@@ -1,0 +1,32 @@
+{
+  "name": "Gost-DOM",
+  "description": "Not a node project, just using node tools for semantic release",
+  "license": "MIT",
+  "devDependencies": {
+    "@semantic-release/exec": "^7.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "semantic-release": "^24.2.1"
+  },
+  "release": {
+    "branches": "tmp",
+    "dryRun": true,
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "CHANGELOG.md"
+          ]
+        }
+      ],
+      [
+        "@semantic-release/exec",
+        {
+          "publishCmd": "GOPROXY=proxy.golang.org go list -m github.com/gost-dom/browser@${nextRelease.version}"
+        }
+      ]
+    ]
+  }
+}
