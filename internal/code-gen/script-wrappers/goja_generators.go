@@ -40,7 +40,9 @@ type GojaTargetGenerators struct{}
 // CreateConstructor has no effect for Goja. It's currently based on a system
 // that it automatically creates the constructors based on whether or not they
 // call the ingerface
-func (gen GojaTargetGenerators) CreateConstructor(ESConstructorData) g.Generator { return g.Noop }
+func (gen GojaTargetGenerators) CreateHostInitializer(ESConstructorData) g.Generator {
+	return g.Noop
+}
 
 func (gen GojaTargetGenerators) CreateConstructorCallback(ESConstructorData) g.Generator {
 	return g.Noop

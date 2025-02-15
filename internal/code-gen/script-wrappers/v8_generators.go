@@ -193,7 +193,7 @@ func prototypeFactoryFunctionName(data ESConstructorData) string {
 	return fmt.Sprintf("create%sPrototype", data.IdlInterfaceName)
 }
 
-func (gen V8TargetGenerators) CreateConstructor(data ESConstructorData) g.Generator {
+func (gen V8TargetGenerators) CreateHostInitializer(data ESConstructorData) g.Generator {
 	return g.FunctionDefinition{
 		Name:     prototypeFactoryFunctionName(data),
 		Args:     g.Arg(scriptHost, scriptHostPtr),

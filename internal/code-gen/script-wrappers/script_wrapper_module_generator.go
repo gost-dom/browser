@@ -18,15 +18,18 @@ type TargetGenerators interface {
 	// methods acting as callback for prototype functions, including the
 	// constructor.
 	CreateWrapperStruct(ESConstructorData) Generator
-	// CreateHostInitialiser creates the function that will register the class
+	// CreateHostInitializer creates the function that will register the class
 	// in the host's global scope.
-	CreateHostInitialiser(ESConstructorData) Generator
+	CreateHostInitializer(ESConstructorData) Generator
 	// CreatePrototypeInitializer creates the "initializePrototype" method, which
-	// sets all the properties on the prototypes on this class.
+	// sets the properties on the prototype object, both data properties for
+	// methods, and accessor properties for attributes.
 	CreatePrototypeInitializer(ESConstructorData) Generator
 	// CreateConstructorCallback generates the function to be called whan
 	// JavaScript code constructs an instance.
 	CreateConstructorCallback(ESConstructorData) Generator
+	// CreateMethodCallback generates the function to be called when
+	// JavaScript code calls a method on an instance.
 	CreateMethodCallback(ESConstructorData, ESOperation) Generator
 }
 
@@ -47,7 +50,7 @@ func (g PrototypeWrapperGenerator) Generate() *jen.Statement {
 
 	}
 	list.Append(
-		g.Platform.CreateHostInitialiser(g.Data),
+		g.Platform.CreateHostInitializer(g.Data),
 		g.Platform.CreatePrototypeInitializer(g.Data),
 		g.Platform.CreateConstructorCallback(g.Data),
 		g.MethodCallbacks(g.Data),
