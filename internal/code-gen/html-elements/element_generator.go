@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/gost-dom/code-gen/customrules"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/elements"
 	"github.com/gost-dom/webref/idl"
@@ -44,14 +45,17 @@ type baseGenerator struct {
 	req     HTMLGeneratorReq
 	idlType idl.Interface
 	type_   g.Type
+	rules   customrules.InterfaceRule
 }
 
 func CreateGenerator(req HTMLGeneratorReq) (baseGenerator, error) {
 	html, err := idl.Load(req.SpecName)
+	specRules := customrules.GetSpecRules(req.SpecName)
 	return baseGenerator{
 		req,
 		html.Interfaces[req.InterfaceName],
 		g.NewType(toStructName(req.InterfaceName)),
+		specRules[req.InterfaceName],
 	}, err
 }
 
@@ -72,7 +76,11 @@ func (gen baseGenerator) GenerateInterface() g.Generator {
 			})
 		}
 		for _, o := range i.Operations {
-			operations = append(operations, IdlInterfaceOperation{o, IdlType(o.ReturnType)})
+			operationRule := gen.rules.Operations[o.Name]
+			operations = append(
+				operations,
+				IdlInterfaceOperation{o, IdlType(o.ReturnType), operationRule.HasError},
+			)
 		}
 	}
 	return IdlInterface{
@@ -80,6 +88,7 @@ func (gen baseGenerator) GenerateInterface() g.Generator {
 		Inherits:   gen.idlType.InternalSpec.Inheritance,
 		Attributes: attributes,
 		Operations: operations,
+		Rules:      gen.rules,
 	}
 }
 

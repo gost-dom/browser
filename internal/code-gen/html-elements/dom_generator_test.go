@@ -58,7 +58,7 @@ func (s *DomSuite) TestGenerateHTMLCollection() {
 	s.Expect(generator).To(HaveRendered(ContainSubstring(
 		`Length() int`)))
 	s.Expect(generator).To(HaveRendered(ContainSubstring(
-		`Item(int) (Element, error)`)))
+		`Item(int) Element`)))
 
 }
 

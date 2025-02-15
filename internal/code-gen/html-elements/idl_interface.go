@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/dave/jennifer/jen"
+	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )
@@ -13,6 +14,7 @@ import (
 type IdlInterface struct {
 	Name       string
 	Inherits   string
+	Rules      customrules.InterfaceRule
 	Attributes []IdlInterfaceAttribute
 	Operations []IdlInterfaceOperation
 }
@@ -48,10 +50,17 @@ func (i IdlInterface) Generate() *jen.Statement {
 				args[i] = IdlType(a.Type)
 			}
 
+			var returnTypes *jen.Statement
+			if o.HasError {
+				returnTypes = jen.Params(o.ReturnType.Generate(), jen.Id("error"))
+			} else {
+				returnTypes = jen.Params(o.ReturnType.Generate())
+			}
+
 			fields = append(fields, generators.Raw(
 				jen.Id(upperCaseFirstLetter(o.Name)).
 					Params(generators.ToJenCodes(args)...).
-					Params(o.ReturnType.Generate(), jen.Id("error")),
+					Add(returnTypes),
 			))
 		}
 	}
@@ -71,4 +80,5 @@ type IdlInterfaceAttribute struct {
 type IdlInterfaceOperation struct {
 	idl.Operation
 	ReturnType IdlType
+	HasError   bool
 }
