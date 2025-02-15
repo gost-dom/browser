@@ -42,10 +42,15 @@ func (i IdlInterface) Generate() *jen.Statement {
 	for _, o := range i.Operations {
 		if !o.Static {
 			// Todo: Parameters
-			// Todo: Return type
+			// Todo: Customize presence of error
+			args := make([]generators.Generator, len(o.Arguments))
+			for i, a := range o.Arguments {
+				args[i] = IdlType(a.Type)
+			}
+
 			fields = append(fields, generators.Raw(
 				jen.Id(upperCaseFirstLetter(o.Name)).
-					Params().
+					Params(generators.ToJenCodes(args)...).
 					Params(o.ReturnType.Generate(), jen.Id("error")),
 			))
 		}
