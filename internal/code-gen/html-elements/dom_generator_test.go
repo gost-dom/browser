@@ -9,7 +9,7 @@ import (
 )
 
 func GenerateURL() (g.Generator, error) {
-	g, err := CreateGenerator(URLSpec)
+	g, err := CreateGenerator(FileGenerationConfig["url"])
 	return g.GenerateInterface(), err
 }
 

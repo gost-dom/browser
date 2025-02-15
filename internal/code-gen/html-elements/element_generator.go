@@ -25,6 +25,11 @@ import (
 //		SpecName:      "url",
 //	}
 type HTMLGeneratorReq struct {
+	// TODO: Shouldn't we extract two separate types? InterfaceName and SpecName
+	// are used to lookup the IDL specification; whereas the other properties
+	// specifies what to generate. So there's a kind of pipline here
+	// Read(intfName, specName) -> Generate(GenStruct, GenCon...) -> Generator
+
 	InterfaceName       string
 	SpecName            string
 	GenerateStruct      bool
@@ -196,23 +201,31 @@ func CreateHTMLElementGenerators() ([]FileGeneratorSpec, error) {
 	}, errors.Join(error)
 }
 
-var URLSpec = HTMLGeneratorReq{
-	InterfaceName:     "URL",
-	SpecName:          "url",
-	GenerateInterface: true,
-}
-
-func CreateDOMGenerators() ([]FileGeneratorSpec, error) {
-	// return []FileGeneratorSpec{}, nil
-	generator, error := CreateGenerator(HTMLGeneratorReq{
+// FileGenerationConfig contains the configuration for which generated files should contain
+// which interfaces. The key is a base file name. The system will append
+// "_generated.go" to the name before creating the file. The HTMLGeneratorReq
+// specifies the IDL source type, as well as what to generate.
+var FileGenerationConfig = map[string]HTMLGeneratorReq{
+	"url": {
 		InterfaceName:      "URL",
 		SpecName:           "url",
 		GenerateInterface:  true,
 		GenerateAttributes: true,
-	})
-	return []FileGeneratorSpec{{
-		"url",
-		"github.com/stroiman/go-dom/browser/dom",
-		generator.GenerateInterface(),
-	}}, errors.Join(error)
+	},
+}
+
+func CreateDOMGenerators() ([]FileGeneratorSpec, error) {
+	result := make([]FileGeneratorSpec, len(FileGenerationConfig))
+	errs := make([]error, len(FileGenerationConfig))
+	index := 0
+	for k, v := range FileGenerationConfig {
+		generator, err := CreateGenerator(v)
+		result[index] = FileGeneratorSpec{
+			k,
+			"github.com/stroiman/go-dom/browser/dom",
+			generator.GenerateInterface(),
+		}
+		errs[index] = err
+	}
+	return result, errors.Join(errs...)
 }

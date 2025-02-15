@@ -90,6 +90,8 @@ func CreateV8Specs() WebIdlConfigurations {
 	event.Method("srcElement").Ignore()
 	event.Method("defaultPrevented").Ignore()
 
+	// domSpecs.Type("ParentNode")
+
 	domElement := domSpecs.Type("Element")
 	domElement.SkipWrapper = true
 	domElement.RunCustomCode = true
