@@ -1,3 +1,12 @@
+# Only one `gow` per terminal is allowed to use raw mode.
+# Otherwise they conflict with each other.
+RAW := $(if $(filter $(MAKELEVEL),0),-r,)
+
+GOW_FLAGS := $(RAW)
+
+# Expects an existing stable version of `gow`.
+GOW := gow $(GOW_FLAGS)
+
 .PHONY: main
 main: codegen-watch
 
@@ -13,7 +22,7 @@ codegen-run:
 	make -j2 codegen-watch codegen-build-watch
 
 codegen-watch: codegen-clean
-	gow -w ./internal/code-gen -S="Codegen done" -e="" generate ./...
+	$(GOW) -w ./internal/code-gen -S="Codegen done" -e="" generate ./...
 
 .PHONY: codegen codegen-build codegen-build-watch
 
@@ -31,11 +40,11 @@ test:
 	go test -v -vet=all ./...
 
 test-watch: 
-	gow -c -e=go -e=js -e=html -v -w=./.. test -vet=off ./...
+	$(GOW) -c -e=go -e=js -e=html -v -w=./.. test -vet=off ./...
 
 .PHONY: test-dom
 test-browser: 
-	gow -s -w=./dom -w=./html -w=. test -vet=off . ./dom ./html
+	$(GOW) -s -w=./dom -w=./html -w=. test -vet=off . ./dom ./html
 
 .PHONY: test-html
 test-html: 
@@ -43,11 +52,11 @@ test-html:
 
 .PHONY: test-v8
 test-v8: 
-	gow -s -e=go -e=js -e=html -w ./.. test -vet=off ./scripting/v8host
+	$(GOW) -s -e=go -e=js -e=html -w ./.. test -vet=off ./scripting/v8host
 
 .PHONY: test-goja
 test-goja:
-	gow -c -e=go -e=js -e=html -w ./.. test -vet=off ./scripting/gojahost
+	$(GOW) -c -e=go -e=js -e=html -w ./.. test -vet=off ./scripting/gojahost
 
 .PHONY: ci ci-build
 ci-build:
