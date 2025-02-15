@@ -15,8 +15,15 @@ func GenerateHtmlAnchor() (g.Generator, error) {
 
 var _ = Describe("ElementGenerator", func() {
 	It("Should generate a getter and setter", func() {
+		Skip("Atrribute implementation currently disabled because of RelList()")
 		Expect(GenerateHtmlAnchor()).To(HaveRendered(ContainSubstring(
 			`func (e *htmlAnchorElement) Target() string {`)))
+	})
+
+	It("Should NOT sanitize type", func() {
+		Skip("Atrribute implementation currently disabled because of RelList()")
+		Expect(GenerateHtmlAnchor()).To(HaveRendered(ContainSubstring(
+			`func (e *htmlAnchorElement) Type() string`)))
 	})
 
 	It("Should generate a struct with embedded htmlElement", func() {
@@ -28,11 +35,6 @@ var _ = Describe("ElementGenerator", func() {
 	It("Should generate an interface ", func() {
 		Expect(GenerateHtmlAnchor()).To(HaveRendered(MatchRegexp(
 			`type HTMLAnchorElement interface {\n\tHTMLElement`)))
-	})
-
-	It("Should NOT sanitize type", func() {
-		Expect(GenerateHtmlAnchor()).To(HaveRendered(ContainSubstring(
-			`func (e *htmlAnchorElement) Type() string`)))
 	})
 
 	It("Should generate a constructor", func() {

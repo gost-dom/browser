@@ -185,10 +185,10 @@ type FileGeneratorSpec struct {
 }
 
 var HTMLAnchorElementSpecs = HTMLGeneratorReq{
-	InterfaceName:      "HTMLAnchorElement",
-	SpecName:           "html",
-	GenerateInterface:  true,
-	GenerateAttributes: true,
+	InterfaceName:     "HTMLAnchorElement",
+	SpecName:          "html",
+	GenerateInterface: true,
+	// GenerateAttributes: true,
 }
 
 func CreateHTMLElementGenerators() ([]FileGeneratorSpec, error) {

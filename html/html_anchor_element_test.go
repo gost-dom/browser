@@ -52,4 +52,12 @@ var _ = Describe("htmlAnchorElement", func() {
 		a.SetPathname("/local")
 		Expect(a).To(matchers.HaveAttribute("href", "http://example.com/local"))
 	})
+
+	Describe("RelList", func() {
+		It("Should contain the space separated rel value", func() {
+			a.SetRel("a b c")
+			Expect(a).To(matchers.HaveAttribute("rel", "a b c"), "Attribute value")
+			Expect(a.RelList().All()).To(ContainElements("a", "b", "c"), "Elements in RelList()")
+		})
+	})
 })

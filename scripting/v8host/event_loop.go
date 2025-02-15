@@ -59,11 +59,12 @@ func (l *eventLoop) Start() disposable {
 				if l.ctx.beginProcess() {
 					_, err := i.fn.Call(l.globalObject)
 					if err != nil {
-						// Wrapped in go func() as it generates a deadlock on linux arm64 tests
+						fnAsString := i.fn.String()
 						go func() {
+							// Wrapped in go func() as it generates a deadlock on linux arm64 tests
 							log.Error(
 								"EventLoop: Error",
-								slog.String("script", i.fn.String()),
+								slog.String("script", fnAsString),
 								slog.String("error", err.Error()),
 								slog.String("stack", string(debug.Stack())),
 							)

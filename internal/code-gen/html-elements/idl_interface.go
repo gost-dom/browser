@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/dave/jennifer/jen"
+	wrappers "github.com/gost-dom/code-gen/script-wrappers"
 	"github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )
@@ -29,9 +30,17 @@ func (i IdlInterface) Generate() *jen.Statement {
 
 	for _, a := range i.Attributes {
 		getterName := upperCaseFirstLetter(a.Name)
-		fields = append(fields, generators.Raw(
-			jen.Id(getterName).Params().Params(jen.Id("string")),
-		))
+		if getterName == "RelList" {
+			fields = append(fields, generators.Raw(
+				jen.Id(getterName).
+					Params().
+					Params(jen.Qual(wrappers.BASE_PKG+"/dom", "DOMTokenList")),
+			))
+		} else {
+			fields = append(fields, generators.Raw(
+				jen.Id(getterName).Params().Params(jen.Id("string")),
+			))
+		}
 		if !a.ReadOnly {
 			setterName := fmt.Sprintf("Set%s", getterName)
 			fields = append(fields, generators.Raw(
