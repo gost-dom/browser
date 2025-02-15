@@ -7,6 +7,7 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/code-gen/script-wrappers/configuration"
 	g "github.com/gost-dom/generators"
@@ -133,6 +134,10 @@ func createOperation(
 	typeSpec *configuration.IdlInterfaceConfiguration,
 	member idl.MemberSpec,
 ) ESOperation {
+	specRules := customrules.GetSpecRules(typeSpec.DomSpec.Name)
+	intfRules := specRules[typeSpec.TypeName]
+	opRules := intfRules.Operations[member.Name]
+
 	methodCustomization := typeSpec.GetMethodCustomization(member.Name)
 	op := ESOperation{
 		Name:                 member.Name,
@@ -140,7 +145,7 @@ func createOperation(
 		CustomImplementation: methodCustomization.CustomImplementation,
 		RetType:              member.ReturnType(),
 		MethodCustomization:  methodCustomization,
-		HasError:             !methodCustomization.HasNoError,
+		HasError:             opRules.HasError,
 		Arguments:            []ESOperationArgument{},
 	}
 	for _, arg := range member.Arguments {

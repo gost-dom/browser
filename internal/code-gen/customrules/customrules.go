@@ -40,6 +40,40 @@ var rules = CustomRules{
 			"toJSON": {HasError: true},
 		}},
 	},
+	"dom": {
+		"DOMTokenList": {Operations: OperationRules{
+			"add": {HasError: true},
+		}},
+		"Node": {Operations: OperationRules{
+			"insertBefore": {HasError: true},
+			"appendChild":  {HasError: true},
+			"removeChild":  {HasError: true},
+		}},
+		"Element": {Operations: OperationRules{
+			"matches": {HasError: true},
+		}},
+	},
+	"html": {
+		"History": {Operations: OperationRules{
+			"go":           {HasError: true},
+			"back":         {HasError: true},
+			"forward":      {HasError: true},
+			"pushState":    {HasError: true},
+			"replaceState": {HasError: true},
+		}},
+		"HTMLFormElement": {Operations: OperationRules{
+			"submit":        {HasError: true},
+			"requestSubmit": {HasError: true},
+		}},
+	},
+	"xhr": {
+		"XMLHttpRequest": {Operations: OperationRules{
+			"getAllResponseHeaders": {HasError: true},
+			"send":                  {HasError: true},
+			"abort":                 {HasError: true},
+			"overrideMimeType":      {HasError: true},
+		}},
+	},
 }
 
 func GetSpecRules(specName string) SpecRules {

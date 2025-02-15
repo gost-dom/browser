@@ -8,12 +8,8 @@ func CreateSpecs() WebIdlConfigurations {
 	domSpecs.SetMultipleFiles(true)
 	domNode := domSpecs.Type("Node")
 	domNode.Method("nodeType").SetCustomImplementation()
-	domNode.Method("contains").SetNoError()
-	domNode.Method("getRootNode").SetNoError().Argument("options").SetHasDefault()
-	domNode.Method("previousSibling").SetNoError()
-	domNode.Method("nextSibling").SetNoError()
-	domNode.Method("cloneNode").SetNoError().Argument("subtree").SetHasDefault()
-	domNode.Method("isSameNode").SetNoError()
+	domNode.Method("getRootNode").Argument("options").SetHasDefault()
+	domNode.Method("cloneNode").Argument("subtree").SetHasDefault()
 	domNode.Method("textContent").SetCustomImplementation()
 
 	domNode.Method("hasChildNodes").Ignore()
@@ -46,8 +42,6 @@ func CreateV8Specs() WebIdlConfigurations {
 	)
 	xhr.Method("open").SetCustomImplementation()
 	xhr.Method("upload").SetCustomImplementation()
-	xhr.Method("getResponseHeader").HasNoError = true
-	xhr.Method("setRequestHeader").HasNoError = true
 	xhr.Method("onreadystatechange").Ignore()
 
 	urlSpecs := specs.Module("url")
@@ -75,9 +69,7 @@ func CreateV8Specs() WebIdlConfigurations {
 	event.Method("initEvent").Ignore()
 	event.Method("composed").Ignore()
 	event.Method("composedPath").Ignore()
-	event.Method("stopPropagation").SetNoError()
 	event.Method("stopImmediatePropagation").Ignore()
-	event.Method("preventDefault").SetNoError()
 	event.Method("isTrusted").Ignore()
 	event.Method("CancelBubble").Ignore()
 	event.Method("cancelBubble").Ignore()
@@ -96,8 +88,6 @@ func CreateV8Specs() WebIdlConfigurations {
 	domElement.SkipWrapper = true
 	domElement.RunCustomCode = true
 	domElement.Method("getAttribute").SetCustomImplementation()
-	domElement.Method("setAttribute").SetNoError()
-	domElement.Method("hasAttribute").SetNoError()
 	domElement.Method("classList").SetCustomImplementation()
 	domElement.Method("matches")
 
@@ -141,11 +131,7 @@ func CreateV8Specs() WebIdlConfigurations {
 	domTokenList := domSpecs.Type("DOMTokenList")
 	domTokenList.SkipWrapper = true
 	domTokenList.RunCustomCode = true
-	domTokenList.Method("item").SetNoError()
-	domTokenList.Method("contains").SetNoError()
-	domTokenList.Method("remove").SetNoError()
 	domTokenList.Method("toggle").SetCustomImplementation()
-	domTokenList.Method("replace").SetNoError()
 	domTokenList.Method("supports").SetNotImplemented()
 
 	htmlSpecs := specs.Module("html")
@@ -178,7 +164,6 @@ func CreateV8Specs() WebIdlConfigurations {
 	input.Method("select").Ignore()
 	input.Method("stepUp").Ignore()
 	input.Method("stepDown").Ignore()
-	input.Method("checkValidity").SetNoError()
 	input.Method("reportValidity").Ignore()
 	input.Method("selectionRangeDirection").Ignore()
 	input.Method("showPicker").Ignore()
