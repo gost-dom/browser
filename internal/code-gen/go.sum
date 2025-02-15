@@ -12,10 +12,6 @@ github.com/google/pprof v0.0.0-20250208200701-d0013a598941 h1:43XjGa6toxLpeksjcx
 github.com/google/pprof v0.0.0-20250208200701-d0013a598941/go.mod h1:vavhavw2zAxS5dIdcRluK6cSGGPlZynqzFM8NdvU144=
 github.com/gost-dom/generators v0.0.0-20250130162306-db4af89dffce h1:6UQtdNhXNHBwoS9GNVcId3EllEzquJqLXwhw1iUfD+M=
 github.com/gost-dom/generators v0.0.0-20250130162306-db4af89dffce/go.mod h1:KYCKK6byuCYZRyl0VrTX4F+x5kVzggRY6LcO1pectPI=
-github.com/gost-dom/webref v0.0.0-20250210163147-f35c2f09bc74 h1:/E5SuKeB22r42sgnnkdih5onwHUpJrdSEQBfnZNZ0qE=
-github.com/gost-dom/webref v0.0.0-20250210163147-f35c2f09bc74/go.mod h1:vhfGFTor7bULVbeLcrkv8dPOUIhUHECQsTGjlPOXBEQ=
-github.com/gost-dom/webref v0.0.0-20250211163028-1351e3b8c802 h1:SOKfH93R59/Qzar0ySobYA8Di8vR/pPQ/f/i+wpHjm4=
-github.com/gost-dom/webref v0.0.0-20250211163028-1351e3b8c802/go.mod h1:2oWcAxp3QFRKsQwXz3rDTW7txFZI4lxMnmwUW5edxfU=
 github.com/gost-dom/webref v0.0.0-20250215103220-7295a6440d9a h1:VCQCsQi8e4Q1JAbrnTXv1cqQESPsj2G6oX3saLDTQEk=
 github.com/gost-dom/webref v0.0.0-20250215103220-7295a6440d9a/go.mod h1:2oWcAxp3QFRKsQwXz3rDTW7txFZI4lxMnmwUW5edxfU=
 github.com/onsi/ginkgo/v2 v2.22.2 h1:/3X8Panh8/WwhU/3Ssa6rCKqPLuAkVY2I0RoyDLySlU=
@@ -26,16 +22,12 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/testify v1.10.0 h1:Xv5erBjTwe/5IxqUQTdXv5kgmIvbHo3QQyRwhJsOfJA=
 github.com/stretchr/testify v1.10.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
-golang.org/x/net v0.34.0 h1:Mb7Mrk043xzHgnRM88suvJFwzVrRfHEHJEl5/71CKw0=
-golang.org/x/net v0.34.0/go.mod h1:di0qlW3YNM5oh6GqDGQr92MyTozJPmybPK4Ev/Gm31k=
 golang.org/x/net v0.35.0 h1:T5GQRQb2y08kTAByq9L4/bz8cipCdA8FbRTXewonqY8=
 golang.org/x/net v0.35.0/go.mod h1:EglIi67kWsHKlRzzVMUD93VMSWGFOMSZgxFjparz1Qk=
 golang.org/x/sys v0.30.0 h1:QjkSwP/36a20jFYWkSue1YwXzLmsV5Gfq7Eiy72C1uc=
 golang.org/x/sys v0.30.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
 golang.org/x/text v0.22.0 h1:bofq7m3/HAFvbF51jz3Q9wLg3jkvSPuiZu/pD1XwgtM=
 golang.org/x/text v0.22.0/go.mod h1:YRoo4H8PVmsu+E3Ou7cqLVH8oXWIHVoX0jqUWALQhfY=
-golang.org/x/tools v0.29.0 h1:Xx0h3TtM9rzQpQuR4dKLrdglAmCEN5Oi+P74JdhdzXE=
-golang.org/x/tools v0.29.0/go.mod h1:KMQVMRsVxU6nHCFXrBPhDB8XncLNLM0lIy/F14RP588=
 golang.org/x/tools v0.30.0 h1:BgcpHewrV5AUp2G9MebG4XPFI1E2W41zU1SaqVA9vJY=
 golang.org/x/tools v0.30.0/go.mod h1:c347cR/OJfw5TI+GfX7RUPNMdDRRbjvYTS0jPyvsVtY=
 google.golang.org/protobuf v1.36.1 h1:yBPeRvTftaleIgM3PZ/WBIZ7XM/eEYAaEyCwvyjq/gk=
