@@ -5,7 +5,7 @@ go 1.23.4
 require (
 	github.com/dave/jennifer v1.7.1
 	github.com/gost-dom/generators v0.0.0-20250130162306-db4af89dffce
-	github.com/gost-dom/webref v0.0.0-20250211163028-1351e3b8c802
+	github.com/gost-dom/webref v0.0.0-20250215103220-7295a6440d9a
 	github.com/onsi/ginkgo/v2 v2.22.2
 	github.com/onsi/gomega v1.36.2
 )
