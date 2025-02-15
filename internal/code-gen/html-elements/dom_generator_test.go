@@ -58,6 +58,16 @@ func (s *DomSuite) TestGenerateHTMLCollection() {
 	s.Expect(generator).To(HaveRendered(ContainSubstring(`Item(int) Element`)))
 }
 
+func (s *DomSuite) TestGenerateParentNode() {
+	generator, err := generateDomType(HTMLGeneratorReq{
+		InterfaceName:     "ParentNode",
+		SpecName:          "dom",
+		GenerateInterface: true,
+	})
+	s.Expect(err).ToNot(HaveOccurred())
+	s.Expect(generator).To(HaveRendered(ContainSubstring("Append()\n")))
+}
+
 /*
 ParentNode generates this:
 	Children() string

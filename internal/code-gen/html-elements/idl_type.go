@@ -16,6 +16,8 @@ func (s IdlType) Generate() *jen.Statement {
 		return jen.Id("int")
 	case "DOMTokenList":
 		return jen.Qual(packagenames.Dom, "DOMTokenList")
+	case "undefined":
+		return nil
 	default:
 		return jen.Id(s.Name)
 	}
