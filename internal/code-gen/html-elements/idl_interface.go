@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/dave/jennifer/jen"
-	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )
@@ -30,21 +29,13 @@ func (i IdlInterface) Generate() *jen.Statement {
 
 	for _, a := range i.Attributes {
 		getterName := upperCaseFirstLetter(a.Name)
-		if getterName == "RelList" {
-			fields = append(fields, generators.Raw(
-				jen.Id(getterName).
-					Params().
-					Params(jen.Qual(packagenames.BASE_PKG+"/dom", "DOMTokenList")),
-			))
-		} else {
-			fields = append(fields, generators.Raw(
-				jen.Id(getterName).Params().Params(jen.Id("string")),
-			))
-		}
+		fields = append(fields, generators.Raw(
+			jen.Id(getterName).Params().Params(a.Type.Generate()),
+		))
 		if !a.ReadOnly {
 			setterName := fmt.Sprintf("Set%s", getterName)
 			fields = append(fields, generators.Raw(
-				jen.Id(setterName).Params(jen.Id("string")),
+				jen.Id(setterName).Params(a.Type.Generate()),
 			))
 		}
 	}
@@ -55,7 +46,7 @@ func (i IdlInterface) Generate() *jen.Statement {
 			fields = append(fields, generators.Raw(
 				jen.Id(upperCaseFirstLetter(o.Name)).
 					Params().
-					Params(jen.Id("string"), jen.Id("error")),
+					Params(o.ReturnType.Generate(), jen.Id("error")),
 			))
 		}
 	}
@@ -66,15 +57,13 @@ func (i IdlInterface) Generate() *jen.Statement {
 
 type IdlInterfaceAttribute struct {
 	Name     string
+	Type     IdlType
 	ReadOnly bool
-}
-
-func NewStringAttribute(name string) IdlInterfaceAttribute {
-	return IdlInterfaceAttribute{Name: name}
 }
 
 /* -------- IdlInterfaceOperation -------- */
 
 type IdlInterfaceOperation struct {
 	idl.Operation
+	ReturnType IdlType
 }

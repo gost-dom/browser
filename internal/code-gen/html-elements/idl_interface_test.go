@@ -7,6 +7,10 @@ import (
 	. "github.com/gost-dom/code-gen/html-elements"
 )
 
+func NewStringAttribute(name string) IdlInterfaceAttribute {
+	return IdlInterfaceAttribute{Name: name, Type: IdlType(DOMStringType)}
+}
+
 var _ = Describe("IdlInterface", func() {
 	It("Should generate an interface", func() {
 		actual := IdlInterface{

@@ -47,6 +47,41 @@ func (s *DomSuite) TestGenerateGetterAndSetterOnURL() {
 		`ToJSON() (string, error)`)))
 }
 
+func (s *DomSuite) TestGenerateHTMLCollection() {
+	generator, err := generateDomType(HTMLGeneratorReq{
+		InterfaceName:     "HTMLCollection",
+		SpecName:          "dom",
+		GenerateInterface: true,
+	})
+	s.Expect(err).ToNot(HaveOccurred())
+
+	s.Expect(generator).To(HaveRendered(ContainSubstring(
+		`Length() int`)))
+	s.Expect(generator).To(HaveRendered(ContainSubstring(
+		`Item(int) (Element, error)`)))
+
+}
+
+/*
+HTMLCollection generates this:
+	Length() string
+	Item() (string, error)
+	NamedItem() (string, error)
+*/
+
+/*
+ParentNode generates this:
+	Children() string
+	FirstElementChild() string
+	LastElementChild() string
+	ChildElementCount() string
+	Prepend() (string, error)
+	Append() (string, error)
+	ReplaceChildren() (string, error)
+	QuerySelector() (string, error)
+	QuerySelectorAll() (string, error)
+*/
+
 func TestGeneratedDomTypes(t *testing.T) {
 	suite.Run(t, new(DomSuite))
 }

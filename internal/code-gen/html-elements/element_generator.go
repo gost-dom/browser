@@ -67,11 +67,12 @@ func (gen baseGenerator) GenerateInterface() g.Generator {
 		for _, a := range i.Attributes {
 			attributes = append(attributes, IdlInterfaceAttribute{
 				Name:     a.Name,
+				Type:     IdlType(a.Type),
 				ReadOnly: a.Readonly,
 			})
 		}
 		for _, o := range i.Operations {
-			operations = append(operations, IdlInterfaceOperation{o})
+			operations = append(operations, IdlInterfaceOperation{o, IdlType(o.ReturnType)})
 		}
 	}
 	return IdlInterface{
@@ -212,6 +213,16 @@ var FileGenerationConfig = map[string]HTMLGeneratorReq{
 		GenerateInterface:  true,
 		GenerateAttributes: true,
 	},
+	// "parent_node": {
+	// 	InterfaceName:     "ParentNode",
+	// 	SpecName:          "dom",
+	// 	GenerateInterface: true,
+	// },
+	// "html_collection": {
+	// 	InterfaceName:     "HTMLCollection",
+	// 	SpecName:          "dom",
+	// 	GenerateInterface: true,
+	// },
 }
 
 func CreateDOMGenerators() ([]FileGeneratorSpec, error) {
