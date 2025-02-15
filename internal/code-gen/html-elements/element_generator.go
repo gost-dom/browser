@@ -227,11 +227,11 @@ var FileGenerationConfig = map[string]HTMLGeneratorReq{
 	// 	SpecName:          "dom",
 	// 	GenerateInterface: true,
 	// },
-	// "html_collection": {
-	// 	InterfaceName:     "HTMLCollection",
-	// 	SpecName:          "dom",
-	// 	GenerateInterface: true,
-	// },
+	"html_collection": {
+		InterfaceName:     "HTMLCollection",
+		SpecName:          "dom",
+		GenerateInterface: true,
+	},
 }
 
 func CreateDOMGenerators() ([]FileGeneratorSpec, error) {
@@ -246,6 +246,7 @@ func CreateDOMGenerators() ([]FileGeneratorSpec, error) {
 			generator.GenerateInterface(),
 		}
 		errs[index] = err
+		index++
 	}
 	return result, errors.Join(errs...)
 }

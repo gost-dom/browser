@@ -63,13 +63,6 @@ func (s *DomSuite) TestGenerateHTMLCollection() {
 }
 
 /*
-HTMLCollection generates this:
-	Length() string
-	Item() (string, error)
-	NamedItem() (string, error)
-*/
-
-/*
 ParentNode generates this:
 	Children() string
 	FirstElementChild() string
