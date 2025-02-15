@@ -53,11 +53,12 @@ parser.
 
 ## Content loading
 
-Cookies _should_ be supported, but is untested (there is no API to access the
-cookie jar)
+- Opening a window returns an error if the server response with a non-200 status
+  code.
+- Redirects are not followed.
 
-The browser errors if the server does not respond with a 200 (window loading,
-not XHR requests). Redirects are not followed.
+Note: The result can still be used when there is a bad HTTP status code. But
+there is no differentiation between a network error, and an HTTP status error.
 
 ## DOM in general
 
@@ -82,16 +83,10 @@ There is simple form support,
 
 - Calling `click()` on an `<input type="submit">` or `<button type="submit">`
 submits the form.
-- Form submits trigger a `formdata` event, but not `requestsubmit` event.
-- Attributes on the submitter does not override the form's method/action
-- Forms have a `submit` method, but not `requestsubmit` 
-
-(requestsubmit is in dev, so maybe it exisst, but I didn't update this doc)
-
-Clever input mechanisms are not supported, you must set the `value` attribute on
-the field.
-
-Reset behaviour is not implemented!
+- Attributes on the submitter does not override the form's method/action.
+- To set a input field, you must set the `value` attribute. There is no support
+for keyboard input simulation.
+- Reset behaviour is not implemented!
 
 ### Other elements
 
@@ -107,5 +102,5 @@ only accepts a `FormBody`.
 Fetch is not supported but you can add a polyfill to your project if you need
 fetch, or you could make a PR:
 
-- https://github.com/stroiman/go-dom/tree/main/browser/scripting/v8host/polyfills
-- https://github.com/stroiman/go-dom/blob/main/browser/scripting/v8host/polyfills.go 
+- Go code to install polyfills: https://github.com/stroiman/go-dom/blob/main/browser/scripting/v8host/polyfills.go 
+- Folder for javascript files to load: https://github.com/stroiman/go-dom/tree/main/browser/scripting/v8host/polyfills
