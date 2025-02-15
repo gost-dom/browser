@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/dave/jennifer/jen"
+	"github.com/gost-dom/code-gen/packagenames"
 	g "github.com/gost-dom/generators"
 )
 
@@ -107,7 +108,7 @@ func (gen GojaTargetGenerators) CreateWrapperStruct(data ESConstructorData) g.Ge
 	naming := GojaNamingStrategy{data}
 	typeName := g.Id(naming.PrototypeWrapperTypeName())
 	constructorName := naming.PrototypeWrapperConstructorName()
-	innerType := g.Raw(jen.Qual(dom, data.Name()))
+	innerType := g.Raw(jen.Qual(packagenames.Dom, data.Name()))
 
 	wrapperStruct := g.NewStruct(typeName)
 	wrapperStruct.Embed(g.Raw(jen.Id("baseInstanceWrapper").Index(innerType)))
@@ -151,7 +152,10 @@ func (gen GojaTargetGenerators) CreateWrapperMethodBody(
 ) g.Generator {
 	if op.NotImplemented {
 		msg := fmt.Sprintf(
-			"%s.%s: Not implemented. Create an issue: %s", data.Name(), op.Name, ISSUE_URL,
+			"%s.%s: Not implemented. Create an issue: %s",
+			data.Name(),
+			op.Name,
+			packagenames.ISSUE_URL,
 		)
 		return g.Raw(jen.Panic(jen.Lit(msg)))
 	}

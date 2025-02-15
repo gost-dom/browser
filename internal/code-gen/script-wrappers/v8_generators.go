@@ -3,6 +3,7 @@ package wrappers
 import (
 	"fmt"
 
+	"github.com/gost-dom/code-gen/packagenames"
 	g "github.com/gost-dom/generators"
 
 	"github.com/dave/jennifer/jen"
@@ -139,11 +140,14 @@ func CreateV8FunctionTemplateCallbackBody(
 	op ESOperation,
 ) JenGenerator {
 	naming := V8NamingStrategy{data}
-	debug := g.NewValuePackage("Debug", log).Call(
+	debug := g.NewValuePackage("Debug", packagenames.Log).Call(
 		g.Lit(fmt.Sprintf("V8 Function call: %s.%s", data.Name(), op.Name)))
 	if op.NotImplemented {
 		errMsg := fmt.Sprintf(
-			"%s.%s: Not implemented. Create an issue: %s", data.Name(), op.Name, ISSUE_URL,
+			"%s.%s: Not implemented. Create an issue: %s",
+			data.Name(),
+			op.Name,
+			packagenames.ISSUE_URL,
 		)
 		return g.StatementList(
 			debug,

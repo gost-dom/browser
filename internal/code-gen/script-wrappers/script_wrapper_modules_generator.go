@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/dave/jennifer/jen"
+	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/code-gen/script-wrappers/configuration"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
@@ -126,7 +127,7 @@ func NewScriptWrapperModulesGenerator() ScriptWrapperModulesGenerator {
 
 	return ScriptWrapperModulesGenerator{
 		Specs:            specs,
-		PackagePath:      v8host,
+		PackagePath:      packagenames.V8host,
 		TargetGenerators: V8TargetGenerators{},
 	}
 }

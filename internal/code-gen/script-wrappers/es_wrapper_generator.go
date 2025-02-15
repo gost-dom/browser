@@ -7,6 +7,7 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/code-gen/script-wrappers/configuration"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
@@ -25,13 +26,8 @@ var (
 )
 
 const (
-	dom      = BASE_PKG + "/dom"
-	html     = BASE_PKG + "/html"
-	v8host   = BASE_PKG + "/scripting/v8host"
-	gojahost = BASE_PKG + "/scripting/gojahost"
-	log      = BASE_PKG + "/internal/log"
-	v8       = "github.com/tommie/v8go"
-	gojaSrc  = "github.com/dop251/goja"
+	v8      = "github.com/tommie/v8go"
+	gojaSrc = "github.com/dop251/goja"
 )
 
 // A list of possible acronyms that an interface can start with. Used as a very
@@ -254,11 +250,11 @@ type ESConstructorData struct {
 func (d ESConstructorData) GetInternalPackage() string {
 	switch d.Spec.DomSpec.Name {
 	case "dom":
-		return dom
+		return packagenames.Dom
 	case "html":
-		return html
+		return packagenames.Html
 	default:
-		return html
+		return packagenames.Html
 	}
 }
 

@@ -1,6 +1,9 @@
 package wrappers
 
-import "github.com/gost-dom/code-gen/script-wrappers/configuration"
+import (
+	"github.com/gost-dom/code-gen/packagenames"
+	"github.com/gost-dom/code-gen/script-wrappers/configuration"
+)
 
 func NewGojaWrapperModuleGenerator() ScriptWrapperModulesGenerator {
 	specs := configuration.CreateSpecs()
@@ -10,7 +13,7 @@ func NewGojaWrapperModuleGenerator() ScriptWrapperModulesGenerator {
 
 	return ScriptWrapperModulesGenerator{
 		Specs:            specs,
-		PackagePath:      gojahost,
+		PackagePath:      packagenames.Gojahost,
 		TargetGenerators: GojaTargetGenerators{},
 	}
 }
