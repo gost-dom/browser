@@ -6,20 +6,7 @@ package dom
 // elements
 type ElementContainer interface {
 	Node
-	// Append supports appending multiple child elements. The JavaScript API
-	// supports adding string values, but the Go API requires a [Text] node
-	// explicitly for text content
-	//
-	// See also: https://developer.mozilla.org/en-US/docs/Web/API/Element/append
-	Children() HTMLCollection
-	Append(...Node) error
-	Prepend(...Node) error
-	ReplaceChildren(...Node) error
-	QuerySelector(string) (Element, error)
-	QuerySelectorAll(string) (NodeList, error)
-	ChildElementCount() int
-	FirstElementChild() Element
-	LastElementChild() Element
+	ParentNode
 }
 
 // RootNode implements defines common behaviour between [Document] and
