@@ -49,7 +49,8 @@ type Element interface {
 }
 
 type element struct {
-	node
+	*node
+	parentNode
 	tagName          string
 	namespace        string
 	attributes       Attributes
@@ -63,22 +64,37 @@ type element struct {
 }
 
 func NewElement(tagName string, ownerDocument Document) Element {
-	// return newElement(tagName, ownerDocument)
-	// // TODO: handle namespace
-	result := &element{newNode(), tagName, "", Attributes(nil), ownerDocument, nil, nil, nil}
+	node := newNodePtr()
+	result := &element{
+		node,
+		newParentNode(node),
+		tagName,
+		"",
+		Attributes(nil),
+		ownerDocument,
+		nil,
+		nil,
+		nil,
+	}
 	result.SetSelf(result)
 	return result
 }
 
 func newElement(tagName string, ownerDocument Document) *element {
-	// TODO: handle namespace
-	result := &element{newNode(), tagName, "", Attributes(nil), ownerDocument, nil, nil, nil}
+	node := newNodePtr()
+	result := &element{
+		node,
+		newParentNode(node),
+		tagName,
+		"",
+		Attributes(nil),
+		ownerDocument,
+		nil,
+		nil,
+		nil,
+	}
 	result.SetSelf(result)
 	return result
-}
-
-func (e *element) ChildElementCount() int {
-	return len(e.childElements())
 }
 
 func (e *element) SetSelf(n Node) {
@@ -106,30 +122,6 @@ func (e *element) NodeName() string {
 
 func (e *element) TagName() string {
 	return strings.ToLower(e.tagName)
-}
-
-func (e *element) Append(nodes ...Node) error {
-	return e.append(nodes...)
-}
-
-func (e *element) Prepend(nodes ...Node) error {
-	return e.prepend(nodes...)
-}
-
-func (e *element) ReplaceChildren(nodes ...Node) error {
-	return e.replaceChildren(nodes...)
-}
-
-func (e *element) Children() HTMLCollection {
-	return e.children()
-}
-
-func (e *element) FirstElementChild() Element {
-	return e.firstElementChild()
-}
-
-func (e *element) LastElementChild() Element {
-	return e.lastElementChild()
 }
 
 func (e *element) ClassList() DOMTokenList {

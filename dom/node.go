@@ -144,7 +144,6 @@ type Node interface {
 	// overriding behaviour in super-classes. This is not a behaviour that Go has.
 	SetSelf(node Node)
 
-	append(nodes ...Node) error
 	getSelf() Node
 	createHtmlNode() *html.Node
 	setParent(Node)
@@ -165,6 +164,11 @@ func newNode() node {
 	return node{newEventTarget(), entity.New(), nil, newNodeList(), nil}
 }
 
+func newNodePtr() *node {
+	n := newNode()
+	return &n
+}
+
 func (n *node) cloneChildren() []Node {
 	children := n.ChildNodes().All()
 	nodes := make([]Node, len(children))
@@ -172,60 +176,6 @@ func (n *node) cloneChildren() []Node {
 		nodes[i] = n.CloneNode(true)
 	}
 	return nodes
-}
-
-func (n *node) nodeOfNodes(nodes []Node) Node {
-	switch len(nodes) {
-	case 0:
-		return nil
-	case 1:
-		return nodes[0]
-	default:
-		fragment := n.getSelf().OwnerDocument().CreateDocumentFragment()
-		for _, n := range nodes {
-			fragment.AppendChild(n)
-		}
-		return fragment
-	}
-}
-
-func (n *node) children() HTMLCollection {
-	return newHtmlCollection(n.self)
-}
-
-func (n *node) append(nodes ...Node) (err error) {
-	if node := n.nodeOfNodes(nodes); node != nil {
-		_, err = n.self.AppendChild(node)
-	}
-	return
-}
-
-func (n *node) prepend(nodes ...Node) (err error) {
-	if node := n.nodeOfNodes(nodes); node != nil {
-		_, err = n.self.InsertBefore(node, n.FirstChild())
-	}
-	return
-}
-
-func (n *node) replaceChildren(nodes ...Node) (err error) {
-	if node := n.nodeOfNodes(nodes); node != nil {
-		if err = n.assertCanAddNode(node); err == nil {
-			for c := n.FirstChild(); c != nil; c = n.FirstChild() {
-				n.RemoveChild(c)
-			}
-			n.self.append(node)
-		}
-	}
-	return
-}
-
-func (n *node) firstElementChild() Element {
-	return n.children().Item(0)
-}
-
-func (n *node) lastElementChild() Element {
-	c := n.children()
-	return n.children().Item(c.Length() - 1)
 }
 
 // AppendChild adds node to the end of the list of the current node's child

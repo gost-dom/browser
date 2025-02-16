@@ -18,11 +18,13 @@ type RootNode interface {
 }
 
 type rootNode struct {
-	node
+	*node
+	parentNode
 }
 
 func newRootNode() rootNode {
-	return rootNode{newNode()}
+	node := newNodePtr()
+	return rootNode{node, newParentNode(node)}
 }
 
 type rootNodeHelper struct{ RootNode }

@@ -29,36 +29,8 @@ func (f *documentFragment) CloneNode(deep bool) Node {
 	return result
 }
 
-func (f *documentFragment) ChildElementCount() int {
-	return len(f.childElements())
-}
-
-func (f *documentFragment) Append(nodes ...Node) error {
-	return f.append(nodes...)
-}
-
-func (f *documentFragment) Prepend(nodes ...Node) error {
-	return f.prepend(nodes...)
-}
-
-func (f *documentFragment) ReplaceChildren(nodes ...Node) error {
-	return f.replaceChildren(nodes...)
-}
-
 func (d *documentFragment) GetElementById(id string) Element {
 	return rootNodeHelper{d}.GetElementById(id)
-}
-
-func (d *documentFragment) Children() HTMLCollection {
-	return d.children()
-}
-
-func (e *documentFragment) FirstElementChild() Element {
-	return e.firstElementChild()
-}
-
-func (e *documentFragment) LastElementChild() Element {
-	return e.lastElementChild()
 }
 
 func (d *documentFragment) QuerySelector(pattern string) (Element, error) {

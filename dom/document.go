@@ -66,10 +66,6 @@ func (d *document) parseFragment(reader io.Reader) (DocumentFragment, error) {
 	return d.ownerWindow.ParseFragment(d, reader)
 }
 
-func (d *document) ChildElementCount() int {
-	return len(d.childElements())
-}
-
 func (d *document) Body() Element {
 	root := d.DocumentElement()
 	if root != nil {
@@ -114,30 +110,6 @@ func (d *document) CreateElementNS(_ string, name string) Element {
 
 func (d *document) CreateDocumentFragment() DocumentFragment {
 	return NewDocumentFragment(d)
-}
-
-func (d *document) Append(nodes ...Node) error {
-	return d.append(nodes...)
-}
-
-func (d *document) Prepend(nodes ...Node) error {
-	return d.prepend(nodes...)
-}
-
-func (d *document) ReplaceChildren(nodes ...Node) error {
-	return d.replaceChildren(nodes...)
-}
-
-func (d *document) Children() HTMLCollection {
-	return rootNodeHelper{d}.Children()
-}
-
-func (e *document) FirstElementChild() Element {
-	return e.firstElementChild()
-}
-
-func (e *document) LastElementChild() Element {
-	return e.lastElementChild()
 }
 
 func (d *document) DocumentElement() Element {
