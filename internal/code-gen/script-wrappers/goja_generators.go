@@ -122,9 +122,6 @@ func (gen GojaTargetGenerators) CreateWrapperStruct(data ESConstructorData) g.Ge
 	constructorName := naming.PrototypeWrapperConstructorName()
 	innerType := g.Raw(jen.Qual(packagenames.Dom, data.Name()))
 
-	wrapperStruct := g.NewStruct(typeName)
-	wrapperStruct.Embed(g.Raw(jen.Id("baseInstanceWrapper").Index(innerType)))
-
 	wrapperConstructor := g.FunctionDefinition{
 		Name:     constructorName,
 		Args:     g.Arg(g.Id("instance"), g.NewType("GojaContext").Pointer()),
@@ -134,7 +131,7 @@ func (gen GojaTargetGenerators) CreateWrapperStruct(data ESConstructorData) g.Ge
 		)),
 	}
 
-	return g.StatementList(wrapperStruct, wrapperConstructor)
+	return wrapperConstructor
 }
 
 func (gen GojaTargetGenerators) CreateMethodCallback(
@@ -217,6 +214,18 @@ func (gen GojaTargetGenerators) CreateWrapperMethodBody(
 		}
 	}
 	return list
+}
+
+func (g GojaTargetGenerators) WrapperStructGenerators() PlatformWrapperStructGenerators {
+	return g
+}
+
+func (g GojaTargetGenerators) WrapperStructTypeName(interfaceName string) string {
+	return fmt.Sprintf("%sWrapper", lowerCaseFirstLetter(interfaceName))
+}
+
+func (g GojaTargetGenerators) EmbedName(data ESConstructorData) string {
+	return "baseInstanceWrapper"
 }
 
 func panicOnNotNil(lhs g.Generator) g.Generator {

@@ -7,6 +7,11 @@ import (
 
 type Generator = generators.Generator
 
+type PlatformWrapperStructGenerators interface {
+	WrapperStructTypeName(interfaceName string) string
+	EmbedName(ESConstructorData) string
+}
+
 type TargetGenerators interface {
 	// CreateInitFunction generates an init function intended to register that a
 	// class should be created. This doesn't _create_ the class, as that
@@ -32,6 +37,8 @@ type TargetGenerators interface {
 	// CreateMethodCallback generates the function to be called when
 	// JavaScript code calls a method on an instance.
 	CreateMethodCallback(ESConstructorData, ESOperation) Generator
+
+	WrapperStructGenerators() PlatformWrapperStructGenerators
 }
 
 // PrototypeWrapperGenerator generates code to create a JavaScript prototype
@@ -51,8 +58,7 @@ func (g PrototypeWrapperGenerator) Generate() *jen.Statement {
 		)
 	}
 	if !g.Data.Spec.SkipWrapper {
-		list.Append(g.Platform.CreateWrapperStruct(g.Data))
-
+		list.Append(WrapperStructGenerator(g))
 	}
 	list.Append(
 		g.Platform.CreateHostInitializer(g.Data),
