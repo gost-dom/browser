@@ -174,24 +174,25 @@ func (n *node) cloneChildren() []Node {
 	return nodes
 }
 
-func (n *node) append(nodes ...Node) error {
-	var node Node
+func (n *node) nodeOfNodes(nodes []Node) Node {
 	switch len(nodes) {
 	case 0:
 		return nil
 	case 1:
-		node = nodes[0]
+		return nodes[0]
 	default:
-		if n.getSelf().OwnerDocument() == nil {
-			panic(fmt.Sprintf("NIL OWNER: %s", n.getSelf().Parent().NodeName()))
-		}
 		fragment := n.getSelf().OwnerDocument().CreateDocumentFragment()
 		for _, n := range nodes {
 			fragment.AppendChild(n)
 		}
-		node = fragment
+		return fragment
 	}
-	_, err := n.self.AppendChild(node)
+}
+
+func (n *node) append(nodes ...Node) (err error) {
+	if node := n.nodeOfNodes(nodes); node != nil {
+		_, err = n.self.AppendChild(node)
+	}
 	return err
 }
 
