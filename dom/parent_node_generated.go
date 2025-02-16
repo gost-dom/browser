@@ -7,9 +7,9 @@ type ParentNode interface {
 	FirstElementChild() Element
 	LastElementChild() Element
 	ChildElementCount() int
-	Prepend(nodes ...Node)
-	Append(nodes ...Node)
-	ReplaceChildren(nodes ...Node)
+	Prepend(nodes ...Node) error
+	Append(nodes ...Node) error
+	ReplaceChildren(nodes ...Node) error
 	QuerySelector(string) Element
 	QuerySelectorAll(string) NodeList
 }

@@ -67,13 +67,13 @@ var rules = CustomRules{
 			"matches": {HasError: true},
 		}},
 		"ParentNode": {Operations: OperationRules{
-			"append": {Attributes: AttributeRules{
+			"append": {HasError: true, Attributes: AttributeRules{
 				"nodes": {Type: idl.Type{Name: "Node"}},
 			}},
-			"prepend": {Attributes: AttributeRules{
+			"prepend": {HasError: true, Attributes: AttributeRules{
 				"nodes": {Type: idl.Type{Name: "Node"}},
 			}},
-			"replaceChildren": {Attributes: AttributeRules{
+			"replaceChildren": {HasError: true, Attributes: AttributeRules{
 				"nodes": {Type: idl.Type{Name: "Node"}},
 			}},
 		}},
