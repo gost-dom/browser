@@ -318,7 +318,7 @@ var _ = Describe("Element", func() {
 		})
 	})
 
-	Describe("Append/Prepend/ReplaceChildren", func() {
+	Describe("Append/Prepend/ReplaceChildren/Children", func() {
 		// These should ideaaly be tested on both Element, Document, and
 		// DocumentFragment. The functions are defined in the ParentNode
 		// mixin interface that all 3 share.
@@ -360,6 +360,30 @@ var _ = Describe("Element", func() {
 				doc.CreateText("f"),
 			)
 			Expect(b).To(HaveOuterHTML(`<body>d<div>e</div>f</body>`))
+		})
+
+		It("Should iterate elements in 'Children'", func() {
+			doc := ParseHtmlString(
+				`<body>a<div id="el-1">b</div>c<div id="el-2">d</div>e<div name="el-3">f</div>g</body>`,
+			)
+			b := doc.Body()
+			c := b.Children()
+
+			Expect(c.Length()).To(Equal(3))
+			Expect(c.Item(0)).To(HaveOuterHTML(`<div id="el-1">b</div>`))
+			Expect(c.Item(1)).To(HaveAttribute("id", "el-2"))
+			Expect(c.Item(2)).To(HaveAttribute("name", "el-3"))
+
+			Expect(c.Item(-1)).To(BeNil())
+			Expect(c.Item(3)).To(BeNil())
+
+			Expect(c.NamedItem("el-1")).To(HaveAttribute("id", "el-1"))
+			Expect(c.NamedItem("el-2")).To(HaveAttribute("id", "el-2"))
+			Expect(c.NamedItem("el-3")).To(HaveAttribute("name", "el-3"))
+		})
+
+		It("Should handle empty string correctly in 'NamedItem'", func() {
+			Skip("Need to research")
 		})
 	})
 })

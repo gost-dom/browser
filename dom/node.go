@@ -189,6 +189,10 @@ func (n *node) nodeOfNodes(nodes []Node) Node {
 	}
 }
 
+func (n *node) children() HTMLCollection {
+	return newHtmlCollection(n.self)
+}
+
 func (n *node) append(nodes ...Node) (err error) {
 	if node := n.nodeOfNodes(nodes); node != nil {
 		_, err = n.self.AppendChild(node)

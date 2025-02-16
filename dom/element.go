@@ -120,6 +120,10 @@ func (e *element) ReplaceChildren(nodes ...Node) error {
 	return e.replaceChildren(nodes...)
 }
 
+func (e *element) Children() HTMLCollection {
+	return e.children()
+}
+
 func (e *element) ClassList() DOMTokenList {
 	return NewClassList(e)
 }

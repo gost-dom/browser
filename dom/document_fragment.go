@@ -49,6 +49,10 @@ func (d *documentFragment) GetElementById(id string) Element {
 	return rootNodeHelper{d}.GetElementById(id)
 }
 
+func (d *documentFragment) Children() HTMLCollection {
+	return d.children()
+}
+
 func (d *documentFragment) QuerySelector(pattern string) (Element, error) {
 	return cssHelper{d}.QuerySelector(pattern)
 }

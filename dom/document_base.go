@@ -11,6 +11,7 @@ type ElementContainer interface {
 	// explicitly for text content
 	//
 	// See also: https://developer.mozilla.org/en-US/docs/Web/API/Element/append
+	Children() HTMLCollection
 	Append(...Node) error
 	Prepend(...Node) error
 	ReplaceChildren(...Node) error
@@ -53,4 +54,8 @@ func (d rootNodeHelper) GetElementById(id string) Element {
 		return nil
 	}
 	return search(d)
+}
+
+func (h rootNodeHelper) Children() HTMLCollection {
+	return nil
 }
