@@ -39,7 +39,6 @@ func (e *elementV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) {
 		v8.NewFunctionTemplateWithError(iso, e.setTextContent),
 		v8.None,
 	)
-	e.parentNode.installPrototype(prototype)
 }
 
 func (e *elementV8Wrapper) insertAdjacentHTML(

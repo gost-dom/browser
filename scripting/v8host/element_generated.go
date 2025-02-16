@@ -91,6 +91,7 @@ func (w elementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 		v8.NewFunctionTemplateWithError(iso, w.shadowRoot),
 		nil,
 		v8.None)
+	w.parentNode.installPrototype(prototypeTmpl)
 }
 
 func (w elementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
