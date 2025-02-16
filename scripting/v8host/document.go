@@ -7,11 +7,15 @@ import (
 )
 
 type documentV8Wrapper struct {
-	esElementContainerWrapper[Document]
+	nodeV8WrapperBase[Document]
+	parentNode *parentNodeV8Wrapper
 }
 
 func newDocumentV8Wrapper(host *V8ScriptHost) documentV8Wrapper {
-	return documentV8Wrapper{newESContainerWrapper[Document](host)}
+	return documentV8Wrapper{
+		newNodeV8WrapperBase[Document](host),
+		newParentNodeV8Wrapper(host),
+	}
 }
 
 func (w documentV8Wrapper) BuildInstanceTemplate(constructor *v8.FunctionTemplate) {
@@ -40,7 +44,6 @@ func createDocumentPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
 			return scriptContext.cacheNode(info.This(), NewDocument(nil))
 		},
 	)
-	wrapper.Install(builder.constructor)
 	builder.SetDefaultInstanceLookup()
 	protoBuilder := builder.NewPrototypeBuilder()
 	instanceBuilder := builder.NewInstanceBuilder()
@@ -117,5 +120,6 @@ func createDocumentPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
 				return nil, v8.NewTypeError(iso, "Object not a Document")
 			}),
 	)
+	wrapper.parentNode.installPrototype(proto)
 	return builder.constructor
 }

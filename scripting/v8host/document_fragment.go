@@ -8,7 +8,8 @@ import (
 )
 
 type documentFragmentV8Wrapper struct {
-	esElementContainerWrapper[DocumentFragment]
+	nodeV8WrapperBase[DocumentFragment]
+	parentNode *parentNodeV8Wrapper
 }
 
 func (w documentFragmentV8Wrapper) constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -19,9 +20,12 @@ func (w documentFragmentV8Wrapper) constructor(info *v8.FunctionCallbackInfo) (*
 }
 
 func createDocumentFragmentPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
-	wrapper := documentFragmentV8Wrapper{newESContainerWrapper[DocumentFragment](host)}
+	wrapper := documentFragmentV8Wrapper{
+		newNodeV8WrapperBase[DocumentFragment](host),
+		newParentNodeV8Wrapper(host),
+	}
 	constructor := v8.NewFunctionTemplateWithError(host.iso, wrapper.constructor)
 	constructor.InstanceTemplate().SetInternalFieldCount(1)
-	wrapper.Install(constructor)
+	wrapper.parentNode.installPrototype(constructor.PrototypeTemplate())
 	return constructor
 }

@@ -4,26 +4,24 @@ import (
 	"errors"
 
 	"github.com/gost-dom/browser/dom"
-	. "github.com/gost-dom/browser/dom"
 
 	v8 "github.com/tommie/v8go"
 )
 
-type esElement struct {
-	esElementContainerWrapper[Element]
-}
-
 type elementV8Wrapper struct {
-	esElementContainerWrapper[dom.Element]
+	nodeV8WrapperBase[dom.Element]
+	parentNode *parentNodeV8Wrapper
 }
 
 func newElementV8Wrapper(host *V8ScriptHost) *elementV8Wrapper {
-	return &elementV8Wrapper{newESContainerWrapper[dom.Element](host)}
+	return &elementV8Wrapper{
+		newNodeV8WrapperBase[dom.Element](host),
+		newParentNodeV8Wrapper(host),
+	}
 }
 
 func (e *elementV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) {
 	iso := e.scriptHost.iso
-	e.Install(constructor)
 	prototype := constructor.PrototypeTemplate()
 	prototype.Set(
 		"insertAdjacentHTML",
@@ -41,6 +39,7 @@ func (e *elementV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) {
 		v8.NewFunctionTemplateWithError(iso, e.setTextContent),
 		v8.None,
 	)
+	e.parentNode.installPrototype(prototype)
 }
 
 func (e *elementV8Wrapper) insertAdjacentHTML(
