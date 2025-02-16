@@ -33,8 +33,9 @@ type OperationRules map[string]OperationRule
 type OperationRule struct {
 	// By default, an operation is assumed to not generate an error. Override
 	// the behaviour by setting this to true.
-	HasError   bool
-	Attributes AttributeRules
+	HasError    bool
+	Attributes  AttributeRules
+	DocComments string
 }
 
 type AttributeRules map[string]AttributeRule
@@ -47,6 +48,17 @@ type AttributeTypeRule struct {
 	Name    string
 	Package string
 }
+
+var parentNodeOperation = OperationRule{
+	HasError: true,
+	DocComments: `Note that the IDL operation accepts either string or node values. This interface
+requires an explicit a [Node]. Use [Document.CreateText] to convert a string to
+a Node.
+
+See also: https://developer.mozilla.org/en-US/docs/Web/API/Element`,
+	Attributes: AttributeRules{
+		"nodes": {Type: idl.Type{Name: "Node"}},
+	}}
 
 var rules = CustomRules{
 	"url": {
@@ -67,15 +79,9 @@ var rules = CustomRules{
 			"matches": {HasError: true},
 		}},
 		"ParentNode": {Operations: OperationRules{
-			"append": {HasError: true, Attributes: AttributeRules{
-				"nodes": {Type: idl.Type{Name: "Node"}},
-			}},
-			"prepend": {HasError: true, Attributes: AttributeRules{
-				"nodes": {Type: idl.Type{Name: "Node"}},
-			}},
-			"replaceChildren": {HasError: true, Attributes: AttributeRules{
-				"nodes": {Type: idl.Type{Name: "Node"}},
-			}},
+			"append":          parentNodeOperation,
+			"prepend":         parentNodeOperation,
+			"replaceChildren": parentNodeOperation,
 		}},
 	},
 	"html": {

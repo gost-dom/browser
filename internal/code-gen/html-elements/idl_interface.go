@@ -68,6 +68,9 @@ func (i IdlInterface) Generate() *jen.Statement {
 				returnTypes = jen.Params(o.ReturnType.Generate())
 			}
 
+			if opRules.DocComments != "" {
+				fields = append(fields, generators.Raw(jen.Comment(opRules.DocComments)))
+			}
 			fields = append(fields, generators.Raw(
 				jen.Id(upperCaseFirstLetter(o.Name)).
 					Params(generators.ToJenCodes(args)...).
