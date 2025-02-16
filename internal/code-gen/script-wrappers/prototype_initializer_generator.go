@@ -30,7 +30,7 @@ func (g PrototypeInitializerGenerator) BodyGenerator() generators.Generator {
 
 func (g PrototypeInitializerGenerator) MixinsGenerator() generators.Generator {
 	result := gen.StatementList()
-	for _, mixin := range g.Data.IdlInterface.Includes {
+	for _, mixin := range g.Data.Includes() {
 		wrapperName := lowerCaseFirstLetter(mixin.Name)
 		// Note: This excludes mixins not known in this spec.
 		// Could the mixing come from another spec, then this will skip

@@ -273,8 +273,10 @@ func CreateV8Specs() WebIdlConfigurations {
 	history.Method("scrollRestoration").Ignore()
 	history.Method("state").SetEncoder("toJSON")
 
+	htmlSpecs.Type("HTMLHyperlinkElementUtils")
+
 	anchor := htmlSpecs.Type("HTMLAnchorElement")
-	anchor.IncludeIncludes = true
+	// anchor.wra
 	anchor.Method("download").Ignore()
 	anchor.Method("Ping").Ignore()
 	anchor.Method("ping").Ignore()

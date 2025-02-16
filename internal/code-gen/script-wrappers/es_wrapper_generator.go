@@ -254,6 +254,18 @@ type ESConstructorData struct {
 	RunCustomCode    bool
 }
 
+// Return the idl mixin interfaces included in this interface AND that has been
+// included in the configuration
+func (d ESConstructorData) Includes() []idl.Interface {
+	var result []idl.Interface
+	for _, i := range d.IdlInterface.Includes {
+		if _, configured := d.Spec.DomSpec.Interfaces[i.Name]; configured {
+			result = append(result, i)
+		}
+	}
+	return result
+}
+
 func (d ESConstructorData) GetInternalPackage() string {
 	switch d.Spec.DomSpec.Name {
 	case "dom":
