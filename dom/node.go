@@ -219,6 +219,15 @@ func (n *node) replaceChildren(nodes ...Node) (err error) {
 	return
 }
 
+func (n *node) firstElementChild() Element {
+	return n.children().Item(0)
+}
+
+func (n *node) lastElementChild() Element {
+	c := n.children()
+	return n.children().Item(c.Length() - 1)
+}
+
 // AppendChild adds node to the end of the list of the current node's child
 // nodes. The appended child is returned. If node is not a valid child of the
 // parent, a [DOMError] is returned. The [MDN docs for appendChild] lists the

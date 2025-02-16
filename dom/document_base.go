@@ -16,8 +16,10 @@ type ElementContainer interface {
 	Prepend(...Node) error
 	ReplaceChildren(...Node) error
 	QuerySelector(string) (Element, error)
-	QuerySelectorAll(string) (staticNodeList, error)
+	QuerySelectorAll(string) (NodeList, error)
 	ChildElementCount() int
+	FirstElementChild() Element
+	LastElementChild() Element
 }
 
 // RootNode implements defines common behaviour between [Document] and

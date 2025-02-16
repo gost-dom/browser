@@ -132,6 +132,14 @@ func (d *document) Children() HTMLCollection {
 	return rootNodeHelper{d}.Children()
 }
 
+func (e *document) FirstElementChild() Element {
+	return e.firstElementChild()
+}
+
+func (e *document) LastElementChild() Element {
+	return e.lastElementChild()
+}
+
 func (d *document) DocumentElement() Element {
 	for _, c := range d.ChildNodes().All() {
 		if e, ok := c.(Element); ok {
@@ -170,7 +178,7 @@ func (d *document) QuerySelector(pattern string) (Element, error) {
 	return cssHelper{d}.QuerySelector(pattern)
 }
 
-func (d *document) QuerySelectorAll(pattern string) (staticNodeList, error) {
+func (d *document) QuerySelectorAll(pattern string) (NodeList, error) {
 	return cssHelper{d}.QuerySelectorAll(pattern)
 }
 

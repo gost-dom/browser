@@ -124,6 +124,14 @@ func (e *element) Children() HTMLCollection {
 	return e.children()
 }
 
+func (e *element) FirstElementChild() Element {
+	return e.firstElementChild()
+}
+
+func (e *element) LastElementChild() Element {
+	return e.lastElementChild()
+}
+
 func (e *element) ClassList() DOMTokenList {
 	return NewClassList(e)
 }
@@ -237,7 +245,7 @@ func (e *element) QuerySelector(pattern string) (Element, error) {
 	return cssHelper{e}.QuerySelector(pattern)
 }
 
-func (e *element) QuerySelectorAll(pattern string) (staticNodeList, error) {
+func (e *element) QuerySelectorAll(pattern string) (NodeList, error) {
 	return cssHelper{e}.QuerySelectorAll(pattern)
 }
 

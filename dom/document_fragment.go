@@ -53,11 +53,19 @@ func (d *documentFragment) Children() HTMLCollection {
 	return d.children()
 }
 
+func (e *documentFragment) FirstElementChild() Element {
+	return e.firstElementChild()
+}
+
+func (e *documentFragment) LastElementChild() Element {
+	return e.lastElementChild()
+}
+
 func (d *documentFragment) QuerySelector(pattern string) (Element, error) {
 	return cssHelper{d}.QuerySelector(pattern)
 }
 
-func (d *documentFragment) QuerySelectorAll(pattern string) (staticNodeList, error) {
+func (d *documentFragment) QuerySelectorAll(pattern string) (NodeList, error) {
 	return cssHelper{d}.QuerySelectorAll(pattern)
 }
 

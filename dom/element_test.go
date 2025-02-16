@@ -382,6 +382,26 @@ var _ = Describe("Element", func() {
 			Expect(c.NamedItem("el-3")).To(HaveAttribute("name", "el-3"))
 		})
 
+		Describe("First/Last element", func() {
+			It("Should return elements when they exist", func() {
+				doc := ParseHtmlString(
+					`<body>a<div id="el-1">b</div>c<div id="el-2">d</div>e<div name="el-3">f</div>g</body>`,
+				)
+				b := doc.Body()
+				Expect(b.FirstElementChild()).To(HaveAttribute("id", "el-1"))
+				Expect(b.LastElementChild()).To(HaveOuterHTML(`<div name="el-3">f</div>`))
+			})
+
+			It("Should nil when there are only non-element children", func() {
+				doc := ParseHtmlString(
+					`<body>body text</body>`,
+				)
+				b := doc.Body()
+				Expect(b.FirstElementChild()).To(BeNil())
+				Expect(b.LastElementChild()).To(BeNil())
+			})
+		})
+
 		It("Should handle empty string correctly in 'NamedItem'", func() {
 			Skip("Need to research")
 		})
