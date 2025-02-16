@@ -49,6 +49,7 @@ type AttributeTypeRule struct {
 	Package string
 }
 
+var parentNodeQueryOperation = OperationRule{HasError: true}
 var parentNodeOperation = OperationRule{
 	HasError: true,
 	DocComments: `Note that the IDL operation accepts either string or node values. This interface
@@ -79,9 +80,11 @@ var rules = CustomRules{
 			"matches": {HasError: true},
 		}},
 		"ParentNode": {Operations: OperationRules{
-			"append":          parentNodeOperation,
-			"prepend":         parentNodeOperation,
-			"replaceChildren": parentNodeOperation,
+			"append":           parentNodeOperation,
+			"prepend":          parentNodeOperation,
+			"replaceChildren":  parentNodeOperation,
+			"querySelector":    parentNodeQueryOperation,
+			"querySelectorAll": parentNodeQueryOperation,
 		}},
 	},
 	"html": {

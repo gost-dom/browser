@@ -31,6 +31,6 @@ type ParentNode interface {
 	   See also: https://developer.mozilla.org/en-US/docs/Web/API/Element
 	*/
 	ReplaceChildren(nodes ...Node) error
-	QuerySelector(string) Element
-	QuerySelectorAll(string) NodeList
+	QuerySelector(string) (Element, error)
+	QuerySelectorAll(string) (NodeList, error)
 }

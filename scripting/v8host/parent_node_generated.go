@@ -70,8 +70,12 @@ func (w parentNodeV8Wrapper) querySelector(info *v8.FunctionCallbackInfo) (*v8.V
 		if err != nil {
 			return nil, err
 		}
-		result := instance.QuerySelector(selectors)
-		return ctx.getInstanceForNode(result)
+		result, callErr := instance.QuerySelector(selectors)
+		if callErr != nil {
+			return nil, callErr
+		} else {
+			return ctx.getInstanceForNode(result)
+		}
 	}
 	return nil, errors.New("ParentNode.querySelector: Missing arguments")
 }
@@ -87,8 +91,12 @@ func (w parentNodeV8Wrapper) querySelectorAll(info *v8.FunctionCallbackInfo) (*v
 		if err != nil {
 			return nil, err
 		}
-		result := instance.QuerySelectorAll(selectors)
-		return w.toNodeList(ctx, result)
+		result, callErr := instance.QuerySelectorAll(selectors)
+		if callErr != nil {
+			return nil, callErr
+		} else {
+			return w.toNodeList(ctx, result)
+		}
 	}
 	return nil, errors.New("ParentNode.querySelectorAll: Missing arguments")
 }
