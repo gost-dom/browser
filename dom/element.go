@@ -392,6 +392,4 @@ func (e *element) CloneNode(deep bool) Node {
 	return res
 }
 
-func (e *element) OwnerDocument() Document {
-	return e.ownerDocument
-}
+func (e *element) OwnerDocument() Document { return e.ownerDocument }

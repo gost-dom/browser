@@ -175,15 +175,24 @@ func (n *node) cloneChildren() []Node {
 }
 
 func (n *node) append(nodes ...Node) error {
-	for _, nn := range nodes {
-		if err := n.assertCanAddNode(nn); err != nil {
-			return err
+	var node Node
+	switch len(nodes) {
+	case 0:
+		return nil
+	case 1:
+		node = nodes[0]
+	default:
+		if n.getSelf().OwnerDocument() == nil {
+			panic(fmt.Sprintf("NIL OWNER: %s", n.getSelf().Parent().NodeName()))
 		}
+		fragment := n.getSelf().OwnerDocument().CreateDocumentFragment()
+		for _, n := range nodes {
+			fragment.AppendChild(n)
+		}
+		node = fragment
 	}
-	for _, nn := range nodes {
-		n.AppendChild(nn)
-	}
-	return nil
+	_, err := n.self.AppendChild(node)
+	return err
 }
 
 // AppendChild adds node to the end of the list of the current node's child
