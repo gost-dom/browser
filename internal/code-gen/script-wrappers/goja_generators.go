@@ -5,6 +5,7 @@ import (
 
 	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/packagenames"
+	"github.com/gost-dom/generators"
 	g "github.com/gost-dom/generators"
 )
 
@@ -119,19 +120,12 @@ func (gen GojaTargetGenerators) CreatePrototypeInitializerBody(
 func (gen GojaTargetGenerators) CreateWrapperStruct(data ESConstructorData) g.Generator {
 	naming := GojaNamingStrategy{data}
 	typeName := g.Id(naming.PrototypeWrapperTypeName())
-	constructorName := naming.PrototypeWrapperConstructorName()
 	innerType := g.Raw(jen.Qual(packagenames.Dom, data.Name()))
 
-	wrapperConstructor := g.FunctionDefinition{
-		Name:     constructorName,
-		Args:     g.Arg(g.Id("instance"), g.NewType("GojaContext").Pointer()),
-		RtnTypes: g.List(g.NewType("wrapper")),
-		Body: g.Return(g.InstantiateStruct(typeName,
-			g.NewValue("newBaseInstanceWrapper").TypeParam(innerType).Call(g.Id("instance")),
-		)),
-	}
-
-	return wrapperConstructor
+	body := g.InstantiateStruct(typeName,
+		g.NewValue("newBaseInstanceWrapper").TypeParam(innerType).Call(g.Id("instance")),
+	)
+	return body
 }
 
 func (gen GojaTargetGenerators) CreateMethodCallback(
@@ -220,12 +214,28 @@ func (g GojaTargetGenerators) WrapperStructGenerators() PlatformWrapperStructGen
 	return g
 }
 
-func (g GojaTargetGenerators) WrapperStructTypeName(interfaceName string) string {
-	return fmt.Sprintf("%sWrapper", lowerCaseFirstLetter(interfaceName))
+func (g GojaTargetGenerators) WrapperStructType(interfaceName string) Generator {
+	return generators.Id(fmt.Sprintf("%sWrapper", lowerCaseFirstLetter(interfaceName)))
 }
 
-func (g GojaTargetGenerators) EmbedName(data ESConstructorData) string {
-	return "baseInstanceWrapper"
+func (g GojaTargetGenerators) WrapperStructConstructorName(interfaceName string) string {
+	return fmt.Sprintf("new%sWrapper", interfaceName)
+}
+
+func (g GojaTargetGenerators) WrapperStructConstructorRetType(string) Generator {
+	return generators.Id("wrapper")
+}
+
+func (g GojaTargetGenerators) EmbeddedType(wrappedType Generator) Generator {
+	return generators.NewType("baseInstanceWrapper").TypeParam(wrappedType)
+}
+
+func (g GojaTargetGenerators) HostArg() Generator {
+	return generators.Id("instance")
+}
+
+func (g GojaTargetGenerators) HostType() Generator {
+	return generators.NewType("GojaContext").Pointer()
 }
 
 func panicOnNotNil(lhs g.Generator) g.Generator {

@@ -13,25 +13,45 @@ type WrapperStructGenerator struct {
 func (g WrapperStructGenerator) Generate() *jen.Statement {
 	return gen.StatementList(
 		g.TypeGenerator(),
-		g.Platform.CreateWrapperStruct(g.Data),
+		g.ConstructorGenerator(),
+		gen.Line,
 	).Generate()
 }
 
-func (g WrapperStructGenerator) TypeGenerator() Generator {
+func (g WrapperStructGenerator) WrappedType() Generator {
 	idlInterfaceName := g.Data.Name()
+	return gen.NewTypePackage(idlInterfaceName, g.Data.GetInternalPackage())
+}
 
+func (g WrapperStructGenerator) TypeGenerator() Generator {
 	structGens := g.Platform.WrapperStructGenerators()
+
+	idlInterfaceName := g.Data.Name()
 	includes := g.Data.Includes()
-	innerType := gen.NewTypePackage(idlInterfaceName, g.Data.GetInternalPackage())
-	embedName := structGens.EmbedName(g.Data)
-	wrapperStruct := gen.NewStruct(gen.Id(structGens.WrapperStructTypeName(idlInterfaceName)))
-	wrapperStruct.Embed(gen.NewType(embedName).TypeParam(innerType))
+	wrapperStruct := gen.NewStruct(structGens.WrapperStructType(idlInterfaceName))
+	wrapperStruct.Embed(structGens.EmbeddedType(g.WrappedType()))
 
 	for _, i := range includes {
 		wrapperStruct.Field(
 			gen.Id(lowerCaseFirstLetter(i.Name)),
-			gen.NewType(structGens.WrapperStructTypeName(i.Name)).Pointer(),
+			gen.Type{Generator: structGens.WrapperStructType(i.Name)}.Pointer(),
 		)
 	}
 	return wrapperStruct
+}
+
+func (g WrapperStructGenerator) ConstructorGenerator() Generator {
+	structGens := g.Platform.WrapperStructGenerators()
+
+	idlInterfaceName := g.Data.Name()
+	constructorName := structGens.WrapperStructConstructorName(idlInterfaceName)
+	hostArg := structGens.HostArg()
+	hostType := structGens.HostType()
+
+	return gen.FunctionDefinition{
+		Name:     constructorName,
+		Args:     gen.Arg(hostArg, hostType),
+		RtnTypes: gen.List(structGens.WrapperStructConstructorRetType(idlInterfaceName)),
+		Body:     gen.Return(g.Platform.CreateWrapperStruct(g.Data)),
+	}
 }

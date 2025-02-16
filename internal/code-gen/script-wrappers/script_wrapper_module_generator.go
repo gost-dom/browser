@@ -8,8 +8,12 @@ import (
 type Generator = generators.Generator
 
 type PlatformWrapperStructGenerators interface {
-	WrapperStructTypeName(interfaceName string) string
-	EmbedName(ESConstructorData) string
+	WrapperStructType(interfaceName string) Generator
+	WrapperStructConstructorName(interfaceName string) string
+	WrapperStructConstructorRetType(interfaceName string) Generator
+	EmbeddedType(wrappedType Generator) Generator
+	HostArg() Generator
+	HostType() Generator
 }
 
 type TargetGenerators interface {
