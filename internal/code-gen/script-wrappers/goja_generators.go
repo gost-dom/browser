@@ -64,12 +64,32 @@ func (gen GojaTargetGenerators) CreateInitFunction(data ESConstructorData) g.Gen
 
 // CreatePrototypeInitializer creates the "initializePrototype" method, which
 // sets all the properties on the prototypes on this class.
-func (gen GojaTargetGenerators) CreatePrototypeInitializer(data ESConstructorData) g.Generator {
+func (gen GojaTargetGenerators) CreatePrototypeInitializer(
+	data ESConstructorData,
+	body g.Generator,
+) g.Generator {
+	naming := GojaNamingStrategy{data}
+	receiver := g.NewValue(naming.ReceiverName())
+	prototype := g.NewValue("prototype")
+
+	return g.FunctionDefinition{
+		Receiver: g.FunctionArgument{
+			Name: receiver,
+			Type: g.Id(naming.PrototypeWrapperTypeName()),
+		},
+		Name: "initializePrototype",
+		Args: g.Arg(prototype, gojaObj).Arg(g.Id("vm"), gojaRuntime),
+		Body: body,
+	}
+}
+
+func (gen GojaTargetGenerators) CreatePrototypeInitializerBody(
+	data ESConstructorData,
+) g.Generator {
 	naming := GojaNamingStrategy{data}
 	receiver := g.NewValue(naming.ReceiverName())
 	vm := receiver.Field("ctx").Field("vm")
 	prototype := g.NewValue("prototype")
-
 	body := g.StatementList()
 	for op := range data.WrapperFunctionsToInstall() {
 		body.Append(prototype.Field("Set").Call(g.Lit(op.Name), receiver.Field(op.Name)))
@@ -93,15 +113,7 @@ func (gen GojaTargetGenerators) CreatePrototypeInitializer(data ESConstructorDat
 		)
 	}
 
-	return g.FunctionDefinition{
-		Receiver: g.FunctionArgument{
-			Name: receiver,
-			Type: g.Id(naming.PrototypeWrapperTypeName()),
-		},
-		Name: "initializePrototype",
-		Args: g.Arg(prototype, gojaObj).Arg(g.Id("vm"), gojaRuntime),
-		Body: body,
-	}
+	return body
 }
 
 func (gen GojaTargetGenerators) CreateWrapperStruct(data ESConstructorData) g.Generator {

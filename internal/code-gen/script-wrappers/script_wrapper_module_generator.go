@@ -24,7 +24,8 @@ type TargetGenerators interface {
 	// CreatePrototypeInitializer creates the "initializePrototype" method, which
 	// sets the properties on the prototype object, both data properties for
 	// methods, and accessor properties for attributes.
-	CreatePrototypeInitializer(ESConstructorData) Generator
+	CreatePrototypeInitializer(ESConstructorData, Generator) Generator
+	CreatePrototypeInitializerBody(ESConstructorData) Generator
 	// CreateConstructorCallback generates the function to be called whan
 	// JavaScript code constructs an instance.
 	CreateConstructorCallback(ESConstructorData) Generator
@@ -55,7 +56,7 @@ func (g PrototypeWrapperGenerator) Generate() *jen.Statement {
 	}
 	list.Append(
 		g.Platform.CreateHostInitializer(g.Data),
-		g.Platform.CreatePrototypeInitializer(g.Data),
+		PrototypeInitializerGenerator(g),
 		g.Platform.CreateConstructorCallback(g.Data),
 		g.MethodCallbacks(g.Data),
 	)

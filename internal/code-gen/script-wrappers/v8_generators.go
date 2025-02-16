@@ -74,15 +74,13 @@ func (gen V8TargetGenerators) CreateWrapperStruct(data ESConstructorData) g.Gene
 	return g.StatementList(wrapperStruct, wrapperConstructor, g.Line)
 }
 
-func (gen V8TargetGenerators) CreatePrototypeInitializer(data ESConstructorData) JenGenerator {
+func (gen V8TargetGenerators) CreatePrototypeInitializer(
+	data ESConstructorData,
+	body JenGenerator,
+) JenGenerator {
 	naming := V8NamingStrategy{data}
-	builder := NewConstructorBuilder()
 	receiver := g.NewValue(naming.Receiver())
-	installer := PrototypeInstaller{
-		builder.v8Iso,
-		builder.Proto,
-		WrapperInstance{g.Value{Generator: receiver}},
-	}
+	builder := NewConstructorBuilder()
 	return g.FunctionDefinition{
 		Name: "installPrototype",
 		Receiver: g.FunctionArgument{
@@ -90,12 +88,26 @@ func (gen V8TargetGenerators) CreatePrototypeInitializer(data ESConstructorData)
 			Type: g.Id(naming.PrototypeWrapperName()),
 		},
 		Args: g.Arg(builder.Proto, v8ObjectTemplatePtr),
-		Body: g.StatementList(
-			g.Assign(g.NewValue("iso"), receiver.Field("scriptHost").Field("iso")),
-			installer.InstallFunctionHandlers(data),
-			installer.InstallAttributeHandlers(data),
-		),
+		Body: body,
 	}
+}
+
+func (gen V8TargetGenerators) CreatePrototypeInitializerBody(
+	data ESConstructorData,
+) JenGenerator {
+	naming := V8NamingStrategy{data}
+	receiver := g.NewValue(naming.Receiver())
+	builder := NewConstructorBuilder()
+	installer := PrototypeInstaller{
+		builder.v8Iso,
+		builder.Proto,
+		WrapperInstance{g.Value{Generator: receiver}},
+	}
+	return g.StatementList(
+		g.Assign(g.NewValue("iso"), receiver.Field("scriptHost").Field("iso")),
+		installer.InstallFunctionHandlers(data),
+		installer.InstallAttributeHandlers(data),
+	)
 }
 
 func (gen V8TargetGenerators) CreateConstructorCallback(data ESConstructorData) JenGenerator {
