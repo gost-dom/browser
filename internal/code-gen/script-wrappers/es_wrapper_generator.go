@@ -51,6 +51,7 @@ func createData(
 		IdlInterfaceName: wrappedTypeName,
 		RunCustomCode:    interfaceConfig.RunCustomCode,
 		Inheritance:      idlInterface.Inheritance,
+		IdlInterface:     idlInterface,
 		Constructor:      CreateConstructor(interfaceConfig, idlName),
 		Operations:       CreateInstanceMethods(interfaceConfig, idlName),
 		Attributes:       CreateAttributes(interfaceConfig, idlName),
@@ -244,6 +245,7 @@ type ESAttribute struct {
 
 type ESConstructorData struct {
 	Spec             *configuration.IdlInterfaceConfiguration
+	IdlInterface     idl.Interface
 	IdlInterfaceName string
 	Inheritance      string
 	Operations       []ESOperation

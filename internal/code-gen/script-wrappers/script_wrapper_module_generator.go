@@ -41,10 +41,14 @@ type PrototypeWrapperGenerator struct {
 }
 
 func (g PrototypeWrapperGenerator) Generate() *jen.Statement {
-	list := generators.StatementList(
-		g.Platform.CreateInitFunction(g.Data),
-		generators.Line,
-	)
+	list := generators.StatementList()
+
+	if !g.Data.IdlInterface.Mixin {
+		list.Append(
+			g.Platform.CreateInitFunction(g.Data),
+			generators.Line,
+		)
+	}
 	if !g.Data.Spec.SkipWrapper {
 		list.Append(g.Platform.CreateWrapperStruct(g.Data))
 

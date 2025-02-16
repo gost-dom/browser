@@ -9,10 +9,6 @@ import (
 	v8 "github.com/tommie/v8go"
 )
 
-func init() {
-	registerJSClass("ParentNode", "", createParentNodePrototype)
-}
-
 type parentNodeV8Wrapper struct {
 	nodeV8WrapperBase[dom.ParentNode]
 }
