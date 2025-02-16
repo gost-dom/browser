@@ -8,8 +8,8 @@ import (
 
 type V8WrapperStructGenerators struct{}
 
-func (g V8WrapperStructGenerators) WrapperStructType(interfaceName string) Generator {
-	return generators.Id(fmt.Sprintf("%sV8Wrapper", lowerCaseFirstLetter(interfaceName)))
+func (g V8WrapperStructGenerators) WrapperStructType(interfaceName string) generators.Type {
+	return generators.NewType(fmt.Sprintf("%sV8Wrapper", lowerCaseFirstLetter(interfaceName)))
 }
 
 func (g V8WrapperStructGenerators) WrapperStructConstructorName(interfaceName string) string {
@@ -19,11 +19,15 @@ func (g V8WrapperStructGenerators) WrapperStructConstructorName(interfaceName st
 func (g V8WrapperStructGenerators) WrapperStructConstructorRetType(
 	idlInterfaceName string,
 ) Generator {
-	return generators.Type{Generator: g.WrapperStructType(idlInterfaceName)}.Pointer()
+	return g.WrapperStructType(idlInterfaceName).Pointer()
 }
 
 func (g V8WrapperStructGenerators) EmbeddedType(wrappedType Generator) Generator {
 	return generators.NewType("nodeV8WrapperBase").TypeParam(wrappedType)
+}
+
+func (g V8WrapperStructGenerators) EmbeddedTypeConstructor(wrappedType Generator) generators.Value {
+	return generators.NewValue("newNodeV8WrapperBase").TypeParam(wrappedType)
 }
 
 func (g V8WrapperStructGenerators) HostArg() Generator {

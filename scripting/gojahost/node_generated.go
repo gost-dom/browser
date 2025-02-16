@@ -16,7 +16,7 @@ type nodeWrapper struct {
 }
 
 func newNodeWrapper(instance *GojaContext) wrapper {
-	return nodeWrapper{newBaseInstanceWrapper[dom.Node](instance)}
+	return &nodeWrapper{newBaseInstanceWrapper[dom.Node](instance)}
 }
 
 func (w nodeWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime) {

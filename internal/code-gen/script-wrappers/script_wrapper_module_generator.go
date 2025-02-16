@@ -7,11 +7,15 @@ import (
 
 type Generator = generators.Generator
 
+// Create a struct definition, and it's constructor, that must contain the
+// methods acting as callback for prototype functions, including the
+// constructor.
 type PlatformWrapperStructGenerators interface {
-	WrapperStructType(interfaceName string) Generator
+	WrapperStructType(interfaceName string) generators.Type
 	WrapperStructConstructorName(interfaceName string) string
 	WrapperStructConstructorRetType(interfaceName string) Generator
 	EmbeddedType(wrappedType Generator) Generator
+	EmbeddedTypeConstructor(wrappedType Generator) generators.Value
 	HostArg() Generator
 	HostType() Generator
 }
@@ -23,10 +27,6 @@ type TargetGenerators interface {
 	// a host is created, this class must be added to global scope, optionally
 	// with a subclass.
 	CreateInitFunction(ESConstructorData) Generator
-	// Create a struct definition, and it's constructor, that must contain the
-	// methods acting as callback for prototype functions, including the
-	// constructor.
-	CreateWrapperStruct(ESConstructorData) Generator
 	// CreateHostInitializer creates the function that will register the class
 	// in the host's global scope.
 	CreateHostInitializer(ESConstructorData) Generator

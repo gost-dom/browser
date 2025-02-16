@@ -49,27 +49,6 @@ func (gen V8TargetGenerators) WrapperStructGenerators() PlatformWrapperStructGen
 	return V8WrapperStructGenerators{}
 }
 
-func (gen V8TargetGenerators) CreateWrapperStruct(data ESConstructorData) g.Generator {
-	typeNameBase := fmt.Sprintf("%sV8Wrapper", data.Name())
-	typeName := g.NewType(lowerCaseFirstLetter(typeNameBase))
-	embedName := "nodeV8WrapperBase"
-	if n := data.Spec.WrapperType; n != "" {
-		embedName = n
-	}
-	embedConstructorName := fmt.Sprintf("new%s", upperCaseFirstLetter(embedName))
-	innerType := g.NewTypePackage(data.Name(), data.GetInternalPackage())
-	includes := data.Includes()
-	fieldInitializers := make([]g.Generator, len(includes)+1)
-	for idx, i := range includes {
-		includeConstructorName := fmt.Sprintf("new%sV8Wrapper", i.Name)
-		fieldInitializers[idx+1] = g.NewValue(includeConstructorName).Call(scriptHost)
-	}
-	fieldInitializers[0] = g.NewValue(embedConstructorName).
-		TypeParam(innerType).
-		Call(scriptHost)
-	return typeName.CreateInstance(fieldInitializers...).Reference()
-}
-
 func (gen V8TargetGenerators) CreatePrototypeInitializer(
 	data ESConstructorData,
 	body JenGenerator,

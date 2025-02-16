@@ -2,6 +2,7 @@ package wrappers
 
 import (
 	"github.com/dave/jennifer/jen"
+	"github.com/gost-dom/generators"
 	gen "github.com/gost-dom/generators"
 )
 
@@ -34,7 +35,7 @@ func (g WrapperStructGenerator) TypeGenerator() Generator {
 	for _, i := range includes {
 		wrapperStruct.Field(
 			gen.Id(lowerCaseFirstLetter(i.Name)),
-			gen.Type{Generator: structGens.WrapperStructType(i.Name)}.Pointer(),
+			structGens.WrapperStructType(i.Name).Pointer(),
 		)
 	}
 	return wrapperStruct
@@ -52,6 +53,24 @@ func (g WrapperStructGenerator) ConstructorGenerator() Generator {
 		Name:     constructorName,
 		Args:     gen.Arg(hostArg, hostType),
 		RtnTypes: gen.List(structGens.WrapperStructConstructorRetType(idlInterfaceName)),
-		Body:     gen.Return(g.Platform.CreateWrapperStruct(g.Data)),
+		Body:     g.Body(),
 	}
+}
+
+func (g WrapperStructGenerator) Body() Generator {
+	structGens := g.Platform.WrapperStructGenerators()
+	idlInterfaceName := g.Data.Name()
+
+	innerType := generators.NewTypePackage(idlInterfaceName, g.Data.GetInternalPackage())
+	embedConstructorName := structGens.EmbeddedTypeConstructor(innerType)
+	includes := g.Data.Includes()
+	fieldInitializers := make([]Generator, len(includes)+1)
+	for idx, i := range includes {
+		includeConstructorName := structGens.WrapperStructConstructorName(i.Name)
+		fieldInitializers[idx+1] = generators.NewValue(includeConstructorName).Call(scriptHost)
+	}
+	fieldInitializers[0] = embedConstructorName.Call(structGens.HostArg())
+
+	wrapperType := structGens.WrapperStructType(idlInterfaceName)
+	return generators.Return(wrapperType.CreateInstance(fieldInitializers...).Reference())
 }

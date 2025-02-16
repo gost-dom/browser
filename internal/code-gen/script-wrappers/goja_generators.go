@@ -117,17 +117,6 @@ func (gen GojaTargetGenerators) CreatePrototypeInitializerBody(
 	return body
 }
 
-func (gen GojaTargetGenerators) CreateWrapperStruct(data ESConstructorData) g.Generator {
-	naming := GojaNamingStrategy{data}
-	typeName := g.Id(naming.PrototypeWrapperTypeName())
-	innerType := g.Raw(jen.Qual(packagenames.Dom, data.Name()))
-
-	body := g.InstantiateStruct(typeName,
-		g.NewValue("newBaseInstanceWrapper").TypeParam(innerType).Call(g.Id("instance")),
-	)
-	return body
-}
-
 func (gen GojaTargetGenerators) CreateMethodCallback(
 	data ESConstructorData,
 	op ESOperation,
@@ -214,8 +203,8 @@ func (g GojaTargetGenerators) WrapperStructGenerators() PlatformWrapperStructGen
 	return g
 }
 
-func (g GojaTargetGenerators) WrapperStructType(interfaceName string) Generator {
-	return generators.Id(fmt.Sprintf("%sWrapper", lowerCaseFirstLetter(interfaceName)))
+func (g GojaTargetGenerators) WrapperStructType(interfaceName string) generators.Type {
+	return generators.NewType(fmt.Sprintf("%sWrapper", lowerCaseFirstLetter(interfaceName)))
 }
 
 func (g GojaTargetGenerators) WrapperStructConstructorName(interfaceName string) string {
@@ -228,6 +217,10 @@ func (g GojaTargetGenerators) WrapperStructConstructorRetType(string) Generator 
 
 func (g GojaTargetGenerators) EmbeddedType(wrappedType Generator) Generator {
 	return generators.NewType("baseInstanceWrapper").TypeParam(wrappedType)
+}
+
+func (g GojaTargetGenerators) EmbeddedTypeConstructor(wrappedType Generator) generators.Value {
+	return generators.NewValue("newBaseInstanceWrapper").TypeParam(wrappedType)
 }
 
 func (g GojaTargetGenerators) HostArg() Generator {
