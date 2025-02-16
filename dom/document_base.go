@@ -19,7 +19,7 @@ type RootNode interface {
 
 type rootNode struct {
 	*node
-	parentNode
+	ParentNode
 }
 
 func newRootNode() rootNode {

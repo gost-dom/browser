@@ -48,7 +48,7 @@ type Element interface {
 
 type element struct {
 	*node
-	parentNode
+	ParentNode
 	tagName          string
 	namespace        string
 	attributes       Attributes
@@ -62,23 +62,6 @@ type element struct {
 }
 
 func NewElement(tagName string, ownerDocument Document) Element {
-	node := newNodePtr()
-	result := &element{
-		node,
-		newParentNode(node),
-		tagName,
-		"",
-		Attributes(nil),
-		ownerDocument,
-		nil,
-		nil,
-		nil,
-	}
-	result.SetSelf(result)
-	return result
-}
-
-func newElement(tagName string, ownerDocument Document) *element {
 	node := newNodePtr()
 	result := &element{
 		node,

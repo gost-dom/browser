@@ -8,7 +8,7 @@ type parentNode struct {
 	node *node
 }
 
-func newParentNode(n *node) parentNode {
+func newParentNode(n *node) ParentNode {
 	return parentNode{n}
 }
 
