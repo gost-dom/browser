@@ -35,4 +35,10 @@ var _ = Describe("Document", func() {
 			Expect(elm).To(HaveOuterHTML(`<div id="grand-child"></div>`))
 		})
 	})
+
+	It("CreateElement", func() {
+		doc := ParseHtmlString("")
+		e := doc.CreateElement("div")
+		Expect(e.OwnerDocument()).To(Equal(doc))
+	})
 })
