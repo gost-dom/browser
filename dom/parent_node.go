@@ -1,5 +1,7 @@
 package dom
 
+import "github.com/ericchiang/css"
+
 // parentNode implements the functions defined in the [ParentNode] IDL Mixin
 // interface.
 type parentNode struct {
@@ -66,4 +68,30 @@ func (n parentNode) LastElementChild() Element {
 
 func (f parentNode) ChildElementCount() int {
 	return len(f.node.childElements())
+}
+
+func (n parentNode) QuerySelector(pattern string) (Element, error) {
+	nodes, err := n.QuerySelectorAll(pattern)
+	if err != nil {
+		return nil, err
+	}
+	// TODO, it should be a list of elements, not nodes, then the cast, and
+	// error isn't necessary
+	return nodes.Item(0).(Element), nil
+}
+
+func (n parentNode) QuerySelectorAll(pattern string) (NodeList, error) {
+	sel, err := css.Parse(pattern)
+	if err != nil {
+		return nil, err
+	}
+	htmlNode, m := toHtmlNodeAndMap(n.node.getSelf())
+
+	nodes := sel.Select(htmlNode)
+	result := make([]Node, len(nodes))
+	for i, node := range nodes {
+		resultNode := m[node]
+		result[i] = resultNode
+	}
+	return newNodeList(result...), nil
 }

@@ -33,14 +33,6 @@ func (d *documentFragment) GetElementById(id string) Element {
 	return rootNodeHelper{d}.GetElementById(id)
 }
 
-func (d *documentFragment) QuerySelector(pattern string) (Element, error) {
-	return cssHelper{d}.QuerySelector(pattern)
-}
-
-func (d *documentFragment) QuerySelectorAll(pattern string) (NodeList, error) {
-	return cssHelper{d}.QuerySelectorAll(pattern)
-}
-
 func (d *documentFragment) createHtmlNode() *html.Node {
 	return &html.Node{
 		Type: html.DocumentNode,

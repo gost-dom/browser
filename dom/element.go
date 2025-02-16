@@ -233,14 +233,6 @@ func (e *element) createHtmlNode() *html.Node {
 	}
 }
 
-func (e *element) QuerySelector(pattern string) (Element, error) {
-	return cssHelper{e}.QuerySelector(pattern)
-}
-
-func (e *element) QuerySelectorAll(pattern string) (NodeList, error) {
-	return cssHelper{e}.QuerySelectorAll(pattern)
-}
-
 func (n *element) InsertAdjacentHTML(position string, text string) error {
 	var (
 		parent    Node

@@ -145,11 +145,11 @@ type Node interface {
 	SetSelf(node Node)
 
 	getSelf() Node
-	createHtmlNode() *html.Node
 	setParent(Node)
 	nodes() []Node
 	assertCanAddNode(Node) error
 	cloneChildren() []Node
+	createHtmlNode() *html.Node
 }
 
 type node struct {

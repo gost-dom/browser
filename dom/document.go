@@ -146,14 +146,6 @@ func (d *document) Location() Location {
 	return d.ownerWindow.Location()
 }
 
-func (d *document) QuerySelector(pattern string) (Element, error) {
-	return cssHelper{d}.QuerySelector(pattern)
-}
-
-func (d *document) QuerySelectorAll(pattern string) (NodeList, error) {
-	return cssHelper{d}.QuerySelectorAll(pattern)
-}
-
 func (d *document) OwnerDocument() Document { return d }
 
 func (d *document) NodeType() NodeType { return NodeTypeDocument }
