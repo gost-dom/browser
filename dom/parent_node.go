@@ -77,7 +77,9 @@ func (n parentNode) QuerySelector(pattern string) (Element, error) {
 	}
 	// TODO, it should be a list of elements, not nodes, then the cast, and
 	// error isn't necessary
-	return nodes.Item(0).(Element), nil
+	result := nodes.Item(0)
+	element, _ := result.(Element)
+	return element, nil
 }
 
 func (n parentNode) QuerySelectorAll(pattern string) (NodeList, error) {

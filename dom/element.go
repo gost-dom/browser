@@ -7,9 +7,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/gost-dom/browser/internal/constants"
 	. "github.com/gost-dom/browser/internal/dom"
-	"github.com/gost-dom/browser/internal/log"
 
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
@@ -297,80 +295,19 @@ var tagNameAndAttribute = regexp.MustCompile(`(?m:^([a-zA-Z]+)+[[]([a-zA-Z-]+)="
 // selectors; accepting a comma-separated list of selectors with any leading and
 // trailing whitespace trimmed. Returns an error if the patterns is not
 // supported (or invalid)
-//
-// Note: This only supports a subset of CSS selectors; primarily those used by
-// HTMX.
-func (e *element) Matches(pattern string) (bool, error) {
-	// Implementation note:
-	// This might have been implemented in terms of QuerySelector == self, but
-	// QuerySelector find child elements, not the element itself it is queried
-	// upon.
-
-	patterns := strings.Split(pattern, ",")
-	// log.Debug("Element.Matches", "pattern", pattern, "element", e.getSelfElement())
-
-	for _, p := range patterns {
-		p = strings.TrimSpace(p)
-
-		knownPattern := false
-
-		if tagNameRegExp.MatchString(p) {
-			knownPattern = true
-			if strings.ToLower(e.getSelfElement().TagName()) == strings.ToLower(p) {
+func (e *element) Matches(pattern string) (res bool, err error) {
+	dummy := e.OwnerDocument().CreateElement("div")
+	clone := e.self.CloneNode(true)
+	dummy.Append(clone)
+	el, err := dummy.QuerySelectorAll(pattern)
+	if err == nil {
+		for _, e := range el.All() {
+			if e == clone {
 				return true, nil
 			}
-		}
-		if m := attributeRegExp.FindStringSubmatch(p); m != nil {
-			knownPattern = true
-			if len(m) != 2 {
-				panic(
-					fmt.Sprintf(
-						"Element.Matches: Unexpected no of matches\n%s\n%s\n - Pattern: %s\n - Element: %s",
-						constants.BUG_USSUE_URL,
-						constants.BUG_USSUE_DETAILS,
-						p,
-						e.getSelfElement().OuterHTML(),
-					),
-				)
-			}
-			_, hasAttribute := e.GetAttribute(m[1])
-			if hasAttribute {
-				return true, nil
-			}
-		}
-		if m := tagNameAndAttribute.FindStringSubmatch(p); m != nil {
-			knownPattern = true
-			if len(m) != 4 {
-				panic(
-					fmt.Sprintf(
-						"Element.Matches: Unexpected no of matches\n%s\n%s\n - Pattern: %s\n - Element: %s",
-						constants.BUG_USSUE_URL,
-						constants.BUG_USSUE_DETAILS,
-						p,
-						e.getSelfElement().OuterHTML(),
-					),
-				)
-			}
-			tag := m[1]
-			key := m[2]
-			val := m[3]
-			v, found := e.GetAttribute(key)
-			if strings.ToLower(e.getSelfElement().TagName()) == strings.ToLower(tag) && found &&
-				val == v {
-				return true, nil
-			}
-		}
-		if !knownPattern {
-			log.Error("Element.Matches: unsupported pattern", "pattern", p)
-			return false, fmt.Errorf(
-				"Element.matches: Unsupported pattern - patterns: %s\n%s\n",
-				p,
-				constants.MISSING_FEATURE_ISSUE_URL,
-			)
 		}
 	}
-	// log.Debug("Element.Matches: no match", "pattern", pattern, "e", e.getSelfElement())
-	return false, nil
+	return false, err
 }
 
 func (e *element) String() string {
