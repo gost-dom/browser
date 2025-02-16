@@ -5,31 +5,31 @@ import (
 	v8 "github.com/tommie/v8go"
 )
 
-func (w *parentNodeV8Wrapper) getNodes(
+func (w *parentNodeV8Wrapper) getNodesAndInstance(
 	info *v8.FunctionCallbackInfo,
-) (parentNode dom.ParentNode, nodes []dom.Node, err error) {
+) (i dom.ParentNode, nodes []dom.Node, err error) {
 	ctx := w.scriptHost.mustGetContext(info.Context())
 	args := info.Args()
 	nodes = make([]dom.Node, len(args))
-	for i, a := range args {
-		if nodes[i], err = w.decodeNodeOrText(ctx, a); err != nil {
-			return nil, nil, err
+	for idx, a := range args {
+		if nodes[idx], err = w.decodeNodeOrText(ctx, a); err != nil {
+			return
 		}
 	}
-	i, err := w.getInstance(info)
-	return i, nodes, err
+	i, err = w.getInstance(info)
+	return
 }
 
-func (w *parentNodeV8Wrapper) append(info *v8.FunctionCallbackInfo) (res *v8.Value, err error) {
-	if i, nodes, err := w.getNodes(info); err != nil {
-		i.Append(nodes...)
+func (w *parentNodeV8Wrapper) append(info *v8.FunctionCallbackInfo) (v *v8.Value, err error) {
+	if i, n, err := w.getNodesAndInstance(info); err == nil {
+		err = i.Append(n...)
 	}
 	return
 }
 
 func (w *parentNodeV8Wrapper) prepend(info *v8.FunctionCallbackInfo) (res *v8.Value, err error) {
-	if i, nodes, err := w.getNodes(info); err != nil {
-		i.Prepend(nodes...)
+	if i, n, err := w.getNodesAndInstance(info); err == nil {
+		err = i.Prepend(n...)
 	}
 	return
 }
@@ -37,8 +37,8 @@ func (w *parentNodeV8Wrapper) prepend(info *v8.FunctionCallbackInfo) (res *v8.Va
 func (w *parentNodeV8Wrapper) replaceChildren(
 	info *v8.FunctionCallbackInfo,
 ) (res *v8.Value, err error) {
-	if i, nodes, err := w.getNodes(info); err != nil {
-		i.ReplaceChildren(nodes...)
+	if i, n, err := w.getNodesAndInstance(info); err == nil {
+		err = i.ReplaceChildren(n...)
 	}
 	return
 }
