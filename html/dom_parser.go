@@ -36,7 +36,7 @@ func (p domParser) ParseFragment(
 	result := ownerDocument.CreateDocumentFragment()
 	if err == nil {
 		for _, child := range nodes {
-			element := createElementFromNode(nil, ownerDocument, nil, child)
+			element := createElementFromNode(nil, ownerDocument, result, child)
 			result.AppendChild(element)
 		}
 	}
@@ -159,6 +159,10 @@ func createElementFromNode(
 	parent dom.Node,
 	source *html.Node,
 ) dom.Element {
+	if parent == nil {
+		panic("Elements must have a parent")
+	}
+
 	rules := ElementMap[source.DataAtom]
 	if rules == nil {
 		rules = BaseRules{}
@@ -174,9 +178,7 @@ func createElementFromNode(
 		newElm.SetAttribute(a.Key, a.Val)
 	}
 	newNode = newElm
-	if parent != nil {
-		newNode = rules.AppendChild(parent, newElm)
-	}
+	newNode = rules.AppendChild(parent, newElm)
 	iterate(w, d, newNode, source)
 	// ?
 	if rules != nil {
