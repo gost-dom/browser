@@ -15,7 +15,7 @@ import (
 // nodeV8WrapperBase serves as a helper for building v8 wrapping code around go objects.
 // Generated code assumes that a wrapper type is used with specific helper
 // methods implemented.
-type nodeV8WrapperBase[T entity.Entity] struct {
+type nodeV8WrapperBase[T interface{}] struct {
 	converters
 	scriptHost *V8ScriptHost
 }
@@ -28,7 +28,7 @@ func (w nodeV8WrapperBase[T]) mustGetContext(info *v8.FunctionCallbackInfo) *V8S
 	return w.scriptHost.mustGetContext(info.Context())
 }
 
-func newNodeV8WrapperBase[T entity.Entity](host *V8ScriptHost) nodeV8WrapperBase[T] {
+func newNodeV8WrapperBase[T any](host *V8ScriptHost) nodeV8WrapperBase[T] {
 	return nodeV8WrapperBase[T]{converters{}, host}
 }
 
@@ -52,9 +52,14 @@ func (w nodeV8WrapperBase[T]) store(
 	this *v8.Object,
 ) (*v8.Value, error) {
 	val := this.Value
-	objectId := value.ObjectId()
+	var i any = value
+	entity, ok := i.(entity.Entity)
+	if !ok {
+		panic("Creating an entity-wrapper for non-entity type")
+	}
+	objectId := entity.ObjectId()
 	ctx.v8nodes[objectId] = val
-	ctx.domNodes[objectId] = value
+	ctx.domNodes[objectId] = entity
 	internal, err := v8.NewValue(ctx.host.iso, objectId)
 	if err != nil {
 		return nil, err

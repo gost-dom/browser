@@ -49,9 +49,14 @@ func (gen V8TargetGenerators) CreateWrapperStruct(data ESConstructorData) g.Gene
 	typeNameBase := fmt.Sprintf("%sV8Wrapper", data.Name())
 	typeName := g.NewType(lowerCaseFirstLetter(typeNameBase))
 	constructorName := fmt.Sprintf("new%s", typeNameBase)
+	embedName := "nodeV8WrapperBase"
+	if n := data.Spec.WrapperType; n != "" {
+		embedName = n
+	}
+	embedConstructorName := fmt.Sprintf("new%s", upperCaseFirstLetter(embedName))
 	innerType := g.NewTypePackage(data.Name(), data.GetInternalPackage())
 	wrapperStruct := g.NewStruct(typeName)
-	wrapperStruct.Embed(g.NewType("nodeV8WrapperBase").TypeParam(innerType))
+	wrapperStruct.Embed(g.NewType(embedName).TypeParam(innerType))
 
 	wrapperConstructor := g.FunctionDefinition{
 		Name:     constructorName,
@@ -59,7 +64,7 @@ func (gen V8TargetGenerators) CreateWrapperStruct(data ESConstructorData) g.Gene
 		RtnTypes: g.List(typeName.Pointer()),
 		Body: g.Return(
 			typeName.CreateInstance(
-				g.NewValue("newNodeV8WrapperBase").
+				g.NewValue(embedConstructorName).
 					TypeParam(innerType).
 					Call(scriptHost),
 			).Reference(),
