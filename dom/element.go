@@ -116,6 +116,10 @@ func (e *element) Prepend(nodes ...Node) error {
 	return e.prepend(nodes...)
 }
 
+func (e *element) ReplaceChildren(nodes ...Node) error {
+	return e.replaceChildren(nodes...)
+}
+
 func (e *element) ClassList() DOMTokenList {
 	return NewClassList(e)
 }

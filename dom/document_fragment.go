@@ -41,6 +41,10 @@ func (f *documentFragment) Prepend(nodes ...Node) error {
 	return f.prepend(nodes...)
 }
 
+func (f *documentFragment) ReplaceChildren(nodes ...Node) error {
+	return f.replaceChildren(nodes...)
+}
+
 func (d *documentFragment) GetElementById(id string) Element {
 	return rootNodeHelper{d}.GetElementById(id)
 }

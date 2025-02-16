@@ -348,5 +348,18 @@ var _ = Describe("Element", func() {
 			)
 			Expect(b).To(HaveOuterHTML(`<body>d<div>e</div>fa<div>b</div>c</body>`))
 		})
+
+		It("Should replace elements first in 'ReplaceChildren'", func() {
+			doc := ParseHtmlString(`<body>a<div>b</div>c</body>`)
+			b := doc.Body()
+			divE := doc.CreateElement("div")
+			divE.SetTextContent("e")
+			b.ReplaceChildren(
+				doc.CreateText("d"),
+				divE,
+				doc.CreateText("f"),
+			)
+			Expect(b).To(HaveOuterHTML(`<body>d<div>e</div>f</body>`))
+		})
 	})
 })

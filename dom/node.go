@@ -193,14 +193,26 @@ func (n *node) append(nodes ...Node) (err error) {
 	if node := n.nodeOfNodes(nodes); node != nil {
 		_, err = n.self.AppendChild(node)
 	}
-	return err
+	return
 }
 
 func (n *node) prepend(nodes ...Node) (err error) {
 	if node := n.nodeOfNodes(nodes); node != nil {
-		_, err = n.self.InsertBefore(node, nil)
+		_, err = n.self.InsertBefore(node, n.FirstChild())
 	}
-	return err
+	return
+}
+
+func (n *node) replaceChildren(nodes ...Node) (err error) {
+	if node := n.nodeOfNodes(nodes); node != nil {
+		if err = n.assertCanAddNode(node); err == nil {
+			for c := n.FirstChild(); c != nil; c = n.FirstChild() {
+				n.RemoveChild(c)
+			}
+			n.self.append(node)
+		}
+	}
+	return
 }
 
 // AppendChild adds node to the end of the list of the current node's child

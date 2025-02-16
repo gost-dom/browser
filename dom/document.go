@@ -124,6 +124,10 @@ func (d *document) Prepend(nodes ...Node) error {
 	return d.prepend(nodes...)
 }
 
+func (d *document) ReplaceChildren(nodes ...Node) error {
+	return d.replaceChildren(nodes...)
+}
+
 func (d *document) DocumentElement() Element {
 	for _, c := range d.ChildNodes().All() {
 		if e, ok := c.(Element); ok {
