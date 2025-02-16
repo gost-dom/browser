@@ -16,6 +16,8 @@ github.com/gost-dom/webref v0.0.0-20250215103220-7295a6440d9a h1:VCQCsQi8e4Q1JAb
 github.com/gost-dom/webref v0.0.0-20250215103220-7295a6440d9a/go.mod h1:2oWcAxp3QFRKsQwXz3rDTW7txFZI4lxMnmwUW5edxfU=
 github.com/gost-dom/webref v0.0.0-20250215133258-4c46d2bed362 h1:RpAKgkN0VKvMyEzLhgZ5Om5mEgYIFCKzgbx0HSPnrUM=
 github.com/gost-dom/webref v0.0.0-20250215133258-4c46d2bed362/go.mod h1:2oWcAxp3QFRKsQwXz3rDTW7txFZI4lxMnmwUW5edxfU=
+github.com/gost-dom/webref v0.0.0-20250216043206-56bb104e25cf h1:srK8zt6zaEPig7GN/2aVe0U1HyNS+peK9hwaubNceJ8=
+github.com/gost-dom/webref v0.0.0-20250216043206-56bb104e25cf/go.mod h1:2oWcAxp3QFRKsQwXz3rDTW7txFZI4lxMnmwUW5edxfU=
 github.com/onsi/ginkgo/v2 v2.22.2 h1:/3X8Panh8/WwhU/3Ssa6rCKqPLuAkVY2I0RoyDLySlU=
 github.com/onsi/ginkgo/v2 v2.22.2/go.mod h1:oeMosUL+8LtarXBHu/c0bx2D/K9zyQ6uX3cTyztHwsk=
 github.com/onsi/gomega v1.36.2 h1:koNYke6TVk6ZmnyHrCXba/T/MoLBXFjeC1PtvYgw0A8=
