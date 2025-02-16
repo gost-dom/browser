@@ -41,4 +41,13 @@ var _ = Describe("Document", func() {
 		e := doc.CreateElement("div")
 		Expect(e.OwnerDocument()).To(Equal(doc))
 	})
+
+	Describe("CreateText", func() {
+		It("Should have ownerDocument", func() {
+			Skip("Text node miss owner document")
+			doc := ParseHtmlString("")
+			t := doc.CreateText("data")
+			Expect(t.OwnerDocument()).To(Equal(doc))
+		})
+	})
 })

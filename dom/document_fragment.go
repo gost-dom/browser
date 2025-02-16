@@ -37,6 +37,10 @@ func (f *documentFragment) Append(nodes ...Node) error {
 	return f.append(nodes...)
 }
 
+func (f *documentFragment) Prepend(nodes ...Node) error {
+	return f.prepend(nodes...)
+}
+
 func (d *documentFragment) GetElementById(id string) Element {
 	return rootNodeHelper{d}.GetElementById(id)
 }

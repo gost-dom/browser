@@ -317,4 +317,36 @@ var _ = Describe("Element", func() {
 			Expect(event.Bubbles()).To(BeTrue())
 		})
 	})
+
+	Describe("Append/Prepend/ReplaceChildren", func() {
+		// These should ideaaly be tested on both Element, Document, and
+		// DocumentFragment. The functions are defined in the ParentNode
+		// mixin interface that all 3 share.
+
+		It("Should add elements in 'Append'", func() {
+			doc := ParseHtmlString(`<body>a<div>b</div>c</body>`)
+			b := doc.Body()
+			divE := doc.CreateElement("div")
+			divE.SetTextContent("e")
+			b.Append(
+				doc.CreateText("d"),
+				divE,
+				doc.CreateText("f"),
+			)
+			Expect(b).To(HaveOuterHTML(`<body>a<div>b</div>cd<div>e</div>f</body>`))
+		})
+
+		It("Should add elements first in 'Prepend'", func() {
+			doc := ParseHtmlString(`<body>a<div>b</div>c</body>`)
+			b := doc.Body()
+			divE := doc.CreateElement("div")
+			divE.SetTextContent("e")
+			b.Prepend(
+				doc.CreateText("d"),
+				divE,
+				doc.CreateText("f"),
+			)
+			Expect(b).To(HaveOuterHTML(`<body>d<div>e</div>fa<div>b</div>c</body>`))
+		})
+	})
 })

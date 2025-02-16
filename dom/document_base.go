@@ -12,6 +12,7 @@ type ElementContainer interface {
 	//
 	// See also: https://developer.mozilla.org/en-US/docs/Web/API/Element/append
 	Append(...Node) error
+	Prepend(...Node) error
 	QuerySelector(string) (Element, error)
 	QuerySelectorAll(string) (staticNodeList, error)
 	ChildElementCount() int

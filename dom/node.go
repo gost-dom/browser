@@ -196,6 +196,13 @@ func (n *node) append(nodes ...Node) (err error) {
 	return err
 }
 
+func (n *node) prepend(nodes ...Node) (err error) {
+	if node := n.nodeOfNodes(nodes); node != nil {
+		_, err = n.self.InsertBefore(node, nil)
+	}
+	return err
+}
+
 // AppendChild adds node to the end of the list of the current node's child
 // nodes. The appended child is returned. If node is not a valid child of the
 // parent, a [DOMError] is returned. The [MDN docs for appendChild] lists the
