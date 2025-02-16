@@ -48,8 +48,13 @@ var _ = Describe("ElementGenerator", func() {
 	})
 
 	Describe("HTMLAnchorElement", func() {
+		It("Should have embedded HyperLinkUtils", func() {
+			Expect(GenerateHtmlAnchor()).To(HaveRendered(
+				MatchRegexp("(?m)^\tHTMLHyperlinkElementUtils$")))
+
+		})
 		It("Should have interface for URL properties", func() {
-			Expect(GenerateHtmlAnchor()).To(HaveRendered(ContainSubstring("\n\tHost() string\n")))
+			Expect(GenerateHtmlAnchor()).To(HaveRendered(ContainSubstring("\n\tTarget() string\n")))
 		})
 
 		It("Should not setters for read-only properties", func() {

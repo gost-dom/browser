@@ -13,6 +13,11 @@ var HTMLPackageConfig = map[string]HTMLGeneratorReq{
 		SpecName:          "html",
 		GenerateInterface: true,
 	},
+	"html_hyper_link_element_utils": {
+		InterfaceName:     "HTMLHyperlinkElementUtils",
+		SpecName:          "html",
+		GenerateInterface: true,
+	},
 }
 
 func CreateHTMLGenerators() ([]FileGeneratorSpec, error) {

@@ -60,34 +60,40 @@ func CreateGenerator(req HTMLGeneratorReq) (baseGenerator, error) {
 }
 
 func (gen baseGenerator) GenerateInterface() g.Generator {
+	idlInterface := gen.idlType
 	attributes := make([]IdlInterfaceAttribute, 0)
 	operations := make([]IdlInterfaceOperation, 0)
+	includes := make([]IdlInterfaceInclude, len(idlInterface.Includes))
 
 	interfaces := make([]idl.Interface, 1+len(gen.idlType.Includes))
 	interfaces[0] = gen.idlType
 	copy(interfaces[1:], gen.idlType.Includes)
 
-	for _, i := range interfaces {
-		for _, a := range i.Attributes {
-			attributes = append(attributes, IdlInterfaceAttribute{
-				Name:     a.Name,
-				Type:     IdlType(a.Type),
-				ReadOnly: a.Readonly,
-			})
-		}
-		for _, o := range i.Operations {
-			operationRule := gen.rules.Operations[o.Name]
-			operations = append(
-				operations,
-				IdlInterfaceOperation{o, IdlType(o.ReturnType), operationRule.HasError},
-			)
-		}
+	for idx, i := range gen.idlType.Includes {
+		includes[idx] = IdlInterfaceInclude{i}
 	}
+
+	for _, a := range gen.idlType.Attributes {
+		attributes = append(attributes, IdlInterfaceAttribute{
+			Name:     a.Name,
+			Type:     IdlType(a.Type),
+			ReadOnly: a.Readonly,
+		})
+	}
+	for _, o := range gen.idlType.Operations {
+		operationRule := gen.rules.Operations[o.Name]
+		operations = append(
+			operations,
+			IdlInterfaceOperation{o, IdlType(o.ReturnType), operationRule.HasError},
+		)
+	}
+	// }
 	return IdlInterface{
 		Name:       gen.idlType.Name,
 		Inherits:   gen.idlType.InternalSpec.Inheritance,
 		Attributes: attributes,
 		Operations: operations,
+		Includes:   includes,
 		Rules:      gen.rules,
 	}
 }

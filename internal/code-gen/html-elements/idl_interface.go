@@ -17,6 +17,7 @@ type IdlInterface struct {
 	Rules      customrules.InterfaceRule
 	Attributes []IdlInterfaceAttribute
 	Operations []IdlInterfaceOperation
+	Includes   []IdlInterfaceInclude
 }
 
 func (i IdlInterface) Generate() *jen.Statement {
@@ -27,6 +28,10 @@ func (i IdlInterface) Generate() *jen.Statement {
 	) // Make room for getters and setters
 	if i.Inherits != "" {
 		fields = append(fields, generators.Id(i.Inherits))
+	}
+
+	for _, i := range i.Includes {
+		fields = append(fields, generators.Id(i.Name))
 	}
 
 	for _, a := range i.Attributes {
@@ -96,3 +101,7 @@ type IdlInterfaceOperation struct {
 	ReturnType IdlType
 	HasError   bool
 }
+
+/* -------- IdlInterfaceInclude -------- */
+
+type IdlInterfaceInclude struct{ idl.Interface }
