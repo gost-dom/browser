@@ -289,3 +289,12 @@ It is not a goal to be able to provide a visual rendering of the DOM.
 
 But just like the accessibility tree, this could be implemented in a new library
 depending only on the interface from here.
+
+## Terminology
+
+Some words inherntly have multiple meanings.
+
+- **Interface**. The IDL Specification defines _interfaces_; which are exposed
+in certain scopes, implemented by "classes" in JavaScript. 
+  - The interfaces can be composed of _partial_ or _mixin_ interfaces.
+  - IDL Interfaces and mixin interfaces are represented in Go, and typically exposed as Go `interface` types.
