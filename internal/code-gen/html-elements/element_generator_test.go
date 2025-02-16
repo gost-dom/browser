@@ -9,7 +9,7 @@ import (
 )
 
 func GenerateHtmlAnchor() (g.Generator, error) {
-	g, err := CreateHTMLElementGenerator(HTMLAnchorElementSpecs)
+	g, err := CreateHTMLElementGenerator(HTMLPackageConfig["html_anchor_element"])
 	return g.Generator(), err
 }
 

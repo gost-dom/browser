@@ -194,55 +194,24 @@ type FileGeneratorSpec struct {
 	Generator g.Generator
 }
 
-var HTMLAnchorElementSpecs = HTMLGeneratorReq{
-	InterfaceName:     "HTMLAnchorElement",
-	SpecName:          "html",
-	GenerateInterface: true,
-	// GenerateAttributes: true,
-}
-
-func CreateHTMLElementGenerators() ([]FileGeneratorSpec, error) {
-	generator, error := CreateHTMLElementGenerator(HTMLAnchorElementSpecs)
-	return []FileGeneratorSpec{
-		{"html_anchor_element",
-			"github.com/gost-dom/browser/html",
-			generator.Generator(),
-		},
-	}, errors.Join(error)
-}
-
-// FileGenerationConfig contains the configuration for which generated files should contain
+// GeneratorConfig contains the configuration for which generated files should contain
 // which interfaces. The key is a base file name. The system will append
 // "_generated.go" to the name before creating the file. The HTMLGeneratorReq
 // specifies the IDL source type, as well as what to generate.
-var FileGenerationConfig = map[string]HTMLGeneratorReq{
-	"url": {
-		InterfaceName:      "URL",
-		SpecName:           "url",
-		GenerateInterface:  true,
-		GenerateAttributes: true,
-	},
-	"parent_node": {
-		InterfaceName:     "ParentNode",
-		SpecName:          "dom",
-		GenerateInterface: true,
-	},
-	"html_collection": {
-		InterfaceName:     "HTMLCollection",
-		SpecName:          "dom",
-		GenerateInterface: true,
-	},
-}
+type GeneratorConfig map[string]HTMLGeneratorReq
 
-func CreateDOMGenerators() ([]FileGeneratorSpec, error) {
-	result := make([]FileGeneratorSpec, len(FileGenerationConfig))
-	errs := make([]error, len(FileGenerationConfig))
+func createGenerators(
+	config map[string]HTMLGeneratorReq,
+	packageName string,
+) ([]FileGeneratorSpec, error) {
+	result := make([]FileGeneratorSpec, len(config))
+	errs := make([]error, len(config))
 	index := 0
-	for k, v := range FileGenerationConfig {
+	for k, v := range config {
 		generator, err := CreateGenerator(v)
 		result[index] = FileGeneratorSpec{
 			k,
-			"github.com/stroiman/go-dom/browser/dom",
+			packageName,
 			generator.GenerateInterface(),
 		}
 		errs[index] = err

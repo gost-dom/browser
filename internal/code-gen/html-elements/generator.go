@@ -24,7 +24,7 @@ func writeFile(s FileGeneratorSpec) error {
 }
 
 func GenerateHTMLElements() error {
-	files, err := CreateHTMLElementGenerators()
+	files, err := CreateHTMLGenerators()
 	if err != nil {
 		return err
 	}

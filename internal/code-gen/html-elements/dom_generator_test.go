@@ -12,7 +12,7 @@ import (
 )
 
 func GenerateURL() (g.Generator, error) {
-	g, err := CreateGenerator(FileGenerationConfig["url"])
+	g, err := CreateGenerator(DOMPackageConfig["url"])
 	return g.GenerateInterface(), err
 }
 
@@ -42,7 +42,7 @@ func (s *DomSuite) SetupTest() {
 
 func (s *DomSuite) TestGenerateGetterAndSetterOnURL() {
 	s.Expect(
-		generateDomType(FileGenerationConfig["url"]),
+		generateDomType(DOMPackageConfig["url"]),
 	).To(HaveRendered(ContainSubstring(
 		`ToJSON() (string, error)`)))
 }
@@ -67,19 +67,6 @@ func (s *DomSuite) TestGenerateParentNode() {
 	s.Expect(err).ToNot(HaveOccurred())
 	s.Expect(generator).To(HaveRendered(ContainSubstring("Append(nodes ...Node) error\n")))
 }
-
-/*
-ParentNode generates this:
-	Children() string
-	FirstElementChild() string
-	LastElementChild() string
-	ChildElementCount() string
-	Prepend() (string, error)
-	Append() (string, error)
-	ReplaceChildren() (string, error)
-	QuerySelector() (string, error)
-	QuerySelectorAll() (string, error)
-*/
 
 func TestGeneratedDomTypes(t *testing.T) {
 	suite.Run(t, new(DomSuite))
