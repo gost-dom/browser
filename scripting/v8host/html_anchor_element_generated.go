@@ -19,7 +19,10 @@ type htmlAnchorElementV8Wrapper struct {
 }
 
 func newHTMLAnchorElementV8Wrapper(scriptHost *V8ScriptHost) *htmlAnchorElementV8Wrapper {
-	return &htmlAnchorElementV8Wrapper{newNodeV8WrapperBase[html.HTMLAnchorElement](scriptHost), newHTMLHyperlinkElementUtilsV8Wrapper(scriptHost)}
+	return &htmlAnchorElementV8Wrapper{
+		newNodeV8WrapperBase[html.HTMLAnchorElement](scriptHost),
+		newHTMLHyperlinkElementUtilsV8Wrapper(scriptHost),
+	}
 }
 
 func createHTMLAnchorElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {

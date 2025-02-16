@@ -57,6 +57,18 @@ func (g WrapperStructGenerator) ConstructorGenerator() Generator {
 	}
 }
 
+func addLinesBetweenElements(g []Generator) []Generator {
+	l := len(g)
+	if l <= 1 {
+		return g
+	}
+	for i, gg := range g {
+		g[i] = generators.Raw(jen.Line().Add(gg.Generate()))
+	}
+	g = append(g, generators.Line)
+	return g
+}
+
 func (g WrapperStructGenerator) Body() Generator {
 	structGens := g.Platform.WrapperStructGenerators()
 	idlInterfaceName := g.Data.Name()
@@ -70,6 +82,7 @@ func (g WrapperStructGenerator) Body() Generator {
 		fieldInitializers[idx+1] = generators.NewValue(includeConstructorName).Call(scriptHost)
 	}
 	fieldInitializers[0] = embedConstructorName.Call(structGens.HostArg())
+	fieldInitializers = addLinesBetweenElements(fieldInitializers)
 
 	wrapperType := structGens.WrapperStructType(idlInterfaceName)
 	return generators.Return(wrapperType.CreateInstance(fieldInitializers...).Reference())
