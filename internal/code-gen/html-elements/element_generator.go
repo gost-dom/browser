@@ -222,11 +222,11 @@ var FileGenerationConfig = map[string]HTMLGeneratorReq{
 		GenerateInterface:  true,
 		GenerateAttributes: true,
 	},
-	// "parent_node": {
-	// 	InterfaceName:     "ParentNode",
-	// 	SpecName:          "dom",
-	// 	GenerateInterface: true,
-	// },
+	"parent_node": {
+		InterfaceName:     "ParentNode",
+		SpecName:          "dom",
+		GenerateInterface: true,
+	},
 	"html_collection": {
 		InterfaceName:     "HTMLCollection",
 		SpecName:          "dom",

@@ -42,12 +42,23 @@ func (i IdlInterface) Generate() *jen.Statement {
 		}
 	}
 	for _, o := range i.Operations {
+		opRules := i.Rules.Operations[o.Name]
 		if !o.Static {
 			// Todo: Parameters
 			// Todo: Customize presence of error
 			args := make([]generators.Generator, len(o.Arguments))
 			for i, a := range o.Arguments {
-				args[i] = IdlType(a.Type)
+				argRules, hasArgRules := opRules.Attributes[a.Name]
+				if hasArgRules {
+					args[i] = IdlType(argRules.Type)
+				} else {
+					args[i] = IdlType(a.Type)
+				}
+				if a.Variadic {
+					args[i] = generators.Raw(
+						jen.Id(a.Name).Add(jen.Op("...").Add(args[i].Generate())),
+					)
+				}
 			}
 
 			var returnTypes *jen.Statement

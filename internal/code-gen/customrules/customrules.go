@@ -11,6 +11,8 @@
 // add error handling to the operations that actually produce errors.
 package customrules
 
+import "github.com/gost-dom/webref/idl"
+
 // CustomRules define the rules pr. IDL Spec. The key identifies the name of the
 // spec, which corresponds to the file name it was loaded from. E.g., "dom"
 // represent the types described in "dom.idl" in the webref specifications
@@ -31,7 +33,19 @@ type OperationRules map[string]OperationRule
 type OperationRule struct {
 	// By default, an operation is assumed to not generate an error. Override
 	// the behaviour by setting this to true.
-	HasError bool
+	HasError   bool
+	Attributes AttributeRules
+}
+
+type AttributeRules map[string]AttributeRule
+
+type AttributeRule struct {
+	Type idl.Type
+}
+
+type AttributeTypeRule struct {
+	Name    string
+	Package string
 }
 
 var rules = CustomRules{
@@ -51,6 +65,17 @@ var rules = CustomRules{
 		}},
 		"Element": {Operations: OperationRules{
 			"matches": {HasError: true},
+		}},
+		"ParentNode": {Operations: OperationRules{
+			"append": {Attributes: AttributeRules{
+				"nodes": {Type: idl.Type{Name: "Node"}},
+			}},
+			"prepend": {Attributes: AttributeRules{
+				"nodes": {Type: idl.Type{Name: "Node"}},
+			}},
+			"replaceChildren": {Attributes: AttributeRules{
+				"nodes": {Type: idl.Type{Name: "Node"}},
+			}},
 		}},
 	},
 	"html": {

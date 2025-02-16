@@ -65,7 +65,7 @@ func (s *DomSuite) TestGenerateParentNode() {
 		GenerateInterface: true,
 	})
 	s.Expect(err).ToNot(HaveOccurred())
-	s.Expect(generator).To(HaveRendered(ContainSubstring("Append()\n")))
+	s.Expect(generator).To(HaveRendered(ContainSubstring("Append(nodes ...Node)\n")))
 }
 
 /*
