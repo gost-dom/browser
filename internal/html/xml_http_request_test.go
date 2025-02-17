@@ -6,7 +6,7 @@ import (
 	"slices"
 	"strings"
 
-	. "github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom"
 	. "github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/internal/html"
 	. "github.com/gost-dom/browser/internal/http"
@@ -112,17 +112,20 @@ var _ = Describe("XmlHTTPRequest", func() {
 				loaded      bool
 			)
 			xhr.Open("GET", "/dummy", RequestOptionAsync(true))
-			xhr.AddEventListener(XHREventLoadstart, NewEventHandlerFunc(func(e Event) error {
-				loadStarted = true
-				return nil
-			}))
-			xhr.AddEventListener(XHREventLoadend, NewEventHandlerFunc(func(e Event) error {
+			xhr.AddEventListener(
+				XHREventLoadstart,
+				dom.NewEventHandlerFunc(func(e dom.Event) error {
+					loadStarted = true
+					return nil
+				}),
+			)
+			xhr.AddEventListener(XHREventLoadend, dom.NewEventHandlerFunc(func(e dom.Event) error {
 				loadEnded = true
 				return nil
 			}))
 			ended := make(chan bool)
 			defer close(ended)
-			xhr.AddEventListener(XHREventLoad, NewEventHandlerFunc(func(e Event) error {
+			xhr.AddEventListener(XHREventLoad, dom.NewEventHandlerFunc(func(e dom.Event) error {
 				loaded = true
 				ended <- true
 				return nil

@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	. "github.com/gost-dom/browser"
-	. "github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom"
 	. "github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 
@@ -93,7 +93,7 @@ var _ = Describe("Browser", func() {
 				anchor, _ := window.Document().QuerySelector("a")
 				anchor.AddEventListener(
 					"click",
-					NewEventHandlerFunc(NoError(Event.PreventDefault)),
+					dom.NewEventHandlerFunc(dom.NoError(dom.Event.PreventDefault)),
 				)
 				anchor.Click()
 				heading, _ := window.Document().QuerySelector("h1")

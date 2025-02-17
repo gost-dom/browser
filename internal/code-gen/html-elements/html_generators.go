@@ -8,6 +8,16 @@ var HTMLAnchorElementSpecs = HTMLGeneratorReq{
 }
 
 var HTMLPackageConfig = map[string]HTMLGeneratorReq{
+	"location": {
+		InterfaceName:     "Location",
+		SpecName:          "html",
+		GenerateInterface: true,
+	},
+	"dom_string_list": {
+		InterfaceName:     "DOMStringList",
+		SpecName:          "html",
+		GenerateInterface: true,
+	},
 	"html_anchor_element": {
 		InterfaceName:     "HTMLAnchorElement",
 		SpecName:          "html",
