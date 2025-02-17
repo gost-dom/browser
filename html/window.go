@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/gost-dom/browser/dom"
-	. "github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
 )
@@ -33,19 +32,19 @@ type ScriptContext interface {
 }
 
 type Window interface {
-	EventTarget
+	dom.EventTarget
 	entity.Entity
-	Document() Document
+	Document() dom.Document
 	Close()
 	Navigate(string) error // TODO: Remove, perhaps? for testing
 	LoadHTML(string) error // TODO: Remove, for testing
 	Eval(string) (any, error)
 	Run(string) error
 	ScriptContext() ScriptContext
-	Location() Location
+	Location() dom.Location
 	History() *History
 	HTTPClient() http.Client
-	ParseFragment(ownerDocument Document, reader io.Reader) (dom.DocumentFragment, error)
+	ParseFragment(ownerDocument dom.Document, reader io.Reader) (dom.DocumentFragment, error)
 	// unexported
 
 	fetchRequest(req *http.Request) error
@@ -53,8 +52,8 @@ type Window interface {
 }
 
 type window struct {
-	EventTarget
-	document            Document
+	dom.EventTarget
+	document            dom.Document
 	history             *History
 	scriptEngineFactory ScriptHost
 	scriptContext       ScriptContext
@@ -69,7 +68,7 @@ func newWindow(windowOptions ...WindowOption) *window {
 		option.Apply(&options)
 	}
 	win := &window{
-		EventTarget:         NewEventTarget(),
+		EventTarget:         dom.NewEventTarget(),
 		httpClient:          options.HttpClient,
 		baseLocation:        options.BaseLocation,
 		scriptEngineFactory: options.ScriptHost,
@@ -141,7 +140,7 @@ func (w *window) History() *History {
 }
 
 func (w *window) ParseFragment(
-	ownerDocument Document,
+	ownerDocument dom.Document,
 	reader io.Reader,
 ) (dom.DocumentFragment, error) {
 	return w.domParser.ParseFragment(ownerDocument, reader)
@@ -162,10 +161,10 @@ func NewWindowReader(reader io.Reader, windowOptions ...WindowOption) (Window, e
 func (w *window) parseReader(reader io.Reader) error {
 	err := w.domParser.ParseReader(w, &w.document, reader)
 	if err == nil {
-		w.document.DispatchEvent(NewCustomEvent(DocumentEventDOMContentLoaded))
+		w.document.DispatchEvent(dom.NewCustomEvent(dom.DocumentEventDOMContentLoaded))
 		// 'load' is emitted when css and images are loaded, not relevant yet, so
 		// just emit it right await
-		w.document.DispatchEvent(NewCustomEvent(DocumentEventLoad))
+		w.document.DispatchEvent(dom.NewCustomEvent(dom.DocumentEventLoad))
 	}
 	return err
 }
@@ -196,7 +195,7 @@ func (o WindowOptions) Apply(options *WindowOptions) {
 	*options = o
 }
 
-func (w *window) Document() Document {
+func (w *window) Document() dom.Document {
 	return w.document
 }
 
@@ -271,14 +270,14 @@ func (w *window) Eval(script string) (any, error) {
 
 func (w *window) ScriptContext() ScriptContext { return w.scriptContext }
 
-func (w *window) Location() Location {
+func (w *window) Location() dom.Location {
 	var u *netURL.URL
 	if w.baseLocation != "" {
 		u, _ = netURL.Parse(w.baseLocation)
 	} else {
 		u = new(netURL.URL)
 	}
-	return NewURLFromNetURL(u)
+	return dom.NewURLFromNetURL(u)
 }
 
 func (w *window) Close() {

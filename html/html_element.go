@@ -3,12 +3,12 @@ package html
 import (
 	"strings"
 
-	. "github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom"
 	. "github.com/gost-dom/browser/internal/dom"
 )
 
 type HTMLElement interface {
-	Element
+	dom.Element
 	Renderer
 	ChildrenRenderer
 	getHTMLDocument() HTMLDocument
@@ -16,7 +16,7 @@ type HTMLElement interface {
 }
 
 type htmlElement struct {
-	Element
+	dom.Element
 	Renderer
 	ChildrenRenderer
 	htmlDocument HTMLDocument
@@ -27,7 +27,7 @@ func NewHTMLElement(tagName string, ownerDocument HTMLDocument) HTMLElement {
 }
 
 func newHTMLElement(tagName string, ownerDocument HTMLDocument) *htmlElement {
-	element := NewElement(tagName, ownerDocument)
+	element := dom.NewElement(tagName, ownerDocument)
 	renderer, _ := element.(Renderer)
 	childrenRenderer, _ := element.(ChildrenRenderer)
 	result := &htmlElement{element, renderer, childrenRenderer, ownerDocument}

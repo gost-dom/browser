@@ -3,21 +3,21 @@ package html
 import (
 	"strings"
 
-	. "github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom"
 )
 
 type HTMLDocument interface {
-	Document
+	dom.Document
 	// unexported
 	getWindow() Window
 }
 
 type htmlDocument struct {
-	Document
+	dom.Document
 	window Window
 }
 
-func mustAppendChild(p, c Node) Node {
+func mustAppendChild(p, c dom.Node) dom.Node {
 	_, err := p.AppendChild(c)
 	if err != nil {
 		panic(err)
@@ -48,19 +48,19 @@ func NewHTMLDocument(window Window) HTMLDocument {
 // newHTMLDocument is used internally to create an empty HTML when parsing an
 // HTML input.
 func newHTMLDocument(window Window) HTMLDocument {
-	var result HTMLDocument = &htmlDocument{NewDocument(window), window}
+	var result HTMLDocument = &htmlDocument{dom.NewDocument(window), window}
 	result.SetSelf(result)
 	return result
 }
 
-func (d *htmlDocument) CreateElementNS(namespace string, name string) Element {
+func (d *htmlDocument) CreateElementNS(namespace string, name string) dom.Element {
 	if namespace == "http://www.w3.org/1999/xhtml" {
 		return d.CreateElement(name)
 	}
 	return d.Document.CreateElementNS(namespace, name)
 }
 
-func (d *htmlDocument) CreateElement(name string) Element {
+func (d *htmlDocument) CreateElement(name string) dom.Element {
 	switch strings.ToLower(name) {
 	case "template":
 		return NewHTMLTemplateElement(d)
@@ -80,4 +80,4 @@ func (d *htmlDocument) CreateElement(name string) Element {
 
 func (d *htmlDocument) getWindow() Window { return d.window }
 
-func (d *htmlDocument) OwnerDocument() Document { return d }
+func (d *htmlDocument) OwnerDocument() dom.Document { return d }
