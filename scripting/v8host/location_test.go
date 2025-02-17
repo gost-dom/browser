@@ -1,9 +1,9 @@
 package v8host_test
 
 import (
+	"github.com/gost-dom/browser/html"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"github.com/gost-dom/browser/html"
 )
 
 var _ = Describe("window.location", func() {
