@@ -17,6 +17,9 @@ const (
 
 type DocumentParentWindow interface {
 	EventTarget
+	// Deprecated: Location is not a property on the Location IDL interface.
+	// It's presence causes a logical circular dependency to the html package;
+	// so this will be removed in a future version.
 	Location() Location
 	Document() Document
 	ParseFragment(ownerDocument Document, reader io.Reader) (DocumentFragment, error)
@@ -32,6 +35,9 @@ type Document interface {
 	CreateElementNS(string, string) Element
 	CreateElement(string) Element
 	DocumentElement() Element
+	// Deprecated: Location is not a property on the Location IDL interface.
+	// It's presence causes a logical circular dependency to the html package;
+	// so this will be removed in a future version.
 	Location() Location
 	// unexported
 	parseFragment(reader io.Reader) (DocumentFragment, error)
@@ -142,6 +148,9 @@ func (d *document) createHtmlNode() *html.Node {
 	}
 }
 
+// Deprecated: Location is not a property on the Location IDL interface.
+// It's presence causes a logical circular dependency to the html package;
+// so this will be removed in a future version.
 func (d *document) Location() Location {
 	return d.ownerWindow.Location()
 }
