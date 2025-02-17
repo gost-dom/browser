@@ -139,7 +139,7 @@ func (e *htmlFormElement) SetAction(val string) { e.SetAttribute("action", val) 
 func (e *htmlFormElement) action() dom.URL {
 	window := e.window()
 	action, found := e.GetAttribute("action")
-	target := dom.URL(window.Location())
+	target := dom.URL(window.Location().(location))
 	var err error
 	if found {
 		if target, err = dom.NewUrlBase(action, window.Location().Href()); err != nil {

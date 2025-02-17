@@ -21,7 +21,7 @@ type Location interface {
 	Hash() string
 	SetHash(string)
 	AncestorOrigins() DOMStringList
-	Assign(string)
-	Replace(string)
-	Reload()
+	Assign(string) error
+	Replace(string) error
+	Reload() error
 }

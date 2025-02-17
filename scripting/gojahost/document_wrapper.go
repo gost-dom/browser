@@ -3,6 +3,7 @@ package gojahost
 import (
 	g "github.com/dop251/goja"
 	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/html"
 )
 
 type documentWrapper struct {
@@ -23,7 +24,7 @@ func newHTMLDocumentWrapper(instance *GojaContext) wrapper {
 
 func (w documentWrapper) constructor(call g.ConstructorCall, r *g.Runtime) *g.Object {
 	window := w.ctx.window
-	newInstance := dom.NewDocument(window)
+	newInstance := html.NewHTMLDocument(window)
 	w.storeInternal(newInstance, call.This)
 	return nil
 }

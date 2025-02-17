@@ -88,6 +88,11 @@ var rules = CustomRules{
 		}},
 	},
 	"html": {
+		"Location": {Operations: OperationRules{
+			"assign":  {HasError: true},
+			"replace": {HasError: true},
+			"reload":  {HasError: true},
+		}},
 		"History": {Operations: OperationRules{
 			"go":           {HasError: true},
 			"back":         {HasError: true},

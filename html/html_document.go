@@ -1,6 +1,7 @@
 package html
 
 import (
+	"io"
 	"strings"
 
 	"github.com/gost-dom/browser/dom"
@@ -45,10 +46,38 @@ func NewHTMLDocument(window Window) HTMLDocument {
 	return doc
 }
 
+type temporaryWindowWrapperUntilDeprecatedTypesAreRemoved struct {
+	dom.EventTarget
+	w Window
+}
+
+func newTemp(w Window) temporaryWindowWrapperUntilDeprecatedTypesAreRemoved {
+	return temporaryWindowWrapperUntilDeprecatedTypesAreRemoved{w, w}
+}
+
+func (r temporaryWindowWrapperUntilDeprecatedTypesAreRemoved) Location() dom.Location {
+	l := dom.NewURLFromNetURL(r.w.Location().(location).neturl)
+	return l
+}
+
+func (r temporaryWindowWrapperUntilDeprecatedTypesAreRemoved) Document() dom.Document {
+	return r.w.Document()
+}
+
+func (r temporaryWindowWrapperUntilDeprecatedTypesAreRemoved) ParseFragment(
+	d dom.Document, reader io.Reader,
+) (dom.DocumentFragment, error) {
+	return r.w.ParseFragment(d, reader)
+}
+
 // newHTMLDocument is used internally to create an empty HTML when parsing an
 // HTML input.
 func newHTMLDocument(window Window) HTMLDocument {
-	var result HTMLDocument = &htmlDocument{dom.NewDocument(window), window}
+	var parent dom.DocumentParentWindow
+	if window != nil {
+		parent = newTemp(window)
+	}
+	var result HTMLDocument = &htmlDocument{dom.NewDocument(parent), window}
 	result.SetSelf(result)
 	return result
 }

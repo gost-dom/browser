@@ -41,7 +41,7 @@ type Window interface {
 	Eval(string) (any, error)
 	Run(string) error
 	ScriptContext() ScriptContext
-	Location() dom.Location
+	Location() Location
 	History() *History
 	HTTPClient() http.Client
 	ParseFragment(ownerDocument dom.Document, reader io.Reader) (dom.DocumentFragment, error)
@@ -270,14 +270,14 @@ func (w *window) Eval(script string) (any, error) {
 
 func (w *window) ScriptContext() ScriptContext { return w.scriptContext }
 
-func (w *window) Location() dom.Location {
+func (w *window) Location() Location {
 	var u *netURL.URL
 	if w.baseLocation != "" {
 		u, _ = netURL.Parse(w.baseLocation)
 	} else {
 		u = new(netURL.URL)
 	}
-	return dom.NewURLFromNetURL(u)
+	return newLocation(u)
 }
 
 func (w *window) Close() {
