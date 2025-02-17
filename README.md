@@ -43,13 +43,16 @@ you can treat your HTTP server as a normal Go component.
 
 ## Looking for sponsors
 
-If this tool could reach a minimum level of usability, this would be extremely
-valuable in testing Go web applications, particularly combined with HTMX, a tech
-combination which is becoming increasingly popular.
+This tool has reached a level where it can be used to test some web applications
+with JavaScript, e.g., simple HTMX applications in Go, particularly combined
+with HTMX, a tech combination which is becoming increasingly popular.
 
-Progress so far is the result of too much spare time; but that will not last. If
-If enough people would sponsor this project, it could mean the difference
-between continued development, or death.
+But there is still a lot to do before you can rely on this to test your web
+applications. So far, I've bade good progress is the result of too much spare
+time; but that will not last. 
+
+If I could find enough sponsors, it could mean the difference between continued
+development, or death.
 
 ## Looking for contributors
 
