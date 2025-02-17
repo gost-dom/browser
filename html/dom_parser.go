@@ -21,7 +21,7 @@ type domParser struct{}
 // be set on the window _before_ the script is executed.
 func (p domParser) ParseReader(window Window, document *dom.Document, reader io.Reader) error {
 	*document = newHTMLDocument(window)
-	return parseIntoDocument(window, *document, reader)
+	return parseIntoDocument(*document, reader)
 }
 
 func (p domParser) ParseFragment(
@@ -36,7 +36,7 @@ func (p domParser) ParseFragment(
 	result := ownerDocument.CreateDocumentFragment()
 	if err == nil {
 		for _, child := range nodes {
-			element := createElementFromNode(nil, ownerDocument, result, child)
+			element := createElementFromNode(ownerDocument, result, child)
 			result.AppendChild(element)
 		}
 	}
@@ -47,7 +47,7 @@ func NewDOMParser() domParser { return domParser{} }
 
 type ElementSteps interface {
 	AppendChild(parent dom.Node, child dom.Node) dom.Node
-	Connected(w Window, n dom.Element)
+	Connected(n dom.Element)
 }
 
 type BaseRules struct{}
@@ -60,51 +60,7 @@ func (r BaseRules) AppendChild(parent dom.Node, child dom.Node) dom.Node {
 	return res
 }
 
-func (r BaseRules) Connected(w Window, n dom.Element) {}
-
-type ScriptElementRules struct{ BaseRules }
-
-func (r ScriptElementRules) Connected(win Window, node dom.Element) {
-	return
-	// var script string
-	// src, hasSrc := node.GetAttribute("src")
-	// log.Debug("Process script tag", "src", src)
-	// if !hasSrc {
-	// 	b := strings.Builder{}
-	// 	for _, child := range node.ChildNodes().All() {
-	// 		switch n := child.(type) {
-	// 		case dom.Text:
-	// 			b.WriteString(n.Data())
-	// 		}
-	// 	}
-	// 	script = b.String()
-	// } else {
-	// 	window := win.(*window)
-	// 	resp, err := window.httpClient.Get(src)
-	// 	if err != nil {
-	// 		panic(err)
-	// 	}
-	// 	if resp.StatusCode != 200 {
-	// 		body, _ := io.ReadAll(resp.Body)
-	// 		log.Error("Error from server", "body", string(body), "src", src)
-	// 		panic("Bad response")
-	// 	}
-	//
-	// 	buf := bytes.NewBuffer([]byte{})
-	// 	buf.ReadFrom(resp.Body)
-	// 	script = string(buf.Bytes())
-	//
-	// }
-	// // TODO: Propagate error for better error handling
-	// if node.IsConnected() {
-	// 	err := win.Run(script)
-	// 	if err != nil {
-	// 		log.Error("Error loading script")
-	// 	} else {
-	// 		log.Debug("Script loaded/executed")
-	// 	}
-	// }
-}
+func (r BaseRules) Connected(n dom.Element) {}
 
 type TemplateElementRules struct{ BaseRules }
 
@@ -122,12 +78,12 @@ var ElementMap = map[atom.Atom]ElementSteps{
 	atom.Template: TemplateElementRules{},
 }
 
-func parseIntoDocument(w Window, doc dom.Document, r io.Reader) error {
+func parseIntoDocument(doc dom.Document, r io.Reader) error {
 	node, err := html.Parse(r)
 	if err != nil {
 		return err
 	}
-	iterate(w, doc, doc, node)
+	iterate(doc, doc, node)
 	return nil
 }
 
@@ -154,7 +110,6 @@ func convertNS(ns string) string {
 }
 
 func createElementFromNode(
-	w Window,
 	d dom.Document,
 	parent dom.Node,
 	source *html.Node,
@@ -179,23 +134,21 @@ func createElementFromNode(
 	}
 	newNode = newElm
 	newNode = rules.AppendChild(parent, newElm)
-	iterate(w, d, newNode, source)
+	iterate(d, newNode, source)
 	// ?
 	if rules != nil {
 		if newElm.IsConnected() {
-			if w != nil {
-				rules.Connected(w, newElm)
-			}
+			rules.Connected(newElm)
 		}
 	}
 	return newElm
 }
 
-func iterate(w Window, d dom.Document, dest dom.Node, source *html.Node) {
+func iterate(d dom.Document, dest dom.Node, source *html.Node) {
 	for child := range source.ChildNodes() {
 		switch child.Type {
 		case html.ElementNode:
-			createElementFromNode(w, d, dest, child)
+			createElementFromNode(d, dest, child)
 		case html.TextNode:
 			dest.AppendChild(dom.NewText(child.Data))
 		case html.DoctypeNode:
