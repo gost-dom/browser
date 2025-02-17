@@ -15,6 +15,9 @@ const (
 	DocumentEventLoad             DocumentEvent = "load"
 )
 
+// Deprecated: This interface is part of an implementation details, and it was
+// an oversight that it wasn't placed in an internal package. This will be
+// removed from the public API in a future version
 type DocumentParentWindow interface {
 	EventTarget
 	// Deprecated: Location is not a property on the Location IDL interface.
