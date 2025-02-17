@@ -1,12 +1,12 @@
-package suite
+package scripttests
 
 import (
 	"strings"
 
-	"github.com/onsi/ginkgo/v2"
-	"github.com/onsi/gomega"
 	"github.com/gost-dom/browser/html"
 	matchers "github.com/gost-dom/browser/testing/gomega-matchers"
+	"github.com/onsi/ginkgo/v2"
+	"github.com/onsi/gomega"
 )
 
 type ScriptTestSuite struct {

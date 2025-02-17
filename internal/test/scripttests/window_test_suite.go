@@ -1,4 +1,4 @@
-package suite
+package scripttests
 
 import (
 	"strings"

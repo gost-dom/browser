@@ -1,4 +1,4 @@
-package suite
+package scripttests
 
 import (
 	. "github.com/onsi/ginkgo/v2"

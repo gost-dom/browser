@@ -1,9 +1,9 @@
-package suite
+package scripttests
 
 import (
+	"github.com/gost-dom/browser/dom"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"github.com/gost-dom/browser/dom"
 )
 
 func (suite *ScriptTestSuite) CreateEventTargetTests() {
