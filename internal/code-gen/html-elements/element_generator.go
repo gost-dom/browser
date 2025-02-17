@@ -225,3 +225,11 @@ func createGenerators(
 	}
 	return result, errors.Join(errs...)
 }
+
+func setSpecName(name string, data GeneratorConfig) GeneratorConfig {
+	for k, v := range data {
+		v.SpecName = name
+		data[k] = v
+	}
+	return data
+}

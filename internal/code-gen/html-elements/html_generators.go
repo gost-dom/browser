@@ -7,28 +7,24 @@ var HTMLAnchorElementSpecs = HTMLGeneratorReq{
 	// GenerateAttributes: true,
 }
 
-var HTMLPackageConfig = map[string]HTMLGeneratorReq{
+var HTMLPackageConfig = setSpecName("html", GeneratorConfig{
 	"location": {
 		InterfaceName:     "Location",
-		SpecName:          "html",
 		GenerateInterface: true,
 	},
 	"dom_string_list": {
 		InterfaceName:     "DOMStringList",
-		SpecName:          "html",
 		GenerateInterface: true,
 	},
 	"html_anchor_element": {
 		InterfaceName:     "HTMLAnchorElement",
-		SpecName:          "html",
 		GenerateInterface: true,
 	},
 	"html_hyper_link_element_utils": {
 		InterfaceName:     "HTMLHyperlinkElementUtils",
-		SpecName:          "html",
 		GenerateInterface: true,
 	},
-}
+})
 
 func CreateHTMLGenerators() ([]FileGeneratorSpec, error) {
 	return createGenerators(
