@@ -10,6 +10,8 @@ type IdlType idl.Type
 
 func (s IdlType) Generate() *jen.Statement {
 	switch string(s.Name) {
+	case "boolean":
+		return jen.Id("bool")
 	case "DOMString", "USVString", "URLSearchParams":
 		return jen.Id("string")
 	case "unsigned long":

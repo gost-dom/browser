@@ -9,9 +9,10 @@ import (
 )
 
 var DOMStringType = idl.Type{Name: "DOMString"}
+var DOMBooleanType = idl.Type{Name: "boolean"}
 
 func TestIdlTypeGeneratesCorrespondingGoType(t *testing.T) {
-	idlType := IdlType(DOMStringType)
 	g := gomega.NewWithT(t)
-	g.Expect(idlType).To(HaveRendered("string"))
+	g.Expect(IdlType(DOMStringType)).To(HaveRendered("string"))
+	g.Expect(IdlType(DOMBooleanType)).To(HaveRendered("bool"))
 }
