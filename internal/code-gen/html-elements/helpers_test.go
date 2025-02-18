@@ -17,25 +17,23 @@ type expect func(actual interface{}, extra ...interface{}) types.Assertion
 
 func newGomega(t *testing.T) expect { return gomega.NewWithT(t).Expect }
 
-func generateType(spec string, name string) (generators.Generator, error) {
-	x := htmlelements.PackageConfigs[spec]
-	r := x[name]
-	g, err := htmlelements.CreateGenerator(r)
-	return g.GenerateInterface(), err
-}
+type BaseGenerator interface{ GenerateInterface() generator }
 
-func getIdlInterfaceGenerator(apiName string, interfaceName string) (generators.Generator, error) {
-	api := htmlelements.PackageConfigs[apiName]
-	for _, v := range api {
+func getIdlInterfaceGenerator(
+	packageName string,
+	interfaceName string,
+) (generators.Generator, error) {
+	packageSpecs, _ := htmlelements.GetPackageGeneratorSpecs(packageName)
+	for _, v := range packageSpecs {
 		if v.InterfaceName == interfaceName {
 			g, err := htmlelements.CreateGenerator(v)
 			return g.GenerateInterface(), err
 		}
 	}
 	return nil, fmt.Errorf(
-		"getIdlInterfaceGenerator: IDL Interface %s not found in web API %s",
+		"getIdlInterfaceGenerator: IDL Interface %s not configured for package %s",
 		interfaceName,
-		apiName,
+		packageName,
 	)
 }
 

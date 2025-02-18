@@ -24,13 +24,20 @@ func writeFile(s FileGeneratorSpec) error {
 	return nil
 }
 
-func CreatePackageGenerators(name string) ([]FileGeneratorSpec, error) {
-	config, found := PackageConfigs[name]
+func GetPackageGeneratorSpecs(packageName string) (result GeneratorConfig, err error) {
+	result, found := PackageConfigs[packageName]
 	if !found {
-		return nil, fmt.Errorf("CreatePackageGenerators: No configuration for package %s", name)
+		err = fmt.Errorf("CreatePackageGenerators: No configuration for package %s", packageName)
 	}
-	packageName := fmt.Sprintf("%s/%s", packagenames.BASE_PKG, name)
-	return createGenerators(config, packageName)
+	return
+}
+
+func CreatePackageGenerators(name string) (res []FileGeneratorSpec, err error) {
+	if config, err := GetPackageGeneratorSpecs(name); err == nil {
+		packageName := fmt.Sprintf("%s/%s", packagenames.BASE_PKG, name)
+		return createGenerators(config, packageName)
+	}
+	return
 }
 
 func CreateImplementationPackage(name string) error {

@@ -24,6 +24,9 @@ import (
 //		InterfaceName: "URL",
 //		SpecName:      "url",
 //	}
+//
+// This doesn't include _where_ to generate, e.g., the file name to place the
+// code in, and the package name it exists in.
 type HTMLGeneratorReq struct {
 	// TODO: Shouldn't we extract two separate types? InterfaceName and SpecName
 	// are used to lookup the IDL specification; whereas the other properties
