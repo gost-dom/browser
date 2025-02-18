@@ -22,7 +22,7 @@ type URL interface {
 	SetPathname(string)
 	Search() string
 	SetSearch(string)
-	SearchParams() string
+	SearchParams() URLSearchParams
 	Hash() string
 	SetHash(string)
 	ToJSON() (string, error)
