@@ -1,7 +1,7 @@
 package htmlelements
 
 var PackageConfigs = map[string]GeneratorConfig{
-	"dom":  DOMPackageConfig,
-	"html": HTMLPackageConfig,
-	"url":  URLPackageConfig,
+	"dom":           DOMPackageConfig,
+	"html":          HTMLPackageConfig,
+	"urlinterfaces": URLPackageConfig,
 }

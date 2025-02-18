@@ -11,7 +11,7 @@ func TestStringifierShouldNotMakeInterfaceFail(t *testing.T) {
 	// The stringifier is an unnamed operation and shouldn't be included in the
 	// go interface; but will generate an error if not handled in code
 	expect := newGomega(t)
-	g, err := generateType("url", "url_search_params")
+	g, err := generateType("urlinterfaces", "url_search_params")
 	expect(err).NotTo(gomega.HaveOccurred())
 	expect(render(g)).Error().ToNot(HaveOccurred())
 }

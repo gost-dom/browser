@@ -25,7 +25,10 @@ func writeFile(s FileGeneratorSpec) error {
 }
 
 func CreatePackageGenerators(name string) ([]FileGeneratorSpec, error) {
-	config := PackageConfigs[name]
+	config, found := PackageConfigs[name]
+	if !found {
+		return nil, fmt.Errorf("CreatePackageGenerators: No configuration for package %s", name)
+	}
 	packageName := fmt.Sprintf("%s/%s", packagenames.BASE_PKG, name)
 	return createGenerators(config, packageName)
 }
