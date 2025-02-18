@@ -6,8 +6,6 @@ import (
 )
 
 type EventTarget interface {
-	// ObjectId is used internally for the scripting engine to associate a v8
-	// object with the Go object it wraps.
 	AddEventListener(eventType string, listener EventHandler /* TODO: options */)
 	RemoveEventListener(eventType string, listener EventHandler)
 	DispatchEvent(event Event) bool
