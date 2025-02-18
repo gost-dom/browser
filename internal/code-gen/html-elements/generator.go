@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/dave/jennifer/jen"
+	"github.com/gost-dom/code-gen/packagenames"
 )
 
 func writeFile(s FileGeneratorSpec) error {
@@ -23,8 +24,14 @@ func writeFile(s FileGeneratorSpec) error {
 	return nil
 }
 
-func GenerateHTMLElements() error {
-	files, err := CreateHTMLGenerators()
+func CreatePackageGenerators(name string) ([]FileGeneratorSpec, error) {
+	config := PacageConfigs[name]
+	packageName := fmt.Sprintf("%s/%s", packagenames.BASE_PKG, name)
+	return createGenerators(config, packageName)
+}
+
+func CreateImplementationPackage(name string) error {
+	files, err := CreatePackageGenerators(name)
 	if err != nil {
 		return err
 	}
@@ -36,15 +43,28 @@ func GenerateHTMLElements() error {
 	return nil
 }
 
-func GenerateDOMTypes() error {
-	files, err := CreateDOMGenerators()
-	if err != nil {
-		return err
-	}
-	for _, f := range files {
-		if err = writeFile(f); err != nil {
-			return err
-		}
-	}
-	return nil
-}
+// func GenerateHTMLElements() error {
+// 	files, err := CreateHTMLGenerators()
+// 	if err != nil {
+// 		return err
+// 	}
+// 	for _, f := range files {
+// 		if err = writeFile(f); err != nil {
+// 			return err
+// 		}
+// 	}
+// 	return nil
+// }
+
+// func GenerateDOMTypes() error {
+// 	files, err := CreateDOMGenerators()
+// 	if err != nil {
+// 		return err
+// 	}
+// 	for _, f := range files {
+// 		if err = writeFile(f); err != nil {
+// 			return err
+// 		}
+// 	}
+// 	return nil
+// }

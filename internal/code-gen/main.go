@@ -33,6 +33,7 @@ func main() {
 	debug := flag.Bool("d", false, "Debug")
 	outputFile := flag.String("o", "", "Output file to write")
 	generatorType := flag.String("g", "", "Generator type")
+	packageName := flag.String("p", "", "Package to generate")
 	flag.Parse()
 	switch *generatorType {
 	case "goja":
@@ -46,13 +47,19 @@ func main() {
 		os.Exit(0)
 		return
 	case "htmlelements":
-		exitOnError(htmlelements.GenerateHTMLElements())
+		exitOnError(htmlelements.CreateImplementationPackage("html"))
 		os.Exit(0)
 		return
 	case "dom":
-		exitOnError(htmlelements.GenerateDOMTypes())
+		exitOnError(htmlelements.CreateImplementationPackage("dom"))
 		os.Exit(0)
 		return
+	case "gotypes":
+		if packageName == nil {
+			panic("Missing package spec")
+		}
+		exitOnError(htmlelements.CreateImplementationPackage(*packageName))
+		os.Exit(0)
 	}
 
 	if *outputFile == "" || *generatorType == "" {

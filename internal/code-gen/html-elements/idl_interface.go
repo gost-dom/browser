@@ -47,10 +47,11 @@ func (i IdlInterface) Generate() *jen.Statement {
 		}
 	}
 	for _, o := range i.Operations {
+		if o.Stringifier && o.Name == "" {
+			continue
+		}
 		opRules := i.Rules.Operations[o.Name]
 		if !o.Static {
-			// Todo: Parameters
-			// Todo: Customize presence of error
 			args := make([]generators.Generator, len(o.Arguments))
 			for i, a := range o.Arguments {
 				argRules, hasArgRules := opRules.Attributes[a.Name]
