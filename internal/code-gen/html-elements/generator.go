@@ -25,7 +25,7 @@ func writeFile(s FileGeneratorSpec) error {
 }
 
 func CreatePackageGenerators(name string) ([]FileGeneratorSpec, error) {
-	config := PacageConfigs[name]
+	config := PackageConfigs[name]
 	packageName := fmt.Sprintf("%s/%s", packagenames.BASE_PKG, name)
 	return createGenerators(config, packageName)
 }

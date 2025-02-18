@@ -18,14 +18,14 @@ type expect func(actual interface{}, extra ...interface{}) types.Assertion
 func newGomega(t *testing.T) expect { return gomega.NewWithT(t).Expect }
 
 func generateType(spec string, name string) (generators.Generator, error) {
-	x := htmlelements.PacageConfigs[spec]
+	x := htmlelements.PackageConfigs[spec]
 	r := x[name]
 	g, err := htmlelements.CreateGenerator(r)
 	return g.GenerateInterface(), err
 }
 
 func getIdlInterfaceGenerator(apiName string, interfaceName string) (generators.Generator, error) {
-	api := htmlelements.PacageConfigs[apiName]
+	api := htmlelements.PackageConfigs[apiName]
 	for _, v := range api {
 		if v.InterfaceName == interfaceName {
 			g, err := htmlelements.CreateGenerator(v)
