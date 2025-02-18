@@ -75,7 +75,8 @@ After go getting `github.com/gost-dom/browser`, you need replace some modules:
 
 ```sh
 go mod edit -replace="github.com/ericchiang/css=github.com/gost-dom/css@latest"
-go mod edit -replace="github.com/tommie/v8go=github.com/stroiman/v8go@go-dom-support"
+go mod tidy
+go mod edit -replace="github.com/tommie/v8go=github.com/stroiman/v8go@latest"
 go mod tidy
 ```
 
