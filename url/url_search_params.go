@@ -2,20 +2,26 @@ package url
 
 import (
 	netURL "net/url"
+	"strings"
 )
 
 type URLSearchParams struct {
 	values netURL.Values
 }
 
-func (p URLSearchParams) Size() int {
-	panic("TODO")
+func ParseURLSearchParams(s string) (URLSearchParams, error) {
+	if strings.HasPrefix(s, "?") {
+		s = s[1:]
+	}
+	values, err := netURL.ParseQuery(s)
+	return URLSearchParams{values}, err
 }
 
 // Read
 
+func (p URLSearchParams) Size() int               { panic("TODO") }
 func (p URLSearchParams) String() string          { return p.values.Encode() }
-func (p URLSearchParams) Get(string) string       { panic("TODO") }
+func (p URLSearchParams) Get(key string) string   { return p.values.Get(key) }
 func (p URLSearchParams) GetAll(string)           { panic("TODO") }
 func (p URLSearchParams) Has(string, string) bool { panic("TODO") }
 
