@@ -12,7 +12,7 @@ func (s IdlType) Generate() *jen.Statement {
 	switch string(s.Name) {
 	case "boolean":
 		return jen.Id("bool")
-	case "DOMString", "USVString", "URLSearchParams":
+	case "DOMString", "USVString":
 		return jen.Id("string")
 	case "unsigned long":
 		return jen.Id("int")
