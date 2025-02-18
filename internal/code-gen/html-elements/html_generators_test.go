@@ -4,13 +4,11 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	. "github.com/gost-dom/code-gen/html-elements"
 	g "github.com/gost-dom/generators"
 )
 
 func GenerateHtmlAnchor() (g.Generator, error) {
-	g, err := CreateHTMLElementGenerator(HTMLPackageConfig["html_anchor_element"])
-	return g.Generator(), err
+	return getIdlInterfaceGenerator("html", "HTMLAnchorElement")
 }
 
 var _ = Describe("ElementGenerator", func() {

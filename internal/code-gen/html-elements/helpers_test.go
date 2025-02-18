@@ -2,6 +2,7 @@ package htmlelements_test
 
 import (
 	"bytes"
+	"fmt"
 	"testing"
 
 	htmlelements "github.com/gost-dom/code-gen/html-elements"
@@ -21,6 +22,21 @@ func generateType(spec string, name string) (generators.Generator, error) {
 	r := x[name]
 	g, err := htmlelements.CreateGenerator(r)
 	return g.GenerateInterface(), err
+}
+
+func getIdlInterfaceGenerator(apiName string, interfaceName string) (generators.Generator, error) {
+	api := htmlelements.PacageConfigs[apiName]
+	for _, v := range api {
+		if v.InterfaceName == interfaceName {
+			g, err := htmlelements.CreateGenerator(v)
+			return g.GenerateInterface(), err
+		}
+	}
+	return nil, fmt.Errorf(
+		"getIdlInterfaceGenerator: IDL Interface %s not found in web API %s",
+		interfaceName,
+		apiName,
+	)
 }
 
 func render(g generator) (string, error) {

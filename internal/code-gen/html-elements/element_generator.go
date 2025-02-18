@@ -7,7 +7,6 @@ import (
 
 	"github.com/gost-dom/code-gen/customrules"
 	g "github.com/gost-dom/generators"
-	"github.com/gost-dom/webref/elements"
 	"github.com/gost-dom/webref/idl"
 )
 
@@ -99,21 +98,6 @@ func (gen baseGenerator) GenerateInterface() g.Generator {
 }
 
 /* -------- htmlElementGenerator -------- */
-
-// CreateHTMLElementGenerator creates a generator for the element with
-func CreateHTMLElementGenerator(req HTMLGeneratorReq) (htmlElementGenerator, error) {
-	base, err1 := CreateGenerator(req)
-	el, err2 := elements.Load("html")
-	tagName, err3 := el.GetTagNameForInterfaceError(req.InterfaceName)
-	err := errors.Join(err1, err2, err3)
-	if err != nil {
-		return htmlElementGenerator{}, err
-	}
-	return htmlElementGenerator{
-		base,
-		tagName,
-	}, nil
-}
 
 type htmlElementGenerator struct {
 	baseGenerator
