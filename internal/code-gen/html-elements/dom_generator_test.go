@@ -40,13 +40,6 @@ func (s *DomSuite) SetupTest() {
 	s.Gomega = gomega.NewWithT(s.T())
 }
 
-func (s *DomSuite) TestGenerateGetterAndSetterOnURL() {
-	s.Expect(
-		generateDomType(DOMPackageConfig["url"]),
-	).To(HaveRendered(ContainSubstring(
-		`ToJSON() (string, error)`)))
-}
-
 func (s *DomSuite) TestGenerateHTMLCollection() {
 	generator, err := generateDomType(HTMLGeneratorReq{
 		InterfaceName:     "HTMLCollection",

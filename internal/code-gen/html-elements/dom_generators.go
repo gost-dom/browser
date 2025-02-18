@@ -1,12 +1,6 @@
 package htmlelements
 
 var DOMPackageConfig = GeneratorConfig{
-	"url": {
-		InterfaceName:      "URL",
-		SpecName:           "url",
-		GenerateInterface:  true,
-		GenerateAttributes: true,
-	},
 	"parent_node": {
 		InterfaceName:     "ParentNode",
 		SpecName:          "dom",
