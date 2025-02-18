@@ -40,8 +40,14 @@ func (e *htmlAnchorElement) setUrl(f func(dom.URL, string), val string) {
 		return
 	}
 	f(e.URL, val)
-	e.HTMLElement.SetAttribute("href", e.URL.Href())
+	e.updateDataAttribute()
 }
+
+func (e htmlAnchorElement) updateDataAttribute() {
+	e.HTMLElement.SetAttribute("href", e.URL.Href())
+
+}
+
 func (e *htmlAnchorElement) getUrl(f func(dom.URL) string) string {
 	if e.URL == nil {
 		return ""
@@ -53,7 +59,10 @@ func (e *htmlAnchorElement) SetHref(val string) {
 	window := e.getHTMLDocument().getWindow()
 	newUrl := window.resolveHref(val)
 	e.URL = newUrl
+	e.updateDataAttribute()
 }
+
+func (e *htmlAnchorElement) String() string { return e.Href() }
 
 func (e *htmlAnchorElement) SetProtocol(val string) { e.setUrl(dom.URL.SetProtocol, val) }
 func (e *htmlAnchorElement) SetUsername(val string) { e.setUrl(dom.URL.SetUsername, val) }

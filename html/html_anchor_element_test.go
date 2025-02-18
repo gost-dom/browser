@@ -1,6 +1,8 @@
 package html_test
 
 import (
+	"fmt"
+
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
 	matchers "github.com/gost-dom/browser/testing/gomega-matchers"
@@ -51,6 +53,16 @@ var _ = Describe("htmlAnchorElement", func() {
 		a.SetHref("/")
 		a.SetPathname("/local")
 		Expect(a).To(matchers.HaveAttribute("href", "http://example.com/local"))
+	})
+
+	It("Should update the href data attribute when setting the href IDL attribute", func() {
+		a.SetHref("http://example.com/local")
+		Expect(a).To(matchers.HaveAttribute("href", "http://example.com/local"))
+	})
+
+	It("Should return the href in String() call", func() {
+		a.SetHref("http://example.com/local")
+		Expect(a.(fmt.Stringer).String()).To(Equal("http://example.com/local"))
 	})
 
 	Describe("RelList", func() {
