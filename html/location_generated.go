@@ -2,7 +2,10 @@
 
 package html
 
+import "fmt"
+
 type Location interface {
+	fmt.Stringer
 	Href() string
 	SetHref(string)
 	Origin() string

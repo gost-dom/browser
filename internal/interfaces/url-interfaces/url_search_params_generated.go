@@ -2,7 +2,10 @@
 
 package urlinterfaces
 
+import "fmt"
+
 type URLSearchParams interface {
+	fmt.Stringer
 	Size() int
 	Append(string, string)
 	Delete(string, string)
