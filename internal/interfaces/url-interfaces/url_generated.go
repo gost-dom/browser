@@ -2,7 +2,10 @@
 
 package urlinterfaces
 
+import "fmt"
+
 type URL interface {
+	fmt.Stringer
 	Href() string
 	SetHref(string)
 	Origin() string

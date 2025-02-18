@@ -8,6 +8,7 @@ import (
 
 // Deprecated: This will be replaced with the URL interface in the url package
 type URL interface {
+	fmt.Stringer
 	Href() string
 	SetHref(string)
 	Origin() string
@@ -121,7 +122,8 @@ func (l url) Hostname() string {
 	return l.url.Hostname()
 }
 
-func (l url) Href() string { return l.url.String() }
+func (l url) String() string { return l.Href() }
+func (l url) Href() string   { return l.url.String() }
 
 func (l url) Origin() string { return l.url.Scheme + "://" + l.url.Host }
 

@@ -8,6 +8,10 @@ import (
 	"github.com/onsi/gomega/types"
 )
 
+func HaveRenderedSubstring(expected string) types.GomegaMatcher {
+	return HaveRendered(ContainSubstring(expected))
+}
+
 func HaveRendered(expected interface{}) types.GomegaMatcher {
 	matcher, ok := expected.(types.GomegaMatcher)
 	if !ok {

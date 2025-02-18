@@ -12,12 +12,13 @@ import (
 /* -------- IdlInterface -------- */
 
 type IdlInterface struct {
-	Name       string
-	Inherits   string
-	Rules      customrules.InterfaceRule
-	Attributes []IdlInterfaceAttribute
-	Operations []IdlInterfaceOperation
-	Includes   []IdlInterfaceInclude
+	Name           string
+	Inherits       string
+	HasStringifier bool
+	Rules          customrules.InterfaceRule
+	Attributes     []IdlInterfaceAttribute
+	Operations     []IdlInterfaceOperation
+	Includes       []IdlInterfaceInclude
 }
 
 func (i IdlInterface) Generate() *jen.Statement {
@@ -32,6 +33,10 @@ func (i IdlInterface) Generate() *jen.Statement {
 
 	for _, i := range i.Includes {
 		fields = append(fields, generators.Id(i.Name))
+	}
+
+	if i.HasStringifier {
+		fields = append(fields, generators.NewTypePackage("Stringer", "fmt"))
 	}
 
 	for _, a := range i.Attributes {
