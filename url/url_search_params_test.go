@@ -78,3 +78,20 @@ func TestURLSearchParamsHas(t *testing.T) {
 	assert.True(t, u.HasValue("foo", "bar"))
 	assert.False(t, u.HasValue("foo", "baz"))
 }
+
+func TestURLSearchParamDelete(t *testing.T) {
+	var u URLSearchParams
+	u.Append("foo", "a")
+	u.Append("foo", "b")
+	u.Append("foo", "c")
+
+	u.DeleteValue("foo", "z")
+	assert.Equal(t, []string{"a", "b", "c"}, u.GetAll("foo"))
+
+	u.DeleteValue("foo", "c")
+	assert.Equal(t, []string{"a", "b"}, u.GetAll("foo"))
+
+	u.Delete("foo")
+	_, found := u.Get("foo")
+	assert.False(t, found)
+}

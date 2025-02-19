@@ -2,6 +2,7 @@ package url
 
 import (
 	netURL "net/url"
+	"slices"
 	"strings"
 )
 
@@ -43,7 +44,14 @@ func (p *URLSearchParams) ensureValid() {
 }
 
 func (p *URLSearchParams) Append(key string, val string) { p.ensureValid(); p.values.Add(key, val) }
-func (p *URLSearchParams) Delete(string)                 { panic("TODO") }
-func (p *URLSearchParams) DeleteValue(string, string)    { panic("TODO") }
-func (p *URLSearchParams) Set(string, string)            { panic("TODO") }
-func (p *URLSearchParams) Sort()                         { panic("TODO") }
+func (p *URLSearchParams) Delete(key string)             { p.values.Del(key) }
+func (p *URLSearchParams) DeleteValue(key string, val string) {
+	if v, ok := p.values[key]; ok {
+		if i := slices.Index(v, val); i >= 0 {
+			p.values[key] = slices.Delete(v, i, i+1)
+		}
+	}
+}
+
+func (p *URLSearchParams) Set(string, string) { panic("TODO") }
+func (p *URLSearchParams) Sort()              { panic("TODO") }
