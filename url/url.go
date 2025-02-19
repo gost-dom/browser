@@ -4,25 +4,21 @@ import (
 	"fmt"
 	netURL "net/url"
 	"strings"
-
-	urlinterfaces "github.com/gost-dom/browser/internal/interfaces/url-interfaces"
 )
 
-type URL = urlinterfaces.URL
-
-type url struct {
+type URL struct {
 	url *netURL.URL
 }
 
-func NewUrl(rawUrl string) (URL, error) {
+func NewUrl(rawUrl string) (*URL, error) {
 	if res, err := netURL.Parse(rawUrl); err == nil {
-		return &url{res}, nil
+		return &URL{res}, nil
 	} else {
 		return nil, err
 	}
 }
 
-func NewUrlBase(relativeUrl string, base string) (result URL, err error) {
+func NewUrlBase(relativeUrl string, base string) (result *URL, err error) {
 	rel, err := netURL.Parse(relativeUrl)
 	if err == nil {
 		if rel.Host != "" {
@@ -52,7 +48,7 @@ func NewUrlBase(relativeUrl string, base string) (result URL, err error) {
 	return
 }
 
-func ParseURL(rawUrl string) URL {
+func ParseURL(rawUrl string) *URL {
 	res, err := NewUrl(rawUrl)
 	if err != nil {
 		res = nil
@@ -60,7 +56,7 @@ func ParseURL(rawUrl string) URL {
 	return res
 }
 
-func ParseURLBase(relativeUrl string, base string) URL {
+func ParseURLBase(relativeUrl string, base string) *URL {
 	res, err := NewUrlBase(relativeUrl, base)
 	if err != nil {
 		res = nil
@@ -73,45 +69,45 @@ func CanParseURL(rawUrl string) bool {
 	return err == nil
 }
 
-func CreateObjectURL(object any) (URL, error) {
+func CreateObjectURL(object any) (*URL, error) {
 	panic("Not implemented")
 	// return nil, dom.newNotImplementedError("URL.CreateObjectURL not implemented yet")
 }
 
-func RevokeObjectURL(object any) (URL, error) {
+func RevokeObjectURL(object any) (*URL, error) {
 	panic("Not implemented")
 	// return nil, dom.newNotImplementedError("URL.RevokeObjectURL not implemented yet")
 }
 
-func NewURLFromNetURL(u *netURL.URL) URL {
-	return &url{u}
+func NewURLFromNetURL(u *netURL.URL) *URL {
+	return &URL{u}
 }
 
-func (l url) Hash() string {
+func (l URL) Hash() string {
 	if l.url.Fragment == "" {
 		return ""
 	}
 	return "#" + l.url.Fragment
 }
 
-func (l url) Host() string { return l.url.Host }
+func (l URL) Host() string { return l.url.Host }
 
-func (l url) Hostname() string {
+func (l URL) Hostname() string {
 	return l.url.Hostname()
 }
 
-func (l url) String() string { return l.Href() }
-func (l url) Href() string   { return l.url.String() }
+func (l URL) String() string { return l.Href() }
+func (l URL) Href() string   { return l.url.String() }
 
-func (l url) Origin() string { return l.url.Scheme + "://" + l.url.Host }
+func (l URL) Origin() string { return l.url.Scheme + "://" + l.url.Host }
 
-func (l url) Pathname() string { return l.url.Path }
+func (l URL) Pathname() string { return l.url.Path }
 
-func (l url) Protocol() string { return l.url.Scheme + ":" }
+func (l URL) Protocol() string { return l.url.Scheme + ":" }
 
-func (l url) Port() string { return l.url.Port() }
+func (l URL) Port() string { return l.url.Port() }
 
-func (l url) Search() string {
+func (l URL) Search() string {
 	if l.url.RawQuery != "" {
 		return "?" + l.url.RawQuery
 	} else {
@@ -119,28 +115,28 @@ func (l url) Search() string {
 	}
 }
 
-func (l url) ToJSON() (string, error) { return l.Href(), nil }
+func (l URL) ToJSON() (string, error) { return l.Href(), nil }
 
-func (l url) Password() string { p, _ := l.url.User.Password(); return p }
-func (l *url) SetPassword(val string) {
+func (l URL) Password() string { p, _ := l.url.User.Password(); return p }
+func (l *URL) SetPassword(val string) {
 	l.url.User = netURL.UserPassword(l.Username(), val)
 }
 
-func (l *url) SetUsername(
+func (l *URL) SetUsername(
 	val string,
 ) {
 	p, _ := l.url.User.Password()
 	l.url.User = netURL.UserPassword(val, p)
 }
-func (l url) Username() string { return l.url.User.Username() }
-func (l url) SearchParams() urlinterfaces.URLSearchParams {
+func (l URL) Username() string { return l.url.User.Username() }
+func (l URL) SearchParams() URLSearchParams {
 	// TODO
 	panic("URL.SearchParams Not implemented. Please file a feature request")
 }
 
-func (l *url) SetHash(val string) { l.url.Fragment = val }
-func (l *url) SetHost(val string) { l.url.Host = val }
-func (l *url) SetHostname(val string) {
+func (l *URL) SetHash(val string) { l.url.Fragment = val }
+func (l *URL) SetHost(val string) { l.url.Host = val }
+func (l *URL) SetHostname(val string) {
 	port := l.Port()
 	if port == "" {
 		l.url.Host = val
@@ -148,7 +144,7 @@ func (l *url) SetHostname(val string) {
 		l.url.Host = fmt.Sprintf("%s:%s", val, port)
 	}
 }
-func (l *url) SetHref(val string) {
+func (l *URL) SetHref(val string) {
 	v, err := netURL.Parse(val)
 	// TODO: Generate error
 	if err != nil {
@@ -156,16 +152,16 @@ func (l *url) SetHref(val string) {
 	}
 	l.url = v
 }
-func (l *url) SetPathname(val string) { l.url.Path = val }
-func (l *url) SetPort(val string) {
+func (l *URL) SetPathname(val string) { l.url.Path = val }
+func (l *URL) SetPort(val string) {
 	if val == "" {
 		l.url.Host = l.url.Hostname()
 	} else {
 		l.url.Host = fmt.Sprintf("%s:%s", l.Hostname(), val)
 	}
 }
-func (l *url) SetProtocol(val string) { l.url.Scheme = val }
-func (l *url) SetSearch(val string) {
+func (l *URL) SetProtocol(val string) { l.url.Scheme = val }
+func (l *URL) SetSearch(val string) {
 	if strings.HasPrefix(val, "?") {
 		val = val[1:]
 	}

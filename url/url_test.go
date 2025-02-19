@@ -4,6 +4,7 @@ import (
 	"errors"
 	"testing"
 
+	urlinterfaces "github.com/gost-dom/browser/internal/interfaces/url-interfaces"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	. "github.com/gost-dom/browser/url"
 
@@ -13,6 +14,14 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
+type urlWrapper struct {
+	*URL
+}
+
+func (w urlWrapper) SearchParams() urlinterfaces.URLSearchParams {
+	return w.SearchParams()
+}
+
 type URLTestSuite struct {
 	suite.Suite
 	gomega.Gomega
@@ -20,6 +29,11 @@ type URLTestSuite struct {
 
 func (s *URLTestSuite) SetupTest() {
 	s.Gomega = gomega.NewWithT(s.T())
+}
+
+func (s *URLTestSuite) TestURLIsValidInterface() {
+	var result urlinterfaces.URL = urlWrapper{ParseURL("http://example.com")}
+	s.Assert().Equal("http://example.com", result.Href())
 }
 
 func (s *URLTestSuite) TestParseURL() {
@@ -135,14 +149,14 @@ func (s *URLTestSuite) TestHostname() {
 
 func HaveHRef(expected interface{}) types.GomegaMatcher {
 	if m, ok := expected.(types.GomegaMatcher); ok {
-		return WithTransform(func(u URL) string { return u.Href() }, m)
+		return WithTransform(func(u *URL) string { return u.Href() }, m)
 	} else {
 		return HaveHRef(Equal(expected))
 	}
 }
 
 func HaveHref(expected string) types.GomegaMatcher {
-	return gcustom.MakeMatcher(func(u URL) (bool, error) {
+	return gcustom.MakeMatcher(func(u *URL) (bool, error) {
 		if u == nil {
 			return false, errors.New("URL is nil")
 		}
