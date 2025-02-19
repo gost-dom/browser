@@ -147,6 +147,12 @@ func (s *URLTestSuite) TestHostname() {
 	s.Expect(u.Hostname()).To(Equal("m.example.com"))
 }
 
+func (s *URLTestSuite) TestSearchParams() {
+	u := ParseURL("https://example.com:1234/path/name?foo=bar")
+	u.SearchParams().Set("foo", "baz")
+	s.Expect(u).To(HaveHref("https://example.com:1234/path/name?foo=baz"))
+}
+
 func HaveHRef(expected interface{}) types.GomegaMatcher {
 	if m, ok := expected.(types.GomegaMatcher); ok {
 		return WithTransform(func(u *URL) string { return u.Href() }, m)

@@ -6,14 +6,17 @@ import (
 	"strings"
 )
 
-type URLSearchParams struct{ values netURL.Values }
+type URLSearchParams struct {
+	values netURL.Values
+	url    *URL
+}
 
 func ParseURLSearchParams(s string) (URLSearchParams, error) {
 	if strings.HasPrefix(s, "?") {
 		s = s[1:]
 	}
 	values, err := netURL.ParseQuery(s)
-	return URLSearchParams{values}, err
+	return URLSearchParams{values, nil}, err
 }
 
 // Read
@@ -39,9 +42,18 @@ func (p *URLSearchParams) ensureValid() {
 		p.values = make(netURL.Values)
 	}
 }
+func (p *URLSearchParams) postUpdate() {
+	if p.url != nil {
+		p.url.SetSearch(p.String())
+	}
+}
 
-func (p *URLSearchParams) Append(key string, val string) { p.ensureValid(); p.values.Add(key, val) }
-func (p *URLSearchParams) Delete(key string)             { p.ensureValid(); p.values.Del(key) }
+func (p *URLSearchParams) Append(key string, val string) {
+	p.ensureValid()
+	p.values.Add(key, val)
+	p.postUpdate()
+}
+func (p *URLSearchParams) Delete(key string) { p.ensureValid(); p.values.Del(key); p.postUpdate() }
 func (p *URLSearchParams) DeleteValue(key string, val string) {
 	p.ensureValid()
 	if v, ok := p.values[key]; ok {
@@ -49,9 +61,14 @@ func (p *URLSearchParams) DeleteValue(key string, val string) {
 			p.values[key] = slices.Delete(v, i, i+1)
 		}
 	}
+	p.postUpdate()
 }
 
-func (p *URLSearchParams) Set(key string, val string) { p.ensureValid(); p.values.Set(key, val) }
+func (p *URLSearchParams) Set(key string, val string) {
+	p.ensureValid()
+	p.values.Set(key, val)
+	p.postUpdate()
+}
 func (p *URLSearchParams) Sort() {
 	panic("URLSearchParams doesn't support Sorting in it's current implementation")
 }

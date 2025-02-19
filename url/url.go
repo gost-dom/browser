@@ -128,11 +128,8 @@ func (l *URL) SetUsername(
 	p, _ := l.url.User.Password()
 	l.url.User = netURL.UserPassword(val, p)
 }
-func (l URL) Username() string { return l.url.User.Username() }
-func (l URL) SearchParams() URLSearchParams {
-	// TODO
-	panic("URL.SearchParams Not implemented. Please file a feature request")
-}
+func (l URL) Username() string                { return l.url.User.Username() }
+func (l *URL) SearchParams() *URLSearchParams { return &URLSearchParams{l.url.Query(), l} }
 
 func (l *URL) SetHash(val string) { l.url.Fragment = val }
 func (l *URL) SetHost(val string) { l.url.Host = val }
