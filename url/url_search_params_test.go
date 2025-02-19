@@ -44,7 +44,6 @@ func TestGet(t *testing.T) {
 	missingValue, ok := u.Get("baz")
 	assert.False(t, ok)
 	assert.Equal(t, "", missingValue)
-
 }
 
 func TestParseUrlSearchParams(t *testing.T) {
@@ -68,4 +67,14 @@ func TestParseUrlSearchParams(t *testing.T) {
 	v, found = u.Get("foo")
 	assert.True(t, found)
 	assert.Equal(t, "bar value", v)
+}
+
+func TestURLSearchParamsHas(t *testing.T) {
+	var u URLSearchParams
+	u.Append("foo", "bar")
+	assert.True(t, u.Has("foo"))
+	assert.False(t, u.Has("bar"))
+
+	assert.True(t, u.HasValue("foo", "bar"))
+	assert.False(t, u.HasValue("foo", "baz"))
 }

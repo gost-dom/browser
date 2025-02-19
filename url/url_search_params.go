@@ -20,17 +20,19 @@ func ParseURLSearchParams(s string) (URLSearchParams, error) {
 
 // Read
 
-func (p URLSearchParams) Size() int      { panic("TODO") }
-func (p URLSearchParams) String() string { return p.values.Encode() }
+func (p URLSearchParams) Size() int                  { panic("TODO") }
+func (p URLSearchParams) String() string             { return p.values.Encode() }
+func (p URLSearchParams) GetAll(key string) []string { return p.values[key] }
+func (p URLSearchParams) Has(key string) bool        { _, ok := p.Get(key); return ok }
 
-func (p URLSearchParams) Get(
-	key string,
-) (string, bool) {
+func (p URLSearchParams) Get(key string) (string, bool) {
 	return p.values.Get(key), p.values.Has(key)
 }
-func (p URLSearchParams) GetAll(key string) []string   { return p.values[key] }
-func (p URLSearchParams) Has(string) bool              { panic("TODO") }
-func (p URLSearchParams) HasValue(string, string) bool { panic("TODO") }
+
+func (p URLSearchParams) HasValue(key string, val string) bool {
+	v, ok := p.Get(key)
+	return ok && v == val
+}
 
 // Mutate
 
