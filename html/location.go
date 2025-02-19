@@ -3,19 +3,19 @@ package html
 import (
 	"fmt"
 
-	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/internal/constants"
+	"github.com/gost-dom/browser/url"
 
 	netURL "net/url"
 )
 
 type location struct {
-	dom.URL
+	*url.URL
 	neturl *netURL.URL
 }
 
 func newLocation(u *netURL.URL) Location {
-	return location{dom.NewURLFromNetURL(u), u}
+	return location{url.NewURLFromNetURL(u), u}
 }
 
 func (l location) AncestorOrigins() DOMStringList {

@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/url"
 )
 
 type FormEvent string
@@ -136,13 +137,14 @@ func (e *htmlFormElement) Method() string {
 
 func (e *htmlFormElement) SetAction(val string) { e.SetAttribute("action", val) }
 
-func (e *htmlFormElement) action() dom.URL {
+func (e *htmlFormElement) action() *url.URL {
 	window := e.window()
 	action, found := e.GetAttribute("action")
-	target := dom.URL(window.Location().(location))
+	l := window.Location().(location)
+	target := l.URL
 	var err error
 	if found {
-		if target, err = dom.NewUrlBase(action, window.Location().Href()); err != nil {
+		if target, err = url.NewUrlBase(action, window.Location().Href()); err != nil {
 			// This _shouldn't_ happen. But let's refactor code, so err isn't a
 			// possible return value
 			panic(err)
@@ -158,7 +160,7 @@ func (e *htmlFormElement) SetMethod(value string) {
 	e.SetAttribute("method", value)
 }
 
-func replaceSearchParams(location dom.URL, searchParams string) string {
+func replaceSearchParams(location *url.URL, searchParams string) string {
 	if searchParams == "" {
 		return fmt.Sprintf("%s%s", location.Origin(), location.Pathname())
 	} else {

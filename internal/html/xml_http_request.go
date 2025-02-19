@@ -10,6 +10,7 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/internal/log"
+	"github.com/gost-dom/browser/url"
 )
 
 // TODO: Events for async
@@ -94,12 +95,12 @@ func (req *xmlHttpRequest) Open(
 }
 
 func (req *xmlHttpRequest) send(body io.Reader) error {
-	url := req.url
-	if u := dom.ParseURLBase(req.url, req.location); u != nil {
-		url = u.Href()
+	reqUrl := req.url
+	if u := url.ParseURLBase(req.url, req.location); u != nil {
+		reqUrl = u.Href()
 	}
-	log.Info("XmlHttpRequest.send", "url", url)
-	httpRequest, err := http.NewRequest(req.method, url, body)
+	log.Info("XmlHttpRequest.send", "url", reqUrl)
+	httpRequest, err := http.NewRequest(req.method, reqUrl, body)
 	if err != nil {
 		return err
 	}

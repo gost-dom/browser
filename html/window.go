@@ -10,6 +10,7 @@ import (
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
+	"github.com/gost-dom/browser/url"
 )
 
 type ScriptHost interface {
@@ -48,7 +49,7 @@ type Window interface {
 	// unexported
 
 	fetchRequest(req *http.Request) error
-	resolveHref(string) dom.URL
+	resolveHref(string) *url.URL
 }
 
 type window struct {
@@ -290,8 +291,8 @@ func (w *window) ObjectId() entity.ObjectId { return -1 }
 
 // resolveHref takes an href from a <a> tag, or action from a <form> tag and
 // resolves an absolute URL that must be requested.
-func (w *window) resolveHref(href string) dom.URL {
-	r, err := dom.NewUrlBase(href, w.Location().Href())
+func (w *window) resolveHref(href string) *url.URL {
+	r, err := url.NewUrlBase(href, w.Location().Href())
 	if err != nil {
 		panic(err)
 	}

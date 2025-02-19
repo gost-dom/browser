@@ -55,11 +55,6 @@ func newTemp(w Window) temporaryWindowWrapperUntilDeprecatedTypesAreRemoved {
 	return temporaryWindowWrapperUntilDeprecatedTypesAreRemoved{w, w}
 }
 
-func (r temporaryWindowWrapperUntilDeprecatedTypesAreRemoved) Location() dom.Location {
-	l := dom.NewURLFromNetURL(r.w.Location().(location).neturl)
-	return l
-}
-
 func (r temporaryWindowWrapperUntilDeprecatedTypesAreRemoved) Document() dom.Document {
 	return r.w.Document()
 }
