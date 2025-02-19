@@ -20,7 +20,6 @@ const (
 // removed from the public API in a future version
 type DocumentParentWindow interface {
 	EventTarget
-	Document() Document
 	ParseFragment(ownerDocument Document, reader io.Reader) (DocumentFragment, error)
 }
 
@@ -34,11 +33,6 @@ type Document interface {
 	CreateElementNS(string, string) Element
 	CreateElement(string) Element
 	DocumentElement() Element
-	// Deprecated: Location is not a property on the Location IDL interface.
-	// It's presence causes a logical circular dependency to the html package;
-	// so this will be removed in a future version.
-	// Location() Location
-	// unexported
 	parseFragment(reader io.Reader) (DocumentFragment, error)
 }
 
@@ -126,16 +120,8 @@ func (d *document) DocumentElement() Element {
 	return nil
 }
 
-func (d *document) NodeName() string { return "#document" }
-
-func (d *document) IsConnected() bool {
-	if d.ownerWindow == nil {
-		// TODO: Shouldn't be the case in real life, but tests can create documents
-		// without a window.
-		return false
-	}
-	return d.ownerWindow.Document() == d.getSelf()
-}
+func (d *document) NodeName() string  { return "#document" }
+func (d *document) IsConnected() bool { return true }
 
 func (d *document) GetElementById(id string) Element {
 	return rootNodeHelper{d}.GetElementById(id)
