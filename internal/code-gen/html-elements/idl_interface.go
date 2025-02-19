@@ -72,20 +72,13 @@ func (i IdlInterface) Generate() *jen.Statement {
 				}
 			}
 
-			var returnTypes *jen.Statement
-			if o.HasError {
-				returnTypes = jen.Params(o.ReturnType.Generate(), jen.Id("error"))
-			} else {
-				returnTypes = jen.Params(o.ReturnType.Generate())
-			}
-
 			if opRules.DocComments != "" {
 				fields = append(fields, generators.Raw(jen.Comment(opRules.DocComments)))
 			}
 			fields = append(fields, generators.Raw(
 				jen.Id(upperCaseFirstLetter(o.Name)).
 					Params(generators.ToJenCodes(args)...).
-					Add(returnTypes),
+					Add(o.ReturnType.ReturnParams(o.HasError)),
 			))
 		}
 	}

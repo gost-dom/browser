@@ -9,7 +9,7 @@ type URLSearchParams interface {
 	Size() int
 	Append(string, string)
 	Delete(string, string)
-	Get(string) string
+	Get(string) (string, bool)
 	GetAll(string) []string
 	Has(string, string) bool
 	Set(string, string)

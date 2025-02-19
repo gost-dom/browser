@@ -4,6 +4,6 @@ package html
 
 type DOMStringList interface {
 	Length() int
-	Item(int) string
+	Item(int) (string, bool)
 	Contains(string) bool
 }

@@ -19,7 +19,9 @@ func TestUrlSearchParamsAddValue(t *testing.T) {
 	u := &URLSearchParams{}
 	u.Append("foo", "bar")
 	assert.Equal(t, "foo=bar", u.String())
-	assert.Equal(t, "bar", u.Get("foo"))
+	v, found := u.Get("foo")
+	assert.True(t, found)
+	assert.Equal(t, "bar", v)
 
 	// Same value can be added twice
 	u.Append("foo", "baz")
@@ -31,19 +33,39 @@ func TestUrlSearchParamsAddValue(t *testing.T) {
 	assert.Equal(t, "foo=Bar+value", u.String(), "Query encoding")
 }
 
+func TestGet(t *testing.T) {
+	u := &URLSearchParams{}
+	u.Append("foo", "bar")
+
+	foundValue, ok := u.Get("foo")
+	assert.True(t, ok)
+	assert.Equal(t, "bar", foundValue)
+
+	missingValue, ok := u.Get("baz")
+	assert.False(t, ok)
+	assert.Equal(t, "", missingValue)
+
+}
+
 func TestParseUrlSearchParams(t *testing.T) {
 	// Test percent decoding
 	var u, err = ParseURLSearchParams("foo=bar%20value")
 	assert.NoError(t, err)
-	assert.Equal(t, "bar value", u.Get("foo"))
+	v, found := u.Get("foo")
+	assert.True(t, found)
+	assert.Equal(t, "bar value", v)
 
 	// Test + decoding
 	u, err = ParseURLSearchParams("foo=bar+value")
 	assert.NoError(t, err)
-	assert.Equal(t, "bar value", u.Get("foo"))
+	v, found = u.Get("foo")
+	assert.True(t, found)
+	assert.Equal(t, "bar value", v)
 
 	// Test leading ? is ignores
 	u, err = ParseURLSearchParams("?foo=bar%20value")
 	assert.NoError(t, err)
-	assert.Equal(t, "bar value", u.Get("foo"))
+	v, found = u.Get("foo")
+	assert.True(t, found)
+	assert.Equal(t, "bar value", v)
 }

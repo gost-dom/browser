@@ -6,6 +6,7 @@ import (
 )
 
 type URLSearchParams struct {
+	// Using netURL.Values
 	values netURL.Values
 }
 
@@ -19,9 +20,14 @@ func ParseURLSearchParams(s string) (URLSearchParams, error) {
 
 // Read
 
-func (p URLSearchParams) Size() int                  { panic("TODO") }
-func (p URLSearchParams) String() string             { return p.values.Encode() }
-func (p URLSearchParams) Get(key string) string      { return p.values.Get(key) }
+func (p URLSearchParams) Size() int      { panic("TODO") }
+func (p URLSearchParams) String() string { return p.values.Encode() }
+
+func (p URLSearchParams) Get(
+	key string,
+) (string, bool) {
+	return p.values.Get(key), p.values.Has(key)
+}
 func (p URLSearchParams) GetAll(key string) []string { return p.values[key] }
 func (p URLSearchParams) Has(string, string) bool    { panic("TODO") }
 

@@ -16,10 +16,15 @@ func TestURLSearchParamsShouldEmbedStringer(t *testing.T) {
 }
 
 func TestURLSearchParamsHaveSliceReturnValue(t *testing.T) {
-	// The stringifier is an unnamed operation and shouldn't be included in the
-	// go interface; but will generate an error if not handled in code
 	expect := newGomega(t)
 	g, err := getIdlInterfaceGenerator("urlinterfaces", "URLSearchParams")
 	expect(err).NotTo(gomega.HaveOccurred())
 	expect(g).To(HaveRenderedSubstring("\tGetAll(string) []string\n"))
+}
+
+func TestURLSearchParamsReturnFoundOnNullableReturnValues(t *testing.T) {
+	expect := newGomega(t)
+	g, err := getIdlInterfaceGenerator("urlinterfaces", "URLSearchParams")
+	expect(err).NotTo(gomega.HaveOccurred())
+	expect(g).To(HaveRenderedSubstring("\tGet(string) (string, bool)\n"))
 }
