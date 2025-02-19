@@ -19,10 +19,12 @@ func TestUrlSearchParamsAddValue(t *testing.T) {
 	u := &URLSearchParams{}
 	u.Append("foo", "bar")
 	assert.Equal(t, "foo=bar", u.String())
+	assert.Equal(t, "bar", u.Get("foo"))
 
 	// Same value can be added twice
 	u.Append("foo", "baz")
 	assert.Equal(t, "foo=bar&foo=baz", u.String())
+	assert.Equal(t, []string{"bar", "baz"}, u.GetAll("foo"))
 
 	u = &URLSearchParams{}
 	u.Append("foo", "Bar value")
