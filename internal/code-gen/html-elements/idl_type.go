@@ -9,6 +9,10 @@ import (
 type IdlType idl.Type
 
 func (s IdlType) Generate() *jen.Statement {
+	switch s.Kind {
+	case idl.KindSequence:
+		return s.generateSequence()
+	}
 	switch string(s.Name) {
 	case "boolean":
 		return jen.Id("bool")
@@ -23,4 +27,11 @@ func (s IdlType) Generate() *jen.Statement {
 	default:
 		return jen.Id(s.Name)
 	}
+}
+
+func (t IdlType) generateSequence() *jen.Statement {
+	if t.TypeParam == nil {
+		panic("IdlType.generateSequence: TypeParameter is nil for sequence type")
+	}
+	return jen.Op("[]").Add(IdlType(*t.TypeParam).Generate())
 }

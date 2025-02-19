@@ -16,3 +16,12 @@ func TestIdlTypeGeneratesCorrespondingGoType(t *testing.T) {
 	g.Expect(IdlType(DOMStringType)).To(HaveRendered("string"))
 	g.Expect(IdlType(DOMBooleanType)).To(HaveRendered("bool"))
 }
+
+func TestIdlTypeGeneratesSequenceTypes(t *testing.T) {
+	g := gomega.NewWithT(t)
+	stringSequence := idl.Type{
+		Kind:      idl.KindSequence,
+		TypeParam: &DOMStringType,
+	}
+	g.Expect(IdlType(stringSequence)).To(HaveRendered("[]string"))
+}

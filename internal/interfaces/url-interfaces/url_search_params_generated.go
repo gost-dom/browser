@@ -10,7 +10,7 @@ type URLSearchParams interface {
 	Append(string, string)
 	Delete(string, string)
 	Get(string) string
-	GetAll(string)
+	GetAll(string) []string
 	Has(string, string) bool
 	Set(string, string)
 	Sort()
