@@ -95,3 +95,18 @@ func TestURLSearchParamDelete(t *testing.T) {
 	_, found := u.Get("foo")
 	assert.False(t, found)
 }
+
+func TestURLSearchParamsSet(t *testing.T) {
+	var u URLSearchParams
+
+	// Add a new value
+	u.Set("key1", "a")
+	val, found := u.Get("key1")
+	assert.True(t, found)
+	assert.Equal(t, "a", val)
+
+	u.Append("key2", "a")
+	u.Append("key2", "b")
+	u.Set("key2", "c")
+	assert.Equal(t, []string{"c"}, u.GetAll("key2"))
+}

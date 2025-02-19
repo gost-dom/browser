@@ -6,10 +6,7 @@ import (
 	"strings"
 )
 
-type URLSearchParams struct {
-	// Using netURL.Values
-	values netURL.Values
-}
+type URLSearchParams struct{ values netURL.Values }
 
 func ParseURLSearchParams(s string) (URLSearchParams, error) {
 	if strings.HasPrefix(s, "?") {
@@ -44,8 +41,9 @@ func (p *URLSearchParams) ensureValid() {
 }
 
 func (p *URLSearchParams) Append(key string, val string) { p.ensureValid(); p.values.Add(key, val) }
-func (p *URLSearchParams) Delete(key string)             { p.values.Del(key) }
+func (p *URLSearchParams) Delete(key string)             { p.ensureValid(); p.values.Del(key) }
 func (p *URLSearchParams) DeleteValue(key string, val string) {
+	p.ensureValid()
 	if v, ok := p.values[key]; ok {
 		if i := slices.Index(v, val); i >= 0 {
 			p.values[key] = slices.Delete(v, i, i+1)
@@ -53,5 +51,7 @@ func (p *URLSearchParams) DeleteValue(key string, val string) {
 	}
 }
 
-func (p *URLSearchParams) Set(string, string) { panic("TODO") }
-func (p *URLSearchParams) Sort()              { panic("TODO") }
+func (p *URLSearchParams) Set(key string, val string) { p.ensureValid(); p.values.Set(key, val) }
+func (p *URLSearchParams) Sort() {
+	panic("URLSearchParams doesn't support Sorting in it's current implementation")
+}
