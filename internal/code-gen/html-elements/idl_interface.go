@@ -12,12 +12,13 @@ import (
 /* -------- IdlInterface -------- */
 
 type IdlInterface struct {
-	Name       string
-	Inherits   string
-	Rules      customrules.InterfaceRule
-	Attributes []IdlInterfaceAttribute
-	Operations []IdlInterfaceOperation
-	Includes   []IdlInterfaceInclude
+	Name           string
+	Inherits       string
+	HasStringifier bool
+	Rules          customrules.InterfaceRule
+	Attributes     []IdlInterfaceAttribute
+	Operations     []IdlInterfaceOperation
+	Includes       []IdlInterfaceInclude
 }
 
 func (i IdlInterface) Generate() *jen.Statement {
@@ -32,6 +33,10 @@ func (i IdlInterface) Generate() *jen.Statement {
 
 	for _, i := range i.Includes {
 		fields = append(fields, generators.Id(i.Name))
+	}
+
+	if i.HasStringifier {
+		fields = append(fields, generators.NewTypePackage("Stringer", "fmt"))
 	}
 
 	for _, a := range i.Attributes {
@@ -50,7 +55,8 @@ func (i IdlInterface) Generate() *jen.Statement {
 		if o.Stringifier && o.Name == "" {
 			continue
 		}
-		opRules := i.Rules.Operations[o.Name]
+		name := o.Name
+		opRules := i.Rules.Operations[name]
 		if !o.Static {
 			args := make([]generators.Generator, len(o.Arguments))
 			for i, a := range o.Arguments {
@@ -65,22 +71,34 @@ func (i IdlInterface) Generate() *jen.Statement {
 						jen.Id(a.Name).Add(jen.Op("...").Add(args[i].Generate())),
 					)
 				}
-			}
 
-			var returnTypes *jen.Statement
-			if o.HasError {
-				returnTypes = jen.Params(o.ReturnType.Generate(), jen.Id("error"))
-			} else {
-				returnTypes = jen.Params(o.ReturnType.Generate())
+				if name == "has" {
+					fmt.Println(
+						"Checking argument",
+						name,
+						o.Arguments[i].Name,
+						o.Arguments[i].Optional,
+					)
+				}
+				if i < len(o.Arguments)-1 {
+					nextArg := o.Arguments[i+1]
+					if nextArg.Optional {
+						fields = append(fields, generators.Raw(
+							jen.Id(upperCaseFirstLetter(name)).
+								Params(generators.ToJenCodes(args[0:i+1])...).
+								Add(o.ReturnType.ReturnParams(o.HasError))))
+						name = name + upperCaseFirstLetter(nextArg.Name)
+					}
+				}
 			}
 
 			if opRules.DocComments != "" {
 				fields = append(fields, generators.Raw(jen.Comment(opRules.DocComments)))
 			}
 			fields = append(fields, generators.Raw(
-				jen.Id(upperCaseFirstLetter(o.Name)).
+				jen.Id(upperCaseFirstLetter(name)).
 					Params(generators.ToJenCodes(args)...).
-					Add(returnTypes),
+					Add(o.ReturnType.ReturnParams(o.HasError)),
 			))
 		}
 	}

@@ -70,12 +70,21 @@ func (gen baseGenerator) GenerateInterface() g.Generator {
 	interfaces := make([]idl.Interface, 1+len(gen.idlType.Includes))
 	interfaces[0] = gen.idlType
 	copy(interfaces[1:], gen.idlType.Includes)
+	result := IdlInterface{
+		Name:     gen.idlType.Name,
+		Inherits: gen.idlType.InternalSpec.Inheritance,
+		Includes: includes,
+		Rules:    gen.rules,
+	}
 
 	for idx, i := range gen.idlType.Includes {
 		includes[idx] = IdlInterfaceInclude{i}
 	}
 
 	for _, a := range gen.idlType.Attributes {
+		if a.Stringifier {
+			result.HasStringifier = true
+		}
 		attributes = append(attributes, IdlInterfaceAttribute{
 			Name:     a.Name,
 			Type:     IdlType(a.Type),
@@ -83,21 +92,21 @@ func (gen baseGenerator) GenerateInterface() g.Generator {
 		})
 	}
 	for _, o := range gen.idlType.Operations {
+		if o.Stringifier {
+			result.HasStringifier = true
+			if o.Name == "" {
+				continue
+			}
+		}
 		operationRule := gen.rules.Operations[o.Name]
 		operations = append(
 			operations,
 			IdlInterfaceOperation{o, IdlType(o.ReturnType), operationRule.HasError},
 		)
 	}
-	// }
-	return IdlInterface{
-		Name:       gen.idlType.Name,
-		Inherits:   gen.idlType.InternalSpec.Inheritance,
-		Attributes: attributes,
-		Operations: operations,
-		Includes:   includes,
-		Rules:      gen.rules,
-	}
+	result.Attributes = attributes
+	result.Operations = operations
+	return result
 }
 
 /* -------- htmlElementGenerator -------- */

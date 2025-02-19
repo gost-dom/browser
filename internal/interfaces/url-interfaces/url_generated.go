@@ -2,7 +2,10 @@
 
 package urlinterfaces
 
+import "fmt"
+
 type URL interface {
+	fmt.Stringer
 	Href() string
 	SetHref(string)
 	Origin() string
@@ -22,7 +25,7 @@ type URL interface {
 	SetPathname(string)
 	Search() string
 	SetSearch(string)
-	SearchParams() string
+	SearchParams() URLSearchParams
 	Hash() string
 	SetHash(string)
 	ToJSON() (string, error)

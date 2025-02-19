@@ -2,13 +2,18 @@
 
 package urlinterfaces
 
+import "fmt"
+
 type URLSearchParams interface {
+	fmt.Stringer
 	Size() int
 	Append(string, string)
-	Delete(string, string)
-	Get(string) string
-	GetAll(string)
-	Has(string, string) bool
+	Delete(string)
+	DeleteValue(string, string)
+	Get(string) (string, bool)
+	GetAll(string) []string
+	Has(string) bool
+	HasValue(string, string) bool
 	Set(string, string)
 	Sort()
 }

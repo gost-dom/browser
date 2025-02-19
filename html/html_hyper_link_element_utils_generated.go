@@ -2,7 +2,10 @@
 
 package html
 
+import "fmt"
+
 type HTMLHyperlinkElementUtils interface {
+	fmt.Stringer
 	Href() string
 	SetHref(string)
 	Origin() string
