@@ -28,3 +28,13 @@ func TestURLSearchParamsReturnFoundOnNullableReturnValues(t *testing.T) {
 	expect(err).NotTo(gomega.HaveOccurred())
 	expect(g).To(HaveRenderedSubstring("\tGet(string) (string, bool)\n"))
 }
+
+func TestURLSearchParamsOptionalArgs(t *testing.T) {
+	expect := newGomega(t)
+	g, err := getIdlInterfaceGenerator("urlinterfaces", "URLSearchParams")
+	expect(err).NotTo(gomega.HaveOccurred())
+	expect(g).To(HaveRenderedSubstring("\tHas(string) bool\n\tHasValue(string, string) bool\n"))
+	expect(
+		g,
+	).To(HaveRenderedSubstring("\tDelete(string)\n\tDeleteValue(string, string)\n"))
+}
