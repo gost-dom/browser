@@ -25,6 +25,13 @@ func (p domParser) ParseReader(window Window, document *dom.Document, reader io.
 }
 
 func (p domParser) ParseFragment(
+	document dom.Document,
+	reader io.Reader,
+) (dom.DocumentFragment, error) {
+	return ParseFragment(document, reader)
+}
+
+func ParseFragment(
 	ownerDocument dom.Document,
 	reader io.Reader,
 ) (dom.DocumentFragment, error) {

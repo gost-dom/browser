@@ -1,7 +1,6 @@
 package html
 
 import (
-	"io"
 	"strings"
 
 	"github.com/gost-dom/browser/dom"
@@ -29,7 +28,7 @@ func mustAppendChild(p, c dom.Node) dom.Node {
 // NewHTMLDocument creates an HTML document for an about:blank page.
 //
 // The resulting document has an outer HTML similar to this, but there are no
-// guarantees about the actual content, so do not depend on this value.
+// guarantees about the actual content.
 //
 //	<html><head></head><body><h1>Gost-DOM</h1></body></html>
 func NewHTMLDocument(window Window) HTMLDocument {
@@ -46,31 +45,12 @@ func NewHTMLDocument(window Window) HTMLDocument {
 	return doc
 }
 
-type temporaryWindowWrapperUntilDeprecatedTypesAreRemoved struct {
-	dom.EventTarget
-	w Window
-}
-
-func newTemp(w Window) temporaryWindowWrapperUntilDeprecatedTypesAreRemoved {
-	return temporaryWindowWrapperUntilDeprecatedTypesAreRemoved{w, w}
-}
-
-func (r temporaryWindowWrapperUntilDeprecatedTypesAreRemoved) Document() dom.Document {
-	return r.w.Document()
-}
-
-func (r temporaryWindowWrapperUntilDeprecatedTypesAreRemoved) ParseFragment(
-	d dom.Document, reader io.Reader,
-) (dom.DocumentFragment, error) {
-	return r.w.ParseFragment(d, reader)
-}
-
 // newHTMLDocument is used internally to create an empty HTML when parsing an
 // HTML input.
 func newHTMLDocument(window Window) HTMLDocument {
 	var parent dom.DocumentParentWindow
 	if window != nil {
-		parent = newTemp(window)
+		parent = window
 	}
 	var result HTMLDocument = &htmlDocument{dom.NewDocument(parent), window}
 	result.SetSelf(result)
