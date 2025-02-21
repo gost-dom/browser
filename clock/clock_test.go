@@ -131,6 +131,19 @@ func (s *ClockTestSuite) TestImmediatesAreExecutedBeforeScheduledTasks() {
 	s.Assert().Equal([]string{"A", "A2", "A3", "A2A", "B"}, logs)
 }
 
+func (s *ClockTestSuite) TestImmediatesPanicWhenListDoesntReduce() {
+	c := clock.New(clock.IsoTime("2025-02-01T12:00:00Z"))
+	var task clock.Task
+	task = func() error {
+		c.AddMicrotask(task)
+		return nil
+	}
+
+	c.AddTask(clock.Relative(1*time.Millisecond), task)
+
+	s.Assert().Panics(func() { c.RunAll() })
+}
+
 func (s *ClockTestSuite) TestImmediatesPropagateErrors() {
 	c := clock.New(clock.IsoTime("2025-02-01T12:00:00Z"))
 	c.AddTask(clock.Relative(1*time.Millisecond), func() error {

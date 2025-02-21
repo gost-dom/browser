@@ -38,11 +38,23 @@ func New(options ...NewClockOption) *Clock {
 
 func (c *Clock) runMicrotasks() []error {
 	var errs []error
+	minLength := len(c.microtasks)
+	count := 0
 	for len(c.microtasks) > 0 {
 		t := c.microtasks[0]
 		c.microtasks = c.microtasks[1:]
 		if err := t(); err != nil {
 			errs = append(errs, err)
+		}
+		newLength := len(c.microtasks)
+		if newLength < minLength {
+			minLength = newLength
+			count = 0
+		} else {
+			count++
+			if count > c.MaxLoopWithoutDecrement {
+				panic("Clock: Size of pending microtasks isn't decreasing. Are tasks adding new tasks?")
+			}
 		}
 	}
 	return errs
