@@ -25,7 +25,9 @@ func (l v8EventListener) HandleEvent(e dom.Event) error {
 			func() {
 				defer l.ctx.endCallback()
 				if l.ctx.beginCallback() {
-					_, err = f.Call(l.val, event)
+					_, err1 := f.Call(l.val, event)
+					err2 := l.ctx.eventLoop.tick()
+					err = errors.Join(err1, err2)
 				}
 			}()
 		}
