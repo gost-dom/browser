@@ -3,13 +3,12 @@ package v8host
 import (
 	"errors"
 	"fmt"
-	"runtime"
 	"strings"
 	"sync"
-	"sync/atomic"
 
 	. "github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting"
@@ -17,6 +16,10 @@ import (
 	"github.com/tommie/v8go"
 	v8 "github.com/tommie/v8go"
 )
+
+// disposable represents a resource that needs cleanup when a context is closed.
+// E.g., cgo handles that need to be released.
+type disposable interface{ dispose() }
 
 type globalInstall struct {
 	name        string
@@ -50,72 +53,15 @@ func (h *V8ScriptHost) mustGetContext(v8ctx *v8.Context) *V8ScriptContext {
 }
 
 type V8ScriptContext struct {
-	htmxLoaded    bool
-	mu            *sync.RWMutex
-	workItemCount *atomic.Int64
-	host          *V8ScriptHost
-	v8ctx         *v8.Context
-	window        html.Window
-	pinner        runtime.Pinner
-	v8nodes       map[entity.ObjectId]*v8.Value
-	domNodes      map[entity.ObjectId]entity.Entity
-	eventLoop     *eventLoop
-	disposers     []disposable
-	disposing     bool
-	disposed      bool
-	closer        chan bool
-}
-
-func (c *V8ScriptContext) inc() bool {
-	return true
-	// c.mu.RLock()
-	// defer c.mu.RUnlock()
-	// return c.workItemCount.Add(1) > 0
-}
-
-func (c *V8ScriptContext) dec() { c.decN(1) }
-
-func (c *V8ScriptContext) decN(n int64) {
-	// if c.workItemCount.Add(-n) < 0 {
-	// 	go func() {
-	// 		c.mu.Lock()
-	// 		defer c.mu.Unlock()
-	// 		c.closer <- true
-	// 	}()
-	// }
-}
-
-// begin/end close are called when we want to close the context
-func (c *V8ScriptContext) beginClose() {
-	// c.closer = make(chan bool)
-	// c.dec()
-	// <-c.closer
-}
-
-func (c *V8ScriptContext) endClose() {}
-
-// begin/end callback are called when an event handler calls into script code
-func (c *V8ScriptContext) beginCallback() bool { return c.inc() }
-func (c *V8ScriptContext) endCallback()        { c.dec() }
-
-// begin/end script are called when Go code directly calls eval or run
-func (c *V8ScriptContext) beginScript() bool { return c.inc() }
-func (c *V8ScriptContext) endScript()        { c.dec() }
-
-// begin/end dispatch are called when something is about to be dispatched to the
-// event loop. Returns true if we are allowed to execute.
-func (c *V8ScriptContext) beginDispatch() bool { return c.inc() }
-func (c *V8ScriptContext) endDispatch()        {}
-
-// begin/end process are called when picking something from the event loop.
-// Returns true if we are allowed to execute.
-func (c *V8ScriptContext) beginProcess() bool { return c.inc() }
-
-func (c *V8ScriptContext) endProcess() {
-	// Event loop items count as two, one for when they were added, and one for
-	// whey were started. Theoretically, they probably don't need to mark
-	// themselves as started, and probably don't need to return a bool.
-	c.decN(2)
+	htmxLoaded bool
+	host       *V8ScriptHost
+	v8ctx      *v8.Context
+	window     html.Window
+	v8nodes    map[entity.ObjectId]*v8.Value
+	domNodes   map[entity.ObjectId]entity.Entity
+	eventLoop  *eventLoop
+	disposers  []disposable
+	disposed   bool
 }
 
 func (c *V8ScriptContext) cacheNode(obj *v8.Object, node entity.Entity) (*v8.Value, error) {
@@ -231,17 +177,6 @@ func createGlobals(host *V8ScriptHost) []globalInstall {
 	for _, class := range classes {
 		iter(class)
 	}
-
-	// if htmlElement, ok := uniqueNames["HTMLElement"]; ok {
-	// 	for _, cls := range htmlElements {
-	// 		if _, ok := uniqueNames[cls]; !ok {
-	// 			fn := NewIllegalConstructorBuilder[Element](host).constructor
-	// 			fn.Inherit(htmlElement)
-	// 			uniqueNames[cls] = fn
-	// 			result = append(result, globalInstall{cls, fn})
-	// 		}
-	// 	}
-	// }
 	return result
 }
 
@@ -361,8 +296,8 @@ func New() *V8ScriptHost {
 }
 
 func (host *V8ScriptHost) Close() {
-	// host.mu.Lock()
-	// defer host.mu.Unlock()
+	host.mu.Lock()
+	defer host.mu.Unlock()
 	var undiposedContexts []*V8ScriptContext
 	for _, ctx := range host.contexts {
 		undiposedContexts = append(undiposedContexts, ctx)
@@ -384,30 +319,39 @@ var global *v8.Object
 
 func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 	context := &V8ScriptContext{
-		mu:            new(sync.RWMutex),
-		workItemCount: new(atomic.Int64),
-		host:          host,
-		v8ctx:         v8.NewContext(host.iso, host.windowTemplate),
-		window:        w,
-		v8nodes:       make(map[entity.ObjectId]*v8.Value),
-		domNodes:      make(map[entity.ObjectId]entity.Entity),
+		host:     host,
+		v8ctx:    v8.NewContext(host.iso, host.windowTemplate),
+		window:   w,
+		v8nodes:  make(map[entity.ObjectId]*v8.Value),
+		domNodes: make(map[entity.ObjectId]entity.Entity),
 	}
 	errorCallback := func(err error) {
 		w.DispatchEvent(NewErrorEvent(err))
 	}
 	global = context.v8ctx.Global()
-	context.eventLoop = newEventLoop(context, global, errorCallback)
+	context.eventLoop = newEventLoop(context, errorCallback)
 	host.inspector.ContextCreated(context.v8ctx)
 	err := installPolyfills(context)
 	if err != nil {
 		// TODO: Handle
-		panic(err)
+		panic(
+			fmt.Sprintf(
+				"Error installing polyfills. Should not be possible on a passing build of Gost-DOM.\n  Please file an issue if this is a release version of Gost-DOM: %s\n  Error: %v",
+				constants.BUG_USSUE_URL,
+				err,
+			),
+		)
 	}
-	host.contexts[context.v8ctx] = context
 	context.cacheNode(global, w)
-	context.addDisposer(context.eventLoop.Start())
+	host.addContext(context)
 
 	return context
+}
+
+func (host *V8ScriptHost) addContext(ctx *V8ScriptContext) {
+	host.mu.Lock()
+	defer host.mu.Unlock()
+	host.contexts[ctx.v8ctx] = ctx
 }
 
 func must(err error) {
@@ -417,10 +361,6 @@ func must(err error) {
 }
 
 func (ctx *V8ScriptContext) Close() {
-	ctx.beginClose()
-	defer ctx.endClose()
-	ctx.mu.Lock()
-	defer ctx.mu.Unlock()
 	if ctx.disposed {
 		panic("Context already disposed")
 	}
@@ -430,23 +370,16 @@ func (ctx *V8ScriptContext) Close() {
 	for _, dispose := range ctx.disposers {
 		dispose.dispose()
 	}
-	ctx.pinner.Unpin()
-	// TODO: Synchronize
 	delete(ctx.host.contexts, ctx.v8ctx)
 	ctx.v8ctx.Close()
 }
 
 func (ctx *V8ScriptContext) addDisposer(disposer disposable) {
-	ctx.mu.Lock()
-	defer ctx.mu.Unlock()
 	ctx.disposers = append(ctx.disposers, disposer)
 }
 
 func (ctx *V8ScriptContext) runScript(script string) (res *v8.Value, err error) {
-	defer ctx.endScript()
-	if ctx.beginScript() {
-		res, err = ctx.v8ctx.RunScript(script, "")
-	}
+	res, err = ctx.v8ctx.RunScript(script, "")
 	ctx.eventLoop.tick()
 	return
 }
