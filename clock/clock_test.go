@@ -14,6 +14,15 @@ const feb1st2025_noon_milli int64 = feb1st2025_noon * 1000
 
 type ClockTestSuite struct {
 	suite.Suite
+	logs []string
+}
+
+func (s *ClockTestSuite) SetupTest() {
+	s.logs = nil
+}
+
+func (s *ClockTestSuite) log(l string) {
+	s.logs = append(s.logs, l)
 }
 
 func (s *ClockTestSuite) TestNewClock() {
@@ -22,20 +31,31 @@ func (s *ClockTestSuite) TestNewClock() {
 }
 
 func (s *ClockTestSuite) TestAdvance() {
-	var logs []string
-	var addLog = func(s string) { logs = append(logs, s) }
 	c := clock.New(clock.OfIsoString("2025-02-01T12:00:00Z"))
 
-	c.AddSafeTask(clock.Relative(101*time.Millisecond), func() { addLog("A") })
-	c.AddSafeTask(clock.Relative(100*time.Millisecond), func() { addLog("B") })
+	c.AddSafeTask(clock.Relative(101*time.Millisecond), func() { s.log("A") })
+	c.AddSafeTask(clock.Relative(100*time.Millisecond), func() { s.log("B") })
 	s.Assert().NoError(c.Advance(10 * time.Millisecond))
 	s.Assert().Equal(feb1st2025_noon_milli+10, c.Time.UnixMilli())
 
 	s.Assert().NoError(c.Advance(90 * time.Millisecond))
 	s.Assert().Equal(feb1st2025_noon_milli+100, c.Time.UnixMilli())
-	s.Assert().Equal([]string{"B"}, logs)
-
+	s.Assert().Equal([]string{"B"}, s.logs)
 }
+
+func (s *ClockTestSuite) TestCancelTask() {
+	c := clock.New()
+	c.AddSafeTask(clock.Relative(100*time.Millisecond), func() { s.log("A") })
+	handle := c.AddSafeTask(clock.Relative(200*time.Millisecond), func() { s.log("B") })
+	c.AddSafeTask(clock.Relative(300*time.Millisecond), func() { s.log("C") })
+
+	c.Advance(150 * time.Millisecond)
+	c.Cancel(handle)
+	c.Advance(150 * time.Millisecond)
+
+	s.Assert().Equal([]string{"A", "C"}, s.logs)
+}
+
 func (s *ClockTestSuite) TestInitialTimeIsRelevant() {
 	// Without any defaults, the clock would start at UTS 0. This can be
 	// problematic converting to a local time on the Western Hemisphere, as that
@@ -64,57 +84,51 @@ func (s *ClockTestSuite) TestRunAll() {
 }
 
 func (s *ClockTestSuite) TestOrderedExecution() {
-	var logs []string
-	var addLog = func(s string) { logs = append(logs, s) }
 	c := clock.New(clock.OfIsoString("2025-02-01T12:00:00Z"))
-	c.AddSafeTask(clock.Relative(200*time.Millisecond), func() { addLog("B") })
-	c.AddSafeTask(clock.Relative(100*time.Millisecond), func() { addLog("A") })
-	c.AddSafeTask(clock.Relative(300*time.Millisecond), func() { addLog("C") })
+	c.AddSafeTask(clock.Relative(200*time.Millisecond), func() { s.log("B") })
+	c.AddSafeTask(clock.Relative(100*time.Millisecond), func() { s.log("A") })
+	c.AddSafeTask(clock.Relative(300*time.Millisecond), func() { s.log("C") })
 	err := c.RunAll()
 	s.Assert().NoError(err)
-	s.Assert().Equal([]string{"A", "B", "C"}, logs)
+	s.Assert().Equal([]string{"A", "B", "C"}, s.logs)
 	s.Assert().Equal(feb1st2025_noon_milli+300, c.Time.UnixMilli())
 }
 
 func (s *ClockTestSuite) TestErrorsAreReturned() {
-	var logs []string
-	var addLog = func(s string) { logs = append(logs, s) }
 	c := clock.New(clock.OfIsoString("2025-02-01T12:00:00Z"))
 	c.AddTask(clock.Relative(200*time.Millisecond), func() error {
-		addLog("B")
+		s.log("B")
 		return errors.New("Error B")
 	})
-	c.AddSafeTask(clock.Relative(100*time.Millisecond), func() { addLog("A") })
-	c.AddSafeTask(clock.Relative(300*time.Millisecond), func() { addLog("C") })
+	c.AddSafeTask(clock.Relative(100*time.Millisecond), func() { s.log("A") })
+	c.AddSafeTask(clock.Relative(300*time.Millisecond), func() { s.log("C") })
 
 	err := c.RunAll()
 	s.Assert().Error(err)
 	// Subsequent tasks should be performed
-	s.Assert().Equal([]string{"A", "B", "C"}, logs)
+	s.Assert().Equal([]string{"A", "B", "C"}, s.logs)
 	s.Assert().Equal(feb1st2025_noon_milli+300, c.Time.UnixMilli())
 }
 
 func (s *ClockTestSuite) TestImmediatesAreExecutedBeforeScheduledTasks() {
-	var logs []string
-	var addLog = func(s string) { logs = append(logs, s) }
 	c := clock.New(clock.OfIsoString("2025-02-01T12:00:00Z"))
 	c.AddSafeTask(clock.Relative(1*time.Millisecond), func() {
-		addLog("A")
+		s.log("A")
 		c.AddSafeMicrotask(func() {
-			addLog("A2")
-			c.AddSafeMicrotask(func() { addLog("A2A") })
+			s.log("A2")
+			c.AddSafeMicrotask(func() { s.log("A2A") })
 		})
-		c.AddSafeMicrotask(func() { addLog("A3") })
+		c.AddSafeMicrotask(func() { s.log("A3") })
 	})
 	c.AddTask(
 		clock.Relative(1*time.Millisecond),
-		func() error { addLog("B"); return errors.New("Error B") },
+		func() error { s.log("B"); return errors.New("Error B") },
 	)
 
 	err := c.RunAll()
 	s.Assert().Error(err)
 	// Subsequent tasks should be performed
-	s.Assert().Equal([]string{"A", "A2", "A3", "A2A", "B"}, logs)
+	s.Assert().Equal([]string{"A", "A2", "A3", "A2A", "B"}, s.logs)
 }
 
 func (s *ClockTestSuite) TestImmediatesPanicWhenListDoesntReduce() {
