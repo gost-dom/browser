@@ -7,11 +7,20 @@ import (
 	"time"
 )
 
-type Task func() error
+// A TaskCallback is the callback registered for a [FutureTask].
+type TaskCallback func() error
 
+// A SafeTaskCallback is the callback that registered for a [FutureTask] that
+// can't generate an err.r
+type SafeTaskCallback func()
+
+func (t SafeTaskCallback) toTask() TaskCallback { return func() error { t(); return nil } }
+
+// A FutureTask represents a task to run when simulated time advances past the
+// specified Time value.
 type FutureTask struct {
 	Time time.Time
-	Task Task
+	Task TaskCallback
 }
 
 // Clock simulates passing of time, as well as potential future tasks. Simulated
@@ -39,7 +48,9 @@ type Clock struct {
 	// new minimum of remaining number of tasks is noticed
 	MaxLoopWithoutDecrement int
 	tasks                   []FutureTask
-	microtasks              []Task
+	// The tasks in the microtask queue must execute before the next task in the
+	// task queue, even if next tasks is set to execute now.
+	microtasks []TaskCallback
 }
 
 func New(options ...NewClockOption) *Clock {
@@ -119,13 +130,14 @@ func (c *Clock) Advance(d time.Duration) error {
 	return errors.Join(errs...)
 }
 
-func (c *Clock) AddMicrotask(task Task) {
+func (c *Clock) AddMicrotask(task TaskCallback) {
 	c.microtasks = append(c.microtasks, task)
 }
+func (c *Clock) AddSafeMicrotask(task SafeTaskCallback) { c.AddMicrotask(task.toTask()) }
 
 // Schedules a task to run at a specified time in the future. Panics if the time
 // is in the past.
-func (c *Clock) AddTask(when FutureTimeSpec, task Task) {
+func (c *Clock) AddTask(when FutureTimeSpec, task TaskCallback) {
 	taskTime := when(c.Time)
 	if taskTime.Before(c.Time) {
 		panic(
@@ -146,6 +158,12 @@ func (c *Clock) AddTask(when FutureTimeSpec, task Task) {
 	} else {
 		c.tasks = append(c.tasks, future)
 	}
+}
+
+// Schedules a task to run at a specified time in the future. Panics if the time
+// is in the past.
+func (c *Clock) AddSafeTask(when FutureTimeSpec, task SafeTaskCallback) {
+	c.AddTask(when, task.toTask())
 }
 
 // Keeps running as long as there are tasks in the task queue. New tasks
