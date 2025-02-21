@@ -15,13 +15,21 @@ type FutureTask struct {
 }
 
 type Clock struct {
-	Time       time.Time
-	tasks      []FutureTask
-	microtasks []Task
+	Time time.Time
+	// Sets the number of times the function allows running without seeing a
+	// reduction in task list size. I.e., the task list doesn't need to be
+	// emptied after the specified no of tasks executed, but the list of pending
+	// tasks must at least have been lower. The counter is reset every time a
+	// new minimum of remaining number of tasks is noticed
+	MaxLoopWithoutDecrement int
+	tasks                   []FutureTask
+	microtasks              []Task
 }
 
 func New(options ...NewClockOption) *Clock {
-	c := new(Clock)
+	c := &Clock{
+		MaxLoopWithoutDecrement: 100,
+	}
 	for _, o := range options {
 		o(c)
 	}
@@ -40,9 +48,11 @@ func (c *Clock) runMicrotasks() []error {
 	return errs
 }
 
-func (c *Clock) runTo(endTime time.Time) []error {
+func (c *Clock) runWhile(predicate func() bool) []error {
 	var errs []error
-	for len(c.tasks) > 0 && !c.tasks[0].Time.After(endTime) {
+	minLength := len(c.tasks)
+	count := 0
+	for predicate() {
 		task := c.tasks[0]
 		c.tasks = c.tasks[1:]
 		c.Time = task.Time
@@ -50,14 +60,28 @@ func (c *Clock) runTo(endTime time.Time) []error {
 			errs = append(errs, err)
 		}
 		errs = append(errs, c.runMicrotasks()...)
+		newLength := len(c.tasks)
+		if newLength < minLength {
+			minLength = newLength
+			count = 0
+		} else {
+			count++
+			if count > c.MaxLoopWithoutDecrement {
+				panic("Clock: Size of pending tasks isn't decreasing. Are tasks adding new tasks?")
+			}
+		}
+
 	}
-	c.Time = endTime
 	return errs
 }
 
 func (c *Clock) Advance(d time.Duration) error {
 	endTime := c.Time.Add(d)
-	return errors.Join(c.runTo(endTime)...)
+	errs := c.runWhile(func() bool {
+		return len(c.tasks) > 0 && !c.tasks[0].Time.After(endTime)
+	})
+	c.Time = endTime
+	return errors.Join(errs...)
 }
 
 func (c *Clock) AddMicrotask(task Task) {
@@ -78,11 +102,25 @@ func (c *Clock) AddTask(when FutureTimeSpec, task Task) {
 	}
 }
 
+// Keeps running as long as there are tasks in the task queue. New tasks
+// appended while running will also run. Panics if the task list doesn't
+// decrease in size.
+//
+// A note about panic. If you call this, and have an active setInterval, this
+// could go into an infinite loop. It accomodate this, the implementation
+// monitors the task list size. If the task list size doesn't decrease after a
+// default of 100 iterations (configuratble on [Clock.MaxLoopWithoutDecrement]),
+// it will panic.
+//
+// To test code that uses a setInterval, you can call [Clock.Advance] instead.
+//
+// Why panic, not error? This is to be executed from a test, that _may_ or _may
+// not_ care about the error itself, i.e., the test may not assert success. This
+// case however, is an issue in the test case that the developer should be aware
+// of.
 func (c *Clock) RunAll() error {
-	var errs []error
-	for len(c.tasks) > 0 {
-		errs = append(errs, c.runTo(c.tasks[0].Time)...)
-	}
+	errs := c.runWhile(func() bool { return len(c.tasks) > 0 })
+
 	return errors.Join(errs...)
 }
 

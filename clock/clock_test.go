@@ -142,7 +142,42 @@ func (s *ClockTestSuite) TestImmediatesPropagateErrors() {
 
 	err := c.RunAll()
 	s.Assert().Error(err, "Microtask error")
+}
 
+func (s *ClockTestSuite) TestRepeatingTasksGeneratePanicOnRunAll() {
+	c := clock.New(clock.IsoTime("2025-02-01T12:00:00Z"))
+	var task clock.Task
+	task = func() error {
+		c.AddTask(clock.Relative(100*time.Millisecond), task)
+		return nil
+	}
+	c.AddTask(clock.Relative(100*time.Millisecond), task)
+
+	s.Assert().Panics(func() { c.RunAll() })
+}
+
+func (s *ClockTestSuite) TestSingleRepeatingTask() {
+	c := clock.New()
+	var task clock.Task
+	task = func() error {
+		c.AddTask(clock.Relative(1*time.Millisecond), func() error { return nil })
+		return nil
+	}
+	c.AddTask(clock.Relative(1*time.Millisecond), task)
+
+	s.Assert().NotPanics(func() { c.Advance(100 * time.Millisecond) })
+}
+
+func (s *ClockTestSuite) TestRepeatingTasksGeneratePanicOnRunAdvance() {
+	c := clock.New(clock.IsoTime("2025-02-01T12:00:00Z"))
+	var task clock.Task
+	task = func() error {
+		c.AddTask(clock.Relative(1*time.Millisecond), task)
+		return nil
+	}
+	c.AddTask(clock.Relative(1*time.Millisecond), task)
+
+	s.Assert().Panics(func() { c.Advance(1000 * time.Millisecond) })
 }
 
 func TestClock(t *testing.T) {
