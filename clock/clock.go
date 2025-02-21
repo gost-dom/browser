@@ -53,12 +53,25 @@ type Clock struct {
 	microtasks []TaskCallback
 }
 
+// Creates a new clock. If the options don't set a specific time, the clock is
+// initialised with the current system time as the initial simulated wall clock
+// time.
+//
+// If tests depend on an actual time, e.g., verifying a local time displaed in
+// the user interface, then test code should pass a concrete starting time;
+// letting the test execution be independent of the running environment.
+//
+// The option should only be left out if the test only needs to verify behaviour
+// due to passing of time. E.g., testing throttling/debouncing/timeouts.
 func New(options ...NewClockOption) *Clock {
 	c := &Clock{
 		MaxLoopWithoutDecrement: 100,
 	}
 	for _, o := range options {
 		o(c)
+	}
+	if c.Time.IsZero() {
+		c.Time = time.Now()
 	}
 	return c
 }
