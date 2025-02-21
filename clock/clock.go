@@ -1,3 +1,4 @@
+// Package clock provides a simulated time for Gost-DOM.
 package clock
 
 import (
@@ -7,27 +8,31 @@ import (
 	"time"
 )
 
-// A TaskCallback is the callback registered for a [FutureTask].
+type TaskHandle int
+
+// A TaskCallback is the callback registered for a [futureTask].
 type TaskCallback func() error
 
-// A SafeTaskCallback is the callback that registered for a [FutureTask] that
+// A SafeTaskCallback is the callback that registered for a [futureTask] that
 // can't generate an err.r
 type SafeTaskCallback func()
 
 func (t SafeTaskCallback) toTask() TaskCallback { return func() error { t(); return nil } }
 
-// A FutureTask represents a task to run when simulated time advances past the
+// A futureTask represents a task to run when simulated time advances past the
 // specified Time value.
-type FutureTask struct {
-	Time time.Time
-	Task TaskCallback
+type futureTask struct {
+	time   time.Time
+	task   TaskCallback
+	handle TaskHandle
 }
 
 // Clock simulates passing of time, as well as potential future tasks. Simulated
-// Time can be advanced using [Clock.Advance] or [Clock.RunAll] which will
-// execute all tasks at the simulated time they are supposed to run. Both
-// functions will return an error if any of the executed tasks return an error;
-// but they can also panic!
+// Time can be advanced using [Clock.Advance] or [Clock.RunAll]. The zero value
+// for Clock represents Unix time 0, and will not panic.
+//
+// Advance and RunAll will return an error if any of the executed tasks return
+// an error; Advance and RunAll panics if the task list isn't reducing.
 //
 // Advancing the clock panics if the task queue isn't decreasing, i.e, tasks are
 // adding new tasks. This will happen if a JavaScript call to setInterval isn't
@@ -39,18 +44,22 @@ type FutureTask struct {
 // even assert on it's precense when testing error conditions. But a task list
 // that doesn't decrease is an error in the test itself, that the developer
 // should be notified of; which is why the design is a panic.
+//
+// The behaviour is configurable by the MaxLoopWithoutDecrement value.
 type Clock struct {
 	Time time.Time
-	// Sets the number of times the function allows running without seeing a
+
+	// Sets the number of times a task is allowed to run without seeing a
 	// reduction in task list size. I.e., the task list doesn't need to be
-	// emptied after the specified no of tasks executed, but the list of pending
-	// tasks must at least have been lower. The counter is reset every time a
-	// new minimum of remaining number of tasks is noticed
+	// emptied after the specified no of tasks executed, but the smallest
+	// observed size of the queue must have decreased. The counter is reset
+	// every time a new minimum of remaining number of tasks is noticed
 	MaxLoopWithoutDecrement int
-	tasks                   []FutureTask
+	tasks                   []futureTask
 	// The tasks in the microtask queue must execute before the next task in the
 	// task queue, even if next tasks is set to execute now.
 	microtasks []TaskCallback
+	nextHandle TaskHandle
 }
 
 // Creates a new clock. If the options don't set a specific time, the clock is
@@ -107,8 +116,8 @@ func (c *Clock) runWhile(predicate func() bool) []error {
 	for predicate() {
 		task := c.tasks[0]
 		c.tasks = c.tasks[1:]
-		c.Time = task.Time
-		if err := task.Task(); err != nil {
+		c.Time = task.time
+		if err := task.task(); err != nil {
 			errs = append(errs, err)
 		}
 		errs = append(errs, c.runMicrotasks()...)
@@ -137,10 +146,22 @@ func (c *Clock) runWhile(predicate func() bool) []error {
 func (c *Clock) Advance(d time.Duration) error {
 	endTime := c.Time.Add(d)
 	errs := c.runWhile(func() bool {
-		return len(c.tasks) > 0 && !c.tasks[0].Time.After(endTime)
+		return len(c.tasks) > 0 && !c.tasks[0].time.After(endTime)
 	})
 	c.Time = endTime
 	return errors.Join(errs...)
+}
+
+// Cancel removes the task with the specified handle from the task list, if
+// present. Ignored if no task if found.
+func (c *Clock) Cancel(handle TaskHandle) {
+	idx := slices.IndexFunc(
+		c.tasks,
+		func(t futureTask) bool { return t.handle == handle },
+	)
+	if idx >= 0 {
+		c.tasks = slices.Delete(c.tasks, idx, idx+1)
+	}
 }
 
 func (c *Clock) AddMicrotask(task TaskCallback) {
@@ -148,9 +169,15 @@ func (c *Clock) AddMicrotask(task TaskCallback) {
 }
 func (c *Clock) AddSafeMicrotask(task SafeTaskCallback) { c.AddMicrotask(task.toTask()) }
 
+func (c *Clock) generateHandle() TaskHandle {
+	c.nextHandle++
+	return c.nextHandle
+}
+
 // Schedules a task to run at a specified time in the future. Panics if the time
 // is in the past.
-func (c *Clock) AddTask(when FutureTimeSpec, task TaskCallback) {
+func (c *Clock) AddTask(when FutureTimeSpec, task TaskCallback) TaskHandle {
+	handle := c.generateHandle()
 	taskTime := when(c.Time)
 	if taskTime.Before(c.Time) {
 		panic(
@@ -161,22 +188,24 @@ func (c *Clock) AddTask(when FutureTimeSpec, task TaskCallback) {
 			),
 		)
 	}
-	future := FutureTask{
-		Time: taskTime,
-		Task: task,
+	future := futureTask{
+		time:   taskTime,
+		task:   task,
+		handle: handle,
 	}
-	idx := slices.IndexFunc(c.tasks, func(t FutureTask) bool { return t.Time.After(taskTime) })
+	idx := slices.IndexFunc(c.tasks, func(t futureTask) bool { return t.time.After(taskTime) })
 	if idx >= 0 {
 		c.tasks = slices.Insert(c.tasks, idx, future)
 	} else {
 		c.tasks = append(c.tasks, future)
 	}
+	return handle
 }
 
 // Schedules a task to run at a specified time in the future. Panics if the time
 // is in the past.
-func (c *Clock) AddSafeTask(when FutureTimeSpec, task SafeTaskCallback) {
-	c.AddTask(when, task.toTask())
+func (c *Clock) AddSafeTask(when FutureTimeSpec, task SafeTaskCallback) TaskHandle {
+	return c.AddTask(when, task.toTask())
 }
 
 // Keeps running as long as there are tasks in the task queue. New tasks
