@@ -131,6 +131,14 @@ func (s *ClockTestSuite) TestImmediatesAreExecutedBeforeScheduledTasks() {
 	s.Assert().Equal([]string{"A", "A2", "A3", "A2A", "B"}, s.logs)
 }
 
+func (s *ClockTestSuite) TestTick() {
+	c := clock.New()
+	c.AddSafeTask(clock.Immediate, func() { s.log("Task") })
+	c.AddSafeMicrotask(func() { s.log("Microtask") })
+	c.Tick()
+	s.Assert().Equal([]string{"Microtask", "Task"}, s.logs)
+}
+
 func (s *ClockTestSuite) TestImmediatesPanicWhenListDoesntReduce() {
 	c := clock.New(clock.OfIsoString("2025-02-01T12:00:00Z"))
 	var task clock.SafeTaskCallback

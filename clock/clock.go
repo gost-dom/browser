@@ -145,12 +145,17 @@ func (c *Clock) runWhile(predicate func() bool) []error {
 // task list doesn't decrease in size. See [Clock] documentation for more info.
 func (c *Clock) Advance(d time.Duration) error {
 	endTime := c.Time.Add(d)
-	errs := c.runWhile(func() bool {
+	errs := c.runMicrotasks()
+	errs = append(errs, c.runWhile(func() bool {
 		return len(c.tasks) > 0 && !c.tasks[0].time.After(endTime)
-	})
+	})...)
 	c.Time = endTime
 	return errors.Join(errs...)
 }
+
+// Tick runs all tasks scheduled for immediate execution. This is synonymous
+// with calling Advance(0).
+func (c *Clock) Tick() error { return c.Advance(0) }
 
 // Cancel removes the task with the specified handle from the task list, if
 // present. Ignored if no task if found.
@@ -258,3 +263,6 @@ func Relative(d time.Duration) FutureTimeSpec {
 		return t.Add(d)
 	}
 }
+
+// Immediate is a FutureTimeSpec indicating the task should be scheduled "now".
+var Immediate FutureTimeSpec = func(t time.Time) time.Time { return t }
