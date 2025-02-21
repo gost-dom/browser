@@ -7,6 +7,7 @@ import (
 	netURL "net/url"
 	"strings"
 
+	"github.com/gost-dom/browser/clock"
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
@@ -29,6 +30,7 @@ type ScriptContext interface {
 	// is not needed, as eval could generate an error if the value cannot be
 	// converted to a go-type.
 	Run(script string) error
+	Clock() *clock.Clock
 	Close()
 }
 
@@ -37,6 +39,7 @@ type Window interface {
 	entity.Entity
 	Document() dom.Document
 	Close()
+	Clock() *clock.Clock
 	Navigate(string) error // TODO: Remove, perhaps? for testing
 	LoadHTML(string) error // TODO: Remove, for testing
 	Eval(string) (any, error)
@@ -279,6 +282,10 @@ func (w *window) Location() Location {
 		u = new(netURL.URL)
 	}
 	return newLocation(u)
+}
+
+func (w *window) Clock() *clock.Clock {
+	return w.scriptContext.Clock()
 }
 
 func (w *window) Close() {

@@ -1,8 +1,10 @@
 package v8host
 
 import (
+	"errors"
 	"log/slog"
 	"runtime/debug"
+	"time"
 
 	"github.com/gost-dom/browser/clock"
 	"github.com/gost-dom/browser/internal/log"
@@ -14,13 +16,12 @@ type workItem struct {
 }
 
 type eventLoop struct {
-	clock   *clock.Clock
 	ctx     *V8ScriptContext
 	errorCb func(error)
 }
 
 func (l *eventLoop) tick() error {
-	return l.clock.Tick()
+	return l.ctx.clock.Tick()
 }
 
 func newWorkItem(fn *v8.Function) workItem {
@@ -28,8 +29,8 @@ func newWorkItem(fn *v8.Function) workItem {
 }
 
 // dispatch places an item on the event loop to be executed immediately
-func (l *eventLoop) dispatch(task clock.TaskCallback) {
-	l.clock.AddSafeTask(clock.Immediate, func() {
+func (l *eventLoop) dispatch(task clock.TaskCallback, delay int) {
+	l.ctx.clock.AddSafeTask(clock.Relative(time.Duration(delay)*time.Millisecond), func() {
 		if err := task(); err != nil { //w.fn.Call(l.globalObject); err != nil {
 			l.errorCb(err)
 		}
@@ -37,7 +38,7 @@ func (l *eventLoop) dispatch(task clock.TaskCallback) {
 }
 
 func newEventLoop(context *V8ScriptContext, cb func(error)) *eventLoop {
-	return &eventLoop{clock.New(), context, cb}
+	return &eventLoop{context, cb}
 }
 
 func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.ObjectTemplate) {
@@ -51,8 +52,9 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 				ctx := host.mustGetContext(info.Context())
 				helper := newArgumentHelper(host, info)
 				f, err1 := helper.getFunctionArg(0)
-				// delay, err2 := helper.GetInt32Arg(1)
-				if err1 == nil {
+				delay, err2 := helper.getInt32Arg(1)
+				err := errors.Join(err1, err2)
+				if err == nil {
 					ctx.eventLoop.dispatch(func() error {
 						_, err := f.Call(info.Context().Global())
 						if err != nil {
@@ -65,8 +67,7 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 						}
 
 						return err
-
-					})
+					}, int(delay))
 				}
 				// TODO: Return a cancel token
 				return v8.Undefined(iso), err1

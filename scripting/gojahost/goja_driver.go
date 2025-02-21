@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/gost-dom/browser/clock"
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/scripting"
@@ -144,6 +145,7 @@ func (d *gojaScriptHost) NewContext(window html.Window) html.ScriptContext {
 	vm.SetFieldNameMapper(propertyNameMapper{})
 	result := &GojaContext{
 		vm:           vm,
+		clock:        clock.New(),
 		window:       window,
 		wrappedGoObj: g.NewSymbol(internal_symbol_name),
 		cachedNodes:  make(map[int32]g.Value),
@@ -186,11 +188,14 @@ func (d *gojaScriptHost) Close() {}
 
 type GojaContext struct {
 	vm           *g.Runtime
+	clock        *clock.Clock
 	window       html.Window
 	globals      map[string]function
 	wrappedGoObj *g.Symbol
 	cachedNodes  map[int32]g.Value
 }
+
+func (c *GojaContext) Clock() *clock.Clock { return c.clock }
 
 func (i *GojaContext) Close() {}
 
