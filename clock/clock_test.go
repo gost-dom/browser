@@ -36,6 +36,22 @@ func (s *ClockTestSuite) TestAdvance() {
 	s.Assert().Equal([]string{"B"}, logs)
 
 }
+func (s *ClockTestSuite) TestInitialTimeIsRelevant() {
+	// Without any defaults, the clock would start at UTS 0. This can be
+	// problematic converting to a local time on the Western Hemisphere, as that
+	// could result in a negative time.
+
+	// A sensible default is to use the current system time as the default
+	// starting time.
+	currentTime := time.Now()
+	c := clock.New()
+
+	// This is pretty vague specification, but the test is not too specific
+	// about what the time should be, to allow some deliberate jitter in the
+	// clock. Just make sure we're in the right ballpark of a sensible default.
+	s.Assert().True(c.Time.After(currentTime.Add(-time.Second)))
+	s.Assert().True(c.Time.Before(currentTime.Add(time.Second)))
+}
 
 func (s *ClockTestSuite) TestRunAll() {
 	var runCount int
