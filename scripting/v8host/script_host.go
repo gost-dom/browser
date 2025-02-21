@@ -6,6 +6,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/gost-dom/browser/clock"
 	. "github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/constants"
@@ -61,6 +62,7 @@ type V8ScriptContext struct {
 	domNodes   map[entity.ObjectId]entity.Entity
 	eventLoop  *eventLoop
 	disposers  []disposable
+	clock      *clock.Clock
 	disposed   bool
 }
 
@@ -320,6 +322,7 @@ var global *v8.Object
 func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 	context := &V8ScriptContext{
 		host:     host,
+		clock:    clock.New(),
 		v8ctx:    v8.NewContext(host.iso, host.windowTemplate),
 		window:   w,
 		v8nodes:  make(map[entity.ObjectId]*v8.Value),
@@ -347,6 +350,8 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 
 	return context
 }
+
+func (ctx *V8ScriptContext) Clock() *clock.Clock { return ctx.clock }
 
 func (host *V8ScriptHost) addContext(ctx *V8ScriptContext) {
 	host.mu.Lock()
