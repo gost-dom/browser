@@ -1,6 +1,7 @@
 package clock
 
 import (
+	"errors"
 	"fmt"
 	"slices"
 	"time"
@@ -14,8 +15,9 @@ type FutureTask struct {
 }
 
 type Clock struct {
-	Time  time.Time
-	tasks []FutureTask
+	Time       time.Time
+	tasks      []FutureTask
+	microtasks []Task
 }
 
 func New(options ...NewClockOption) *Clock {
@@ -26,8 +28,40 @@ func New(options ...NewClockOption) *Clock {
 	return c
 }
 
-func (c *Clock) Advance(d time.Duration) {
-	c.Time = c.Time.Add(d)
+func (c *Clock) runMicrotasks() []error {
+	var errs []error
+	for len(c.microtasks) > 0 {
+		t := c.microtasks[0]
+		c.microtasks = c.microtasks[1:]
+		if err := t(); err != nil {
+			errs = append(errs, err)
+		}
+	}
+	return errs
+}
+
+func (c *Clock) runTo(endTime time.Time) []error {
+	var errs []error
+	for len(c.tasks) > 0 && !c.tasks[0].Time.After(endTime) {
+		task := c.tasks[0]
+		c.tasks = c.tasks[1:]
+		c.Time = task.Time
+		if err := task.Task(); err != nil {
+			errs = append(errs, err)
+		}
+		errs = append(errs, c.runMicrotasks()...)
+	}
+	c.Time = endTime
+	return errs
+}
+
+func (c *Clock) Advance(d time.Duration) error {
+	endTime := c.Time.Add(d)
+	return errors.Join(c.runTo(endTime)...)
+}
+
+func (c *Clock) AddMicrotask(task Task) {
+	c.microtasks = append(c.microtasks, task)
 }
 
 func (c *Clock) AddTask(when FutureTimeSpec, task Task) {
@@ -45,13 +79,11 @@ func (c *Clock) AddTask(when FutureTimeSpec, task Task) {
 }
 
 func (c *Clock) RunAll() error {
+	var errs []error
 	for len(c.tasks) > 0 {
-		task := c.tasks[0]
-		c.tasks = c.tasks[1:]
-		c.Time = task.Time
-		task.Task()
+		errs = append(errs, c.runTo(c.tasks[0].Time)...)
 	}
-	return nil
+	return errors.Join(errs...)
 }
 
 /* -------- Options -------- */
