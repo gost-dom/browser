@@ -1,8 +1,6 @@
 package v8host_test
 
 import (
-	"time"
-
 	. "github.com/gost-dom/browser/dom"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -10,15 +8,16 @@ import (
 
 var _ = Describe("EventLoop", func() {
 	It("Defers execution", func() {
-		Skip("Hmmm")
-		ctx := NewTestContext()
+		ctx := NewTestContext(IgnoreUnhandledErrors)
 		c := make(chan bool)
 		defer close(c)
 
 		ctx.Window().
 			AddEventListener("go:home",
 				NewEventHandlerFunc(func(e Event) error {
-					c <- true
+					go func() {
+						c <- true
+					}()
 					return nil
 				}))
 		Expect(
@@ -48,7 +47,6 @@ var _ = Describe("EventLoop", func() {
 				val`,
 			),
 		).To(BeNil())
-		<-time.After(10 * time.Millisecond)
 		Expect(ctx.Eval(`val`)).To(BeEquivalentTo(42))
 	})
 })

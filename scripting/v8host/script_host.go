@@ -67,28 +67,29 @@ type V8ScriptContext struct {
 }
 
 func (c *V8ScriptContext) inc() bool {
-	c.mu.RLock()
-	defer c.mu.RUnlock()
-	return c.workItemCount.Add(1) > 0
+	return true
+	// c.mu.RLock()
+	// defer c.mu.RUnlock()
+	// return c.workItemCount.Add(1) > 0
 }
 
 func (c *V8ScriptContext) dec() { c.decN(1) }
 
 func (c *V8ScriptContext) decN(n int64) {
-	if c.workItemCount.Add(-n) < 0 {
-		go func() {
-			c.mu.Lock()
-			defer c.mu.Unlock()
-			c.closer <- true
-		}()
-	}
+	// if c.workItemCount.Add(-n) < 0 {
+	// 	go func() {
+	// 		c.mu.Lock()
+	// 		defer c.mu.Unlock()
+	// 		c.closer <- true
+	// 	}()
+	// }
 }
 
 // begin/end close are called when we want to close the context
 func (c *V8ScriptContext) beginClose() {
-	c.closer = make(chan bool)
-	c.dec()
-	<-c.closer
+	// c.closer = make(chan bool)
+	// c.dec()
+	// <-c.closer
 }
 
 func (c *V8ScriptContext) endClose() {}
@@ -391,17 +392,17 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 		v8nodes:       make(map[entity.ObjectId]*v8.Value),
 		domNodes:      make(map[entity.ObjectId]entity.Entity),
 	}
+	errorCallback := func(err error) {
+		w.DispatchEvent(NewErrorEvent(err))
+	}
+	global = context.v8ctx.Global()
+	context.eventLoop = newEventLoop(context, global, errorCallback)
 	host.inspector.ContextCreated(context.v8ctx)
 	err := installPolyfills(context)
 	if err != nil {
 		// TODO: Handle
 		panic(err)
 	}
-	global = context.v8ctx.Global()
-	errorCallback := func(err error) {
-		w.DispatchEvent(NewErrorEvent(err))
-	}
-	context.eventLoop = newEventLoop(context, global, errorCallback)
 	host.contexts[context.v8ctx] = context
 	context.cacheNode(global, w)
 	context.addDisposer(context.eventLoop.Start())
@@ -446,6 +447,7 @@ func (ctx *V8ScriptContext) runScript(script string) (res *v8.Value, err error) 
 	if ctx.beginScript() {
 		res, err = ctx.v8ctx.RunScript(script, "")
 	}
+	ctx.eventLoop.tick()
 	return
 }
 

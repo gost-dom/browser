@@ -67,12 +67,12 @@ var _ = Describe("HTMX Tests", Ordered, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		// Click an hx-boost link
-		<-c
+		// <-c
 		Expect(win.ScriptContext().Eval("window.pageA")).ToNot(BeNil())
 		Expect(win.ScriptContext().Eval("window.pageA")).To(BeTrue())
 		Expect(win.ScriptContext().Eval("window.pageB")).To(BeNil())
 		win.Document().GetElementById("link-to-b-boosted").Click()
-		<-c
+		// <-c
 
 		Expect(win.ScriptContext().Eval("window.pageA")).ToNot(BeNil(), "A")
 		Expect(win.ScriptContext().Eval("window.pageB")).ToNot(BeNil(), "B")
