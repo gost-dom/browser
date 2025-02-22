@@ -195,6 +195,10 @@ func WindowOptionLocation(location string) WindowOptionFunc {
 	}
 }
 
+func WindowOptionHost(host ScriptHost) WindowOptionFunc {
+	return func(options *WindowOptions) { options.ScriptHost = host }
+}
+
 func (o WindowOptions) Apply(options *WindowOptions) {
 	*options = o
 }
