@@ -1,30 +1,47 @@
 package v8host_test
 
 import (
+	"testing"
 	"time"
 
-	. "github.com/onsi/ginkgo/v2"
+	"github.com/gost-dom/browser/html"
+	"github.com/onsi/gomega"
 	. "github.com/onsi/gomega"
+	"github.com/stretchr/testify/suite"
 )
 
-var _ = Describe("EventLoop", func() {
-	It("Defers execution", func() {
-		ctx := NewTestContext(IgnoreUnhandledErrors)
-		Expect(
-			ctx.Eval(`
+type EventLoopTestSuite struct {
+	suite.Suite
+	host html.ScriptHost
+	ctx  html.ScriptContext
+}
+
+func (s *EventLoopTestSuite) SetupTest() {
+	w := html.NewWindow(html.WindowOptionHost(s.host))
+	s.ctx = w.ScriptContext()
+}
+
+func (s *EventLoopTestSuite) TeardownTest() {
+	s.ctx.Close()
+}
+
+func (s *EventLoopTestSuite) TestDeferExecution() {
+	Expect := gomega.NewWithT(s.T()).Expect
+	Expect(
+		s.ctx.Eval(`
 				let val; 
 				setTimeout(() => { val = 42 }, 1);
 				val`,
-			),
-		).To(BeNil())
-		ctx.Clock().Advance(time.Millisecond)
-		Expect(ctx.Eval(`val`)).To(BeEquivalentTo(42))
-	})
+		),
+	).To(BeNil())
+	s.ctx.Clock().Advance(time.Millisecond)
+	Expect(s.ctx.Eval(`val`)).To(BeEquivalentTo(42))
+}
 
-	It("Dispatches an 'error' event on unhandled error", func() {
-		ctx := NewTestContext(IgnoreUnhandledErrors)
-		Expect(
-			ctx.Eval(`
+func (s *EventLoopTestSuite) TestDispatchError() {
+	Expect := gomega.NewWithT(s.T()).Expect
+	Expect(
+		s.ctx.Eval(`
 				let val;
 				window.addEventListener('error', () => {
 					val = 42;
@@ -33,8 +50,11 @@ var _ = Describe("EventLoop", func() {
 					throw new Error()
 				}, 0); 
 				val`,
-			),
-		).To(BeNil())
-		Expect(ctx.Eval(`val`)).To(BeEquivalentTo(42))
-	})
-})
+		),
+	).To(BeNil())
+	Expect(s.ctx.Eval(`val`)).To(BeEquivalentTo(42))
+}
+
+func TestEventLoop(t *testing.T) {
+	suite.Run(t, &EventLoopTestSuite{host: host})
+}
