@@ -2,12 +2,9 @@ package v8host
 
 import (
 	"errors"
-	"log/slog"
-	"runtime/debug"
 	"time"
 
 	"github.com/gost-dom/browser/clock"
-	"github.com/gost-dom/browser/internal/log"
 	v8 "github.com/tommie/v8go"
 )
 
@@ -54,23 +51,33 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 				f, err1 := helper.getFunctionArg(0)
 				delay, err2 := helper.getInt32Arg(1)
 				err := errors.Join(err1, err2)
-				if err == nil {
-					ctx.eventLoop.dispatch(func() error {
-						_, err := f.Call(info.Context().Global())
-						if err != nil {
-							log.Error(
-								"EventLoop: Error",
-								slog.String("script", f.String()),
-								slog.String("error", err.Error()),
-								slog.String("stack", string(debug.Stack())),
-							)
-						}
-
-						return err
-					}, int(delay))
+				if err != nil {
+					return v8.Undefined(iso), err
 				}
-				// TODO: Return a cancel token
-				return v8.Undefined(iso), err1
+				handle := ctx.clock.AddSafeTask(
+					clock.Relative(time.Duration(delay)*time.Millisecond),
+					func() {
+						if _, err := f.Call(info.Context().Global()); err != nil {
+							ctx.eventLoop.errorCb(err)
+						}
+					},
+				)
+				return v8.NewValue(iso, uint32(handle))
+			},
+		),
+	)
+	globalObjectTemplate.Set(
+		"clearTimeout",
+		v8.NewFunctionTemplateWithError(
+			iso,
+			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+				ctx := host.mustGetContext(info.Context())
+				helper := newArgumentHelper(host, info)
+				handle, err := helper.getInt32Arg(0)
+				if err == nil {
+					ctx.clock.Cancel(clock.TaskHandle(handle))
+				}
+				return nil, err
 			},
 		),
 	)
