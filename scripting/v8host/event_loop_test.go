@@ -38,6 +38,20 @@ func (s *EventLoopTestSuite) TestDeferExecution() {
 	Expect(s.ctx.Eval(`val`)).To(BeEquivalentTo(42))
 }
 
+func (s *EventLoopTestSuite) TestClearTimeout() {
+	Expect := gomega.NewWithT(s.T()).Expect
+	Expect(
+		s.ctx.Eval(`
+				let val; 
+				let handle =setTimeout(() => { val = 42 }, 1);
+				clearTimeout(handle);
+				val`,
+		),
+	).To(BeNil())
+	s.ctx.Clock().Advance(time.Millisecond)
+	Expect(s.ctx.Eval(`val`)).To(BeNil())
+}
+
 func (s *EventLoopTestSuite) TestDispatchError() {
 	Expect := gomega.NewWithT(s.T()).Expect
 	Expect(

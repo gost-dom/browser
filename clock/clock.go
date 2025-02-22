@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-type TaskHandle int
+type TaskHandle uint32
 
 // A TaskCallback is the callback registered for a [futureTask].
 type TaskCallback func() error
