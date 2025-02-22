@@ -69,6 +69,24 @@ func (s *EventLoopTestSuite) TestDispatchError() {
 	Expect(s.ctx.Eval(`val`)).To(BeEquivalentTo(42))
 }
 
+func (s *EventLoopTestSuite) TestInterval() {
+	Expect := gomega.NewWithT(s.T()).Expect
+	Expect(s.ctx.Eval(`
+		let count = 0;
+		const h = setInterval(() => {
+			count++;
+		}, 100);
+		count
+	`)).To(BeEquivalentTo(0))
+	s.ctx.Clock().Advance(100 * time.Millisecond)
+	Expect(s.ctx.Eval("count")).To(BeEquivalentTo(1))
+	s.ctx.Clock().Advance(300 * time.Millisecond)
+	Expect(s.ctx.Eval("count")).To(BeEquivalentTo(4))
+	s.ctx.Run("clearInterval(h)")
+	s.ctx.Clock().Advance(300 * time.Millisecond)
+	Expect(s.ctx.Eval("count")).To(BeEquivalentTo(4))
+}
+
 func TestEventLoop(t *testing.T) {
 	suite.Run(t, &EventLoopTestSuite{host: host})
 }

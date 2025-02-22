@@ -41,6 +41,17 @@ func (h argumentHelper) getInt32Arg(index int) (int32, error) {
 	}
 	return 0, h.newTypeError("Expected int32", arg)
 }
+func (h argumentHelper) getUint32Arg(index int) (uint32, error) {
+	args := h.Args()
+	if index >= len(args) {
+		return 0, ErrWrongNoOfArguments
+	}
+	arg := args[index]
+	if arg.IsNumber() {
+		return arg.Uint32(), nil
+	}
+	return 0, h.newTypeError("Expected int32", arg)
+}
 
 func (h argumentHelper) getStringArg(index int) (string, error) {
 	args := h.Args()
