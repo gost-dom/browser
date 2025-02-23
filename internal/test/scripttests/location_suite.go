@@ -29,6 +29,12 @@ func (s *ScriptHostSuite) SetupTest() {
 	})
 }
 
+func (s *ScriptHostSuite) OpenWindow(location string) html.Window {
+	err := s.window.Navigate(location)
+	s.Assert().NoError(err)
+	return s.window
+}
+
 func (s *ScriptHostSuite) TeardownTest() {
 	s.window.Close()
 }
@@ -68,4 +74,14 @@ func NewLocationSuite(h html.ScriptHost) *LocationSuite {
 
 func (s *LocationSuite) TestGlobalScope() {
 	s.Expect(s.eval("typeof Location")).To(Equal("function"))
+	s.Expect(s.eval("Object.getPrototypeOf(location) === Location"))
+}
+
+func (s *LocationSuite) TestHrefEqualsDocumentLocation() {
+	window := html.NewWindow(
+		html.WindowOptions{
+			BaseLocation: "http://example.com/foo",
+			ScriptHost:   s.scriptHost,
+		})
+	s.Expect(window.Eval("location.href")).To(Equal("http://example.com/foo"))
 }

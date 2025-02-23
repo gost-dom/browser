@@ -68,6 +68,10 @@ func (w baseInstanceWrapper[T]) decodeboolean(v g.Value) bool {
 	return v.ToBoolean()
 }
 
+func (w baseInstanceWrapper[T]) decodeUSVString(v g.Value) string {
+	return v.String()
+}
+
 func (c *GojaContext) getPrototype(e entity.Entity) function {
 	switch v := e.(type) {
 	case html.HTMLDocument:
@@ -116,6 +120,10 @@ func (w baseInstanceWrapper[T]) toBoolean(b bool) g.Value {
 }
 
 func (w baseInstanceWrapper[T]) toDOMString(b string) g.Value {
+	return w.ctx.vm.ToValue(b)
+}
+
+func (w baseInstanceWrapper[T]) toUSVString(b string) g.Value {
 	return w.ctx.vm.ToValue(b)
 }
 

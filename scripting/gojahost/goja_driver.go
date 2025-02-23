@@ -52,7 +52,6 @@ func installClass(name string, superClassName string, wrapper createWrapper) {
 
 func init() {
 	installClass("EventTarget", "", newEventTargetWrapper)
-	installClass("Location", "", newLocationWrapper)
 	installClass("Window", "Node", newWindowWrapper)
 	installClass("Document", "Node", newDocumentWrapper)
 	installClass("HTMLDocument", "Document", newHTMLDocumentWrapper)
@@ -163,11 +162,26 @@ func (d *gojaScriptHost) NewContext(window html.Window) html.ScriptContext {
 	globalThis.DefineAccessorProperty("document", vm.ToValue(func(c *g.FunctionCall) g.Value {
 		return result.toNode(window.Document())
 	}), nil, g.FLAG_FALSE, g.FLAG_TRUE)
+	location := result.createLocationInstance()
+	globalThis.DefineAccessorProperty("location", vm.ToValue(func(c *g.FunctionCall) g.Value {
+		return location
+	}), nil, g.FLAG_FALSE, g.FLAG_TRUE)
 	globalThis.SetPrototype(result.globals["Window"].Prototype)
 
 	return result
 }
 
+func (m *GojaContext) createLocationInstance() *goja.Object {
+	location := m.vm.CreateObject(m.globals["Location"].Prototype)
+	location.DefineDataPropertySymbol(
+		m.wrappedGoObj,
+		m.vm.ToValue(m.window.Location()),
+		g.FLAG_FALSE,
+		g.FLAG_FALSE,
+		g.FLAG_FALSE,
+	)
+	return location
+}
 func (d *gojaScriptHost) Close() {}
 
 type GojaContext struct {
