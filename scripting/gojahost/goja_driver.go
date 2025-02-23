@@ -161,6 +161,7 @@ func (d *gojaScriptHost) NewContext(window html.Window) html.ScriptContext {
 		g.FLAG_FALSE,
 	)
 	globalThis.Set("window", globalThis)
+	newEventLoopWrapper(result).initializeWindows(globalThis, vm)
 	globalThis.DefineAccessorProperty("document", vm.ToValue(func(c *g.FunctionCall) g.Value {
 		return result.toNode(window.Document())
 	}), nil, g.FLAG_FALSE, g.FLAG_TRUE)
@@ -199,13 +200,19 @@ func (c *GojaContext) Clock() *clock.Clock { return c.clock }
 
 func (i *GojaContext) Close() {}
 
+func (i *GojaContext) run(str string) (goja.Value, error) {
+	res, err := i.vm.RunString(str)
+	i.clock.Tick()
+	return res, err
+}
+
 func (i *GojaContext) Run(str string) error {
-	_, err := i.vm.RunString(str)
+	_, err := i.run(str)
 	return err
 }
 
 func (i *GojaContext) Eval(str string) (res any, err error) {
-	if gojaVal, err := i.vm.RunString(str); err == nil {
+	if gojaVal, err := i.run(str); err == nil {
 		return gojaVal.Export(), nil
 	} else {
 		return nil, err

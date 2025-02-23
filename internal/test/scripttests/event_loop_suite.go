@@ -1,7 +1,6 @@
-package v8host_test
+package scripttests
 
 import (
-	"testing"
 	"time"
 
 	"github.com/gost-dom/browser/html"
@@ -14,6 +13,10 @@ type EventLoopTestSuite struct {
 	suite.Suite
 	host html.ScriptHost
 	ctx  html.ScriptContext
+}
+
+func NewEventLoopTestSuite(host html.ScriptHost) *EventLoopTestSuite {
+	return &EventLoopTestSuite{host: host}
 }
 
 func (s *EventLoopTestSuite) SetupTest() {
@@ -43,7 +46,7 @@ func (s *EventLoopTestSuite) TestClearTimeout() {
 	Expect(
 		s.ctx.Eval(`
 				let val; 
-				let handle =setTimeout(() => { val = 42 }, 1);
+				let handle = setTimeout(() => { val = 42 }, 1);
 				clearTimeout(handle);
 				val`,
 		),
@@ -73,7 +76,7 @@ func (s *EventLoopTestSuite) TestInterval() {
 	Expect := gomega.NewWithT(s.T()).Expect
 	Expect(s.ctx.Eval(`
 		let count = 0;
-		const h = setInterval(() => {
+		const h = globalThis.setInterval(() => {
 			count++;
 		}, 100);
 		count
@@ -87,6 +90,20 @@ func (s *EventLoopTestSuite) TestInterval() {
 	Expect(s.ctx.Eval("count")).To(BeEquivalentTo(4))
 }
 
-func TestEventLoop(t *testing.T) {
-	suite.Run(t, &EventLoopTestSuite{host: host})
+func (s *EventLoopTestSuite) TestGlobals() {
+	// Methods should be in the window _instance_ not the Window prototype
+	Expect := gomega.NewWithT(s.T()).Expect
+	windowNames, err := s.ctx.Eval("Object.getOwnPropertyNames(window)")
+	Expect(err).ToNot(HaveOccurred())
+	Expect(windowNames).To(ContainElement("setTimeout"))
+	Expect(windowNames).To(ContainElement("clearTimeout"))
+	Expect(windowNames).To(ContainElement("setInterval"))
+	Expect(windowNames).To(ContainElement("clearInterval"))
+
+	prototypeNames, err := s.ctx.Eval("Object.getOwnPropertyNames(Window.prototype)")
+	Expect(err).ToNot(HaveOccurred())
+	Expect(prototypeNames).ToNot(ContainElement("setTimeout"))
+	Expect(prototypeNames).ToNot(ContainElement("clearTimeout"))
+	Expect(prototypeNames).ToNot(ContainElement("setInterval"))
+	Expect(prototypeNames).ToNot(ContainElement("clearInterval"))
 }

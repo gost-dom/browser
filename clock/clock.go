@@ -25,6 +25,8 @@ type futureTask struct {
 	time   time.Time
 	task   TaskCallback
 	handle TaskHandle
+	repeat bool
+	delay  time.Duration
 }
 
 // Clock simulates passing of time, as well as potential future tasks. Simulated
@@ -120,6 +122,10 @@ func (c *Clock) runWhile(predicate func() bool) []error {
 		if err := task.task(); err != nil {
 			errs = append(errs, err)
 		}
+		if task.repeat {
+			task.time = task.time.Add(task.delay)
+			c.insertTask(task)
+		}
 		errs = append(errs, c.runMicrotasks()...)
 		newLength := len(c.tasks)
 		if newLength < minLength {
@@ -179,6 +185,28 @@ func (c *Clock) generateHandle() TaskHandle {
 	return c.nextHandle
 }
 
+func (c *Clock) insertTask(future futureTask) {
+	idx := slices.IndexFunc(c.tasks, func(t futureTask) bool { return t.time.After(future.time) })
+	if idx >= 0 {
+		c.tasks = slices.Insert(c.tasks, idx, future)
+	} else {
+		c.tasks = append(c.tasks, future)
+	}
+}
+
+func (c *Clock) AddRepeat(delay time.Duration, task SafeTaskCallback) TaskHandle {
+	handle := c.generateHandle()
+	future := futureTask{
+		time:   c.Time.Add(delay),
+		task:   task.toTask(),
+		handle: handle,
+		repeat: true,
+		delay:  delay,
+	}
+	c.insertTask(future)
+	return handle
+}
+
 // Schedules a task to run at a specified time in the future. Panics if the time
 // is in the past.
 func (c *Clock) AddTask(when FutureTimeSpec, task TaskCallback) TaskHandle {
@@ -198,12 +226,13 @@ func (c *Clock) AddTask(when FutureTimeSpec, task TaskCallback) TaskHandle {
 		task:   task,
 		handle: handle,
 	}
-	idx := slices.IndexFunc(c.tasks, func(t futureTask) bool { return t.time.After(taskTime) })
-	if idx >= 0 {
-		c.tasks = slices.Insert(c.tasks, idx, future)
-	} else {
-		c.tasks = append(c.tasks, future)
-	}
+	c.insertTask(future)
+	// idx := slices.IndexFunc(c.tasks, func(t futureTask) bool { return t.time.After(taskTime) })
+	// if idx >= 0 {
+	// 	c.tasks = slices.Insert(c.tasks, idx, future)
+	// } else {
+	// 	c.tasks = append(c.tasks, future)
+	// }
 	return handle
 }
 
