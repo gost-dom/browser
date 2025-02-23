@@ -18,6 +18,16 @@ func newArgumentHelper(host *V8ScriptHost, info *v8.FunctionCallbackInfo) *argum
 	return &argumentHelper{info, ctx, 0}
 }
 
+// getValueArg returns the argument with the specified index, or undefined if
+// the argument doesn't exist.
+func (h argumentHelper) getValueArg(index int) *v8.Value {
+	args := h.Args()
+	if index >= len(args) {
+		return v8.Undefined(h.ctx.host.iso)
+	}
+	return args[index]
+}
+
 func (h argumentHelper) getFunctionArg(index int) (*v8.Function, error) {
 	args := h.Args()
 	if index >= len(args) {

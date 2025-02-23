@@ -13,10 +13,8 @@ type workItem struct {
 }
 
 type eventLoop struct {
-	ctx        *V8ScriptContext
-	errorCb    func(error)
-	intervals  map[uint32]clock.TaskHandle
-	nextHandle uint32
+	ctx     *V8ScriptContext
+	errorCb func(error)
 }
 
 func (l *eventLoop) tick() error {
@@ -37,7 +35,7 @@ func (l *eventLoop) dispatch(task clock.TaskCallback, delay int) {
 }
 
 func newEventLoop(context *V8ScriptContext, cb func(error)) *eventLoop {
-	return &eventLoop{context, cb, make(map[uint32]clock.TaskHandle), 0}
+	return &eventLoop{context, cb}
 }
 
 func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.ObjectTemplate) {
@@ -75,11 +73,9 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 				ctx := host.mustGetContext(info.Context())
 				helper := newArgumentHelper(host, info)
-				handle, err := helper.getInt32Arg(0)
-				if err == nil {
-					ctx.clock.Cancel(clock.TaskHandle(handle))
-				}
-				return nil, err
+				handle := helper.getValueArg(0)
+				ctx.clock.Cancel(clock.TaskHandle(handle.Uint32()))
+				return nil, nil
 			},
 		),
 	)
@@ -96,21 +92,15 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 				if err != nil {
 					return v8.Undefined(iso), err
 				}
-				intervalHandle := ctx.eventLoop.nextHandle
-				ctx.eventLoop.nextHandle++
-				var task clock.SafeTaskCallback
-				task = func() {
-					if _, err := f.Call(info.Context().Global()); err != nil {
-						ctx.eventLoop.errorCb(err)
-					}
-					ctx.eventLoop.intervals[intervalHandle] = ctx.clock.AddSafeTask(
-						clock.Relative(time.Duration(delay)*time.Millisecond), task)
-				}
-				ctx.eventLoop.intervals[intervalHandle] = ctx.clock.AddSafeTask(
-					clock.Relative(time.Duration(delay)*time.Millisecond),
-					task,
+				handle := ctx.clock.AddRepeat(
+					time.Duration(delay)*time.Millisecond,
+					func() {
+						if _, err := f.Call(info.Context().Global()); err != nil {
+							ctx.eventLoop.errorCb(err)
+						}
+					},
 				)
-				return v8.NewValue(iso, intervalHandle)
+				return v8.NewValue(iso, uint32(handle))
 			},
 		),
 	)
@@ -121,12 +111,9 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 				ctx := host.mustGetContext(info.Context())
 				helper := newArgumentHelper(host, info)
-				handle, err := helper.getUint32Arg(0)
-				if err == nil {
-					clockHandle := ctx.eventLoop.intervals[handle]
-					ctx.clock.Cancel(clockHandle)
-				}
-				return nil, err
+				handle := helper.getValueArg(0)
+				ctx.clock.Cancel(clock.TaskHandle(handle.Uint32()))
+				return nil, nil
 			},
 		),
 	)
