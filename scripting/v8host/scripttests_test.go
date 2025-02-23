@@ -8,6 +8,6 @@ import (
 )
 
 // Runs all the shared script tests using the V8 script engine
-func TestScriptTests(t *testing.T) {
-	t.Run("V8 ScriptHost", func(t *testing.T) { scripttests.RunSuites(t, v8host.New()) })
+func TestV8ScriptHost(t *testing.T) {
+	scripttests.RunSuites(t, v8host.New())
 }
