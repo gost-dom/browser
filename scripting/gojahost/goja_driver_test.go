@@ -1,11 +1,15 @@
 package gojahost_test
 
 import (
+	"testing"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	. "github.com/gost-dom/browser/scripting/gojahost"
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/test/scripttests"
+	"github.com/gost-dom/browser/scripting/gojahost"
+	. "github.com/gost-dom/browser/scripting/gojahost"
 )
 
 var _ = Describe("GojaDriver", func() {
@@ -31,3 +35,7 @@ var _ = Describe("GojaDriver", func() {
 		).To(BeTrue(), "window instanceof EventTarget")
 	})
 })
+
+func TestGojaHost(t *testing.T) {
+	scripttests.RunSuites(t, gojahost.New())
+}

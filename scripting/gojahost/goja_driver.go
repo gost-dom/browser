@@ -52,6 +52,7 @@ func installClass(name string, superClassName string, wrapper createWrapper) {
 
 func init() {
 	installClass("EventTarget", "", newEventTargetWrapper)
+	installClass("Location", "", newLocationWrapper)
 	installClass("Window", "Node", newWindowWrapper)
 	installClass("Document", "Node", newDocumentWrapper)
 	installClass("HTMLDocument", "Document", newHTMLDocumentWrapper)
