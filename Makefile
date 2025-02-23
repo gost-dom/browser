@@ -41,7 +41,7 @@ test:
 
 test-watch: 
 	# $(GOW) -c -e=go -e=js -e=html -v -w=./.. test -vet=off ./...
-	gotestsum --format dots --watch ./...
+	gotestsum --format dots --watch ./... -- vet=off
 
 .PHONY: test-dom
 test-browser: 

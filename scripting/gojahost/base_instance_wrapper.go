@@ -3,6 +3,7 @@ package gojahost
 import (
 	"strings"
 
+	"github.com/dop251/goja"
 	g "github.com/dop251/goja"
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
@@ -12,6 +13,10 @@ import (
 
 type baseInstanceWrapper[T any] struct {
 	ctx *GojaContext
+}
+
+func (w baseInstanceWrapper[T]) vm() *goja.Runtime {
+	return w.ctx.vm
 }
 
 func newBaseInstanceWrapper[T any](instance *GojaContext) baseInstanceWrapper[T] {
