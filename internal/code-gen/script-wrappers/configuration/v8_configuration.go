@@ -65,7 +65,6 @@ func CreateV8Specs() WebIdlConfigurations {
 	domElement.RunCustomCode = true
 	domElement.Method("getAttribute").SetCustomImplementation()
 	domElement.Method("classList").SetCustomImplementation()
-	domElement.Method("matches")
 
 	domElement.MarkMembersAsNotImplemented(
 		"hasAttributes",
