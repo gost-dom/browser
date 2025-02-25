@@ -1,6 +1,6 @@
 package dom
 
-import "github.com/ericchiang/css"
+import "github.com/gost-dom/css"
 
 // parentNode implements the functions defined in the [ParentNode] IDL Mixin
 // interface.
