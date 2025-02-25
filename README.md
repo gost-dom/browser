@@ -74,8 +74,6 @@ hi!](https://github.com/orgs/gost-dom/discussions)
 After go getting `github.com/gost-dom/browser`, you need replace some modules:
 
 ```sh
-go mod edit -replace="github.com/ericchiang/css=github.com/gost-dom/css@latest"
-go mod tidy
 go mod edit -replace="github.com/tommie/v8go=github.com/stroiman/v8go@latest"
 go mod tidy
 ```
@@ -302,3 +300,7 @@ Some words inherntly have multiple meanings.
 in certain scopes, implemented by "classes" in JavaScript. 
   - The interfaces can be composed of _partial_ or _mixin_ interfaces.
   - IDL Interfaces and mixin interfaces are represented in Go, and typically exposed as Go `interface` types.
+
+## Attribution / 3rd party included code.
+
+This library contains code from the [jsdom project](https://github.com/jsdom/jsdom) distributed under the MIT license.
