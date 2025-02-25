@@ -5,7 +5,7 @@ import (
 	"errors"
 )
 
-//go:embed polyfills/xpath.js
+//go:embed polyfills/xpath/xpath.js
 var xpath []byte
 
 func installPolyfills(context *V8ScriptContext) error {
