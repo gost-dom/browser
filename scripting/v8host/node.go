@@ -2,7 +2,7 @@ package v8host
 
 import (
 	"github.com/gost-dom/browser/dom"
-	v8 "github.com/tommie/v8go"
+	v8 "github.com/gost-dom/v8go"
 )
 
 func (n nodeV8Wrapper) textContent(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

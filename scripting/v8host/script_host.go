@@ -14,8 +14,8 @@ import (
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting"
 
-	"github.com/tommie/v8go"
-	v8 "github.com/tommie/v8go"
+	"github.com/gost-dom/v8go"
+	v8 "github.com/gost-dom/v8go"
 )
 
 // disposable represents a resource that needs cleanup when a context is closed.

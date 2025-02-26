@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/gost-dom/browser/internal/clock"
-	v8 "github.com/tommie/v8go"
+	v8 "github.com/gost-dom/v8go"
 )
 
 type workItem struct {

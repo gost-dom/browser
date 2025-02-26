@@ -5,7 +5,7 @@ import (
 	"iter"
 
 	"github.com/gost-dom/browser/internal/entity"
-	v8 "github.com/tommie/v8go"
+	v8 "github.com/gost-dom/v8go"
 )
 
 type iterator[T any] struct {

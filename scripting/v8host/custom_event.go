@@ -5,7 +5,7 @@ import (
 	"runtime/cgo"
 
 	"github.com/gost-dom/browser/dom"
-	v8 "github.com/tommie/v8go"
+	v8 "github.com/gost-dom/v8go"
 )
 
 func createCustomEvent(host *V8ScriptHost) *v8.FunctionTemplate {

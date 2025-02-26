@@ -1,7 +1,7 @@
 package v8host
 
 import (
-	v8 "github.com/tommie/v8go"
+	v8 "github.com/gost-dom/v8go"
 )
 
 func createHtmlElement(host *V8ScriptHost) *v8.FunctionTemplate {

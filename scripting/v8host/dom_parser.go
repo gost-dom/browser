@@ -6,7 +6,7 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	. "github.com/gost-dom/browser/html"
-	v8 "github.com/tommie/v8go"
+	v8 "github.com/gost-dom/v8go"
 )
 
 func createDOMParserPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
