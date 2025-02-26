@@ -74,13 +74,14 @@ hi!](https://github.com/orgs/gost-dom/discussions)
 After go getting `github.com/gost-dom/browser`, you need replace some modules:
 
 ```sh
+go mod edit -replace="github.com/ericchiang/css=github.com/gost-dom/css@latest"
+go mod tidy
 go mod edit -replace="github.com/tommie/v8go=github.com/stroiman/v8go@latest"
 go mod tidy
 ```
 
-The CSS is just a simple fix that allows the CSS selector to accept tag name
-patterns with upper case tag names, which HTMX produces. I've filed a PR, so
-hopefully this will get merged to the source repo soon.
+The CSS rewrite should no longer be necessary, once the next version is
+released.
 
 For the v8go project, I've added a lot of V8 features that were missing in v8go.
 I'm working with tommie, who runs the [best maintained
