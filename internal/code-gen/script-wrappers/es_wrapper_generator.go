@@ -27,7 +27,7 @@ var (
 )
 
 const (
-	v8      = "github.com/tommie/v8go"
+	v8      = "github.com/gost-dom/v8go"
 	gojaSrc = "github.com/dop251/goja"
 )
 

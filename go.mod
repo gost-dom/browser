@@ -7,10 +7,10 @@ toolchain go1.23.6
 require (
 	github.com/dop251/goja v0.0.0-20241024094426-79f3a7efcdbd
 	github.com/gost-dom/css v0.1.0
+	github.com/gost-dom/v8go v0.0.0-20250226155312-422158da51fa
 	github.com/onsi/ginkgo/v2 v2.22.2
 	github.com/onsi/gomega v1.36.2
 	github.com/stretchr/testify v1.8.4
-	github.com/tommie/v8go v0.28.0
 	golang.org/x/net v0.34.0
 )
 
@@ -23,16 +23,14 @@ require (
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/pprof v0.0.0-20241210010833-40e02aabc2ad // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/tommie/v8go/deps/android_amd64 v0.0.0-20250116090852-b2a925bc7092 // indirect
-	github.com/tommie/v8go/deps/android_arm64 v0.0.0-20250116090852-b2a925bc7092 // indirect
-	github.com/tommie/v8go/deps/darwin_amd64 v0.0.0-20250116090852-b2a925bc7092 // indirect
-	github.com/tommie/v8go/deps/darwin_arm64 v0.0.0-20250116090852-b2a925bc7092 // indirect
-	github.com/tommie/v8go/deps/linux_amd64 v0.0.0-20250116090852-b2a925bc7092 // indirect
-	github.com/tommie/v8go/deps/linux_arm64 v0.0.0-20250116090852-b2a925bc7092 // indirect
+	github.com/tommie/v8go/deps/android_amd64 v0.0.0-20250226014007-409bc005c2fa // indirect
+	github.com/tommie/v8go/deps/android_arm64 v0.0.0-20250226014007-409bc005c2fa // indirect
+	github.com/tommie/v8go/deps/darwin_amd64 v0.0.0-20250226014007-409bc005c2fa // indirect
+	github.com/tommie/v8go/deps/darwin_arm64 v0.0.0-20250226014007-409bc005c2fa // indirect
+	github.com/tommie/v8go/deps/linux_amd64 v0.0.0-20250226014007-409bc005c2fa // indirect
+	github.com/tommie/v8go/deps/linux_arm64 v0.0.0-20250226014007-409bc005c2fa // indirect
 	golang.org/x/sys v0.29.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 	golang.org/x/tools v0.28.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/tommie/v8go => github.com/stroiman/v8go v0.0.0-20250205095925-1fbfd47bcf87

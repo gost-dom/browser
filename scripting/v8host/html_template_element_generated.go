@@ -6,7 +6,7 @@ import (
 	"errors"
 	html "github.com/gost-dom/browser/html"
 	log "github.com/gost-dom/browser/internal/log"
-	v8 "github.com/tommie/v8go"
+	v8 "github.com/gost-dom/v8go"
 )
 
 func init() {

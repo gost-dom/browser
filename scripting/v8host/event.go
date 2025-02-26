@@ -5,7 +5,7 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/internal/entity"
-	v8 "github.com/tommie/v8go"
+	v8 "github.com/gost-dom/v8go"
 )
 
 func (w eventV8Wrapper) decodeEventInit(

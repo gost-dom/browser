@@ -9,7 +9,7 @@ import (
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/internal/html"
 
-	v8 "github.com/tommie/v8go"
+	v8 "github.com/gost-dom/v8go"
 )
 
 type xmlHttpRequestV8Wrapper struct {

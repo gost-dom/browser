@@ -3,7 +3,7 @@ package v8host
 import (
 	"errors"
 
-	v8 "github.com/tommie/v8go"
+	v8 "github.com/gost-dom/v8go"
 )
 
 type constructorBuilder[T any] struct {

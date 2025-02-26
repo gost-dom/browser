@@ -2,7 +2,7 @@ package v8host
 
 import (
 	"github.com/gost-dom/browser/html"
-	v8 "github.com/tommie/v8go"
+	v8 "github.com/gost-dom/v8go"
 )
 
 func createLocationPrototype(host *V8ScriptHost) *v8.FunctionTemplate {

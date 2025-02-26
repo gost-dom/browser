@@ -9,7 +9,7 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/entity"
 
-	v8 "github.com/tommie/v8go"
+	v8 "github.com/gost-dom/v8go"
 )
 
 // nodeV8WrapperBase serves as a helper for building v8 wrapping code around go objects.
