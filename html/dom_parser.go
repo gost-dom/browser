@@ -157,11 +157,11 @@ func iterate(d dom.Document, dest dom.Node, source *html.Node) {
 		case html.ElementNode:
 			createElementFromNode(d, dest, child)
 		case html.TextNode:
-			dest.AppendChild(dom.NewText(child.Data))
+			dest.AppendChild(d.CreateText(child.Data))
 		case html.DoctypeNode:
-			dest.AppendChild(dom.NewDocumentType(child.Data))
+			dest.AppendChild(d.CreateDocumentType(child.Data))
 		case html.CommentNode:
-			dest.AppendChild(dom.NewComment(child.Data))
+			dest.AppendChild(d.CreateComment(child.Data))
 		default:
 			panic(fmt.Sprintf("Node not yet supported: %v", child.Type))
 		}

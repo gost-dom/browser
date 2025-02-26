@@ -22,8 +22,8 @@ type rootNode struct {
 	ParentNode
 }
 
-func newRootNode() rootNode {
-	node := newNodePtr()
+func newRootNode(ownerDoc Document) rootNode {
+	node := newNodePtr(ownerDoc)
 	return rootNode{node, newParentNode(node)}
 }
 

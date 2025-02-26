@@ -12,8 +12,8 @@ type documentType struct {
 	name string
 }
 
-func NewDocumentType(name string) DocumentType {
-	result := &documentType{newNode(), name}
+func NewDocumentType(name string, ownerDocument Document) DocumentType {
+	result := &documentType{newNode(ownerDocument), name}
 	result.SetSelf(result)
 	return result
 }
@@ -22,7 +22,7 @@ func (t *documentType) Name() string       { return t.name }
 func (t *documentType) NodeType() NodeType { return NodeTypeDocumentType }
 
 func (t *documentType) CloneNode(deep bool) Node {
-	return NewDocumentType(t.name)
+	return NewDocumentType(t.name, t.OwnerDocument())
 }
 
 func (t *documentType) createHtmlNode() *html.Node {

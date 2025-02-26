@@ -30,6 +30,8 @@ type Document interface {
 	CreateDocumentFragment() DocumentFragment
 	CreateAttribute(string) Attr
 	CreateText(data string) Text
+	CreateComment(data string) Comment
+	CreateDocumentType(name string) DocumentType
 	CreateElementNS(string, string) Element
 	CreateElement(string) Element
 	DocumentElement() Element
@@ -44,7 +46,7 @@ type document struct {
 }
 
 func NewDocument(window DocumentParentWindow) Document {
-	result := &document{newRootNode(), window}
+	result := &document{newRootNode(nil), window}
 	// Hmmm, can document be replaced; and now the old doc's event goes to a
 	// window they shouldn't?
 	// What about disconnected documents, e.g. `new Document()` in the browser?
@@ -94,14 +96,16 @@ func (d *document) Head() Element {
 }
 
 func (d *document) CreateAttribute(name string) Attr {
-	return newAttr(name, "")
+	return newAttr(name, "", d)
 }
 
 func (d *document) CreateElement(name string) Element {
 	return NewElement(name, d)
 }
 
-func (d *document) CreateText(data string) Text { return NewText(data) }
+func (d *document) CreateText(data string) Text                 { return NewText(data, d) }
+func (d *document) CreateComment(data string) Comment           { return NewComment(data, d) }
+func (d *document) CreateDocumentType(name string) DocumentType { return NewDocumentType(name, d) }
 
 func (d *document) CreateElementNS(_ string, name string) Element {
 	return NewElement(name, d)
@@ -132,7 +136,5 @@ func (d *document) createHtmlNode() *html.Node {
 		Type: html.DocumentNode,
 	}
 }
-
-func (d *document) OwnerDocument() Document { return d }
 
 func (d *document) NodeType() NodeType { return NodeTypeDocument }

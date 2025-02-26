@@ -8,21 +8,16 @@ type DocumentFragment interface {
 
 type documentFragment struct {
 	rootNode
-	ownerDocument Document
 }
 
 func NewDocumentFragment(ownerDocument Document) DocumentFragment {
-	result := &documentFragment{newRootNode(), ownerDocument}
+	result := &documentFragment{newRootNode(ownerDocument)}
 	result.SetSelf(result)
 	return result
 }
 
-func (f *documentFragment) OwnerDocument() Document {
-	return f.ownerDocument
-}
-
 func (f *documentFragment) CloneNode(deep bool) Node {
-	result := NewDocumentFragment(f.ownerDocument)
+	result := NewDocumentFragment(f.nodeDocument())
 	if deep {
 		result.Append(f.cloneChildren()...)
 	}

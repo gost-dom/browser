@@ -41,9 +41,9 @@ type attr struct {
 	attr         *html.Attribute
 }
 
-func newAttr(n, v string) Attr {
+func newAttr(n, v string, doc Document) Attr {
 	res := &attr{
-		node: newNode(),
+		node: newNode(doc),
 		attr: &html.Attribute{
 			Key: n,
 			Val: v,
@@ -66,7 +66,11 @@ func (a *attr) htmlAttr() html.Attribute {
 	return *a.attr
 }
 
-func (a *attr) CloneNode(deep bool) Node { return newAttr(a.attr.Key, a.attr.Val) }
+func (a *attr) CloneNode(
+	deep bool,
+) Node {
+	return newAttr(a.attr.Key, a.attr.Val, a.OwnerDocument())
+}
 
 func newNamedNodeMapForElement(ownerElement Element) NamedNodeMap {
 	return &namedNodeMap{entity.New(), ownerElement}

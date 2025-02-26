@@ -52,7 +52,6 @@ type element struct {
 	tagName          string
 	namespace        string
 	attributes       Attributes
-	ownerDocument    Document
 	selfElement      Element
 	selfRenderer     Renderer
 	childrenRenderer ChildrenRenderer
@@ -62,14 +61,13 @@ type element struct {
 }
 
 func NewElement(tagName string, ownerDocument Document) Element {
-	node := newNodePtr()
+	node := newNodePtr(ownerDocument)
 	result := &element{
 		node,
 		newParentNode(node),
 		tagName,
 		"",
 		Attributes(nil),
-		ownerDocument,
 		nil,
 		nil,
 		nil,
@@ -193,7 +191,7 @@ func (e *element) SetAttribute(name string, value string) {
 	if a := e.GetAttributeNode(name); a != nil {
 		a.SetValue(value)
 	} else {
-		a := newAttr(name, value)
+		a := newAttr(name, value, e.OwnerDocument())
 		a.setParent(e.selfElement)
 		e.attributes = append(e.attributes, a)
 	}
@@ -235,7 +233,7 @@ func (n *element) InsertAdjacentHTML(position string, text string) error {
 	default:
 		return errors.New("Invalid position")
 	}
-	fragment, err := n.ownerDocument.parseFragment(strings.NewReader(text))
+	fragment, err := n.nodeDocument().parseFragment(strings.NewReader(text))
 	if err == nil {
 		_, err = parent.InsertBefore(fragment, reference)
 	}
@@ -316,4 +314,4 @@ func (e *element) CloneNode(deep bool) Node {
 	return res
 }
 
-func (e *element) OwnerDocument() Document { return e.ownerDocument }
+// func (e *element) OwnerDocument() Document { return e.ownerDocument }

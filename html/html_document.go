@@ -83,5 +83,3 @@ func (d *htmlDocument) CreateElement(name string) dom.Element {
 }
 
 func (d *htmlDocument) getWindow() Window { return d.window }
-
-func (d *htmlDocument) OwnerDocument() dom.Document { return d }

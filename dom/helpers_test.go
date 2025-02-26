@@ -28,9 +28,13 @@ type DocumentSuite struct {
 	doc dom.Document
 }
 
+func (s *DocumentSuite) CreateDocument() dom.Document {
+	return CreateHTMLDocument()
+}
+
 func (s *DocumentSuite) Document() dom.Document {
 	if s.doc == nil {
-		s.doc = CreateHTMLDocument()
+		s.doc = s.CreateDocument()
 	}
 	return s.doc
 }

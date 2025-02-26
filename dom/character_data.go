@@ -40,8 +40,8 @@ type comment struct {
 	characterData
 }
 
-func NewComment(text string) Comment {
-	result := &comment{characterData{newNode(), text}}
+func NewComment(text string, ownerDocument Document) Comment {
+	result := &comment{characterData{newNode(ownerDocument), text}}
 	result.SetSelf(result)
 	return result
 }
@@ -64,7 +64,7 @@ func (n *comment) createHtmlNode() *html.Node {
 }
 
 func (c *comment) CloneNode(bool) Node {
-	return NewComment(c.TextContent())
+	return NewComment(c.TextContent(), c.OwnerDocument())
 }
 
 /* -------- Text -------- */
@@ -77,14 +77,14 @@ type textNode struct {
 	characterData
 }
 
-func NewText(text string) Text {
-	result := &textNode{characterData{newNode(), text}}
+func NewText(text string, ownerDocument Document) Text {
+	result := &textNode{characterData{newNode(ownerDocument), text}}
 	result.SetSelf(result)
 	return result
 }
 
 func (n *textNode) CloneNode(bool) Node {
-	return NewText(n.characterData.data)
+	return NewText(n.characterData.data, n.OwnerDocument())
 }
 
 func (n *textNode) Render(builder *strings.Builder) {

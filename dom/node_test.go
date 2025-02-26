@@ -197,3 +197,34 @@ func (s *NodeMoveToNewParentTest) TestOldParentIsUpdatedWhenUsingAppend() {
 func TestNodeInsertBefore(t *testing.T) {
 	suite.Run(t, new(NodeMoveToNewParentTest))
 }
+
+type NodeOwnerDocumentTestSuite struct {
+	suite.Suite
+	DocumentSuite
+}
+
+func (s *NodeOwnerDocumentTestSuite) TestNewElementHasSourceDocumentAsOwner() {
+	element := s.Document().CreateElement("div")
+	s.Assert().Same(element.OwnerDocument(), s.Document())
+}
+
+func (s *NodeOwnerDocumentTestSuite) TestMoveNewElementToDifferentDocument() {
+	element := s.Document().CreateElement("div")
+
+	otherDoc := s.CreateDocument()
+	s.Assert().
+		Same(otherDoc.DocumentElement().OwnerDocument(), otherDoc, "Owner doc of new doc's document element")
+
+	otherDoc.DocumentElement().AppendChild(element)
+
+	s.Assert().NotSame(element.OwnerDocument(), s.Document(), "Owner doc of moved element")
+	s.Assert().Same(element.OwnerDocument(), otherDoc, "Owner doc of moved element")
+}
+
+func (s *NodeOwnerDocumentTestSuite) TestOwnerDocumentOfDocumentNode() {
+	s.Assert().Nil(s.Document().OwnerDocument())
+}
+
+func TestNodeOwnerDocument(t *testing.T) {
+	suite.Run(t, new(NodeOwnerDocumentTestSuite))
+}

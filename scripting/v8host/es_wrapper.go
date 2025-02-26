@@ -122,7 +122,7 @@ func (c converters) defaultHTMLElement() html.HTMLElement { return nil }
 
 func (w converters) decodeNodeOrText(ctx *V8ScriptContext, val *v8.Value) (dom.Node, error) {
 	if val.IsString() {
-		return NewText(val.String()), nil
+		return ctx.window.Document().CreateText(val.String()), nil
 	}
 	return w.decodeNode(ctx, val)
 }

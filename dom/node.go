@@ -146,10 +146,12 @@ type Node interface {
 
 	getSelf() Node
 	setParent(Node)
+	setOwnerDocument(owner Document)
 	nodes() []Node
 	assertCanAddNode(Node) error
 	cloneChildren() []Node
 	createHtmlNode() *html.Node
+	nodeDocument() Document
 }
 
 type node struct {
@@ -158,14 +160,15 @@ type node struct {
 	self       Node
 	childNodes NodeList
 	parent     Node
+	document   Document
 }
 
-func newNode() node {
-	return node{newEventTarget(), entity.New(), nil, newNodeList(), nil}
+func newNode(ownerDocument Document) node {
+	return node{newEventTarget(), entity.New(), nil, newNodeList(), nil, ownerDocument}
 }
 
-func newNodePtr() *node {
-	n := newNode()
+func newNodePtr(ownerDocument Document) *node {
+	n := newNode(ownerDocument)
 	return &n
 }
 
@@ -243,7 +246,19 @@ func (n *node) ParentElement() Element {
 	return r
 }
 
+func (n *node) setOwnerDocument(owner Document) {
+	n.document = owner
+	for _, n := range n.ChildNodes().All() {
+		n.setOwnerDocument(owner)
+	}
+}
 func (n *node) setParent(parent Node) {
+	if parent != nil {
+		parentOwner := parent.nodeDocument()
+		if n.document != parentOwner {
+			n.setOwnerDocument(parentOwner)
+		}
+	}
 	n.parent = parent
 	n.parentTarget = parent
 }
@@ -385,11 +400,14 @@ func (n nodeIterator) toHtmlNode(m map[*html.Node]Node) *html.Node {
 }
 
 func (n *node) OwnerDocument() Document {
-	parent := n.Parent()
-	if parent != nil {
-		return parent.OwnerDocument()
+	if _, isDoc := n.getSelf().(Document); isDoc {
+		return nil
 	}
-	return nil
+	return n.nodeDocument()
+}
+
+func (n *node) nodeDocument() Document {
+	return n.document
 }
 
 func (n *node) FirstChild() Node {
@@ -432,14 +450,21 @@ func (n *node) nodes() []Node {
 	return n.childNodes.All()
 }
 
-func (n *node) SetSelf(node Node) { n.self = node; SetEventTargetSelf(node) }
-func (n *node) getSelf() Node     { return n.self }
+func (n *node) SetSelf(node Node) {
+	n.self = node
+	SetEventTargetSelf(node)
+	if doc, ok := node.(Document); ok {
+		n.document = doc
+	}
+}
+
+func (n *node) getSelf() Node { return n.self }
 
 func (n *node) SetTextContent(val string) {
 	for x := n.FirstChild(); x != nil; x = n.FirstChild() {
 		n.RemoveChild(x)
 	}
-	n.AppendChild(NewText(val))
+	n.AppendChild(NewText(val, n.OwnerDocument()))
 }
 
 func (n *node) TextContent() string {
@@ -464,4 +489,4 @@ func (n *node) RenderChildren(builder *strings.Builder) {
 	}
 }
 
-func (n *node) String() string { return n.NodeName() }
+func (n *node) String() string { return n.self.NodeName() }
