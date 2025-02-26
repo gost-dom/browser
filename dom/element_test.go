@@ -19,7 +19,6 @@ type ElementTestSuite struct {
 }
 
 func (s *ElementTestSuite) SetupTest() {
-	s.GomegaSuite.SetupTest()
 	s.doc = CreateHTMLDocument()
 }
 
