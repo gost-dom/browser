@@ -17,5 +17,6 @@ var Succeed = gomega.Succeed
 var HaveOccurred = gomega.HaveOccurred
 
 var BeNil = gomega.BeNil
+var BeEmpty = gomega.BeEmpty
 
 var WithTransform = gomega.WithTransform

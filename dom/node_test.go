@@ -1,220 +1,199 @@
 package dom_test
 
 import (
-	. "github.com/gost-dom/browser/dom"
-	"github.com/gost-dom/browser/html"
-	. "github.com/gost-dom/browser/testing/gomega-matchers"
+	"testing"
 
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
+	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/html"
+	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
+	. "github.com/gost-dom/browser/testing/gomega-matchers"
+	"github.com/stretchr/testify/suite"
 )
 
-var _ = Describe("Node", func() {
-	Describe("CloneNode", func() {
-		It("Should create a shallow copy when called with false", func() {
-			doc := ParseHtmlString(`<body id='body'><div>First</div><div id="1">1</div></body>`)
-			clone := doc.Body().CloneNode(false)
-			Expect(clone).ToNot(BeNil())
-			Expect(clone).To(HaveTag("BODY"))
-			elm := clone.(html.HTMLElement)
-			Expect(elm).To(HaveAttribute("id", "body"))
-		})
+type NodeTestSuite struct {
+	GomegaSuite
+}
 
-		It("Should create a shallow copy when called with true", func() {
-			doc := ParseHtmlString(`<body id="body"><div>First</div><div id="1">1</div></body>`)
-			clone := doc.Body().CloneNode(true)
-			Expect(
-				clone,
-			).To(HaveOuterHTML(`<body id="body"><div>First</div><div id="1">1</div></body>`))
-			Expect(
-				doc.Body(),
-			).To(HaveOuterHTML(`<body id="body"><div>First</div><div id="1">1</div></body>`),
-				"Original node was not mutated",
-			)
-		})
-	})
+func (s *NodeTestSuite) TestShallowClone() {
+	doc := ParseHtmlString(`<body id='body'><div>First</div><div id="1">1</div></body>`)
+	clone := doc.Body().CloneNode(false)
+	s.Expect(clone).ToNot(BeNil())
+	s.Expect(clone).To(HaveTag("BODY"))
+	elm := clone.(html.HTMLElement)
+	s.Expect(elm).To(HaveAttribute("id", "body"))
+}
 
-	Describe("InsertBefore", func() {
-		It("Should insert the element if it's a new element", func() {
-			doc := ParseHtmlString(`<body><div>First</div><div id="1">1</div></body>`)
-			div := doc.GetElementById("1")
-			Expect(div).ToNot(BeNil())
-			newElm := doc.CreateElement("p")
-			Expect(doc.Body().InsertBefore(newElm, div)).Error().To(Succeed())
-			Expect(
-				doc.Body(),
-			).To(HaveOuterHTML(`<body><div>First</div><p></p><div id="1">1</div></body>`))
-			Expect(newElm.Parent()).To(Equal(doc.Body()))
-		})
+func (s *NodeTestSuite) TestDeepClone() {
+	doc := ParseHtmlString(`<body id="body"><div>First</div><div id="1">1</div></body>`)
+	clone := doc.Body().CloneNode(true)
+	s.Expect(
+		clone,
+	).To(HaveOuterHTML(`<body id="body"><div>First</div><div id="1">1</div></body>`))
+	s.Expect(
+		doc.Body(),
+	).To(HaveOuterHTML(`<body id="body"><div>First</div><div id="1">1</div></body>`),
+		"Original node was not mutated",
+	)
+}
 
-		It("Should append the element if the reference is nil", func() {
-			doc := ParseHtmlString(`<body><div>First</div><div id="1">1</div></body>`)
-			newElm := doc.CreateElement("p")
-			Expect(doc.Body().InsertBefore(newElm, nil)).Error().ToNot(HaveOccurred())
-			Expect(
-				doc.Body(),
-			).To(HaveOuterHTML(`<body><div>First</div><div id="1">1</div><p></p></body>`))
-			Expect(newElm.Parent()).To(Equal(doc.Body()))
-		})
+func (s *NodeTestSuite) TestInsertBeforeOfNewElement() {
+	doc := ParseHtmlString(`<body><div>First</div><div id="1">1</div></body>`)
+	div := doc.GetElementById("1")
+	s.Expect(div).ToNot(BeNil())
+	newElm := doc.CreateElement("p")
+	s.Expect(doc.Body().InsertBefore(newElm, div)).Error().To(Succeed())
+	s.Expect(
+		doc.Body(),
+	).To(HaveOuterHTML(`<body><div>First</div><p></p><div id="1">1</div></body>`))
+	s.Expect(newElm.Parent()).To(Equal(doc.Body()))
+}
 
-		Describe("Inserting a documentFragment", func() {
-			It("Inserts the nodes in the right order", func() {
-				doc := ParseHtmlString(`<body><div>First</div><div id="1">1</div></body>`)
-				fragment := doc.CreateDocumentFragment()
-				d1 := doc.CreateElement("div")
-				d2 := doc.CreateElement("div")
-				d1.SetAttribute("id", "c-1")
-				d2.SetAttribute("id", "c-2")
-				fragment.Append(d1)
-				fragment.Append(d2)
-				ref := doc.GetElementById("1")
+func (s *NodeTestSuite) TestInsertBeforeAppendsWithNilReference() {
+	doc := ParseHtmlString(`<body><div>First</div><div id="1">1</div></body>`)
+	newElm := doc.CreateElement("p")
+	s.Expect(doc.Body().InsertBefore(newElm, nil)).Error().ToNot(HaveOccurred())
+	s.Expect(
+		doc.Body(),
+	).To(HaveOuterHTML(`<body><div>First</div><div id="1">1</div><p></p></body>`))
+	s.Expect(newElm.Parent()).To(Equal(doc.Body()))
+}
 
-				result, err := doc.Body().InsertBefore(fragment, ref)
-				Expect(err).ToNot(HaveOccurred())
-				Expect(
-					doc.Body(),
-				).To(HaveOuterHTML(`<body><div>First</div><div id="c-1"></div><div id="c-2"></div><div id="1">1</div></body>`))
-				Expect(result.ChildNodes().All()).To(BeEmpty())
-			})
-		})
+func (s *NodeTestSuite) TestInsertDocumentFragmentOrder() {
+	doc := ParseHtmlString(`<body><div>First</div><div id="1">1</div></body>`)
+	fragment := doc.CreateDocumentFragment()
+	d1 := doc.CreateElement("div")
+	d2 := doc.CreateElement("div")
+	d1.SetAttribute("id", "c-1")
+	d2.SetAttribute("id", "c-2")
+	fragment.Append(d1)
+	fragment.Append(d2)
+	ref := doc.GetElementById("1")
 
-		Describe("Moving an existing node", func() {
-			var doc Document
+	result, err := doc.Body().InsertBefore(fragment, ref)
+	s.Expect(err).ToNot(HaveOccurred())
+	s.Expect(
+		doc.Body(),
+	).To(HaveOuterHTML(`<body><div>First</div><div id="c-1"></div><div id="c-2"></div><div id="1">1</div></body>`))
+	s.Expect(result.ChildNodes().All()).To(BeEmpty())
+}
 
-			BeforeEach(func() {
-				doc = ParseHtmlString(
-					`<body>
+func TestNode(t *testing.T) {
+	suite.Run(t, new(NodeTestSuite))
+}
+
+func (s *NodeTestSuite) TestContains() {
+	doc := ParseHtmlString(`<body>
+	<div id="parent-1">
+		<div id="1">
+			<div id="2">
+				<div id="3">
+		</div></div></div></div>
+	<div id="sibling"></div>
+</body>`)
+	parent := doc.GetElementById("parent-1")
+	s.Assert().True(parent.Contains(doc.GetElementById("1")), "Direct child node")
+	s.Assert().True(parent.Contains(doc.GetElementById("3")), "Great grand child node")
+	s.Assert().False(parent.Contains(doc.GetElementById("sibling")), "Sibling node")
+}
+
+func (s *NodeTestSuite) TestTextContents() {
+	doc := ParseHtmlString(
+		`<body><div style="display: none">Hidden text</div><div>Visible text</div></body>`,
+	)
+	s.Assert().Equal("Hidden textVisible text", doc.Body().TextContent())
+}
+
+func (s *NodeTestSuite) TestIsConnected() {
+	doc := ParseHtmlString(`<body></body>`)
+	div := doc.CreateElement("div")
+	s.Expect(div.IsConnected()).To(BeFalse())
+
+	_, err := doc.DocumentElement().AppendChild(div)
+	s.Expect(err).ToNot(HaveOccurred())
+	s.Expect(div.IsConnected()).To(BeTrue())
+}
+
+func (s *NodeTestSuite) TestRemoveChild() {
+	doc := ParseHtmlString(
+		`<body><div id="parent"><div id="child">child</div></div></body>`,
+	)
+	parent := doc.GetElementById("parent")
+	child := doc.GetElementById("child")
+	removed, err := parent.RemoveChild(child)
+	s.Expect(err).ToNot(HaveOccurred())
+	s.Expect(parent).To(HaveOuterHTML(`<div id="parent"></div>`))
+	s.Expect(removed).To(HaveOuterHTML(`<div id="child">child</div>`))
+}
+
+func (s *NodeTestSuite) TestInvalidRemoveChild() {
+	doc := ParseHtmlString(
+		`<body><div id="sibling-1"></div><div id="sibling-2"></div></body>`,
+	)
+	node1 := doc.GetElementById("sibling-1")
+	node2 := doc.GetElementById("sibling-2")
+	s.Expect(node1.RemoveChild(node2)).Error().To(BeADOMError())
+}
+
+func (s *NodeTestSuite) TestGetRootNode() {
+	doc := ParseHtmlString(
+		`<body><div id="parent"><div id="child">child</div></div></body>`,
+	)
+	root := doc.GetElementById("child").GetRootNode()
+	s.Expect(root).To(Equal(doc))
+}
+
+func (s *NodeTestSuite) TestRootNodeOfDisconnectedRoot() {
+	doc := CreateHTMLDocument()
+	div := doc.CreateElement("div")
+	s.Expect(div.GetRootNode()).To(Equal(div))
+}
+
+type NodeMoveToNewParentTest struct {
+	GomegaSuite
+	doc dom.Document
+}
+
+func (s *NodeMoveToNewParentTest) SetupTest() {
+	s.doc = ParseHtmlString(
+		`<body>
   <div id="parent-1"><div id="1">1</div><div id="2">2</div><div id="3">3</div></div>
   <div id="parent-2"><div id="ref"></div></div>
 </body>`,
-				)
-			})
+	)
+}
+func (s *NodeMoveToNewParentTest) TestMovedNodeAreRemoveFromPrevParent() {
+	elm := s.doc.GetElementById("2")
+	ref := s.doc.GetElementById("ref")
+	oldParent := s.doc.GetElementById("parent-1")
+	newParent := s.doc.GetElementById("parent-2")
+	s.Expect(
+		oldParent,
+	).To(HaveOuterHTML(`<div id="parent-1"><div id="1">1</div><div id="2">2</div><div id="3">3</div></div>`))
+	s.Expect(newParent.InsertBefore(elm, ref)).Error().ToNot(HaveOccurred())
+	s.Expect(
+		oldParent,
+	).To(HaveOuterHTML(`<div id="parent-1"><div id="1">1</div><div id="3">3</div></div>`))
+	s.Expect(
+		newParent,
+	).To(HaveOuterHTML(`<div id="parent-2"><div id="2">2</div><div id="ref"></div></div>`))
+}
 
-			It("Should be removed from parent when using `InsertBefore`", func() {
-				elm := doc.GetElementById("2")
-				ref := doc.GetElementById("ref")
-				oldParent := doc.GetElementById("parent-1")
-				newParent := doc.GetElementById("parent-2")
-				Expect(
-					oldParent,
-				).To(HaveOuterHTML(`<div id="parent-1"><div id="1">1</div><div id="2">2</div><div id="3">3</div></div>`))
-				Expect(newParent.InsertBefore(elm, ref)).Error().ToNot(HaveOccurred())
-				Expect(
-					oldParent,
-				).To(HaveOuterHTML(`<div id="parent-1"><div id="1">1</div><div id="3">3</div></div>`))
-				Expect(
-					newParent,
-				).To(HaveOuterHTML(`<div id="parent-2"><div id="2">2</div><div id="ref"></div></div>`))
-			})
+func (s *NodeMoveToNewParentTest) TestOldParentIsUpdatedWhenUsingAppend() {
+	elm := s.doc.GetElementById("2")
+	oldParent := s.doc.GetElementById("parent-1")
+	newParent := s.doc.GetElementById("parent-2")
+	s.Expect(
+		oldParent,
+	).To(HaveOuterHTML(`<div id="parent-1"><div id="1">1</div><div id="2">2</div><div id="3">3</div></div>`))
+	newParent.AppendChild(elm)
+	s.Expect(
+		oldParent,
+	).To(HaveOuterHTML(`<div id="parent-1"><div id="1">1</div><div id="3">3</div></div>`))
+	s.Expect(
+		newParent,
+	).To(HaveOuterHTML(`<div id="parent-2"><div id="ref"></div><div id="2">2</div></div>`))
+}
 
-			It("Should be removed from parent when using `AppendChild`", func() {
-				elm := doc.GetElementById("2")
-				oldParent := doc.GetElementById("parent-1")
-				newParent := doc.GetElementById("parent-2")
-				Expect(
-					oldParent,
-				).To(HaveOuterHTML(`<div id="parent-1"><div id="1">1</div><div id="2">2</div><div id="3">3</div></div>`))
-				newParent.AppendChild(elm)
-				Expect(
-					oldParent,
-				).To(HaveOuterHTML(`<div id="parent-1"><div id="1">1</div><div id="3">3</div></div>`))
-				Expect(
-					newParent,
-				).To(HaveOuterHTML(`<div id="parent-2"><div id="ref"></div><div id="2">2</div></div>`))
-			})
-		})
-	})
-
-	Describe("Contains", func() {
-		It("Should return true for an immediate child", func() {
-			doc := ParseHtmlString(
-				`<body><div id="parent-1"><div id="1">1</div></div></body>`,
-			)
-			child := doc.GetElementById("1")
-			parent := doc.GetElementById("parent-1")
-			Expect(parent.Contains(child)).To(BeTrue())
-		})
-
-		It("Should return true for a grandchild", func() {
-			doc := ParseHtmlString(
-				`<body><div id="parent-1"><div id="1"><div id="2"><div id="3"></div></div></div></div></body>`,
-			)
-			child := doc.GetElementById("3")
-			parent := doc.GetElementById("parent-1")
-			Expect(parent.Contains(child)).To(BeTrue())
-		})
-
-		It("Should return false for a sibling", func() {
-			doc := ParseHtmlString(
-				`<body><div id="parent-1"><div id="1"></div></div><div id="parent-2"></div></body>`,
-			)
-			child := doc.GetElementById("parent-2")
-			parent := doc.GetElementById("parent-1")
-			Expect(parent.Contains(child)).To(BeFalse())
-		})
-	})
-
-	Describe("TextContents", func() {
-		It("Should return all text", func() {
-			doc := ParseHtmlString(
-				`<body><div style="display: none">Hidden text</div><div>Visible text</div></body>`,
-			)
-			text := doc.Body().TextContent()
-			Expect(text).To(Equal("Hidden textVisible text"))
-		})
-	})
-
-	Describe("IsConnected", func() {
-		It("Returns false for a new node", func() {
-			doc := ParseHtmlString(`<body></body>`)
-			div := doc.CreateElement("div")
-			Expect(div.IsConnected()).To(BeFalse())
-		})
-
-		It("Should return true when node is inserted in document", func() {
-			doc := ParseHtmlString(`<body></body>`)
-			div, err := doc.DocumentElement().AppendChild(doc.CreateElement("div"))
-			Expect(err).ToNot(HaveOccurred())
-			Expect(div.IsConnected()).To(BeTrue())
-		})
-	})
-
-	Describe("RemoveChild", func() {
-		It("Should return the removed element", func() {
-			doc := ParseHtmlString(
-				`<body><div id="parent"><div id="child">child</div></div></body>`,
-			)
-			parent := doc.GetElementById("parent")
-			child := doc.GetElementById("child")
-			removed, err := parent.RemoveChild(child)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(parent).To(HaveOuterHTML(`<div id="parent"></div>`))
-			Expect(removed).To(HaveOuterHTML(`<div id="child">child</div>`))
-		})
-
-		It("Should generate a DOMError if node is not a child of parent", func() {
-			doc := ParseHtmlString(
-				`<body><div id="sibling-1"></div><div id="sibling-2"></div></body>`,
-			)
-			node1 := doc.GetElementById("sibling-1")
-			node2 := doc.GetElementById("sibling-2")
-			Expect(node1.RemoveChild(node2)).Error().To(BeADOMError())
-		})
-	})
-
-	Describe("GetRootNode", func() {
-		It("Should return the document", func() {
-			doc := ParseHtmlString(
-				`<body><div id="parent"><div id="child">child</div></div></body>`,
-			)
-			root := doc.GetElementById("child").GetRootNode()
-			Expect(root).To(Equal(doc))
-		})
-
-		It("Should return itself if not connected", func() {
-			doc := CreateHTMLDocument()
-			div := doc.CreateElement("div")
-			Expect(div.GetRootNode()).To(Equal(div))
-		})
-	})
-})
+func TestNodeInsertBefore(t *testing.T) {
+	suite.Run(t, new(NodeMoveToNewParentTest))
+}
