@@ -5,7 +5,10 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/test/scripttests"
 )
+
+type GomegaSuite = scripttests.GomegaSuite
 
 func ParseHtmlString(s string) dom.Document {
 	win, err := html.NewWindowReader(strings.NewReader(s))

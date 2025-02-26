@@ -5,7 +5,6 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	. "github.com/gost-dom/browser/dom"
-	"github.com/gost-dom/browser/internal/test/scripttests"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 	"github.com/stretchr/testify/suite"
@@ -15,7 +14,7 @@ import (
 )
 
 type ElementTestSuite struct {
-	scripttests.GomegaSuite
+	GomegaSuite
 	doc dom.Document
 }
 
