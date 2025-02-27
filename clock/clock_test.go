@@ -46,14 +46,15 @@ func (s *ClockTestSuite) TestAdvance() {
 func (s *ClockTestSuite) TestCancelTask() {
 	c := clock.New()
 	c.AddSafeTask(func() { s.log("A") }, 100*time.Millisecond)
-	handle := c.AddSafeTask(func() { s.log("B") }, 200*time.Millisecond)
+	c.AddSafeTask(func() { s.log("B1") }, 200*time.Millisecond)
+	handle := c.AddSafeTask(func() { s.log("B2") }, 200*time.Millisecond)
 	c.AddSafeTask(func() { s.log("C") }, 300*time.Millisecond)
 
 	c.Advance(150 * time.Millisecond)
 	c.Cancel(handle)
 	c.Advance(150 * time.Millisecond)
 
-	s.Assert().Equal([]string{"A", "C"}, s.logs)
+	s.Assert().Equal([]string{"A", "B1", "C"}, s.logs)
 }
 
 func (s *ClockTestSuite) TestInitialTimeIsRelevant() {

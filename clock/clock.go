@@ -59,7 +59,9 @@ type Clock struct {
 	MaxLoopWithoutDecrement int
 	tasks                   []futureTask
 	// The tasks in the microtask queue must execute before the next task in the
-	// task queue, even if next tasks is set to execute now.
+	// task queue, even if next tasks is set to execute now. Microtasks are
+	// really a property of the JavaScript language and should be eventually be
+	// carried out by the JavaScript host.
 	microtasks []TaskCallback
 	nextHandle TaskHandle
 }
@@ -198,13 +200,17 @@ func (c *Clock) generateHandle() TaskHandle {
 	return c.nextHandle
 }
 
-func (c *Clock) insertTask(future futureTask) {
+func (c *Clock) insertTask(future futureTask) TaskHandle {
+	if future.handle == 0 {
+		future.handle = c.generateHandle()
+	}
 	idx := slices.IndexFunc(c.tasks, func(t futureTask) bool { return t.time.After(future.time) })
 	if idx >= 0 {
 		c.tasks = slices.Insert(c.tasks, idx, future)
 	} else {
 		c.tasks = append(c.tasks, future)
 	}
+	return future.handle
 }
 
 // SetInterval corresponds to the browser's [setInterval] function. Panics if
@@ -215,16 +221,13 @@ func (c *Clock) SetInterval(task SafeTaskCallback, delay time.Duration) TaskHand
 	if delay < 0 {
 		panic(fmt.Sprintf("Clock.SetInterval: negative delay: %d", delay))
 	}
-	handle := c.generateHandle()
-	future := futureTask{
-		time:   c.Time.Add(delay),
-		task:   task.toTask(),
-		handle: handle,
-		repeat: true,
-		delay:  delay,
-	}
-	c.insertTask(future)
-	return handle
+	return c.insertTask(
+		futureTask{
+			time:   c.Time.Add(delay),
+			task:   task.toTask(),
+			repeat: true,
+			delay:  delay,
+		})
 }
 
 // SetInterval corresponds to the browser's [setTimeout] function. Panics if the
@@ -235,15 +238,10 @@ func (c *Clock) SetTimeout(task TaskCallback, delay time.Duration) TaskHandle {
 	if delay < 0 {
 		panic(fmt.Sprintf("Clock.SetTimeout: negative delay: %d", delay))
 	}
-	handle := c.generateHandle()
-	taskTime := c.Time.Add(delay)
-	future := futureTask{
-		time:   taskTime,
-		task:   task,
-		handle: handle,
-	}
-	c.insertTask(future)
-	return handle
+	return c.insertTask(futureTask{
+		time: c.Time.Add(delay),
+		task: task,
+	})
 }
 
 // Schedules a task to run at a specified time in the future. Panics if the time
