@@ -53,7 +53,11 @@ test-html:
 
 .PHONY: test-v8
 test-v8: 
-	$(GOW) -s -e=go -e=js -e=html -w ./.. test -vet=off ./scripting/v8host
+	# $(GOW) -s -e=go -e=js -e=html -w ./.. test -vet=off ./scripting/v8host
+	gotestsum --format dots --watch --packages "./scripting/v8host ./internal/test/scripttests" -- -vet=off
+
+test-scripting: 
+	gotestsum --format dots --watch --packages "./scripting/... ./internal/test/scripttests" -- -vet=off
 
 .PHONY: test-goja
 test-goja:
