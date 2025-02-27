@@ -52,7 +52,7 @@ func (xhr xmlHttpRequestV8Wrapper) CreateInstance(
 	ctx *V8ScriptContext,
 	this *v8.Object,
 ) (*v8.Value, error) {
-	result := NewXmlHttpRequest(ctx.window.HTTPClient(), ctx.window.Location().Href())
+	result := NewXmlHttpRequest(ctx.window.HTTPClient(), ctx.window.Location().Href(), ctx.clock)
 	result.SetCatchAllHandler(NewEventHandlerFunc(func(event Event) error {
 		prop := "on" + event.Type()
 		handler, err := this.Get(prop)
@@ -75,7 +75,7 @@ func (xhr xmlHttpRequestV8Wrapper) open(
 	args := newArgumentHelper(xhr.scriptHost, info)
 	method, err0 := tryParseArg(args, 0, xhr.decodeUSVString)
 	url, err1 := tryParseArg(args, 1, xhr.decodeUSVString)
-	async, err2 := tryParseArg(args, 1, xhr.decodeBoolean)
+	async, err2 := tryParseArg(args, 2, xhr.decodeBoolean)
 	// username, err3 := TryParseArg(args, 1, u.DecodeUSVString)
 	// password, err4 := TryParseArg(args, 1, u.DecodeUSVString)
 	instance, errInstance := xhr.getInstance(info)

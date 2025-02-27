@@ -105,7 +105,7 @@ var _ = Describe("V8 XmlHttpRequest", func() {
 		It("Should send with `null`", func() {
 			Expect(window.Eval(`
 				const xhr = new XMLHttpRequest();
-				xhr.open("GET", "/");
+				xhr.open("GET", "/", false);
 				xhr.send(null)
 				xhr.status
 			`)).To(BeEquivalentTo(200))
@@ -117,7 +117,7 @@ var _ = Describe("V8 XmlHttpRequest", func() {
 				const data = new FormData()
 				data.append("k1", "v1")
 				data.append("k2", "v2")
-				xhr.open("GET", "/");
+				xhr.open("GET", "/", false);
 				xhr.send(data)
 				xhr.status
 			`)).To(BeEquivalentTo(200))
@@ -127,6 +127,7 @@ var _ = Describe("V8 XmlHttpRequest", func() {
 		It("Should be able to send a string", func() {
 			Expect(window.Eval(`
 				const xhr = new XMLHttpRequest();
+				xhr.open("POST", "/", false)
 				xhr.send("body contents")
 				xhr.status
 			`)).To(BeEquivalentTo(200))

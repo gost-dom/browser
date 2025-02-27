@@ -5,7 +5,6 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/gost-dom/browser"
-	"github.com/gost-dom/browser/dom"
 	app "github.com/gost-dom/browser/internal/test/htmx-app"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 )
@@ -23,7 +22,6 @@ var _ = Describe("HTMX Tests", Ordered, func() {
 	})
 
 	It("Should increment the counter example", func() {
-		Skip("Need sync")
 		win, err := b.Open("/counter/index.html")
 		Expect(err).ToNot(HaveOccurred())
 		counter := win.Document().GetElementById("counter")
@@ -54,25 +52,14 @@ var _ = Describe("HTMX Tests", Ordered, func() {
 	})
 
 	It("Should update the location when a link with href is boosted", func() {
-		c := make(chan bool)
 		win, err := b.Open("/navigation/page-a.html")
-		win.AddEventListener("htmx:load", dom.NewEventHandlerFunc(func(e dom.Event) error {
-			go func() { c <- true }()
-			return nil
-		}))
-		win.AddEventListener("htmx:afterSwap", dom.NewEventHandlerFunc(func(e dom.Event) error {
-			go func() { c <- true }()
-			return nil
-		}))
 		Expect(err).ToNot(HaveOccurred())
 
 		// Click an hx-boost link
-		<-c
 		Expect(win.ScriptContext().Eval("window.pageA")).ToNot(BeNil())
 		Expect(win.ScriptContext().Eval("window.pageA")).To(BeTrue())
 		Expect(win.ScriptContext().Eval("window.pageB")).To(BeNil())
 		win.Document().GetElementById("link-to-b-boosted").Click()
-		<-c
 
 		Expect(win.ScriptContext().Eval("window.pageA")).ToNot(BeNil(), "A")
 		Expect(win.ScriptContext().Eval("window.pageB")).ToNot(BeNil(), "B")

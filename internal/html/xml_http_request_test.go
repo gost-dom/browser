@@ -8,6 +8,7 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	. "github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/clock"
 	. "github.com/gost-dom/browser/internal/html"
 	. "github.com/gost-dom/browser/internal/http"
 
@@ -16,11 +17,14 @@ import (
 	"github.com/onsi/gomega/types"
 )
 
-func newFromHandlerFunc(f func(http.ResponseWriter, *http.Request)) XmlHttpRequest {
+func newFromHandlerFunc(
+	clock *clock.Clock,
+	f func(http.ResponseWriter, *http.Request),
+) XmlHttpRequest {
 	client := http.Client{
 		Transport: TestRoundTripper{Handler: http.HandlerFunc(f)},
 	}
-	return NewXmlHttpRequest(client, "")
+	return NewXmlHttpRequest(client, "", clock)
 }
 
 var _ = Describe("XmlHTTPRequest", func() {
@@ -32,10 +36,12 @@ var _ = Describe("XmlHTTPRequest", func() {
 		reqErr         error
 		responseHeader http.Header
 		xhr            XmlHttpRequest
+		timer          *clock.Clock
 	)
 
 	JustBeforeEach(func() {
 		// Create a basic server for testing
+		timer = clock.New()
 		handler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 			actualHeader = req.Header
 			actualMethod = req.Method
@@ -52,7 +58,7 @@ var _ = Describe("XmlHTTPRequest", func() {
 			}
 			w.Write([]byte("Hello, World!"))
 		})
-		xhr = NewXmlHttpRequest(NewHttpClientFromHandler(handler), "")
+		xhr = NewXmlHttpRequest(NewHttpClientFromHandler(handler), "", timer)
 		DeferCleanup(func() {
 			// Allow GC after test run
 			handler = nil
@@ -89,7 +95,7 @@ var _ = Describe("XmlHTTPRequest", func() {
 		// It was written as the first test as it's the easier case to deal with
 		Describe("Request succeeds", func() {
 			It("Can make a request", func() {
-				xhr.Open("GET", "/dummy")
+				xhr.Open("GET", "/dummy", RequestOptionAsync(false))
 				Expect(xhr.Status()).To(Equal(0))
 				Expect(xhr.Send()).To(Succeed())
 				// Verify request
@@ -111,7 +117,7 @@ var _ = Describe("XmlHTTPRequest", func() {
 				loadEnded   bool
 				loaded      bool
 			)
-			xhr.Open("GET", "/dummy", RequestOptionAsync(true))
+			xhr.Open("GET", "/dummy")
 			xhr.AddEventListener(
 				XHREventLoadstart,
 				dom.NewEventHandlerFunc(func(e dom.Event) error {
@@ -123,22 +129,19 @@ var _ = Describe("XmlHTTPRequest", func() {
 				loadEnded = true
 				return nil
 			}))
-			ended := make(chan bool)
-			defer close(ended)
 			xhr.AddEventListener(XHREventLoad, dom.NewEventHandlerFunc(func(e dom.Event) error {
 				loaded = true
-				ended <- true
 				return nil
 			}))
 			By("Sending the request")
 			Expect(xhr.Send()).To(Succeed())
-			Expect(xhr.Status()).To(Equal(0), "Response should not have been received yet")
 			Expect(loadStarted).To(BeTrue(), "loadstart emitted")
+			Expect(xhr.Status()).To(Equal(0), "Response should not have been received yet")
 			Expect(loadEnded).To(BeFalse(), "loadend emitted")
 			Expect(loaded).To(BeFalse(), "load emitted")
 
 			By("Receiving load event")
-			<-ended
+			Expect(timer.RunAll()).To(Succeed())
 
 			By("The response should be a success")
 			Expect(xhr.Status()).To(Equal(200))
@@ -152,7 +155,7 @@ var _ = Describe("XmlHTTPRequest", func() {
 				// This test uses blocking requests.
 				// This isn't the ususal case, but the test is much easier to write; and
 				// code being tested is unrelated to blocking/non-blocking.
-				xhr.Open("POST", "/dummy")
+				xhr.Open("POST", "/dummy", RequestOptionAsync(false))
 				formData := NewFormData()
 				formData.Append("key1", "Value%42")
 				formData.Append("key2", "Value&=42")
@@ -172,7 +175,7 @@ var _ = Describe("XmlHTTPRequest", func() {
 	Describe("SetRequestHeader", func() {
 		It("Should add the header", func() {
 			xhr.SetRequestHeader("x-test", "42")
-			xhr.Open("GET", "/dummy")
+			xhr.Open("GET", "/dummy", RequestOptionAsync(false))
 			Expect(xhr.Send()).To(Succeed())
 			Expect(actualHeader.Get("x-test")).To(Equal("42"))
 		})
@@ -187,7 +190,7 @@ var _ = Describe("XmlHTTPRequest", func() {
 		})
 
 		JustBeforeEach(func() {
-			xhr.Open("GET", "/dummy")
+			xhr.Open("GET", "/dummy", RequestOptionAsync(false))
 			xhr.Send()
 		})
 

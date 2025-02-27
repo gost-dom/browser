@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/url"
 )
@@ -63,15 +64,18 @@ type xmlHttpRequest struct {
 	response []byte
 	res      *http.Response
 	headers  http.Header
+	clock    *clock.Clock
 }
 
-func NewXmlHttpRequest(client http.Client, location string) XmlHttpRequest {
+func NewXmlHttpRequest(client http.Client, location string, clock *clock.Clock) XmlHttpRequest {
 	log.Info("NewXmlHttpRequest", "location", location)
 	return &xmlHttpRequest{
 		EventTarget: dom.NewEventTarget(),
 		location:    location,
 		client:      client,
 		headers:     make(map[string][]string),
+		clock:       clock,
+		async:       true,
 	}
 }
 
@@ -130,7 +134,9 @@ func (req *xmlHttpRequest) SendBody(body io.Reader) error {
 	}
 	if req.async {
 		req.DispatchEvent(dom.NewCustomEvent((XHREventLoadstart)))
-		go req.send(body)
+		req.clock.AddSafeTask(func() {
+			req.send(body)
+		}, 0)
 		return nil
 	}
 	return req.send(body)

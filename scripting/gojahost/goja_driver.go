@@ -8,6 +8,7 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/scripting"
 
 	"github.com/dop251/goja"
@@ -144,6 +145,7 @@ func (d *gojaScriptHost) NewContext(window html.Window) html.ScriptContext {
 	vm.SetFieldNameMapper(propertyNameMapper{})
 	result := &GojaContext{
 		vm:           vm,
+		clock:        clock.New(),
 		window:       window,
 		wrappedGoObj: g.NewSymbol(internal_symbol_name),
 		cachedNodes:  make(map[int32]g.Value),
@@ -159,6 +161,7 @@ func (d *gojaScriptHost) NewContext(window html.Window) html.ScriptContext {
 		g.FLAG_FALSE,
 	)
 	globalThis.Set("window", globalThis)
+	newEventLoopWrapper(result).initializeWindows(globalThis, vm)
 	globalThis.DefineAccessorProperty("document", vm.ToValue(func(c *g.FunctionCall) g.Value {
 		return result.toNode(window.Document())
 	}), nil, g.FLAG_FALSE, g.FLAG_TRUE)
@@ -186,21 +189,30 @@ func (d *gojaScriptHost) Close() {}
 
 type GojaContext struct {
 	vm           *g.Runtime
+	clock        *clock.Clock
 	window       html.Window
 	globals      map[string]function
 	wrappedGoObj *g.Symbol
 	cachedNodes  map[int32]g.Value
 }
 
+func (c *GojaContext) Clock() html.Clock { return c.clock }
+
 func (i *GojaContext) Close() {}
 
+func (i *GojaContext) run(str string) (goja.Value, error) {
+	res, err := i.vm.RunString(str)
+	i.clock.Tick()
+	return res, err
+}
+
 func (i *GojaContext) Run(str string) error {
-	_, err := i.vm.RunString(str)
+	_, err := i.run(str)
 	return err
 }
 
 func (i *GojaContext) Eval(str string) (res any, err error) {
-	if gojaVal, err := i.vm.RunString(str); err == nil {
+	if gojaVal, err := i.run(str); err == nil {
 		return gojaVal.Export(), nil
 	} else {
 		return nil, err
