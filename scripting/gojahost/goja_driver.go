@@ -12,7 +12,6 @@ import (
 	"github.com/gost-dom/browser/scripting"
 
 	"github.com/dop251/goja"
-	g "github.com/dop251/goja"
 )
 
 const internal_symbol_name = "__go_dom_internal_value__"
@@ -24,14 +23,14 @@ func New() html.ScriptHost {
 type gojaScriptHost struct{}
 
 type wrapper interface {
-	constructor(call g.ConstructorCall, r *g.Runtime) *g.Object
-	storeInternal(value any, this *g.Object)
+	constructor(call goja.ConstructorCall, r *goja.Runtime) *goja.Object
+	storeInternal(value any, this *goja.Object)
 }
 
 type createWrapper func(instance *GojaContext) wrapper
 
 type wrapperPrototypeInitializer interface {
-	initializePrototype(prototype *g.Object, r *g.Runtime)
+	initializePrototype(prototype *goja.Object, r *goja.Runtime)
 }
 
 type class struct {
@@ -69,13 +68,13 @@ func init() {
 }
 
 type function struct {
-	Constructor *g.Object
-	Prototype   *g.Object
+	Constructor *goja.Object
+	Prototype   *goja.Object
 	Wrapper     wrapper
 }
 
 type instanceInitializer interface {
-	initObject(*g.Object)
+	initObject(*goja.Object)
 }
 
 type propertyNameMapper struct{}
@@ -107,15 +106,15 @@ func (d *GojaContext) installGlobals(classes classMap) {
 		if constructor, alreadyInstalled := d.globals[name]; alreadyInstalled {
 			return constructor
 		}
-		constructor := d.vm.ToValue(wrapper.constructor).(*g.Object)
+		constructor := d.vm.ToValue(wrapper.constructor).(*goja.Object)
 		constructor.DefineDataProperty(
 			"name",
 			d.vm.ToValue(name),
-			g.FLAG_NOT_SET,
-			g.FLAG_NOT_SET,
-			g.FLAG_NOT_SET,
+			goja.FLAG_NOT_SET,
+			goja.FLAG_NOT_SET,
+			goja.FLAG_NOT_SET,
 		)
-		prototype := constructor.Get("prototype").(*g.Object)
+		prototype := constructor.Get("prototype").(*goja.Object)
 		result := function{constructor, prototype, wrapper}
 		d.vm.Set(name, constructor)
 		d.globals[name] = result
@@ -141,14 +140,14 @@ func (d *GojaContext) installGlobals(classes classMap) {
 }
 
 func (d *gojaScriptHost) NewContext(window html.Window) html.ScriptContext {
-	vm := g.New()
+	vm := goja.New()
 	vm.SetFieldNameMapper(propertyNameMapper{})
 	result := &GojaContext{
 		vm:           vm,
 		clock:        clock.New(),
 		window:       window,
-		wrappedGoObj: g.NewSymbol(internal_symbol_name),
-		cachedNodes:  make(map[int32]g.Value),
+		wrappedGoObj: goja.NewSymbol(internal_symbol_name),
+		cachedNodes:  make(map[int32]goja.Value),
 	}
 	result.installGlobals(globals)
 
@@ -156,19 +155,19 @@ func (d *gojaScriptHost) NewContext(window html.Window) html.ScriptContext {
 	globalThis.DefineDataPropertySymbol(
 		result.wrappedGoObj,
 		vm.ToValue(window),
-		g.FLAG_FALSE,
-		g.FLAG_FALSE,
-		g.FLAG_FALSE,
+		goja.FLAG_FALSE,
+		goja.FLAG_FALSE,
+		goja.FLAG_FALSE,
 	)
 	globalThis.Set("window", globalThis)
 	newEventLoopWrapper(result).initializeWindows(globalThis, vm)
-	globalThis.DefineAccessorProperty("document", vm.ToValue(func(c *g.FunctionCall) g.Value {
+	globalThis.DefineAccessorProperty("document", vm.ToValue(func(c *goja.FunctionCall) goja.Value {
 		return result.toNode(window.Document())
-	}), nil, g.FLAG_FALSE, g.FLAG_TRUE)
+	}), nil, goja.FLAG_FALSE, goja.FLAG_TRUE)
 	location := result.createLocationInstance()
-	globalThis.DefineAccessorProperty("location", vm.ToValue(func(c *g.FunctionCall) g.Value {
+	globalThis.DefineAccessorProperty("location", vm.ToValue(func(c *goja.FunctionCall) goja.Value {
 		return location
-	}), nil, g.FLAG_FALSE, g.FLAG_TRUE)
+	}), nil, goja.FLAG_FALSE, goja.FLAG_TRUE)
 	globalThis.SetPrototype(result.globals["Window"].Prototype)
 
 	return result
@@ -179,21 +178,21 @@ func (m *GojaContext) createLocationInstance() *goja.Object {
 	location.DefineDataPropertySymbol(
 		m.wrappedGoObj,
 		m.vm.ToValue(m.window.Location()),
-		g.FLAG_FALSE,
-		g.FLAG_FALSE,
-		g.FLAG_FALSE,
+		goja.FLAG_FALSE,
+		goja.FLAG_FALSE,
+		goja.FLAG_FALSE,
 	)
 	return location
 }
 func (d *gojaScriptHost) Close() {}
 
 type GojaContext struct {
-	vm           *g.Runtime
+	vm           *goja.Runtime
 	clock        *clock.Clock
 	window       html.Window
 	globals      map[string]function
-	wrappedGoObj *g.Symbol
-	cachedNodes  map[int32]g.Value
+	wrappedGoObj *goja.Symbol
+	cachedNodes  map[int32]goja.Value
 }
 
 func (c *GojaContext) Clock() html.Clock { return c.clock }
@@ -224,15 +223,15 @@ func (i *GojaContext) EvalCore(str string) (res any, err error) {
 }
 
 func (i *GojaContext) RunFunction(str string, arguments ...any) (res any, err error) {
-	var f g.Value
+	var f goja.Value
 	if f, err = i.vm.RunString(str); err == nil {
-		if c, ok := g.AssertFunction(f); !ok {
+		if c, ok := goja.AssertFunction(f); !ok {
 			err = errors.New("GojaContext.RunFunction: script is not a function")
 		} else {
-			values := make([]g.Value, len(arguments))
+			values := make([]goja.Value, len(arguments))
 			for i, a := range arguments {
 				var ok bool
-				if values[i], ok = a.(g.Value); !ok {
+				if values[i], ok = a.(goja.Value); !ok {
 					err = fmt.Errorf("GojaContext.RunFunction: argument %d was not a goja Value", i)
 				}
 			}
@@ -259,7 +258,7 @@ func (i *GojaContext) Export(value any) (res any, err error) {
 			err = fmt.Errorf("GojaContext.Export: %v", r)
 		}
 	}()
-	if gv, ok := value.(g.Value); ok {
+	if gv, ok := value.(goja.Value); ok {
 		res = gv.Export()
 	} else {
 		err = fmt.Errorf("GojaContext.Export: Value not a goja value: %v", value)
