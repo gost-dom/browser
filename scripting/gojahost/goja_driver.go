@@ -6,9 +6,9 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/gost-dom/browser/clock"
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/scripting"
 
 	"github.com/dop251/goja"
@@ -196,7 +196,7 @@ type GojaContext struct {
 	cachedNodes  map[int32]g.Value
 }
 
-func (c *GojaContext) Clock() *clock.Clock { return c.clock }
+func (c *GojaContext) Clock() html.Clock { return c.clock }
 
 func (i *GojaContext) Close() {}
 

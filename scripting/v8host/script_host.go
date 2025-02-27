@@ -6,9 +6,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gost-dom/browser/clock"
 	. "github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
@@ -351,7 +351,7 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 	return context
 }
 
-func (ctx *V8ScriptContext) Clock() *clock.Clock { return ctx.clock }
+func (ctx *V8ScriptContext) Clock() html.Clock { return ctx.clock }
 
 func (host *V8ScriptHost) addContext(ctx *V8ScriptContext) {
 	host.mu.Lock()

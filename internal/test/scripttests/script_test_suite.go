@@ -3,7 +3,6 @@ package scripttests
 import (
 	"strings"
 
-	"github.com/gost-dom/browser/clock"
 	"github.com/gost-dom/browser/html"
 	matchers "github.com/gost-dom/browser/testing/gomega-matchers"
 	"github.com/onsi/ginkgo/v2"
@@ -29,13 +28,8 @@ func (ctx *ScriptTestContext) Run(script string) error {
 	return ctx.Window.Run(script)
 }
 
-func (c *ScriptTestContext) Clock() *clock.Clock {
-	return c.Window.Clock()
-}
-
-func (ctx *ScriptTestContext) Close() {
-	ctx.Window.Close()
-}
+func (c *ScriptTestContext) Clock() html.Clock { return c.Window.Clock() }
+func (ctx *ScriptTestContext) Close()          { ctx.Window.Close() }
 
 type ScriptTestSuiteOption func(*ScriptTestSuite)
 

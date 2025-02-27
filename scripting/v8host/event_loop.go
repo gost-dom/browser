@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/gost-dom/browser/clock"
+	"github.com/gost-dom/browser/internal/clock"
 	v8 "github.com/tommie/v8go"
 )
 

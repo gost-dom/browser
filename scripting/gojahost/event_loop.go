@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/dop251/goja"
-	"github.com/gost-dom/browser/clock"
 	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/internal/clock"
 )
 
 type eventLoopWrapper struct {

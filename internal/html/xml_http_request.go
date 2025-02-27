@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gost-dom/browser/clock"
 	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/url"
 )

@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gost-dom/browser/clock"
+	"github.com/gost-dom/browser/internal/clock"
 	"github.com/stretchr/testify/suite"
 )
 

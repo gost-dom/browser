@@ -6,9 +6,9 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/gost-dom/browser/clock"
 	"github.com/gost-dom/browser/dom"
 	. "github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/clock"
 	. "github.com/gost-dom/browser/internal/html"
 	. "github.com/gost-dom/browser/internal/http"
 
