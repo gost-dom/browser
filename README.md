@@ -114,8 +114,8 @@ This is still in early development, and the structure may still change.
 dom/ # Core DOM implementation
 html/ # Window, HTMLDocument, HTMLElement, 
 scripting/ # Client-side script support
-v8host/ # v8 engine, and bindings
-gojahost/ # goja javascript engine,
+  v8host/ # v8 engine, and bindings
+  gojahost/ # goja javascript engine,
 browser.go # Main module
 ```
 
