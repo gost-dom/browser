@@ -194,7 +194,7 @@ func (c *Clock) insertTask(future futureTask) {
 	}
 }
 
-func (c *Clock) AddRepeat(delay time.Duration, task SafeTaskCallback) TaskHandle {
+func (c *Clock) SetInterval(task SafeTaskCallback, delay time.Duration) TaskHandle {
 	handle := c.generateHandle()
 	future := futureTask{
 		time:   c.Time.Add(delay),
@@ -209,9 +209,9 @@ func (c *Clock) AddRepeat(delay time.Duration, task SafeTaskCallback) TaskHandle
 
 // Schedules a task to run at a specified time in the future. Panics if the time
 // is in the past.
-func (c *Clock) AddTask(when FutureTimeSpec, task TaskCallback) TaskHandle {
+func (c *Clock) SetTimeout(task TaskCallback, delay time.Duration) TaskHandle {
 	handle := c.generateHandle()
-	taskTime := when(c.Time)
+	taskTime := c.Time.Add(delay)
 	if taskTime.Before(c.Time) {
 		panic(
 			fmt.Sprintf(
@@ -238,8 +238,8 @@ func (c *Clock) AddTask(when FutureTimeSpec, task TaskCallback) TaskHandle {
 
 // Schedules a task to run at a specified time in the future. Panics if the time
 // is in the past.
-func (c *Clock) AddSafeTask(when FutureTimeSpec, task SafeTaskCallback) TaskHandle {
-	return c.AddTask(when, task.toTask())
+func (c *Clock) AddSafeTask(task SafeTaskCallback, delay time.Duration) TaskHandle {
+	return c.SetTimeout(task.toTask(), delay)
 }
 
 // Keeps running as long as there are tasks in the task queue. New tasks
@@ -279,19 +279,3 @@ func OfIsoString(iso string) NewClockOption {
 	}
 	return OfTime(t)
 }
-
-/* -------- DelaySpecifier -------- */
-
-// FutureTimeSpec calback is called to calculate when a task should execute
-type FutureTimeSpec func(current time.Time) time.Time
-
-// Relative is a FutureTimeSpec indicating a relative time to the current
-// simulated time. Panics if the duration is negative.
-func Relative(d time.Duration) FutureTimeSpec {
-	return func(t time.Time) time.Time {
-		return t.Add(d)
-	}
-}
-
-// Immediate is a FutureTimeSpec indicating the task should be scheduled "now".
-var Immediate FutureTimeSpec = func(t time.Time) time.Time { return t }

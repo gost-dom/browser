@@ -134,9 +134,9 @@ func (req *xmlHttpRequest) SendBody(body io.Reader) error {
 	}
 	if req.async {
 		req.DispatchEvent(dom.NewCustomEvent((XHREventLoadstart)))
-		req.clock.AddSafeTask(clock.Immediate, func() {
+		req.clock.AddSafeTask(func() {
 			req.send(body)
-		})
+		}, 0)
 		return nil
 	}
 	return req.send(body)

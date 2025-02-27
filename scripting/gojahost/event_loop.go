@@ -55,13 +55,13 @@ func (l eventLoopWrapper) setTimeout(c goja.FunctionCall) goja.Value {
 	}
 	delay := c.Argument(1).ToInteger()
 	handle := l.ctx.clock.AddSafeTask(
-		clock.Relative(time.Millisecond*time.Duration(delay)),
 		func() {
 			_, err := f(l.ctx.vm.GlobalObject())
 			if err != nil {
 				l.ctx.window.DispatchEvent(dom.NewErrorEvent(err))
 			}
 		},
+		time.Millisecond*time.Duration(delay),
 	)
 	return l.vm().ToValue(handle)
 }
@@ -78,14 +78,14 @@ func (l eventLoopWrapper) setInterval(c goja.FunctionCall) goja.Value {
 		panic(l.ctx.vm.NewTypeError("setTimeout: Argument must be a function"))
 	}
 	delay := c.Argument(1).ToInteger()
-	handle := l.ctx.clock.AddRepeat(
-		time.Millisecond*time.Duration(delay),
+	handle := l.ctx.clock.SetInterval(
 		func() {
 			_, err := f(l.ctx.vm.GlobalObject())
 			if err != nil {
 				l.ctx.window.DispatchEvent(dom.NewErrorEvent(err))
 			}
 		},
+		time.Millisecond*time.Duration(delay),
 	)
 	return l.vm().ToValue(handle)
 }

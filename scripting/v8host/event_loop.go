@@ -27,11 +27,12 @@ func newWorkItem(fn *v8.Function) workItem {
 
 // dispatch places an item on the event loop to be executed immediately
 func (l *eventLoop) dispatch(task clock.TaskCallback, delay int) {
-	l.ctx.clock.AddSafeTask(clock.Relative(time.Duration(delay)*time.Millisecond), func() {
+	l.ctx.clock.AddSafeTask(func() {
 		if err := task(); err != nil { //w.fn.Call(l.globalObject); err != nil {
 			l.errorCb(err)
 		}
-	})
+	},
+		time.Duration(delay)*time.Millisecond)
 }
 
 func newEventLoop(context *V8ScriptContext, cb func(error)) *eventLoop {
@@ -55,12 +56,12 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 					return v8.Undefined(iso), err
 				}
 				handle := ctx.clock.AddSafeTask(
-					clock.Relative(time.Duration(delay)*time.Millisecond),
 					func() {
 						if _, err := f.Call(info.Context().Global()); err != nil {
 							ctx.eventLoop.errorCb(err)
 						}
 					},
+					time.Duration(delay)*time.Millisecond,
 				)
 				return v8.NewValue(iso, uint32(handle))
 			},
@@ -92,13 +93,13 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 				if err != nil {
 					return v8.Undefined(iso), err
 				}
-				handle := ctx.clock.AddRepeat(
-					time.Duration(delay)*time.Millisecond,
+				handle := ctx.clock.SetInterval(
 					func() {
 						if _, err := f.Call(info.Context().Global()); err != nil {
 							ctx.eventLoop.errorCb(err)
 						}
 					},
+					time.Duration(delay)*time.Millisecond,
 				)
 				return v8.NewValue(iso, uint32(handle))
 			},
