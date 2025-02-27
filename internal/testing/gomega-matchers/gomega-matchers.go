@@ -20,3 +20,5 @@ var BeNil = gomega.BeNil
 var BeEmpty = gomega.BeEmpty
 
 var WithTransform = gomega.WithTransform
+
+var ContainElement = gomega.ContainElement

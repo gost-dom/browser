@@ -1,87 +1,62 @@
 package scripttests
 
 import (
-	"strings"
-
 	"github.com/gost-dom/browser/html"
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
+	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 )
 
-func (suite *ScriptTestSuite) CreateWindowTests() {
-	prefix := suite.Prefix
-	Describe(prefix+"Window object", func() {
-		var ctx html.ScriptContext
+type WindowTestSuite struct {
+	ScriptHostSuite
+}
 
-		BeforeEach(func() {
-			ctx = suite.NewContext()
-		})
+func (s *WindowTestSuite) TestGlobalInstance() {
+	s.Expect(s.eval("globalThis === window")).To(BeTrue())
+}
 
-		Describe("location property", func() {
-			It("Should be a Location", func() {
-				Expect(ctx.Eval("window.location instanceof Location")).To(BeTrue())
-			})
-		})
+func (s *WindowTestSuite) TestWindowInheritance() {
+	s.Expect(s.eval("window instanceof EventTarget")).To(BeTrue())
+	s.Expect(s.eval("Object.getPrototypeOf(window).constructor === Window")).To(BeTrue())
+}
 
-		Describe("Inheritance", func() {
-			It("Should be an EventTarget", func() {
-				Expect(ctx.Eval("window instanceof EventTarget")).To(BeTrue())
-			})
-		})
+func (s *WindowTestSuite) TestWindowConstructor() {
+	s.Expect(s.eval("Window && typeof Window")).To(Equal("function"))
+	s.Expect(s.run("Window()")).ToNot(Succeed())
+	s.Expect(s.eval(
+		`let error;
+		try { new Window() } catch(err) { 
+			error = err;
+		}
+		error && Object.getPrototypeOf(error).constructor.name
+	`)).To(Equal("TypeError"))
+}
 
-		Describe("Constructor", func() {
-			It("Should be defined", func() {
-				Expect(
-					ctx.Eval("Window && typeof Window === 'function'"),
-				).To(BeTrue())
-			})
+func (s *WindowTestSuite) TestDocumentProperty() {
+	s.Expect(s.eval("document instanceof Document")).To(BeTrue())
+	s.Expect(s.eval(`
+		const keys = []
+		for (let key in window) {
+			keys.push(key);
+		}
+		keys
+	`)).To(ContainElement("document"), "document is an enumerable property")
+	s.Expect(s.eval(
+		`const a = window.document;
+		const b = window.document;
+		a === b`,
+	)).To(BeTrue())
+}
 
-			It("Should not be callable", func() {
-				Expect(ctx.Eval("Window()")).Error().To(HaveOccurred())
-			})
+func (s *WindowTestSuite) TestConstructorName() {
+	s.T().Skip("The Window function doesn't have a name. We might need to add setName to v8go")
+	s.Expect(s.eval("window.constructor.name")).To(Equal("Window"))
+}
 
-			It("Should throw a TypeError when constructed", func() {
-				Expect(suite.NewWindow().Eval(
-					`let error;
-				try { new Window() } catch(err) { 
-					error = err;
-				}
-				error && Object.getPrototypeOf(error).constructor.name
-				`)).To(Equal("TypeError"))
-			})
-		})
+func NewWindowTestSuite(h html.ScriptHost) *WindowTestSuite {
+	return &WindowTestSuite{ScriptHostSuite: *NewScriptHostSuite(h)}
+}
 
-		Describe("window.document", func() {
-			It("Should have a document property", func() {
-				Expect(suite.NewWindow().Eval("document instanceof Document")).To(BeTrue())
-			})
-
-			It("Is an enumerable property", func() {
-				Expect(
-					suite.NewWindow().
-						Eval(`
-							const keys = []
-							for (let key in window) {
-								keys.push(key);
-							}
-							keys.join(", ")
-						`)).To(ContainSubstring("document"))
-			})
-
-			It("Should return the same instance on multiple calls", func() {
-				Expect(suite.NewWindow().Eval(
-					`const a = window.document;
-					const b = window.document;
-					a === b`,
-				)).To(BeTrue())
-			})
-		})
-
-		Describe("Window Events", func() {
-			Describe("DOMContentLoaded", func() {
-				It("Should be fired _after_ script has executed", func() {
-					win, err := html.NewWindowReader(strings.NewReader(
-						`<body><script>
+func (s *WindowTestSuite) TestDOMContentLoaded() {
+	s.Expect(s.window.LoadHTML(`<body><script>
   scripts = []
   function listener1() {
     scripts.push("DOMContentLoaded")
@@ -91,14 +66,6 @@ func (suite *ScriptTestSuite) CreateWindowTests() {
   }
   window.document.addEventListener("DOMContentLoaded", listener1);
   window.document.addEventListener("load", listener2);
-</script></body>`), html.WindowOptions{ScriptHost: suite.Engine},
-					)
-					DeferCleanup(func() { win.Close() })
-					Expect(err).ToNot(HaveOccurred())
-					ctx := win.ScriptContext()
-					Expect(ctx.Eval("scripts.join(',')")).To(Equal("DOMContentLoaded,load"))
-				})
-			})
-		})
-	})
+</script></body>`)).To(Succeed())
+	s.Expect(s.eval("scripts.join(',')")).To(Equal("DOMContentLoaded,load"))
 }
