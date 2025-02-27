@@ -163,8 +163,13 @@ func (c *Clock) Advance(d time.Duration) error {
 // with calling Advance(0).
 func (c *Clock) Tick() error { return c.Advance(0) }
 
-// Cancel removes the task with the specified handle from the task list, if
-// present. Ignored if no task if found.
+// Cancel removes the task that have been added using [Clock.SetTimeout] or
+// [Clock.SetInterval]. This corresponds to either [clearTimeout] or
+// [clearInterval] in the browser, which by specification can be used
+// interchangably; but shouldn't for clarity.
+//
+// [clearTimeout]: https://developer.mozilla.org/en-US/docs/Web/API/Window/clearTimeout
+// [clearInterval]: https://developer.mozilla.org/en-US/docs/Web/API/Window/clearInterval
 func (c *Clock) Cancel(handle TaskHandle) {
 	idx := slices.IndexFunc(
 		c.tasks,
@@ -175,9 +180,17 @@ func (c *Clock) Cancel(handle TaskHandle) {
 	}
 }
 
+// AddMicrotask adds a task to the "microtask queue".
+//
+// This shouldn't be called from Go code. Microtasks are a property of
+// JavaScript execution and should really be carried out by the javascript
+// engine.
 func (c *Clock) AddMicrotask(task TaskCallback) {
 	c.microtasks = append(c.microtasks, task)
 }
+
+// AddSafeMicrotask is a version of AddMicrotask, where the caller can guarantee
+// the task doesn't generate an error.
 func (c *Clock) AddSafeMicrotask(task SafeTaskCallback) { c.AddMicrotask(task.toTask()) }
 
 func (c *Clock) generateHandle() TaskHandle {
@@ -194,7 +207,14 @@ func (c *Clock) insertTask(future futureTask) {
 	}
 }
 
+// SetInterval corresponds to the browser's [setInterval] function. Panics if
+// the delay is negative.
+//
+// [SetInterval]: https://developer.mozilla.org/en-US/docs/Web/API/Window/setInterval
 func (c *Clock) SetInterval(task SafeTaskCallback, delay time.Duration) TaskHandle {
+	if delay < 0 {
+		panic(fmt.Sprintf("Clock.SetInterval: negative delay: %d", delay))
+	}
 	handle := c.generateHandle()
 	future := futureTask{
 		time:   c.Time.Add(delay),
@@ -207,32 +227,22 @@ func (c *Clock) SetInterval(task SafeTaskCallback, delay time.Duration) TaskHand
 	return handle
 }
 
-// Schedules a task to run at a specified time in the future. Panics if the time
-// is in the past.
+// SetInterval corresponds to the browser's [setTimeout] function. Panics if the
+// delay is negative.
+//
+// [SetTimeout]: https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout
 func (c *Clock) SetTimeout(task TaskCallback, delay time.Duration) TaskHandle {
+	if delay < 0 {
+		panic(fmt.Sprintf("Clock.SetTimeout: negative delay: %d", delay))
+	}
 	handle := c.generateHandle()
 	taskTime := c.Time.Add(delay)
-	if taskTime.Before(c.Time) {
-		panic(
-			fmt.Sprintf(
-				"Clock.AddTask: Adding task to run in the past\n  Current time: %v\n  Task time: %v",
-				c.Time,
-				taskTime,
-			),
-		)
-	}
 	future := futureTask{
 		time:   taskTime,
 		task:   task,
 		handle: handle,
 	}
 	c.insertTask(future)
-	// idx := slices.IndexFunc(c.tasks, func(t futureTask) bool { return t.time.After(taskTime) })
-	// if idx >= 0 {
-	// 	c.tasks = slices.Insert(c.tasks, idx, future)
-	// } else {
-	// 	c.tasks = append(c.tasks, future)
-	// }
 	return handle
 }
 
