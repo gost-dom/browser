@@ -5,6 +5,7 @@
   "devDependencies": {
     "@semantic-release/exec": "^7.0.3",
     "@semantic-release/git": "^10.0.1",
+    "commit-and-tag-version": "^12.5.0",
     "semantic-release": "^24.2.1"
   },
   "release": {
@@ -28,5 +29,9 @@
         }
       ]
     ]
+  },
+  "commit-and-tag-version": {
+    "header": "# Changelog - Gost-DOM\n\n",
+    "bumpFiles": []
   }
 }
