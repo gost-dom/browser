@@ -32,11 +32,6 @@ you can treat your HTTP server as a normal Go component.
 >
 > [Feature list](./README_FEATURE_LIST.md)
 
-> [!IMPORTANT]
->
-> This package currently requires module replacement, check out the
-> [Installation](#Installation) section.
-
 > [!WARNING]
 >
 > The API is not yet stable. use at your own risk.
@@ -68,31 +63,6 @@ engine)
 up-to-date on progress
 - Participate in the [github discussions](https://github.com/orgs/gost-dom/discussions), and [say
 hi!](https://github.com/orgs/gost-dom/discussions)
-
-## Installation
-
-After go getting `github.com/gost-dom/browser`, you need replace some modules:
-
-```sh
-go mod edit -replace="github.com/ericchiang/css=github.com/gost-dom/css@latest"
-go mod tidy
-go mod edit -replace="github.com/tommie/v8go=github.com/stroiman/v8go@latest"
-go mod tidy
-```
-
-The CSS rewrite should no longer be necessary, once the next version is
-released.
-
-For the v8go project, I've added a lot of V8 features that were missing in v8go.
-I'm working with tommie, who runs the [best maintained
-branch](https://github.com/tommie/v8go), but it may be a while before they are
-all merged.
-
-> [!NOTE]
->
-> New features _will probably_ be added to my branch, requiring the replacement
-> to be updated. If you get build errors that look v8-ish, try running the
-> replacement again. Tip: Create a shell script for this.
 
 ## Project background
 
