@@ -14,11 +14,11 @@ func init() {
 }
 
 type windowV8Wrapper struct {
-	nodeV8WrapperBase[html.Window]
+	handleReffedObject[html.Window]
 }
 
 func newWindowV8Wrapper(scriptHost *V8ScriptHost) *windowV8Wrapper {
-	return &windowV8Wrapper{newNodeV8WrapperBase[html.Window](scriptHost)}
+	return &windowV8Wrapper{newHandleReffedObject[html.Window](scriptHost)}
 }
 
 func createWindowPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {

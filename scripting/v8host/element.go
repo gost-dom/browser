@@ -9,13 +9,13 @@ import (
 )
 
 type elementV8Wrapper struct {
-	nodeV8WrapperBase[dom.Element]
+	handleReffedObject[dom.Element]
 	parentNode *parentNodeV8Wrapper
 }
 
 func newElementV8Wrapper(host *V8ScriptHost) *elementV8Wrapper {
 	return &elementV8Wrapper{
-		newNodeV8WrapperBase[dom.Element](host),
+		newHandleReffedObject[dom.Element](host),
 		newParentNodeV8Wrapper(host),
 	}
 }
@@ -80,15 +80,8 @@ func (e elementV8Wrapper) classList(info *v8.FunctionCallbackInfo) (*v8.Value, e
 	if err != nil {
 		return nil, err
 	}
-	element, err := e.getInstance(info)
-	if err != nil {
-		return nil, err
-	}
-	value, err := v8.NewValue(e.scriptHost.iso, element.ObjectId())
-	if err != nil {
-		return nil, err
-	}
-	instance.SetInternalField(0, value)
+
+	instance.SetInternalField(0, info.This().GetInternalField(0))
 	return instance.Value, nil
 }
 

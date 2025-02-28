@@ -12,62 +12,6 @@ import (
 	v8 "github.com/gost-dom/v8go"
 )
 
-// nodeV8WrapperBase serves as a helper for building v8 wrapping code around go objects.
-// Generated code assumes that a wrapper type is used with specific helper
-// methods implemented.
-type nodeV8WrapperBase[T interface{}] struct {
-	converters
-	scriptHost *V8ScriptHost
-}
-
-func (w nodeV8WrapperBase[T]) iso() *v8.Isolate {
-	return w.scriptHost.iso
-}
-
-func (w nodeV8WrapperBase[T]) mustGetContext(info *v8.FunctionCallbackInfo) *V8ScriptContext {
-	return w.scriptHost.mustGetContext(info.Context())
-}
-
-func newNodeV8WrapperBase[T any](host *V8ScriptHost) nodeV8WrapperBase[T] {
-	return nodeV8WrapperBase[T]{converters{}, host}
-}
-
-func (w nodeV8WrapperBase[T]) getInstance(info *v8.FunctionCallbackInfo) (result T, err error) {
-	if ctx, ok := w.scriptHost.netContext(info.Context()); ok {
-		if instance, ok := ctx.getCachedNode(info.This()); ok {
-			if typedInstance, ok := instance.(T); ok {
-				return typedInstance, nil
-			}
-		}
-		err = v8.NewTypeError(ctx.host.iso, "Not an instance of NamedNodeMap")
-		return
-	}
-	err = errors.New("Could not get context")
-	return
-}
-
-func (w nodeV8WrapperBase[T]) store(
-	value T,
-	ctx *V8ScriptContext,
-	this *v8.Object,
-) (*v8.Value, error) {
-	val := this.Value
-	var i any = value
-	entity, ok := i.(entity.Entity)
-	if !ok {
-		panic("Creating an entity-wrapper for non-entity type")
-	}
-	objectId := entity.ObjectId()
-	ctx.v8nodes[objectId] = val
-	ctx.domNodes[objectId] = entity
-	internal, err := v8.NewValue(ctx.host.iso, objectId)
-	if err != nil {
-		return nil, err
-	}
-	this.SetInternalField(0, internal)
-	return val, nil
-}
-
 type converters struct{}
 
 func (w converters) decodeUSVString(ctx *V8ScriptContext, val *v8.Value) (string, error) {
@@ -183,6 +127,9 @@ func (w converters) toHTMLFormControlsCollection(
 	return w.toNodeList(ctx, val)
 }
 
+// handleReffedObject serves as a helper for building v8 wrapping code around go objects.
+// Generated code assumes that a wrapper type is used with specific helper
+// methods implemented.
 type handleReffedObject[T any] struct {
 	scriptHost *V8ScriptHost
 	converters
@@ -198,12 +145,26 @@ func newHandleReffedObject[T any](host *V8ScriptHost) handleReffedObject[T] {
 	}
 }
 
-func (o handleReffedObject[T]) store(value T, ctx *V8ScriptContext, this *v8.Object) {
+func (o handleReffedObject[T]) iso() *v8.Isolate { return o.scriptHost.iso }
+
+func (o handleReffedObject[T]) store(
+	value any,
+	ctx *V8ScriptContext,
+	this *v8.Object,
+) (*v8.Value, error) {
 	handle := cgo.NewHandle(value)
 	ctx.addDisposer(handleDisposable(handle))
 
+	e, ok := value.(entity.Entity)
+	if ok {
+		objectId := e.ObjectId()
+		ctx.v8nodes[objectId] = this.Value
+		ctx.domNodes[objectId] = e
+	}
+
 	internalField := v8.NewValueExternalHandle(o.scriptHost.iso, handle)
 	this.SetInternalField(0, internalField)
+	return this.Value, nil
 }
 
 func getWrappedInstance[T any](object *v8.Object) (res T, err error) {

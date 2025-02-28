@@ -14,13 +14,13 @@ func init() {
 }
 
 type htmlAnchorElementV8Wrapper struct {
-	nodeV8WrapperBase[html.HTMLAnchorElement]
+	handleReffedObject[html.HTMLAnchorElement]
 	htmlHyperlinkElementUtils *htmlHyperlinkElementUtilsV8Wrapper
 }
 
 func newHTMLAnchorElementV8Wrapper(scriptHost *V8ScriptHost) *htmlAnchorElementV8Wrapper {
 	return &htmlAnchorElementV8Wrapper{
-		newNodeV8WrapperBase[html.HTMLAnchorElement](scriptHost),
+		newHandleReffedObject[html.HTMLAnchorElement](scriptHost),
 		newHTMLHyperlinkElementUtilsV8Wrapper(scriptHost),
 	}
 }

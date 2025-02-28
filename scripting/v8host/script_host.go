@@ -3,6 +3,7 @@ package v8host
 import (
 	"errors"
 	"fmt"
+	"runtime/cgo"
 	"strings"
 	"sync"
 
@@ -71,10 +72,9 @@ func (c *V8ScriptContext) cacheNode(obj *v8.Object, node entity.Entity) (*v8.Val
 	objectId := node.ObjectId()
 	c.v8nodes[objectId] = val
 	c.domNodes[objectId] = node
-	internal, err := v8.NewValue(c.host.iso, objectId)
-	if err != nil {
-		return nil, err
-	}
+	handle := cgo.NewHandle(node)
+	c.addDisposer(handleDisposable(handle))
+	internal := v8.NewValueExternalHandle(c.host.iso, handle)
 	obj.SetInternalField(0, internal)
 	return val, nil
 }
@@ -135,8 +135,10 @@ func (c *V8ScriptContext) getInstanceForNodeByName(
 }
 
 func (c *V8ScriptContext) getCachedNode(this *v8.Object) (entity.Entity, bool) {
-	result, ok := c.domNodes[this.GetInternalField(0).Int32()]
-	return result, ok
+
+	h := this.GetInternalField(0).ExternalHandle()
+	r, ok := h.Value().(entity.Entity)
+	return r, ok
 }
 
 type jsConstructorFactory = func(*V8ScriptHost) *v8.FunctionTemplate

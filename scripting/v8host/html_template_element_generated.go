@@ -14,11 +14,11 @@ func init() {
 }
 
 type htmlTemplateElementV8Wrapper struct {
-	nodeV8WrapperBase[html.HTMLTemplateElement]
+	handleReffedObject[html.HTMLTemplateElement]
 }
 
 func newHTMLTemplateElementV8Wrapper(scriptHost *V8ScriptHost) *htmlTemplateElementV8Wrapper {
-	return &htmlTemplateElementV8Wrapper{newNodeV8WrapperBase[html.HTMLTemplateElement](scriptHost)}
+	return &htmlTemplateElementV8Wrapper{newHandleReffedObject[html.HTMLTemplateElement](scriptHost)}
 }
 
 func createHTMLTemplateElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {

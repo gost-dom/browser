@@ -7,13 +7,13 @@ import (
 )
 
 type documentV8Wrapper struct {
-	nodeV8WrapperBase[Document]
+	handleReffedObject[Document]
 	parentNode *parentNodeV8Wrapper
 }
 
 func newDocumentV8Wrapper(host *V8ScriptHost) documentV8Wrapper {
 	return documentV8Wrapper{
-		newNodeV8WrapperBase[Document](host),
+		newHandleReffedObject[Document](host),
 		newParentNodeV8Wrapper(host),
 	}
 }

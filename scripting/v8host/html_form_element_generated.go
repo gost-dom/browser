@@ -14,11 +14,11 @@ func init() {
 }
 
 type htmlFormElementV8Wrapper struct {
-	nodeV8WrapperBase[html.HTMLFormElement]
+	handleReffedObject[html.HTMLFormElement]
 }
 
 func newHTMLFormElementV8Wrapper(scriptHost *V8ScriptHost) *htmlFormElementV8Wrapper {
-	return &htmlFormElementV8Wrapper{newNodeV8WrapperBase[html.HTMLFormElement](scriptHost)}
+	return &htmlFormElementV8Wrapper{newHandleReffedObject[html.HTMLFormElement](scriptHost)}
 }
 
 func createHTMLFormElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {

@@ -10,11 +10,11 @@ import (
 )
 
 type parentNodeV8Wrapper struct {
-	nodeV8WrapperBase[dom.ParentNode]
+	handleReffedObject[dom.ParentNode]
 }
 
 func newParentNodeV8Wrapper(scriptHost *V8ScriptHost) *parentNodeV8Wrapper {
-	return &parentNodeV8Wrapper{newNodeV8WrapperBase[dom.ParentNode](scriptHost)}
+	return &parentNodeV8Wrapper{newHandleReffedObject[dom.ParentNode](scriptHost)}
 }
 
 func createParentNodePrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
