@@ -267,14 +267,7 @@ func (d ESConstructorData) Includes() []idl.Interface {
 }
 
 func (d ESConstructorData) GetInternalPackage() string {
-	switch d.Spec.DomSpec.Name {
-	case "dom":
-		return packagenames.Dom
-	case "html":
-		return packagenames.Html
-	default:
-		return packagenames.Html
-	}
+	return packagenames.PackageName(d.Spec.DomSpec.Name)
 }
 
 func (d ESConstructorData) WrapperFunctionsToInstall() iter.Seq[ESOperation] {
