@@ -1,31 +1,10 @@
 package v8host
 
 import (
-	"errors"
-
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/internal/entity"
 	v8 "github.com/gost-dom/v8go"
 )
-
-func (w eventV8Wrapper) decodeEventInit(
-	ctx *V8ScriptContext,
-	v *v8.Value,
-) (dom.EventOption, error) {
-	var eventOptions []dom.EventOption
-	options, err0 := v.AsObject()
-
-	bubbles, err1 := options.Get("bubbles")
-	cancelable, err2 := options.Get("cancelable")
-	err := errors.Join(err0, err1, err2)
-	if err == nil {
-		eventOptions = []dom.EventOption{
-			dom.EventBubbles(bubbles.Boolean()),
-			dom.EventCancelable(cancelable.Boolean()),
-		}
-	}
-	return dom.EventOptions(eventOptions), nil
-}
 
 func (w eventV8Wrapper) defaultEventInit() dom.EventOption {
 	return dom.EventOptions(nil)
