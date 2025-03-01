@@ -29,7 +29,17 @@ func newGojaEventListener(r *GojaContext, v goja.Value) dom.EventHandler {
 }
 
 func (h *gojaEventListener) HandleEvent(e dom.Event) error {
-	customEvent := h.instance.globals["CustomEvent"]
+	customEvent := h.instance.globals["Event"]
+	switch e.(type) {
+	case dom.PointerEvent:
+		customEvent = h.instance.globals["PointerEvent"]
+	case dom.MouseEvent:
+		customEvent = h.instance.globals["MouseEvent"]
+	case dom.UIEvent:
+		customEvent = h.instance.globals["UIEvent"]
+	case dom.CustomEvent:
+		customEvent = h.instance.globals["CustomEvent"]
+	}
 	obj := h.instance.vm.CreateObject(customEvent.Prototype)
 	customEvent.Wrapper.storeInternal(e, obj)
 	_, err := h.f(obj, obj)

@@ -243,7 +243,9 @@ func (n *element) InsertAdjacentHTML(position string, text string) error {
 func (n *element) NodeType() NodeType { return NodeTypeElement }
 
 func (n *element) Click() bool {
-	return n.DispatchEvent(NewCustomEvent("click", EventCancelable(true), EventBubbles(true)))
+	return n.DispatchEvent(
+		NewPointerEvent("click", EventCancelable(true), EventBubbles(true)),
+	)
 }
 
 func (e *element) Render(writer *strings.Builder) {

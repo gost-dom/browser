@@ -17,7 +17,8 @@ const (
 var names = map[string]string{
 	"dom":            Dom,
 	"html":           Html,
-	"pointerevents4": BASE_PKG + "/internal/uievents",
+	"uievents":       Dom,
+	"pointerevents4": Dom,
 }
 
 // PackageName returns the package name containing the implementation of a

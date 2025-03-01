@@ -4,8 +4,8 @@ package v8host
 
 import (
 	"errors"
+	dom "github.com/gost-dom/browser/dom"
 	log "github.com/gost-dom/browser/internal/log"
-	uievents "github.com/gost-dom/browser/internal/uievents"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -51,30 +51,6 @@ func (w mouseEventV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) 
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("layerY",
 		v8.NewFunctionTemplateWithError(iso, w.layerY),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("ctrlKey",
-		v8.NewFunctionTemplateWithError(iso, w.ctrlKey),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("shiftKey",
-		v8.NewFunctionTemplateWithError(iso, w.shiftKey),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("altKey",
-		v8.NewFunctionTemplateWithError(iso, w.altKey),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("metaKey",
-		v8.NewFunctionTemplateWithError(iso, w.metaKey),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("button",
-		v8.NewFunctionTemplateWithError(iso, w.button),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("buttons",
-		v8.NewFunctionTemplateWithError(iso, w.buttons),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("relatedTarget",
@@ -139,36 +115,6 @@ func (w mouseEventV8Wrapper) layerY(info *v8.FunctionCallbackInfo) (*v8.Value, e
 	return nil, errors.New("MouseEvent.layerY: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w mouseEventV8Wrapper) ctrlKey(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: MouseEvent.ctrlKey")
-	return nil, errors.New("MouseEvent.ctrlKey: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
-}
-
-func (w mouseEventV8Wrapper) shiftKey(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: MouseEvent.shiftKey")
-	return nil, errors.New("MouseEvent.shiftKey: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
-}
-
-func (w mouseEventV8Wrapper) altKey(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: MouseEvent.altKey")
-	return nil, errors.New("MouseEvent.altKey: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
-}
-
-func (w mouseEventV8Wrapper) metaKey(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: MouseEvent.metaKey")
-	return nil, errors.New("MouseEvent.metaKey: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
-}
-
-func (w mouseEventV8Wrapper) button(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: MouseEvent.button")
-	return nil, errors.New("MouseEvent.button: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
-}
-
-func (w mouseEventV8Wrapper) buttons(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: MouseEvent.buttons")
-	return nil, errors.New("MouseEvent.buttons: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
-}
-
 func (w mouseEventV8Wrapper) relatedTarget(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug("V8 Function call: MouseEvent.relatedTarget")
 	return nil, errors.New("MouseEvent.relatedTarget: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
@@ -179,11 +125,11 @@ func init() {
 }
 
 type uIEventV8Wrapper struct {
-	handleReffedObject[uievents.UIEvent]
+	handleReffedObject[dom.UIEvent]
 }
 
 func newUIEventV8Wrapper(scriptHost *V8ScriptHost) *uIEventV8Wrapper {
-	return &uIEventV8Wrapper{newHandleReffedObject[uievents.UIEvent](scriptHost)}
+	return &uIEventV8Wrapper{newHandleReffedObject[dom.UIEvent](scriptHost)}
 }
 
 func createUIEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {

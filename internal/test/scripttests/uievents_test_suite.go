@@ -24,12 +24,12 @@ func (s *UIEventTestSuite) TestEventInheritance() {
 		To(Equal("Event"), "UIEvent event superclass")
 }
 
-func (s *UIEventTestSuite) TestClickEventInheritance() {
+func (s *UIEventTestSuite) TestClickEventIsAPointerEvent() {
 	s.window.LoadHTML(`<body><div id="foo"></div></body>`)
 	s.Assert().NoError(s.run(`
 		let event
 		document.getElementById("foo").addEventListener("click", e => { event = e })
 	`))
 	s.window.Document().GetElementById("foo").Click()
-	s.Expect(s.eval(`event instanceof Event`)).To(BeTrue())
+	s.Expect(s.eval(`event instanceof PointerEvent`)).To(BeTrue(), "Event is an event")
 }

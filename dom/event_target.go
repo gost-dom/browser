@@ -141,8 +141,8 @@ type Event interface {
 	StopPropagation()
 	Target() EventTarget
 	CurrentTarget() EventTarget
-	// Unexported
 	reset(t EventTarget)
+
 	isCancelled() bool
 	shouldPropagate() bool
 	setCurrentTarget(t EventTarget)

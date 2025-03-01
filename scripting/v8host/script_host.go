@@ -87,6 +87,12 @@ func (c *V8ScriptContext) getInstanceForNode(
 		return v8.Null(iso), nil
 	}
 	switch n := node.(type) {
+	case PointerEvent:
+		return c.getInstanceForNodeByName("PointerEvent", n)
+	// case MouseEvent:
+	// 	return c.getInstanceForNodeByName("MouseEvent", n)
+	case UIEvent:
+		return c.getInstanceForNodeByName("UIEvent", n)
 	case CustomEvent:
 		return c.getInstanceForNodeByName("CustomEvent", n)
 	case Event:
