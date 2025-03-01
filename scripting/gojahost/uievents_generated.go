@@ -8,6 +8,12 @@ import (
 )
 
 func init() {
+	installClass("MouseEvent", "UIEvent", newMouseEventWrapper)
+}
+
+func (w mouseEventWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime) {}
+
+func init() {
 	installClass("UIEvent", "Event", newUIEventWrapper)
 }
 

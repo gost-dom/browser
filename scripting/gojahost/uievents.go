@@ -12,3 +12,13 @@ func (w uIEventWrapper) constructor(
 	w.storeInternal(uievents.NewUIEvent(type_), c.This)
 	return nil
 }
+
+type mouseEventWrapper struct{ uIEventWrapper }
+
+func createUIEventWrapper(instance *GojaContext) uIEventWrapper {
+	return uIEventWrapper{newBaseInstanceWrapper[uievents.UIEvent](instance)}
+}
+
+func newMouseEventWrapper(instance *GojaContext) wrapper {
+	return &mouseEventWrapper{createUIEventWrapper(instance)}
+}

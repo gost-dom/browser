@@ -63,8 +63,6 @@ test-scripting:
 test-goja:
 	$(GOW) -c -e=go -e=js -e=html -w ./.. test -vet=off ./scripting/gojahost
 
-test-scripting: 
-	gotestsum --format dots --watch --packages "./scripting/... ./internal/test/scripttests" -- -vet=off
  
 .PHONY: ci ci-build
 ci-build:
