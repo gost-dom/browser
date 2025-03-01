@@ -9,13 +9,13 @@ import (
 )
 
 type domTokenListV8Wrapper struct {
-	nodeV8WrapperBase[dom.Element]
+	handleReffedObject[dom.Element]
 	Iterator iterator[string]
 }
 
 func newDOMTokenListV8Wrapper(host *V8ScriptHost) domTokenListV8Wrapper {
 	return domTokenListV8Wrapper{
-		newNodeV8WrapperBase[dom.Element](host),
+		newHandleReffedObject[dom.Element](host),
 		newIterator(host, func(item string, ctx *V8ScriptContext) (*v8.Value, error) {
 			return v8.NewValue(host.iso, item)
 		}),
@@ -25,7 +25,7 @@ func newDOMTokenListV8Wrapper(host *V8ScriptHost) domTokenListV8Wrapper {
 func (l domTokenListV8Wrapper) getInstance(
 	info *v8.FunctionCallbackInfo,
 ) (result dom.DOMTokenList, err error) {
-	element, err := l.nodeV8WrapperBase.getInstance(info)
+	element, err := l.handleReffedObject.getInstance(info)
 	if err == nil {
 		result = dom.NewClassList(element)
 	}

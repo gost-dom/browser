@@ -7,6 +7,7 @@ func CreateSpecs() WebIdlConfigurations {
 
 	ConfigureDOMSpecs(&specs)
 	ConfigureHTMLSpecs(&specs)
+	ConfigureEventSpecs(&specs)
 
 	return specs
 }

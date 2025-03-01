@@ -8,7 +8,7 @@ import (
 )
 
 type documentFragmentV8Wrapper struct {
-	nodeV8WrapperBase[DocumentFragment]
+	handleReffedObject[DocumentFragment]
 	parentNode *parentNodeV8Wrapper
 }
 
@@ -21,7 +21,7 @@ func (w documentFragmentV8Wrapper) constructor(info *v8.FunctionCallbackInfo) (*
 
 func createDocumentFragmentPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
 	wrapper := documentFragmentV8Wrapper{
-		newNodeV8WrapperBase[DocumentFragment](host),
+		newHandleReffedObject[DocumentFragment](host),
 		newParentNodeV8Wrapper(host),
 	}
 	constructor := v8.NewFunctionTemplateWithError(host.iso, wrapper.constructor)

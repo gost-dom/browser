@@ -14,11 +14,11 @@ func init() {
 }
 
 type htmlInputElementV8Wrapper struct {
-	nodeV8WrapperBase[html.HTMLInputElement]
+	handleReffedObject[html.HTMLInputElement]
 }
 
 func newHTMLInputElementV8Wrapper(scriptHost *V8ScriptHost) *htmlInputElementV8Wrapper {
-	return &htmlInputElementV8Wrapper{newNodeV8WrapperBase[html.HTMLInputElement](scriptHost)}
+	return &htmlInputElementV8Wrapper{newHandleReffedObject[html.HTMLInputElement](scriptHost)}
 }
 
 func createHTMLInputElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {

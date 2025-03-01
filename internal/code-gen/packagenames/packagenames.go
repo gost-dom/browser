@@ -1,5 +1,7 @@
 package packagenames
 
+import "fmt"
+
 const (
 	NAME      = "gost-dom"
 	BASE_PKG  = "github.com/gost-dom/browser"
@@ -11,3 +13,19 @@ const (
 	Gojahost = BASE_PKG + "/scripting/gojahost"
 	Log      = BASE_PKG + "/internal/log"
 )
+
+var names = map[string]string{
+	"dom":            Dom,
+	"html":           Html,
+	"uievents":       Dom,
+	"pointerevents4": Dom,
+}
+
+// PackageName returns the package name containing the implementation of a
+// specific web API.
+func PackageName(apiName string) string {
+	if res, found := names[apiName]; found {
+		return res
+	}
+	return fmt.Sprintf("%s/internal/%s", BASE_PKG, apiName)
+}

@@ -23,11 +23,11 @@ func (g V8WrapperStructGenerators) WrapperStructConstructorRetType(
 }
 
 func (g V8WrapperStructGenerators) EmbeddedType(wrappedType Generator) Generator {
-	return generators.NewType("nodeV8WrapperBase").TypeParam(wrappedType)
+	return generators.NewType("handleReffedObject").TypeParam(wrappedType)
 }
 
 func (g V8WrapperStructGenerators) EmbeddedTypeConstructor(wrappedType Generator) generators.Value {
-	return generators.NewValue("newNodeV8WrapperBase").TypeParam(wrappedType)
+	return generators.NewValue("newHandleReffedObject").TypeParam(wrappedType)
 }
 
 func (g V8WrapperStructGenerators) HostArg() Generator {

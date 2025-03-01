@@ -14,11 +14,11 @@ func init() {
 }
 
 type eventV8Wrapper struct {
-	nodeV8WrapperBase[dom.Event]
+	handleReffedObject[dom.Event]
 }
 
 func newEventV8Wrapper(scriptHost *V8ScriptHost) *eventV8Wrapper {
-	return &eventV8Wrapper{newNodeV8WrapperBase[dom.Event](scriptHost)}
+	return &eventV8Wrapper{newHandleReffedObject[dom.Event](scriptHost)}
 }
 
 func createEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {

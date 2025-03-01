@@ -63,6 +63,7 @@ test-scripting:
 test-goja:
 	$(GOW) -c -e=go -e=js -e=html -w ./.. test -vet=off ./scripting/gojahost
 
+ 
 .PHONY: ci ci-build
 ci-build:
 	go build -v ./...

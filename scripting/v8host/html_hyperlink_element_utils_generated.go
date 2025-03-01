@@ -10,11 +10,11 @@ import (
 )
 
 type htmlHyperlinkElementUtilsV8Wrapper struct {
-	nodeV8WrapperBase[html.HTMLHyperlinkElementUtils]
+	handleReffedObject[html.HTMLHyperlinkElementUtils]
 }
 
 func newHTMLHyperlinkElementUtilsV8Wrapper(scriptHost *V8ScriptHost) *htmlHyperlinkElementUtilsV8Wrapper {
-	return &htmlHyperlinkElementUtilsV8Wrapper{newNodeV8WrapperBase[html.HTMLHyperlinkElementUtils](scriptHost)}
+	return &htmlHyperlinkElementUtilsV8Wrapper{newHandleReffedObject[html.HTMLHyperlinkElementUtils](scriptHost)}
 }
 
 func createHTMLHyperlinkElementUtilsPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
