@@ -18,6 +18,8 @@ github.com/gost-dom/webref v0.3.0 h1:l5x01q7v66gprGLESGvtPuQyffMEVOQz/HLkcXXSKCs
 github.com/gost-dom/webref v0.3.0/go.mod h1:eNon8FDGv/xEaMoHveVdXOgfsnuiKREWEglnMM063Gk=
 github.com/gost-dom/webref v0.5.0 h1:dHSIcSCDYhKJwtbEucSqe0/J2GJo7OZPb6RALAEfk1g=
 github.com/gost-dom/webref v0.5.0/go.mod h1:dDG6ljKAixLvdbSHD/FeyKbaFB5a9GiV9aHvSM5QmqE=
+github.com/gost-dom/webref v0.5.1 h1:sXaLrWo++JMxDx1mI+awYFUUJi2l3weUPXIqlaTCWSk=
+github.com/gost-dom/webref v0.5.1/go.mod h1:dDG6ljKAixLvdbSHD/FeyKbaFB5a9GiV9aHvSM5QmqE=
 github.com/onsi/ginkgo/v2 v2.22.2 h1:/3X8Panh8/WwhU/3Ssa6rCKqPLuAkVY2I0RoyDLySlU=
 github.com/onsi/ginkgo/v2 v2.22.2/go.mod h1:oeMosUL+8LtarXBHu/c0bx2D/K9zyQ6uX3cTyztHwsk=
 github.com/onsi/gomega v1.36.2 h1:koNYke6TVk6ZmnyHrCXba/T/MoLBXFjeC1PtvYgw0A8=

@@ -9,6 +9,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/gost-dom/code-gen/events"
 	htmlelements "github.com/gost-dom/code-gen/html-elements"
 	wrappers "github.com/gost-dom/code-gen/script-wrappers"
 )
@@ -59,6 +60,12 @@ func main() {
 			panic("Missing package spec")
 		}
 		exitOnError(htmlelements.CreateImplementationPackage(*packageName))
+		os.Exit(0)
+	case "eventTypes":
+		if packageName == nil {
+			panic("Missing package spec")
+		}
+		exitOnError(events.CreateEventGenerators(*packageName))
 		os.Exit(0)
 	}
 

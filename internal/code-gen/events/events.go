@@ -96,12 +96,14 @@ func CreateMethodGenerator(specs EventGeneratorSpecs) (res gen.Generator, err er
 }
 
 func CreateEventSourceGenerator(apiName string, element string) (gen.Generator, error) {
+	fmt.Println("CreateEventSource", apiName, element)
 	api, err := events.Load(apiName)
 	n := gen.NewType(eventDispatchTypeName(element))
 	s := gen.Struct{Name: n}
 	s.Field(gen.Id("target"), gen.NewType("eventTarget").Pointer())
 	res := gen.StatementList(s)
 	for _, e := range api.EventsForType(element) {
+		fmt.Println("Iter", e.Type)
 		res.Append(gen.Line)
 		res.Append(EventDispatchMethodGenerator{
 			SourceTypeName: element,
@@ -115,7 +117,7 @@ func generateFile(packageName string, apiName string, element string) (*jen.File
 	file := jen.NewFile(packageName)
 	file.HeaderComment("This file is generated. Do not edit.")
 	g, err := CreateEventSourceGenerator(apiName, element)
-	if err != nil {
+	if err == nil {
 		file.Add(g.Generate())
 	}
 	return file, err
@@ -127,15 +129,18 @@ type eventSources struct {
 }
 
 var types = map[string][]eventSources{
-	"dom": []eventSources{eventSources{
+	"dom": {{
 		api:   "uievents",
 		names: []string{"Element"},
 	}},
 }
 
 func CreateEventGenerators(packageName string) error {
+	fmt.Println("---", packageName)
 	for _, source := range types[packageName] {
+		fmt.Println("source", source.api)
 		for _, e := range source.names {
+			fmt.Println("Element", e)
 			var f *jen.File
 			filename := fmt.Sprintf("%s_events_generated.go", strings.ToLower(e))
 			writer, err := os.Create(filename)
