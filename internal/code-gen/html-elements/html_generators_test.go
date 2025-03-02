@@ -5,6 +5,7 @@ import (
 	. "github.com/onsi/gomega"
 
 	g "github.com/gost-dom/generators"
+	. "github.com/gost-dom/generators/testing/matchers"
 )
 
 func GenerateHtmlAnchor() (g.Generator, error) {

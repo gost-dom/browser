@@ -12,6 +12,8 @@ github.com/google/pprof v0.0.0-20250208200701-d0013a598941 h1:43XjGa6toxLpeksjcx
 github.com/google/pprof v0.0.0-20250208200701-d0013a598941/go.mod h1:vavhavw2zAxS5dIdcRluK6cSGGPlZynqzFM8NdvU144=
 github.com/gost-dom/generators v0.0.0-20250130162306-db4af89dffce h1:6UQtdNhXNHBwoS9GNVcId3EllEzquJqLXwhw1iUfD+M=
 github.com/gost-dom/generators v0.0.0-20250130162306-db4af89dffce/go.mod h1:KYCKK6byuCYZRyl0VrTX4F+x5kVzggRY6LcO1pectPI=
+github.com/gost-dom/generators v0.0.0-20250302122505-693e3cffa93b h1:erAhurZ7nUOzsUSvYt1APvT3O+ruPvaqOA6I1R3h764=
+github.com/gost-dom/generators v0.0.0-20250302122505-693e3cffa93b/go.mod h1:KYCKK6byuCYZRyl0VrTX4F+x5kVzggRY6LcO1pectPI=
 github.com/gost-dom/webref v0.3.0 h1:l5x01q7v66gprGLESGvtPuQyffMEVOQz/HLkcXXSKCs=
 github.com/gost-dom/webref v0.3.0/go.mod h1:eNon8FDGv/xEaMoHveVdXOgfsnuiKREWEglnMM063Gk=
 github.com/gost-dom/webref v0.5.0 h1:dHSIcSCDYhKJwtbEucSqe0/J2GJo7OZPb6RALAEfk1g=
