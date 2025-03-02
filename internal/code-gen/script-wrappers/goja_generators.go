@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/dave/jennifer/jen"
+	. "github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/generators"
 	g "github.com/gost-dom/generators"
@@ -26,7 +27,7 @@ func (s GojaNamingStrategy) PrototypeWrapperBaseName() string {
 }
 
 func (s GojaNamingStrategy) PrototypeWrapperTypeName() string {
-	return lowerCaseFirstLetter(s.PrototypeWrapperBaseName())
+	return LowerCaseFirstLetter(s.PrototypeWrapperBaseName())
 }
 
 func (s GojaNamingStrategy) PrototypeWrapperConstructorName() string {
@@ -172,7 +173,7 @@ func (gen GojaTargetGenerators) CreateWrapperMethodBody(
 			list.Append(
 				g.AssignMany(g.List(
 					g.Id("result"), g.Id("err")),
-					instance.Field(upperCaseFirstLetter(op.Name)).Call(argNames...),
+					instance.Field(UpperCaseFirstLetter(op.Name)).Call(argNames...),
 				),
 				panicOnNotNil(g.Id("err")),
 			)
@@ -180,7 +181,7 @@ func (gen GojaTargetGenerators) CreateWrapperMethodBody(
 			list.Append(
 				g.Assign(
 					g.Id("result"),
-					instance.Field(upperCaseFirstLetter(op.Name)).Call(argNames...),
+					instance.Field(UpperCaseFirstLetter(op.Name)).Call(argNames...),
 				),
 			)
 		}
@@ -188,12 +189,12 @@ func (gen GojaTargetGenerators) CreateWrapperMethodBody(
 	} else {
 		if op.GetHasError() {
 			list.Append(
-				g.Assign(g.Id("err"), instance.Field(upperCaseFirstLetter(op.Name)).Call(argNames...)),
+				g.Assign(g.Id("err"), instance.Field(UpperCaseFirstLetter(op.Name)).Call(argNames...)),
 				panicOnNotNil(g.Id("err")),
 			)
 
 		} else {
-			list.Append(instance.Field(upperCaseFirstLetter(op.Name)).Call(argNames...))
+			list.Append(instance.Field(UpperCaseFirstLetter(op.Name)).Call(argNames...))
 		}
 	}
 	return list
@@ -204,7 +205,7 @@ func (g GojaTargetGenerators) WrapperStructGenerators() PlatformWrapperStructGen
 }
 
 func (g GojaTargetGenerators) WrapperStructType(interfaceName string) generators.Type {
-	return generators.NewType(fmt.Sprintf("%sWrapper", lowerCaseFirstLetter(interfaceName)))
+	return generators.NewType(fmt.Sprintf("%sWrapper", LowerCaseFirstLetter(interfaceName)))
 }
 
 func (g GojaTargetGenerators) WrapperStructConstructorName(interfaceName string) string {

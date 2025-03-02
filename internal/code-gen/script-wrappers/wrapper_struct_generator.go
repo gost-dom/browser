@@ -2,6 +2,7 @@ package wrappers
 
 import (
 	"github.com/dave/jennifer/jen"
+	. "github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/generators"
 	gen "github.com/gost-dom/generators"
 )
@@ -34,7 +35,7 @@ func (g WrapperStructGenerator) TypeGenerator() Generator {
 
 	for _, i := range includes {
 		wrapperStruct.Field(
-			gen.Id(lowerCaseFirstLetter(i.Name)),
+			gen.Id(LowerCaseFirstLetter(i.Name)),
 			structGens.WrapperStructType(i.Name).Pointer(),
 		)
 	}

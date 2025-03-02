@@ -3,13 +3,14 @@ package wrappers
 import (
 	"fmt"
 
+	. "github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/generators"
 )
 
 type V8WrapperStructGenerators struct{}
 
 func (g V8WrapperStructGenerators) WrapperStructType(interfaceName string) generators.Type {
-	return generators.NewType(fmt.Sprintf("%sV8Wrapper", lowerCaseFirstLetter(interfaceName)))
+	return generators.NewType(fmt.Sprintf("%sV8Wrapper", LowerCaseFirstLetter(interfaceName)))
 }
 
 func (g V8WrapperStructGenerators) WrapperStructConstructorName(interfaceName string) string {

@@ -2,25 +2,12 @@ package htmlelements
 
 import (
 	"fmt"
-	"log/slog"
-	"unicode"
 
 	"github.com/dave/jennifer/jen"
 
+	. "github.com/gost-dom/code-gen/internal"
 	g "github.com/gost-dom/generators"
 )
-
-func upperCaseFirstLetter(s string) string {
-	strLen := len(s)
-	if strLen == 0 {
-		slog.Warn("Passing empty string to upperCaseFirstLetter")
-		return ""
-	}
-	buffer := make([]rune, 0, strLen)
-	buffer = append(buffer, unicode.ToUpper([]rune(s)[0]))
-	buffer = append(buffer, []rune(s)[1:]...)
-	return string(buffer)
-}
 
 type Receiver struct {
 	Name g.Generator
@@ -39,7 +26,7 @@ func (a IDLAttribute) Generate() *jen.Statement {
 	result := g.Id("result")
 	getter := g.FunctionDefinition{
 		Receiver: g.FunctionArgument(a.Receiver),
-		Name:     upperCaseFirstLetter(a.AttributeName),
+		Name:     UpperCaseFirstLetter(a.AttributeName),
 		RtnTypes: g.List(attrType),
 		Body: g.StatementList(
 			g.AssignMany(

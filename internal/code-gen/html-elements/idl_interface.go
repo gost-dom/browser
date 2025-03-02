@@ -5,6 +5,7 @@ import (
 
 	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/customrules"
+	. "github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )
@@ -40,7 +41,7 @@ func (i IdlInterface) Generate() *jen.Statement {
 	}
 
 	for _, a := range i.Attributes {
-		getterName := upperCaseFirstLetter(a.Name)
+		getterName := UpperCaseFirstLetter(a.Name)
 		fields = append(fields, generators.Raw(
 			jen.Id(getterName).Params().Params(a.Type.Generate()),
 		))
@@ -84,10 +85,10 @@ func (i IdlInterface) Generate() *jen.Statement {
 					nextArg := o.Arguments[i+1]
 					if nextArg.Optional {
 						fields = append(fields, generators.Raw(
-							jen.Id(upperCaseFirstLetter(name)).
+							jen.Id(UpperCaseFirstLetter(name)).
 								Params(generators.ToJenCodes(args[0:i+1])...).
 								Add(o.ReturnType.ReturnParams(o.HasError))))
-						name = name + upperCaseFirstLetter(nextArg.Name)
+						name = name + UpperCaseFirstLetter(nextArg.Name)
 					}
 				}
 			}
@@ -96,7 +97,7 @@ func (i IdlInterface) Generate() *jen.Statement {
 				fields = append(fields, generators.Raw(jen.Comment(opRules.DocComments)))
 			}
 			fields = append(fields, generators.Raw(
-				jen.Id(upperCaseFirstLetter(name)).
+				jen.Id(UpperCaseFirstLetter(name)).
 					Params(generators.ToJenCodes(args)...).
 					Add(o.ReturnType.ReturnParams(o.HasError)),
 			))
