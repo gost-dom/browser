@@ -20,14 +20,10 @@ func (attrs Attributes) Length() int {
 	return len(attrs)
 }
 
-type MouseEvents interface {
-	Click() bool
-}
-
 // An Element in the document. Can be either an [HTMLElement] or an [XMLElement]
 type Element interface {
 	ElementContainer
-	MouseEvents
+	ElementEvents
 	ClassList() DOMTokenList
 	HasAttribute(name string) bool
 	GetAttribute(name string) (string, bool)
@@ -48,6 +44,7 @@ type Element interface {
 
 type element struct {
 	*node
+	elementEvents
 	ParentNode
 	tagName          string
 	namespace        string
@@ -63,15 +60,12 @@ type element struct {
 func NewElement(tagName string, ownerDocument Document) Element {
 	node := newNodePtr(ownerDocument)
 	result := &element{
-		node,
-		newParentNode(node),
-		tagName,
-		"",
-		Attributes(nil),
-		nil,
-		nil,
-		nil,
+		node:       node,
+		ParentNode: newParentNode(node),
+		tagName:    tagName,
+		attributes: Attributes(nil),
 	}
+	result.elementEvents = elementEvents{result}
 	result.SetSelf(result)
 	return result
 }
@@ -241,12 +235,6 @@ func (n *element) InsertAdjacentHTML(position string, text string) error {
 }
 
 func (n *element) NodeType() NodeType { return NodeTypeElement }
-
-func (n *element) Click() bool {
-	return n.DispatchEvent(
-		NewPointerEvent("click", EventCancelable(true), EventBubbles(true)),
-	)
-}
 
 func (e *element) Render(writer *strings.Builder) {
 	renderElement(e, writer)

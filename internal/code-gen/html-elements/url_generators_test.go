@@ -3,6 +3,7 @@ package htmlelements_test
 import (
 	"testing"
 
+	. "github.com/gost-dom/generators/testing/matchers"
 	"github.com/onsi/gomega"
 )
 

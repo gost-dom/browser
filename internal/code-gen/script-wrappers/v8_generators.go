@@ -3,6 +3,7 @@ package wrappers
 import (
 	"fmt"
 
+	. "github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/code-gen/packagenames"
 	g "github.com/gost-dom/generators"
 
@@ -26,7 +27,7 @@ func (s V8NamingStrategy) PrototypeWrapperBaseName() string {
 }
 
 func (s V8NamingStrategy) PrototypeWrapperName() string {
-	return lowerCaseFirstLetter(s.PrototypeWrapperBaseName())
+	return LowerCaseFirstLetter(s.PrototypeWrapperBaseName())
 }
 
 func (t NewV8FunctionTemplate) Generate() *jen.Statement {

@@ -5,6 +5,7 @@ import (
 	. "github.com/onsi/gomega"
 
 	. "github.com/gost-dom/code-gen/html-elements"
+	. "github.com/gost-dom/generators/testing/matchers"
 )
 
 func NewStringAttribute(name string) IdlInterfaceAttribute {

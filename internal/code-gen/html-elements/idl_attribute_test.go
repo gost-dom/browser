@@ -6,6 +6,7 @@ import (
 
 	. "github.com/gost-dom/code-gen/html-elements"
 	g "github.com/gost-dom/generators"
+	. "github.com/gost-dom/generators/testing/matchers"
 )
 
 var _ = Describe("IDLAttribute", func() {

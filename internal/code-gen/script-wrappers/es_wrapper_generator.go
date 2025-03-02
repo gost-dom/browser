@@ -5,9 +5,9 @@ import (
 	"iter"
 	"log/slog"
 	"strings"
-	"unicode"
 
 	"github.com/gost-dom/code-gen/customrules"
+	. "github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/code-gen/script-wrappers/configuration"
 	g "github.com/gost-dom/generators"
@@ -31,11 +31,6 @@ const (
 	v8      = "github.com/gost-dom/v8go"
 	gojaSrc = "github.com/dop251/goja"
 )
-
-// A list of possible acronyms that an interface can start with. Used as a very
-// simple way to generate sensible unexported names for wrapper types. E.g.,
-// HTMLTemplateElement -> htmlTemplateElement.
-var KnownAcronyms = []string{"HTML", "URL", "DOM", "XML"}
 
 func createData(
 	spec idl.Spec,
@@ -366,41 +361,13 @@ func sanitizeVarName(name string) string {
 func idlNameToGoName(s string) string {
 	words := strings.Split(s, " ")
 	for i, word := range words {
-		words[i] = upperCaseFirstLetter(word)
+		words[i] = UpperCaseFirstLetter(word)
 	}
 	return strings.Join(words, "")
 }
 
 func idlNameToUnexportedGoName(s string) string {
-	return lowerCaseFirstLetter(idlNameToGoName(s))
-}
-
-func lowerCaseFirstLetter(s string) string {
-	for _, acro := range KnownAcronyms {
-		if strings.HasPrefix(s, acro) {
-			return strings.ToLower(acro) + s[len(acro):]
-		}
-	}
-	strLen := len(s)
-	if strLen == 0 {
-		slog.Warn("Passing empty string to upperCaseFirstLetter")
-		return ""
-	}
-	buffer := make([]rune, 0, strLen)
-	buffer = append(buffer, unicode.ToLower([]rune(s)[0]))
-	buffer = append(buffer, []rune(s)[1:]...)
-	return string(buffer)
-}
-func upperCaseFirstLetter(s string) string {
-	strLen := len(s)
-	if strLen == 0 {
-		slog.Warn("Passing empty string to upperCaseFirstLetter")
-		return ""
-	}
-	buffer := make([]rune, 0, strLen)
-	buffer = append(buffer, unicode.ToUpper([]rune(s)[0]))
-	buffer = append(buffer, []rune(s)[1:]...)
-	return string(buffer)
+	return LowerCaseFirstLetter(idlNameToGoName(s))
 }
 
 type ReturnOnError struct {
