@@ -167,13 +167,15 @@ func (e *eventTarget) dispatchEvent(event Event, capture bool) {
 }
 
 func (e *eventTarget) dispatchOnParent(event Event, capture bool) {
-	if e.parentTarget != nil && event.shouldPropagate() {
+	if e.parentTarget != nil {
 		if capture {
 			e.parentTarget.dispatchOnParent(event, capture)
 			e.parentTarget.dispatchEvent(event, capture)
 		} else {
-			e.parentTarget.dispatchEvent(event, capture)
-			e.parentTarget.dispatchOnParent(event, capture)
+			if event.shouldPropagate() {
+				e.parentTarget.dispatchEvent(event, capture)
+				e.parentTarget.dispatchOnParent(event, capture)
+			}
 		}
 	}
 }

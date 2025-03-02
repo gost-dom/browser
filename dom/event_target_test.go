@@ -124,6 +124,15 @@ func (s *EventPropagationTestSuite) TestEventCapture() {
 
 	s.Assert().Equal(expected, events)
 	s.Assert().Equal(EventPhaseNone, event.EventPhase(), "Phase after dispatch")
+
+	events = nil
+	s.target.DispatchEvent(NewCustomEvent("custom"))
+	s.Assert().Equal(
+		[]string{
+			"Window capture. Phase: 1",
+			"Target capture. Phase: 2",
+			"Target bubble. Phase: 2",
+		}, events, "Event handlers when event doesn't bubble")
 }
 
 func (s *EventPropagationTestSuite) TestDefaultEventPropagation() {
