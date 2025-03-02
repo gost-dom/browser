@@ -5,8 +5,25 @@ import (
 	"github.com/gost-dom/browser/internal/log"
 )
 
+type EventPhase int
+
+const (
+	EventPhaseNone     EventPhase = 0
+	EventPhaseCapture  EventPhase = 1
+	EventPhaseAtTarget EventPhase = 2
+	EventPhaseBubbline EventPhase = 3
+)
+
+type EventListenerOption struct {
+	Capture bool
+}
+
+type EventListenerOptionFunc func(*EventListenerOption)
+
+func EventListenerOptionCapture(o *EventListenerOption) { o.Capture = true }
+
 type EventTarget interface {
-	AddEventListener(eventType string, listener EventHandler /* TODO: options */)
+	AddEventListener(eventType string, listener EventHandler, options ...EventListenerOptionFunc)
 	RemoveEventListener(eventType string, listener EventHandler)
 	DispatchEvent(event Event) bool
 	// Adds a listener that will receive _all_ dispatched events. This listener
@@ -18,13 +35,19 @@ type EventTarget interface {
 	RemoveAll()
 	// Unexported
 	dispatchError(err ErrorEvent)
-	dispatchEvent(event Event) bool
+	dispatchEvent(event Event, capture bool)
+	dispatchOnParent(Event, bool)
 	setSelf(e EventTarget)
+}
+
+type eventHandlerSpec struct {
+	handler EventHandler
+	capture bool
 }
 
 type eventTarget struct {
 	parentTarget    EventTarget
-	lmap            map[string][]EventHandler
+	lmap            map[string][]eventHandlerSpec
 	catchAllHandler EventHandler
 	self            EventTarget
 }
@@ -40,7 +63,7 @@ func SetEventTargetSelf(t EventTarget) {
 
 func newEventTarget() eventTarget {
 	return eventTarget{
-		lmap: make(map[string][]EventHandler),
+		lmap: make(map[string][]eventHandlerSpec),
 	}
 }
 
@@ -48,7 +71,15 @@ func (e *eventTarget) setSelf(self EventTarget) {
 	e.self = self
 }
 
-func (e *eventTarget) AddEventListener(eventType string, listener EventHandler) {
+func (e *eventTarget) AddEventListener(
+	eventType string,
+	listener EventHandler,
+	options ...EventListenerOptionFunc,
+) {
+	var option EventListenerOption
+	for _, o := range options {
+		o(&option)
+	}
 	log.Debug("AddEventListener", "EventType", eventType)
 	// TODO: Handle options
 	// - capture
@@ -62,21 +93,24 @@ func (e *eventTarget) AddEventListener(eventType string, listener EventHandler) 
 	//   - https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#wantsuntrusted
 	listeners := e.lmap[eventType]
 	for _, l := range listeners {
-		if l.Equals(listener) {
+		if l.handler.Equals(listener) {
 			return
 		}
 	}
-	e.lmap[eventType] = append(listeners, listener)
+	e.lmap[eventType] = append(
+		listeners,
+		eventHandlerSpec{handler: listener, capture: option.Capture},
+	)
 }
 
 func (e *eventTarget) RemoveAll() {
-	e.lmap = make(map[string][]EventHandler)
+	e.lmap = make(map[string][]eventHandlerSpec)
 }
 
 func (e *eventTarget) RemoveEventListener(eventType string, listener EventHandler) {
 	listeners := e.lmap[eventType]
 	for i, l := range listeners {
-		if l.Equals(listener) {
+		if l.handler.Equals(listener) {
 			e.lmap[eventType] = append(listeners[:i], listeners[i+1:]...)
 			return
 		}
@@ -90,36 +124,63 @@ func (e *eventTarget) SetCatchAllHandler(handler EventHandler) {
 func (e *eventTarget) DispatchEvent(event Event) bool {
 	event.reset(e.self)
 	log.Debug("Dispatch event", "EventType", event.Type())
-	return e.dispatchEvent(event)
+
+	event.setEventPhase(EventPhaseCapture)
+	e.dispatchOnParent(event, true)
+
+	event.setEventPhase(EventPhaseAtTarget)
+	e.dispatchEvent(event, true)
+	e.dispatchEvent(event, false)
+	event.setEventPhase(EventPhaseBubbline)
+
+	e.dispatchOnParent(event, false)
+
+	event.setEventPhase(EventPhaseNone)
+
+	return !event.isCancelled()
 }
 
-func (e *eventTarget) dispatchEvent(event Event) bool {
+func (e *eventTarget) dispatchEvent(event Event, capture bool) {
+	if event.isStopped() {
+		return
+	}
 	event.setCurrentTarget(e.self)
 	defer func() { event.setCurrentTarget(nil) }()
-	if e.catchAllHandler != nil {
+	if e.catchAllHandler != nil && !capture {
 		if err := e.catchAllHandler.HandleEvent(event); err != nil {
 			log.Debug("Error occurred", "error", err.Error())
 			e.dispatchError(NewErrorEvent(err))
 		}
 	}
-	listeners := e.lmap[event.Type()]
 
+	listeners := e.lmap[event.Type()]
 	for _, l := range listeners {
 		log.Debug("eventTarget.dispatchEvent: Calling event handler", "type", event.Type())
-		if err := l.HandleEvent(event); err != nil {
-			log.Error(
-				"eventTarget.dispatchEvent: Error occurred in event handler",
-				"error",
-				err.Error(),
-			)
-			e.dispatchError(NewErrorEvent(err))
+		if l.capture == capture {
+			if err := l.handler.HandleEvent(event); err != nil {
+				log.Error(
+					"eventTarget.dispatchEvent: Error occurred in event handler",
+					"error",
+					err.Error(),
+				)
+				e.dispatchError(NewErrorEvent(err))
+			}
 		}
 	}
+}
 
-	if e.parentTarget != nil && event.shouldPropagate() {
-		e.parentTarget.dispatchEvent(event)
+func (e *eventTarget) dispatchOnParent(event Event, capture bool) {
+	if e.parentTarget != nil {
+		if capture {
+			e.parentTarget.dispatchOnParent(event, capture)
+			e.parentTarget.dispatchEvent(event, capture)
+		} else {
+			if event.Bubbles() {
+				e.parentTarget.dispatchEvent(event, capture)
+				e.parentTarget.dispatchOnParent(event, capture)
+			}
+		}
 	}
-	return !event.isCancelled()
 }
 
 func (e *eventTarget) dispatchError(event ErrorEvent) {
@@ -142,9 +203,11 @@ type Event interface {
 	Target() EventTarget
 	CurrentTarget() EventTarget
 	reset(t EventTarget)
+	EventPhase() EventPhase
 
 	isCancelled() bool
-	shouldPropagate() bool
+	isStopped() bool
+	setEventPhase(phase EventPhase)
 	setCurrentTarget(t EventTarget)
 }
 
@@ -185,11 +248,12 @@ func EventCancelable(cancelable bool) EventOption {
 
 type event struct {
 	entity.Entity
+	phase         EventPhase
 	cancelable    bool
 	cancelled     bool
 	eventType     string
 	bubbles       bool
-	propagate     bool
+	stopped       bool
 	target        EventTarget
 	currentTarget EventTarget
 }
@@ -199,7 +263,7 @@ func newEvent(eventType string) event {
 		Entity:    entity.New(),
 		eventType: eventType,
 		bubbles:   false,
-		propagate: false,
+		stopped:   false,
 	}
 }
 
@@ -212,19 +276,21 @@ func NewEvent(eventType string, options ...EventOption) Event {
 }
 
 func (e *event) Type() string                   { return e.eventType }
-func (e *event) StopPropagation()               { e.propagate = false }
+func (e *event) StopPropagation()               { e.stopped = true }
 func (e *event) PreventDefault()                { e.cancelled = true }
 func (e *event) Cancelable() bool               { return e.cancelable }
 func (e *event) Bubbles() bool                  { return e.bubbles }
-func (e *event) shouldPropagate() bool          { return e.propagate }
+func (e *event) isStopped() bool                { return e.stopped }
 func (e *event) isCancelled() bool              { return e.cancelable && e.cancelled }
+func (e *event) EventPhase() EventPhase         { return e.phase }
 func (e *event) Target() EventTarget            { return e.target }
 func (e *event) CurrentTarget() EventTarget     { return e.currentTarget }
+func (e *event) setEventPhase(phase EventPhase) { e.phase = phase }
 func (e *event) setCurrentTarget(t EventTarget) { e.currentTarget = t }
 
 func (e *event) reset(t EventTarget) {
 	e.target = t
-	e.propagate = e.bubbles
+	e.stopped = false
 	e.cancelled = false
 }
 

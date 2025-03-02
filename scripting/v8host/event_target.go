@@ -82,10 +82,25 @@ func createEventTarget(host *V8ScriptHost) *v8.FunctionTemplate {
 				args := newArgumentHelper(host, info)
 				eventType, e1 := args.getStringArg(0)
 				fn, e2 := args.getFunctionArg(1)
+				var options []dom.EventListenerOptionFunc
+				optionArg := args.getArg(2)
+				if optionArg != nil {
+					if optionArg.IsBoolean() && optionArg.Boolean() {
+						options = append(options, dom.EventListenerOptionCapture)
+					}
+					if optionArg.IsObject() {
+						if capture, err := optionArg.Object().Get("capture"); err == nil &&
+							capture != nil {
+							if capture.Boolean() {
+								options = append(options, dom.EventListenerOptionCapture)
+							}
+						}
+					}
+				}
 				err = errors.Join(e1, e2)
 				if err == nil {
 					listener := newV8EventListener(ctx, fn.Value)
-					target.AddEventListener(eventType, listener)
+					target.AddEventListener(eventType, listener, options...)
 				}
 				return v8.Undefined(iso), err
 			}), v8.ReadOnly)

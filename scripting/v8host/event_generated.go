@@ -50,6 +50,10 @@ func (w eventV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 		v8.NewFunctionTemplateWithError(iso, w.currentTarget),
 		nil,
 		v8.None)
+	prototypeTmpl.SetAccessorProperty("eventPhase",
+		v8.NewFunctionTemplateWithError(iso, w.eventPhase),
+		nil,
+		v8.None)
 	prototypeTmpl.SetAccessorProperty("bubbles",
 		v8.NewFunctionTemplateWithError(iso, w.bubbles),
 		nil,
