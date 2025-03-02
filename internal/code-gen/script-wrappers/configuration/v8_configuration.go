@@ -37,6 +37,8 @@ func CreateV8Specs() WebIdlConfigurations {
 	domSpecs := specs.Module("dom")
 
 	event := domSpecs.Type("Event")
+	event.Method("eventPhase").SetCustomImplementation()
+
 	event.Method("constructor").Argument("eventInitDict").SetHasDefault()
 	event.Method("initEvent").Ignore()
 	event.Method("composed").Ignore()
@@ -45,8 +47,6 @@ func CreateV8Specs() WebIdlConfigurations {
 	event.Method("isTrusted").Ignore()
 	event.Method("CancelBubble").Ignore()
 	event.Method("cancelBubble").Ignore()
-	event.Method("EventPhase").Ignore()
-	event.Method("eventPhase").Ignore()
 	event.Method("TimeStamp").Ignore()
 	event.Method("timeStamp").Ignore()
 	event.Method("ReturnValue").Ignore()

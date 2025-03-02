@@ -32,3 +32,11 @@ func (w eventV8Wrapper) toNullableEventTarget(
 	}
 	return nil, v8.NewError(w.iso(), "TODO, Not yet supported")
 }
+
+func (w eventV8Wrapper) eventPhase(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+	instance, err := w.getInstance(info)
+	if err != nil {
+		return nil, err
+	}
+	return v8.NewValue(w.iso(), uint32(instance.EventPhase()))
+}
