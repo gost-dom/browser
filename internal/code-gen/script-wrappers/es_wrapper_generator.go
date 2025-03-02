@@ -12,6 +12,7 @@ import (
 	"github.com/gost-dom/code-gen/script-wrappers/configuration"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
+	legacy "github.com/gost-dom/webref/idl/legacy"
 
 	"github.com/dave/jennifer/jen"
 )
@@ -183,7 +184,7 @@ type ESOperationArgument struct {
 	Type         string
 	Optional     bool
 	Variadic     bool
-	IdlType      idl.IdlTypes
+	IdlType      legacy.IdlTypes
 	ArgumentSpec configuration.ESMethodArgument
 	Ignore       bool
 }
