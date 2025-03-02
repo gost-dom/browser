@@ -3,220 +3,198 @@ package dom_test
 import (
 	"errors"
 	"strings"
+	"testing"
 
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
+	"github.com/stretchr/testify/suite"
 
 	. "github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
+	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 )
 
-var _ = Describe("EventTarget", func() {
-	It("Should call a handler of the right type", func() {
-		callCount := 0
-		handler := NewEventHandlerFuncWithoutError(func(e Event) { callCount++ })
-		target := NewEventTarget()
-		target.AddEventListener("click", handler)
-		target.DispatchEvent(NewCustomEvent("click"))
-		Expect(callCount).To(Equal(1))
-	})
+type TestSuite struct {
+	GomegaSuite
+	clickCount   int
+	target       EventTarget
+	clickHandler EventHandler
+}
 
-	It("Should not call a handler of a different type", func() {
-		callCount := 0
-		handler := NewEventHandlerFuncWithoutError(func(e Event) { callCount++ })
-		target := NewEventTarget()
-		target.AddEventListener("click", handler)
-		target.DispatchEvent(NewCustomEvent("keyDown"))
-		Expect(callCount).To(Equal(0))
-	})
+func NewTestHandler(f func(Event)) EventHandler { return NewEventHandlerFunc(NoError(f)) }
 
-	It("Should not call a handler that was removed type", func() {
-		callCount := 0
-		handler := NewEventHandlerFuncWithoutError(func(e Event) { callCount++ })
-		target := NewEventTarget()
-		target.AddEventListener("click", handler)
-		target.RemoveEventListener("click", handler)
-		target.DispatchEvent(NewCustomEvent("click"))
-		Expect(callCount).To(Equal(0))
-	})
+func Test(t *testing.T) {
+	suite.Run(t, new(TestSuite))
+}
 
-	It("Should only call a handler once, even if added twice", func() {
-		callCount := 0
-		handler := NewEventHandlerFuncWithoutError(func(e Event) { callCount++ })
-		target := NewEventTarget()
-		target.AddEventListener("click", handler)
-		target.AddEventListener("click", handler)
-		target.DispatchEvent(NewCustomEvent("click"))
-		Expect(callCount).To(Equal(1))
-	})
+func (s *TestSuite) SetupTest() {
+	s.clickCount = 0
+	s.target = NewEventTarget()
+	s.clickHandler = NewTestHandler(func(e Event) { s.clickCount++ })
+	s.target.AddEventListener("click", s.clickHandler)
+}
 
-	It("Should call the event listeners in the order they are added", func() {
-		// This is a very silly test, and there are probably many _wrong_
-		// implementations that would by accident make this test pass. The test
-		// mostly exists here to document required behaviour.
-		callCount := 0
-		eventHandler := func(e Event) { callCount++ }
-		target := NewEventTarget()
-		NewEventHandlerFuncWithoutError(eventHandler)
-		target.AddEventListener("click", NewEventHandlerFuncWithoutError(func(e Event) {
-			Expect(callCount).To(Equal(0), "First handler")
-			callCount++
+func (s *TestSuite) TestDispatchEvent() {
+	s.target.DispatchEvent(NewCustomEvent("click"))
+	s.Expect(s.clickCount).To(Equal(1))
+}
+
+func (s *TestSuite) TestDispatchDifferentEvent() {
+	s.target.DispatchEvent(NewCustomEvent("auxclick"))
+	s.Expect(s.clickCount).To(Equal(0))
+}
+
+func (s *TestSuite) TestRemoveEventHandler() {
+	s.target.DispatchEvent(NewCustomEvent("click"))
+	s.Expect(s.clickCount).To(Equal(1))
+
+	s.target.RemoveEventListener("click", s.clickHandler)
+	s.target.DispatchEvent(NewCustomEvent("click"))
+	s.Expect(s.clickCount).To(Equal(1))
+}
+
+func (s *TestSuite) TestAddingSameHandlerTwice() {
+	s.target.AddEventListener("click", s.clickHandler)
+	s.target.AddEventListener("click", s.clickHandler)
+	s.target.DispatchEvent(NewCustomEvent("click"))
+	s.Expect(s.clickCount).To(Equal(1))
+}
+
+func (s *TestSuite) TestEventHandlersCalledInOrder() {
+	var order []string
+	s.target.AddEventListener("auxclick",
+		NewTestHandler(func(e Event) { order = append(order, "A") }),
+	)
+	s.target.AddEventListener("auxclick",
+		NewTestHandler(func(e Event) { order = append(order, "B") }),
+	)
+	s.target.AddEventListener("auxclick",
+		NewTestHandler(func(e Event) { order = append(order, "C") }),
+	)
+	s.target.DispatchEvent(NewCustomEvent("auxclick"))
+	s.Expect(order).To(Equal([]string{"A", "B", "C"}))
+}
+
+type EventPropagationTestSuiteBase struct {
+	GomegaSuite
+	window html.Window
+	target Element
+}
+
+type EventPropagationTestSuite struct {
+	EventPropagationTestSuiteBase
+}
+
+func TestEventPropagation(t *testing.T) {
+	suite.Run(t, new(EventPropagationTestSuite))
+}
+
+func (s *EventPropagationTestSuiteBase) SetupTest() {
+	var err error
+	s.window, err = html.NewWindowReader(
+		strings.NewReader(`<body><div id="target"></div></body>`),
+	)
+	s.Expect(err).ToNot(HaveOccurred())
+	s.Expect(err).ToNot(HaveOccurred())
+	s.target = s.window.Document().GetElementById("target")
+}
+
+func (s *EventPropagationTestSuite) TestDefaultEventPropagation() {
+	called := false
+	var l EventHandler = NewTestHandler(func(e Event) {
+		called = true
+	})
+	s.window.Document().Body().AddEventListener("custom", l)
+	s.target.DispatchEvent(NewCustomEvent("custom"))
+	s.Expect(called).To(BeFalse())
+}
+
+func (s *EventPropagationTestSuite) TestPropagateToWindow() {
+	called := false
+
+	var l EventHandler = NewTestHandler(func(e Event) {
+		called = true
+	})
+	s.window.AddEventListener("custom", l)
+	s.target.DispatchEvent(NewCustomEvent("custom", EventBubbles(true)))
+	s.Expect(called).To(BeTrue())
+}
+
+func (s *EventPropagationTestSuite) TestTargetOrCurrentTarget() {
+	var actualEvent Event
+	var actualTarget EventTarget
+	var actualCurrentTarget EventTarget
+
+	var l EventHandler = NewTestHandler(func(e Event) {
+		actualEvent = e
+		actualTarget = e.Target()
+		actualCurrentTarget = e.CurrentTarget()
+	})
+	s.window.AddEventListener("custom", l)
+	s.target.DispatchEvent(NewCustomEvent("custom", EventBubbles(true)))
+	s.Expect(actualTarget).To(Equal(s.target), "Event target")
+	s.Expect(actualCurrentTarget).To(Equal(s.window), "CurrentEvent target")
+	s.Expect(actualEvent.CurrentTarget()).To(BeNil(), "CurrentTarget after event")
+	s.Expect(actualEvent.Target()).To(Equal(s.target), "Target after event")
+}
+
+func (s *EventPropagationTestSuite) TestPropagateToWindowBubbles() {
+	called := false
+
+	// window.Document()
+	var l EventHandler = NewTestHandler(func(e Event) {
+		called = true
+	})
+	s.window.AddEventListener("custom", l)
+	s.target.DispatchEvent(NewCustomEvent("custom", EventBubbles(true)))
+	s.Expect(called).To(BeTrue())
+}
+
+func (s *EventPropagationTestSuite) TestStopPropagation() {
+	calledA := false
+	calledB := false
+	s.window.Document().Body().
+		AddEventListener("custom", NewTestHandler(func(e Event) {
+			calledA = true
+			e.StopPropagation()
 		}))
-		target.AddEventListener("click", NewEventHandlerFuncWithoutError(func(e Event) {
-			Expect(callCount).To(Equal(1), "Second handler")
-			callCount++
-		}))
-		target.DispatchEvent(NewCustomEvent("click"))
-		Expect(callCount).To(Equal(2), "Final state")
-	})
+	s.window.AddEventListener("custom", NewTestHandler(func(e Event) {
+		calledB = true
+	}))
+	s.target.DispatchEvent(NewCustomEvent("custom", EventBubbles(true)))
+	s.Expect(calledA).To(BeTrue(), "Event dispatched on body")
+	s.Expect(calledB).To(BeFalse(), "Event dispatched on window")
+}
 
-	Describe("Event propagation", func() {
-		var (
-			window html.Window
-			target Element
-		)
+func (s *EventPropagationTestSuite) TestReturnValueForPreventDefault() {
+	s.target.AddEventListener("custom", NewTestHandler(func(e Event) {
+		e.PreventDefault()
+	}))
+	s.Assert().False(
+		s.target.DispatchEvent(NewCustomEvent("custom", EventCancelable(true))),
+		"DispatchEvent return value with default prevented, Cancelable: true",
+	)
+	s.Assert().True(
+		s.target.DispatchEvent(NewCustomEvent("custom", EventCancelable(false))),
+		"DispatchEvent return value with default prevented, Cancelable: false",
+	)
+	s.Assert().True(
+		s.target.DispatchEvent(NewCustomEvent("custom")),
+		"DispatchEvent return value with default prevented, Cancelable not set",
+	)
+}
 
-		BeforeEach(func() {
-			var err error
-			window, err = html.NewWindowReader(
-				strings.NewReader(`<body><div id="target"></div></body>`),
-			)
-			Expect(err).ToNot(HaveOccurred())
-			target = window.Document().GetElementById("target")
-		})
-
-		It("Should not propagate the event to the parent by default", func() {
-			called := false
-			var l EventHandler = NewEventHandlerFunc(func(e Event) error {
-				called = true
-				return nil
-			})
-			window.Document().Body().AddEventListener("custom", l)
-			target.DispatchEvent(NewCustomEvent("custom"))
-			Expect(called).To(BeFalse())
-		})
-
-		It("Should propagate the event to the window", func() {
-			called := false
-
-			// window.Document()
-			var l EventHandler = NewEventHandlerFunc(func(e Event) error {
-				called = true
-				return nil
-			})
-			window.AddEventListener("custom", l)
-			target.DispatchEvent(NewCustomEvent("custom", EventBubbles(true)))
-			Expect(called).To(BeTrue())
-		})
-
-		It("Should provide correct target and currentTarget", func() {
-			var actualEvent Event
-			var actualTarget EventTarget
-			var actualCurrentTarget EventTarget
-
-			// window.Document()
-			var l EventHandler = NewEventHandlerFunc(func(e Event) error {
-				actualEvent = e
-				actualTarget = e.Target()
-				actualCurrentTarget = e.CurrentTarget()
-				return nil
-			})
-			window.AddEventListener("custom", l)
-			target.DispatchEvent(NewCustomEvent("custom", EventBubbles(true)))
-			Expect(actualTarget).To(Equal(target), "Event target")
-			Expect(actualCurrentTarget).To(Equal(window), "CurrentEvent target")
-			Expect(actualEvent.CurrentTarget()).To(BeNil(), "CurrentTarget after event")
-			Expect(actualEvent.Target()).To(Equal(target), "Target after event")
-		})
-
-		It("Should propagate the event to the window if 'bubbles' is set", func() {
-			called := false
-
-			// window.Document()
-			var l EventHandler = NewEventHandlerFunc(func(e Event) error {
-				called = true
-				return nil
-			})
-			window.AddEventListener("custom", l)
-			target.DispatchEvent(NewCustomEvent("custom", EventBubbles(true)))
-			Expect(called).To(BeTrue())
-		})
-
-		It("Should not propagate if the handler calls `StopPropagation()`", func() {
-			calledA := false
-			calledB := false
-			window.Document().
-				Body().
-				AddEventListener("custom", NewEventHandlerFunc(func(e Event) error {
-					calledA = true
-					e.StopPropagation()
-					return nil
-				}))
-			window.AddEventListener("custom", NewEventHandlerFunc(func(e Event) error {
-				calledB = true
-				return nil
-			}))
-			target.DispatchEvent(NewCustomEvent("custom", EventBubbles(true)))
-			Expect(calledA).To(BeTrue(), "Event dispatched on body")
-			Expect(calledB).To(BeFalse(), "Event dispatched on window")
-		})
-
-		Describe("DispatchEvent return value", func() {
-			It("Should return true", func() {
-				Expect(target.DispatchEvent(NewCustomEvent("custom"))).To(BeTrue())
-			})
-
-			It(
-				"Should return false when the handler calls PreventDefault() on a cancelable event",
-				func() {
-					target.AddEventListener("custom", NewEventHandlerFunc(func(e Event) error {
-						e.PreventDefault()
-						return nil
-					}))
-					Expect(
-						target.DispatchEvent(NewCustomEvent("custom", EventCancelable(true))),
-					).To(BeFalse())
-				},
-			)
-
-			It(
-				"Should return true when the handler calls PreventDefault() on a non-cancelable event",
-				func() {
-					target.AddEventListener("custom", NewEventHandlerFunc(func(e Event) error {
-						e.PreventDefault()
-						return nil
-					}))
-					Expect(target.DispatchEvent(NewCustomEvent("custom"))).To(BeTrue())
-				},
-			)
-		})
-
-		Describe("The event handler generates an error", func() {
-			BeforeEach(func() {
-				target.AddEventListener("custom", NewEventHandlerFunc(func(e Event) error {
-					return errors.New("dummy")
-				}))
-			})
-
-			It("Should be reported on Window", func() {
-				var errorOnWindow bool
-				window.AddEventListener("error", NewEventHandlerFunc(func(e Event) error {
-					errorOnWindow = true
-					return nil
-				}))
-				target.DispatchEvent(NewCustomEvent("custom"))
-				Expect(errorOnWindow).To(BeTrue())
-			})
-
-			It("Should not be reported on target", func() {
-				var errorOnTarget bool
-				target.AddEventListener("error", NewEventHandlerFunc(func(e Event) error {
-					errorOnTarget = true
-					return nil
-				}))
-				target.DispatchEvent(NewCustomEvent("custom"))
-				Expect(errorOnTarget).To(BeFalse())
-			})
-		})
-	})
-})
+func (s *EventPropagationTestSuite) TestEventHandlerGeneratesError() {
+	var errorOnWindow bool
+	s.window.AddEventListener("error", NewTestHandler(func(e Event) {
+		errorOnWindow = true
+	}))
+	var errorOnTarget bool
+	s.target.AddEventListener("error", NewTestHandler(func(e Event) {
+		errorOnTarget = true
+	}))
+	s.target.AddEventListener("custom", NewEventHandlerFunc(func(e Event) error {
+		return errors.New("Error")
+	}))
+	s.target.DispatchEvent(NewCustomEvent("custom"))
+	s.Assert().True(errorOnWindow, "Error event dispached on Window")
+	s.Assert().False(errorOnTarget, "Error event dispached on original target")
+}
