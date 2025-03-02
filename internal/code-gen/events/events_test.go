@@ -25,3 +25,13 @@ func TestGenerateElementEventMethod(t *testing.T) {
 }`,
 	))
 }
+
+func TestGenerateEventDispatcher(t *testing.T) {
+	g := gomega.NewWithT(t)
+	res, err := CreateEventSourceGenerator("uievents", "Element")
+	g.Expect(err).ToNot(HaveOccurred())
+	g.Expect(res).To(HaveRendered(gomega.HavePrefix(`type elementEvents struct {
+	target *eventTarget
+}`)))
+	g.Expect(res).To(HaveRenderedSubstring("func (e *elementEvents) Click() bool {"))
+}

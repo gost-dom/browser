@@ -2,6 +2,8 @@ package events
 
 import (
 	"fmt"
+	"os"
+	"strings"
 
 	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/internal"
@@ -60,8 +62,12 @@ type EventDispatchMethodGenerator struct {
 	Event          events.Event
 }
 
+func eventDispatchTypeName(typeName string) string {
+	return fmt.Sprintf("%sEvents", internal.LowerCaseFirstLetter(typeName))
+}
+
 func (g EventDispatchMethodGenerator) Generate() *jen.Statement {
-	typeName := fmt.Sprintf("%sEvents", internal.LowerCaseFirstLetter(g.SourceTypeName))
+	typeName := eventDispatchTypeName(g.SourceTypeName)
 	event := g.Event
 	return gen.FunctionDefinition{
 		Receiver: gen.FunctionArgument{
@@ -89,6 +95,60 @@ func CreateMethodGenerator(specs EventGeneratorSpecs) (res gen.Generator, err er
 	return
 }
 
-func CreateEventSourceGenerator(api string, element string) (gen.Generator, error) {
-	return nil, nil
+func CreateEventSourceGenerator(apiName string, element string) (gen.Generator, error) {
+	api, err := events.Load(apiName)
+	n := gen.NewType(eventDispatchTypeName(element))
+	s := gen.Struct{Name: n}
+	s.Field(gen.Id("target"), gen.NewType("eventTarget").Pointer())
+	res := gen.StatementList(s)
+	for _, e := range api.EventsForType(element) {
+		res.Append(gen.Line)
+		res.Append(EventDispatchMethodGenerator{
+			SourceTypeName: element,
+			Event:          e,
+		})
+	}
+	return res, err
+}
+
+func generateFile(packageName string, apiName string, element string) (*jen.File, error) {
+	file := jen.NewFile(packageName)
+	file.HeaderComment("This file is generated. Do not edit.")
+	g, err := CreateEventSourceGenerator(apiName, element)
+	if err != nil {
+		file.Add(g.Generate())
+	}
+	return file, err
+}
+
+type eventSources struct {
+	api   string
+	names []string
+}
+
+var types = map[string][]eventSources{
+	"dom": []eventSources{eventSources{
+		api:   "uievents",
+		names: []string{"Element"},
+	}},
+}
+
+func CreateEventGenerators(packageName string) error {
+	for _, source := range types[packageName] {
+		for _, e := range source.names {
+			var f *jen.File
+			filename := fmt.Sprintf("%s_events_generated.go", strings.ToLower(e))
+			writer, err := os.Create(filename)
+			if err != nil {
+				return err
+			}
+			defer writer.Close()
+			f, err = generateFile(packageName, source.api, e)
+			if err != nil {
+				return err
+			}
+			f.Render(writer)
+		}
+	}
+	return nil
 }
