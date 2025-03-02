@@ -41,7 +41,7 @@ func TestV8EventCapture(t *testing.T) {
 		window.addEventListener("gost", e => { events.push("Window bubble. Phase: " + e.eventPhase)})
 		window.addEventListener("gost", e => { events.push("Window capture. Phase: " + e.eventPhase)}, true)
 		div.addEventListener("gost", e => { events.push("Div bubble. Phase: " + e.eventPhase)})
-		div.addEventListener("gost", e => { events.push("Div capture. Phase: " + e.eventPhase)}, true)
+		div.addEventListener("gost", e => { events.push("Div capture. Phase: " + e.eventPhase)}, {capture:true})
 		div.dispatchEvent(new CustomEvent("gost", { bubbles: true }))
 
 		events

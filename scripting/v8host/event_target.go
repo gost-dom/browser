@@ -84,8 +84,18 @@ func createEventTarget(host *V8ScriptHost) *v8.FunctionTemplate {
 				fn, e2 := args.getFunctionArg(1)
 				var options []dom.EventListenerOptionFunc
 				optionArg := args.getArg(2)
-				if optionArg != nil && optionArg.IsBoolean() && optionArg.Boolean() {
-					options = append(options, dom.EventListenerOptionCapture)
+				if optionArg != nil {
+					if optionArg.IsBoolean() && optionArg.Boolean() {
+						options = append(options, dom.EventListenerOptionCapture)
+					}
+					if optionArg.IsObject() {
+						if capture, err := optionArg.Object().Get("capture"); err == nil &&
+							capture != nil {
+							if capture.Boolean() {
+								options = append(options, dom.EventListenerOptionCapture)
+							}
+						}
+					}
 				}
 				err = errors.Join(e1, e2)
 				if err == nil {
