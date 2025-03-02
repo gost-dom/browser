@@ -141,6 +141,9 @@ func (e *eventTarget) DispatchEvent(event Event) bool {
 }
 
 func (e *eventTarget) dispatchEvent(event Event, capture bool) {
+	if event.isStopped() {
+		return
+	}
 	event.setCurrentTarget(e.self)
 	defer func() { event.setCurrentTarget(nil) }()
 	if e.catchAllHandler != nil && !capture {
@@ -172,7 +175,7 @@ func (e *eventTarget) dispatchOnParent(event Event, capture bool) {
 			e.parentTarget.dispatchOnParent(event, capture)
 			e.parentTarget.dispatchEvent(event, capture)
 		} else {
-			if event.shouldPropagate() {
+			if event.Bubbles() {
 				e.parentTarget.dispatchEvent(event, capture)
 				e.parentTarget.dispatchOnParent(event, capture)
 			}
@@ -203,8 +206,8 @@ type Event interface {
 	EventPhase() EventPhase
 
 	isCancelled() bool
+	isStopped() bool
 	setEventPhase(phase EventPhase)
-	shouldPropagate() bool
 	setCurrentTarget(t EventTarget)
 }
 
@@ -250,7 +253,7 @@ type event struct {
 	cancelled     bool
 	eventType     string
 	bubbles       bool
-	propagate     bool
+	stopped       bool
 	target        EventTarget
 	currentTarget EventTarget
 }
@@ -260,7 +263,7 @@ func newEvent(eventType string) event {
 		Entity:    entity.New(),
 		eventType: eventType,
 		bubbles:   false,
-		propagate: false,
+		stopped:   false,
 	}
 }
 
@@ -273,21 +276,21 @@ func NewEvent(eventType string, options ...EventOption) Event {
 }
 
 func (e *event) Type() string                   { return e.eventType }
-func (e *event) StopPropagation()               { e.propagate = false }
+func (e *event) StopPropagation()               { e.stopped = true }
 func (e *event) PreventDefault()                { e.cancelled = true }
 func (e *event) Cancelable() bool               { return e.cancelable }
 func (e *event) Bubbles() bool                  { return e.bubbles }
-func (e *event) shouldPropagate() bool          { return e.propagate }
-func (e *event) setEventPhase(phase EventPhase) { e.phase = phase }
+func (e *event) isStopped() bool                { return e.stopped }
 func (e *event) isCancelled() bool              { return e.cancelable && e.cancelled }
 func (e *event) EventPhase() EventPhase         { return e.phase }
 func (e *event) Target() EventTarget            { return e.target }
 func (e *event) CurrentTarget() EventTarget     { return e.currentTarget }
+func (e *event) setEventPhase(phase EventPhase) { e.phase = phase }
 func (e *event) setCurrentTarget(t EventTarget) { e.currentTarget = t }
 
 func (e *event) reset(t EventTarget) {
 	e.target = t
-	e.propagate = e.bubbles
+	e.stopped = false
 	e.cancelled = false
 }
 
