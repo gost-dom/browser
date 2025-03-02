@@ -95,15 +95,27 @@ func CreateMethodGenerator(specs EventGeneratorSpecs) (res gen.Generator, err er
 	return
 }
 
+type EventInterfaceGenerator struct {
+	Element string
+	Events  []events.Event
+}
+
+func (g EventInterfaceGenerator) Generate() *jen.Statement {
+	name := fmt.Sprintf("%sEvents", g.Element)
+	ops := make([]gen.Generator, len(g.Events))
+	for i, e := range g.Events {
+		ops[i] = gen.Raw(jen.Id(internal.UpperCaseFirstLetter(e.Type)).Params().Add(jen.Id("bool")))
+	}
+	return jen.Type().Add(jen.Id(name)).Interface(gen.ToJenCodes(ops)...)
+}
+
 func CreateEventSourceGenerator(apiName string, element string) (gen.Generator, error) {
-	fmt.Println("CreateEventSource", apiName, element)
 	api, err := events.Load(apiName)
 	n := gen.NewType(eventDispatchTypeName(element))
 	s := gen.Struct{Name: n}
 	s.Field(gen.Id("target"), gen.NewType("eventTarget").Pointer())
 	res := gen.StatementList(s)
 	for _, e := range api.EventsForType(element) {
-		fmt.Println("Iter", e.Type)
 		res.Append(gen.Line)
 		res.Append(EventDispatchMethodGenerator{
 			SourceTypeName: element,
@@ -136,11 +148,8 @@ var types = map[string][]eventSources{
 }
 
 func CreateEventGenerators(packageName string) error {
-	fmt.Println("---", packageName)
 	for _, source := range types[packageName] {
-		fmt.Println("source", source.api)
 		for _, e := range source.names {
-			fmt.Println("Element", e)
 			var f *jen.File
 			filename := fmt.Sprintf("%s_events_generated.go", strings.ToLower(e))
 			writer, err := os.Create(filename)

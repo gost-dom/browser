@@ -6,6 +6,7 @@ import (
 	. "github.com/gost-dom/code-gen/events"
 	. "github.com/gost-dom/code-gen/internal/gomega-matchers"
 	. "github.com/gost-dom/generators/testing/matchers"
+	"github.com/gost-dom/webref/events"
 	"github.com/onsi/gomega"
 )
 
@@ -26,6 +27,18 @@ func TestGenerateElementEventMethod(t *testing.T) {
 	))
 }
 
+func TestInterfaceGeneration(t *testing.T) {
+	g := gomega.NewWithT(t)
+	api, err := events.Load("uievents")
+	g.Expect(err).ToNot(HaveOccurred())
+	res := EventInterfaceGenerator{
+		Element: "Element",
+		Events:  api.EventsForType("Element"),
+	}
+	g.Expect(res).To(HaveRenderedSubstring("type ElementEvents interface {"))
+	g.Expect(res).To(HaveRendered(gomega.MatchRegexp("(?m)^\tClick\\(\\) bool$")))
+}
+
 func TestGenerateEventDispatcher(t *testing.T) {
 	g := gomega.NewWithT(t)
 	res, err := CreateEventSourceGenerator("uievents", "Element")
@@ -34,4 +47,6 @@ func TestGenerateEventDispatcher(t *testing.T) {
 	target *eventTarget
 }`)))
 	g.Expect(res).To(HaveRenderedSubstring("func (e *elementEvents) Click() bool {"))
+	// g.Expect(res).To(HaveRenderedSubstring("type ElementEvents interface {"))
+	// g.Expect(res).To(HaveRendered(gomega.MatchRegexp("(g:)^\tClick()$")))
 }
