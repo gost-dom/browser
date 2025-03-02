@@ -31,7 +31,7 @@ func LowerCaseFirstLetter(s string) string {
 	}
 	strLen := len(s)
 	if strLen == 0 {
-		slog.Warn("Passing empty string to lowerCaseFirstLetter")
+		slog.Warn("Passing empty string to LowerCaseFirstLetter")
 		return ""
 	}
 	buffer := make([]rune, 0, strLen)
