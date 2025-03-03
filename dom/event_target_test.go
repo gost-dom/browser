@@ -97,8 +97,59 @@ func (s *EventPropagationTestSuiteBase) SetupTest() {
 	s.target = s.window.Document().GetElementById("target")
 }
 
-func (s *EventPropagationTestSuite) TestEventCapture() {
+func (s *EventPropagationTestSuite) TestRemoveCorrectPhase() {
+	var events []string
+	h := NewTestHandler(func(e Event) {
+		events = append(events, fmt.Sprintf("Phase: %d", e.EventPhase()))
+	})
+	event := NewCustomEvent("gost:remove", EventBubbles(true))
+	s.window.AddEventListener("gost:remove", h)
+	s.window.AddEventListener("gost:remove", h, EventListenerOptionCapture)
 
+	s.target.DispatchEvent(event)
+	s.Assert().Equal([]string{
+		"Phase: 1",
+		"Phase: 3",
+	}, events)
+
+	s.window.RemoveEventListener("gost:remove", h)
+
+	events = nil
+	s.target.DispatchEvent(event)
+	s.Assert().Equal([]string{
+		"Phase: 1",
+	}, events)
+
+	s.window.AddEventListener("gost:remove", h)
+	s.window.RemoveEventListener("gost:remove", h, EventListenerOptionCapture)
+
+	events = nil
+	s.target.DispatchEvent(event)
+	s.Assert().Equal([]string{
+		"Phase: 3",
+	}, events)
+}
+
+func (s *EventPropagationTestSuite) TestEventOnce() {
+	var events []string
+	s.window.AddEventListener("custom", NewTestHandler(func(e Event) {
+		events = append(events, fmt.Sprintf("Handler A"))
+	}))
+	s.window.AddEventListener("custom", NewTestHandler(func(e Event) {
+		events = append(events, fmt.Sprintf("Handler B"))
+	}), EventListenerOptionOnce)
+
+	s.target.DispatchEvent(NewCustomEvent("custom", EventBubbles(true)))
+	s.target.DispatchEvent(NewCustomEvent("custom", EventBubbles(true)))
+
+	s.Assert().Equal([]string{
+		"Handler A",
+		"Handler B",
+		"Handler A",
+	}, events)
+}
+
+func (s *EventPropagationTestSuite) TestEventCapture() {
 	var events []string
 	s.window.AddEventListener("custom", NewTestHandler(func(e Event) {
 		events = append(events, fmt.Sprintf("Window capture. Phase: %d", e.EventPhase()))
