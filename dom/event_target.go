@@ -1,6 +1,8 @@
 package dom
 
 import (
+	"slices"
+
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
 )
@@ -16,15 +18,17 @@ const (
 
 type EventListenerOption struct {
 	Capture bool
+	Once    bool
 }
 
 type EventListenerOptionFunc func(*EventListenerOption)
 
 func EventListenerOptionCapture(o *EventListenerOption) { o.Capture = true }
+func EventListenerOptionOnce(o *EventListenerOption)    { o.Once = true }
 
 type EventTarget interface {
 	AddEventListener(eventType string, listener EventHandler, options ...EventListenerOptionFunc)
-	RemoveEventListener(eventType string, listener EventHandler)
+	RemoveEventListener(eventType string, listener EventHandler, options ...EventListenerOptionFunc)
 	DispatchEvent(event Event) bool
 	// Adds a listener that will receive _all_ dispatched events. This listener
 	// will not be removed from the window when navigating. This makes it useful
@@ -43,6 +47,7 @@ type EventTarget interface {
 type eventHandlerSpec struct {
 	handler EventHandler
 	capture bool
+	once    bool
 }
 
 type eventTarget struct {
@@ -82,7 +87,6 @@ func (e *eventTarget) AddEventListener(
 	}
 	log.Debug("AddEventListener", "EventType", eventType)
 	// TODO: Handle options
-	// - capture
 	// - once
 	// - passive. Defaults to false,
 	// - signal - TODO: Implement AbortSignal
@@ -93,13 +97,13 @@ func (e *eventTarget) AddEventListener(
 	//   - https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#wantsuntrusted
 	listeners := e.lmap[eventType]
 	for _, l := range listeners {
-		if l.handler.Equals(listener) {
+		if l.handler.Equals(listener) && l.capture == option.Capture {
 			return
 		}
 	}
 	e.lmap[eventType] = append(
 		listeners,
-		eventHandlerSpec{handler: listener, capture: option.Capture},
+		eventHandlerSpec{handler: listener, capture: option.Capture, once: option.Once},
 	)
 }
 
@@ -107,12 +111,20 @@ func (e *eventTarget) RemoveAll() {
 	e.lmap = make(map[string][]eventHandlerSpec)
 }
 
-func (e *eventTarget) RemoveEventListener(eventType string, listener EventHandler) {
+func (e *eventTarget) RemoveEventListener(
+	eventType string,
+	listener EventHandler,
+	options ...EventListenerOptionFunc,
+) {
+	var option EventListenerOption
+	for _, o := range options {
+		o(&option)
+	}
 	listeners := e.lmap[eventType]
 	for i, l := range listeners {
-		if l.handler.Equals(listener) {
+		if l.handler.Equals(listener) && l.capture == option.Capture {
 			e.lmap[eventType] = append(listeners[:i], listeners[i+1:]...)
-			return
+			// return
 		}
 	}
 }
@@ -153,8 +165,11 @@ func (e *eventTarget) dispatchEvent(event Event, capture bool) {
 		}
 	}
 
-	listeners := e.lmap[event.Type()]
-	for _, l := range listeners {
+	eventType := event.Type()
+	listeners := e.lmap[eventType]
+	for i := 0; i < len(listeners); i++ {
+		// for i, l := range listeners {
+		l := listeners[i]
 		log.Debug("eventTarget.dispatchEvent: Calling event handler", "type", event.Type())
 		if l.capture == capture {
 			if err := l.handler.HandleEvent(event); err != nil {
@@ -164,6 +179,11 @@ func (e *eventTarget) dispatchEvent(event Event, capture bool) {
 					err.Error(),
 				)
 				e.dispatchError(NewErrorEvent(err))
+			}
+			if l.once {
+				listeners = slices.Delete(listeners, i, i+1)
+				i--
+				e.lmap[eventType] = listeners
 			}
 		}
 	}
