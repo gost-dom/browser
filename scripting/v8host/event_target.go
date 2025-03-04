@@ -88,13 +88,13 @@ func createEventTarget(host *V8ScriptHost) *v8.FunctionTemplate {
 				optionArg := args.getArg(2)
 				if optionArg != nil {
 					if optionArg.IsBoolean() && optionArg.Boolean() {
-						options = append(options, events.EventListenerOptionCapture)
+						options = append(options, events.Capture)
 					}
 					if optionArg.IsObject() {
 						if capture, err := optionArg.Object().Get("capture"); err == nil &&
 							capture != nil {
 							if capture.Boolean() {
-								options = append(options, events.EventListenerOptionCapture)
+								options = append(options, events.Capture)
 							}
 						}
 					}

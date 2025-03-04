@@ -16,8 +16,8 @@ const (
 	EventPhaseBubbline EventPhase = 3
 )
 
-func EventListenerOptionCapture(o *EventListener) { o.Capture = true }
-func EventListenerOptionOnce(o *EventListener)    { o.Once = true }
+func Capture(o *EventListener) { o.Capture = true }
+func Once(o *EventListener)    { o.Once = true }
 
 type EventTarget interface {
 	AddEventListener(eventType string, listener EventHandler, options ...func(*EventListener))

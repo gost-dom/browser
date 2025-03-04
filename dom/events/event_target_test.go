@@ -106,7 +106,7 @@ func (s *EventPropagationTestSuite) TestRemoveCorrectPhase() {
 	})
 	event := NewCustomEvent("gost:remove", EventBubbles(true))
 	s.window.AddEventListener("gost:remove", h)
-	s.window.AddEventListener("gost:remove", h, EventListenerOptionCapture)
+	s.window.AddEventListener("gost:remove", h, Capture)
 
 	s.target.DispatchEvent(event)
 	s.Assert().Equal([]string{
@@ -123,7 +123,7 @@ func (s *EventPropagationTestSuite) TestRemoveCorrectPhase() {
 	}, events)
 
 	s.window.AddEventListener("gost:remove", h)
-	s.window.RemoveEventListener("gost:remove", h, EventListenerOptionCapture)
+	s.window.RemoveEventListener("gost:remove", h, Capture)
 
 	events = nil
 	s.target.DispatchEvent(event)
@@ -139,7 +139,7 @@ func (s *EventPropagationTestSuite) TestEventOnce() {
 	}))
 	s.window.AddEventListener("custom", NewTestHandler(func(e Event) {
 		events = append(events, fmt.Sprintf("Handler B"))
-	}), EventListenerOptionOnce)
+	}), Once)
 
 	s.target.DispatchEvent(NewCustomEvent("custom", EventBubbles(true)))
 	s.target.DispatchEvent(NewCustomEvent("custom", EventBubbles(true)))
@@ -155,13 +155,13 @@ func (s *EventPropagationTestSuite) TestEventCapture() {
 	var events []string
 	s.window.AddEventListener("custom", NewTestHandler(func(e Event) {
 		events = append(events, fmt.Sprintf("Window capture. Phase: %d", e.EventPhase()))
-	}), EventListenerOptionCapture)
+	}), Capture)
 	s.window.AddEventListener("custom", NewTestHandler(func(e Event) {
 		events = append(events, fmt.Sprintf("Window bubble. Phase: %d", e.EventPhase()))
 	}))
 	s.target.AddEventListener("custom", NewTestHandler(func(e Event) {
 		events = append(events, fmt.Sprintf("Target capture. Phase: %d", e.EventPhase()))
-	}), EventListenerOptionCapture)
+	}), Capture)
 	s.target.AddEventListener("custom", NewTestHandler(func(e Event) {
 		events = append(events, fmt.Sprintf("Target bubble. Phase: %d", e.EventPhase()))
 	}))
@@ -191,7 +191,7 @@ func (s *EventPropagationTestSuite) TestEventCapture() {
 	events = nil
 	s.window.AddEventListener("custom", NewTestHandler(func(e Event) {
 		e.StopPropagation()
-	}), EventListenerOptionCapture)
+	}), Capture)
 	s.target.DispatchEvent(event)
 	s.Assert().Equal(
 		[]string{
