@@ -2,7 +2,7 @@
 
 package dom
 
-import "github.com/gost-dom/browser/dom/events"
+import events "github.com/gost-dom/browser/dom/events"
 
 type elementEvents struct {
 	target events.EventTarget

@@ -21,7 +21,7 @@ func TestGenerateElementEventMethod(t *testing.T) {
 	g.Expect(r).To(HaveRendered(
 		`func (e *elementEvents) Click() bool {
 	return e.target.DispatchEvent(
-		NewPointerEvent("click", EventBubbles(true), EventCancelable(true)),
+		NewPointerEvent("click", events.EventBubbles(true), events.EventCancelable(true)),
 	)
 }`,
 	))
@@ -44,7 +44,7 @@ func TestGenerateEventDispatcher(t *testing.T) {
 	res, err := CreateEventSourceGenerator("uievents", "Element")
 	g.Expect(err).ToNot(HaveOccurred())
 	g.Expect(res).To(HaveRendered(gomega.HavePrefix(`type elementEvents struct {
-	target EventTarget
+	target events.EventTarget
 }`)))
 	g.Expect(res).To(HaveRenderedSubstring("func (e *elementEvents) Click() bool {"))
 	// g.Expect(res).To(HaveRenderedSubstring("type ElementEvents interface {"))

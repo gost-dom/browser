@@ -8,6 +8,7 @@ import (
 
 	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/internal"
+	"github.com/gost-dom/code-gen/packagenames"
 	gen "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/events"
 )
@@ -27,10 +28,16 @@ func (s EventConstructorGenerator) Generate() *jen.Statement {
 		gen.Lit(e.Type),
 	}
 	if b, ok := e.Options["bubbles"]; ok {
-		arguments = append(arguments, gen.NewValue("EventBubbles").Call(gen.Lit(b)))
+		arguments = append(
+			arguments,
+			gen.NewValuePackage("EventBubbles", packagenames.Events).Call(gen.Lit(b)),
+		)
 	}
 	if b, ok := e.Options["cancelable"]; ok {
-		arguments = append(arguments, gen.NewValue("EventCancelable").Call(gen.Lit(b)))
+		arguments = append(
+			arguments,
+			gen.NewValuePackage("EventCancelable", packagenames.Events).Call(gen.Lit(b)),
+		)
 	}
 	if b, ok := e.Options["composable"]; ok {
 		// This is theoretical. There are no composable event
@@ -114,7 +121,7 @@ func CreateEventSourceGenerator(apiName string, element string) (gen.Generator, 
 	api, err := events.Load(apiName)
 	n := gen.NewType(eventDispatchTypeName(element))
 	s := gen.Struct{Name: n}
-	s.Field(gen.Id("target"), gen.NewType("EventTarget"))
+	s.Field(gen.Id("target"), gen.NewTypePackage("EventTarget", packagenames.Events))
 	events := slices.DeleteFunc(
 		api.EventsForType(element),
 		func(e events.Event) bool { return e.Interface != "PointerEvent" },

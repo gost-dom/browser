@@ -22,6 +22,10 @@ func (g WrapperStructGenerator) Generate() *jen.Statement {
 
 func (g WrapperStructGenerator) WrappedType() Generator {
 	idlInterfaceName := g.Data.Name()
+	if idlInterfaceName == "Event" {
+		return gen.NewTypePackage(idlInterfaceName, g.Data.GetInternalPackage()).Pointer()
+	}
+
 	return gen.NewTypePackage(idlInterfaceName, g.Data.GetInternalPackage())
 }
 
@@ -74,7 +78,7 @@ func (g WrapperStructGenerator) Body() Generator {
 	structGens := g.Platform.WrapperStructGenerators()
 	idlInterfaceName := g.Data.Name()
 
-	innerType := generators.NewTypePackage(idlInterfaceName, g.Data.GetInternalPackage())
+	innerType := g.WrappedType()
 	embedConstructorName := structGens.EmbeddedTypeConstructor(innerType)
 	includes := g.Data.Includes()
 	fieldInitializers := make([]Generator, len(includes)+1)

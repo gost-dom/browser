@@ -4,7 +4,7 @@ package v8host
 
 import (
 	"errors"
-	"github.com/gost-dom/browser/dom/events"
+	events "github.com/gost-dom/browser/dom/events"
 	log "github.com/gost-dom/browser/internal/log"
 	v8 "github.com/gost-dom/v8go"
 )
