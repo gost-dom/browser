@@ -399,11 +399,6 @@ func (e eventHandlerFunc) HandleEvent(event Event) error {
 }
 
 func (e eventHandlerFunc) Equals(handler EventHandler) bool {
-	x, ok := handler.(entity.Entity)
-	return ok && x.ObjectId() == e.id
+	x, ok := handler.(eventHandlerFunc)
+	return ok && x.id == e.id
 }
-
-// ObjectId makes the eventHandlerFunc type implement the Entity interface.
-// While the code will still compile without this function; equality check will
-// fail. This will be caught by tests verifying EventTarget behaviour.
-func (e eventHandlerFunc) ObjectId() entity.ObjectId { return e.id }
