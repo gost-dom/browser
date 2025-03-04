@@ -16,19 +16,12 @@ const (
 	EventPhaseBubbline EventPhase = 3
 )
 
-type EventListenerOption struct {
-	Capture bool
-	Once    bool
-}
-
-type EventListenerOptionFunc func(*EventListenerOption)
-
-func EventListenerOptionCapture(o *EventListenerOption) { o.Capture = true }
-func EventListenerOptionOnce(o *EventListenerOption)    { o.Once = true }
+func EventListenerOptionCapture(o *EventListener) { o.Capture = true }
+func EventListenerOptionOnce(o *EventListener)    { o.Once = true }
 
 type EventTarget interface {
-	AddEventListener(eventType string, listener EventHandler, options ...EventListenerOptionFunc)
-	RemoveEventListener(eventType string, listener EventHandler, options ...EventListenerOptionFunc)
+	AddEventListener(eventType string, listener EventHandler, options ...func(*EventListener))
+	RemoveEventListener(eventType string, listener EventHandler, options ...func(*EventListener))
 	DispatchEvent(event Event) bool
 	// Adds a listener that will receive _all_ dispatched events. This listener
 	// will not be removed from the window when navigating. This makes it useful
@@ -44,15 +37,15 @@ type EventTarget interface {
 	setSelf(e EventTarget)
 }
 
-type eventHandlerSpec struct {
-	handler EventHandler
-	capture bool
-	once    bool
+type EventListener struct {
+	Handler EventHandler
+	Capture bool
+	Once    bool
 }
 
 type eventTarget struct {
 	parentTarget    EventTarget
-	lmap            map[string][]eventHandlerSpec
+	lmap            map[string][]EventListener
 	catchAllHandler EventHandler
 	self            EventTarget
 }
@@ -68,7 +61,7 @@ func SetEventTargetSelf(t EventTarget) {
 
 func newEventTarget() eventTarget {
 	return eventTarget{
-		lmap: make(map[string][]eventHandlerSpec),
+		lmap: make(map[string][]EventListener),
 	}
 }
 
@@ -78,12 +71,12 @@ func (e *eventTarget) setSelf(self EventTarget) {
 
 func (e *eventTarget) AddEventListener(
 	eventType string,
-	listener EventHandler,
-	options ...EventListenerOptionFunc,
+	handler EventHandler,
+	options ...func(*EventListener),
 ) {
-	var option EventListenerOption
+	listener := EventListener{Handler: handler}
 	for _, o := range options {
-		o(&option)
+		o(&listener)
 	}
 	log.Debug("AddEventListener", "EventType", eventType)
 	// TODO: Handle options
@@ -97,32 +90,29 @@ func (e *eventTarget) AddEventListener(
 	//   - https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#wantsuntrusted
 	listeners := e.lmap[eventType]
 	for _, l := range listeners {
-		if l.handler.Equals(listener) && l.capture == option.Capture {
+		if l.Handler.Equals(handler) && l.Capture == listener.Capture {
 			return
 		}
 	}
-	e.lmap[eventType] = append(
-		listeners,
-		eventHandlerSpec{handler: listener, capture: option.Capture, once: option.Once},
-	)
+	e.lmap[eventType] = append(listeners, listener)
 }
 
 func (e *eventTarget) RemoveAll() {
-	e.lmap = make(map[string][]eventHandlerSpec)
+	e.lmap = make(map[string][]EventListener)
 }
 
 func (e *eventTarget) RemoveEventListener(
 	eventType string,
-	listener EventHandler,
-	options ...EventListenerOptionFunc,
+	handler EventHandler,
+	options ...func(*EventListener),
 ) {
-	var option EventListenerOption
+	listener := EventListener{Handler: handler}
 	for _, o := range options {
-		o(&option)
+		o(&listener)
 	}
 	listeners := e.lmap[eventType]
 	for i, l := range listeners {
-		if l.handler.Equals(listener) && l.capture == option.Capture {
+		if l.Handler.Equals(handler) && l.Capture == listener.Capture {
 			e.lmap[eventType] = append(listeners[:i], listeners[i+1:]...)
 			// return
 		}
@@ -171,8 +161,8 @@ func (e *eventTarget) dispatchEvent(event Event, capture bool) {
 		// for i, l := range listeners {
 		l := listeners[i]
 		log.Debug("eventTarget.dispatchEvent: Calling event handler", "type", event.Type())
-		if l.capture == capture {
-			if err := l.handler.HandleEvent(event); err != nil {
+		if l.Capture == capture {
+			if err := l.Handler.HandleEvent(event); err != nil {
 				log.Error(
 					"eventTarget.dispatchEvent: Error occurred in event handler",
 					"error",
@@ -180,7 +170,7 @@ func (e *eventTarget) dispatchEvent(event Event, capture bool) {
 				)
 				e.dispatchError(NewErrorEvent(err))
 			}
-			if l.once {
+			if l.Once {
 				listeners = slices.Delete(listeners, i, i+1)
 				i--
 				e.lmap[eventType] = listeners
