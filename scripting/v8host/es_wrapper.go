@@ -31,7 +31,7 @@ func (w converters) decodeEventInit(
 			events.EventCancelable(cancelable.Boolean()),
 		}
 	}
-	return events.EventOptions(eventOptions), nil
+	return events.EventOptions(eventOptions...), nil
 }
 
 func (w converters) decodeUSVString(ctx *V8ScriptContext, val *v8.Value) (string, error) {
@@ -193,6 +193,7 @@ func getWrappedInstance[T any](object *v8.Object) (res T, err error) {
 	var ok bool
 	res, ok = handle.Value().(T)
 	if !ok {
+		panic("Foo")
 		err = errors.New("Not a valid type stored in the handle")
 	}
 	return

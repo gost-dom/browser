@@ -108,7 +108,7 @@ func (s *BrowserNavigationTestSuite) TestNavigationAbortedByEventHandler() {
 	anchor, _ := window.Document().QuerySelector("a")
 	anchor.AddEventListener(
 		"click",
-		events.NewEventHandlerFunc(events.NoError(events.Event.PreventDefault)),
+		events.NewEventHandlerFunc(events.NoError((*events.Event).PreventDefault)),
 	)
 	anchor.Click()
 	heading, _ := window.Document().QuerySelector("h1")

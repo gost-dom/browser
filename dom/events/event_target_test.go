@@ -22,7 +22,7 @@ type TestSuite struct {
 	clickHandler EventHandler
 }
 
-func NewTestHandler(f func(Event)) EventHandler { return NewEventHandlerFunc(NoError(f)) }
+func NewTestHandler(f func(*Event)) EventHandler { return NewEventHandlerFunc(NoError(f)) }
 
 func Test(t *testing.T) {
 	suite.Run(t, new(TestSuite))
@@ -31,7 +31,7 @@ func Test(t *testing.T) {
 func (s *TestSuite) SetupTest() {
 	s.clickCount = 0
 	s.target = NewEventTarget()
-	s.clickHandler = NewTestHandler(func(e Event) { s.clickCount++ })
+	s.clickHandler = NewTestHandler(func(e *Event) { s.clickCount++ })
 	s.target.AddEventListener("click", s.clickHandler)
 }
 
@@ -64,13 +64,13 @@ func (s *TestSuite) TestAddingSameHandlerTwice() {
 func (s *TestSuite) TestEventHandlersCalledInOrder() {
 	var order []string
 	s.target.AddEventListener("auxclick",
-		NewTestHandler(func(e Event) { order = append(order, "A") }),
+		NewTestHandler(func(e *Event) { order = append(order, "A") }),
 	)
 	s.target.AddEventListener("auxclick",
-		NewTestHandler(func(e Event) { order = append(order, "B") }),
+		NewTestHandler(func(e *Event) { order = append(order, "B") }),
 	)
 	s.target.AddEventListener("auxclick",
-		NewTestHandler(func(e Event) { order = append(order, "C") }),
+		NewTestHandler(func(e *Event) { order = append(order, "C") }),
 	)
 	s.target.DispatchEvent(NewCustomEvent("auxclick"))
 	s.Expect(order).To(Equal([]string{"A", "B", "C"}))
@@ -101,7 +101,7 @@ func (s *EventPropagationTestSuiteBase) SetupTest() {
 
 func (s *EventPropagationTestSuite) TestRemoveCorrectPhase() {
 	var events []string
-	h := NewTestHandler(func(e Event) {
+	h := NewTestHandler(func(e *Event) {
 		events = append(events, fmt.Sprintf("Phase: %d", e.EventPhase()))
 	})
 	event := NewCustomEvent("gost:remove", EventBubbles(true))
@@ -134,10 +134,10 @@ func (s *EventPropagationTestSuite) TestRemoveCorrectPhase() {
 
 func (s *EventPropagationTestSuite) TestEventOnce() {
 	var events []string
-	s.window.AddEventListener("custom", NewTestHandler(func(e Event) {
+	s.window.AddEventListener("custom", NewTestHandler(func(e *Event) {
 		events = append(events, fmt.Sprintf("Handler A"))
 	}))
-	s.window.AddEventListener("custom", NewTestHandler(func(e Event) {
+	s.window.AddEventListener("custom", NewTestHandler(func(e *Event) {
 		events = append(events, fmt.Sprintf("Handler B"))
 	}), Once)
 
@@ -153,16 +153,16 @@ func (s *EventPropagationTestSuite) TestEventOnce() {
 
 func (s *EventPropagationTestSuite) TestEventCapture() {
 	var events []string
-	s.window.AddEventListener("custom", NewTestHandler(func(e Event) {
+	s.window.AddEventListener("custom", NewTestHandler(func(e *Event) {
 		events = append(events, fmt.Sprintf("Window capture. Phase: %d", e.EventPhase()))
 	}), Capture)
-	s.window.AddEventListener("custom", NewTestHandler(func(e Event) {
+	s.window.AddEventListener("custom", NewTestHandler(func(e *Event) {
 		events = append(events, fmt.Sprintf("Window bubble. Phase: %d", e.EventPhase()))
 	}))
-	s.target.AddEventListener("custom", NewTestHandler(func(e Event) {
+	s.target.AddEventListener("custom", NewTestHandler(func(e *Event) {
 		events = append(events, fmt.Sprintf("Target capture. Phase: %d", e.EventPhase()))
 	}), Capture)
-	s.target.AddEventListener("custom", NewTestHandler(func(e Event) {
+	s.target.AddEventListener("custom", NewTestHandler(func(e *Event) {
 		events = append(events, fmt.Sprintf("Target bubble. Phase: %d", e.EventPhase()))
 	}))
 
@@ -189,7 +189,7 @@ func (s *EventPropagationTestSuite) TestEventCapture() {
 		}, events, "Event handlers when event doesn't bubble")
 
 	events = nil
-	s.window.AddEventListener("custom", NewTestHandler(func(e Event) {
+	s.window.AddEventListener("custom", NewTestHandler(func(e *Event) {
 		e.StopPropagation()
 	}), Capture)
 	s.target.DispatchEvent(event)
@@ -202,7 +202,7 @@ func (s *EventPropagationTestSuite) TestEventCapture() {
 
 func (s *EventPropagationTestSuite) TestDefaultEventPropagation() {
 	called := false
-	var l EventHandler = NewTestHandler(func(e Event) {
+	var l EventHandler = NewTestHandler(func(e *Event) {
 		called = true
 	})
 	s.window.Document().Body().AddEventListener("custom", l)
@@ -213,7 +213,7 @@ func (s *EventPropagationTestSuite) TestDefaultEventPropagation() {
 func (s *EventPropagationTestSuite) TestPropagateToWindow() {
 	called := false
 
-	var l EventHandler = NewTestHandler(func(e Event) {
+	var l EventHandler = NewTestHandler(func(e *Event) {
 		called = true
 	})
 	s.window.AddEventListener("custom", l)
@@ -222,11 +222,11 @@ func (s *EventPropagationTestSuite) TestPropagateToWindow() {
 }
 
 func (s *EventPropagationTestSuite) TestTargetOrCurrentTarget() {
-	var actualEvent Event
+	var actualEvent *Event
 	var actualTarget EventTarget
 	var actualCurrentTarget EventTarget
 
-	var l EventHandler = NewTestHandler(func(e Event) {
+	var l EventHandler = NewTestHandler(func(e *Event) {
 		actualEvent = e
 		actualTarget = e.Target()
 		actualCurrentTarget = e.CurrentTarget()
@@ -243,7 +243,7 @@ func (s *EventPropagationTestSuite) TestPropagateToWindowBubbles() {
 	called := false
 
 	// window.Document()
-	var l EventHandler = NewTestHandler(func(e Event) {
+	var l EventHandler = NewTestHandler(func(e *Event) {
 		called = true
 	})
 	s.window.AddEventListener("custom", l)
@@ -255,11 +255,11 @@ func (s *EventPropagationTestSuite) TestStopPropagation() {
 	calledA := false
 	calledB := false
 	s.window.Document().Body().
-		AddEventListener("custom", NewTestHandler(func(e Event) {
+		AddEventListener("custom", NewTestHandler(func(e *Event) {
 			calledA = true
 			e.StopPropagation()
 		}))
-	s.window.AddEventListener("custom", NewTestHandler(func(e Event) {
+	s.window.AddEventListener("custom", NewTestHandler(func(e *Event) {
 		calledB = true
 	}))
 	s.target.DispatchEvent(NewCustomEvent("custom", EventBubbles(true)))
@@ -268,7 +268,7 @@ func (s *EventPropagationTestSuite) TestStopPropagation() {
 }
 
 func (s *EventPropagationTestSuite) TestReturnValueForPreventDefault() {
-	s.target.AddEventListener("custom", NewTestHandler(func(e Event) {
+	s.target.AddEventListener("custom", NewTestHandler(func(e *Event) {
 		e.PreventDefault()
 	}))
 	s.Assert().False(
@@ -287,14 +287,14 @@ func (s *EventPropagationTestSuite) TestReturnValueForPreventDefault() {
 
 func (s *EventPropagationTestSuite) TestEventHandlerGeneratesError() {
 	var errorOnWindow bool
-	s.window.AddEventListener("error", NewTestHandler(func(e Event) {
+	s.window.AddEventListener("error", NewTestHandler(func(e *Event) {
 		errorOnWindow = true
 	}))
 	var errorOnTarget bool
-	s.target.AddEventListener("error", NewTestHandler(func(e Event) {
+	s.target.AddEventListener("error", NewTestHandler(func(e *Event) {
 		errorOnTarget = true
 	}))
-	s.target.AddEventListener("custom", NewEventHandlerFunc(func(e Event) error {
+	s.target.AddEventListener("custom", NewEventHandlerFunc(func(e *Event) error {
 		return errors.New("Error")
 	}))
 	s.target.DispatchEvent(NewCustomEvent("custom"))

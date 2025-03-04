@@ -120,21 +120,21 @@ var _ = Describe("XmlHTTPRequest", func() {
 			xhr.Open("GET", "/dummy")
 			xhr.AddEventListener(
 				XHREventLoadstart,
-				events.NewEventHandlerFunc(func(e events.Event) error {
+				events.NewEventHandlerFunc(func(e *events.Event) error {
 					loadStarted = true
 					return nil
 				}),
 			)
 			xhr.AddEventListener(
 				XHREventLoadend,
-				events.NewEventHandlerFunc(func(e events.Event) error {
+				events.NewEventHandlerFunc(func(e *events.Event) error {
 					loadEnded = true
 					return nil
 				}),
 			)
 			xhr.AddEventListener(
 				XHREventLoad,
-				events.NewEventHandlerFunc(func(e events.Event) error {
+				events.NewEventHandlerFunc(func(e *events.Event) error {
 					loaded = true
 					return nil
 				}),

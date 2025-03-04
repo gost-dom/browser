@@ -23,10 +23,20 @@ type GetReader interface {
 	GetReader() io.Reader
 }
 
-type FormDataEvent interface {
-	events.Event
-	FormData() *FormData
+type FormDataEventInit struct {
+	events.EventInit
+	FormData *FormData
 }
+
+type SubmitEventInit struct {
+	events.EventInit
+	Submitter dom.Element
+}
+
+// type FormDataEvent interface {
+// 	dom.Event
+// 	FormData() *FormData
+// }
 
 type FormSubmitEvent interface {
 	events.Event
@@ -49,18 +59,25 @@ func (e *formSubmitEvent) Submitter() dom.Element {
 	return e.submitter
 }
 
-func newFormDataEvent(data *FormData) FormDataEvent {
-	e := events.NewEvent(string(FormEventFormData), events.EventBubbles(true))
-	return &formDataEvent{e, data}
+func newFormDataEvent(data *FormData) *events.Event {
+	eventInit := FormDataEventInit{
+		events.NewEventInitDict(events.EventBubbles(true)),
+		data,
+	}
+	return events.NewEventInit(string(FormEventFormData), eventInit)
 }
 
-func newSubmitEvent(submitter dom.Element) FormSubmitEvent {
-	e := events.NewEvent(
+func newSubmitEvent(submitter dom.Element) *events.Event {
+	eventInit := SubmitEventInit{
+		events.NewEventInitDict(
+			events.EventBubbles(true),
+			events.EventCancelable(true),
+		),
+		submitter,
+	}
+	return events.NewEventInit(
 		string(FormEventSubmit),
-		events.EventBubbles(true),
-		events.EventCancelable(true),
-	)
-	return &formSubmitEvent{e, submitter}
+		eventInit)
 }
 
 type HTMLFormElement interface {

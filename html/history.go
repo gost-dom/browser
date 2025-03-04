@@ -12,9 +12,9 @@ const HistoryEventPopState = "popstate"
 // [History.PushState].
 //
 // See also: https://developer.mozilla.org/en-US/docs/Web/API/PopStateEvent
-type PopStateEvent interface {
-	events.Event
-	State() HistoryState
+type PopStateEventInit struct {
+	events.EventInit
+	State HistoryState
 }
 
 // Will eventually contain more information, e.g. state
@@ -153,8 +153,10 @@ type popStateEvent struct {
 	state HistoryState
 }
 
-func newPopStateEvent(state HistoryState) PopStateEvent {
-	return popStateEvent{events.NewEvent(HistoryEventPopState), state}
+func newPopStateEvent(state HistoryState) *events.Event {
+	return events.NewEventInit(HistoryEventPopState, PopStateEventInit{
+		EventInit: events.EventInitDict{},
+		State:     state})
 }
 
 func (e popStateEvent) State() HistoryState {

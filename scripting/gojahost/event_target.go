@@ -29,17 +29,19 @@ func newGojaEventListener(r *GojaContext, v goja.Value) events.EventHandler {
 	return &gojaEventListener{r, v, f}
 }
 
-func (h *gojaEventListener) HandleEvent(e events.Event) error {
+func (h *gojaEventListener) HandleEvent(e *events.Event) error {
 	customEvent := h.instance.globals["Event"]
-	switch e.(type) {
-	case dom.PointerEvent:
+	switch e.EventInit.(type) {
+	case dom.PointerEventInitDict:
 		customEvent = h.instance.globals["PointerEvent"]
-	case dom.MouseEvent:
+	case dom.MouseEventInitDict:
 		customEvent = h.instance.globals["MouseEvent"]
-	case dom.UIEvent:
+	case dom.UIEventInitDict:
 		customEvent = h.instance.globals["UIEvent"]
-	case events.CustomEvent:
+	case events.CustomEventInitDict:
 		customEvent = h.instance.globals["CustomEvent"]
+	default:
+		customEvent = h.instance.globals["Event"]
 	}
 	obj := h.instance.vm.CreateObject(customEvent.Prototype)
 	customEvent.Wrapper.storeInternal(e, obj)
@@ -88,7 +90,7 @@ func (w eventTargetWrapper) addEventListener(c goja.FunctionCall) goja.Value {
 func (w eventTargetWrapper) dispatchEvent(c goja.FunctionCall) goja.Value {
 	instance := w.getInstance(c)
 	internal := c.Argument(0).(*goja.Object).GetSymbol(w.ctx.wrappedGoObj).Export()
-	if event, ok := internal.(events.Event); ok {
+	if event, ok := internal.(*events.Event); ok {
 		return w.ctx.vm.ToValue(instance.DispatchEvent(event))
 	} else {
 		panic(w.ctx.vm.NewTypeError("Not an event"))

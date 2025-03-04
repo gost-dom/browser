@@ -216,7 +216,7 @@ var _ = Describe("HTML Form", func() {
 				It("Should not submit if preventDefault is called", func() {
 					button.AddEventListener(
 						"click",
-						events.NewEventHandlerFunc(func(e events.Event) error {
+						events.NewEventHandlerFunc(func(e *events.Event) error {
 							e.PreventDefault()
 							return nil
 						}),
@@ -264,10 +264,10 @@ var _ = Describe("HTML Form", func() {
 		Describe("Dispatched events", func() {
 			Describe("Submit event", func() {
 				It("Should not be dispatched when form.submit is called", func() {
-					var actualEvent events.Event
+					var actualEvent *events.Event
 					form.AddEventListener(
 						"submit",
-						events.NewEventHandlerFunc(func(e events.Event) error {
+						events.NewEventHandlerFunc(func(e *events.Event) error {
 							actualEvent = e
 							return nil
 						}),
@@ -277,10 +277,10 @@ var _ = Describe("HTML Form", func() {
 				})
 
 				It("Should be dispatched when form.requestSubmit is called", func() {
-					var actualEvent events.Event
+					var actualEvent *events.Event
 					form.AddEventListener(
 						"submit",
-						events.NewEventHandlerFunc(func(e events.Event) error {
+						events.NewEventHandlerFunc(func(e *events.Event) error {
 							actualEvent = e
 							return nil
 						}),
@@ -293,7 +293,7 @@ var _ = Describe("HTML Form", func() {
 				It("Should be abort the request on preventDefault()", func() {
 					form.AddEventListener(
 						"submit",
-						events.NewEventHandlerFunc(func(e events.Event) error {
+						events.NewEventHandlerFunc(func(e *events.Event) error {
 							e.PreventDefault()
 							return nil
 						}),
@@ -305,10 +305,10 @@ var _ = Describe("HTML Form", func() {
 
 			Describe("formdata event", func() {
 				It("Should be dispatched when a form is submitted", func() {
-					var actualEvent events.Event
+					var actualEvent *events.Event
 					form.AddEventListener(
 						"formdata",
-						events.NewEventHandlerFunc(func(e events.Event) error {
+						events.NewEventHandlerFunc(func(e *events.Event) error {
 							actualEvent = e
 							return nil
 						}),
@@ -317,10 +317,10 @@ var _ = Describe("HTML Form", func() {
 					Expect(actualEvent).ToNot(BeNil())
 					Expect(actualEvent.Cancelable()).To(BeFalse())
 					Expect(actualEvent.Bubbles()).To(BeTrue())
-					formDataEvent, ok := actualEvent.(FormDataEvent)
+					formDataEventInit, ok := actualEvent.EventInit.(FormDataEventInit)
 					Expect(ok).To(BeTrue())
-					Expect(formDataEvent.FormData()).ToNot(BeNil())
-					Expect(formDataEvent.FormData()).To(HaveFormDataValue("foo", "bar"))
+					Expect(formDataEventInit.FormData).ToNot(BeNil())
+					Expect(formDataEventInit.FormData).To(HaveFormDataValue("foo", "bar"))
 				})
 			})
 		})

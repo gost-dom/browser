@@ -2,22 +2,47 @@ package dom
 
 import "github.com/gost-dom/browser/dom/events"
 
-type UIEvent struct {
-	events.Event
+type UIEvent = *events.Event
+
+type UIEventInitDict struct {
+	events.EventInitDict
+	view events.EventTarget
 }
 
-func NewUIEvent(type_ string, options ...events.EventOption) UIEvent {
-	return UIEvent{events.NewEvent(type_, options...)}
+type MouseEventInitDict struct {
+	UIEventInitDict
+	ScreenX int
+	ScreenY int
 }
 
-type MouseEvent struct{ UIEvent }
-
-type PointerEvent struct{ MouseEvent }
-
-func NewMouseEvent(type_ string, options ...events.EventOption) MouseEvent {
-	return MouseEvent{NewUIEvent(type_, options...)}
+type PointerEventInitDict struct {
+	MouseEventInitDict
+	PointerId int
 }
 
-func NewPointerEvent(type_ string, options ...events.EventOption) PointerEvent {
-	return PointerEvent{NewMouseEvent(type_, options...)}
+func NewUIEvent(type_ string, options ...events.EventOption) *events.Event {
+	return events.NewEventInit(type_, UIEventInitDict{
+		EventInitDict: events.NewEventInitDict(options...),
+	})
+}
+
+// type MouseEvent struct{ UIEvent }
+//
+// type PointerEvent struct{ MouseEvent }
+
+func NewMouseEvent(type_ string, options ...events.EventOption) *events.Event {
+	return events.NewEventInit(type_, MouseEventInitDict{UIEventInitDict: UIEventInitDict{
+		EventInitDict: events.NewEventInitDict(options...),
+	}})
+}
+
+func NewPointerEvent(type_ string, options ...events.EventOption) *events.Event {
+	return events.NewEventInit(
+		type_,
+		PointerEventInitDict{
+			MouseEventInitDict: MouseEventInitDict{UIEventInitDict: UIEventInitDict{
+				EventInitDict: events.NewEventInitDict(options...),
+			}},
+		},
+	)
 }

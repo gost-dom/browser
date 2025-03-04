@@ -16,7 +16,7 @@ func newV8EventListener(ctx *V8ScriptContext, val *v8.Value) events.EventHandler
 	return v8EventListener{ctx, val}
 }
 
-func (l v8EventListener) HandleEvent(e events.Event) error {
+func (l v8EventListener) HandleEvent(e *events.Event) error {
 	f, err := l.val.AsFunction()
 	if err == nil {
 		var event *v8.Value
@@ -135,7 +135,7 @@ func createEventTarget(host *V8ScriptHost) *v8.FunctionTemplate {
 				}
 				e := info.Args()[0]
 				handle := e.Object().GetInternalField(0).ExternalHandle()
-				if evt, ok := handle.Value().(events.Event); ok {
+				if evt, ok := handle.Value().(*events.Event); ok {
 					return v8.NewValue(iso, target.DispatchEvent(evt))
 				} else {
 					return nil, v8.NewTypeError(iso, "Not an Event")

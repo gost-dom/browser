@@ -6,12 +6,12 @@ import (
 )
 
 type eventWrapper struct {
-	baseInstanceWrapper[events.Event]
+	baseInstanceWrapper[*events.Event]
 }
 
 func newEventWrapperAsWrapper(instance *GojaContext) wrapper { return newEventWrapper(instance) }
 func newEventWrapper(instance *GojaContext) eventWrapper {
-	return eventWrapper{newBaseInstanceWrapper[events.Event](instance)}
+	return eventWrapper{newBaseInstanceWrapper[*events.Event](instance)}
 }
 
 type gojaEvent[T events.Event] struct {

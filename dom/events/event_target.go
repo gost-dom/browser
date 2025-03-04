@@ -22,7 +22,7 @@ func Once(o *EventListener)    { o.Once = true }
 type EventTarget interface {
 	AddEventListener(eventType string, listener EventHandler, options ...func(*EventListener))
 	RemoveEventListener(eventType string, listener EventHandler, options ...func(*EventListener))
-	DispatchEvent(event Event) bool
+	DispatchEvent(event *Event) bool
 	// Adds a listener that will receive _all_ dispatched events. This listener
 	// will not be removed from the window when navigating. This makes it useful
 	// for a test to setup event listeners _before_ navigating, as by the time the
@@ -32,9 +32,9 @@ type EventTarget interface {
 	SetParentTarget(EventTarget)
 	RemoveAll()
 	// Unexported
-	dispatchError(err ErrorEvent)
-	dispatchEvent(event Event, capture bool)
-	dispatchOnParent(Event, bool)
+	dispatchError(err error)
+	dispatchEvent(event *Event, capture bool)
+	dispatchOnParent(*Event, bool)
 	setSelf(e EventTarget)
 }
 
@@ -133,7 +133,7 @@ func (e *eventTarget) SetCatchAllHandler(handler EventHandler) {
 	e.catchAllHandler = handler
 }
 
-func (e *eventTarget) DispatchEvent(event Event) bool {
+func (e *eventTarget) DispatchEvent(event *Event) bool {
 	event.reset(e.self)
 	log.Debug("Dispatch event", "EventType", event.Type())
 
@@ -152,7 +152,7 @@ func (e *eventTarget) DispatchEvent(event Event) bool {
 	return !event.isCancelled()
 }
 
-func (e *eventTarget) dispatchEvent(event Event, capture bool) {
+func (e *eventTarget) dispatchEvent(event *Event, capture bool) {
 	if event.isStopped() {
 		return
 	}
@@ -161,7 +161,7 @@ func (e *eventTarget) dispatchEvent(event Event, capture bool) {
 	if e.catchAllHandler != nil && !capture {
 		if err := e.catchAllHandler.HandleEvent(event); err != nil {
 			log.Debug("Error occurred", "error", err.Error())
-			e.dispatchError(NewErrorEvent(err))
+			e.dispatchError(err)
 		}
 	}
 
@@ -189,10 +189,10 @@ func (e *eventTarget) handleError(err error) {
 		"error",
 		err.Error(),
 	)
-	e.dispatchError(NewErrorEvent(err))
+	e.dispatchError(err)
 }
 
-func (e *eventTarget) dispatchOnParent(event Event, capture bool) {
+func (e *eventTarget) dispatchOnParent(event *Event, capture bool) {
 	if e.parentTarget != nil {
 		if capture {
 			e.parentTarget.dispatchOnParent(event, capture)
@@ -206,106 +206,129 @@ func (e *eventTarget) dispatchOnParent(event Event, capture bool) {
 	}
 }
 
-func (e *eventTarget) dispatchError(event ErrorEvent) {
+func (e *eventTarget) dispatchError(err error) {
+	event := NewErrorEvent(err)
 	if e.parentTarget == nil {
 		e.DispatchEvent(event)
 	} else {
-		e.parentTarget.dispatchError(event)
+		e.parentTarget.dispatchError(err)
 	}
 }
 
 /* -------- Event & CustomEvent -------- */
 
-type Event interface {
-	entity.Entity
-	Cancelable() bool
-	Bubbles() bool
-	PreventDefault()
-	Type() string
-	StopPropagation()
-	Target() EventTarget
-	CurrentTarget() EventTarget
-	reset(t EventTarget)
-	EventPhase() EventPhase
+// type Event interface {
+// 	entity.Entity
+// 	Cancelable() bool
+// 	Bubbles() bool
+// 	PreventDefault()
+// 	Type() string
+// 	StopPropagation()
+// 	Target() EventTarget
+// 	CurrentTarget() EventTarget
+// 	reset(t EventTarget)
+// 	EventPhase() EventPhase
+//
+// 	isCancelled() bool
+// 	isStopped() bool
+// 	setEventPhase(phase EventPhase)
+// 	setCurrentTarget(t EventTarget)
+// }
 
-	isCancelled() bool
-	isStopped() bool
-	setEventPhase(phase EventPhase)
-	setCurrentTarget(t EventTarget)
-}
+// type CustomEvent interface {
+// 	Event
+// }
 
-type CustomEvent interface {
-	Event
-}
+type EventOption func(*EventInitDict)
 
-type EventOption interface {
-	updateEvent(*event)
-}
-
-type EventOptions []EventOption
-
-func (o EventOptions) updateEvent(e *event) {
-	for _, option := range o {
-		option.updateEvent(e)
+func EventOptions(options ...EventOption) EventOption {
+	return func(e *EventInitDict) {
+		for _, o := range options {
+			o(e)
+		}
 	}
 }
 
-type eventOptionFunc func(*event)
-
-func (f eventOptionFunc) updateEvent(e *event) { f(e) }
-
 func EventBubbles(bubbles bool) EventOption {
-	return eventOptionFunc(func(e *event) { e.bubbles = bubbles })
+	return func(e *EventInitDict) { e.bubbles = bubbles }
 }
+
 func EventCancelable(cancelable bool) EventOption {
-	return eventOptionFunc(func(e *event) { e.cancelable = cancelable })
+	return func(e *EventInitDict) { e.cancelable = cancelable }
 }
 
 /* -------- event -------- */
 
-type event struct {
+type EventInit interface {
+	Bubbles() bool
+	Cancelable() bool
+}
+
+type EventInitDict struct {
+	bubbles    bool
+	cancelable bool
+}
+
+func (d EventInitDict) Bubbles() bool {
+	return d.bubbles
+}
+
+func (d EventInitDict) Cancelable() bool {
+	return d.cancelable
+}
+
+type Event struct {
 	entity.Entity
+	EventInit
 	phase         EventPhase
-	cancelable    bool
 	cancelled     bool
 	eventType     string
-	bubbles       bool
 	stopped       bool
 	target        EventTarget
 	currentTarget EventTarget
 }
 
-func newEvent(eventType string) event {
-	return event{
+func newEvent(eventType string, eventInit EventInit) *Event {
+	return &Event{
 		Entity:    entity.New(),
+		EventInit: eventInit,
 		eventType: eventType,
-		bubbles:   false,
-		stopped:   false,
 	}
 }
 
-func NewEvent(eventType string, options ...EventOption) Event {
-	e := newEvent(eventType)
+func NewEventInitDict(options ...EventOption) EventInitDict {
+	var init EventInitDict
 	for _, o := range options {
-		o.updateEvent(&e)
+		o(&init)
 	}
-	return &e
+	return init
 }
 
-func (e *event) Type() string                   { return e.eventType }
-func (e *event) StopPropagation()               { e.stopped = true }
-func (e *event) PreventDefault()                { e.cancelled = true }
-func (e *event) Cancelable() bool               { return e.cancelable }
-func (e *event) Bubbles() bool                  { return e.bubbles }
-func (e *event) isStopped() bool                { return e.stopped }
-func (e *event) isCancelled() bool              { return e.cancelable && e.cancelled }
-func (e *event) EventPhase() EventPhase         { return e.phase }
-func (e *event) Target() EventTarget            { return e.target }
-func (e *event) CurrentTarget() EventTarget     { return e.currentTarget }
-func (e *event) setEventPhase(phase EventPhase) { e.phase = phase }
-func (e *event) setCurrentTarget(t EventTarget) { e.currentTarget = t }
+func NewEvent(eventType string, options ...EventOption) *Event {
+	var init EventInitDict
+	for _, o := range options {
+		o(&init)
+	}
+	e := newEvent(eventType, init)
+	return e
+}
+func NewEventInit(eventType string, init EventInit) *Event {
+	e := newEvent(eventType, init)
+	return e
+}
 
-func (e *event) reset(t EventTarget) {
+func (e *Event) Type() string                   { return e.eventType }
+func (e *Event) StopPropagation()               { e.stopped = true }
+func (e *Event) PreventDefault()                { e.cancelled = true }
+func (e *Event) isStopped() bool                { return e.stopped }
+func (e *Event) isCancelled() bool              { return e.Cancelable() && e.cancelled }
+func (e *Event) EventPhase() EventPhase         { return e.phase }
+func (e *Event) Target() EventTarget            { return e.target }
+func (e *Event) CurrentTarget() EventTarget     { return e.currentTarget }
+func (e *Event) setEventPhase(phase EventPhase) { e.phase = phase }
+func (e *Event) setCurrentTarget(t EventTarget) { e.currentTarget = t }
+
+func (e *Event) reset(t EventTarget) {
 	e.target = t
 	e.stopped = false
 	e.cancelled = false
@@ -313,31 +336,34 @@ func (e *event) reset(t EventTarget) {
 
 /* -------- customEvent -------- */
 
-type customEvent struct {
-	event
+type CustomEventInitDict struct {
+	EventInitDict
+	Details interface{}
 }
 
-func NewCustomEvent(eventType string, options ...EventOption) CustomEvent {
-	e := &customEvent{newEvent(eventType)}
+func NewCustomEvent(eventType string, options ...EventOption) *Event {
+	var init CustomEventInitDict
 	for _, o := range options {
-		o.updateEvent(&e.event)
+		o(&init.EventInitDict)
 	}
+	e := newEvent(eventType, init)
 	return e
 }
 
 /* -------- errorEvent -------- */
 
-type ErrorEvent struct {
-	Event
+type ErrorEventInitDict struct {
+	EventInitDict
 	Err error
 }
 
-func NewErrorEvent(err error) ErrorEvent {
-	e := newEvent("error")
-	return ErrorEvent{&e, err}
+func NewErrorEvent(err error) *Event {
+	e := newEvent(
+		"error",
+		ErrorEventInitDict{Err: err, EventInitDict: EventInitDict{bubbles: true}},
+	)
+	return e
 }
-
-func (e ErrorEvent) Error() string { return e.Err.Error() }
 
 /* -------- EventHandler -------- */
 
@@ -358,17 +384,17 @@ type EventHandler interface {
 	//
 	// An non-nil error return value will dispatch an error event on the global
 	// object in a normally configured environment.
-	HandleEvent(event Event) error
+	HandleEvent(event *Event) error
 	// Equals must return true, if they underlying event handler of the other
 	// handler is the same as this handler.
 	Equals(other EventHandler) bool
 }
 
-type HandlerFuncWithoutError = func(Event)
-type HandlerFunc = func(Event) error
+type HandlerFuncWithoutError = func(*Event)
+type HandlerFunc = func(*Event) error
 
 type eventHandlerFunc struct {
-	handlerFunc func(Event) error
+	handlerFunc func(*Event) error
 	id          entity.ObjectId
 }
 
@@ -393,13 +419,13 @@ func NoError[T func(U), U any](f T) func(U) error {
 }
 
 func NewEventHandlerFuncWithoutError(handler HandlerFuncWithoutError) EventHandler {
-	return eventHandlerFunc{func(event Event) error {
+	return eventHandlerFunc{func(event *Event) error {
 		handler(event)
 		return nil
 	}, entity.NewObjectId()}
 }
 
-func (e eventHandlerFunc) HandleEvent(event Event) error {
+func (e eventHandlerFunc) HandleEvent(event *Event) error {
 	return e.handlerFunc(event)
 }
 

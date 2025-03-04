@@ -88,16 +88,19 @@ func (c *V8ScriptContext) getInstanceForNode(
 		return v8.Null(iso), nil
 	}
 	switch n := node.(type) {
-	case PointerEvent:
-		return c.getInstanceForNodeByName("PointerEvent", n)
-	case MouseEvent:
-		return c.getInstanceForNodeByName("MouseEvent", n)
-	case UIEvent:
-		return c.getInstanceForNodeByName("UIEvent", n)
-	case events.CustomEvent:
-		return c.getInstanceForNodeByName("CustomEvent", n)
-	case events.Event:
-		return c.getInstanceForNodeByName("Event", n)
+	case *events.Event:
+		switch n.EventInit.(type) {
+		case events.CustomEventInitDict:
+			return c.getInstanceForNodeByName("CustomEvent", n)
+		case PointerEventInitDict:
+			return c.getInstanceForNodeByName("PointerEvent", n)
+		case MouseEventInitDict:
+			return c.getInstanceForNodeByName("MouseEvent", n)
+		case UIEventInitDict:
+			return c.getInstanceForNodeByName("UIEvent", n)
+		default:
+			return c.getInstanceForNodeByName("Event", n)
+		}
 	case Element:
 		if constructor, ok := scripting.HtmlElements[strings.ToLower(n.TagName())]; ok {
 			return c.getInstanceForNodeByName(constructor, n)

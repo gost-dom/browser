@@ -297,12 +297,12 @@ var _ = Describe("Element", func() {
 
 	Describe("Click", func() {
 		It("Is cancelable and bubbles", func() {
-			var event events.Event
+			var event *events.Event
 			doc := ParseHtmlString(`<body><div id="target"></div></body>`)
 			element := doc.GetElementById("target")
 			element.AddEventListener(
 				"click",
-				events.NewEventHandlerFuncWithoutError(func(e events.Event) {
+				events.NewEventHandlerFuncWithoutError(func(e *events.Event) {
 					event = e
 				}),
 			)
