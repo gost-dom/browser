@@ -69,15 +69,23 @@ func (e *eventTarget) setSelf(self EventTarget) {
 	e.self = self
 }
 
+func (t *eventTarget) createListener(
+	handler EventHandler,
+	options []func(*EventListener),
+) EventListener {
+	listener := EventListener{Handler: handler}
+	for _, o := range options {
+		o(&listener)
+	}
+	return listener
+}
+
 func (e *eventTarget) AddEventListener(
 	eventType string,
 	handler EventHandler,
 	options ...func(*EventListener),
 ) {
-	listener := EventListener{Handler: handler}
-	for _, o := range options {
-		o(&listener)
-	}
+	listener := e.createListener(handler, options)
 	log.Debug("AddEventListener", "EventType", eventType)
 	// TODO: Handle options
 	// - once
@@ -106,15 +114,12 @@ func (e *eventTarget) RemoveEventListener(
 	handler EventHandler,
 	options ...func(*EventListener),
 ) {
-	listener := EventListener{Handler: handler}
-	for _, o := range options {
-		o(&listener)
-	}
+	listener := e.createListener(handler, options)
 	listeners := e.lmap[eventType]
 	for i, l := range listeners {
 		if l.Handler.Equals(handler) && l.Capture == listener.Capture {
 			e.lmap[eventType] = append(listeners[:i], listeners[i+1:]...)
-			// return
+			return
 		}
 	}
 }
@@ -158,17 +163,11 @@ func (e *eventTarget) dispatchEvent(event Event, capture bool) {
 	eventType := event.Type()
 	listeners := e.lmap[eventType]
 	for i := 0; i < len(listeners); i++ {
-		// for i, l := range listeners {
 		l := listeners[i]
 		log.Debug("eventTarget.dispatchEvent: Calling event handler", "type", event.Type())
 		if l.Capture == capture {
 			if err := l.Handler.HandleEvent(event); err != nil {
-				log.Error(
-					"eventTarget.dispatchEvent: Error occurred in event handler",
-					"error",
-					err.Error(),
-				)
-				e.dispatchError(NewErrorEvent(err))
+				e.handleError(err)
 			}
 			if l.Once {
 				listeners = slices.Delete(listeners, i, i+1)
@@ -177,6 +176,15 @@ func (e *eventTarget) dispatchEvent(event Event, capture bool) {
 			}
 		}
 	}
+}
+
+func (e *eventTarget) handleError(err error) {
+	log.Error(
+		"eventTarget.dispatchEvent: Error occurred in event handler",
+		"error",
+		err.Error(),
+	)
+	e.dispatchError(NewErrorEvent(err))
 }
 
 func (e *eventTarget) dispatchOnParent(event Event, capture bool) {
@@ -219,12 +227,6 @@ type Event interface {
 	isStopped() bool
 	setEventPhase(phase EventPhase)
 	setCurrentTarget(t EventTarget)
-}
-
-type ErrorEvent interface {
-	Event
-	Err() error
-	Error() string
 }
 
 type CustomEvent interface {
@@ -320,17 +322,17 @@ func NewCustomEvent(eventType string, options ...EventOption) CustomEvent {
 
 /* -------- errorEvent -------- */
 
-type errorEvent struct {
-	event
-	err error
+type ErrorEvent struct {
+	Event
+	Err error
 }
 
 func NewErrorEvent(err error) ErrorEvent {
-	return &errorEvent{newEvent("error"), err}
+	e := newEvent("error")
+	return ErrorEvent{&e, err}
 }
 
-func (e *errorEvent) Err() error    { return e.err }
-func (e *errorEvent) Error() string { return e.err.Error() }
+func (e ErrorEvent) Error() string { return e.Err.Error() }
 
 /* -------- EventHandler -------- */
 
