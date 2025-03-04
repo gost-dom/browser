@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom/events"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/url"
@@ -40,7 +41,7 @@ type ScriptContext interface {
 }
 
 type Window interface {
-	dom.EventTarget
+	events.EventTarget
 	entity.Entity
 	Document() dom.Document
 	Close()
@@ -61,7 +62,7 @@ type Window interface {
 }
 
 type window struct {
-	dom.EventTarget
+	events.EventTarget
 	document            dom.Document
 	history             *History
 	scriptEngineFactory ScriptHost
@@ -77,7 +78,7 @@ func newWindow(windowOptions ...WindowOption) *window {
 		option.Apply(&options)
 	}
 	win := &window{
-		EventTarget:         dom.NewEventTarget(),
+		EventTarget:         events.NewEventTarget(),
 		httpClient:          options.HttpClient,
 		baseLocation:        options.BaseLocation,
 		scriptEngineFactory: options.ScriptHost,
@@ -91,7 +92,7 @@ func newWindow(windowOptions ...WindowOption) *window {
 	win.domParser = domParser{}
 	win.initScriptEngine()
 	win.document = NewHTMLDocument(win)
-	dom.SetEventTargetSelf(win)
+	events.SetEventTargetSelf(win)
 	return win
 }
 
@@ -170,10 +171,10 @@ func NewWindowReader(reader io.Reader, windowOptions ...WindowOption) (Window, e
 func (w *window) parseReader(reader io.Reader) error {
 	err := w.domParser.ParseReader(w, &w.document, reader)
 	if err == nil {
-		w.document.DispatchEvent(dom.NewCustomEvent(dom.DocumentEventDOMContentLoaded))
+		w.document.DispatchEvent(events.NewCustomEvent(dom.DocumentEventDOMContentLoaded))
 		// 'load' is emitted when css and images are loaded, not relevant yet, so
 		// just emit it right await
-		w.document.DispatchEvent(dom.NewCustomEvent(dom.DocumentEventLoad))
+		w.document.DispatchEvent(events.NewCustomEvent(dom.DocumentEventLoad))
 	}
 	return err
 }

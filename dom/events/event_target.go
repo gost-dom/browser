@@ -1,4 +1,4 @@
-package dom
+package events
 
 import (
 	"slices"
@@ -29,6 +29,7 @@ type EventTarget interface {
 	// Navigate function returns, the DOMContentLoaded event _has_ fired, and
 	// subscribed listeners have been called.
 	SetCatchAllHandler(listener EventHandler)
+	SetParentTarget(EventTarget)
 	RemoveAll()
 	// Unexported
 	dispatchError(err ErrorEvent)
@@ -53,6 +54,10 @@ type eventTarget struct {
 func NewEventTarget() EventTarget {
 	res := newEventTarget()
 	return &res
+}
+
+func (t *eventTarget) SetParentTarget(parent EventTarget) {
+	t.parentTarget = parent
 }
 
 func SetEventTargetSelf(t EventTarget) {

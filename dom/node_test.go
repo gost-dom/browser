@@ -5,6 +5,7 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
+	. "github.com/gost-dom/browser/internal/testing"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 	"github.com/stretchr/testify/suite"

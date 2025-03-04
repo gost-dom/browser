@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom/events"
 	"github.com/gost-dom/browser/url"
 )
 
@@ -23,24 +24,24 @@ type GetReader interface {
 }
 
 type FormDataEvent interface {
-	dom.Event
+	events.Event
 	FormData() *FormData
 }
 
 type FormSubmitEvent interface {
-	dom.Event
+	events.Event
 	Submitter() dom.Element
 }
 
 type formDataEvent struct {
-	dom.Event
+	events.Event
 	formData *FormData
 }
 
 func (e *formDataEvent) FormData() *FormData { return e.formData }
 
 type formSubmitEvent struct {
-	dom.Event
+	events.Event
 	submitter dom.Element
 }
 
@@ -49,12 +50,16 @@ func (e *formSubmitEvent) Submitter() dom.Element {
 }
 
 func newFormDataEvent(data *FormData) FormDataEvent {
-	e := dom.NewEvent(string(FormEventFormData), dom.EventBubbles(true))
+	e := events.NewEvent(string(FormEventFormData), events.EventBubbles(true))
 	return &formDataEvent{e, data}
 }
 
 func newSubmitEvent(submitter dom.Element) FormSubmitEvent {
-	e := dom.NewEvent(string(FormEventSubmit), dom.EventBubbles(true), dom.EventCancelable(true))
+	e := events.NewEvent(
+		string(FormEventSubmit),
+		events.EventBubbles(true),
+		events.EventCancelable(true),
+	)
 	return &formSubmitEvent{e, submitter}
 }
 

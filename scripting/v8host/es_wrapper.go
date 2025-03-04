@@ -6,6 +6,7 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	. "github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom/events"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/entity"
 
@@ -17,20 +18,20 @@ type converters struct{}
 func (w converters) decodeEventInit(
 	ctx *V8ScriptContext,
 	v *v8.Value,
-) (dom.EventOption, error) {
-	var eventOptions []dom.EventOption
+) (events.EventOption, error) {
+	var eventOptions []events.EventOption
 	options, err0 := v.AsObject()
 
 	bubbles, err1 := options.Get("bubbles")
 	cancelable, err2 := options.Get("cancelable")
 	err := errors.Join(err0, err1, err2)
 	if err == nil {
-		eventOptions = []dom.EventOption{
-			dom.EventBubbles(bubbles.Boolean()),
-			dom.EventCancelable(cancelable.Boolean()),
+		eventOptions = []events.EventOption{
+			events.EventBubbles(bubbles.Boolean()),
+			events.EventCancelable(cancelable.Boolean()),
 		}
 	}
-	return dom.EventOptions(eventOptions), nil
+	return events.EventOptions(eventOptions), nil
 }
 
 func (w converters) decodeUSVString(ctx *V8ScriptContext, val *v8.Value) (string, error) {

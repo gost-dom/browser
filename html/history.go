@@ -1,7 +1,7 @@
 package html
 
 import (
-	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom/events"
 	"github.com/gost-dom/browser/internal/log"
 )
 
@@ -13,7 +13,7 @@ const HistoryEventPopState = "popstate"
 //
 // See also: https://developer.mozilla.org/en-US/docs/Web/API/PopStateEvent
 type PopStateEvent interface {
-	dom.Event
+	events.Event
 	State() HistoryState
 }
 
@@ -149,12 +149,12 @@ func (h History) State() HistoryState {
 }
 
 type popStateEvent struct {
-	dom.Event
+	events.Event
 	state HistoryState
 }
 
 func newPopStateEvent(state HistoryState) PopStateEvent {
-	return popStateEvent{dom.NewEvent(HistoryEventPopState), state}
+	return popStateEvent{events.NewEvent(HistoryEventPopState), state}
 }
 
 func (e popStateEvent) State() HistoryState {

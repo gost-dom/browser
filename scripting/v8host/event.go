@@ -1,28 +1,28 @@
 package v8host
 
 import (
-	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom/events"
 	"github.com/gost-dom/browser/internal/entity"
 	v8 "github.com/gost-dom/v8go"
 )
 
-func (w eventV8Wrapper) defaultEventInit() dom.EventOption {
-	return dom.EventOptions(nil)
+func (w eventV8Wrapper) defaultEventInit() events.EventOption {
+	return events.EventOptions(nil)
 }
 
 func (w eventV8Wrapper) CreateInstance(
 	ctx *V8ScriptContext,
 	this *v8.Object,
 	type_ string,
-	o dom.EventOption,
+	o events.EventOption,
 ) (*v8.Value, error) {
-	e := dom.NewEvent(type_, o)
+	e := events.NewEvent(type_, o)
 	return w.store(e, ctx, this)
 }
 
 func (w eventV8Wrapper) toNullableEventTarget(
 	ctx *V8ScriptContext,
-	e dom.EventTarget,
+	e events.EventTarget,
 ) (*v8.Value, error) {
 	if e == nil {
 		return v8.Null(w.scriptHost.iso), nil
