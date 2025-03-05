@@ -41,14 +41,6 @@ func New(eventType string, eventInit Init) *Event {
 	}
 }
 
-func NewEventInit(options ...EventOption) EventInit {
-	var init EventInit
-	for _, o := range options {
-		o(&init)
-	}
-	return init
-}
-
 func (e *Event) Bubbles() bool              { return e.Init.bubbles() }
 func (e *Event) Cancelable() bool           { return e.Init.cancelable() }
 func (e *Event) Type() string               { return e.eventType }
@@ -62,14 +54,4 @@ func (e *Event) reset(t EventTarget) {
 	e.target = t
 	e.stopped = false
 	e.cancelled = false
-}
-
-type EventOption func(*EventInit)
-
-func EventBubbles(bubbles bool) EventOption {
-	return func(e *EventInit) { e.Bubbles = bubbles }
-}
-
-func EventCancelable(cancelable bool) EventOption {
-	return func(e *EventInit) { e.Cancelable = cancelable }
 }

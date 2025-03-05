@@ -171,10 +171,10 @@ func NewWindowReader(reader io.Reader, windowOptions ...WindowOption) (Window, e
 func (w *window) parseReader(reader io.Reader) error {
 	err := w.domParser.ParseReader(w, &w.document, reader)
 	if err == nil {
-		w.document.DispatchEvent(event.NewCustomEvent(dom.DocumentEventDOMContentLoaded))
+		w.document.DispatchEvent(event.New(dom.DocumentEventDOMContentLoaded, event.EventInit{}))
 		// 'load' is emitted when css and images are loaded, not relevant yet, so
 		// just emit it right await
-		w.document.DispatchEvent(event.NewCustomEvent(dom.DocumentEventLoad))
+		w.document.DispatchEvent(event.New(dom.DocumentEventLoad, event.EventInit{}))
 	}
 	return err
 }

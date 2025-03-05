@@ -119,7 +119,7 @@ func (req *xmlHttpRequest) send(body io.Reader) error {
 	_, err = b.ReadFrom(res.Body)
 	req.response = b.Bytes()
 	log.Debug("Response received", "Status", res.StatusCode)
-	req.DispatchEvent(event.NewCustomEvent(XHREventLoad))
+	req.DispatchEvent(event.New(XHREventLoad, event.EventInit{}))
 	return err
 }
 
@@ -133,7 +133,7 @@ func (req *xmlHttpRequest) SendBody(body io.Reader) error {
 		req.headers["Content-Type"] = []string{"application/x-www-form-urlencoded"}
 	}
 	if req.async {
-		req.DispatchEvent(event.NewCustomEvent((XHREventLoadstart)))
+		req.DispatchEvent(event.New(XHREventLoadstart, event.EventInit{}))
 		req.clock.AddSafeTask(func() {
 			req.send(body)
 		}, 0)

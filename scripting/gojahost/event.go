@@ -25,14 +25,14 @@ func toBoolean(value g.Value) bool {
 
 func (w eventWrapper) constructor(call g.ConstructorCall, r *g.Runtime) *g.Object {
 	arg1 := call.Argument(0).String()
-	options := make([]event.EventOption, 0, 2)
+	init := event.CustomEventInit{}
 	if arg2 := call.Argument(1); !g.IsUndefined(arg2) {
 		if obj, ok := arg2.(*g.Object); ok {
-			options = append(options, event.EventCancelable(toBoolean(obj.Get("cancelable"))))
-			options = append(options, event.EventBubbles(toBoolean(obj.Get("bubbles"))))
+			init.Bubbles = toBoolean(obj.Get("bubbles"))
+			init.Cancelable = toBoolean(obj.Get("cancelable"))
 		}
 	}
-	newInstance := event.NewCustomEvent(arg1, options...)
+	newInstance := event.NewCustomEvent(arg1, init)
 	w.storeInternal(newInstance, call.This)
 	return nil
 }

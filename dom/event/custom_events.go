@@ -7,11 +7,7 @@ type CustomEventInit struct {
 	Details interface{}
 }
 
-func NewCustomEvent(eventType string, options ...EventOption) *Event {
-	var init CustomEventInit
-	for _, o := range options {
-		o(&init.EventInit)
-	}
+func NewCustomEvent(eventType string, init CustomEventInit) *Event {
 	e := New(eventType, init)
 	return e
 }

@@ -96,7 +96,7 @@ func (suite *ScriptTestSuite) CreateEventTargetTests() {
 				const target = window;
 				target.addEventListener('custom', listener);
 			`)).Error().ToNot(HaveOccurred())
-			ctx.Window.DispatchEvent(event.NewCustomEvent("custom"))
+			ctx.Window.DispatchEvent(event.NewCustomEvent("custom", event.CustomEventInit{}))
 			Expect(ctx.Eval("callCount")).To(BeEquivalentTo(1))
 		})
 
@@ -107,7 +107,9 @@ func (suite *ScriptTestSuite) CreateEventTargetTests() {
 						var event;
 						window.addEventListener('custom', e => { event = e });`,
 					)).Error().ToNot(HaveOccurred())
-					ctx.Window.DispatchEvent(event.NewCustomEvent("custom"))
+					ctx.Window.DispatchEvent(
+						event.NewCustomEvent("custom", event.CustomEventInit{}),
+					)
 					Expect(
 						ctx.Eval(`Object.getPrototypeOf(event) === CustomEvent.prototype`),
 					).To(BeTrue())

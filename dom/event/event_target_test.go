@@ -37,28 +37,28 @@ func (s *TestSuite) SetupTest() {
 }
 
 func (s *TestSuite) TestDispatchEvent() {
-	s.target.DispatchEvent(NewCustomEvent("click"))
+	s.target.DispatchEvent(NewCustomEvent("click", CustomEventInit{}))
 	s.Expect(s.clickCount).To(Equal(1))
 }
 
 func (s *TestSuite) TestDispatchDifferentEvent() {
-	s.target.DispatchEvent(NewCustomEvent("auxclick"))
+	s.target.DispatchEvent(NewCustomEvent("auxclick", CustomEventInit{}))
 	s.Expect(s.clickCount).To(Equal(0))
 }
 
 func (s *TestSuite) TestRemoveEventHandler() {
-	s.target.DispatchEvent(NewCustomEvent("click"))
+	s.target.DispatchEvent(NewCustomEvent("click", CustomEventInit{}))
 	s.Expect(s.clickCount).To(Equal(1))
 
 	s.target.RemoveEventListener("click", s.clickHandler)
-	s.target.DispatchEvent(NewCustomEvent("click"))
+	s.target.DispatchEvent(NewCustomEvent("click", CustomEventInit{}))
 	s.Expect(s.clickCount).To(Equal(1))
 }
 
 func (s *TestSuite) TestAddingSameHandlerTwice() {
 	s.target.AddEventListener("click", s.clickHandler)
 	s.target.AddEventListener("click", s.clickHandler)
-	s.target.DispatchEvent(NewCustomEvent("click"))
+	s.target.DispatchEvent(NewCustomEvent("click", CustomEventInit{}))
 	s.Expect(s.clickCount).To(Equal(1))
 }
 
@@ -73,7 +73,7 @@ func (s *TestSuite) TestEventHandlersCalledInOrder() {
 	s.target.AddEventListener("auxclick",
 		NewTestHandler(func(e *Event) { order = append(order, "C") }),
 	)
-	s.target.DispatchEvent(NewCustomEvent("auxclick"))
+	s.target.DispatchEvent(NewCustomEvent("auxclick", CustomEventInit{}))
 	s.Expect(order).To(Equal([]string{"A", "B", "C"}))
 }
 
@@ -105,7 +105,7 @@ func (s *EventPropagationTestSuite) TestRemoveCorrectPhase() {
 	h := NewTestHandler(func(e *Event) {
 		events = append(events, fmt.Sprintf("Phase: %d", e.EventPhase()))
 	})
-	event := NewCustomEvent("gost:remove", EventBubbles(true))
+	event := New("gost:remove", EventInit{Bubbles: true})
 	s.window.AddEventListener("gost:remove", h)
 	s.window.AddEventListener("gost:remove", h, Capture)
 
@@ -181,7 +181,7 @@ func (s *EventPropagationTestSuite) TestEventCapture() {
 	s.Assert().Equal(EventPhaseNone, event.EventPhase(), "Phase after dispatch")
 
 	events = nil
-	s.target.DispatchEvent(NewCustomEvent("custom"))
+	s.target.DispatchEvent(New("custom", EventInit{}))
 	s.Assert().Equal(
 		[]string{
 			"Window capture. Phase: 1",
@@ -207,7 +207,7 @@ func (s *EventPropagationTestSuite) TestDefaultEventPropagation() {
 		called = true
 	})
 	s.window.Document().Body().AddEventListener("custom", l)
-	s.target.DispatchEvent(NewCustomEvent("custom"))
+	s.target.DispatchEvent(New("custom", EventInit{}))
 	s.Expect(called).To(BeFalse())
 }
 
@@ -281,7 +281,7 @@ func (s *EventPropagationTestSuite) TestReturnValueForPreventDefault() {
 		"DispatchEvent return value with default prevented, Cancelable: false",
 	)
 	s.Assert().True(
-		s.target.DispatchEvent(NewCustomEvent("custom")),
+		s.target.DispatchEvent(New("custom", EventInit{})),
 		"DispatchEvent return value with default prevented, Cancelable not set",
 	)
 }
@@ -298,7 +298,7 @@ func (s *EventPropagationTestSuite) TestEventHandlerGeneratesError() {
 	s.target.AddEventListener("custom", NewEventHandlerFunc(func(e *Event) error {
 		return errors.New("Error")
 	}))
-	s.target.DispatchEvent(NewCustomEvent("custom"))
+	s.target.DispatchEvent(New("custom", EventInit{}))
 	s.Assert().True(errorOnWindow, "Error event dispached on Window")
 	s.Assert().False(errorOnTarget, "Error event dispached on original target")
 }
