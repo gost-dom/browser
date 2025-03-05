@@ -234,6 +234,14 @@ var _ = Describe("HTML Form", func() {
 					button.Click()
 					Expect(submittedForm).To(HaveKey("the-button"))
 				})
+
+				It("Should include the button value in the form data if set", func() {
+					button.SetAttribute("name", "the-button")
+					button.SetAttribute("value", "the-button-value")
+					button.Click()
+					Expect(submittedForm).To(HaveKey("the-button"))
+					Expect(submittedForm.Get("the-button")).To(Equal("the-button-value"))
+				})
 			})
 
 			Describe("The button is not type='submit'", func() {
