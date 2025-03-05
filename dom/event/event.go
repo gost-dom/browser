@@ -49,21 +49,27 @@ func NewEventInit(options ...EventOption) EventInit {
 	return init
 }
 
-func (e *Event) Bubbles() bool                  { return e.Init.bubbles() }
-func (e *Event) Cancelable() bool               { return e.Init.cancelable() }
-func (e *Event) Type() string                   { return e.eventType }
-func (e *Event) StopPropagation()               { e.stopped = true }
-func (e *Event) PreventDefault()                { e.cancelled = true }
-func (e *Event) isStopped() bool                { return e.stopped }
-func (e *Event) isCancelled() bool              { return e.Cancelable() && e.cancelled }
-func (e *Event) EventPhase() EventPhase         { return e.phase }
-func (e *Event) Target() EventTarget            { return e.target }
-func (e *Event) CurrentTarget() EventTarget     { return e.currentTarget }
-func (e *Event) setEventPhase(phase EventPhase) { e.phase = phase }
-func (e *Event) setCurrentTarget(t EventTarget) { e.currentTarget = t }
+func (e *Event) Bubbles() bool              { return e.Init.bubbles() }
+func (e *Event) Cancelable() bool           { return e.Init.cancelable() }
+func (e *Event) Type() string               { return e.eventType }
+func (e *Event) StopPropagation()           { e.stopped = true }
+func (e *Event) PreventDefault()            { e.cancelled = true }
+func (e *Event) EventPhase() EventPhase     { return e.phase }
+func (e *Event) Target() EventTarget        { return e.target }
+func (e *Event) CurrentTarget() EventTarget { return e.currentTarget }
 
 func (e *Event) reset(t EventTarget) {
 	e.target = t
 	e.stopped = false
 	e.cancelled = false
+}
+
+type EventOption func(*EventInit)
+
+func EventBubbles(bubbles bool) EventOption {
+	return func(e *EventInit) { e.Bubbles = bubbles }
+}
+
+func EventCancelable(cancelable bool) EventOption {
+	return func(e *EventInit) { e.Cancelable = cancelable }
 }

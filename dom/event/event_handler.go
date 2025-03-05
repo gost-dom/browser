@@ -22,7 +22,7 @@ type EventHandler interface {
 	// An non-nil error return value will dispatch an error event on the global
 	// object in a normally configured environment.
 	HandleEvent(event *Event) error
-	// Equals must return true, if they underlying event handler of the other
+	// Equals must return true, if the underlying event handler of the other
 	// handler is the same as this handler.
 	Equals(other EventHandler) bool
 }

@@ -30,6 +30,7 @@ type EventTarget interface {
 	SetCatchAllHandler(listener EventHandler)
 	SetParentTarget(EventTarget)
 	RemoveAll()
+
 	// Unexported
 	dispatchError(err error)
 	dispatchEvent(event *Event, capture bool)
@@ -136,27 +137,27 @@ func (e *eventTarget) DispatchEvent(event *Event) bool {
 	event.reset(e.self)
 	log.Debug("Dispatch event", "EventType", event.Type())
 
-	event.setEventPhase(EventPhaseCapture)
+	event.phase = EventPhaseCapture
 	e.dispatchOnParent(event, true)
 
-	event.setEventPhase(EventPhaseAtTarget)
+	event.phase = EventPhaseAtTarget
 	e.dispatchEvent(event, true)
 	e.dispatchEvent(event, false)
-	event.setEventPhase(EventPhaseBubbline)
+	event.phase = EventPhaseBubbline
 
 	e.dispatchOnParent(event, false)
 
-	event.setEventPhase(EventPhaseNone)
+	event.phase = EventPhaseNone
 
-	return !event.isCancelled()
+	return !(event.Cancelable() && event.cancelled)
 }
 
 func (e *eventTarget) dispatchEvent(event *Event, capture bool) {
-	if event.isStopped() {
+	if event.stopped {
 		return
 	}
-	event.setCurrentTarget(e.self)
-	defer func() { event.setCurrentTarget(nil) }()
+	event.currentTarget = e.self
+	defer func() { event.currentTarget = nil }()
 	if e.catchAllHandler != nil && !capture {
 		if err := e.catchAllHandler.HandleEvent(event); err != nil {
 			log.Debug("Error occurred", "error", err.Error())
@@ -212,46 +213,4 @@ func (e *eventTarget) dispatchError(err error) {
 	} else {
 		e.parentTarget.dispatchError(err)
 	}
-}
-
-/* -------- Event & CustomEvent -------- */
-
-// type Event interface {
-// 	entity.Entity
-// 	Cancelable() bool
-// 	Bubbles() bool
-// 	PreventDefault()
-// 	Type() string
-// 	StopPropagation()
-// 	Target() EventTarget
-// 	CurrentTarget() EventTarget
-// 	reset(t EventTarget)
-// 	EventPhase() EventPhase
-//
-// 	isCancelled() bool
-// 	isStopped() bool
-// 	setEventPhase(phase EventPhase)
-// 	setCurrentTarget(t EventTarget)
-// }
-
-// type CustomEvent interface {
-// 	Event
-// }
-
-type EventOption func(*EventInit)
-
-func EventOptions(options ...EventOption) EventOption {
-	return func(e *EventInit) {
-		for _, o := range options {
-			o(e)
-		}
-	}
-}
-
-func EventBubbles(bubbles bool) EventOption {
-	return func(e *EventInit) { e.Bubbles = bubbles }
-}
-
-func EventCancelable(cancelable bool) EventOption {
-	return func(e *EventInit) { e.Cancelable = cancelable }
 }

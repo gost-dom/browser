@@ -20,8 +20,11 @@ func TestGenerateElementEventMethod(t *testing.T) {
 	g.Expect(err).ToNot(HaveOccurred())
 	g.Expect(r).To(HaveRendered(
 		`func (e *elementEvents) Click() bool {
+	init := PointerEventInit{}
+	init.Bubbles = true
+	init.Cancelable = true
 	return e.target.DispatchEvent(
-		NewPointerEvent("click", event.EventBubbles(true), event.EventCancelable(true)),
+		NewPointerEvent("click", init),
 	)
 }`,
 	))
@@ -29,7 +32,7 @@ func TestGenerateElementEventMethod(t *testing.T) {
 
 func TestInterfaceGeneration(t *testing.T) {
 	g := gomega.NewWithT(t)
-	api, err := event.Load("uievents")
+	api, err := events.Load("uievents")
 	g.Expect(err).ToNot(HaveOccurred())
 	res := EventInterfaceGenerator{
 		Element: "Element",

@@ -20,29 +20,20 @@ type PointerEventInit struct {
 	PointerId int
 }
 
-func NewUIEvent(type_ string, options ...event.EventOption) *event.Event {
-	return event.New(type_, UIEventInit{
-		EventInit: event.NewEventInit(options...),
-	})
+func NewUIEvent(type_ string) *event.Event {
+	return event.New(type_, UIEventInit{})
 }
 
 // type MouseEvent struct{ UIEvent }
 //
 // type PointerEvent struct{ MouseEvent }
 
-func NewMouseEvent(type_ string, options ...event.EventOption) *event.Event {
-	return event.New(type_, MouseEventInit{UIEventInit: UIEventInit{
-		EventInit: event.NewEventInit(options...),
-	}})
-}
+// func NewMouseEvent(type_ string, options ...event.EventOption) *event.Event {
+// 	return event.New(type_, MouseEventInit{UIEventInit: UIEventInit{
+// 		EventInit: event.NewEventInit(options...),
+// 	}})
+// }
 
-func NewPointerEvent(type_ string, options ...event.EventOption) *event.Event {
-	return event.New(
-		type_,
-		PointerEventInit{
-			MouseEventInit: MouseEventInit{UIEventInit: UIEventInit{
-				EventInit: event.NewEventInit(options...),
-			}},
-		},
-	)
+func NewPointerEvent(type_ string, init PointerEventInit) *event.Event {
+	return event.New(type_, init)
 }
