@@ -1,6 +1,13 @@
 # Changelog - Gost-DOM
 
 
+## [0.3.1](https://github.com/gost-dom/browser/compare/v0.3.0...v0.3.1) (2025-03-05)
+
+
+### Bug Fixes
+
+* Missing header on form posts ([9a89ca9](https://github.com/gost-dom/browser/commit/9a89ca96ae6c09867d20eb76acce8f838d13f229))
+
 ## [0.3.0](https://github.com/gost-dom/browser/compare/v0.2.0...v0.3.0) (2025-02-27)
 
 This is a breaking change because of when callbacks will be executed. See the

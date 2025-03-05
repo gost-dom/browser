@@ -49,20 +49,13 @@ time; but that will not last.
 If I could find enough sponsors, it could mean the difference between continued
 development, or death.
 
-## Looking for contributors
-
-This is a massive undertaking, and I would love people to join in.
-
-Particularly if you have experience in the area of building actual browsers (I'm
-not talking about skinning Chromium here, like, implementing an actual rendering
-engine)
-
 ## Join the "community"
 
 - [Join my discord server](https://discord.gg/rPBRt8Rf) to chat with me, and stay
 up-to-date on progress
 - Participate in the [github discussions](https://github.com/orgs/gost-dom/discussions), and [say
 hi!](https://github.com/orgs/gost-dom/discussions)
+- Want to contribute to the project, there's a very rough early [guide describing the overall project structure](./CONTRIBUTING.md)
 
 ## Project background
 
@@ -108,21 +101,9 @@ isolated test, e.g. mocking out part of the behaviour;
 
 ## Code structure
 
-This is still in early development, and the structure may still change.
+The [constributor's guide](./CONTRIBUTING.md) describe the overall project
+structure.
 
-```sh
-dom/ # Core DOM implementation
-html/ # Window, HTMLDocument, HTMLElement, 
-scripting/ # Client-side script support
-  v8host/ # v8 engine, and bindings
-  gojahost/ # goja javascript engine,
-browser.go # Main module
-```
-
-The folders, `dom`, and `html` correspond to the [web
-APIs](https://developer.mozilla.org/en-US/docs/Web/API). It was the intention to
-have a folder for each supported web API, but that may turn out to be
-impossible, as there are circular dependencies between some of the specs.
 
 ### Modularisation
 
