@@ -108,6 +108,7 @@ func (e *htmlFormElement) submitFormData(formData *FormData) error {
 	} else {
 		getReader := GetReader(formData)
 		req, err = http.NewRequest("POST", e.Action(), getReader.GetReader())
+		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	}
 	if err != nil {
 		return err

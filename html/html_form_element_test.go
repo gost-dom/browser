@@ -1,7 +1,6 @@
 package html_test
 
 import (
-	"io"
 	"net/http"
 	"net/url"
 
@@ -53,7 +52,6 @@ var _ = Describe("HTML Form", func() {
 
 	Describe("Submit behaviour", func() {
 		var window Window
-		var actualBody string
 		var requests []*http.Request
 		var form HTMLFormElement
 		var actualRequest *http.Request
@@ -62,11 +60,11 @@ var _ = Describe("HTML Form", func() {
 		AfterEach(func() {
 			// Make the values ready for garbage collection
 			actualRequest = nil
+			submittedForm = nil
 			form = nil
 		})
 
 		BeforeEach(func() {
-			actualBody = ""
 			DeferCleanup(func() { requests = nil; submittedForm = nil })
 
 			window = NewWindow(WindowOptions{
@@ -78,9 +76,6 @@ var _ = Describe("HTML Form", func() {
 						actualRequest = req
 						submittedForm = req.Form
 						requests = append(requests, req)
-						data, err := io.ReadAll(req.Body)
-						Expect(err).ToNot(HaveOccurred())
-						actualBody = string(data)
 					}),
 				),
 				BaseLocation: "http://example.com/forms/example-form.html?original-query=original-value",
@@ -160,7 +155,7 @@ var _ = Describe("HTML Form", func() {
 
 				It("Should store the values in the form body", func() {
 					form.Submit()
-					Expect(actualBody).To(Equal("foo=bar"))
+					Expect(submittedForm["foo"]).To(Equal([]string{"bar"}))
 				})
 
 				It("Should resolve a relative 'action' without a ./.. prefix", func() {
