@@ -89,7 +89,7 @@ func (c *V8ScriptContext) getInstanceForNode(
 	}
 	switch n := node.(type) {
 	case *event.Event:
-		switch n.EventInit.(type) {
+		switch n.Init.(type) {
 		case event.CustomEventInitDict:
 			return c.getInstanceForNodeByName("CustomEvent", n)
 		case PointerEventInitDict:

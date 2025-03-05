@@ -317,7 +317,7 @@ var _ = Describe("HTML Form", func() {
 					Expect(actualEvent).ToNot(BeNil())
 					Expect(actualEvent.Cancelable()).To(BeFalse())
 					Expect(actualEvent.Bubbles()).To(BeTrue())
-					formDataEventInit, ok := actualEvent.EventInit.(FormDataEventInit)
+					formDataEventInit, ok := actualEvent.Init.(FormDataEventInit)
 					Expect(ok).To(BeTrue())
 					Expect(formDataEventInit.FormData).ToNot(BeNil())
 					Expect(formDataEventInit.FormData).To(HaveFormDataValue("foo", "bar"))

@@ -297,18 +297,18 @@ var _ = Describe("Element", func() {
 
 	Describe("Click", func() {
 		It("Is cancelable and bubbles", func() {
-			var event *event.Event
+			var ev *event.Event
 			doc := ParseHtmlString(`<body><div id="target"></div></body>`)
 			element := doc.GetElementById("target")
 			element.AddEventListener(
 				"click",
 				event.NewEventHandlerFuncWithoutError(func(e *event.Event) {
-					event = e
+					ev = e
 				}),
 			)
 			element.Click()
-			gomega.Expect(event.Cancelable()).To(BeTrue())
-			gomega.Expect(event.Bubbles()).To(BeTrue())
+			gomega.Expect(ev.Cancelable()).To(BeTrue())
+			gomega.Expect(ev.Bubbles()).To(BeTrue())
 		})
 	})
 

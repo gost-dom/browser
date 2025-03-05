@@ -13,7 +13,7 @@ const HistoryEventPopState = "popstate"
 //
 // See also: https://developer.mozilla.org/en-US/docs/Web/API/PopStateEvent
 type PopStateEventInit struct {
-	event.EventInit
+	event.Init
 	State HistoryState
 }
 
@@ -155,8 +155,8 @@ type popStateEvent struct {
 
 func newPopStateEvent(state HistoryState) *event.Event {
 	return event.NewEventInit(HistoryEventPopState, PopStateEventInit{
-		EventInit: event.EventInitDict{},
-		State:     state})
+		Init:  event.EventInitDict{},
+		State: state})
 }
 
 func (e popStateEvent) State() HistoryState {

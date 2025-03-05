@@ -15,16 +15,16 @@ func TestV8EventTargetAddRemoveListeners(t *testing.T) {
 	g.Expect(win.Eval(`
 		let events = [];
 		let noOfEvents = []
-		const handler = e => { event.push(e) }
+		const handler = e => { events.push(e) }
 		window.addEventListener("gost", handler)
 		window.dispatchEvent(new CustomEvent("gost"))
-		noOfEvents.push(event.length)
+		noOfEvents.push(events.length)
 		window.removeEventListener("gost", handler)
 		window.dispatchEvent(new CustomEvent("gost"))
-		noOfEvents.push(event.length)
+		noOfEvents.push(events.length)
 		window.addEventListener("gost", handler)
 		window.dispatchEvent(new CustomEvent("gost"))
-		noOfEvents.push(event.length)
+		noOfEvents.push(events.length)
 		noOfEvents
 	`)).To(HaveExactElements([]int32{1, 1, 2}))
 }
@@ -38,10 +38,10 @@ func TestV8EventCapture(t *testing.T) {
 		let noOfEvents = []
 		const div = document.createElement("div")
 		document.body.appendChild(div)
-		window.addEventListener("gost", e => { event.push("Window bubble. Phase: " + e.eventPhase)})
-		window.addEventListener("gost", e => { event.push("Window capture. Phase: " + e.eventPhase)}, true)
-		div.addEventListener("gost", e => { event.push("Div bubble. Phase: " + e.eventPhase)})
-		div.addEventListener("gost", e => { event.push("Div capture. Phase: " + e.eventPhase)}, {capture:true})
+		window.addEventListener("gost", e => { events.push("Window bubble. Phase: " + e.eventPhase)})
+		window.addEventListener("gost", e => { events.push("Window capture. Phase: " + e.eventPhase)}, true)
+		div.addEventListener("gost", e => { events.push("Div bubble. Phase: " + e.eventPhase)})
+		div.addEventListener("gost", e => { events.push("Div capture. Phase: " + e.eventPhase)}, {capture:true})
 		div.dispatchEvent(new CustomEvent("gost", { bubbles: true }))
 
 		events

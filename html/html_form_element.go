@@ -24,12 +24,12 @@ type GetReader interface {
 }
 
 type FormDataEventInit struct {
-	event.EventInit
+	event.Init
 	FormData *FormData
 }
 
 type SubmitEventInit struct {
-	event.EventInit
+	event.Init
 	Submitter dom.Element
 }
 
