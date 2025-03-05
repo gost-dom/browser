@@ -6,7 +6,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/gost-dom/browser/dom/events"
+	"github.com/gost-dom/browser/dom/event"
 	. "github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	. "github.com/gost-dom/browser/internal/html"
@@ -120,21 +120,21 @@ var _ = Describe("XmlHTTPRequest", func() {
 			xhr.Open("GET", "/dummy")
 			xhr.AddEventListener(
 				XHREventLoadstart,
-				events.NewEventHandlerFunc(func(e *events.Event) error {
+				event.NewEventHandlerFunc(func(e *event.Event) error {
 					loadStarted = true
 					return nil
 				}),
 			)
 			xhr.AddEventListener(
 				XHREventLoadend,
-				events.NewEventHandlerFunc(func(e *events.Event) error {
+				event.NewEventHandlerFunc(func(e *event.Event) error {
 					loadEnded = true
 					return nil
 				}),
 			)
 			xhr.AddEventListener(
 				XHREventLoad,
-				events.NewEventHandlerFunc(func(e *events.Event) error {
+				event.NewEventHandlerFunc(func(e *event.Event) error {
 					loaded = true
 					return nil
 				}),

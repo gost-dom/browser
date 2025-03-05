@@ -8,7 +8,7 @@ import (
 	"sync"
 
 	. "github.com/gost-dom/browser/dom"
-	"github.com/gost-dom/browser/dom/events"
+	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/constants"
@@ -88,9 +88,9 @@ func (c *V8ScriptContext) getInstanceForNode(
 		return v8.Null(iso), nil
 	}
 	switch n := node.(type) {
-	case *events.Event:
+	case *event.Event:
 		switch n.EventInit.(type) {
-		case events.CustomEventInitDict:
+		case event.CustomEventInitDict:
 			return c.getInstanceForNodeByName("CustomEvent", n)
 		case PointerEventInitDict:
 			return c.getInstanceForNodeByName("PointerEvent", n)
@@ -341,7 +341,7 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 		domNodes: make(map[entity.ObjectId]entity.Entity),
 	}
 	errorCallback := func(err error) {
-		w.DispatchEvent(events.NewErrorEvent(err))
+		w.DispatchEvent(event.NewErrorEvent(err))
 	}
 	global = context.v8ctx.Global()
 	context.eventLoop = newEventLoop(context, errorCallback)

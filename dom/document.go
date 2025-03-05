@@ -3,7 +3,7 @@ package dom
 import (
 	"io"
 
-	"github.com/gost-dom/browser/dom/events"
+	"github.com/gost-dom/browser/dom/event"
 	"golang.org/x/net/html"
 )
 
@@ -20,7 +20,7 @@ const (
 // an oversight that it wasn't placed in an internal package. This will be
 // removed from the public API in a future version
 type DocumentParentWindow interface {
-	events.EventTarget
+	event.EventTarget
 	ParseFragment(ownerDocument Document, reader io.Reader) (DocumentFragment, error)
 }
 

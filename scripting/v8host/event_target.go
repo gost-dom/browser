@@ -3,7 +3,7 @@ package v8host
 import (
 	"errors"
 
-	"github.com/gost-dom/browser/dom/events"
+	"github.com/gost-dom/browser/dom/event"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -12,11 +12,11 @@ type v8EventListener struct {
 	val *v8.Value
 }
 
-func newV8EventListener(ctx *V8ScriptContext, val *v8.Value) events.EventHandler {
+func newV8EventListener(ctx *V8ScriptContext, val *v8.Value) event.EventHandler {
 	return v8EventListener{ctx, val}
 }
 
-func (l v8EventListener) HandleEvent(e *events.Event) error {
+func (l v8EventListener) HandleEvent(e *event.Event) error {
 	f, err := l.val.AsFunction()
 	if err == nil {
 		var event *v8.Value
@@ -30,29 +30,29 @@ func (l v8EventListener) HandleEvent(e *events.Event) error {
 	return err
 }
 
-func (l v8EventListener) Equals(other events.EventHandler) bool {
+func (l v8EventListener) Equals(other event.EventHandler) bool {
 	x, ok := other.(v8EventListener)
 	return ok && x.val.StrictEquals(l.val)
 }
 
 type eventTargetV8Wrapper struct {
-	handleReffedObject[events.EventTarget]
+	handleReffedObject[event.EventTarget]
 }
 
 func newEventTargetV8Wrapper(host *V8ScriptHost) eventTargetV8Wrapper {
-	return eventTargetV8Wrapper{newHandleReffedObject[events.EventTarget](host)}
+	return eventTargetV8Wrapper{newHandleReffedObject[event.EventTarget](host)}
 }
 
 func (w eventTargetV8Wrapper) getInstance(
 	info *v8.FunctionCallbackInfo,
-) (events.EventTarget, error) {
+) (event.EventTarget, error) {
 	if info.This().GetInternalField(0).IsExternal() {
 		return w.handleReffedObject.getInstance(info)
 	} else {
 		ctx := w.scriptHost.mustGetContext(info.Context())
 		entity, ok := ctx.getCachedNode(info.This())
 		if ok {
-			if target, ok := entity.(events.EventTarget); ok {
+			if target, ok := entity.(event.EventTarget); ok {
 				return target, nil
 			}
 		}
@@ -67,7 +67,7 @@ func createEventTarget(host *V8ScriptHost) *v8.FunctionTemplate {
 		iso,
 		func(info *v8.FunctionCallbackInfo) *v8.Value {
 			ctx := host.mustGetContext(info.Context())
-			wrapper.store(events.NewEventTarget(), ctx, info.This())
+			wrapper.store(event.NewEventTarget(), ctx, info.This())
 			return v8.Undefined(iso)
 		},
 	)
@@ -84,17 +84,17 @@ func createEventTarget(host *V8ScriptHost) *v8.FunctionTemplate {
 				args := newArgumentHelper(host, info)
 				eventType, e1 := args.getStringArg(0)
 				fn, e2 := args.getFunctionArg(1)
-				var options []func(*events.EventListener)
+				var options []func(*event.EventListener)
 				optionArg := args.getArg(2)
 				if optionArg != nil {
 					if optionArg.IsBoolean() && optionArg.Boolean() {
-						options = append(options, events.Capture)
+						options = append(options, event.Capture)
 					}
 					if optionArg.IsObject() {
 						if capture, err := optionArg.Object().Get("capture"); err == nil &&
 							capture != nil {
 							if capture.Boolean() {
-								options = append(options, events.Capture)
+								options = append(options, event.Capture)
 							}
 						}
 					}
@@ -135,7 +135,7 @@ func createEventTarget(host *V8ScriptHost) *v8.FunctionTemplate {
 				}
 				e := info.Args()[0]
 				handle := e.Object().GetInternalField(0).ExternalHandle()
-				if evt, ok := handle.Value().(*events.Event); ok {
+				if evt, ok := handle.Value().(*event.Event); ok {
 					return v8.NewValue(iso, target.DispatchEvent(evt))
 				} else {
 					return nil, v8.NewTypeError(iso, "Not an Event")

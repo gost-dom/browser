@@ -1,4 +1,4 @@
-package events
+package event
 
 import (
 	"slices"
@@ -23,7 +23,7 @@ type EventTarget interface {
 	AddEventListener(eventType string, listener EventHandler, options ...func(*EventListener))
 	RemoveEventListener(eventType string, listener EventHandler, options ...func(*EventListener))
 	DispatchEvent(event *Event) bool
-	// Adds a listener that will receive _all_ dispatched events. This listener
+	// Adds a listener that will receive _all_ dispatched event. This listener
 	// will not be removed from the window when navigating. This makes it useful
 	// for a test to setup event listeners _before_ navigating, as by the time the
 	// Navigate function returns, the DOMContentLoaded event _has_ fired, and
@@ -250,31 +250,31 @@ func EventOptions(options ...EventOption) EventOption {
 }
 
 func EventBubbles(bubbles bool) EventOption {
-	return func(e *EventInitDict) { e.bubbles = bubbles }
+	return func(e *EventInitDict) { e.Bubbles = bubbles }
 }
 
 func EventCancelable(cancelable bool) EventOption {
-	return func(e *EventInitDict) { e.cancelable = cancelable }
+	return func(e *EventInitDict) { e.Cancelable = cancelable }
 }
 
 /* -------- event -------- */
 
 type EventInit interface {
-	Bubbles() bool
-	Cancelable() bool
+	bubbles() bool
+	cancelable() bool
 }
 
 type EventInitDict struct {
-	bubbles    bool
-	cancelable bool
+	Bubbles    bool
+	Cancelable bool
 }
 
-func (d EventInitDict) Bubbles() bool {
-	return d.bubbles
+func (d EventInitDict) bubbles() bool {
+	return d.Bubbles
 }
 
-func (d EventInitDict) Cancelable() bool {
-	return d.cancelable
+func (d EventInitDict) cancelable() bool {
+	return d.Cancelable
 }
 
 type Event struct {
@@ -312,11 +312,14 @@ func NewEvent(eventType string, options ...EventOption) *Event {
 	e := newEvent(eventType, init)
 	return e
 }
+
 func NewEventInit(eventType string, init EventInit) *Event {
 	e := newEvent(eventType, init)
 	return e
 }
 
+func (e *Event) Bubbles() bool                  { return e.EventInit.bubbles() }
+func (e *Event) Cancelable() bool               { return e.EventInit.cancelable() }
 func (e *Event) Type() string                   { return e.eventType }
 func (e *Event) StopPropagation()               { e.stopped = true }
 func (e *Event) PreventDefault()                { e.cancelled = true }
@@ -360,7 +363,7 @@ type ErrorEventInitDict struct {
 func NewErrorEvent(err error) *Event {
 	e := newEvent(
 		"error",
-		ErrorEventInitDict{Err: err, EventInitDict: EventInitDict{bubbles: true}},
+		ErrorEventInitDict{Err: err, EventInitDict: EventInitDict{Bubbles: true}},
 	)
 	return e
 }

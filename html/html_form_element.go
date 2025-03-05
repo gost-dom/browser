@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/gost-dom/browser/dom"
-	"github.com/gost-dom/browser/dom/events"
+	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/url"
 )
 
@@ -24,12 +24,12 @@ type GetReader interface {
 }
 
 type FormDataEventInit struct {
-	events.EventInit
+	event.EventInit
 	FormData *FormData
 }
 
 type SubmitEventInit struct {
-	events.EventInit
+	event.EventInit
 	Submitter dom.Element
 }
 
@@ -39,19 +39,19 @@ type SubmitEventInit struct {
 // }
 
 type FormSubmitEvent interface {
-	events.Event
+	event.Event
 	Submitter() dom.Element
 }
 
 type formDataEvent struct {
-	events.Event
+	event.Event
 	formData *FormData
 }
 
 func (e *formDataEvent) FormData() *FormData { return e.formData }
 
 type formSubmitEvent struct {
-	events.Event
+	event.Event
 	submitter dom.Element
 }
 
@@ -59,23 +59,23 @@ func (e *formSubmitEvent) Submitter() dom.Element {
 	return e.submitter
 }
 
-func newFormDataEvent(data *FormData) *events.Event {
+func newFormDataEvent(data *FormData) *event.Event {
 	eventInit := FormDataEventInit{
-		events.NewEventInitDict(events.EventBubbles(true)),
+		event.NewEventInitDict(event.EventBubbles(true)),
 		data,
 	}
-	return events.NewEventInit(string(FormEventFormData), eventInit)
+	return event.NewEventInit(string(FormEventFormData), eventInit)
 }
 
-func newSubmitEvent(submitter dom.Element) *events.Event {
+func newSubmitEvent(submitter dom.Element) *event.Event {
 	eventInit := SubmitEventInit{
-		events.NewEventInitDict(
-			events.EventBubbles(true),
-			events.EventCancelable(true),
+		event.NewEventInitDict(
+			event.EventBubbles(true),
+			event.EventCancelable(true),
 		),
 		submitter,
 	}
-	return events.NewEventInit(
+	return event.NewEventInit(
 		string(FormEventSubmit),
 		eventInit)
 }

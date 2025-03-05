@@ -2,10 +2,10 @@
 
 package dom
 
-import events "github.com/gost-dom/browser/dom/events"
+import event "github.com/gost-dom/browser/dom/event"
 
 type elementEvents struct {
-	target events.EventTarget
+	target event.EventTarget
 }
 
 type ElementEvents interface {
@@ -16,18 +16,18 @@ type ElementEvents interface {
 
 func (e *elementEvents) Auxclick() bool {
 	return e.target.DispatchEvent(
-		NewPointerEvent("auxclick", events.EventBubbles(true), events.EventCancelable(true)),
+		NewPointerEvent("auxclick", event.EventBubbles(true), event.EventCancelable(true)),
 	)
 }
 
 func (e *elementEvents) Click() bool {
 	return e.target.DispatchEvent(
-		NewPointerEvent("click", events.EventBubbles(true), events.EventCancelable(true)),
+		NewPointerEvent("click", event.EventBubbles(true), event.EventCancelable(true)),
 	)
 }
 
 func (e *elementEvents) Contextmenu() bool {
 	return e.target.DispatchEvent(
-		NewPointerEvent("contextmenu", events.EventBubbles(true), events.EventCancelable(true)),
+		NewPointerEvent("contextmenu", event.EventBubbles(true), event.EventCancelable(true)),
 	)
 }

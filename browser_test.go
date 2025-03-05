@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	. "github.com/gost-dom/browser"
-	"github.com/gost-dom/browser/dom/events"
+	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
@@ -108,7 +108,7 @@ func (s *BrowserNavigationTestSuite) TestNavigationAbortedByEventHandler() {
 	anchor, _ := window.Document().QuerySelector("a")
 	anchor.AddEventListener(
 		"click",
-		events.NewEventHandlerFunc(events.NoError((*events.Event).PreventDefault)),
+		event.NewEventHandlerFunc(event.NoError((*event.Event).PreventDefault)),
 	)
 	anchor.Click()
 	heading, _ := window.Document().QuerySelector("h1")

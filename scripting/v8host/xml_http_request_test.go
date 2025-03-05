@@ -4,7 +4,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/gost-dom/browser/dom/events"
+	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/internal/http"
 
@@ -52,7 +52,7 @@ var _ = Describe("V8 XmlHttpRequest", func() {
 	})
 
 	It("Should dispatch 'load' event", func() {
-		window.AddEventListener("go:home", events.NewEventHandlerFunc(func(e *events.Event) error {
+		window.AddEventListener("go:home", event.NewEventHandlerFunc(func(e *event.Event) error {
 			go func() {
 				evt <- true
 			}()
@@ -77,7 +77,7 @@ var _ = Describe("V8 XmlHttpRequest", func() {
 	})
 
 	It("Should dispatch 'load' to `onload` function", func() {
-		window.AddEventListener("go:home", events.NewEventHandlerFunc(func(e *events.Event) error {
+		window.AddEventListener("go:home", event.NewEventHandlerFunc(func(e *event.Event) error {
 			go func() {
 				evt <- true
 			}()

@@ -1,4 +1,4 @@
-package events_test
+package event_test
 
 import (
 	"errors"
@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"github.com/gost-dom/browser/dom"
-	. "github.com/gost-dom/browser/dom/events"
+	. "github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/internal/testing"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"

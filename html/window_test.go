@@ -7,7 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/gost-dom/browser/dom"
-	"github.com/gost-dom/browser/dom/events"
+	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/domslices"
@@ -100,10 +100,10 @@ var _ = Describe("Window", func() {
 				})
 
 				It("Should dispatch a popstate event with the state", func() {
-					var actualEvent *events.Event
+					var actualEvent *event.Event
 					win.AddEventListener(
 						"popstate",
-						events.NewEventHandlerFunc(func(e *events.Event) error {
+						event.NewEventHandlerFunc(func(e *event.Event) error {
 							actualEvent = e
 							return nil
 						}),
@@ -175,7 +175,7 @@ var _ = Describe("Window", func() {
 					eventDispatched := false
 					win.AddEventListener(
 						"hashchange",
-						events.NewEventHandlerFunc(func(e *events.Event) error {
+						event.NewEventHandlerFunc(func(e *event.Event) error {
 							eventDispatched = true
 							return nil
 						}),
@@ -296,13 +296,13 @@ var _ = Describe("Window", func() {
 				Expect(window.Navigate("about:blank")).To(Succeed())
 				window.AddEventListener(
 					"gost-event",
-					events.NewEventHandlerFunc(func(e *events.Event) error {
+					event.NewEventHandlerFunc(func(e *event.Event) error {
 						count++
 						return nil
 					}))
 
 				Expect(window.Navigate("/index")).To(Succeed())
-				window.DispatchEvent(events.NewCustomEvent("gost-event"))
+				window.DispatchEvent(event.NewCustomEvent("gost-event"))
 				Expect(count).To(Equal(0))
 			})
 		})

@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gost-dom/browser/dom/events"
+	"github.com/gost-dom/browser/dom/event"
 	. "github.com/gost-dom/browser/internal/dom"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
@@ -111,7 +111,7 @@ type GetRootNodeOptions bool
 
 type Node interface {
 	entity.Entity
-	events.EventTarget
+	event.EventTarget
 	AppendChild(node Node) (Node, error)
 	GetRootNode(options ...GetRootNodeOptions) Node
 	ChildNodes() NodeList
@@ -156,7 +156,7 @@ type Node interface {
 }
 
 type node struct {
-	events.EventTarget
+	event.EventTarget
 	entity.Entity
 	self       Node
 	childNodes NodeList
@@ -165,7 +165,7 @@ type node struct {
 }
 
 func newNode(ownerDocument Document) node {
-	return node{events.NewEventTarget(), entity.New(), nil, newNodeList(), nil, ownerDocument}
+	return node{event.NewEventTarget(), entity.New(), nil, newNodeList(), nil, ownerDocument}
 }
 
 func newNodePtr(ownerDocument Document) *node {
@@ -453,7 +453,7 @@ func (n *node) nodes() []Node {
 
 func (n *node) SetSelf(node Node) {
 	n.self = node
-	events.SetEventTargetSelf(node)
+	event.SetEventTargetSelf(node)
 	if doc, ok := node.(Document); ok {
 		n.document = doc
 	}
