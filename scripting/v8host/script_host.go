@@ -90,13 +90,13 @@ func (c *V8ScriptContext) getInstanceForNode(
 	switch n := node.(type) {
 	case *event.Event:
 		switch n.Init.(type) {
-		case event.CustomEventInitDict:
+		case event.CustomEventInit:
 			return c.getInstanceForNodeByName("CustomEvent", n)
-		case PointerEventInitDict:
+		case PointerEventInit:
 			return c.getInstanceForNodeByName("PointerEvent", n)
-		case MouseEventInitDict:
+		case MouseEventInit:
 			return c.getInstanceForNodeByName("MouseEvent", n)
-		case UIEventInitDict:
+		case UIEventInit:
 			return c.getInstanceForNodeByName("UIEvent", n)
 		default:
 			return c.getInstanceForNodeByName("Event", n)

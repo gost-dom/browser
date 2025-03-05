@@ -6,17 +6,17 @@ import (
 	v8 "github.com/gost-dom/v8go"
 )
 
-func (w eventV8Wrapper) defaultEventInit() event.EventOption {
-	return event.EventOptions(nil)
+func (w eventV8Wrapper) defaultEventInit() event.EventInit {
+	return event.EventInit{}
 }
 
 func (w eventV8Wrapper) CreateInstance(
 	ctx *V8ScriptContext,
 	this *v8.Object,
 	type_ string,
-	o event.EventOption,
+	o event.EventInit,
 ) (*v8.Value, error) {
-	e := event.NewEvent(type_, o)
+	e := event.New(type_, o)
 	return w.store(e, ctx, this)
 }
 

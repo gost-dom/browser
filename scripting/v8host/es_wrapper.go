@@ -18,20 +18,29 @@ type converters struct{}
 func (w converters) decodeEventInit(
 	ctx *V8ScriptContext,
 	v *v8.Value,
-) (event.EventOption, error) {
-	var eventOptions []event.EventOption
+) (event.EventInit, error) {
+	// var eventOptions []event.EventOption
 	options, err0 := v.AsObject()
 
 	bubbles, err1 := options.Get("bubbles")
 	cancelable, err2 := options.Get("cancelable")
 	err := errors.Join(err0, err1, err2)
-	if err == nil {
-		eventOptions = []event.EventOption{
-			event.EventBubbles(bubbles.Boolean()),
-			event.EventCancelable(cancelable.Boolean()),
-		}
+	if err != nil {
+		return event.EventInit{}, err
 	}
-	return event.EventOptions(eventOptions...), nil
+	init := event.EventInit{
+		Bubbles:    bubbles.Boolean(),
+		Cancelable: cancelable.Boolean(),
+	}
+	// err := errors.Join(err0, err1, err2)
+	// if err == nil {
+	// 	eventOptions = []event.EventOption{
+	// 		event.EventBubbles(bubbles.Boolean()),
+	// 		event.EventCancelable(cancelable.Boolean()),
+	// 	}
+	// }
+	// return event.EventOptions(eventOptions...), nil
+	return init, nil
 }
 
 func (w converters) decodeUSVString(ctx *V8ScriptContext, val *v8.Value) (string, error) {

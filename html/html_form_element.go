@@ -61,21 +61,21 @@ func (e *formSubmitEvent) Submitter() dom.Element {
 
 func newFormDataEvent(data *FormData) *event.Event {
 	eventInit := FormDataEventInit{
-		event.NewEventInitDict(event.EventBubbles(true)),
+		event.EventInit{Bubbles: true},
 		data,
 	}
-	return event.NewEventInit(string(FormEventFormData), eventInit)
+	return event.New(string(FormEventFormData), eventInit)
 }
 
 func newSubmitEvent(submitter dom.Element) *event.Event {
 	eventInit := SubmitEventInit{
-		event.NewEventInitDict(
-			event.EventBubbles(true),
-			event.EventCancelable(true),
-		),
+		event.EventInit{
+			Bubbles:    true,
+			Cancelable: true,
+		},
 		submitter,
 	}
-	return event.NewEventInit(
+	return event.New(
 		string(FormEventSubmit),
 		eventInit)
 }

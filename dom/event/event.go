@@ -9,16 +9,16 @@ type Init interface {
 	cancelable() bool
 }
 
-type EventInitDict struct {
+type EventInit struct {
 	Bubbles    bool
 	Cancelable bool
 }
 
-func (d EventInitDict) bubbles() bool {
+func (d EventInit) bubbles() bool {
 	return d.Bubbles
 }
 
-func (d EventInitDict) cancelable() bool {
+func (d EventInit) cancelable() bool {
 	return d.Cancelable
 }
 
@@ -33,7 +33,7 @@ type Event struct {
 	currentTarget EventTarget
 }
 
-func newEvent(eventType string, eventInit Init) *Event {
+func New(eventType string, eventInit Init) *Event {
 	return &Event{
 		Entity:    entity.New(),
 		Init:      eventInit,
@@ -41,26 +41,12 @@ func newEvent(eventType string, eventInit Init) *Event {
 	}
 }
 
-func NewEventInitDict(options ...EventOption) EventInitDict {
-	var init EventInitDict
+func NewEventInit(options ...EventOption) EventInit {
+	var init EventInit
 	for _, o := range options {
 		o(&init)
 	}
 	return init
-}
-
-func NewEvent(eventType string, options ...EventOption) *Event {
-	var init EventInitDict
-	for _, o := range options {
-		o(&init)
-	}
-	e := newEvent(eventType, init)
-	return e
-}
-
-func NewEventInit(eventType string, init Init) *Event {
-	e := newEvent(eventType, init)
-	return e
 }
 
 func (e *Event) Bubbles() bool                  { return e.Init.bubbles() }

@@ -32,13 +32,13 @@ func newGojaEventListener(r *GojaContext, v goja.Value) event.EventHandler {
 func (h *gojaEventListener) HandleEvent(e *event.Event) error {
 	customEvent := h.instance.globals["Event"]
 	switch e.Init.(type) {
-	case dom.PointerEventInitDict:
+	case dom.PointerEventInit:
 		customEvent = h.instance.globals["PointerEvent"]
-	case dom.MouseEventInitDict:
+	case dom.MouseEventInit:
 		customEvent = h.instance.globals["MouseEvent"]
-	case dom.UIEventInitDict:
+	case dom.UIEventInit:
 		customEvent = h.instance.globals["UIEvent"]
-	case event.CustomEventInitDict:
+	case event.CustomEventInit:
 		customEvent = h.instance.globals["CustomEvent"]
 	default:
 		customEvent = h.instance.globals["Event"]

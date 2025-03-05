@@ -154,8 +154,8 @@ type popStateEvent struct {
 }
 
 func newPopStateEvent(state HistoryState) *event.Event {
-	return event.NewEventInit(HistoryEventPopState, PopStateEventInit{
-		Init:  event.EventInitDict{},
+	return event.New(HistoryEventPopState, PopStateEventInit{
+		Init:  event.EventInit{},
 		State: state})
 }
 

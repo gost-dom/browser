@@ -238,10 +238,10 @@ func (e *eventTarget) dispatchError(err error) {
 // 	Event
 // }
 
-type EventOption func(*EventInitDict)
+type EventOption func(*EventInit)
 
 func EventOptions(options ...EventOption) EventOption {
-	return func(e *EventInitDict) {
+	return func(e *EventInit) {
 		for _, o := range options {
 			o(e)
 		}
@@ -249,9 +249,9 @@ func EventOptions(options ...EventOption) EventOption {
 }
 
 func EventBubbles(bubbles bool) EventOption {
-	return func(e *EventInitDict) { e.Bubbles = bubbles }
+	return func(e *EventInit) { e.Bubbles = bubbles }
 }
 
 func EventCancelable(cancelable bool) EventOption {
-	return func(e *EventInitDict) { e.Cancelable = cancelable }
+	return func(e *EventInit) { e.Cancelable = cancelable }
 }

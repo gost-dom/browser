@@ -2,31 +2,31 @@ package event
 
 /* -------- customEvent -------- */
 
-type CustomEventInitDict struct {
-	EventInitDict
+type CustomEventInit struct {
+	EventInit
 	Details interface{}
 }
 
 func NewCustomEvent(eventType string, options ...EventOption) *Event {
-	var init CustomEventInitDict
+	var init CustomEventInit
 	for _, o := range options {
-		o(&init.EventInitDict)
+		o(&init.EventInit)
 	}
-	e := newEvent(eventType, init)
+	e := New(eventType, init)
 	return e
 }
 
 /* -------- errorEvent -------- */
 
-type ErrorEventInitDict struct {
-	EventInitDict
+type ErrorEventInit struct {
+	EventInit
 	Err error
 }
 
 func NewErrorEvent(err error) *Event {
-	e := newEvent(
+	e := New(
 		"error",
-		ErrorEventInitDict{Err: err, EventInitDict: EventInitDict{Bubbles: true}},
+		ErrorEventInit{Err: err, EventInit: EventInit{Bubbles: true}},
 	)
 	return e
 }
