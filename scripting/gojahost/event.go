@@ -43,7 +43,7 @@ func (w eventWrapper) PreventDefault(c g.FunctionCall) g.Value {
 }
 
 func (w eventWrapper) GetType(c g.FunctionCall) g.Value {
-	return w.ctx.vm.ToValue(w.getInstance(c).Type())
+	return w.ctx.vm.ToValue(w.getInstance(c).Type)
 }
 
 func (w eventWrapper) initializePrototype(prototype *g.Object,

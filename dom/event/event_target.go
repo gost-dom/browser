@@ -135,7 +135,7 @@ func (e *eventTarget) SetCatchAllHandler(handler EventHandler) {
 
 func (e *eventTarget) DispatchEvent(event *Event) bool {
 	event.reset(e.self)
-	log.Debug("Dispatch event", "EventType", event.Type())
+	log.Debug("Dispatch event", "EventType", event.Type)
 
 	event.phase = EventPhaseCapture
 	e.dispatchOnParent(event, true)
@@ -165,11 +165,10 @@ func (e *eventTarget) dispatchEvent(event *Event, capture bool) {
 		}
 	}
 
-	eventType := event.Type()
-	listeners := e.lmap[eventType]
+	listeners := e.lmap[event.Type]
 	for i := 0; i < len(listeners); i++ {
 		l := listeners[i]
-		log.Debug("eventTarget.dispatchEvent: Calling event handler", "type", event.Type())
+		log.Debug("eventTarget.dispatchEvent: Calling event handler", "type", event.Type)
 		if l.Capture == capture {
 			if err := l.Handler.HandleEvent(event); err != nil {
 				e.handleError(err)
@@ -177,7 +176,7 @@ func (e *eventTarget) dispatchEvent(event *Event, capture bool) {
 			if l.Once {
 				listeners = slices.Delete(listeners, i, i+1)
 				i--
-				e.lmap[eventType] = listeners
+				e.lmap[event.Type] = listeners
 			}
 		}
 	}

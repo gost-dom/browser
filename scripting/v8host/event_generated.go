@@ -106,7 +106,7 @@ func (w eventV8Wrapper) type_(info *v8.FunctionCallbackInfo) (*v8.Value, error) 
 	if err != nil {
 		return nil, err
 	}
-	result := instance.Type()
+	result := instance.GetType()
 	return w.toDOMString(ctx, result)
 }
 
