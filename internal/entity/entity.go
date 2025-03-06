@@ -11,26 +11,33 @@ type ObjectId = int32
 
 var idSeq atomic.Int32
 
+// NewObjectId returns a new guaranteed atomically unique ObjectId.
+//
+// Warning: This solution is temporary, and a different solution is intended to
+// be used, so function will likely disappear in the future.
 func NewObjectId() ObjectId {
 	return idSeq.Add(1)
 }
 
-// An Entity provides a unique identifier of an object that may be retrieved
+// An ObjectIder provides a unique identifier of an object that may be retrieved
 // from the DOM. It is part of a solution to ensure the same JS object is
 // returned for the same DOM element.
 //
 // Warning: This solution is temporary, and a different solution is intended to
 // be used. Do not rely on this value.
-type Entity interface {
+type ObjectIder interface {
 	ObjectId() ObjectId
 }
 
-type entity struct {
+// Entity is the default Entity implementation. The zero value will generate a
+// unique [ObjectId] the first time it is read.
+type Entity struct {
 	objectId ObjectId
 }
 
-func New() Entity {
-	return entity{NewObjectId()}
+func (b *Entity) ObjectId() ObjectId {
+	if b.objectId == 0 {
+		b.objectId = NewObjectId()
+	}
+	return b.objectId
 }
-
-func (b entity) ObjectId() ObjectId { return b.objectId }

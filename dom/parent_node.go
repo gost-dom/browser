@@ -95,5 +95,5 @@ func (n parentNode) QuerySelectorAll(pattern string) (NodeList, error) {
 		resultNode := m[node]
 		result[i] = resultNode
 	}
-	return newNodeList(result...), nil
+	return &nodeList{nodes: result}, nil
 }

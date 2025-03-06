@@ -3,7 +3,7 @@ package dom
 import "github.com/gost-dom/browser/internal/entity"
 
 type NodeList interface {
-	entity.Entity
+	entity.ObjectIder
 	Length() int
 	Item(index int) Node
 	All() []Node
@@ -19,10 +19,6 @@ type nodeList struct {
 type staticNodeSource []Node
 
 func (s staticNodeSource) ChildNodes() []Node { return s }
-
-func newNodeList(nodes ...Node) NodeList {
-	return &nodeList{entity.New(), nodes}
-}
 
 func (l *nodeList) Length() int { return len(l.nodes) }
 

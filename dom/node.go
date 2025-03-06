@@ -110,7 +110,7 @@ func (t NodeType) String() string {
 type GetRootNodeOptions bool
 
 type Node interface {
-	entity.Entity
+	entity.ObjectIder
 	event.EventTarget
 	AppendChild(node Node) (Node, error)
 	GetRootNode(options ...GetRootNodeOptions) Node
@@ -165,7 +165,11 @@ type node struct {
 }
 
 func newNode(ownerDocument Document) node {
-	return node{event.NewEventTarget(), entity.New(), nil, newNodeList(), nil, ownerDocument}
+	return node{
+		EventTarget: event.NewEventTarget(),
+		childNodes:  &nodeList{},
+		document:    ownerDocument,
+	}
 }
 
 func newNodePtr(ownerDocument Document) *node {
@@ -234,7 +238,6 @@ func (n *node) Contains(node Node) bool {
 	for _, c := range n.ChildNodes().All() {
 		if c == node || c.Contains(node) {
 			return true
-
 		}
 	}
 	return false

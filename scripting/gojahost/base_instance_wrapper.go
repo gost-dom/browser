@@ -31,7 +31,7 @@ func (c *GojaContext) storeInternal(value any, obj *g.Object) {
 		g.FLAG_FALSE,
 		g.FLAG_FALSE,
 	)
-	if e, ok := value.(entity.Entity); ok {
+	if e, ok := value.(entity.ObjectIder); ok {
 		c.cachedNodes[e.ObjectId()] = obj
 	}
 	// obj.SetSymbol(w.instance.wrappedGoObj, w.instance.vm.ToValue(value))
@@ -57,7 +57,7 @@ func (w baseInstanceWrapper[T]) getInstance(c g.FunctionCall) T {
 	}
 }
 
-func (w baseInstanceWrapper[T]) getCachedObject(e entity.Entity) g.Value {
+func (w baseInstanceWrapper[T]) getCachedObject(e entity.ObjectIder) g.Value {
 	return w.ctx.cachedNodes[e.ObjectId()]
 }
 
@@ -77,7 +77,7 @@ func (w baseInstanceWrapper[T]) decodeUSVString(v g.Value) string {
 	return v.String()
 }
 
-func (c *GojaContext) getPrototype(e entity.Entity) function {
+func (c *GojaContext) getPrototype(e entity.ObjectIder) function {
 	switch v := e.(type) {
 	case html.HTMLDocument:
 		return c.globals["HTMLDocument"]
@@ -95,7 +95,7 @@ func (c *GojaContext) getPrototype(e entity.Entity) function {
 	panic("Prototype lookup not defined")
 }
 
-func (c *GojaContext) toNode(e entity.Entity) g.Value {
+func (c *GojaContext) toNode(e entity.ObjectIder) g.Value {
 	if o, ok := c.cachedNodes[e.ObjectId()]; ok {
 		return o
 	}
@@ -108,15 +108,15 @@ func (c *GojaContext) toNode(e entity.Entity) g.Value {
 	return obj
 }
 
-func (c *GojaContext) toElement(e entity.Entity) g.Value {
+func (c *GojaContext) toElement(e entity.ObjectIder) g.Value {
 	return c.toNode(e)
 }
 
-func (w baseInstanceWrapper[T]) toNode(e entity.Entity) g.Value {
+func (w baseInstanceWrapper[T]) toNode(e entity.ObjectIder) g.Value {
 	return w.ctx.toNode(e)
 }
 
-func (w baseInstanceWrapper[T]) toElement(e entity.Entity) g.Value {
+func (w baseInstanceWrapper[T]) toElement(e entity.ObjectIder) g.Value {
 	return w.toNode(e)
 }
 
@@ -132,7 +132,7 @@ func (w baseInstanceWrapper[T]) toUSVString(b string) g.Value {
 	return w.ctx.vm.ToValue(b)
 }
 
-func (w baseInstanceWrapper[T]) toDocument(e entity.Entity) g.Value {
+func (w baseInstanceWrapper[T]) toDocument(e entity.ObjectIder) g.Value {
 	return w.toNode(e)
 }
 

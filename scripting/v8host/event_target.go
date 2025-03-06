@@ -20,7 +20,7 @@ func (l v8EventListener) HandleEvent(e *event.Event) error {
 	f, err := l.val.AsFunction()
 	if err == nil {
 		var event *v8.Value
-		event, err = l.ctx.getInstanceForNode(e)
+		event, err = l.ctx.getInstanceForNode(eventWrapper{e})
 		if err == nil {
 			_, err1 := f.Call(l.val, event)
 			err2 := l.ctx.eventLoop.tick()
@@ -41,23 +41,6 @@ type eventTargetV8Wrapper struct {
 
 func newEventTargetV8Wrapper(host *V8ScriptHost) eventTargetV8Wrapper {
 	return eventTargetV8Wrapper{newHandleReffedObject[event.EventTarget](host)}
-}
-
-func (w eventTargetV8Wrapper) getInstance(
-	info *v8.FunctionCallbackInfo,
-) (event.EventTarget, error) {
-	if info.This().GetInternalField(0).IsExternal() {
-		return w.handleReffedObject.getInstance(info)
-	} else {
-		ctx := w.scriptHost.mustGetContext(info.Context())
-		entity, ok := ctx.getCachedNode(info.This())
-		if ok {
-			if target, ok := entity.(event.EventTarget); ok {
-				return target, nil
-			}
-		}
-		return nil, errors.New("Stored object is not an event target")
-	}
 }
 
 func createEventTarget(host *V8ScriptHost) *v8.FunctionTemplate {

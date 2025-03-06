@@ -305,6 +305,11 @@ var _ = Describe("HTML Form", func() {
 
 			Describe("formdata event", func() {
 				It("Should be dispatched when a form is submitted", func() {
+					var eventBubbles bool
+					form.ParentElement().
+						AddEventListener("formdata", NewTestHandler(func(e *event.Event) {
+							eventBubbles = true
+						}))
 					var actualEvent *event.Event
 					form.AddEventListener(
 						"formdata",
@@ -315,9 +320,8 @@ var _ = Describe("HTML Form", func() {
 					)
 					form.Submit()
 					Expect(actualEvent).ToNot(BeNil())
-					Expect(actualEvent.Cancelable()).To(BeFalse())
-					Expect(actualEvent.Bubbles()).To(BeTrue())
-					formDataEventInit, ok := actualEvent.Init.(FormDataEventInit)
+					Expect(eventBubbles).To(BeTrue())
+					formDataEventInit, ok := actualEvent.Data.(FormDataEventInit)
 					Expect(ok).To(BeTrue())
 					Expect(formDataEventInit.FormData).ToNot(BeNil())
 					Expect(formDataEventInit.FormData).To(HaveFormDataValue("foo", "bar"))

@@ -77,10 +77,9 @@ func (i iterator[T]) newIteratorInstanceOfIterable(
 	next, stop := iter.Pull(seq)
 
 	iterator := &iteratorInstance[T]{
-		entity.New(),
-		items,
-		next,
-		stop,
+		items: items,
+		next:  next,
+		stop:  stop,
 	}
 	res, err := i.ot.NewInstance(context.v8ctx)
 	if err == nil {

@@ -2,13 +2,12 @@ package v8host
 
 import (
 	"github.com/gost-dom/browser/dom"
-	. "github.com/gost-dom/browser/dom"
 
 	v8 "github.com/gost-dom/v8go"
 )
 
 type documentFragmentV8Wrapper struct {
-	handleReffedObject[DocumentFragment]
+	handleReffedObject[dom.DocumentFragment]
 	parentNode *parentNodeV8Wrapper
 }
 
@@ -21,7 +20,7 @@ func (w documentFragmentV8Wrapper) constructor(info *v8.FunctionCallbackInfo) (*
 
 func createDocumentFragmentPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
 	wrapper := documentFragmentV8Wrapper{
-		newHandleReffedObject[DocumentFragment](host),
+		newHandleReffedObject[dom.DocumentFragment](host),
 		newParentNodeV8Wrapper(host),
 	}
 	constructor := v8.NewFunctionTemplateWithError(host.iso, wrapper.constructor)

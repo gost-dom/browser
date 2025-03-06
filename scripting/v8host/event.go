@@ -6,17 +6,35 @@ import (
 	v8 "github.com/gost-dom/v8go"
 )
 
-func (w eventV8Wrapper) defaultEventInit() event.EventInit {
-	return event.EventInit{}
+// the eventWrapper type is a temporary solution because the code generator
+// creates function calls, not field lookups.
+//
+// Once that if fixed, this type can be removed.
+type eventWrapper struct{ *event.Event }
+
+func (w eventWrapper) Type() string {
+	return w.Event.Type
+}
+func (w eventWrapper) Cancelable() bool {
+	return w.Event.Cancelable
+}
+func (w eventWrapper) Bubbles() bool {
+	return w.Event.Bubbles
+}
+
+func (w eventV8Wrapper) defaultEventInit() eventInitWrapper {
+	return eventInitWrapper{}
 }
 
 func (w eventV8Wrapper) CreateInstance(
 	ctx *V8ScriptContext,
 	this *v8.Object,
 	type_ string,
-	o event.EventInit,
+	o eventInitWrapper,
 ) (*v8.Value, error) {
-	e := event.New(type_, o)
+	e := eventWrapper{
+		&event.Event{Type: type_, Bubbles: o.bubbles, Cancelable: o.cancelable, Data: o.init},
+	}
 	return w.store(e, ctx, this)
 }
 
@@ -27,7 +45,7 @@ func (w eventV8Wrapper) toNullableEventTarget(
 	if e == nil {
 		return v8.Null(w.scriptHost.iso), nil
 	}
-	if entity, ok := e.(entity.Entity); ok {
+	if entity, ok := e.(entity.ObjectIder); ok {
 		return ctx.getInstanceForNode(entity)
 	}
 	return nil, v8.NewError(w.iso(), "TODO, Not yet supported")

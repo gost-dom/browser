@@ -42,7 +42,7 @@ type ScriptContext interface {
 
 type Window interface {
 	event.EventTarget
-	entity.Entity
+	entity.ObjectIder
 	Document() dom.Document
 	Close()
 	Clock() Clock
@@ -171,10 +171,10 @@ func NewWindowReader(reader io.Reader, windowOptions ...WindowOption) (Window, e
 func (w *window) parseReader(reader io.Reader) error {
 	err := w.domParser.ParseReader(w, &w.document, reader)
 	if err == nil {
-		w.document.DispatchEvent(event.New(dom.DocumentEventDOMContentLoaded, event.EventInit{}))
+		w.document.DispatchEvent(event.New(dom.DocumentEventDOMContentLoaded, nil))
 		// 'load' is emitted when css and images are loaded, not relevant yet, so
 		// just emit it right await
-		w.document.DispatchEvent(event.New(dom.DocumentEventLoad, event.EventInit{}))
+		w.document.DispatchEvent(event.New(dom.DocumentEventLoad, nil))
 	}
 	return err
 }

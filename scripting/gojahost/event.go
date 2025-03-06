@@ -26,13 +26,13 @@ func toBoolean(value g.Value) bool {
 func (w eventWrapper) constructor(call g.ConstructorCall, r *g.Runtime) *g.Object {
 	arg1 := call.Argument(0).String()
 	init := event.CustomEventInit{}
+	newInstance := &event.Event{Type: arg1, Data: init}
 	if arg2 := call.Argument(1); !g.IsUndefined(arg2) {
 		if obj, ok := arg2.(*g.Object); ok {
-			init.Bubbles = toBoolean(obj.Get("bubbles"))
-			init.Cancelable = toBoolean(obj.Get("cancelable"))
+			newInstance.Bubbles = toBoolean(obj.Get("bubbles"))
+			newInstance.Cancelable = toBoolean(obj.Get("cancelable"))
 		}
 	}
-	newInstance := event.NewCustomEvent(arg1, init)
 	w.storeInternal(newInstance, call.This)
 	return nil
 }
@@ -43,7 +43,7 @@ func (w eventWrapper) PreventDefault(c g.FunctionCall) g.Value {
 }
 
 func (w eventWrapper) GetType(c g.FunctionCall) g.Value {
-	return w.ctx.vm.ToValue(w.getInstance(c).Type())
+	return w.ctx.vm.ToValue(w.getInstance(c).Type)
 }
 
 func (w eventWrapper) initializePrototype(prototype *g.Object,

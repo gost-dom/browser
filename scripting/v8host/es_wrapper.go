@@ -5,8 +5,6 @@ import (
 	"runtime/cgo"
 
 	"github.com/gost-dom/browser/dom"
-	. "github.com/gost-dom/browser/dom"
-	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/entity"
 
@@ -15,10 +13,16 @@ import (
 
 type converters struct{}
 
+type eventInitWrapper struct {
+	bubbles    bool
+	cancelable bool
+	init       any
+}
+
 func (w converters) decodeEventInit(
 	ctx *V8ScriptContext,
 	v *v8.Value,
-) (event.EventInit, error) {
+) (eventInitWrapper, error) {
 	// var eventOptions []event.EventOption
 	options, err0 := v.AsObject()
 
@@ -26,11 +30,11 @@ func (w converters) decodeEventInit(
 	cancelable, err2 := options.Get("cancelable")
 	err := errors.Join(err0, err1, err2)
 	if err != nil {
-		return event.EventInit{}, err
+		return eventInitWrapper{}, err
 	}
-	init := event.EventInit{
-		Bubbles:    bubbles.Boolean(),
-		Cancelable: cancelable.Boolean(),
+	init := eventInitWrapper{
+		bubbles:    bubbles.Boolean(),
+		cancelable: cancelable.Boolean(),
 	}
 	// err := errors.Join(err0, err1, err2)
 	// if err == nil {
@@ -145,13 +149,13 @@ func (w converters) toBoolean(ctx *V8ScriptContext, val bool) (*v8.Value, error)
 	return v8.NewValue(ctx.host.iso, val)
 }
 
-func (w converters) toNodeList(ctx *V8ScriptContext, val NodeList) (*v8.Value, error) {
+func (w converters) toNodeList(ctx *V8ScriptContext, val dom.NodeList) (*v8.Value, error) {
 	return ctx.getInstanceForNodeByName("NodeList", val)
 }
 
 func (w converters) toHTMLFormControlsCollection(
 	ctx *V8ScriptContext,
-	val NodeList,
+	val dom.NodeList,
 ) (*v8.Value, error) {
 	return w.toNodeList(ctx, val)
 }
@@ -184,7 +188,7 @@ func (o handleReffedObject[T]) store(
 	handle := cgo.NewHandle(value)
 	ctx.addDisposer(handleDisposable(handle))
 
-	e, ok := value.(entity.Entity)
+	e, ok := value.(entity.ObjectIder)
 	if ok {
 		objectId := e.ObjectId()
 		ctx.v8nodes[objectId] = this.Value

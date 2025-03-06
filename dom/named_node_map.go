@@ -9,7 +9,7 @@ import (
 )
 
 type NamedNodeMap interface {
-	entity.Entity
+	entity.ObjectIder
 	All() iter.Seq[Attr]
 	Length() int
 	Item(index int) Attr
@@ -71,10 +71,6 @@ func (a *attr) CloneNode(
 	deep bool,
 ) Node {
 	return newAttr(a.attr.Key, a.attr.Val, a.OwnerDocument())
-}
-
-func newNamedNodeMapForElement(ownerElement Element) NamedNodeMap {
-	return &namedNodeMap{entity.New(), ownerElement}
 }
 
 func (m *namedNodeMap) All() iter.Seq[Attr] {

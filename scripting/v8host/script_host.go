@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	. "github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
@@ -61,14 +61,14 @@ type V8ScriptContext struct {
 	v8ctx      *v8.Context
 	window     html.Window
 	v8nodes    map[entity.ObjectId]*v8.Value
-	domNodes   map[entity.ObjectId]entity.Entity
+	domNodes   map[entity.ObjectId]entity.ObjectIder
 	eventLoop  *eventLoop
 	disposers  []disposable
 	clock      *clock.Clock
 	disposed   bool
 }
 
-func (c *V8ScriptContext) cacheNode(obj *v8.Object, node entity.Entity) (*v8.Value, error) {
+func (c *V8ScriptContext) cacheNode(obj *v8.Object, node entity.ObjectIder) (*v8.Value, error) {
 	val := obj.Value
 	objectId := node.ObjectId()
 	c.v8nodes[objectId] = val
@@ -81,49 +81,50 @@ func (c *V8ScriptContext) cacheNode(obj *v8.Object, node entity.Entity) (*v8.Val
 }
 
 func (c *V8ScriptContext) getInstanceForNode(
-	node entity.Entity,
+	node entity.ObjectIder,
 ) (*v8.Value, error) {
 	iso := c.host.iso
 	if node == nil {
 		return v8.Null(iso), nil
 	}
 	switch n := node.(type) {
-	case *event.Event:
-		switch n.Init.(type) {
+	case eventWrapper:
+		switch n.Data.(type) {
 		case event.CustomEventInit:
 			return c.getInstanceForNodeByName("CustomEvent", n)
-		case PointerEventInit:
+		case dom.PointerEventInit:
 			return c.getInstanceForNodeByName("PointerEvent", n)
-		case MouseEventInit:
+		case dom.MouseEventInit:
 			return c.getInstanceForNodeByName("MouseEvent", n)
-		case UIEventInit:
+		case dom.UIEventInit:
 			return c.getInstanceForNodeByName("UIEvent", n)
 		default:
 			return c.getInstanceForNodeByName("Event", n)
 		}
-	case Element:
+	case dom.Element:
 		if constructor, ok := scripting.HtmlElements[strings.ToLower(n.TagName())]; ok {
 			return c.getInstanceForNodeByName(constructor, n)
 		}
 		return c.getInstanceForNodeByName("Element", n)
 	case html.HTMLDocument:
 		return c.getInstanceForNodeByName("HTMLDocument", n)
-	case Document:
+	case dom.Document:
 		return c.getInstanceForNodeByName("Document", n)
-	case DocumentFragment:
+	case dom.DocumentFragment:
 		return c.getInstanceForNodeByName("DocumentFragment", n)
-	case Node:
+	case dom.Node:
 		return c.getInstanceForNodeByName("Node", n)
-	case Attr:
+	case dom.Attr:
 		return c.getInstanceForNodeByName("Attr", n)
 	default:
-		panic("Cannot lookup node")
+		fmt.Println("ERROR!", n)
+		panic(fmt.Sprintf("Cannot lookup node: %V", n))
 	}
 }
 
 func (c *V8ScriptContext) getInstanceForNodeByName(
 	constructor string,
-	node entity.Entity,
+	node entity.ObjectIder,
 ) (*v8.Value, error) {
 	iso := c.host.iso
 	if node == nil {
@@ -144,10 +145,10 @@ func (c *V8ScriptContext) getInstanceForNodeByName(
 	return nil, err
 }
 
-func (c *V8ScriptContext) getCachedNode(this *v8.Object) (entity.Entity, bool) {
+func (c *V8ScriptContext) getCachedNode(this *v8.Object) (entity.ObjectIder, bool) {
 
 	h := this.GetInternalField(0).ExternalHandle()
-	r, ok := h.Value().(entity.Entity)
+	r, ok := h.Value().(entity.ObjectIder)
 	return r, ok
 }
 
@@ -338,7 +339,7 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 		v8ctx:    v8.NewContext(host.iso, host.windowTemplate),
 		window:   w,
 		v8nodes:  make(map[entity.ObjectId]*v8.Value),
-		domNodes: make(map[entity.ObjectId]entity.Entity),
+		domNodes: make(map[entity.ObjectId]entity.ObjectIder),
 	}
 	errorCallback := func(err error) {
 		w.DispatchEvent(event.NewErrorEvent(err))
