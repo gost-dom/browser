@@ -8,9 +8,6 @@ type Entity interface {
 
 /* -------- event -------- */
 
-type EventInit struct {
-}
-
 type Event struct {
 	entity.Entity
 	Init       any

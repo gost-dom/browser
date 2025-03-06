@@ -13,7 +13,6 @@ const HistoryEventPopState = "popstate"
 //
 // See also: https://developer.mozilla.org/en-US/docs/Web/API/PopStateEvent
 type PopStateEventInit struct {
-	event.EventInit
 	State HistoryState
 }
 

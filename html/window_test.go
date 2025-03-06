@@ -302,7 +302,7 @@ var _ = Describe("Window", func() {
 					}))
 
 				Expect(window.Navigate("/index")).To(Succeed())
-				window.DispatchEvent(event.New("gost-event", event.EventInit{}))
+				window.DispatchEvent(event.New("gost-event", nil))
 				Expect(count).To(Equal(0))
 			})
 		})

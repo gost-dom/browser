@@ -24,12 +24,10 @@ type GetReader interface {
 }
 
 type FormDataEventInit struct {
-	event.EventInit
 	FormData *FormData
 }
 
 type SubmitEventInit struct {
-	event.EventInit
 	Submitter dom.Element
 }
 
@@ -69,10 +67,7 @@ func newFormDataEvent(data *FormData) *event.Event {
 }
 
 func newSubmitEvent(submitter dom.Element) *event.Event {
-	eventInit := SubmitEventInit{
-		event.EventInit{},
-		submitter,
-	}
+	eventInit := SubmitEventInit{submitter}
 	return &event.Event{
 		Type:       string(FormEventSubmit),
 		Bubbles:    true,
