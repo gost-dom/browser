@@ -202,7 +202,6 @@ func getWrappedInstance[T any](object *v8.Object) (res T, err error) {
 	var ok bool
 	res, ok = handle.Value().(T)
 	if !ok {
-		panic("Foo")
 		err = errors.New("Not a valid type stored in the handle")
 	}
 	return

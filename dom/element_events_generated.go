@@ -34,8 +34,8 @@ func (e *elementEvents) Click() bool {
 
 func (e *elementEvents) Contextmenu() bool {
 	init := PointerEventInit{}
-	init.Cancelable = true
 	init.Bubbles = true
+	init.Cancelable = true
 	return e.target.DispatchEvent(
 		NewPointerEvent("contextmenu", init),
 	)
