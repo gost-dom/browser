@@ -9,8 +9,8 @@ type Entity interface {
 /* -------- event -------- */
 
 type Init interface {
-	bubbles() bool
-	cancelable() bool
+	GetBubbles() bool
+	GetCancelable() bool
 }
 
 type EventInit struct {
@@ -18,20 +18,23 @@ type EventInit struct {
 	Cancelable bool
 }
 
-func (d EventInit) bubbles() bool {
+func (d EventInit) GetBubbles() bool {
 	return d.Bubbles
 }
 
-func (d EventInit) cancelable() bool {
+func (d EventInit) GetCancelable() bool {
 	return d.Cancelable
 }
 
 type Event struct {
 	entity.Entity
 	Init
+	Type       string
+	Bubbles    bool
+	Cancelable bool
+
 	phase         EventPhase
 	cancelled     bool
-	Type          string
 	stopped       bool
 	target        EventTarget
 	currentTarget EventTarget
@@ -49,17 +52,13 @@ func New(eventType string, eventInit Init) *Event {
 	}
 }
 
-func (e *Event) Bubbles() bool              { return e.Init.bubbles() }
-func (e *Event) Cancelable() bool           { return e.Init.cancelable() }
+func (e *Event) bubbles() bool              { return e.Bubbles || e.Init.GetBubbles() }
+func (e *Event) cancelable() bool           { return e.Cancelable || e.Init.GetCancelable() }
 func (e *Event) StopPropagation()           { e.stopped = true }
 func (e *Event) PreventDefault()            { e.cancelled = true }
 func (e *Event) EventPhase() EventPhase     { return e.phase }
 func (e *Event) Target() EventTarget        { return e.target }
 func (e *Event) CurrentTarget() EventTarget { return e.currentTarget }
-
-// Deprecated: Just read Event.Type, this method still exists because the code
-// generator still creates code calling this
-func (e *Event) GetType() string { return e.Type }
 
 func (e *Event) reset(t EventTarget) {
 	e.target = t

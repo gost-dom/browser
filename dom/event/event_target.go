@@ -149,7 +149,7 @@ func (e *eventTarget) DispatchEvent(event *Event) bool {
 
 	event.phase = EventPhaseNone
 
-	return !(event.Cancelable() && event.cancelled)
+	return !(event.cancelable() && event.cancelled)
 }
 
 func (e *eventTarget) dispatchEvent(event *Event, capture bool) {
@@ -197,7 +197,7 @@ func (e *eventTarget) dispatchOnParent(event *Event, capture bool) {
 			e.parentTarget.dispatchOnParent(event, capture)
 			e.parentTarget.dispatchEvent(event, capture)
 		} else {
-			if event.Bubbles() {
+			if event.bubbles() {
 				e.parentTarget.dispatchEvent(event, capture)
 				e.parentTarget.dispatchOnParent(event, capture)
 			}

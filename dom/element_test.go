@@ -307,8 +307,8 @@ var _ = Describe("Element", func() {
 				}),
 			)
 			element.Click()
-			gomega.Expect(ev.Cancelable()).To(BeTrue())
-			gomega.Expect(ev.Bubbles()).To(BeTrue())
+			gomega.Expect(ev.Init.GetCancelable()).To(BeTrue())
+			gomega.Expect(ev.Init.GetBubbles()).To(BeTrue())
 		})
 	})
 

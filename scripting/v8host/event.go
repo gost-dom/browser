@@ -6,6 +6,22 @@ import (
 	v8 "github.com/gost-dom/v8go"
 )
 
+// the eventWrapper type is a temporary solution because the code generator
+// creates function calls, not field lookups.
+//
+// Once that if fixed, this type can be removed.
+type eventWrapper struct{ *event.Event }
+
+func (w eventWrapper) Type() string {
+	return w.Event.Type
+}
+func (w eventWrapper) Cancelable() bool {
+	return w.Event.Cancelable
+}
+func (w eventWrapper) Bubbles() bool {
+	return w.Event.Bubbles
+}
+
 func (w eventV8Wrapper) defaultEventInit() event.EventInit {
 	return event.EventInit{}
 }
@@ -16,7 +32,7 @@ func (w eventV8Wrapper) CreateInstance(
 	type_ string,
 	o event.EventInit,
 ) (*v8.Value, error) {
-	e := event.New(type_, o)
+	e := eventWrapper{event.New(type_, o)}
 	return w.store(e, ctx, this)
 }
 

@@ -88,7 +88,7 @@ func (c *V8ScriptContext) getInstanceForNode(
 		return v8.Null(iso), nil
 	}
 	switch n := node.(type) {
-	case *event.Event:
+	case eventWrapper:
 		switch n.Init.(type) {
 		case event.CustomEventInit:
 			return c.getInstanceForNodeByName("CustomEvent", n)
@@ -117,7 +117,8 @@ func (c *V8ScriptContext) getInstanceForNode(
 	case dom.Attr:
 		return c.getInstanceForNodeByName("Attr", n)
 	default:
-		panic("Cannot lookup node")
+		fmt.Println("ERROR!", n)
+		panic(fmt.Sprintf("Cannot lookup node: %V", n))
 	}
 }
 
