@@ -43,23 +43,6 @@ func newEventTargetV8Wrapper(host *V8ScriptHost) eventTargetV8Wrapper {
 	return eventTargetV8Wrapper{newHandleReffedObject[event.EventTarget](host)}
 }
 
-func (w eventTargetV8Wrapper) getInstance(
-	info *v8.FunctionCallbackInfo,
-) (event.EventTarget, error) {
-	if info.This().GetInternalField(0).IsExternal() {
-		return w.handleReffedObject.getInstance(info)
-	} else {
-		ctx := w.scriptHost.mustGetContext(info.Context())
-		entity, ok := ctx.getCachedNode(info.This())
-		if ok {
-			if target, ok := entity.(event.EventTarget); ok {
-				return target, nil
-			}
-		}
-		return nil, errors.New("Stored object is not an event target")
-	}
-}
-
 func createEventTarget(host *V8ScriptHost) *v8.FunctionTemplate {
 	iso := host.iso
 	wrapper := newEventTargetV8Wrapper(host)
