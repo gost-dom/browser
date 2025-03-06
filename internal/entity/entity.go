@@ -19,23 +19,23 @@ func NewObjectId() ObjectId {
 	return idSeq.Add(1)
 }
 
-// An Entity provides a unique identifier of an object that may be retrieved
+// An ObjectIder provides a unique identifier of an object that may be retrieved
 // from the DOM. It is part of a solution to ensure the same JS object is
 // returned for the same DOM element.
 //
 // Warning: This solution is temporary, and a different solution is intended to
 // be used. Do not rely on this value.
-type Entity interface {
+type ObjectIder interface {
 	ObjectId() ObjectId
 }
 
-// Base is the default Entity implementation. The zero value will generate a
+// Entity is the default Entity implementation. The zero value will generate a
 // unique [ObjectId] the first time it is read.
-type Base struct {
+type Entity struct {
 	objectId ObjectId
 }
 
-func (b *Base) ObjectId() ObjectId {
+func (b *Entity) ObjectId() ObjectId {
 	if b.objectId == 0 {
 		b.objectId = NewObjectId()
 	}

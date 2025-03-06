@@ -42,7 +42,7 @@ type ScriptContext interface {
 
 type Window interface {
 	event.EventTarget
-	entity.Entity
+	entity.ObjectIder
 	Document() dom.Document
 	Close()
 	Clock() Clock

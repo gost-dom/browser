@@ -3,7 +3,7 @@ package dom
 import "github.com/gost-dom/browser/internal/entity"
 
 type NodeList interface {
-	entity.Entity
+	entity.ObjectIder
 	Length() int
 	Item(index int) Node
 	All() []Node
@@ -12,7 +12,7 @@ type NodeList interface {
 }
 
 type nodeList struct {
-	entity.Base
+	entity.Entity
 	nodes []Node
 }
 

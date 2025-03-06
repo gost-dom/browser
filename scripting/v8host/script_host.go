@@ -61,14 +61,14 @@ type V8ScriptContext struct {
 	v8ctx      *v8.Context
 	window     html.Window
 	v8nodes    map[entity.ObjectId]*v8.Value
-	domNodes   map[entity.ObjectId]entity.Entity
+	domNodes   map[entity.ObjectId]entity.ObjectIder
 	eventLoop  *eventLoop
 	disposers  []disposable
 	clock      *clock.Clock
 	disposed   bool
 }
 
-func (c *V8ScriptContext) cacheNode(obj *v8.Object, node entity.Entity) (*v8.Value, error) {
+func (c *V8ScriptContext) cacheNode(obj *v8.Object, node entity.ObjectIder) (*v8.Value, error) {
 	val := obj.Value
 	objectId := node.ObjectId()
 	c.v8nodes[objectId] = val
@@ -81,7 +81,7 @@ func (c *V8ScriptContext) cacheNode(obj *v8.Object, node entity.Entity) (*v8.Val
 }
 
 func (c *V8ScriptContext) getInstanceForNode(
-	node entity.Entity,
+	node entity.ObjectIder,
 ) (*v8.Value, error) {
 	iso := c.host.iso
 	if node == nil {
@@ -123,7 +123,7 @@ func (c *V8ScriptContext) getInstanceForNode(
 
 func (c *V8ScriptContext) getInstanceForNodeByName(
 	constructor string,
-	node entity.Entity,
+	node entity.ObjectIder,
 ) (*v8.Value, error) {
 	iso := c.host.iso
 	if node == nil {
@@ -144,10 +144,10 @@ func (c *V8ScriptContext) getInstanceForNodeByName(
 	return nil, err
 }
 
-func (c *V8ScriptContext) getCachedNode(this *v8.Object) (entity.Entity, bool) {
+func (c *V8ScriptContext) getCachedNode(this *v8.Object) (entity.ObjectIder, bool) {
 
 	h := this.GetInternalField(0).ExternalHandle()
-	r, ok := h.Value().(entity.Entity)
+	r, ok := h.Value().(entity.ObjectIder)
 	return r, ok
 }
 
@@ -338,7 +338,7 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 		v8ctx:    v8.NewContext(host.iso, host.windowTemplate),
 		window:   w,
 		v8nodes:  make(map[entity.ObjectId]*v8.Value),
-		domNodes: make(map[entity.ObjectId]entity.Entity),
+		domNodes: make(map[entity.ObjectId]entity.ObjectIder),
 	}
 	errorCallback := func(err error) {
 		w.DispatchEvent(event.NewErrorEvent(err))

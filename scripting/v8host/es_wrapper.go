@@ -183,7 +183,7 @@ func (o handleReffedObject[T]) store(
 	handle := cgo.NewHandle(value)
 	ctx.addDisposer(handleDisposable(handle))
 
-	e, ok := value.(entity.Entity)
+	e, ok := value.(entity.ObjectIder)
 	if ok {
 		objectId := e.ObjectId()
 		ctx.v8nodes[objectId] = this.Value

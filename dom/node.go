@@ -110,7 +110,7 @@ func (t NodeType) String() string {
 type GetRootNodeOptions bool
 
 type Node interface {
-	entity.Entity
+	entity.ObjectIder
 	event.EventTarget
 	AppendChild(node Node) (Node, error)
 	GetRootNode(options ...GetRootNodeOptions) Node
@@ -157,7 +157,7 @@ type Node interface {
 
 type node struct {
 	event.EventTarget
-	entity.Base
+	entity.Entity
 	self       Node
 	childNodes NodeList
 	parent     Node

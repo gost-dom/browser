@@ -41,7 +41,7 @@ type iterable[T any] interface {
 }
 
 type iteratorInstance[T any] struct {
-	entity.Base
+	entity.Entity
 	items iterable[T]
 	next  func() (T, bool)
 	stop  func()

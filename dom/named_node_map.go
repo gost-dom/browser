@@ -9,7 +9,7 @@ import (
 )
 
 type NamedNodeMap interface {
-	entity.Entity
+	entity.ObjectIder
 	All() iter.Seq[Attr]
 	Length() int
 	Item(index int) Attr
@@ -32,7 +32,7 @@ type Attr interface {
 }
 
 type namedNodeMap struct {
-	entity.Base
+	entity.Entity
 	ownerElement Element
 }
 

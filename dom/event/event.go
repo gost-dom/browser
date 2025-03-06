@@ -27,7 +27,7 @@ func (d EventInit) cancelable() bool {
 }
 
 type Event struct {
-	entity.Base
+	entity.Entity
 	Init
 	phase         EventPhase
 	cancelled     bool

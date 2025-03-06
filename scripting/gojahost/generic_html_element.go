@@ -6,11 +6,11 @@ import (
 )
 
 type genericElementWrapper struct {
-	baseInstanceWrapper[entity.Entity]
+	baseInstanceWrapper[entity.ObjectIder]
 }
 
 func newGenericElementWrapper(instance *GojaContext) wrapper {
-	return genericElementWrapper{newBaseInstanceWrapper[entity.Entity](instance)}
+	return genericElementWrapper{newBaseInstanceWrapper[entity.ObjectIder](instance)}
 }
 func (w genericElementWrapper) constructor(call g.ConstructorCall, r *g.Runtime) *g.Object {
 	panic(r.NewTypeError("Illegal Constructor"))

@@ -27,7 +27,7 @@ func (w eventV8Wrapper) toNullableEventTarget(
 	if e == nil {
 		return v8.Null(w.scriptHost.iso), nil
 	}
-	if entity, ok := e.(entity.Entity); ok {
+	if entity, ok := e.(entity.ObjectIder); ok {
 		return ctx.getInstanceForNode(entity)
 	}
 	return nil, v8.NewError(w.iso(), "TODO, Not yet supported")
