@@ -1,6 +1,15 @@
 # Changelog - Gost-DOM
 
 
+## [0.4.0](https://github.com/gost-dom/browser/compare/v0.3.1...v0.4.0) (2025-03-06)
+
+
+### Features
+
+* Add more event types ([311d50a](https://github.com/gost-dom/browser/commit/311d50adbe3b8495f6a832a85b483140f6b6d41a))
+* Create prototype chain for `click` events ([bed3be2](https://github.com/gost-dom/browser/commit/bed3be2f02d378a1a966480010a06630fd6bb9da))
+* Implement event capture phase ([29942d3](https://github.com/gost-dom/browser/commit/29942d3a59e14d4a5f1f2a19f8aac8418b39a1d7))
+
 ## [0.3.1](https://github.com/gost-dom/browser/compare/v0.3.0...v0.3.1) (2025-03-05)
 
 
