@@ -3,6 +3,7 @@ package dom
 import (
 	"iter"
 
+	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/internal/entity"
 	"golang.org/x/net/html"
 )
@@ -49,7 +50,7 @@ func newAttr(n, v string, doc Document) Attr {
 			Val: v,
 		},
 	}
-	res.setSelf(res)
+	event.SetEventTargetSelf(res)
 	return res
 }
 

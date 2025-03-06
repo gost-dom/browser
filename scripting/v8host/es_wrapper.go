@@ -6,6 +6,7 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	. "github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/entity"
 
@@ -17,20 +18,29 @@ type converters struct{}
 func (w converters) decodeEventInit(
 	ctx *V8ScriptContext,
 	v *v8.Value,
-) (dom.EventOption, error) {
-	var eventOptions []dom.EventOption
+) (event.EventInit, error) {
+	// var eventOptions []event.EventOption
 	options, err0 := v.AsObject()
 
 	bubbles, err1 := options.Get("bubbles")
 	cancelable, err2 := options.Get("cancelable")
 	err := errors.Join(err0, err1, err2)
-	if err == nil {
-		eventOptions = []dom.EventOption{
-			dom.EventBubbles(bubbles.Boolean()),
-			dom.EventCancelable(cancelable.Boolean()),
-		}
+	if err != nil {
+		return event.EventInit{}, err
 	}
-	return dom.EventOptions(eventOptions), nil
+	init := event.EventInit{
+		Bubbles:    bubbles.Boolean(),
+		Cancelable: cancelable.Boolean(),
+	}
+	// err := errors.Join(err0, err1, err2)
+	// if err == nil {
+	// 	eventOptions = []event.EventOption{
+	// 		event.EventBubbles(bubbles.Boolean()),
+	// 		event.EventCancelable(cancelable.Boolean()),
+	// 	}
+	// }
+	// return event.EventOptions(eventOptions...), nil
+	return init, nil
 }
 
 func (w converters) decodeUSVString(ctx *V8ScriptContext, val *v8.Value) (string, error) {
@@ -192,6 +202,7 @@ func getWrappedInstance[T any](object *v8.Object) (res T, err error) {
 	var ok bool
 	res, ok = handle.Value().(T)
 	if !ok {
+		panic("Foo")
 		err = errors.New("Not a valid type stored in the handle")
 	}
 	return

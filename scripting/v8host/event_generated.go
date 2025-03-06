@@ -4,7 +4,7 @@ package v8host
 
 import (
 	"errors"
-	dom "github.com/gost-dom/browser/dom"
+	event "github.com/gost-dom/browser/dom/event"
 	log "github.com/gost-dom/browser/internal/log"
 	v8 "github.com/gost-dom/v8go"
 )
@@ -14,11 +14,11 @@ func init() {
 }
 
 type eventV8Wrapper struct {
-	handleReffedObject[dom.Event]
+	handleReffedObject[*event.Event]
 }
 
 func newEventV8Wrapper(scriptHost *V8ScriptHost) *eventV8Wrapper {
-	return &eventV8Wrapper{newHandleReffedObject[dom.Event](scriptHost)}
+	return &eventV8Wrapper{newHandleReffedObject[*event.Event](scriptHost)}
 }
 
 func createEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {

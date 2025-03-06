@@ -5,22 +5,7 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
-	"github.com/onsi/gomega"
-	"github.com/onsi/gomega/types"
-	"github.com/stretchr/testify/suite"
 )
-
-type GomegaSuite struct {
-	suite.Suite
-	gomega gomega.Gomega
-}
-
-func (s *GomegaSuite) Expect(actual interface{}, extra ...interface{}) types.Assertion {
-	if s.gomega == nil {
-		s.gomega = gomega.NewWithT(s.T())
-	}
-	return s.gomega.Expect(actual, extra...)
-}
 
 // Designed as a "mixin" for a testify Suite, that can create a document on
 // demand.

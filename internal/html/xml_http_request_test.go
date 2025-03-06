@@ -6,7 +6,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom/event"
 	. "github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	. "github.com/gost-dom/browser/internal/html"
@@ -120,19 +120,25 @@ var _ = Describe("XmlHTTPRequest", func() {
 			xhr.Open("GET", "/dummy")
 			xhr.AddEventListener(
 				XHREventLoadstart,
-				dom.NewEventHandlerFunc(func(e dom.Event) error {
+				event.NewEventHandlerFunc(func(e *event.Event) error {
 					loadStarted = true
 					return nil
 				}),
 			)
-			xhr.AddEventListener(XHREventLoadend, dom.NewEventHandlerFunc(func(e dom.Event) error {
-				loadEnded = true
-				return nil
-			}))
-			xhr.AddEventListener(XHREventLoad, dom.NewEventHandlerFunc(func(e dom.Event) error {
-				loaded = true
-				return nil
-			}))
+			xhr.AddEventListener(
+				XHREventLoadend,
+				event.NewEventHandlerFunc(func(e *event.Event) error {
+					loadEnded = true
+					return nil
+				}),
+			)
+			xhr.AddEventListener(
+				XHREventLoad,
+				event.NewEventHandlerFunc(func(e *event.Event) error {
+					loaded = true
+					return nil
+				}),
+			)
 			By("Sending the request")
 			Expect(xhr.Send()).To(Succeed())
 			Expect(loadStarted).To(BeTrue(), "loadstart emitted")

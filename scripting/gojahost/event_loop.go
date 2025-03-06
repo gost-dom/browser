@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/dop251/goja"
-	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/internal/clock"
 )
 
@@ -58,7 +58,7 @@ func (l eventLoopWrapper) setTimeout(c goja.FunctionCall) goja.Value {
 		func() {
 			_, err := f(l.ctx.vm.GlobalObject())
 			if err != nil {
-				l.ctx.window.DispatchEvent(dom.NewErrorEvent(err))
+				l.ctx.window.DispatchEvent(event.NewErrorEvent(err))
 			}
 		},
 		time.Millisecond*time.Duration(delay),
@@ -82,7 +82,7 @@ func (l eventLoopWrapper) setInterval(c goja.FunctionCall) goja.Value {
 		func() {
 			_, err := f(l.ctx.vm.GlobalObject())
 			if err != nil {
-				l.ctx.window.DispatchEvent(dom.NewErrorEvent(err))
+				l.ctx.window.DispatchEvent(event.NewErrorEvent(err))
 			}
 		},
 		time.Millisecond*time.Duration(delay),

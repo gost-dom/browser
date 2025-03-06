@@ -5,6 +5,8 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	. "github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom/event"
+	. "github.com/gost-dom/browser/internal/testing"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 	"github.com/stretchr/testify/suite"
@@ -295,15 +297,18 @@ var _ = Describe("Element", func() {
 
 	Describe("Click", func() {
 		It("Is cancelable and bubbles", func() {
-			var event Event
+			var ev *event.Event
 			doc := ParseHtmlString(`<body><div id="target"></div></body>`)
 			element := doc.GetElementById("target")
-			element.AddEventListener("click", NewEventHandlerFuncWithoutError(func(e Event) {
-				event = e
-			}))
+			element.AddEventListener(
+				"click",
+				event.NewEventHandlerFuncWithoutError(func(e *event.Event) {
+					ev = e
+				}),
+			)
 			element.Click()
-			gomega.Expect(event.Cancelable()).To(BeTrue())
-			gomega.Expect(event.Bubbles()).To(BeTrue())
+			gomega.Expect(ev.Cancelable()).To(BeTrue())
+			gomega.Expect(ev.Bubbles()).To(BeTrue())
 		})
 	})
 

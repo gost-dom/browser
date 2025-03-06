@@ -4,7 +4,7 @@ import (
 	"errors"
 	"runtime/cgo"
 
-	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom/event"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -13,12 +13,12 @@ func createCustomEvent(host *V8ScriptHost) *v8.FunctionTemplate {
 	res := v8.NewFunctionTemplateWithError(
 		iso,
 		func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+			init := event.CustomEventInit{}
 			ctx := host.mustGetContext(info.Context())
 			args := info.Args()
 			if len(args) < 1 {
 				return nil, v8.NewTypeError(iso, "Must have at least one constructor argument")
 			}
-			var eventOptions []dom.EventOption
 			if len(args) > 1 {
 				if options, err := args[1].AsObject(); err == nil {
 					bubbles, err1 := options.Get("bubbles")
@@ -27,13 +27,11 @@ func createCustomEvent(host *V8ScriptHost) *v8.FunctionTemplate {
 					if err != nil {
 						return nil, err
 					}
-					eventOptions = []dom.EventOption{
-						dom.EventBubbles(bubbles.Boolean()),
-						dom.EventCancelable(cancelable.Boolean()),
-					}
+					init.Bubbles = bubbles.Boolean()
+					init.Cancelable = cancelable.Boolean()
 				}
 			}
-			e := dom.NewCustomEvent(args[0].String(), eventOptions...)
+			e := event.NewCustomEvent(args[0].String(), init)
 			handle := cgo.NewHandle(e)
 			ctx.addDisposer(handleDisposable(handle))
 			info.This().SetInternalField(0, v8.NewValueExternalHandle(iso, handle))

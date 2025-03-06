@@ -263,6 +263,9 @@ func (d ESConstructorData) Includes() []idl.Interface {
 }
 
 func (d ESConstructorData) GetInternalPackage() string {
+	if d.Name() == "Event" {
+		return packagenames.Events
+	}
 	return packagenames.PackageName(d.Spec.DomSpec.Name)
 }
 

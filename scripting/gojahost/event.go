@@ -2,19 +2,19 @@ package gojahost
 
 import (
 	g "github.com/dop251/goja"
-	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom/event"
 )
 
 type eventWrapper struct {
-	baseInstanceWrapper[dom.Event]
+	baseInstanceWrapper[*event.Event]
 }
 
 func newEventWrapperAsWrapper(instance *GojaContext) wrapper { return newEventWrapper(instance) }
 func newEventWrapper(instance *GojaContext) eventWrapper {
-	return eventWrapper{newBaseInstanceWrapper[dom.Event](instance)}
+	return eventWrapper{newBaseInstanceWrapper[*event.Event](instance)}
 }
 
-type gojaEvent[T dom.Event] struct {
+type gojaEvent[T event.Event] struct {
 	Value *g.Object
 	Event T
 }
@@ -25,14 +25,14 @@ func toBoolean(value g.Value) bool {
 
 func (w eventWrapper) constructor(call g.ConstructorCall, r *g.Runtime) *g.Object {
 	arg1 := call.Argument(0).String()
-	options := make([]dom.EventOption, 0, 2)
+	init := event.CustomEventInit{}
 	if arg2 := call.Argument(1); !g.IsUndefined(arg2) {
 		if obj, ok := arg2.(*g.Object); ok {
-			options = append(options, dom.EventCancelable(toBoolean(obj.Get("cancelable"))))
-			options = append(options, dom.EventBubbles(toBoolean(obj.Get("bubbles"))))
+			init.Bubbles = toBoolean(obj.Get("bubbles"))
+			init.Cancelable = toBoolean(obj.Get("cancelable"))
 		}
 	}
-	newInstance := dom.NewCustomEvent(arg1, options...)
+	newInstance := event.NewCustomEvent(arg1, init)
 	w.storeInternal(newInstance, call.This)
 	return nil
 }

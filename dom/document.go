@@ -3,6 +3,7 @@ package dom
 import (
 	"io"
 
+	"github.com/gost-dom/browser/dom/event"
 	"golang.org/x/net/html"
 )
 
@@ -19,7 +20,7 @@ const (
 // an oversight that it wasn't placed in an internal package. This will be
 // removed from the public API in a future version
 type DocumentParentWindow interface {
-	EventTarget
+	event.EventTarget
 	ParseFragment(ownerDocument Document, reader io.Reader) (DocumentFragment, error)
 }
 
@@ -50,7 +51,7 @@ func NewDocument(window DocumentParentWindow) Document {
 	// Hmmm, can document be replaced; and now the old doc's event goes to a
 	// window they shouldn't?
 	// What about disconnected documents, e.g. `new Document()` in the browser?
-	result.parentTarget = window
+	result.SetParentTarget(window)
 	result.SetSelf(result)
 	return result
 }

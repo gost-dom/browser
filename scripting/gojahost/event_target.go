@@ -2,16 +2,17 @@ package gojahost
 
 import (
 	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom/event"
 
 	"github.com/dop251/goja"
 )
 
 type eventTargetWrapper struct {
-	baseInstanceWrapper[dom.EventTarget]
+	baseInstanceWrapper[event.EventTarget]
 }
 
 func newEventTargetWrapper(instance *GojaContext) wrapper {
-	return eventTargetWrapper{newBaseInstanceWrapper[dom.EventTarget](instance)}
+	return eventTargetWrapper{newBaseInstanceWrapper[event.EventTarget](instance)}
 }
 
 type gojaEventListener struct {
@@ -20,7 +21,7 @@ type gojaEventListener struct {
 	f        goja.Callable
 }
 
-func newGojaEventListener(r *GojaContext, v goja.Value) dom.EventHandler {
+func newGojaEventListener(r *GojaContext, v goja.Value) event.EventHandler {
 	f, ok := goja.AssertFunction(v)
 	if !ok {
 		panic("TODO")
@@ -28,17 +29,19 @@ func newGojaEventListener(r *GojaContext, v goja.Value) dom.EventHandler {
 	return &gojaEventListener{r, v, f}
 }
 
-func (h *gojaEventListener) HandleEvent(e dom.Event) error {
+func (h *gojaEventListener) HandleEvent(e *event.Event) error {
 	customEvent := h.instance.globals["Event"]
-	switch e.(type) {
-	case dom.PointerEvent:
+	switch e.Init.(type) {
+	case dom.PointerEventInit:
 		customEvent = h.instance.globals["PointerEvent"]
-	case dom.MouseEvent:
+	case dom.MouseEventInit:
 		customEvent = h.instance.globals["MouseEvent"]
-	case dom.UIEvent:
+	case dom.UIEventInit:
 		customEvent = h.instance.globals["UIEvent"]
-	case dom.CustomEvent:
+	case event.CustomEventInit:
 		customEvent = h.instance.globals["CustomEvent"]
+	default:
+		customEvent = h.instance.globals["Event"]
 	}
 	obj := h.instance.vm.CreateObject(customEvent.Prototype)
 	customEvent.Wrapper.storeInternal(e, obj)
@@ -46,7 +49,7 @@ func (h *gojaEventListener) HandleEvent(e dom.Event) error {
 	return err
 }
 
-func (h *gojaEventListener) Equals(e dom.EventHandler) bool {
+func (h *gojaEventListener) Equals(e event.EventHandler) bool {
 	if ge, ok := e.(*gojaEventListener); ok && ge.v.StrictEquals(h.v) {
 		return true
 	} else {
@@ -58,19 +61,19 @@ func (w eventTargetWrapper) constructor(
 	call goja.ConstructorCall,
 	r *goja.Runtime,
 ) *goja.Object {
-	newInstance := dom.NewEventTarget()
+	newInstance := event.NewEventTarget()
 	w.storeInternal(newInstance, call.This)
 	return nil
 }
 
-func (w eventTargetWrapper) getEventTarget(c goja.FunctionCall) dom.EventTarget {
+func (w eventTargetWrapper) getEventTarget(c goja.FunctionCall) event.EventTarget {
 	if c.This == nil {
 		panic("No this pointer")
 	}
 	if c.This == w.ctx.vm.GlobalObject() {
 		return w.ctx.window
 	}
-	instance, ok := c.This.Export().(dom.EventTarget)
+	instance, ok := c.This.Export().(event.EventTarget)
 	if !ok {
 		panic(w.ctx.vm.NewTypeError("Not an event target"))
 	}
@@ -87,7 +90,7 @@ func (w eventTargetWrapper) addEventListener(c goja.FunctionCall) goja.Value {
 func (w eventTargetWrapper) dispatchEvent(c goja.FunctionCall) goja.Value {
 	instance := w.getInstance(c)
 	internal := c.Argument(0).(*goja.Object).GetSymbol(w.ctx.wrappedGoObj).Export()
-	if event, ok := internal.(dom.Event); ok {
+	if event, ok := internal.(*event.Event); ok {
 		return w.ctx.vm.ToValue(instance.DispatchEvent(event))
 	} else {
 		panic(w.ctx.vm.NewTypeError("Not an event"))

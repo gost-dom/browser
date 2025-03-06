@@ -2,20 +2,21 @@ package v8host
 
 import (
 	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/v8go"
 )
 
 func (w uIEventV8Wrapper) decodeMouseEventInit(
 	ctx *V8ScriptContext,
 	v *v8go.Value,
-) (dom.EventOption, error) {
+) (event.EventInit, error) {
 	return w.decodeUIEventInit(ctx, v)
 }
 
 func (w uIEventV8Wrapper) decodePointerEventInit(
 	ctx *V8ScriptContext,
 	v *v8go.Value,
-) (dom.EventOption, error) {
+) (event.EventInit, error) {
 	return w.decodeMouseEventInit(ctx, v)
 }
 
@@ -39,7 +40,7 @@ func (w uIEventV8Wrapper) CreateInstanceEventInitDict(
 func (w uIEventV8Wrapper) decodeUIEventInit(
 	ctx *V8ScriptContext,
 	v *v8go.Value,
-) (dom.EventOption, error) {
+) (event.EventInit, error) {
 	return w.decodeEventInit(ctx, v)
 }
 

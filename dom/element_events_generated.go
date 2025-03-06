@@ -2,8 +2,10 @@
 
 package dom
 
+import event "github.com/gost-dom/browser/dom/event"
+
 type elementEvents struct {
-	target EventTarget
+	target event.EventTarget
 }
 
 type ElementEvents interface {
@@ -13,19 +15,28 @@ type ElementEvents interface {
 }
 
 func (e *elementEvents) Auxclick() bool {
+	init := PointerEventInit{}
+	init.Bubbles = true
+	init.Cancelable = true
 	return e.target.DispatchEvent(
-		NewPointerEvent("auxclick", EventBubbles(true), EventCancelable(true)),
+		NewPointerEvent("auxclick", init),
 	)
 }
 
 func (e *elementEvents) Click() bool {
+	init := PointerEventInit{}
+	init.Bubbles = true
+	init.Cancelable = true
 	return e.target.DispatchEvent(
-		NewPointerEvent("click", EventBubbles(true), EventCancelable(true)),
+		NewPointerEvent("click", init),
 	)
 }
 
 func (e *elementEvents) Contextmenu() bool {
+	init := PointerEventInit{}
+	init.Cancelable = true
+	init.Bubbles = true
 	return e.target.DispatchEvent(
-		NewPointerEvent("contextmenu", EventBubbles(true), EventCancelable(true)),
+		NewPointerEvent("contextmenu", init),
 	)
 }

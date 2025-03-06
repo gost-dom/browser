@@ -8,6 +8,7 @@ import (
 
 	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/internal"
+	"github.com/gost-dom/code-gen/packagenames"
 	gen "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/events"
 )
@@ -18,26 +19,48 @@ type EventGeneratorSpecs struct {
 	EventName  string
 }
 
+type EventInitGenerator events.Event
+
+func (g EventInitGenerator) Generate() *jen.Statement {
+	init := gen.NewValue("init")
+	typeName := fmt.Sprintf("%sInit", g.Interface)
+	s := gen.StatementList(gen.Assign(init, gen.Raw(jen.Id(typeName).Values())))
+	for k, v := range g.Options {
+		field := internal.UpperCaseFirstLetter(string(k))
+		value := gen.Lit(v)
+		s.Append(gen.Reassign(init.Field(field), value))
+	}
+	return s.Generate()
+}
+
 type EventConstructorGenerator events.Event
 
 func (s EventConstructorGenerator) Generate() *jen.Statement {
 	e := events.Event(s)
 	eventConstructor := fmt.Sprintf("New%s", e.Interface)
-	arguments := []gen.Generator{
-		gen.Lit(e.Type),
-	}
-	if b, ok := e.Options["bubbles"]; ok {
-		arguments = append(arguments, gen.NewValue("EventBubbles").Call(gen.Lit(b)))
-	}
-	if b, ok := e.Options["cancelable"]; ok {
-		arguments = append(arguments, gen.NewValue("EventCancelable").Call(gen.Lit(b)))
-	}
-	if b, ok := e.Options["composable"]; ok {
-		// This is theoretical. There are no composable event
-		// definitions in the source data.
-		arguments = append(arguments, gen.NewValue("EventComposable").Call(gen.Lit(b)))
-	}
-	return gen.NewValue(eventConstructor).Call(arguments...).Generate()
+	// arguments := []gen.Generator{
+	// 	gen.Lit(e.Type),
+	// }
+	// if b, ok := e.Options["bubbles"]; ok {
+	// 	arguments = append(
+	// 		arguments,
+	// 		gen.NewValuePackage("EventBubbles", packagenames.Events).Call(gen.Lit(b)),
+	// 	)
+	// }
+	// if b, ok := e.Options["cancelable"]; ok {
+	// 	arguments = append(
+	// 		arguments,
+	// 		gen.NewValuePackage("EventCancelable", packagenames.Events).Call(gen.Lit(b)),
+	// 	)
+	// }
+	// if b, ok := e.Options["composable"]; ok {
+	// 	// This is theoretical. There are no composable event
+	// 	// definitions in the source data.
+	// 	arguments = append(arguments, gen.NewValue("EventComposable").Call(gen.Lit(b)))
+	// }
+	return gen.StatementList(
+		gen.NewValue(eventConstructor).Call(gen.Lit(e.Type), gen.NewValue("init")),
+	).Generate()
 
 }
 
@@ -46,9 +69,11 @@ type DispatchEventGenerator events.Event
 func (g DispatchEventGenerator) Generate() *jen.Statement {
 	e := events.Event(g)
 	receiver := gen.NewValue("e")
-	return gen.Return(
-		receiver.Field("target").Field("DispatchEvent").Call(
-			line(EventConstructorGenerator(e)), gen.Line)).Generate()
+	return gen.StatementList(
+		EventInitGenerator(g),
+		gen.Return(
+			receiver.Field("target").Field("DispatchEvent").Call(
+				line(EventConstructorGenerator(e)), gen.Line))).Generate()
 
 }
 
@@ -114,7 +139,7 @@ func CreateEventSourceGenerator(apiName string, element string) (gen.Generator, 
 	api, err := events.Load(apiName)
 	n := gen.NewType(eventDispatchTypeName(element))
 	s := gen.Struct{Name: n}
-	s.Field(gen.Id("target"), gen.NewType("EventTarget"))
+	s.Field(gen.Id("target"), gen.NewTypePackage("EventTarget", packagenames.Events))
 	events := slices.DeleteFunc(
 		api.EventsForType(element),
 		func(e events.Event) bool { return e.Interface != "PointerEvent" },

@@ -8,6 +8,7 @@ const (
 	ISSUE_URL = "https://github.com/gost-dom/browser/issues"
 
 	Dom      = BASE_PKG + "/dom"
+	Events   = Dom + "/event"
 	Html     = BASE_PKG + "/html"
 	V8host   = BASE_PKG + "/scripting/v8host"
 	Gojahost = BASE_PKG + "/scripting/gojahost"

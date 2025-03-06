@@ -5,6 +5,7 @@ import (
 	"net/url"
 
 	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom/event"
 	. "github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/internal/http"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
@@ -215,7 +216,7 @@ var _ = Describe("HTML Form", func() {
 				It("Should not submit if preventDefault is called", func() {
 					button.AddEventListener(
 						"click",
-						dom.NewEventHandlerFunc(func(e dom.Event) error {
+						event.NewEventHandlerFunc(func(e *event.Event) error {
 							e.PreventDefault()
 							return nil
 						}),
@@ -263,10 +264,10 @@ var _ = Describe("HTML Form", func() {
 		Describe("Dispatched events", func() {
 			Describe("Submit event", func() {
 				It("Should not be dispatched when form.submit is called", func() {
-					var actualEvent dom.Event
+					var actualEvent *event.Event
 					form.AddEventListener(
 						"submit",
-						dom.NewEventHandlerFunc(func(e dom.Event) error {
+						event.NewEventHandlerFunc(func(e *event.Event) error {
 							actualEvent = e
 							return nil
 						}),
@@ -276,10 +277,10 @@ var _ = Describe("HTML Form", func() {
 				})
 
 				It("Should be dispatched when form.requestSubmit is called", func() {
-					var actualEvent dom.Event
+					var actualEvent *event.Event
 					form.AddEventListener(
 						"submit",
-						dom.NewEventHandlerFunc(func(e dom.Event) error {
+						event.NewEventHandlerFunc(func(e *event.Event) error {
 							actualEvent = e
 							return nil
 						}),
@@ -292,7 +293,7 @@ var _ = Describe("HTML Form", func() {
 				It("Should be abort the request on preventDefault()", func() {
 					form.AddEventListener(
 						"submit",
-						dom.NewEventHandlerFunc(func(e dom.Event) error {
+						event.NewEventHandlerFunc(func(e *event.Event) error {
 							e.PreventDefault()
 							return nil
 						}),
@@ -304,10 +305,10 @@ var _ = Describe("HTML Form", func() {
 
 			Describe("formdata event", func() {
 				It("Should be dispatched when a form is submitted", func() {
-					var actualEvent dom.Event
+					var actualEvent *event.Event
 					form.AddEventListener(
 						"formdata",
-						dom.NewEventHandlerFunc(func(e dom.Event) error {
+						event.NewEventHandlerFunc(func(e *event.Event) error {
 							actualEvent = e
 							return nil
 						}),
@@ -316,10 +317,10 @@ var _ = Describe("HTML Form", func() {
 					Expect(actualEvent).ToNot(BeNil())
 					Expect(actualEvent.Cancelable()).To(BeFalse())
 					Expect(actualEvent.Bubbles()).To(BeTrue())
-					formDataEvent, ok := actualEvent.(FormDataEvent)
+					formDataEventInit, ok := actualEvent.Init.(FormDataEventInit)
 					Expect(ok).To(BeTrue())
-					Expect(formDataEvent.FormData()).ToNot(BeNil())
-					Expect(formDataEvent.FormData()).To(HaveFormDataValue("foo", "bar"))
+					Expect(formDataEventInit.FormData).ToNot(BeNil())
+					Expect(formDataEventInit.FormData).To(HaveFormDataValue("foo", "bar"))
 				})
 			})
 		})

@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/url"
@@ -33,7 +33,7 @@ const (
 )
 
 type XmlHttpRequest interface {
-	dom.EventTarget
+	event.EventTarget
 	Abort() error
 	Open(string, string, ...RequestOption)
 	Send() error
@@ -54,7 +54,7 @@ type XmlHttpRequest interface {
 }
 
 type xmlHttpRequest struct {
-	dom.EventTarget
+	event.EventTarget
 	location string
 	client   http.Client
 	async    bool
@@ -70,7 +70,7 @@ type xmlHttpRequest struct {
 func NewXmlHttpRequest(client http.Client, location string, clock *clock.Clock) XmlHttpRequest {
 	log.Info("NewXmlHttpRequest", "location", location)
 	return &xmlHttpRequest{
-		EventTarget: dom.NewEventTarget(),
+		EventTarget: event.NewEventTarget(),
 		location:    location,
 		client:      client,
 		headers:     make(map[string][]string),
@@ -119,7 +119,7 @@ func (req *xmlHttpRequest) send(body io.Reader) error {
 	_, err = b.ReadFrom(res.Body)
 	req.response = b.Bytes()
 	log.Debug("Response received", "Status", res.StatusCode)
-	req.DispatchEvent(dom.NewCustomEvent(XHREventLoad))
+	req.DispatchEvent(event.New(XHREventLoad, event.EventInit{}))
 	return err
 }
 
@@ -133,7 +133,7 @@ func (req *xmlHttpRequest) SendBody(body io.Reader) error {
 		req.headers["Content-Type"] = []string{"application/x-www-form-urlencoded"}
 	}
 	if req.async {
-		req.DispatchEvent(dom.NewCustomEvent((XHREventLoadstart)))
+		req.DispatchEvent(event.New(XHREventLoadstart, event.EventInit{}))
 		req.clock.AddSafeTask(func() {
 			req.send(body)
 		}, 0)

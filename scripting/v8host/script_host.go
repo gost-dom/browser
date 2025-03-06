@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	. "github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/constants"
@@ -87,16 +88,19 @@ func (c *V8ScriptContext) getInstanceForNode(
 		return v8.Null(iso), nil
 	}
 	switch n := node.(type) {
-	case PointerEvent:
-		return c.getInstanceForNodeByName("PointerEvent", n)
-	// case MouseEvent:
-	// 	return c.getInstanceForNodeByName("MouseEvent", n)
-	case UIEvent:
-		return c.getInstanceForNodeByName("UIEvent", n)
-	case CustomEvent:
-		return c.getInstanceForNodeByName("CustomEvent", n)
-	case Event:
-		return c.getInstanceForNodeByName("Event", n)
+	case *event.Event:
+		switch n.Init.(type) {
+		case event.CustomEventInit:
+			return c.getInstanceForNodeByName("CustomEvent", n)
+		case PointerEventInit:
+			return c.getInstanceForNodeByName("PointerEvent", n)
+		case MouseEventInit:
+			return c.getInstanceForNodeByName("MouseEvent", n)
+		case UIEventInit:
+			return c.getInstanceForNodeByName("UIEvent", n)
+		default:
+			return c.getInstanceForNodeByName("Event", n)
+		}
 	case Element:
 		if constructor, ok := scripting.HtmlElements[strings.ToLower(n.TagName())]; ok {
 			return c.getInstanceForNodeByName(constructor, n)
@@ -337,7 +341,7 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 		domNodes: make(map[entity.ObjectId]entity.Entity),
 	}
 	errorCallback := func(err error) {
-		w.DispatchEvent(NewErrorEvent(err))
+		w.DispatchEvent(event.NewErrorEvent(err))
 	}
 	global = context.v8ctx.Global()
 	context.eventLoop = newEventLoop(context, errorCallback)

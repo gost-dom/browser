@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/url"
 )
 
@@ -22,25 +23,35 @@ type GetReader interface {
 	GetReader() io.Reader
 }
 
-type FormDataEvent interface {
-	dom.Event
-	FormData() *FormData
+type FormDataEventInit struct {
+	event.Init
+	FormData *FormData
 }
 
+type SubmitEventInit struct {
+	event.Init
+	Submitter dom.Element
+}
+
+// type FormDataEvent interface {
+// 	dom.Event
+// 	FormData() *FormData
+// }
+
 type FormSubmitEvent interface {
-	dom.Event
+	event.Event
 	Submitter() dom.Element
 }
 
 type formDataEvent struct {
-	dom.Event
+	event.Event
 	formData *FormData
 }
 
 func (e *formDataEvent) FormData() *FormData { return e.formData }
 
 type formSubmitEvent struct {
-	dom.Event
+	event.Event
 	submitter dom.Element
 }
 
@@ -48,14 +59,25 @@ func (e *formSubmitEvent) Submitter() dom.Element {
 	return e.submitter
 }
 
-func newFormDataEvent(data *FormData) FormDataEvent {
-	e := dom.NewEvent(string(FormEventFormData), dom.EventBubbles(true))
-	return &formDataEvent{e, data}
+func newFormDataEvent(data *FormData) *event.Event {
+	eventInit := FormDataEventInit{
+		event.EventInit{Bubbles: true},
+		data,
+	}
+	return event.New(string(FormEventFormData), eventInit)
 }
 
-func newSubmitEvent(submitter dom.Element) FormSubmitEvent {
-	e := dom.NewEvent(string(FormEventSubmit), dom.EventBubbles(true), dom.EventCancelable(true))
-	return &formSubmitEvent{e, submitter}
+func newSubmitEvent(submitter dom.Element) *event.Event {
+	eventInit := SubmitEventInit{
+		event.EventInit{
+			Bubbles:    true,
+			Cancelable: true,
+		},
+		submitter,
+	}
+	return event.New(
+		string(FormEventSubmit),
+		eventInit)
 }
 
 type HTMLFormElement interface {

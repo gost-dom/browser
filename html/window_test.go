@@ -7,6 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/domslices"
@@ -99,10 +100,10 @@ var _ = Describe("Window", func() {
 				})
 
 				It("Should dispatch a popstate event with the state", func() {
-					var actualEvent dom.Event
+					var actualEvent *event.Event
 					win.AddEventListener(
 						"popstate",
-						dom.NewEventHandlerFunc(func(e dom.Event) error {
+						event.NewEventHandlerFunc(func(e *event.Event) error {
 							actualEvent = e
 							return nil
 						}),
@@ -110,9 +111,9 @@ var _ = Describe("Window", func() {
 					Expect(win.History().Go(-1)).To(Succeed())
 
 					Expect(actualEvent).ToNot(BeNil(), "Event was dispatched")
-					popEvent, ok := actualEvent.(PopStateEvent)
+					popEvent, ok := actualEvent.Init.(PopStateEventInit)
 					Expect(ok).To(BeTrue(), "Event is a popstateevent")
-					Expect(popEvent.State()).To(BeEquivalentTo("page-2 state"), "Event state")
+					Expect(popEvent.State).To(BeEquivalentTo("page-2 state"), "Event state")
 				})
 			})
 		})
@@ -174,7 +175,7 @@ var _ = Describe("Window", func() {
 					eventDispatched := false
 					win.AddEventListener(
 						"hashchange",
-						dom.NewEventHandlerFunc(func(e dom.Event) error {
+						event.NewEventHandlerFunc(func(e *event.Event) error {
 							eventDispatched = true
 							return nil
 						}),
@@ -295,13 +296,13 @@ var _ = Describe("Window", func() {
 				Expect(window.Navigate("about:blank")).To(Succeed())
 				window.AddEventListener(
 					"gost-event",
-					dom.NewEventHandlerFunc(func(e dom.Event) error {
+					event.NewEventHandlerFunc(func(e *event.Event) error {
 						count++
 						return nil
 					}))
 
 				Expect(window.Navigate("/index")).To(Succeed())
-				window.DispatchEvent(dom.NewCustomEvent("gost-event"))
+				window.DispatchEvent(event.New("gost-event", event.EventInit{}))
 				Expect(count).To(Equal(0))
 			})
 		})
