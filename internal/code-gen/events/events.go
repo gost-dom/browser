@@ -45,26 +45,6 @@ type EventConstructorGenerator events.Event
 func (s EventConstructorGenerator) Generate() *jen.Statement {
 	e := events.Event(s)
 	eventConstructor := fmt.Sprintf("New%s", e.Interface)
-	// arguments := []gen.Generator{
-	// 	gen.Lit(e.Type),
-	// }
-	// if b, ok := e.Options["bubbles"]; ok {
-	// 	arguments = append(
-	// 		arguments,
-	// 		gen.NewValuePackage("EventBubbles", packagenames.Events).Call(gen.Lit(b)),
-	// 	)
-	// }
-	// if b, ok := e.Options["cancelable"]; ok {
-	// 	arguments = append(
-	// 		arguments,
-	// 		gen.NewValuePackage("EventCancelable", packagenames.Events).Call(gen.Lit(b)),
-	// 	)
-	// }
-	// if b, ok := e.Options["composable"]; ok {
-	// 	// This is theoretical. There are no composable event
-	// 	// definitions in the source data.
-	// 	arguments = append(arguments, gen.NewValue("EventComposable").Call(gen.Lit(b)))
-	// }
 	return gen.StatementList(
 		gen.NewValue(eventConstructor).Call(gen.Lit(e.Type), gen.NewValue("init")),
 	).Generate()
