@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"slices"
+	"sort"
 	"strings"
 
 	"github.com/dave/jennifer/jen"
@@ -25,7 +26,13 @@ func (g EventInitGenerator) Generate() *jen.Statement {
 	init := gen.NewValue("init")
 	typeName := fmt.Sprintf("%sInit", g.Interface)
 	s := gen.StatementList(gen.Assign(init, gen.Raw(jen.Id(typeName).Values())))
-	for k, v := range g.Options {
+	keys := make([]string, 0)
+	for k := range g.Options {
+		keys = append(keys, string(k))
+	}
+	sort.Strings(keys)
+	for _, k := range keys {
+		v := g.Options[events.EventOption(k)]
 		field := internal.UpperCaseFirstLetter(string(k))
 		value := gen.Lit(v)
 		s.Append(gen.Reassign(init.Field(field), value))
