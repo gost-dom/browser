@@ -25,12 +25,17 @@ type Entity interface {
 	ObjectId() ObjectId
 }
 
-type entity struct {
+type Base struct {
 	objectId ObjectId
 }
 
 func New() Entity {
-	return entity{NewObjectId()}
+	return Base{NewObjectId()}
 }
 
-func (b entity) ObjectId() ObjectId { return b.objectId }
+func (b Base) ObjectId() ObjectId {
+	if b.objectId == 0 {
+		b.objectId = NewObjectId()
+	}
+	return b.objectId
+}
