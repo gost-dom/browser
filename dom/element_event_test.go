@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/gost-dom/browser/dom/event"
+	. "github.com/gost-dom/browser/internal/testing"
 	"github.com/stretchr/testify/assert"
 )
 

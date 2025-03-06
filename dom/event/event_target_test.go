@@ -23,8 +23,6 @@ type TestSuite struct {
 	clickHandler EventHandler
 }
 
-func NewTestHandler(f func(*Event)) EventHandler { return NewEventHandlerFunc(NoError(f)) }
-
 func Test(t *testing.T) {
 	suite.Run(t, new(TestSuite))
 }

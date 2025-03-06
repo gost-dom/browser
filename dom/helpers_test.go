@@ -4,15 +4,8 @@ import (
 	"strings"
 
 	"github.com/gost-dom/browser/dom"
-	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 )
-
-func NewTestHandler(
-	f func(*event.Event),
-) event.EventHandler {
-	return event.NewEventHandlerFunc(event.NoError(f))
-}
 
 // Designed as a "mixin" for a testify Suite, that can create a document on
 // demand.
