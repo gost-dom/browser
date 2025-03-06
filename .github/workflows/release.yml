@@ -23,5 +23,5 @@ jobs:
           node-version: 20
           cache: 'pnpm'
       - run: pnpm install
-      - run: pnpm exec semantic-release
+      - run: pnpm exec commit-and-tag-version
       - run: git push HEAD:main && git push --tags
