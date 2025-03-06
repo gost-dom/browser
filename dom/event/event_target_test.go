@@ -103,7 +103,7 @@ func (s *EventPropagationTestSuite) TestRemoveCorrectPhase() {
 	h := NewTestHandler(func(e *Event) {
 		events = append(events, fmt.Sprintf("Phase: %d", e.EventPhase()))
 	})
-	event := New("gost:remove", EventInit{Bubbles: true})
+	event := &event.Event{Type: "gost:remove", Bubbles: true}
 	s.window.AddEventListener("gost:remove", h)
 	s.window.AddEventListener("gost:remove", h, Capture)
 
@@ -140,8 +140,8 @@ func (s *EventPropagationTestSuite) TestEventOnce() {
 		events = append(events, fmt.Sprintf("Handler B"))
 	}), Once)
 
-	s.target.DispatchEvent(event.New("custom", EventInit{Bubbles: true}))
-	s.target.DispatchEvent(event.New("custom", EventInit{Bubbles: true}))
+	s.target.DispatchEvent(&event.Event{Type: "custom", Bubbles: true})
+	s.target.DispatchEvent(&event.Event{Type: "custom", Bubbles: true})
 
 	s.Assert().Equal([]string{
 		"Handler A",
@@ -165,7 +165,7 @@ func (s *EventPropagationTestSuite) TestEventCapture() {
 		events = append(events, fmt.Sprintf("Target bubble. Phase: %d", e.EventPhase()))
 	}))
 
-	event := event.New("custom", EventInit{Bubbles: true})
+	event := &Event{Type: "custom", Bubbles: true}
 	s.Assert().Equal(EventPhaseNone, event.EventPhase(), "Phase before dispatch")
 	s.target.DispatchEvent(event)
 	expected := []string{
@@ -179,7 +179,7 @@ func (s *EventPropagationTestSuite) TestEventCapture() {
 	s.Assert().Equal(EventPhaseNone, event.EventPhase(), "Phase after dispatch")
 
 	events = nil
-	s.target.DispatchEvent(New("custom", EventInit{}))
+	s.target.DispatchEvent(&Event{Type: "custom"})
 	s.Assert().Equal(
 		[]string{
 			"Window capture. Phase: 1",
@@ -205,7 +205,7 @@ func (s *EventPropagationTestSuite) TestDefaultEventPropagation() {
 		called = true
 	})
 	s.window.Document().Body().AddEventListener("custom", l)
-	s.target.DispatchEvent(New("custom", EventInit{}))
+	s.target.DispatchEvent(&Event{Type: "custom"})
 	s.Expect(called).To(BeFalse())
 }
 
@@ -216,7 +216,7 @@ func (s *EventPropagationTestSuite) TestPropagateToWindow() {
 		called = true
 	})
 	s.window.AddEventListener("custom", l)
-	s.target.DispatchEvent(event.New("custom", EventInit{Bubbles: true}))
+	s.target.DispatchEvent(&Event{Type: "custom", Bubbles: true})
 	s.Expect(called).To(BeTrue())
 }
 
@@ -231,7 +231,7 @@ func (s *EventPropagationTestSuite) TestTargetOrCurrentTarget() {
 		actualCurrentTarget = e.CurrentTarget()
 	})
 	s.window.AddEventListener("custom", l)
-	s.target.DispatchEvent(event.New("custom", EventInit{Bubbles: true}))
+	s.target.DispatchEvent(&Event{Type: "custom", Bubbles: true})
 	s.Expect(actualTarget).To(Equal(s.target), "Event target")
 	s.Expect(actualCurrentTarget).To(Equal(s.window), "CurrentEvent target")
 	s.Expect(actualEvent.CurrentTarget()).To(BeNil(), "CurrentTarget after event")
@@ -246,7 +246,7 @@ func (s *EventPropagationTestSuite) TestPropagateToWindowBubbles() {
 		called = true
 	})
 	s.window.AddEventListener("custom", l)
-	s.target.DispatchEvent(event.New("custom", EventInit{Bubbles: true}))
+	s.target.DispatchEvent(&Event{Type: "custom", Bubbles: true})
 	s.Expect(called).To(BeTrue())
 }
 
@@ -261,7 +261,7 @@ func (s *EventPropagationTestSuite) TestStopPropagation() {
 	s.window.AddEventListener("custom", NewTestHandler(func(e *Event) {
 		calledB = true
 	}))
-	s.target.DispatchEvent(event.New("custom", EventInit{Bubbles: true}))
+	s.target.DispatchEvent(&Event{Type: "custom", Bubbles: true})
 	s.Expect(calledA).To(BeTrue(), "Event dispatched on body")
 	s.Expect(calledB).To(BeFalse(), "Event dispatched on window")
 }
@@ -271,15 +271,15 @@ func (s *EventPropagationTestSuite) TestReturnValueForPreventDefault() {
 		e.PreventDefault()
 	}))
 	s.Assert().False(
-		s.target.DispatchEvent(event.New("custom", EventInit{Cancelable: true})),
+		s.target.DispatchEvent(&Event{Type: "custom", Cancelable: true}),
 		"DispatchEvent return value with default prevented, Cancelable: true",
 	)
 	s.Assert().True(
-		s.target.DispatchEvent(event.New("custom", EventInit{Cancelable: false})),
+		s.target.DispatchEvent(&Event{Type: "custom", Cancelable: false}),
 		"DispatchEvent return value with default prevented, Cancelable: false",
 	)
 	s.Assert().True(
-		s.target.DispatchEvent(New("custom", EventInit{})),
+		s.target.DispatchEvent(&Event{Type: "custom"}),
 		"DispatchEvent return value with default prevented, Cancelable not set",
 	)
 }
@@ -296,7 +296,7 @@ func (s *EventPropagationTestSuite) TestEventHandlerGeneratesError() {
 	s.target.AddEventListener("custom", NewEventHandlerFunc(func(e *Event) error {
 		return errors.New("Error")
 	}))
-	s.target.DispatchEvent(New("custom", EventInit{}))
+	s.target.DispatchEvent(&Event{Type: "custom"})
 	s.Assert().True(errorOnWindow, "Error event dispached on Window")
 	s.Assert().False(errorOnTarget, "Error event dispached on original target")
 }

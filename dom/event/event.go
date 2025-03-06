@@ -52,8 +52,20 @@ func New(eventType string, eventInit Init) *Event {
 	}
 }
 
-func (e *Event) bubbles() bool              { return e.Bubbles || e.Init.bubbles() }
-func (e *Event) cancelable() bool           { return e.Cancelable || e.Init.cancelable() }
+func (e *Event) initCancelable() bool {
+	if e.Init == nil {
+		return false
+	}
+	return e.Init.cancelable()
+}
+func (e *Event) initBubbles() bool {
+	if e.Init == nil {
+		return false
+	}
+	return e.Init.bubbles()
+}
+func (e *Event) cancelable() bool           { return e.Cancelable || e.initCancelable() }
+func (e *Event) bubbles() bool              { return e.Bubbles || e.initBubbles() }
 func (e *Event) StopPropagation()           { e.stopped = true }
 func (e *Event) PreventDefault()            { e.cancelled = true }
 func (e *Event) EventPhase() EventPhase     { return e.phase }
