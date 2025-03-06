@@ -5,7 +5,6 @@ import (
 	"runtime/cgo"
 
 	"github.com/gost-dom/browser/dom"
-	. "github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/entity"
@@ -145,13 +144,13 @@ func (w converters) toBoolean(ctx *V8ScriptContext, val bool) (*v8.Value, error)
 	return v8.NewValue(ctx.host.iso, val)
 }
 
-func (w converters) toNodeList(ctx *V8ScriptContext, val NodeList) (*v8.Value, error) {
+func (w converters) toNodeList(ctx *V8ScriptContext, val dom.NodeList) (*v8.Value, error) {
 	return ctx.getInstanceForNodeByName("NodeList", val)
 }
 
 func (w converters) toHTMLFormControlsCollection(
 	ctx *V8ScriptContext,
-	val NodeList,
+	val dom.NodeList,
 ) (*v8.Value, error) {
 	return w.toNodeList(ctx, val)
 }

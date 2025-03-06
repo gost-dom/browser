@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	. "github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
@@ -92,29 +92,29 @@ func (c *V8ScriptContext) getInstanceForNode(
 		switch n.Init.(type) {
 		case event.CustomEventInit:
 			return c.getInstanceForNodeByName("CustomEvent", n)
-		case PointerEventInit:
+		case dom.PointerEventInit:
 			return c.getInstanceForNodeByName("PointerEvent", n)
-		case MouseEventInit:
+		case dom.MouseEventInit:
 			return c.getInstanceForNodeByName("MouseEvent", n)
-		case UIEventInit:
+		case dom.UIEventInit:
 			return c.getInstanceForNodeByName("UIEvent", n)
 		default:
 			return c.getInstanceForNodeByName("Event", n)
 		}
-	case Element:
+	case dom.Element:
 		if constructor, ok := scripting.HtmlElements[strings.ToLower(n.TagName())]; ok {
 			return c.getInstanceForNodeByName(constructor, n)
 		}
 		return c.getInstanceForNodeByName("Element", n)
 	case html.HTMLDocument:
 		return c.getInstanceForNodeByName("HTMLDocument", n)
-	case Document:
+	case dom.Document:
 		return c.getInstanceForNodeByName("Document", n)
-	case DocumentFragment:
+	case dom.DocumentFragment:
 		return c.getInstanceForNodeByName("DocumentFragment", n)
-	case Node:
+	case dom.Node:
 		return c.getInstanceForNodeByName("Node", n)
-	case Attr:
+	case dom.Attr:
 		return c.getInstanceForNodeByName("Attr", n)
 	default:
 		panic("Cannot lookup node")

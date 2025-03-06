@@ -1,8 +1,7 @@
 package v8host
 
 import (
-	. "github.com/gost-dom/browser/dom"
-
+	"github.com/gost-dom/browser/dom"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -10,6 +9,6 @@ import (
 // for inheritence, i.e., `node instanceof DocumentFragment`.
 // This is performed by HTMX; but it doesn't itself _create_ a shadow root.
 func createShadowRootPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
-	builder := newIllegalConstructorBuilder[ShadowRoot](host)
+	builder := newIllegalConstructorBuilder[dom.ShadowRoot](host)
 	return builder.constructor
 }
