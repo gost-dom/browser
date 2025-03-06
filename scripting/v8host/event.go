@@ -33,7 +33,7 @@ func (w eventV8Wrapper) CreateInstance(
 	o eventInitWrapper,
 ) (*v8.Value, error) {
 	e := eventWrapper{
-		&event.Event{Type: type_, Bubbles: o.bubbles, Cancelable: o.cancelable, Init: o.init},
+		&event.Event{Type: type_, Bubbles: o.bubbles, Cancelable: o.cancelable, Data: o.init},
 	}
 	return w.store(e, ctx, this)
 }

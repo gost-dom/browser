@@ -155,7 +155,7 @@ type popStateEvent struct {
 func newPopStateEvent(state HistoryState) *event.Event {
 	return &event.Event{
 		Type: HistoryEventPopState,
-		Init: PopStateEventInit{State: state},
+		Data: PopStateEventInit{State: state},
 	}
 }
 

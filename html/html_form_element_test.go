@@ -321,7 +321,7 @@ var _ = Describe("HTML Form", func() {
 					form.Submit()
 					Expect(actualEvent).ToNot(BeNil())
 					Expect(eventBubbles).To(BeTrue())
-					formDataEventInit, ok := actualEvent.Init.(FormDataEventInit)
+					formDataEventInit, ok := actualEvent.Data.(FormDataEventInit)
 					Expect(ok).To(BeTrue())
 					Expect(formDataEventInit.FormData).ToNot(BeNil())
 					Expect(formDataEventInit.FormData).To(HaveFormDataValue("foo", "bar"))

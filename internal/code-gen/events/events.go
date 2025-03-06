@@ -23,7 +23,7 @@ type EventGeneratorSpecs struct {
 type EventInitGenerator events.Event
 
 func (g EventInitGenerator) Generate() *jen.Statement {
-	init := gen.NewValue("init")
+	init := gen.NewValue("data")
 	// event := gen.NewValue("event")
 	typeName := fmt.Sprintf("%sInit", g.Interface)
 	s := gen.StatementList(gen.Assign(init, gen.Raw(jen.Id(typeName).Values())))
@@ -68,7 +68,7 @@ func (s EventConstructorGenerator) Generate() *jen.Statement {
 
 	dict := jen.Code(jen.Dict{
 		jen.Id("Type"): jen.Lit(s.Type),
-		jen.Id("Init"): jen.Id("init"),
+		jen.Id("Data"): jen.Id("data"),
 	})
 	d := jen.Statement([]jen.Code{dict})
 

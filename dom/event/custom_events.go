@@ -21,7 +21,7 @@ func NewErrorEvent(err error) *Event {
 	e := &Event{
 		Type:    "error",
 		Bubbles: true,
-		Init:    ErrorEventInit{Err: err},
+		Data:    ErrorEventInit{Err: err},
 	}
 	return e
 }

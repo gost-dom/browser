@@ -20,7 +20,7 @@ func createCustomEvent(host *V8ScriptHost) *v8.FunctionTemplate {
 			}
 			e := &event.Event{
 				Type: args[0].String(),
-				Init: event.CustomEventInit{},
+				Data: event.CustomEventInit{},
 			}
 			if len(args) > 1 {
 				if options, err := args[1].AsObject(); err == nil {

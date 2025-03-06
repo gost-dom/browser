@@ -15,9 +15,9 @@ type ElementEvents interface {
 }
 
 func (e *elementEvents) Auxclick() bool {
-	init := PointerEventInit{}
+	data := PointerEventInit{}
 	event := &event.Event{
-		Init: init,
+		Data: data,
 		Type: "auxclick",
 	}
 	event.Bubbles = true
@@ -26,9 +26,9 @@ func (e *elementEvents) Auxclick() bool {
 }
 
 func (e *elementEvents) Click() bool {
-	init := PointerEventInit{}
+	data := PointerEventInit{}
 	event := &event.Event{
-		Init: init,
+		Data: data,
 		Type: "click",
 	}
 	event.Bubbles = true
@@ -37,9 +37,9 @@ func (e *elementEvents) Click() bool {
 }
 
 func (e *elementEvents) Contextmenu() bool {
-	init := PointerEventInit{}
+	data := PointerEventInit{}
 	event := &event.Event{
-		Init: init,
+		Data: data,
 		Type: "contextmenu",
 	}
 	event.Bubbles = true

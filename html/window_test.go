@@ -111,7 +111,7 @@ var _ = Describe("Window", func() {
 					Expect(win.History().Go(-1)).To(Succeed())
 
 					Expect(actualEvent).ToNot(BeNil(), "Event was dispatched")
-					popEvent, ok := actualEvent.Init.(PopStateEventInit)
+					popEvent, ok := actualEvent.Data.(PopStateEventInit)
 					Expect(ok).To(BeTrue(), "Event is a popstateevent")
 					Expect(popEvent.State).To(BeEquivalentTo("page-2 state"), "Event state")
 				})

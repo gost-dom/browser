@@ -10,10 +10,10 @@ type Entity interface {
 
 type Event struct {
 	entity.Entity
-	Init       any
 	Type       string
 	Bubbles    bool
 	Cancelable bool
+	Data       any
 
 	phase         EventPhase
 	cancelled     bool
@@ -29,7 +29,7 @@ type Event struct {
 // create an Event objects directly
 func New(eventType string, eventInit any) *Event {
 	return &Event{
-		Init: eventInit,
+		Data: eventInit,
 		Type: eventType,
 	}
 }

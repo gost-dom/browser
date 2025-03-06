@@ -20,9 +20,9 @@ func TestGenerateElementEventMethod(t *testing.T) {
 	g.Expect(err).ToNot(HaveOccurred())
 	g.Expect(r).To(HaveRendered(
 		`func (e *elementEvents) Click() bool {
-	init := PointerEventInit{}
+	data := PointerEventInit{}
 	event := &event.Event{
-		Init: init,
+		Data: data,
 		Type: "click",
 	}
 	event.Bubbles = true

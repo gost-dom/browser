@@ -61,7 +61,7 @@ func newFormDataEvent(data *FormData) *event.Event {
 	return &event.Event{
 		Type:    string(FormEventFormData),
 		Bubbles: true,
-		Init: FormDataEventInit{
+		Data: FormDataEventInit{
 			FormData: data,
 		}}
 }
@@ -72,7 +72,7 @@ func newSubmitEvent(submitter dom.Element) *event.Event {
 		Type:       string(FormEventSubmit),
 		Bubbles:    true,
 		Cancelable: true,
-		Init:       eventInit}
+		Data:       eventInit}
 }
 
 type HTMLFormElement interface {
