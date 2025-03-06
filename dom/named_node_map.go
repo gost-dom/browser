@@ -32,7 +32,7 @@ type Attr interface {
 }
 
 type namedNodeMap struct {
-	entity.Entity
+	entity.Base
 	ownerElement Element
 }
 
@@ -71,10 +71,6 @@ func (a *attr) CloneNode(
 	deep bool,
 ) Node {
 	return newAttr(a.attr.Key, a.attr.Val, a.OwnerDocument())
-}
-
-func newNamedNodeMapForElement(ownerElement Element) NamedNodeMap {
-	return &namedNodeMap{entity.New(), ownerElement}
 }
 
 func (m *namedNodeMap) All() iter.Seq[Attr] {

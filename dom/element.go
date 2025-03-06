@@ -43,7 +43,7 @@ type Element interface {
 }
 
 type element struct {
-	*node
+	node
 	elementEvents
 	ParentNode
 	tagName          string
@@ -58,13 +58,14 @@ type element struct {
 }
 
 func NewElement(tagName string, ownerDocument Document) Element {
-	node := newNodePtr(ownerDocument)
+	node := newNode(ownerDocument)
 	result := &element{
-		node:       node,
-		ParentNode: newParentNode(node),
+		node: node,
+		// ParentNode: newParentNode(node),
 		tagName:    tagName,
 		attributes: Attributes(nil),
 	}
+	result.ParentNode = newParentNode(&result.node)
 	result.elementEvents = elementEvents{result}
 	result.SetSelf(result)
 	return result
@@ -178,7 +179,7 @@ func (e *element) getSelfElement() Element {
 }
 
 func (e *element) Attributes() NamedNodeMap {
-	return newNamedNodeMapForElement(e)
+	return &namedNodeMap{ownerElement: e}
 }
 
 func (e *element) SetAttribute(name string, value string) {

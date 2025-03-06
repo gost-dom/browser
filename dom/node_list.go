@@ -12,17 +12,13 @@ type NodeList interface {
 }
 
 type nodeList struct {
-	entity.Entity
+	entity.Base
 	nodes []Node
 }
 
 type staticNodeSource []Node
 
 func (s staticNodeSource) ChildNodes() []Node { return s }
-
-func newNodeList(nodes ...Node) NodeList {
-	return &nodeList{entity.New(), nodes}
-}
 
 func (l *nodeList) Length() int { return len(l.nodes) }
 

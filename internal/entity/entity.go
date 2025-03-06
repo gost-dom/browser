@@ -35,14 +35,7 @@ type Base struct {
 	objectId ObjectId
 }
 
-// Creates a new Entity
-//
-// Deprecated: You can just use a zero value Base instance.
-func New() Entity {
-	return Base{NewObjectId()}
-}
-
-func (b Base) ObjectId() ObjectId {
+func (b *Base) ObjectId() ObjectId {
 	if b.objectId == 0 {
 		b.objectId = NewObjectId()
 	}

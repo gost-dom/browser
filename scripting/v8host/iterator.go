@@ -41,7 +41,7 @@ type iterable[T any] interface {
 }
 
 type iteratorInstance[T any] struct {
-	entity.Entity
+	entity.Base
 	items iterable[T]
 	next  func() (T, bool)
 	stop  func()
@@ -77,10 +77,9 @@ func (i iterator[T]) newIteratorInstanceOfIterable(
 	next, stop := iter.Pull(seq)
 
 	iterator := &iteratorInstance[T]{
-		entity.New(),
-		items,
-		next,
-		stop,
+		items: items,
+		next:  next,
+		stop:  stop,
 	}
 	res, err := i.ot.NewInstance(context.v8ctx)
 	if err == nil {
