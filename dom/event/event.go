@@ -8,6 +8,29 @@ type Entity interface {
 
 /* -------- event -------- */
 
+// Event corresponds to a [DOM Event] dispatched by a [DOM EventTarget].
+// Different types of events carry different types of data, which is represented
+// by the Data property.
+//
+// The different event types have different data types, all carrying having the
+// prefix, `EventInit`. This naming replect the naming in the IDL
+// specifications. When types in JavaScript are constructed, concrete subclasses
+// of `Event` in JavaScript are created based on the concrete type of the Data.
+//
+// Properties are arranged slightly differently on this type, than the DOM
+// version, where the properties that affect the event dispatching behaviour,
+// such as Bubbles, and Cancelable, are part of the EventInit, or options
+// argument.
+//
+//	const = new CustomEvent("my-custom", { bubbles: true, details: "Something else" })
+//
+// The Go Event representation stores the value for Bubbles on the event itself.
+// The other properties on the event options are data communicated between the
+// event dispatcher and the event listener, which Gost doesn't case about, and
+// as such is stored as an interface{} type.
+//
+// [DOM Event]: https://developer.mozilla.org/en-US/docs/Web/API/Event
+// [DOM EventTarget]: https://developer.mozilla.org/en-US/docs/Web/API/EventTarget
 type Event struct {
 	entity.Entity
 	Type       string
