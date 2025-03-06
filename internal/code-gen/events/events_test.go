@@ -21,11 +21,13 @@ func TestGenerateElementEventMethod(t *testing.T) {
 	g.Expect(r).To(HaveRendered(
 		`func (e *elementEvents) Click() bool {
 	init := PointerEventInit{}
-	init.Bubbles = true
-	init.Cancelable = true
-	return e.target.DispatchEvent(
-		NewPointerEvent("click", init),
-	)
+	event := &event.Event{
+		Init: init,
+		Type: "click",
+	}
+	event.Bubbles = true
+	event.Cancelable = true
+	return e.target.DispatchEvent(event)
 }`,
 	))
 }

@@ -24,8 +24,28 @@ type EventInitGenerator events.Event
 
 func (g EventInitGenerator) Generate() *jen.Statement {
 	init := gen.NewValue("init")
+	// event := gen.NewValue("event")
 	typeName := fmt.Sprintf("%sInit", g.Interface)
 	s := gen.StatementList(gen.Assign(init, gen.Raw(jen.Id(typeName).Values())))
+	// keys := make([]string, 0)
+	// for k := range g.Options {
+	// 	keys = append(keys, string(k))
+	// }
+	// sort.Strings(keys)
+	// for _, k := range keys {
+	// 	v := g.Options[events.EventOption(k)]
+	// 	field := internal.UpperCaseFirstLetter(string(k))
+	// 	value := gen.Lit(v)
+	// 	s.Append(gen.Reassign(event.Field(field), value))
+	// }
+	return s.Generate()
+}
+
+type EventPropertiesGenerator events.Event
+
+func (g EventPropertiesGenerator) Generate() *jen.Statement {
+	event := gen.NewValue("event")
+	s := gen.StatementList()
 	keys := make([]string, 0)
 	for k := range g.Options {
 		keys = append(keys, string(k))
@@ -35,7 +55,7 @@ func (g EventInitGenerator) Generate() *jen.Statement {
 		v := g.Options[events.EventOption(k)]
 		field := internal.UpperCaseFirstLetter(string(k))
 		value := gen.Lit(v)
-		s.Append(gen.Reassign(init.Field(field), value))
+		s.Append(gen.Reassign(event.Field(field), value))
 	}
 	return s.Generate()
 }
@@ -43,10 +63,19 @@ func (g EventInitGenerator) Generate() *jen.Statement {
 type EventConstructorGenerator events.Event
 
 func (s EventConstructorGenerator) Generate() *jen.Statement {
-	e := events.Event(s)
-	eventConstructor := fmt.Sprintf("New%s", e.Interface)
+	// e := events.Event(s)
+	// eventConstructor := fmt.Sprintf("New%s", e.Interface)
+
+	dict := jen.Code(jen.Dict{
+		jen.Id("Type"): jen.Lit(s.Type),
+		jen.Id("Init"): jen.Id("init"),
+	})
+	d := jen.Statement([]jen.Code{dict})
+
 	return gen.StatementList(
-		gen.NewValue(eventConstructor).Call(gen.Lit(e.Type), gen.NewValue("init")),
+		gen.NewTypePackage("Event", packagenames.Events).CreateInstance(
+			gen.Raw(&d),
+		).Reference(),
 	).Generate()
 
 }
@@ -56,11 +85,13 @@ type DispatchEventGenerator events.Event
 func (g DispatchEventGenerator) Generate() *jen.Statement {
 	e := events.Event(g)
 	receiver := gen.NewValue("e")
+	event := gen.NewValue("event")
 	return gen.StatementList(
 		EventInitGenerator(g),
+		gen.Assign(event, EventConstructorGenerator(e)),
+		EventPropertiesGenerator(g),
 		gen.Return(
-			receiver.Field("target").Field("DispatchEvent").Call(
-				line(EventConstructorGenerator(e)), gen.Line))).Generate()
+			receiver.Field("target").Field("DispatchEvent").Call(event, gen.Line))).Generate()
 
 }
 

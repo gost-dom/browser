@@ -16,27 +16,33 @@ type ElementEvents interface {
 
 func (e *elementEvents) Auxclick() bool {
 	init := PointerEventInit{}
-	init.Bubbles = true
-	init.Cancelable = true
-	return e.target.DispatchEvent(
-		NewPointerEvent("auxclick", init),
-	)
+	event := &event.Event{
+		Init: init,
+		Type: "auxclick",
+	}
+	event.Bubbles = true
+	event.Cancelable = true
+	return e.target.DispatchEvent(event)
 }
 
 func (e *elementEvents) Click() bool {
 	init := PointerEventInit{}
-	init.Bubbles = true
-	init.Cancelable = true
-	return e.target.DispatchEvent(
-		NewPointerEvent("click", init),
-	)
+	event := &event.Event{
+		Init: init,
+		Type: "click",
+	}
+	event.Bubbles = true
+	event.Cancelable = true
+	return e.target.DispatchEvent(event)
 }
 
 func (e *elementEvents) Contextmenu() bool {
 	init := PointerEventInit{}
-	init.Bubbles = true
-	init.Cancelable = true
-	return e.target.DispatchEvent(
-		NewPointerEvent("contextmenu", init),
-	)
+	event := &event.Event{
+		Init: init,
+		Type: "contextmenu",
+	}
+	event.Bubbles = true
+	event.Cancelable = true
+	return e.target.DispatchEvent(event)
 }
