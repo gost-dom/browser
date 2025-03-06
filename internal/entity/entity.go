@@ -11,6 +11,10 @@ type ObjectId = int32
 
 var idSeq atomic.Int32
 
+// NewObjectId returns a new guaranteed atomically unique ObjectId.
+//
+// Warning: This solution is temporary, and a different solution is intended to
+// be used, so function will likely disappear in the future.
 func NewObjectId() ObjectId {
 	return idSeq.Add(1)
 }
@@ -25,10 +29,15 @@ type Entity interface {
 	ObjectId() ObjectId
 }
 
+// Base is the default Entity implementation. The zero value will generate a
+// unique [ObjectId] the first time it is read.
 type Base struct {
 	objectId ObjectId
 }
 
+// Creates a new Entity
+//
+// Deprecated: You can just use a zero value Base instance.
 func New() Entity {
 	return Base{NewObjectId()}
 }

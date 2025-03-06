@@ -2,6 +2,10 @@ package event
 
 import "github.com/gost-dom/browser/internal/entity"
 
+type Entity interface {
+	ObjectId() entity.ObjectId
+}
+
 /* -------- event -------- */
 
 type Init interface {
@@ -23,7 +27,7 @@ func (d EventInit) cancelable() bool {
 }
 
 type Event struct {
-	entity.Entity
+	entity.Base
 	Init
 	phase         EventPhase
 	cancelled     bool
@@ -33,9 +37,13 @@ type Event struct {
 	currentTarget EventTarget
 }
 
+// New creates a new Event object passing a specific event type and event data.
+//
+// Deprecated: Calling New was originally necessary to handle object
+// initialization, but this is no longer necessary, and it's suggested to just
+// create an Event objects directly
 func New(eventType string, eventInit Init) *Event {
 	return &Event{
-		Entity:    entity.New(),
 		Init:      eventInit,
 		eventType: eventType,
 	}
