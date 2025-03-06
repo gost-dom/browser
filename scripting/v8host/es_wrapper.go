@@ -5,7 +5,6 @@ import (
 	"runtime/cgo"
 
 	"github.com/gost-dom/browser/dom"
-	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/entity"
 
@@ -14,10 +13,16 @@ import (
 
 type converters struct{}
 
+type eventInitWrapper struct {
+	bubbles    bool
+	cancelable bool
+	init       any
+}
+
 func (w converters) decodeEventInit(
 	ctx *V8ScriptContext,
 	v *v8.Value,
-) (event.EventInit, error) {
+) (eventInitWrapper, error) {
 	// var eventOptions []event.EventOption
 	options, err0 := v.AsObject()
 
@@ -25,11 +30,11 @@ func (w converters) decodeEventInit(
 	cancelable, err2 := options.Get("cancelable")
 	err := errors.Join(err0, err1, err2)
 	if err != nil {
-		return event.EventInit{}, err
+		return eventInitWrapper{}, err
 	}
-	init := event.EventInit{
-		Bubbles:    bubbles.Boolean(),
-		Cancelable: cancelable.Boolean(),
+	init := eventInitWrapper{
+		bubbles:    bubbles.Boolean(),
+		cancelable: cancelable.Boolean(),
 	}
 	// err := errors.Join(err0, err1, err2)
 	// if err == nil {

@@ -22,17 +22,19 @@ func (w eventWrapper) Bubbles() bool {
 	return w.Event.Bubbles
 }
 
-func (w eventV8Wrapper) defaultEventInit() event.EventInit {
-	return event.EventInit{}
+func (w eventV8Wrapper) defaultEventInit() eventInitWrapper {
+	return eventInitWrapper{}
 }
 
 func (w eventV8Wrapper) CreateInstance(
 	ctx *V8ScriptContext,
 	this *v8.Object,
 	type_ string,
-	o event.EventInit,
+	o eventInitWrapper,
 ) (*v8.Value, error) {
-	e := eventWrapper{event.New(type_, o)}
+	e := eventWrapper{
+		&event.Event{Type: type_, Bubbles: o.bubbles, Cancelable: o.cancelable, Init: o.init},
+	}
 	return w.store(e, ctx, this)
 }
 

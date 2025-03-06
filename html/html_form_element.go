@@ -29,7 +29,7 @@ type FormDataEventInit struct {
 }
 
 type SubmitEventInit struct {
-	event.Init
+	event.EventInit
 	Submitter dom.Element
 }
 
@@ -70,15 +70,14 @@ func newFormDataEvent(data *FormData) *event.Event {
 
 func newSubmitEvent(submitter dom.Element) *event.Event {
 	eventInit := SubmitEventInit{
-		event.EventInit{
-			Bubbles:    true,
-			Cancelable: true,
-		},
+		event.EventInit{},
 		submitter,
 	}
-	return event.New(
-		string(FormEventSubmit),
-		eventInit)
+	return &event.Event{
+		Type:       string(FormEventSubmit),
+		Bubbles:    true,
+		Cancelable: true,
+		Init:       eventInit}
 }
 
 type HTMLFormElement interface {

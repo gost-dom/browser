@@ -13,11 +13,14 @@ func createCustomEvent(host *V8ScriptHost) *v8.FunctionTemplate {
 	res := v8.NewFunctionTemplateWithError(
 		iso,
 		func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-			init := event.CustomEventInit{}
 			ctx := host.mustGetContext(info.Context())
 			args := info.Args()
 			if len(args) < 1 {
 				return nil, v8.NewTypeError(iso, "Must have at least one constructor argument")
+			}
+			e := &event.Event{
+				Type: args[0].String(),
+				Init: event.CustomEventInit{},
 			}
 			if len(args) > 1 {
 				if options, err := args[1].AsObject(); err == nil {
@@ -27,11 +30,10 @@ func createCustomEvent(host *V8ScriptHost) *v8.FunctionTemplate {
 					if err != nil {
 						return nil, err
 					}
-					init.Bubbles = bubbles.Boolean()
-					init.Cancelable = cancelable.Boolean()
+					e.Bubbles = bubbles.Boolean()
+					e.Cancelable = cancelable.Boolean()
 				}
 			}
-			e := event.NewCustomEvent(args[0].String(), init)
 			handle := cgo.NewHandle(e)
 			ctx.addDisposer(handleDisposable(handle))
 			info.This().SetInternalField(0, v8.NewValueExternalHandle(iso, handle))
