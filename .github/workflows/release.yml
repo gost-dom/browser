@@ -24,4 +24,4 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install
       - run: pnpm exec semantic-release
-      - run: git push && git push --tags
+      - run: git push HEAD:main && git push --tags
