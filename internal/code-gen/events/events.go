@@ -52,10 +52,13 @@ type EventConstructorGenerator events.Event
 
 func (s EventConstructorGenerator) Generate() *jen.Statement {
 	return gen.StatementList(
-		gen.NewTypePackage("Event", packagenames.Events).CreateInstance(
-			gen.Raw(jen.Id("Type").Op(":").Lit(s.Type)),
-			gen.Raw(jen.Id("Data").Op(":").Id("data")),
-		).Reference(),
+		gen.StructLiteral{
+			Type: gen.NewTypePackage("Event", packagenames.Events),
+			Elements: []gen.Generator{
+				gen.StructLiteralKeyElement{Key: gen.Id("Type"), Value: gen.Lit(s.Type)},
+				gen.StructLiteralKeyElement{Key: gen.Id("Data"), Value: gen.Id("data")},
+			},
+		}.Value().Reference(),
 	).Generate()
 
 }
