@@ -82,9 +82,13 @@ type GetGeneratorsRes struct {
 
 func line(g gen.Generator) gen.Generator { return gen.Raw(jen.Line().Add(g.Generate())) }
 
+// Generates a single event dispatch methods for an element, e.g.
+//
+//	func (e *elementEvents) Blur() { /* ... */ }
 type EventDispatchMethodGenerator struct {
+	Type           gen.Type
 	SourceTypeName string
-	Event          events.Event
+	Event          EventType
 }
 
 func eventDispatchTypeName(typeName string) string {
@@ -92,12 +96,11 @@ func eventDispatchTypeName(typeName string) string {
 }
 
 func (g EventDispatchMethodGenerator) Generate() *jen.Statement {
-	typeName := eventDispatchTypeName(g.SourceTypeName)
 	event := g.Event
 	return gen.FunctionDefinition{
 		Receiver: gen.FunctionArgument{
 			Name: gen.Id("e"),
-			Type: gen.NewType(typeName).Pointer(),
+			Type: g.Type.Pointer(),
 		},
 		Name:     internal.UpperCaseFirstLetter(event.Type),
 		RtnTypes: []gen.Generator{gen.Id("bool")},
@@ -105,24 +108,9 @@ func (g EventDispatchMethodGenerator) Generate() *jen.Statement {
 	}.Generate()
 }
 
-func CreateMethodGenerator(specs EventGeneratorSpecs) (res gen.Generator, err error) {
-	api, err := events.Load(specs.Api)
-	events := api.EventsForType(specs.SourceType)
-	for _, e := range events {
-		if e.Type == specs.EventName {
-			res = EventDispatchMethodGenerator{
-				SourceTypeName: specs.SourceType,
-				Event:          e,
-			}
-			break
-		}
-	}
-	return
-}
-
 type EventInterfaceGenerator struct {
 	Element string
-	Events  []events.Event
+	Events  []EventType
 }
 
 func (g EventInterfaceGenerator) Generate() *jen.Statement {
@@ -145,26 +133,96 @@ func IncludeEvent(e events.Event) bool {
 	}
 }
 
-func CreateEventSourceGenerator(apiName string, element string) (gen.Generator, error) {
-	api, err := events.Load(apiName)
-	n := gen.NewType(eventDispatchTypeName(element))
-	s := gen.Struct{Name: n}
-	s.Field(gen.Id("target"), gen.NewTypePackage("EventTarget", packagenames.Events))
-	var events []events.Event
-	for _, e := range api.EventsForType(element) {
+// Generates the file containins event constructors for a specific element
+//
+//	type elementEvents struct { /* */ }
+//
+//	type ElementEvents interface { /* */ }
+//
+//	func (e *elementEvents) Click() { /* dispatch a "click" event */ }
+type ElementEventGenerator struct {
+	Api     events.Events
+	Element string
+}
+
+func (g ElementEventGenerator) Type() gen.Type {
+	return gen.NewType(eventDispatchTypeName(g.Element))
+}
+
+// EventType represents a specific event type specification, and has helper
+// functions, e.g. to generate the corresponding Go data types.
+type EventType events.Event
+
+func (g ElementEventGenerator) Generate() *jen.Statement {
+	events := g.Events()
+	type_ := g.Type()
+
+	res := gen.StatementList(
+		ElementEventStructGenerator{type_},
+		gen.Line,
+		EventInterfaceGenerator{Element: g.Element, Events: events},
+		gen.Line,
+		EventDispatchMethodsGenerator{
+			Type:           type_,
+			SourceTypeName: g.Element,
+			Events:         events,
+		},
+	)
+	return res.Generate()
+}
+
+func (g ElementEventGenerator) Events() []EventType {
+	var events []EventType
+	for _, e := range g.Api.EventsForType(g.Element) {
 		if IncludeEvent(e) {
-			events = append(events, e)
+			events = append(events, EventType(e))
 		}
 	}
-	res := gen.StatementList(s, gen.Line, EventInterfaceGenerator{Element: element, Events: events})
-	for _, e := range events {
+	return events
+}
+
+// Generates
+type ElementEventStructGenerator struct {
+	Type gen.Type
+}
+
+func (g ElementEventStructGenerator) Generate() *jen.Statement {
+	s := gen.Struct{Name: g.Type}
+	s.Field(gen.Id("target"), gen.NewTypePackage("EventTarget", packagenames.Events))
+	return s.Generate()
+}
+
+// Generates all event dispatch methods for an element, e.g. (but with blank
+// lines between each.
+//
+//	func (e *elementEvents) Blur() { /* ... */ }
+//	func (e *elementEvents) Click() { /* ... */ }
+//	func (e *elementEvents) Focus() { /* ... */ }
+type EventDispatchMethodsGenerator struct {
+	Type           gen.Type
+	SourceTypeName string
+	Events         []EventType
+}
+
+func (g EventDispatchMethodsGenerator) Generate() *jen.Statement {
+	res := gen.StatementList()
+	for _, e := range g.Events {
 		res.Append(gen.Line)
 		res.Append(EventDispatchMethodGenerator{
-			SourceTypeName: element,
+			Type:           g.Type,
+			SourceTypeName: g.SourceTypeName,
 			Event:          e,
 		})
 	}
-	return res, err
+	return res.Generate()
+}
+
+func CreateEventSourceGenerator(apiName string, element string) (gen.Generator, error) {
+	api, err := events.Load(apiName)
+	if err != nil {
+		return nil, err
+	}
+	return ElementEventGenerator{api, element}, nil
 }
 
 func generateFile(packageName string, apiName string, element string) (*jen.File, error) {
