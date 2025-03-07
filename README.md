@@ -1,29 +1,28 @@
 # Gost-DOM - A headless browser for Go
 
-The Go-to headless browser for TDD workflows.
+**The Go-to headless browser for TDD workflows.**
 
-```go
-browser := NewBrowserFromHandler(pkg.RootHttpHandler)
-window, err := browser.Open("http://example.com/example") // host is ignored
-Expect(err).ToNot(HaveOccurred())
-doc := window.Document()
-button := doc.QuerySelector("button")
-targetArea := doc.GetElementById("target-area")
-button.Click()
-Expect(targetArea).To(HaveTextContent("Click count: 1"))
-button.Click()
-Expect(targetArea).To(HaveTextContent("Click count: 2"))
-```
+Gost-DOM is a headless browser written in Go intended to write tests of web
+application in Go. If features a V8 engine for JavaScript execution, and is
+intended to simulate enough browser behaviour to work reliably as a _blazingly
+fast_ testing tool for _modern_ web applications.
 
-Go-dom downloads, and executes client-side script, making it an ideal choice to
-help build applications using a Go/HTMX stack. 
+It an ideal choice to help build applications using a Go/HTMX stack, where the
+implementation of behaviour is fragmented and a choreography of HTML element
+attributes, specific HTTP handlers, designed to serve specific HTMX requests,
+and the response headers, affecting how HTMX swaps, and possibly updates the
+browser history.
 
 Being written in Go you can connect directly to an `http.Handler` bypassing the
-overhead of a TCP connection; as well as the burden of managing ports and
-connections.
+overhead of a TCP connection (hence blazingly fast); as well as the burden of
+managing ports and connections. Everything just runs in the test thread, while
+the entire HTTP stack is still exercised.
 
-This greatly simplifies the ability to replace dependencies during testing, as
-you can treat your HTTP server as a normal Go component.
+This enables parallel tests, and simplifies the ability to replace dependencies
+during testing, your HTTP server is just a Go component that is exercised by the
+tests, like any other Go test.
+
+[Read this to get started](./docs/Getting-started.md).
 
 > [!NOTE] 
 >
