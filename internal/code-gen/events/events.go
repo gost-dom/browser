@@ -23,22 +23,10 @@ type EventGeneratorSpecs struct {
 type EventInitGenerator events.Event
 
 func (g EventInitGenerator) Generate() *jen.Statement {
-	init := gen.NewValue("data")
-	// event := gen.NewValue("event")
-	typeName := fmt.Sprintf("%sInit", g.Interface)
-	s := gen.StatementList(gen.Assign(init, gen.Raw(jen.Id(typeName).Values())))
-	// keys := make([]string, 0)
-	// for k := range g.Options {
-	// 	keys = append(keys, string(k))
-	// }
-	// sort.Strings(keys)
-	// for _, k := range keys {
-	// 	v := g.Options[events.EventOption(k)]
-	// 	field := internal.UpperCaseFirstLetter(string(k))
-	// 	value := gen.Lit(v)
-	// 	s.Append(gen.Reassign(event.Field(field), value))
-	// }
-	return s.Generate()
+	return gen.Assign(
+		gen.NewValue("data"),
+		gen.NewType(fmt.Sprintf("%sInit", g.Interface)).CreateInstance(),
+	).Generate()
 }
 
 type EventPropertiesGenerator events.Event
@@ -63,18 +51,10 @@ func (g EventPropertiesGenerator) Generate() *jen.Statement {
 type EventConstructorGenerator events.Event
 
 func (s EventConstructorGenerator) Generate() *jen.Statement {
-	// e := events.Event(s)
-	// eventConstructor := fmt.Sprintf("New%s", e.Interface)
-
-	dict := jen.Code(jen.Dict{
-		jen.Id("Type"): jen.Lit(s.Type),
-		jen.Id("Data"): jen.Id("data"),
-	})
-	d := jen.Statement([]jen.Code{dict})
-
 	return gen.StatementList(
 		gen.NewTypePackage("Event", packagenames.Events).CreateInstance(
-			gen.Raw(&d),
+			gen.Raw(jen.Id("Type").Op(":").Lit(s.Type)),
+			gen.Raw(jen.Id("Data").Op(":").Id("data")),
 		).Reference(),
 	).Generate()
 
@@ -92,7 +72,6 @@ func (g DispatchEventGenerator) Generate() *jen.Statement {
 		EventPropertiesGenerator(g),
 		gen.Return(
 			receiver.Field("target").Field("DispatchEvent").Call(event, gen.Line))).Generate()
-
 }
 
 type GetGeneratorsRes struct {
