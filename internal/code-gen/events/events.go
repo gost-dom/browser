@@ -3,7 +3,6 @@ package events
 import (
 	"fmt"
 	"os"
-	"slices"
 	"sort"
 	"strings"
 
@@ -140,10 +139,12 @@ func CreateEventSourceGenerator(apiName string, element string) (gen.Generator, 
 	n := gen.NewType(eventDispatchTypeName(element))
 	s := gen.Struct{Name: n}
 	s.Field(gen.Id("target"), gen.NewTypePackage("EventTarget", packagenames.Events))
-	events := slices.DeleteFunc(
-		api.EventsForType(element),
-		func(e events.Event) bool { return e.Interface != "PointerEvent" },
-	)
+	var events []events.Event
+	for _, e := range api.EventsForType(element) {
+		if e.Interface == "PointerEvent" {
+			events = append(events, e)
+		}
+	}
 	res := gen.StatementList(s, gen.Line, EventInterfaceGenerator{Element: element, Events: events})
 	for _, e := range events {
 		res.Append(gen.Line)
