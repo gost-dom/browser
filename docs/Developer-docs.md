@@ -2,9 +2,9 @@
 
 This consists of a few separate documents
 
-- [Code architecture](./Code-architecture.md) describes the overall dependency of packages.
-- [Code structure](./Code-structure.md) - more detailed description of the packages.
-- [DOM node implementation](./DOM-nodes.md) - The DOM tree itself (see below)
+- [Code architecture](./Code architecture.md) describes the overall dependency of packages.
+- [Code structure](./Code structure.md) - more detailed description of the packages.
+- [DOM node implementation](./DOM nodes.md) - The DOM tree itself (see below)
 - [Testing](./Testing.md) - Guidelines for testing
 
 ## DOM Tree - Unidiomatic Go

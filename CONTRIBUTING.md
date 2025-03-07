@@ -24,11 +24,9 @@ Otherwise, here are some guidelines:
 - Let yourself known before starting working on a feature to avoid conflicts
 - There is not a "correct" prioritization. Without user feedback, prioritization
   is based on what I experience, and what I believe would make most sense
-- Browse through the [Developer docs](./docs/Developer docs.md), but don't be
+- Browse through the [Developer docs](./docs/Developer-docs.md), but don't be
   afraid to ask questions about the implementation.
-
 - If there's something you find to be weird or unidiomatic, chances are that I'd agree. Any suggestions 
-
 - **Read the docs**. This project implements specific standards. Both MDN and the
   Living Standard are sources of information.
     - [MDN Developer](https://developer.mozilla.org/en-US/docs/Web)
