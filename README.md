@@ -99,25 +99,6 @@ This isn't intended as a replacement for the cases where an end-2-end test is
 the right choice. It is intended as a tool to help when you want a smaller
 isolated test, e.g. mocking out part of the behaviour;
 
-## Code structure
-
-The [constributor's guide](./CONTRIBUTING.md) describe the overall project
-structure.
-
-
-### Modularisation
-
-Although the code isn't modularised yet, it is an idea that you should be able
-to include the modules relevant to your app. E.g., if your app deals with
-location services, you can add a module implementing location services.
-
-This helps keep the size of the dependencies down for client projects; keeping
-build times down for the TDD loop.
-
-It also provides the option of alternate implementations. E.g., for location
-services, the simple implementation can provide a single function to set the
-current location / accuracy. The advanced implementation can replay a GPX track.
-
 ## Project status
 
 Currently, the most basic HTMX app is working, simple click handler with
