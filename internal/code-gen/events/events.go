@@ -19,16 +19,20 @@ type EventGeneratorSpecs struct {
 	EventName  string
 }
 
-type EventInitGenerator events.Event
+type EventInitGenerator struct {
+	EventType
+	Receiver gen.Value
+}
 
 func (g EventInitGenerator) Generate() *jen.Statement {
 	return gen.Assign(
 		gen.NewValue("data"),
-		gen.NewType(fmt.Sprintf("%sInit", g.Interface)).CreateInstance(),
+		g.Receiver.Field(fmt.Sprintf("default%sInit", g.Interface)).Call(),
+		// gen.NewType(fmt.Sprintf("%sInit", g.Interface)).CreateInstance(),
 	).Generate()
 }
 
-type EventPropertiesGenerator events.Event
+type EventPropertiesGenerator struct{ EventType }
 
 func (g EventPropertiesGenerator) Generate() *jen.Statement {
 	event := gen.NewValue("event")
@@ -47,7 +51,7 @@ func (g EventPropertiesGenerator) Generate() *jen.Statement {
 	return s.Generate()
 }
 
-type EventConstructorGenerator events.Event
+type EventConstructorGenerator struct{ EventType }
 
 func (s EventConstructorGenerator) Generate() *jen.Statement {
 	return gen.StatementList(
@@ -62,15 +66,17 @@ func (s EventConstructorGenerator) Generate() *jen.Statement {
 
 }
 
-type DispatchEventGenerator events.Event
+type DispatchEventGenerator struct {
+	EventType
+}
 
 func (g DispatchEventGenerator) Generate() *jen.Statement {
-	e := events.Event(g)
+	// e := events.Event(g)
 	receiver := gen.NewValue("e")
 	event := gen.NewValue("event")
 	return gen.StatementList(
-		EventInitGenerator(g),
-		gen.Assign(event, EventConstructorGenerator(e)),
+		EventInitGenerator{g.EventType, receiver},
+		gen.Assign(event, EventConstructorGenerator(g)),
 		EventPropertiesGenerator(g),
 		gen.Return(
 			receiver.Field("target").Field("DispatchEvent").Call(event, gen.Line))).Generate()
@@ -104,7 +110,7 @@ func (g EventDispatchMethodGenerator) Generate() *jen.Statement {
 		},
 		Name:     internal.UpperCaseFirstLetter(event.Type),
 		RtnTypes: []gen.Generator{gen.Id("bool")},
-		Body:     DispatchEventGenerator(event),
+		Body:     DispatchEventGenerator{event},
 	}.Generate()
 }
 

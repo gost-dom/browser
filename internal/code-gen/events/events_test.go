@@ -40,7 +40,7 @@ func TestGenerateElementEventMethod(t *testing.T) {
 	g.Expect(err).ToNot(HaveOccurred())
 	g.Expect(r).To(HaveRendered(
 		`func (e *elementEvents) Click() bool {
-	data := PointerEventInit{}
+	data := e.defaultPointerEventInit()
 	event := &event.Event{Type: "click", Data: data}
 	event.Bubbles = true
 	event.Cancelable = true
@@ -57,7 +57,6 @@ func TestInterfaceGeneration(t *testing.T) {
 		Api:     api,
 		Element: "Element",
 	}
-
 	res := EventInterfaceGenerator{
 		Element: "Element",
 		Events:  x.Events(),
