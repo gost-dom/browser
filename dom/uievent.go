@@ -19,6 +19,11 @@ type PointerEventInit struct {
 	PointerId int
 }
 
+type FocusEventInit struct {
+	UIEventInit
+	RelatedTarget event.EventTarget
+}
+
 func NewUIEvent(type_ string) *event.Event {
 	return event.New(type_, UIEventInit{})
 }

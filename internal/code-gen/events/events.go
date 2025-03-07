@@ -134,6 +134,17 @@ func (g EventInterfaceGenerator) Generate() *jen.Statement {
 	return jen.Type().Add(jen.Id(name)).Interface(gen.ToJenCodes(ops)...)
 }
 
+func IncludeEvent(e events.Event) bool {
+	switch e.Interface {
+	case "PointerEvent":
+		return true
+	case "FocusEvent":
+		return !strings.HasPrefix(e.Type, "DOMFocus")
+	default:
+		return false
+	}
+}
+
 func CreateEventSourceGenerator(apiName string, element string) (gen.Generator, error) {
 	api, err := events.Load(apiName)
 	n := gen.NewType(eventDispatchTypeName(element))
@@ -141,7 +152,7 @@ func CreateEventSourceGenerator(apiName string, element string) (gen.Generator, 
 	s.Field(gen.Id("target"), gen.NewTypePackage("EventTarget", packagenames.Events))
 	var events []events.Event
 	for _, e := range api.EventsForType(element) {
-		if e.Interface == "PointerEvent" {
+		if IncludeEvent(e) {
 			events = append(events, e)
 		}
 	}

@@ -10,8 +10,12 @@ type elementEvents struct {
 
 type ElementEvents interface {
 	Auxclick() bool
+	Blur() bool
 	Click() bool
 	Contextmenu() bool
+	Focus() bool
+	Focusin() bool
+	Focusout() bool
 }
 
 func (e *elementEvents) Auxclick() bool {
@@ -19,6 +23,14 @@ func (e *elementEvents) Auxclick() bool {
 	event := &event.Event{Type: "auxclick", Data: data}
 	event.Bubbles = true
 	event.Cancelable = true
+	return e.target.DispatchEvent(event)
+}
+
+func (e *elementEvents) Blur() bool {
+	data := FocusEventInit{}
+	event := &event.Event{Type: "blur", Data: data}
+	event.Bubbles = false
+	event.Cancelable = false
 	return e.target.DispatchEvent(event)
 }
 
@@ -35,5 +47,29 @@ func (e *elementEvents) Contextmenu() bool {
 	event := &event.Event{Type: "contextmenu", Data: data}
 	event.Bubbles = true
 	event.Cancelable = true
+	return e.target.DispatchEvent(event)
+}
+
+func (e *elementEvents) Focus() bool {
+	data := FocusEventInit{}
+	event := &event.Event{Type: "focus", Data: data}
+	event.Bubbles = false
+	event.Cancelable = false
+	return e.target.DispatchEvent(event)
+}
+
+func (e *elementEvents) Focusin() bool {
+	data := FocusEventInit{}
+	event := &event.Event{Type: "focusin", Data: data}
+	event.Bubbles = true
+	event.Cancelable = false
+	return e.target.DispatchEvent(event)
+}
+
+func (e *elementEvents) Focusout() bool {
+	data := FocusEventInit{}
+	event := &event.Event{Type: "focusout", Data: data}
+	event.Bubbles = true
+	event.Cancelable = false
 	return e.target.DispatchEvent(event)
 }
