@@ -31,7 +31,7 @@ Otherwise, here are some guidelines:
 
 - **Read the docs**. This project implements specific standards. Both MDN and the
   Living Standard are sources of information.
-    - [MDN Developer](./docs/Developer docs.md)
+    - [MDN Developer](https://developer.mozilla.org/en-US/docs/Web)
     - [WHATWG Living Standard](https://html.spec.whatwg.org/multipage)
 
 Regarding conflicts. The code base is being heavily refactored, as [new
