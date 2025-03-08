@@ -154,8 +154,7 @@ a few examples.
 - Submit buttons cannot override form method and action.
 
 To give users a better chance of predicting what works, and what doesn't, it is
-an aim to make sure that the features are implemented, work as they would in a
-real browser.
+an aim to make sure that existing features work as they would in a real browser.
 
 #### Goja support
 
