@@ -10,6 +10,7 @@ import (
 )
 
 func TestHttpHandlerCreateContext(t *testing.T) {
+	t.Parallel()
 	var ctx context.Context
 	server := func(w netHttp.ResponseWriter, r *netHttp.Request) {
 		ctx = r.Context()

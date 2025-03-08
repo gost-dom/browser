@@ -195,5 +195,6 @@ func (s *ClockTestSuite) TestRepeatingTasksGeneratePanicOnRunAdvance() {
 }
 
 func TestClock(t *testing.T) {
+	t.Parallel()
 	suite.Run(t, new(ClockTestSuite))
 }

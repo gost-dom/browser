@@ -163,6 +163,7 @@ func (s *ElementTestSuite) TestSetTextContentRemovesChildren() {
 }
 
 func TestElement(t *testing.T) {
+	t.Parallel()
 	suite.Run(t, new(ElementTestSuite))
 }
 
