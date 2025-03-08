@@ -9,6 +9,9 @@ if you need any of the features missing.
 
 User feedback helps setting the direction and prioritising development.
 
+For missing features, described here, check the linked issues to see if this
+document might be missing updates updates.
+
 ## General browser behaviour
 
 Opening windows with isolated script context, sharing a cookie store.
@@ -54,6 +57,7 @@ implementations to be build independently.
 
 - Only supports HTML documents. XML and XHTML documents, as well as namespaces are not supported.
 - `Element.outerHTML` and `innerHTML` output is not properly escaped.
+- No support for shadow DOM.
 
 ### HTML API
 
@@ -74,7 +78,9 @@ Specific HTML elements have specific behaviour.
 - `<form>` (be aware of missing redirects)
     - `<input>`
     - `<button>`/`<input type="submit">` When clicked inside a form, submits. Overriding `method` and `action` is not implemented.
+        - [Issue #10](https://github.com/gost-dom/browser/issues/10)
     - Reset behaviour is not implemented (either as a call to `.reset()` or a
+    - Missing validation. [Issue #30](https://github.com/gost-dom/browser/issues/30)
     reset button.
 - `<template>` exposes its HTML children as children of the `content` attribute.
 
