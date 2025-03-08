@@ -3,37 +3,26 @@
 **The Go-to headless browser for TDD workflows.**
 
 Gost-DOM is a headless browser written in Go intended to write tests of web
-application in Go. If features a V8 engine for JavaScript execution, and is
-intended to simulate enough browser behaviour to work reliably as a _blazingly
-fast_ testing tool for _modern_ web applications.
+application in Go that relies on JavaScript. Properties of Gost-DOM-based tests:
 
-It an ideal choice to help build applications using a Go/HTMX stack, where the
-implementation of behaviour is fragmented and a choreography of HTML element
-attributes, specific HTTP handlers, designed to serve specific HTMX requests,
-and the response headers, affecting how HTMX swaps, and possibly updates the
-browser history.
+- Tests run in parallel due to complete _complete isolation_[^2]
+- No erratic behaviour due to 100% predictable UI reactions.
+- "Blazingly fast". No out-of-process calls, not even thread boundaries. Web
+  application code runs in the test thread, so a panic in your code keeps a full
+  stack trace to the test case. [^3]
+- Dependencies can be replaced while testing.
 
-Being written in Go you can connect directly to an `http.Handler` bypassing the
-overhead of a TCP connection (hence blazingly fast); as well as the burden of
-managing ports and connections. Everything just runs in the test thread, while
-the entire HTTP stack is still exercised.
+Yet Gost-DOM still uses HTTP request and responses for verification, testing the
+entire stack, as well as middlewares. 
 
-This enables parallel tests, and simplifies the ability to replace dependencies
-during testing, your HTTP server is just a Go component that is exercised by the
-tests, like any other Go test.
+[Read this to get started](./docs/Getting-started.md), and see a quick example
+of usage.
 
-[Read this to get started](./docs/Getting-started.md).
-
-> [!NOTE] 
+> [!NOTE]
 >
-> This still early pre-release. Minimal functionality exists for some basic
-> flows, but only just.
->
-> [Feature list](./README_FEATURE_LIST.md)
-
-> [!WARNING]
->
-> The API is not yet stable. use at your own risk.
+> This is 0.x version still, and breaking API changes do occur, but will be
+> announced before release in the [Gost-DOM
+> discussions](https://github.com/orgs/gost-dom/discussions/categories/announcements) (do say Hi! 👋)
 
 ## Looking for sponsors
 
@@ -41,12 +30,12 @@ This tool has reached a level where it can be used to test some web applications
 with JavaScript, e.g., simple HTMX applications in Go, particularly combined
 with HTMX, a tech combination which is becoming increasingly popular.
 
-But there is still a lot to do before you can rely on this to test your web
-applications. So far, I've bade good progress is the result of too much spare
-time; but that will not last. 
+But there is still a lot to build to support just the most relevant Web APIs.
+
+I've bade good progress because of too much spare time; but that will not last. 
 
 If I could find enough sponsors, it could mean the difference between continued
-development, or death.
+development, or death 😢
 
 ## Join the "community"
 
@@ -56,6 +45,7 @@ up-to-date on progress
 hi!](https://github.com/orgs/gost-dom/discussions)
 - Want to contribute to the project, there's a very rough early [guide describing the overall project structure](./CONTRIBUTING.md)
 
+<!---
 ## Project background
 
 Go and HTMX is gaining in popularity as a stack.
@@ -98,10 +88,19 @@ This isn't intended as a replacement for the cases where an end-2-end test is
 the right choice. It is intended as a tool to help when you want a smaller
 isolated test, e.g. mocking out part of the behaviour;
 
+--->
+
 ## Project status
 
-Currently, the most basic HTMX app is working, simple click handler with
-swapping, boosted links, and form (at least with text fields).
+This still early pre-release, and only the core web APIs are supported, and not
+100%. Check the [Feature list](./README_FEATURE_LIST.md) for a list.
+
+The 0.1 focus was to support a common session based login-flow using HTMX,
+meaning to support content swapping, XHR, forms, and cookies; in order to
+identify risks and architectural flaws.
+
+But many features were not fully implemented, e.g., you cannot navigate by
+assigning `history.href`, and redirect responses are not followed.
 
 ### Memory Leaks
 
@@ -130,19 +129,43 @@ have postponed dealing with that issue.
 
 ### Next up
 
-The following are main focus areas ATM
+Currently there are two main focus areas
 
-- Handle redirect responses
-- Implement a proper event loop, with proper `setTimeout`, `setInterval`, and
-their clear-counterparts.
-- Implement fast-forwarding of time. 
-- Replace early hand-written JS wrappers with auto-generated code, helping drive
-  a more complete implementation.
+- Element focus
+- Fix already implemented features
 
-A parallel project is adding support for [Goja](https://github.com/dop251/goja)
-, to eventually replace V8 with Goja as the default script engine, resulting in
-a pure Go implementation. V8 support will not go away, so there's a fallback, if
-important JS features are lacking from Goja.
+A side project worked on in parallel is to support Goja as an alternate script engine.
+
+#### Element focus
+
+Implement focus behaviour, including `focus()` and `blur()` methods, and their
+Go counterparts, including the relevant events.
+
+This is primarily a priority not because just adding `autofocus` on an input
+element that is swapped in by HTMX causes an JavaScript error to be thrown.
+
+#### Fix already implemented features
+
+Many of the already implemented features or APIs are not completely implemented,
+a few examples.
+
+- Assigning to the `history` doesn't navigate
+- [Live collections](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCollection) are static.
+- Submit buttons cannot override form method and action.
+
+To give users a better chance of predicting what works, and what doesn't, it is
+an aim to make sure that the features are implemented, work as they would in a
+real browser.
+
+#### Goja support
+
+V8 depends on Cgo, but [Goja](https://github.com/dop251/goja) is a pure Go
+JavaScript engine. While it may not be as complete as V8, it could be a usable
+alternative for many projects providing a pure Go option.
+
+
+V8 support will not go away, so there's always a fallback, if important JS
+features are lacking from Goja.
 
 ### Future goals
 
@@ -236,3 +259,11 @@ in certain scopes, implemented by "classes" in JavaScript.
 ## Attribution / 3rd party included code.
 
 This library contains [code derived](./scripting/v8host/polyfills/xpath) from the [jsdom project](https://github.com/jsdom/jsdom) distributed under the MIT license.
+
+---
+
+[^1]: Current focus is to support HTMX apps, but eventually React/Angular,
+    whatever front-end framework you use, will work in Gost-DOM.
+[^2]: Complete isolation depends on _your code_, e.g., if you don't replace
+    database dependencies, they are not isolated.
+[^3]: This depends on how you configure Gost-DOM. 
