@@ -93,7 +93,7 @@ isolated test, e.g. mocking out part of the behaviour;
 ## Project status
 
 This still early pre-release, and only the core web APIs are supported, and not
-100%. Check the [Feature list](./README_FEATURE_LIST.md) for a list.
+100%. Check the [Feature list](./docs/Features.md) for a list.
 
 The 0.1 focus was to support a common session based login-flow using HTMX,
 meaning to support content swapping, XHR, forms, and cookies; in order to

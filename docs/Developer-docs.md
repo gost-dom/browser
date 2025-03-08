@@ -17,3 +17,10 @@ applicable.
 
 As a result, there are many types, and specifically interfaces, that are larger
 than desired. This is particularly the case in the DOM tree itself.
+
+## Polyfills
+
+Where possible, JavaScript APIs are implemented through polyfills.
+
+- Go code to install polyfills: https://github.com/gost-dom/browser/blob/main/scripting/v8host/polyfills.go 
+- Folder for javascript files to load: https://github.com/gost-dom/browser/tree/main/scripting/v8host/polyfills
