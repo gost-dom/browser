@@ -200,7 +200,7 @@ benefits:
 
 - The verification of your system doesn't depend on the availability of an
   external service; when working offline
-- Avoid tests breaking because of changes to the external system.
+- Avoid tests breaking due to a new UI in your external dependency.
 - For an identity provider
   - Avoid pollution of dummy accounts to run your test suite.
   - Avoid locking out test accounts due to _"suspiscious activity"_.
