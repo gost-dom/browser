@@ -41,6 +41,7 @@ import (
 )
 
 func TestWebBrowser(t *testing.T) {
+    t.Parallel()
     b := browser.NewFromHandler(server.RootHttpHandler)
     window, err := b.Open("http://example.com/") // Host is ignored
     assert.NoError(t, err)
@@ -206,3 +207,12 @@ console.log(a.getAttribute("href")) // Logs https://example.com/idl-attributes
 
 Some IDL attributes have different names, e.g., the IDL attribute that
 corresponds to the `class` Data attribute is not called `class` but `className`.
+
+## Logging
+
+You can inject an `log/slog.Logger` calling `SetDefaultLogger` in
+the `browser/logger` package.
+
+This works on a global scale. A future enhancement might be to allow injecting
+the logger into a browser, allowing tests more control of log output on a
+test-by-test case.
