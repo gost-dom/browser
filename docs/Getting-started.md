@@ -161,19 +161,14 @@ Gost as well.
 ## Test isolation and parallelism.
 
 Each `Browser` instance has it's own isolated V8 instance, and each window
-created from the browser has it's own context, i.e. it's own global scope.
+created from the browser has it's own context, i.e. it's own global scope,
+allowing all tests to run in parallel.
 
-This means all tests can run in completely isolated scope, and run in parallel.
-Two threads cannot access the same V8 instance at the same time, but they are
-synchronized at low level, so reusing V8 instances should still work for
-parallel tests.
-
-There's some overhead to creating an isolated V8 instance and setting up global
-scope, so reusing them _may_ lead to better performance, but it is strongly
-recommended to not do that, unless performance _is_ a problem.
-
-There are planned features for recycling unused V8 instances for example, and
-creating a "template" of global scope that can be applied to new instances.
+Each `Browser` instance is not currently safe to use from multiple threads, and
+there is some overhead to creating an isolated V8 instance and setting up global
+scope, so browsers them _may_ lead to better performance, but it is strongly
+recommended to not do that, unless performance _is_ a problem. There are
+optimisations planned, such as reusing V8 instances from discarded browsers.
 
 ## IDL Attributes vs. Data Attributes
 
