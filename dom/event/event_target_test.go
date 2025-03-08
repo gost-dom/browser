@@ -86,6 +86,7 @@ type EventPropagationTestSuite struct {
 }
 
 func TestEventPropagation(t *testing.T) {
+	t.Parallel()
 	suite.Run(t, new(EventPropagationTestSuite))
 }
 

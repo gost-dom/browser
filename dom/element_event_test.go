@@ -9,6 +9,7 @@ import (
 )
 
 func TestElementClickEventPropagation(t *testing.T) {
+	t.Parallel()
 	var (
 		targetCalled bool
 		parentCalled bool
@@ -30,6 +31,7 @@ func TestElementClickEventPropagation(t *testing.T) {
 }
 
 func TestElementClickEventPreventDefault(t *testing.T) {
+	t.Parallel()
 	var (
 		targetCalled bool
 		parentCalled bool
@@ -51,6 +53,7 @@ func TestElementClickEventPreventDefault(t *testing.T) {
 }
 
 func TestElementClickEventBubbles(t *testing.T) {
+	t.Parallel()
 	var (
 		targetCalled bool
 		parentCalled bool

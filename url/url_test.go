@@ -171,5 +171,6 @@ func HaveHref(expected string) types.GomegaMatcher {
 }
 
 func TestURL(t *testing.T) {
+	t.Parallel()
 	suite.Run(t, new(URLTestSuite))
 }

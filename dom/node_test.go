@@ -79,6 +79,7 @@ func (s *NodeTestSuite) TestInsertDocumentFragmentOrder() {
 }
 
 func TestNode(t *testing.T) {
+	t.Parallel()
 	suite.Run(t, new(NodeTestSuite))
 }
 
@@ -196,6 +197,7 @@ func (s *NodeMoveToNewParentTest) TestOldParentIsUpdatedWhenUsingAppend() {
 }
 
 func TestNodeInsertBefore(t *testing.T) {
+	t.Parallel()
 	suite.Run(t, new(NodeMoveToNewParentTest))
 }
 
@@ -227,5 +229,6 @@ func (s *NodeOwnerDocumentTestSuite) TestOwnerDocumentOfDocumentNode() {
 }
 
 func TestNodeOwnerDocument(t *testing.T) {
+	t.Parallel()
 	suite.Run(t, new(NodeOwnerDocumentTestSuite))
 }

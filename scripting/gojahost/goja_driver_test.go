@@ -37,5 +37,6 @@ var _ = Describe("GojaDriver", func() {
 })
 
 func TestGojaHost(t *testing.T) {
+	t.Parallel()
 	scripttests.RunSuites(t, gojahost.New())
 }

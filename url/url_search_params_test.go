@@ -114,5 +114,6 @@ func (s *URLSearchParamsSuits) TestSet() {
 }
 
 func TestURLSearchParams(t *testing.T) {
+	t.Parallel()
 	suite.Run(t, new(URLSearchParamsSuits))
 }
