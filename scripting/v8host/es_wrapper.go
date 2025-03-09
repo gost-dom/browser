@@ -192,7 +192,6 @@ func (o handleReffedObject[T]) store(
 	if ok {
 		objectId := e.ObjectId()
 		ctx.v8nodes[objectId] = this.Value
-		ctx.domNodes[objectId] = e
 	}
 
 	internalField := v8.NewValueExternalHandle(o.scriptHost.iso, handle)
