@@ -23,7 +23,6 @@ func (w converters) decodeEventInit(
 	ctx *V8ScriptContext,
 	v *v8.Value,
 ) (eventInitWrapper, error) {
-	// var eventOptions []event.EventOption
 	options, err0 := v.AsObject()
 
 	bubbles, err1 := options.Get("bubbles")
@@ -36,14 +35,6 @@ func (w converters) decodeEventInit(
 		bubbles:    bubbles.Boolean(),
 		cancelable: cancelable.Boolean(),
 	}
-	// err := errors.Join(err0, err1, err2)
-	// if err == nil {
-	// 	eventOptions = []event.EventOption{
-	// 		event.EventBubbles(bubbles.Boolean()),
-	// 		event.EventCancelable(cancelable.Boolean()),
-	// 	}
-	// }
-	// return event.EventOptions(eventOptions...), nil
 	return init, nil
 }
 
