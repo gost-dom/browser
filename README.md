@@ -27,15 +27,15 @@ of usage.
 ## Looking for sponsors
 
 This tool has reached a level where it can be used to test some web applications
-with JavaScript, e.g., simple HTMX applications in Go, particularly combined
-with HTMX, a tech combination which is becoming increasingly popular.
+with JavaScript, e.g., simple HTMX applications. But there is still a lot to
+build to support just the most relevant Web APIs.
 
-But there is still a lot to build to support just the most relevant Web APIs.
-
-I've bade good progress because of too much spare time; but that will not last. 
-
+I've made good progress because of too much spare time; but that will not last.
 If I could find enough sponsors, it could mean the difference between continued
 development, or death 😢
+
+For companies wanting to sponsor, I can send formal invoices too. More
+information on the project's [Sponsor page](https://gostdom.net/sponsor)
 
 ## Join the "community"
 
