@@ -61,7 +61,6 @@ type V8ScriptContext struct {
 	v8ctx      *v8.Context
 	window     html.Window
 	v8nodes    map[entity.ObjectId]*v8.Value
-	domNodes   map[entity.ObjectId]entity.ObjectIder
 	eventLoop  *eventLoop
 	disposers  []disposable
 	clock      *clock.Clock
@@ -72,7 +71,6 @@ func (c *V8ScriptContext) cacheNode(obj *v8.Object, node entity.ObjectIder) (*v8
 	val := obj.Value
 	objectId := node.ObjectId()
 	c.v8nodes[objectId] = val
-	c.domNodes[objectId] = node
 	handle := cgo.NewHandle(node)
 	c.addDisposer(handleDisposable(handle))
 	internal := v8.NewValueExternalHandle(c.host.iso, handle)
@@ -334,12 +332,11 @@ var global *v8.Object
 
 func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 	context := &V8ScriptContext{
-		host:     host,
-		clock:    clock.New(),
-		v8ctx:    v8.NewContext(host.iso, host.windowTemplate),
-		window:   w,
-		v8nodes:  make(map[entity.ObjectId]*v8.Value),
-		domNodes: make(map[entity.ObjectId]entity.ObjectIder),
+		host:    host,
+		clock:   clock.New(),
+		v8ctx:   v8.NewContext(host.iso, host.windowTemplate),
+		window:  w,
+		v8nodes: make(map[entity.ObjectId]*v8.Value),
 	}
 	errorCallback := func(err error) {
 		w.DispatchEvent(event.NewErrorEvent(err))
