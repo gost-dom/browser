@@ -23,9 +23,22 @@ Gomega has been used historically, and provides expressive assertions through
 custom matchers, but the true benefit isn't achieved until you take your time to
 write the custom matchers.
 
+## Testing stripped HTML documents
+
+Many tests create a `Document` by parsing an HTML string. The HTML specification
+dictates implicitly creating `<html>`, `<head>`, and `<body>` if these elements
+are missing in the source.
+
+For brevity, `<html>`, and `<head>` are left out where they don't affect the
+outcome of the test, but `<body>` is kept to explicitly state that the string
+contains the _entire_ body of the test document.
+
+Tests can safely rely on this behaviour, as it is according to standards.
+
 ---
 
-[^1]: When Ginkgo was first conceived, provided some benefits. But these have
-    diminished with advancements in Go's own testing capabilities.
+[^1]: When Ginkgo was first conceived, it provided some benefits for organising
+    larget test suites. But these have diminished with advancements in Go's own
+    testing capabilities.
 
 
