@@ -45,7 +45,6 @@ test-watch:
 
 .PHONY: test-browser test-dom
 test-dom: 
-	echo "`go list -deps ./dom | ./deps`|"
 	gotestsum --packages "`go list -deps ./dom | ./deps`" --format dots --watch
 
 test-browser: 
