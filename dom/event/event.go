@@ -9,25 +9,30 @@ type Entity interface {
 /* -------- event -------- */
 
 // Event corresponds to a [DOM Event] dispatched by a [DOM EventTarget].
-// Different types of events carry different types of data, which is represented
-// by the Data property.
+// Different types of events carry different data. The event-specific data exist
+// in the Data property, which must be a valid "EventInit" type. The data
+// contains the event-specific values of the 2nd constructor argument.
 //
-// The different event types have different data types, all carrying having the
-// prefix, `EventInit`. This naming replect the naming in the IDL
-// specifications. When types in JavaScript are constructed, concrete subclasses
-// of `Event` in JavaScript are created based on the concrete type of the Data.
+//	// JS:
+//	const event = new CustomEvent("my-custom", { bubbles: true, details: "Something else" })
 //
-// Properties are arranged slightly differently on this type, than the DOM
-// version, where the properties that affect the event dispatching behaviour,
-// such as Bubbles, and Cancelable, are part of the EventInit, or options
-// argument.
+// The corresponding Go event would be:
 //
-//	const = new CustomEvent("my-custom", { bubbles: true, details: "Something else" })
+//	event := Event {
+//	  Type: "My-custom",
+//	  Bubbles: true,
+//	  Data: CustomEventInit{ Details: "Something else" },
+//	}
+//
+// The "EventInit" postfix reflect naming in IDL specifications.
 //
 // The Go Event representation stores the value for Bubbles on the event itself.
 // The other properties on the event options are data communicated between the
-// event dispatcher and the event listener, which Gost doesn't case about, and
+// event dispatcher and the event listener, which Gost doesn't care about, and
 // as such is stored as an interface{} type.
+//
+// In JavaScript, events are represented by concrete subclasses of the base
+// Event class. The concrete class used will be determined by the Data property.
 //
 // [DOM Event]: https://developer.mozilla.org/en-US/docs/Web/API/Event
 // [DOM EventTarget]: https://developer.mozilla.org/en-US/docs/Web/API/EventTarget
