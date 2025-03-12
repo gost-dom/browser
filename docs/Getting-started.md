@@ -171,17 +171,17 @@ scope, so browsers them _may_ lead to better performance, but it is strongly
 recommended to not do that, unless performance _is_ a problem. There are
 optimisations planned, such as reusing V8 instances from discarded browsers.
 
-## IDL Attributes vs. Data Attributes
+## IDL Attributes vs. Content Attributes
 
-There are two sets of attributes in the DOM, IDL Attributes and Data Attributes. 
+There are two sets of attributes in the DOM, IDL Attributes and Content Attributes. 
 
-Data Attributes are what most would consider attributes. They exist in the HTML,
-like the `class` data attribute in `<div class="container"></div>`. The data
+Content Attributes are what most would consider attributes. They exist in the HTML,
+like the `class` content attribute in `<div class="container"></div>`. The data
 attributes are accessible in JavaScript using e.g.,
 `getAttribute`/`setAttribute`.
 
 IDL attributes are properties on objects in the DOM, i.e., the JavaScript
-objects, and they normally reflect a corresponding data attribute. E.g., an
+objects, and they normally reflect a corresponding content attribute. E.g., an
 anchor element has an `href` attribute.
 
 ```html
@@ -194,11 +194,11 @@ console.log(a.getAttribute("href") // Logs https://example.com
 console.log(a.href) // Logs https://example.com
 ```
 
-Normally, setting an IDL attribute updates the corresponding data attribute. But
+Normally, setting an IDL attribute updates the corresponding content attribute. But
 other behaviour can be attaced.
 
 E.g., the link has IDL attributes for the different URL components, and
-assigning a new value to them will update the href data attribute.
+assigning a new value to them will update the href content attribute.
 
 ```javascript
 a.patnhame = "/idl-attributes"
@@ -206,7 +206,7 @@ console.log(a.getAttribute("href")) // Logs https://example.com/idl-attributes
 ```
 
 Some IDL attributes have different names, e.g., the IDL attribute that
-corresponds to the `class` Data attribute is not called `class` but `className`.
+corresponds to the `class` content attribute is not called `class` but `className`.
 
 ## Logging
 

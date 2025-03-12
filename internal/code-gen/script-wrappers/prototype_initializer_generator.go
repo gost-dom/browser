@@ -8,7 +8,7 @@ import (
 )
 
 // PrototypeInitializerGenerator generates a function to initialize a JavaScript
-// prototype. Initialize means setting data attributes for functions, and
+// prototype. Initialize means setting content attributes for functions, and
 // accessor attributes for IDL attributes.
 type PrototypeInitializerGenerator struct {
 	Platform TargetGenerators

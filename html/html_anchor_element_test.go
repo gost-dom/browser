@@ -49,13 +49,13 @@ var _ = Describe("htmlAnchorElement", func() {
 		Expect(a.Pathname()).To(Equal(""))
 	})
 
-	It("Should update the href data attribute when stetting an idl attribute", func() {
+	It("Should update the href content attribute when stetting an idl attribute", func() {
 		a.SetHref("/")
 		a.SetPathname("/local")
 		Expect(a).To(matchers.HaveAttribute("href", "http://example.com/local"))
 	})
 
-	It("Should update the href data attribute when setting the href IDL attribute", func() {
+	It("Should update the href content attribute when setting the href IDL attribute", func() {
 		a.SetHref("http://example.com/local")
 		Expect(a).To(matchers.HaveAttribute("href", "http://example.com/local"))
 	})
