@@ -44,10 +44,11 @@ test-watch:
 
 .PHONY: test-browser test-dom
 test-dom: 
-	gotestsum --packages "./dom" --format dots --watch
+	echo "`go list -deps ./dom | ./deps`|"
+	gotestsum --packages "`go list -deps ./dom | ./deps`" --format dots --watch
 
 test-browser: 
-	$(GOW) -s -w=./dom -w=./html -w=. test -vet=off . ./dom ./html
+	gotestsum --packages "`go list -deps ./html | ./deps`" --format dots --watch
 
 .PHONY: test-html
 test-html: 

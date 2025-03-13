@@ -1,0 +1,13 @@
+#!/bin/sh
+
+PREFIX="github.com/gost-dom/browser"
+FIRST="TRUE"
+
+while IFS= read -r line; do
+  if [[ "$line" == "$PREFIX"* ]]; then
+    if [[ "$FIRST" == "FALSE" ]]; then echo " \c"; fi
+    FIRST="FALSE"
+    echo "${line/#$PREFIX/.}\c"
+  fi
+done
+echo ""
