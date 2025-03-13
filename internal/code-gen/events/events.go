@@ -137,9 +137,19 @@ func (g EventInterfaceGenerator) Generate() *jen.Statement {
 	name := fmt.Sprintf("%sEvents", g.Element)
 	ops := make([]gen.Generator, len(g.Events))
 	for i, e := range g.Events {
-		ops[i] = gen.Raw(jen.Id(internal.UpperCaseFirstLetter(e.Type)).Params().Add(jen.Id("bool")))
+		ops[i] = gen.Raw(
+			jen.Commentf("Deprecated: %s is not a method defined on Element in the DOM", e.Type).
+				Line().
+				Id(internal.UpperCaseFirstLetter(e.Type)).
+				Params().
+				Add(jen.Id("bool")),
+		)
 	}
-	return jen.Type().Add(jen.Id(name)).Interface(gen.ToJenCodes(ops)...)
+	return jen.Commentf("Deprecated: %s expose methods that are not part of the %s specification ", name, g.Element).
+		Line().
+		Type().
+		Add(jen.Id(name)).
+		Interface(gen.ToJenCodes(ops)...)
 }
 
 func CreateEventSourceGenerator(apiName string, element string) (gen.Generator, error) {
