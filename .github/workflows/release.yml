@@ -29,6 +29,12 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
-      - run: pnpm install
-      - run: pnpm exec commit-and-tag-version
-      - run: git push HEAD:main && git push --tags
+      - name: Create changelog and tag version
+        run: |
+          pnpm install
+          pnpm exec commit-and-tag-version
+      - name: Push version
+        # Push the release to 'main' branch if it's ahead of main.
+        run: |
+          if git merge-base --is-ancestor remotes/origin/main HEAD; then git push origin HEAD:main; fi
+          git push --tags
