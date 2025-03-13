@@ -40,6 +40,7 @@ test:
 	go test -v -vet=all ./...
 
 test-watch: 
+	gotestsum --format dots ./... -- vet=off || echo "Error"
 	gotestsum --format dots --watch ./... -- vet=off
 
 .PHONY: test-browser test-dom
