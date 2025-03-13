@@ -1,6 +1,12 @@
 # Changelog - Gost-DOM
 
 
+## [0.4.1](https://github.com/gost-dom/browser/compare/v0.4.0...v0.4.1) (2025-03-13)
+
+### Deprecated
+
+* `ElementEvents` and it's methods as deprecated
+
 ## [0.4.0](https://github.com/gost-dom/browser/compare/v0.3.1...v0.4.0) (2025-03-06)
 
 This is breaking change because of a major refactor, moving event types ([c777cc4](https://github.com/gost-dom/browser/commit/c777cc429ec40a6760eecb229bb4b241e0cee8e8)). Also see [this discussion thread](https://github.com/orgs/gost-dom/discussions/50)
