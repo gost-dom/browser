@@ -37,10 +37,8 @@ func (e *htmlInputElement) SetType(val string) {
 
 func (e *htmlInputElement) Click() bool {
 	ok := e.htmlElement.Click()
-	if ok {
-		if e.Type() == "submit" {
-			e.trySubmitForm()
-		}
+	if ok && e.Type() == "submit" {
+		e.trySubmitForm()
 	}
 	return ok
 }
