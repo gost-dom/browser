@@ -73,6 +73,4 @@ func TestGenerateEventDispatcher(t *testing.T) {
 	target event.EventTarget
 }`)))
 	g.Expect(res).To(HaveRenderedSubstring("func (e *elementEvents) Click() bool {"))
-	// g.Expect(res).To(HaveRenderedSubstring("type ElementEvents interface {"))
-	// g.Expect(res).To(HaveRendered(gomega.MatchRegexp("(g:)^\tClick()$")))
 }
