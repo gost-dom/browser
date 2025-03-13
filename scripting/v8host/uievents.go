@@ -1,7 +1,7 @@
 package v8host
 
 import (
-	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/internal/uievents"
 	"github.com/gost-dom/v8go"
 )
 
@@ -32,7 +32,7 @@ func (w uIEventV8Wrapper) CreateInstanceEventInitDict(
 	this *v8go.Object,
 	type_ string,
 	options ...interface{}) (*v8go.Value, error) {
-	e := dom.NewUIEvent(type_)
+	e := uievents.NewUIEvent(type_)
 	return w.store(e, ctx, this)
 }
 

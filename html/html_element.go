@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/gost-dom/browser/dom"
-	"github.com/gost-dom/browser/dom/event"
 	. "github.com/gost-dom/browser/internal/dom"
+	"github.com/gost-dom/browser/internal/uievents"
 )
 
 type HTMLElement interface {
@@ -56,12 +56,7 @@ func (e *htmlElement) TagName() string {
 	return strings.ToUpper(e.Element.TagName())
 }
 
-func (e *htmlElement) Click() bool {
-	event := &event.Event{Type: "click", Data: dom.PointerEventInit{}}
-	event.Bubbles = true
-	event.Cancelable = true
-	return e.DispatchEvent(event)
-}
+func (e *htmlElement) Click() bool { return uievents.Click(e.Element) }
 
 func (e *htmlElement) Dataset() DOMStringMap { return e.dataset }
 
