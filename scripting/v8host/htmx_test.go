@@ -5,17 +5,19 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/gost-dom/browser"
+	"github.com/gost-dom/browser/html"
 	app "github.com/gost-dom/browser/internal/test/htmx-app"
+	. "github.com/gost-dom/browser/internal/testing"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 )
 
 var _ = Describe("HTMX Tests", Ordered, func() {
-	var b *browser.Browser
+	var b BrowserHelper
 	var server *app.TestServer
 
 	BeforeEach(func() {
 		server = app.CreateServer()
-		b = browser.NewBrowserFromHandler(server)
+		b = NewBrowserHelper(GinkgoTB(), browser.NewBrowserFromHandler(server))
 		DeferCleanup(func() {
 			b.Close()
 		})
@@ -24,22 +26,21 @@ var _ = Describe("HTMX Tests", Ordered, func() {
 	It("Should increment the counter example", func() {
 		win, err := b.Open("/counter/index.html")
 		Expect(err).ToNot(HaveOccurred())
-		counter := win.Document().GetElementById("counter")
+		counter := win.Document().GetElementById("counter").(html.HTMLElement)
 		Expect(counter).To(HaveInnerHTML(Equal("Count: 1")))
 		counter.Click()
-		counter = win.Document().GetElementById("counter")
+		counter = win.Document().GetElementById("counter").(html.HTMLElement)
 		Expect(counter).To(HaveInnerHTML(Equal("Count: 2")))
 	})
 
 	It("Should not update the location when a link has hx-get", func() {
 		Skip("Need sync")
-		win, err := b.Open("/navigation/page-a.html")
-		Expect(err).ToNot(HaveOccurred())
+		win := b.OpenWindow("/navigation/page-a.html")
 		Expect(win.ScriptContext().Eval("window.pageA")).To(BeTrue())
 		Expect(win.ScriptContext().Eval("window.pageB")).To(BeNil())
 
 		// Click an hx-get link
-		win.Document().GetElementById("link-to-b").Click()
+		win.HTMLDocument().GetHTMLElementById("link-to-b").Click()
 
 		Expect(
 			win.ScriptContext().Eval("window.pageA"),
@@ -59,7 +60,7 @@ var _ = Describe("HTMX Tests", Ordered, func() {
 		Expect(win.ScriptContext().Eval("window.pageA")).ToNot(BeNil())
 		Expect(win.ScriptContext().Eval("window.pageA")).To(BeTrue())
 		Expect(win.ScriptContext().Eval("window.pageB")).To(BeNil())
-		win.Document().GetElementById("link-to-b-boosted").Click()
+		win.Document().GetElementById("link-to-b-boosted").(html.HTMLElement).Click()
 
 		Expect(win.ScriptContext().Eval("window.pageA")).ToNot(BeNil(), "A")
 		Expect(win.ScriptContext().Eval("window.pageB")).ToNot(BeNil(), "B")
@@ -78,7 +79,7 @@ var _ = Describe("HTMX Tests", Ordered, func() {
 		Expect(err).ToNot(HaveOccurred())
 		i1 := win.Document().GetElementById("field-1")
 		i1.SetAttribute("value", "Foo")
-		b := win.Document().GetElementById("submit-btn")
+		b := win.Document().GetElementById("submit-btn").(html.HTMLElement)
 		Expect(len(server.Requests)).To(Equal(2), "No of requests _before_ click")
 		b.Click()
 		Expect(len(server.Requests)).To(Equal(3), "No of requests _after_ click")

@@ -8,10 +8,7 @@ import (
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/internal/http"
 	domHttp "github.com/gost-dom/browser/internal/http"
-	"github.com/gost-dom/browser/internal/testing"
 )
-
-var NewTestHandler = testing.NewTestHandler
 
 func ParseHtmlString(s string) (res dom.Document) {
 	html.NewDOMParser().ParseReader(nil, &res, strings.NewReader(s))

@@ -7,7 +7,7 @@ import (
 
 	. "github.com/gost-dom/browser"
 	"github.com/gost-dom/browser/dom/event"
-	"github.com/gost-dom/browser/html"
+	. "github.com/gost-dom/browser/internal/testing"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 
@@ -73,12 +73,10 @@ func (s *BrowserNavigationTestSuite) SetupTest() {
 	s.Gomega = gomega.NewWithT(s.T())
 }
 
-func (s *BrowserNavigationTestSuite) loadPageA() html.Window {
-	Expect := gomega.NewWithT(s.T()).Expect
+func (s *BrowserNavigationTestSuite) loadPageA() WindowHelper {
 	server := newBrowserNavigateTestServer()
-	browser := NewBrowserFromHandler(server)
-	window, err := browser.Open("/a.html")
-	Expect(err).ToNot(HaveOccurred())
+	browser := NewBrowserHelper(s.T(), NewBrowserFromHandler(server))
+	window := browser.OpenWindow("/a.html")
 	return window
 }
 
@@ -92,8 +90,7 @@ func (s *BrowserNavigationTestSuite) TestPageAHasLoaded() {
 
 func (s *BrowserNavigationTestSuite) TestClickLink() {
 	window := s.loadPageA()
-	anchor, _ := window.Document().QuerySelector("a")
-	anchor.Click()
+	window.HTMLDocument().QuerySelectorHTML("a").Click()
 
 	heading, _ := window.Document().QuerySelector("h1")
 	s.Expect(heading).To(HaveTextContent(Equal("Page B")))
@@ -105,7 +102,7 @@ func (s *BrowserNavigationTestSuite) TestClickLink() {
 
 func (s *BrowserNavigationTestSuite) TestNavigationAbortedByEventHandler() {
 	window := s.loadPageA()
-	anchor, _ := window.Document().QuerySelector("a")
+	anchor := window.HTMLDocument().QuerySelectorHTML("a")
 	anchor.AddEventListener(
 		"click",
 		event.NewEventHandlerFunc(event.NoError((*event.Event).PreventDefault)),

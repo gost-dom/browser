@@ -6,8 +6,10 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/dom/event"
+	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/internal/http"
+	. "github.com/gost-dom/browser/internal/testing"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -52,7 +54,7 @@ var _ = Describe("HTML Form", func() {
 	})
 
 	Describe("Submit behaviour", func() {
-		var window Window
+		var window WindowHelper
 		var requests []*http.Request
 		var form HTMLFormElement
 		var actualRequest *http.Request
@@ -68,7 +70,7 @@ var _ = Describe("HTML Form", func() {
 		BeforeEach(func() {
 			DeferCleanup(func() { requests = nil; submittedForm = nil })
 
-			window = NewWindow(WindowOptions{
+			window = NewWindowHelper(GinkgoTB(), NewWindow(WindowOptions{
 				HttpClient: NewHttpClientFromHandler(
 					http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 						if req.ParseForm() != nil {
@@ -80,7 +82,7 @@ var _ = Describe("HTML Form", func() {
 					}),
 				),
 				BaseLocation: "http://example.com/forms/example-form.html?original-query=original-value",
-			})
+			}))
 
 			Expect(
 				window.LoadHTML(
@@ -190,10 +192,10 @@ var _ = Describe("HTML Form", func() {
 		})
 
 		Describe("React to <button> click", func() {
-			var button dom.Element
+			var button html.HTMLElement
 
 			BeforeEach(func() {
-				button = window.Document().CreateElement("button")
+				button = window.HTMLDocument().CreateHTMLElement("button")
 				form.Append(button)
 			})
 

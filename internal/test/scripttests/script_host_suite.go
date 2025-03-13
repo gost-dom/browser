@@ -2,30 +2,19 @@ package scripttests
 
 import (
 	"github.com/gost-dom/browser/html"
-	"github.com/onsi/gomega"
-	"github.com/stretchr/testify/suite"
+	. "github.com/gost-dom/browser/internal/testing"
 )
-
-type GomegaSuite struct {
-	suite.Suite
-	gomega.Gomega
-}
-
-func (s *GomegaSuite) SetupTest() {
-	s.Gomega = gomega.NewWithT(s.T())
-}
 
 type ScriptHostSuite struct {
 	GomegaSuite
 	scriptHost html.ScriptHost
-	window     html.Window
+	window     WindowHelper
 }
 
 func (s *ScriptHostSuite) SetupTest() {
-	s.GomegaSuite.SetupTest()
-	s.window = html.NewWindow(html.WindowOptions{
+	s.window = NewWindowHelper(s.T(), html.NewWindow(html.WindowOptions{
 		ScriptHost: s.scriptHost,
-	})
+	}))
 }
 
 func (s *ScriptHostSuite) OpenWindow(location string) html.Window {

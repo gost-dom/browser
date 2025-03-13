@@ -14,8 +14,8 @@ func TestElementClickEventPropagation(t *testing.T) {
 		targetCalled bool
 		parentCalled bool
 	)
-	doc := ParseHtmlString(`<body><div id="parent"><div id="target"></div></div></body>`)
-	target := doc.GetElementById("target")
+	doc := ParseHTMLDocumentHelper(t, `<body><div id="parent"><div id="target"></div></div></body>`)
+	target := doc.GetHTMLElementById("target")
 	target.
 		AddEventListener("click", NewTestHandler(func(e *event.Event) {
 			targetCalled = true
@@ -36,8 +36,8 @@ func TestElementClickEventPreventDefault(t *testing.T) {
 		targetCalled bool
 		parentCalled bool
 	)
-	doc := ParseHtmlString(`<body><div id="parent"><div id="target"></div></div></body>`)
-	target := doc.GetElementById("target")
+	doc := ParseHTMLDocumentHelper(t, `<body><div id="parent"><div id="target"></div></div></body>`)
+	target := doc.GetHTMLElementById("target")
 	target.
 		AddEventListener("click", NewTestHandler(func(e *event.Event) {
 			targetCalled = true
@@ -58,8 +58,8 @@ func TestElementClickEventBubbles(t *testing.T) {
 		targetCalled bool
 		parentCalled bool
 	)
-	doc := ParseHtmlString(`<body><div id="parent"><div id="target"></div></div></body>`)
-	target := doc.GetElementById("target")
+	doc := ParseHTMLDocumentHelper(t, `<body><div id="parent"><div id="target"></div></div></body>`)
+	target := doc.GetHTMLElementById("target")
 	target.AddEventListener("click", NewTestHandler(func(e *event.Event) { targetCalled = true }))
 	doc.GetElementById("parent").
 		AddEventListener("click", NewTestHandler(func(e *event.Event) { parentCalled = true }))

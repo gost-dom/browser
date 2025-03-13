@@ -30,6 +30,6 @@ func (s *UIEventTestSuite) TestClickEventIsAPointerEvent() {
 		let event
 		document.getElementById("foo").addEventListener("click", e => { event = e })
 	`))
-	s.window.Document().GetElementById("foo").Click()
+	s.window.HTMLDocument().GetHTMLElementById("foo").Click()
 	s.Expect(s.eval(`event instanceof PointerEvent`)).To(BeTrue(), "Event is an event")
 }
