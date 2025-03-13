@@ -113,7 +113,6 @@ func (s *BrowserNavigationTestSuite) TestNavigationAbortedByEventHandler() {
 	anchor.Click()
 	heading, _ := window.Document().QuerySelector("h1")
 	s.Expect(heading).To(HaveTextContent(Equal("Page A")))
-
 }
 
 func TestBrowserNavigation(t *testing.T) {

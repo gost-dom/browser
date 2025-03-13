@@ -8,13 +8,21 @@ type elementEvents struct {
 	target event.EventTarget
 }
 
+// Deprecated: ElementEvents expose methods that are not part of the Element specification
 type ElementEvents interface {
+	// Deprecated: auxclick is not a method defined on Element in the DOM
 	Auxclick() bool
+	// Deprecated: blur is not a method defined on Element in the DOM
 	Blur() bool
+	// Deprecated: click is not a method defined on Element in the DOM
 	Click() bool
+	// Deprecated: contextmenu is not a method defined on Element in the DOM
 	Contextmenu() bool
+	// Deprecated: focus is not a method defined on Element in the DOM
 	Focus() bool
+	// Deprecated: focusin is not a method defined on Element in the DOM
 	Focusin() bool
+	// Deprecated: focusout is not a method defined on Element in the DOM
 	Focusout() bool
 }
 
