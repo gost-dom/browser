@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom/event"
 	. "github.com/gost-dom/browser/internal/dom"
 )
 
@@ -12,6 +13,7 @@ type HTMLElement interface {
 	dom.Element
 	Renderer
 	ChildrenRenderer
+	Click() bool
 	Tabindex() int
 	SetTabindex(int)
 	Dataset() DOMStringMap
@@ -52,6 +54,13 @@ func (e *htmlElement) window() Window { return e.getHTMLDocument().getWindow() }
 
 func (e *htmlElement) TagName() string {
 	return strings.ToUpper(e.Element.TagName())
+}
+
+func (e *htmlElement) Click() bool {
+	event := &event.Event{Type: "click", Data: dom.PointerEventInit{}}
+	event.Bubbles = true
+	event.Cancelable = true
+	return e.DispatchEvent(event)
 }
 
 func (e *htmlElement) Dataset() DOMStringMap { return e.dataset }
