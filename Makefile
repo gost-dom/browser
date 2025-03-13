@@ -40,10 +40,12 @@ test:
 	go test -v -vet=all ./...
 
 test-watch: 
-	# $(GOW) -c -e=go -e=js -e=html -v -w=./.. test -vet=off ./...
 	gotestsum --format dots --watch ./... -- vet=off
 
-.PHONY: test-dom
+.PHONY: test-browser test-dom
+test-dom: 
+	gotestsum --packages "./dom" --format dots --watch
+
 test-browser: 
 	$(GOW) -s -w=./dom -w=./html -w=. test -vet=off . ./dom ./html
 
@@ -53,7 +55,6 @@ test-html:
 
 .PHONY: test-v8
 test-v8: 
-	# $(GOW) -s -e=go -e=js -e=html -w ./.. test -vet=off ./scripting/v8host
 	gotestsum --format dots --watch --packages "./scripting/v8host ./internal/test/scripttests" -- -vet=off
 
 test-scripting: 
@@ -62,7 +63,6 @@ test-scripting:
 .PHONY: test-goja
 test-goja:
 	$(GOW) -c -e=go -e=js -e=html -w ./.. test -vet=off ./scripting/gojahost
-
  
 .PHONY: ci ci-build
 ci-build:
