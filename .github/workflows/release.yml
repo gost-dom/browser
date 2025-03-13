@@ -12,6 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: release-prebuild
     steps:
+      - name: set git config
+        run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com"
+          git config -l
       - uses: actions/checkout@v4
       - name: Setup pnpm
         uses: pnpm/action-setup@v3 # docs https://pnpm.io/continuous-integration#github-actions
