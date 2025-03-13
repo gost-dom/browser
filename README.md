@@ -45,6 +45,16 @@ up-to-date on progress
 hi!](https://github.com/orgs/gost-dom/discussions)
 - Want to contribute to the project, there's a very rough early [guide describing the overall project structure](./CONTRIBUTING.md)
 
+## Adding support for library X
+
+The goal is to support all modern JS frameworks, but I can't make tests for all.
+If you can contribute a "test project" with specific JS frameworks that will be
+a great help to detect compatibility issues, and potential extension to the test
+suites.
+
+See the guidelines in the [contributor documentation](./CONTRIBUTING.md#Providing-test-projects)
+
+
 <!---
 ## Project background
 

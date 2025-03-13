@@ -5,6 +5,9 @@ ways to contribute:
 
 - **Provide feedback**. This is super important. The feedback from users help
   set the direction, and prioritise features.
+- Providing test projects to check for compatibility with existing frameworks
+  and libraries, with the potential to serve as a foundation to extend the
+  existing test suite.
 - Help with documentation. Maybe you had a problem that could have been avoided
   by better documentation.
 - Help maintain a website. Currently online at https://gostdom.net - but it's a
@@ -37,3 +40,69 @@ insights](https://github.com/orgs/gost-dom/discussions/50) leads to better
 implementations. If this leads to breaking changes (from a client's point of
 view), I'd normally announce this ahead of publishing; but refactors that don't
 break the API aren't.
+
+## Providing test projects
+
+Gost-DOM has prioritised HTMX, but it should support all modern front-end
+frameworks/libraries.
+
+I don't have time to test every project; you can help by creating test projects
+using other frameworks and libraries, like Alpine, Datastar, and even React.
+
+The test should obviously have some functionality depending on the the
+framework/library; otherwise there really isn't a test ;)
+
+### Test project "requirement"
+
+Please make sure you have 
+
+- Be `git clone`able. E.g., a public github project is great.
+- The root `http.Handler` should be exported, either as a variable, or a
+  function to construct an instance.
+- The root handler must serve all JavaScript code, I recommend go's
+  [embed](https://pkg.go.dev/embed) package.
+- JavaScript code must be bundled if you use ESM. Gost-DOM doesn't support
+  ECMAScript modules yet.
+  - Preferably: Have the bundle committed to git. If not, it must be buildable
+    following following normal JS conventions, i.e. (`pnpm i && pnpm build`)
+- Optional: Have a `main` module, to make it easy to launch it in a browser.
+  I can manage creating it if it's not there, but it'll save me the work.
+- Optional: A readme file describing the behaviour.
+- Optional: Check the [feature list](./docs/Features.md) to check for potential
+  compatibility issues, and mention them in the readme. I still want tests for
+  incompatible frameworks.
+
+Please consider:
+
+- Can the framework be grouped into layers of functionality?
+- Can you create separate routes to check core behaviour separately from
+  extended/advanced behaviour.
+  - If the framework supports plugins, can we test the core functionality without
+    any plugins, and have different pages for the different plugin behaviour.
+
+### Example
+
+As an example, the project's own [HTMX
+test](https://github.com/gost-dom/browser/tree/main/internal/test)
+
+- `htmx-app` exports `CreateServer()` that returns an http server.
+  `content/fx.go` embeds `htmx.js`
+- `htmx-app-main` has a `main` to launch the app and test in a real browser.
+
+### Optional: Create a PR to the community-examples
+
+You can optionally 
+
+1. Fork the [community-examples](https://github.com/gost-dom/community-examples)
+   project.
+2. Create the project in a subdirectory of the project. The directory must be
+   self-contained following the requirements listed above
+3. Create a PR back to the community-examples
+
+### Optional: Include a permissive license
+
+If you provide a permissive license, preferable one without _any_
+restrictions, even just the requirement to keep the license file, I could easily
+integrate your example into the main project test suite, if it would make sense.
+
+I would always make sure contributors are mentioned (unless you prefer not to).
