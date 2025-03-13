@@ -83,3 +83,11 @@ func (d *htmlDocument) CreateElement(name string) dom.Element {
 }
 
 func (d *htmlDocument) getWindow() Window { return d.window }
+
+type SetActiveElementer interface {
+	SetActiveElement(e dom.Element)
+}
+
+func (d *htmlDocument) SetActiveElement(e dom.Element) {
+	d.Document.(SetActiveElementer).SetActiveElement(e)
+}

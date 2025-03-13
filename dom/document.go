@@ -151,3 +151,7 @@ func (d *document) createHtmlNode() *html.Node {
 }
 
 func (d *document) NodeType() NodeType { return NodeTypeDocument }
+
+func (d *document) SetActiveElement(e Element) {
+	d.activeElement = e
+}
