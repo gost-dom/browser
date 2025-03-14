@@ -19,6 +19,9 @@ type EventGeneratorSpecs struct {
 	EventName  string
 }
 
+// Renders the line to initialise the event init data:
+//
+//	data := PointerEventInit{}
 type EventInitGenerator struct {
 	EventType
 	Receiver gen.Value
@@ -27,11 +30,11 @@ type EventInitGenerator struct {
 func (g EventInitGenerator) Generate() *jen.Statement {
 	return gen.Assign(
 		gen.NewValue("data"),
-		g.Receiver.Field(fmt.Sprintf("default%sInit", g.Interface)).Call(),
-		// gen.NewType(fmt.Sprintf("%sInit", g.Interface)).CreateInstance(),
+		gen.NewType(fmt.Sprintf("%sInit", g.Interface)).CreateInstance(),
 	).Generate()
 }
 
+// TODO: Delete
 type EventPropertiesGenerator struct{ EventType }
 
 func (g EventPropertiesGenerator) Generate() *jen.Statement {
@@ -51,6 +54,7 @@ func (g EventPropertiesGenerator) Generate() *jen.Statement {
 	return s.Generate()
 }
 
+// TODO: Delete
 type EventConstructorGenerator struct{ EventType }
 
 func (s EventConstructorGenerator) Generate() *jen.Statement {
@@ -66,12 +70,16 @@ func (s EventConstructorGenerator) Generate() *jen.Statement {
 
 }
 
-type DispatchEventGenerator struct {
+// Renders the line to dispatch an event
+//
+//	data := PointerEventInit{}
+//	// ...
+//	return e.DispatchEvent(event)
+type DispatchEventBodyGenerator struct {
 	EventType
 }
 
-func (g DispatchEventGenerator) Generate() *jen.Statement {
-	// e := events.Event(g)
+func (g DispatchEventBodyGenerator) Generate() *jen.Statement {
 	receiver := gen.NewValue("e")
 	event := gen.NewValue("event")
 	return gen.StatementList(
@@ -79,39 +87,56 @@ func (g DispatchEventGenerator) Generate() *jen.Statement {
 		gen.Assign(event, EventConstructorGenerator(g)),
 		EventPropertiesGenerator(g),
 		gen.Return(
-			receiver.Field("target").Field("DispatchEvent").Call(event, gen.Line))).Generate()
+			receiver.Field("DispatchEvent").Call(event, gen.Line))).Generate()
 }
-
-type GetGeneratorsRes struct {
-	optionsGenerator gen.Generator
-}
-
-func line(g gen.Generator) gen.Generator { return gen.Raw(jen.Line().Add(g.Generate())) }
 
 // Generates a single event dispatch methods for an element, e.g.
 //
-//	func (e *elementEvents) Blur() { /* ... */ }
+//	func Blur(e Element) { /* ... */ }
 type EventDispatchMethodGenerator struct {
-	Type           gen.Type
-	SourceTypeName string
-	Event          EventType
+	Type       gen.Type
+	TargetType EventTargetType
+	Event      EventType
 }
 
 func eventDispatchTypeName(typeName string) string {
-	return fmt.Sprintf("%sEvents", internal.LowerCaseFirstLetter(typeName))
+	return fmt.Sprintf("%sEvents", typeName)
 }
 
 func (g EventDispatchMethodGenerator) Generate() *jen.Statement {
 	event := g.Event
-	return gen.FunctionDefinition{
-		Receiver: gen.FunctionArgument{
-			Name: gen.Id("e"),
-			Type: g.Type.Pointer(),
+	return gen.StatementList(
+		DispatchFunctionDocumentation{EventType: g.Event.Type, Target: g.TargetType},
+		gen.FunctionDefinition{
+			Args:     gen.Arg(gen.Id("e"), g.TargetType),
+			Name:     internal.UpperCaseFirstLetter(event.Type),
+			RtnTypes: []gen.Generator{gen.Id("bool")},
+			Body:     DispatchEventBodyGenerator{event},
 		},
-		Name:     internal.UpperCaseFirstLetter(event.Type),
-		RtnTypes: []gen.Generator{gen.Id("bool")},
-		Body:     DispatchEventGenerator{event},
-	}.Generate()
+	).Generate()
+}
+
+// Generates the code documentation for an event dispatch function
+type DispatchFunctionDocumentation struct {
+	// The event type, like "click", "blur", etc.
+	EventType string
+	Target    EventTargetType
+}
+
+func (d DispatchFunctionDocumentation) Generate() *jen.Statement {
+	return jen.Commentf(
+		`// Dispatches a [%s event]. Returns the return value from [EventTarget.DispatchEvent].
+//
+// The behaviour dictating the return value depends on the type of event. For
+// more information see the [MDN docs]
+//
+// [%s event]: https://developer.mozilla.org/en-US/docs/Web/API/%s/%s_event
+// [MDN docs]: https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent#return_value`,
+		d.EventType,
+		d.EventType,
+		d.Target,
+		d.EventType,
+	)
 }
 
 type EventInterfaceGenerator struct {
@@ -149,20 +174,18 @@ func IncludeEvent(e events.Event) bool {
 	}
 }
 
-// Generates the file containins event constructors for a specific element
+// Generates the file containins event dispatch methods for a specific element
 //
-//	type elementEvents struct { /* */ }
+//	func Click(e Element) { /* dispatch a "click" event */ }
 //
-//	type ElementEvents interface { /* */ }
-//
-//	func (e *elementEvents) Click() { /* dispatch a "click" event */ }
+//	func Submit(e HTMLFormElement) { /* dispatch a "submit" event for a form */ }
 type ElementEventGenerator struct {
-	Api     events.Events
-	Element string
+	Api        events.Events
+	TargetType EventTargetType
 }
 
 func (g ElementEventGenerator) Type() gen.Type {
-	return gen.NewType(eventDispatchTypeName(g.Element))
+	return gen.NewType(eventDispatchTypeName(g.TargetType.String()))
 }
 
 // EventType represents a specific event type specification, and has helper
@@ -174,14 +197,14 @@ func (g ElementEventGenerator) Generate() *jen.Statement {
 	type_ := g.Type()
 
 	res := gen.StatementList(
-		ElementEventStructGenerator{type_},
-		gen.Line,
-		EventInterfaceGenerator{Element: g.Element, Events: events},
-		gen.Line,
+		// ElementEventStructGenerator{type_},
+		// gen.Line,
+		// EventInterfaceGenerator{Element: g.Element, Events: events},
+		// gen.Line,
 		EventDispatchMethodsGenerator{
-			Type:           type_,
-			SourceTypeName: g.Element,
-			Events:         events,
+			Type:       type_,
+			TargetType: g.TargetType,
+			Events:     events,
 		},
 	)
 	return res.Generate()
@@ -189,12 +212,24 @@ func (g ElementEventGenerator) Generate() *jen.Statement {
 
 func (g ElementEventGenerator) Events() []EventType {
 	var events []EventType
-	for _, e := range g.Api.EventsForType(g.Element) {
+	for _, e := range g.Api.EventsForType(g.TargetType.String()) {
 		if IncludeEvent(e) {
 			events = append(events, EventType(e))
 		}
 	}
 	return events
+}
+
+// The specific EventTarget type, e.g., Element or HTMLFormElement
+type EventTargetType struct {
+	TypeName string
+	Package  string
+}
+
+func (t EventTargetType) String() string { return t.TypeName }
+
+func (t EventTargetType) Generate() *jen.Statement {
+	return gen.NewTypePackage(t.TypeName, t.Package).Generate()
 }
 
 // Generates
@@ -204,20 +239,23 @@ type ElementEventStructGenerator struct {
 
 func (g ElementEventStructGenerator) Generate() *jen.Statement {
 	s := gen.Struct{Name: g.Type}
-	s.Field(gen.Id("target"), gen.NewTypePackage("EventTarget", packagenames.Events))
+	s.Field(gen.Id("Target"), gen.NewTypePackage("EventTarget", packagenames.Events))
 	return s.Generate()
 }
 
 // Generates all event dispatch methods for an element, e.g. (but with blank
 // lines between each.
 //
-//	func (e *elementEvents) Blur() { /* ... */ }
-//	func (e *elementEvents) Click() { /* ... */ }
-//	func (e *elementEvents) Focus() { /* ... */ }
+//	func Blur(e dom.Element) { /* ... */ }
+//	func Click(e dom.Element) { /* ... */ }
+//	func Focus(e dom.Element) { /* ... */ }
+//
+// The argument reflects the type that can be the source of the event. E.g., for
+// the "submit" event, the argument type is HTMLFormElement.
 type EventDispatchMethodsGenerator struct {
-	Type           gen.Type
-	SourceTypeName string
-	Events         []EventType
+	Type       gen.Type
+	TargetType EventTargetType
+	Events     []EventType
 }
 
 func (g EventDispatchMethodsGenerator) Generate() *jen.Statement {
@@ -225,9 +263,9 @@ func (g EventDispatchMethodsGenerator) Generate() *jen.Statement {
 	for _, e := range g.Events {
 		res.Append(gen.Line)
 		res.Append(EventDispatchMethodGenerator{
-			Type:           g.Type,
-			SourceTypeName: g.SourceTypeName,
-			Event:          e,
+			Type:       g.Type,
+			TargetType: g.TargetType,
+			Event:      e,
 		})
 	}
 	return res.Generate()
@@ -238,7 +276,7 @@ func CreateEventSourceGenerator(apiName string, element string) (gen.Generator, 
 	if err != nil {
 		return nil, err
 	}
-	return ElementEventGenerator{api, element}, nil
+	return ElementEventGenerator{api, EventTargetType{element, packagenames.Dom}}, nil
 }
 
 func generateFile(packageName string, apiName string, element string) (*jen.File, error) {
@@ -257,15 +295,18 @@ type eventSources struct {
 }
 
 var types = map[string][]eventSources{
-	"dom": {{
+	"uievents": {{
 		api:   "uievents",
 		names: []string{"Element"},
 	}},
 }
 
 func CreateEventGenerators(packageName string) error {
+	fmt.Println("Iterate", packageName, types[packageName])
 	for _, source := range types[packageName] {
+		fmt.Println("- Type: ", source.api)
 		for _, e := range source.names {
+			fmt.Println("  - Name: ", e)
 			var f *jen.File
 			filename := fmt.Sprintf("%s_events_generated.go", strings.ToLower(e))
 			writer, err := os.Create(filename)
@@ -280,5 +321,14 @@ func CreateEventGenerators(packageName string) error {
 			f.Render(writer)
 		}
 	}
+	return nil
+}
+
+type ElementEventDispatchFunctionsGenerator struct {
+	Api     events.Events
+	Element string
+}
+
+func (g *ElementEventDispatchFunctionsGenerator) Generate() *jen.Statement {
 	return nil
 }
