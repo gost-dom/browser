@@ -71,6 +71,10 @@ In order to easily consume the project from Gost-DOM, the project must:
 - Optional: Create a `readme` describing the project, particularly if different
   actions depend on different browser APIs.
 
+Regarding ESM bundles, Gost-DOM will ignore `type="module` on `<script>` tags,
+and will treat it as a class script source. So as long as the script doesn't
+`import` other modules, it should be fine.
+
 #### Things to consider:
 
 - Can the framework be grouped into layers of functionality?
