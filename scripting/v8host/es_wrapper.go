@@ -124,6 +124,10 @@ func (w converters) toUnsignedLong(ctx *V8ScriptContext, val int) (*v8.Value, er
 	return v8.NewValue(ctx.host.iso, uint32(val))
 }
 
+func (w converters) toLong(ctx *V8ScriptContext, val int) (*v8.Value, error) {
+	return v8.NewValue(ctx.host.iso, int64(val))
+}
+
 func (w converters) toAny(ctx *V8ScriptContext, val string) (*v8.Value, error) {
 	return v8.NewValue(ctx.host.iso, val)
 }

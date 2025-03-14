@@ -274,7 +274,6 @@ func init() {
 	registerJSClass("HTMLDocument", "Document", createHTMLDocumentPrototype)
 	registerJSClass("DocumentFragment", "Node", createDocumentFragmentPrototype)
 	registerJSClass("ShadowRoot", "DocumentFragment", createShadowRootPrototype)
-	registerJSClass("HTMLElement", "Element", createHtmlElement)
 	registerJSClass("Attr", "Node", createAttr)
 
 	registerJSClass("FormData", "", createFormData)
