@@ -36,3 +36,9 @@ func (m DOMStringMap) Set(key string, val string) {
 	key = toKebab(key)
 	m.Element.SetAttribute("data-"+key, val)
 }
+
+func (m DOMStringMap) Delete(key string) {
+	if attr := m.Element.GetAttributeNode("data-" + toKebab(key)); attr != nil {
+		m.Element.RemoveAttributeNode(attr)
+	}
+}
