@@ -27,6 +27,7 @@ type htmlElement struct {
 	ChildrenRenderer
 	htmlDocument HTMLDocument
 	dataset      DOMStringMap
+	self         HTMLElement
 }
 
 func NewHTMLElement(tagName string, ownerDocument HTMLDocument) HTMLElement {
@@ -46,6 +47,11 @@ func newHTMLElement(tagName string, ownerDocument HTMLDocument) *htmlElement {
 	}
 	result.SetSelf(result)
 	return result
+}
+
+func (e *htmlElement) SetSelf(self dom.Node) {
+	e.self = self.(HTMLElement)
+	e.Element.SetSelf(self)
 }
 
 func (e *htmlElement) getHTMLDocument() HTMLDocument { return e.htmlDocument }
