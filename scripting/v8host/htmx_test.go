@@ -7,17 +7,17 @@ import (
 	"github.com/gost-dom/browser"
 	"github.com/gost-dom/browser/html"
 	app "github.com/gost-dom/browser/internal/test/htmx-app"
-	. "github.com/gost-dom/browser/internal/testing"
+	"github.com/gost-dom/browser/internal/testing/htmltest"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 )
 
 var _ = Describe("HTMX Tests", Ordered, func() {
-	var b BrowserHelper
+	var b htmltest.BrowserHelper
 	var server *app.TestServer
 
 	BeforeEach(func() {
 		server = app.CreateServer()
-		b = NewBrowserHelper(GinkgoTB(), browser.NewBrowserFromHandler(server))
+		b = htmltest.NewBrowserHelper(GinkgoTB(), browser.NewBrowserFromHandler(server))
 		DeferCleanup(func() {
 			b.Close()
 		})

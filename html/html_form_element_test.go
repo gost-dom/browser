@@ -9,7 +9,8 @@ import (
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/internal/http"
-	. "github.com/gost-dom/browser/internal/testing"
+	"github.com/gost-dom/browser/internal/testing/eventtest"
+	. "github.com/gost-dom/browser/internal/testing/htmltest"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -309,7 +310,7 @@ var _ = Describe("HTML Form", func() {
 				It("Should be dispatched when a form is submitted", func() {
 					var eventBubbles bool
 					form.ParentElement().
-						AddEventListener("formdata", NewTestHandler(func(e *event.Event) {
+						AddEventListener("formdata", eventtest.NewTestHandler(func(e *event.Event) {
 							eventBubbles = true
 						}))
 					var actualEvent *event.Event

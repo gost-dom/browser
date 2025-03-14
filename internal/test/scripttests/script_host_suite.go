@@ -2,17 +2,18 @@ package scripttests
 
 import (
 	"github.com/gost-dom/browser/html"
-	. "github.com/gost-dom/browser/internal/testing"
+	"github.com/gost-dom/browser/internal/testing/gosttest"
+	"github.com/gost-dom/browser/internal/testing/htmltest"
 )
 
 type ScriptHostSuite struct {
-	GomegaSuite
+	gosttest.GomegaSuite
 	scriptHost html.ScriptHost
-	window     WindowHelper
+	window     htmltest.WindowHelper
 }
 
 func (s *ScriptHostSuite) SetupTest() {
-	s.window = NewWindowHelper(s.T(), html.NewWindow(html.WindowOptions{
+	s.window = htmltest.NewWindowHelper(s.T(), html.NewWindow(html.WindowOptions{
 		ScriptHost: s.scriptHost,
 	}))
 }

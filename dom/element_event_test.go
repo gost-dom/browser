@@ -4,7 +4,8 @@ import (
 	"testing"
 
 	"github.com/gost-dom/browser/dom/event"
-	. "github.com/gost-dom/browser/internal/testing"
+	"github.com/gost-dom/browser/internal/testing/eventtest"
+	"github.com/gost-dom/browser/internal/testing/htmltest"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -14,16 +15,20 @@ func TestElementClickEventPropagation(t *testing.T) {
 		targetCalled bool
 		parentCalled bool
 	)
-	doc := ParseHTMLDocumentHelper(t, `<body><div id="parent"><div id="target"></div></div></body>`)
+	doc := htmltest.ParseHTMLDocumentHelper(
+		t,
+		`<body><div id="parent"><div id="target"></div></div></body>`,
+	)
 	target := doc.GetHTMLElementById("target")
 	target.
-		AddEventListener("click", NewTestHandler(func(e *event.Event) {
+		AddEventListener("click", eventtest.NewTestHandler(func(e *event.Event) {
 			targetCalled = true
 			e.StopPropagation()
 		}))
-	doc.GetElementById("parent").AddEventListener("click", NewTestHandler(func(e *event.Event) {
-		parentCalled = true
-	}))
+	doc.GetElementById("parent").
+		AddEventListener("click", eventtest.NewTestHandler(func(e *event.Event) {
+			parentCalled = true
+		}))
 	result := target.Click()
 	assert.True(t, targetCalled, "Target handler called")
 	assert.False(t, parentCalled, "Parent handler called")
@@ -36,16 +41,20 @@ func TestElementClickEventPreventDefault(t *testing.T) {
 		targetCalled bool
 		parentCalled bool
 	)
-	doc := ParseHTMLDocumentHelper(t, `<body><div id="parent"><div id="target"></div></div></body>`)
+	doc := htmltest.ParseHTMLDocumentHelper(
+		t,
+		`<body><div id="parent"><div id="target"></div></div></body>`,
+	)
 	target := doc.GetHTMLElementById("target")
 	target.
-		AddEventListener("click", NewTestHandler(func(e *event.Event) {
+		AddEventListener("click", eventtest.NewTestHandler(func(e *event.Event) {
 			targetCalled = true
 			e.PreventDefault()
 		}))
-	doc.GetElementById("parent").AddEventListener("click", NewTestHandler(func(e *event.Event) {
-		parentCalled = true
-	}))
+	doc.GetElementById("parent").
+		AddEventListener("click", eventtest.NewTestHandler(func(e *event.Event) {
+			parentCalled = true
+		}))
 	result := target.Click()
 	assert.True(t, targetCalled, "Target handler called")
 	assert.True(t, parentCalled, "Parent handler called")
@@ -58,11 +67,17 @@ func TestElementClickEventBubbles(t *testing.T) {
 		targetCalled bool
 		parentCalled bool
 	)
-	doc := ParseHTMLDocumentHelper(t, `<body><div id="parent"><div id="target"></div></div></body>`)
+	doc := htmltest.ParseHTMLDocumentHelper(
+		t,
+		`<body><div id="parent"><div id="target"></div></div></body>`,
+	)
 	target := doc.GetHTMLElementById("target")
-	target.AddEventListener("click", NewTestHandler(func(e *event.Event) { targetCalled = true }))
+	target.AddEventListener(
+		"click",
+		eventtest.NewTestHandler(func(e *event.Event) { targetCalled = true }),
+	)
 	doc.GetElementById("parent").
-		AddEventListener("click", NewTestHandler(func(e *event.Event) { parentCalled = true }))
+		AddEventListener("click", eventtest.NewTestHandler(func(e *event.Event) { parentCalled = true }))
 	result := target.Click()
 	assert.True(t, targetCalled, "Target handler called")
 	assert.True(t, parentCalled, "Parent handler called")

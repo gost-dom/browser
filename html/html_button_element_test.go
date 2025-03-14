@@ -3,7 +3,7 @@ package html_test
 import (
 	"testing"
 
-	. "github.com/gost-dom/browser/internal/testing"
+	. "github.com/gost-dom/browser/internal/testing/htmltest"
 	"github.com/stretchr/testify/assert"
 )
 

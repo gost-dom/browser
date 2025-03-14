@@ -7,8 +7,8 @@ import (
 
 	. "github.com/gost-dom/browser"
 	"github.com/gost-dom/browser/dom/event"
-	. "github.com/gost-dom/browser/internal/testing"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
+	"github.com/gost-dom/browser/internal/testing/htmltest"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 
 	"github.com/onsi/gomega"
@@ -73,9 +73,9 @@ func (s *BrowserNavigationTestSuite) SetupTest() {
 	s.Gomega = gomega.NewWithT(s.T())
 }
 
-func (s *BrowserNavigationTestSuite) loadPageA() WindowHelper {
+func (s *BrowserNavigationTestSuite) loadPageA() htmltest.WindowHelper {
 	server := newBrowserNavigateTestServer()
-	browser := NewBrowserHelper(s.T(), NewBrowserFromHandler(server))
+	browser := htmltest.NewBrowserHelper(s.T(), NewBrowserFromHandler(server))
 	window := browser.OpenWindow("/a.html")
 	return window
 }

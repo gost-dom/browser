@@ -1,4 +1,4 @@
-package testing
+package gosttest
 
 import (
 	"github.com/onsi/gomega"

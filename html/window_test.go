@@ -11,7 +11,7 @@ import (
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/domslices"
-	"github.com/gost-dom/browser/internal/testing"
+	"github.com/gost-dom/browser/internal/testing/gosttest"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 	"github.com/gost-dom/browser/testing/testservers"
 )
@@ -31,10 +31,10 @@ var _ = Describe("Window", func() {
 
 	Describe("History()", func() {
 		var win html.Window
-		var h *testing.EchoHandler
+		var h *gosttest.EchoHandler
 
 		BeforeEach(func() {
-			h = new(testing.EchoHandler)
+			h = new(gosttest.EchoHandler)
 			win = html.NewWindow(windowOptionHandler(h))
 			DeferCleanup(func() { win = nil; h = nil }) // Allow GC
 		})

@@ -12,12 +12,13 @@ import (
 	"github.com/gost-dom/browser/dom/event"
 	. "github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
-	. "github.com/gost-dom/browser/internal/testing"
+	. "github.com/gost-dom/browser/internal/testing/eventtest"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
+	"github.com/gost-dom/browser/internal/testing/gosttest"
 )
 
 type TestSuite struct {
-	GomegaSuite
+	gosttest.GomegaSuite
 	clickCount   int
 	target       EventTarget
 	clickHandler EventHandler
@@ -76,7 +77,7 @@ func (s *TestSuite) TestEventHandlersCalledInOrder() {
 }
 
 type EventPropagationTestSuiteBase struct {
-	GomegaSuite
+	gosttest.GomegaSuite
 	window html.Window
 	target dom.Element
 }

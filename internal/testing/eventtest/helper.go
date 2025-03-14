@@ -1,4 +1,4 @@
-package testing
+package eventtest
 
 import "github.com/gost-dom/browser/dom/event"
 
