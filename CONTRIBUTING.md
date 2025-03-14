@@ -46,12 +46,14 @@ break the API aren't.
 You can help discover compatibility issues and drive development by supplying an
 example project using other libraries.
 
+<!--
 Gost-DOM should support all _modern_ JavaScript libraries and front-end
 frameworks, including:
 
 - Datastar
 - React
 - Alpine
+-->
 
 ### Test project "requirement"
 
