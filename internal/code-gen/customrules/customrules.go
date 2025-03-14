@@ -34,13 +34,13 @@ type OperationRule struct {
 	// By default, an operation is assumed to not generate an error. Override
 	// the behaviour by setting this to true.
 	HasError    bool
-	Attributes  AttributeRules
+	Arguments   ArgumentRules
 	DocComments string
 }
 
-type AttributeRules map[string]AttributeRule
+type ArgumentRules map[string]ArgumentRule
 
-type AttributeRule struct {
+type ArgumentRule struct {
 	Type idl.Type
 }
 
@@ -57,7 +57,7 @@ requires an explicit a [Node]. Use [Document.CreateText] to convert a string to
 a Node.
 
 See also: https://developer.mozilla.org/en-US/docs/Web/API/Element`,
-	Attributes: AttributeRules{
+	Arguments: ArgumentRules{
 		"nodes": {Type: idl.Type{Name: "Node"}},
 	}}
 

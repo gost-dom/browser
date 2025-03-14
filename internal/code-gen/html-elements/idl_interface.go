@@ -61,7 +61,7 @@ func (i IdlInterface) Generate() *jen.Statement {
 		if !o.Static {
 			args := make([]generators.Generator, len(o.Arguments))
 			for i, a := range o.Arguments {
-				argRules, hasArgRules := opRules.Attributes[a.Name]
+				argRules, hasArgRules := opRules.Arguments[a.Name]
 				if hasArgRules {
 					args[i] = IdlType(argRules.Type)
 				} else {
