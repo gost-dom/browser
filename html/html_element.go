@@ -1,6 +1,7 @@
 package html
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/gost-dom/browser/dom"
@@ -11,6 +12,8 @@ type HTMLElement interface {
 	dom.Element
 	Renderer
 	ChildrenRenderer
+	Tabindex() int
+	SetTabindex(int)
 	Dataset() DOMStringMap
 	getHTMLDocument() HTMLDocument
 	window() Window
@@ -52,3 +55,15 @@ func (e *htmlElement) TagName() string {
 }
 
 func (e *htmlElement) Dataset() DOMStringMap { return e.dataset }
+
+func (e *htmlElement) Tabindex() int {
+	val, ok := e.GetAttribute("tabindex")
+	res, err := strconv.Atoi(val)
+	if ok && err == nil {
+		return res
+	} else {
+		return -1
+	}
+}
+
+func (e *htmlElement) SetTabindex(i int) { e.SetAttribute("tabindex", strconv.Itoa(i)) }
