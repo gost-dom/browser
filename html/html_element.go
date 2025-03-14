@@ -17,7 +17,7 @@ type DOMStringMap struct{ Element dom.Element }
 
 var camelCaseDetector = regexp.MustCompile("[a-z][A-Z]")
 
-// toKebab converts a camelCase string to a kebabString.
+// toKebab converts a camelCase string to a kebab-case string.
 //
 // This is intended for [HTMLElement.Dataset] that provides a camelCase API over
 // the kebab-case data- content attribute names.
@@ -31,6 +31,11 @@ func toKebab(str string) string {
 func (m DOMStringMap) Get(key string) (val string, exists bool) {
 	key = toKebab(key)
 	return m.Element.GetAttribute("data-" + key)
+}
+
+func (m DOMStringMap) Set(key string, val string) {
+	key = toKebab(key)
+	m.Element.SetAttribute("data-"+key, val)
 }
 
 type HTMLElement interface {
