@@ -41,38 +41,35 @@ implementations. If this leads to breaking changes (from a client's point of
 view), I'd normally announce this ahead of publishing; but refactors that don't
 break the API aren't.
 
-## Providing test projects
+## Provide examples for other frameworks.
 
-Gost-DOM has prioritised HTMX, but it should support all modern front-end
-frameworks/libraries.
+You can help discover compatibility issues and drive development by supplying an
+example project using other libraries.
 
-I don't have time to test every project; you can help by creating test projects
-using other frameworks and libraries, like Alpine, Datastar, and even React.
+Gost-DOM should support all _modern_ JavaScript libraries and front-end
+frameworks, including:
 
-The test should obviously have some functionality depending on the the
-framework/library; otherwise there really isn't a test ;)
+- Datastar
+- React
+- Alpine
 
 ### Test project "requirement"
 
-Please make sure you have 
+In order to easily consume the project from Gost-DOM, the project must:
 
 - Be `git clone`able. E.g., a public github project is great.
 - The root `http.Handler` should be exported, either as a variable, or a
   function to construct an instance.
 - The root handler must serve all JavaScript code, I recommend go's
   [embed](https://pkg.go.dev/embed) package.
-- JavaScript code must be bundled if you use ESM. Gost-DOM doesn't support
-  ECMAScript modules yet.
-  - Preferably: Have the bundle committed to git. If not, it must be buildable
-    following following normal JS conventions, i.e. (`pnpm i && pnpm build`)
-- Optional: Have a `main` module, to make it easy to launch it in a browser.
-  I can manage creating it if it's not there, but it'll save me the work.
-- Optional: A readme file describing the behaviour.
-- Optional: Check the [feature list](./docs/Features.md) to check for potential
-  compatibility issues, and mention them in the readme. I still want tests for
-  incompatible frameworks.
+- JavaScript code **must be bundled** if you use ESM (preferably committed to git,
+  but I can manage an npm build)
+- Optional: Have a `main` module, to make it easy to test in a browser for
+  comparison. I can manage creating it, but it'll save me the work.
+- Optional: Create a `readme` describing the project, particularly if different
+  actions depend on different browser APIs.
 
-Please consider:
+#### Things to consider:
 
 - Can the framework be grouped into layers of functionality?
 - Can you create separate routes to check core behaviour separately from
@@ -82,13 +79,14 @@ Please consider:
 
 ### Example
 
-As an example, the project's own [HTMX
+As an example, the project's own _extremely limited_ [HTMX
 test](https://github.com/gost-dom/browser/tree/main/internal/test)
 
 - `htmx-app` exports `CreateServer()` that returns an http server.
-  `content/fx.go` embeds `htmx.js`
-- `htmx-app-main` has a `main` to launch the app and test in a real browser.
+- The server uses `embed` to serve `htmx.js` from `contents/` directory.
+- `htmx-app-main` has a `main` to launch the app for comparison in a real browser.
 
+<!--
 ### Optional: Create a PR to the community-examples
 
 You can optionally 
@@ -106,3 +104,5 @@ restrictions, even just the requirement to keep the license file, I could easily
 integrate your example into the main project test suite, if it would make sense.
 
 I would always make sure contributors are mentioned (unless you prefer not to).
+-->
+
