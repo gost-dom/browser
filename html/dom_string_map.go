@@ -27,18 +27,20 @@ func toKebab(str string) string {
 	})
 }
 
+func encodeDataAttrKey(key string) string {
+	return "data-" + toKebab(key)
+}
+
 func (m DOMStringMap) Get(key string) (val string, exists bool) {
-	key = toKebab(key)
-	return m.Element.GetAttribute("data-" + key)
+	return m.Element.GetAttribute(encodeDataAttrKey(key))
 }
 
 func (m DOMStringMap) Set(key string, val string) {
-	key = toKebab(key)
-	m.Element.SetAttribute("data-"+key, val)
+	m.Element.SetAttribute(encodeDataAttrKey(key), val)
 }
 
 func (m DOMStringMap) Delete(key string) {
-	if attr := m.Element.GetAttributeNode("data-" + toKebab(key)); attr != nil {
+	if attr := m.Element.GetAttributeNode(encodeDataAttrKey(key)); attr != nil {
 		m.Element.RemoveAttributeNode(attr)
 	}
 }
