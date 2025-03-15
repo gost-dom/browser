@@ -3,7 +3,6 @@ package htmlelements
 import (
 	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/packagenames"
-	"github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )
 
@@ -42,7 +41,7 @@ func (t IdlType) IsString() bool {
 
 func (t IdlType) IsInt() bool {
 	switch t.Name {
-	case "unsigned long":
+	case "unsigned long", "long":
 		return true
 	}
 	return false
@@ -65,20 +64,4 @@ func (t IdlType) generateSequence() *jen.Statement {
 		panic("IdlType.generateSequence: TypeParameter is nil for sequence type")
 	}
 	return jen.Op("[]").Add(IdlType(*t.TypeParam).Generate())
-}
-
-// ReturnParams return multiple parameters for an operation's return types.
-// The return values can include a bool for methods like GetAttribute, that
-// return (string, bool), indicating if the attribute was found. If hasError is
-// true, an error return type will be added as well.
-func (s IdlType) ReturnParams(hasError bool) *jen.Statement {
-	result := make([]generators.Generator, 1, 3)
-	result[0] = s
-	if s.Nullable && !s.Nillable() {
-		result = append(result, generators.Id("bool"))
-	}
-	if hasError {
-		result = append(result, generators.Id("error"))
-	}
-	return jen.Params(generators.ToJenCodes(result)...)
 }

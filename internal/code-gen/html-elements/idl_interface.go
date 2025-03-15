@@ -5,6 +5,7 @@ import (
 
 	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/customrules"
+	"github.com/gost-dom/code-gen/customrules/typerule"
 	. "github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
@@ -79,7 +80,7 @@ func (i IdlInterface) Generate() *jen.Statement {
 						fields = append(fields, generators.Raw(
 							jen.Id(UpperCaseFirstLetter(name)).
 								Params(generators.ToJenCodes(args[0:i+1])...).
-								Add(o.ReturnType.ReturnParams(o.HasError))))
+								Add(o.ReturnParams())))
 						name = name + UpperCaseFirstLetter(nextArg.Name)
 					}
 				}
@@ -91,7 +92,7 @@ func (i IdlInterface) Generate() *jen.Statement {
 			fields = append(fields, generators.Raw(
 				jen.Id(UpperCaseFirstLetter(name)).
 					Params(generators.ToJenCodes(args)...).
-					Add(o.ReturnType.ReturnParams(o.HasError)),
+					Add(o.ReturnParams()),
 			))
 		}
 	}
@@ -108,10 +109,46 @@ type IdlInterfaceAttribute struct {
 
 /* -------- IdlInterfaceOperation -------- */
 
+// OutputType describes a type to generate. The Default value is from Web IDL
+// specifications, and the Override is custom configuration.
+type OutputType struct {
+	Default  IdlType
+	Override *typerule.TypeRule
+}
+
+func (t OutputType) Generate() *jen.Statement {
+	if t.Override != nil {
+		return t.Override.Generate()
+	}
+	return t.Default.Generate()
+}
+
 type IdlInterfaceOperation struct {
 	idl.Operation
-	ReturnType IdlType
-	HasError   bool
+	ReturnType     IdlType
+	ReturnOverride *typerule.TypeRule
+	HasError       bool
+}
+
+// ReturnParams return multiple parameters for an operation's return types.
+// The return values can include a bool for methods like GetAttribute, that
+// return (string, bool), indicating if the attribute was found. If hasError is
+// true, an error return type will be added as well.
+func (o IdlInterfaceOperation) ReturnParams() *jen.Statement {
+	result := make([]generators.Generator, 1, 3)
+	if o.ReturnOverride != nil {
+		result[0] = o.ReturnOverride
+	} else {
+		s := o.ReturnType
+		result[0] = s
+		if s.Nullable && !s.Nillable() {
+			result = append(result, generators.Id("bool"))
+		}
+		if o.HasError {
+			result = append(result, generators.Id("error"))
+		}
+	}
+	return jen.Params(generators.ToJenCodes(result)...)
 }
 
 /* -------- IdlInterfaceInclude -------- */

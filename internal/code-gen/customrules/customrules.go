@@ -11,7 +11,11 @@
 // add error handling to the operations that actually produce errors.
 package customrules
 
-import "github.com/gost-dom/webref/idl"
+import (
+	"github.com/gost-dom/code-gen/customrules/typerule"
+	. "github.com/gost-dom/code-gen/customrules/typerule"
+	"github.com/gost-dom/webref/idl"
+)
 
 // CustomRules define the rules pr. IDL Spec. The key identifies the name of the
 // spec, which corresponds to the file name it was loaded from. E.g., "dom"
@@ -36,12 +40,14 @@ type OperationRule struct {
 	HasError    bool
 	Arguments   ArgumentRules
 	DocComments string
+	ReturnType  *TypeRule
 }
 
 type ArgumentRules map[string]ArgumentRule
 
 type ArgumentRule struct {
-	Type idl.Type
+	Type     idl.Type
+	Variadic bool
 }
 
 type AttributeTypeRule struct {
