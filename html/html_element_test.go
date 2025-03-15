@@ -13,6 +13,7 @@ func TestHTMLElement(t *testing.T) {
 	t.Parallel()
 	t.Run("Dataset", testHTMLElementDataset)
 	t.Run("Tabindex", testHTMLElementTabindex)
+	t.Run("Autofocus", testHTMLElementAutofocus)
 }
 
 func testHTMLElementDataset(t *testing.T) {
@@ -65,4 +66,36 @@ func testHTMLElementTabindex(t *testing.T) {
 	div.SetTabindex(1)
 	g := gomega.NewWithT(t)
 	g.Expect(div).To(HaveAttribute("tabindex", "1"), "tabindex content attribute")
+}
+
+func testHTMLElementAutofocus(t *testing.T) {
+	t.Parallel()
+	assert := assert.New(t)
+
+	testHelper := htmltest.HTMLHelper{T: t}
+	{
+		//
+		div := testHelper.CreateHTMLElement("div")
+
+		assert.False(div.Autofocus(), "Autofocus on empty property")
+
+		// Content attribute values, not "false" does not become "true"
+		for _, val := range []string{"", "foo", "false"} {
+			div.SetAttribute("autofocus", val)
+			assert.Truef(div.Autofocus(), "Autofocus content attribute: %s", val)
+		}
+	}
+
+	{
+		// Set value
+		div := testHelper.CreateHTMLElement("div")
+
+		div.SetAutofocus(true)
+		assert.True(div.Autofocus(), "Autofocus IDL attribute")
+		assert.Equal("", div.AttributeValue("autofocus"), "Autofocus IDL attribute")
+
+		div.SetAutofocus(false)
+		assert.False(div.Autofocus(), "Autofocus IDL attribute")
+		assert.False(div.HasAttribute("autofocus"), "Autofocus content attribute exists")
+	}
 }

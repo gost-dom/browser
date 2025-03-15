@@ -18,6 +18,8 @@ type HTMLElement interface {
 	Focus() bool
 	Tabindex() int
 	SetTabindex(int)
+	Autofocus() bool
+	SetAutofocus(bool)
 	Dataset() DOMStringMap
 	getHTMLDocument() HTMLDocument
 	window() Window
@@ -99,3 +101,13 @@ func (e *htmlElement) SetTabindex(i int) { e.SetAttribute("tabindex", strconv.It
 
 func (e *htmlElement) Nonce() string         { v, _ := e.GetAttribute("nonce"); return v }
 func (e *htmlElement) SetNonce(nonce string) { e.SetAttribute("nonce", nonce) }
+
+func (e *htmlElement) Autofocus() bool { return e.HasAttribute("autofocus") }
+
+func (e *htmlElement) SetAutofocus(val bool) {
+	if val {
+		e.SetAttribute("autofocus", "")
+	} else {
+		e.RemoveAttribute("autofocus")
+	}
+}
