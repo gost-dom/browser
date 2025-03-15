@@ -73,14 +73,6 @@ func (i IdlInterface) Generate() *jen.Statement {
 					)
 				}
 
-				if name == "has" {
-					fmt.Println(
-						"Checking argument",
-						name,
-						o.Arguments[i].Name,
-						o.Arguments[i].Optional,
-					)
-				}
 				if i < len(o.Arguments)-1 {
 					nextArg := o.Arguments[i+1]
 					if nextArg.Optional {
