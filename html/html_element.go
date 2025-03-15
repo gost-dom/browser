@@ -67,3 +67,6 @@ func (e *htmlElement) Tabindex() int {
 }
 
 func (e *htmlElement) SetTabindex(i int) { e.SetAttribute("tabindex", strconv.Itoa(i)) }
+
+func (e *htmlElement) Nonce() string         { v, _ := e.GetAttribute("nonce"); return v }
+func (e *htmlElement) SetNonce(nonce string) { e.SetAttribute("nonce", nonce) }
