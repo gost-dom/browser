@@ -6,13 +6,13 @@ import (
 )
 
 type htmlAnchorElement struct {
-	HTMLElement
+	*htmlElement
 	URL *url.URL
 }
 
 func NewHTMLAnchorElement(ownerDoc HTMLDocument) HTMLAnchorElement {
 	result := &htmlAnchorElement{
-		HTMLElement: NewHTMLElement("a", ownerDoc),
+		htmlElement: newHTMLElement("a", ownerDoc),
 		URL:         nil,
 	}
 	result.SetSelf(result)
@@ -20,7 +20,7 @@ func NewHTMLAnchorElement(ownerDoc HTMLDocument) HTMLAnchorElement {
 }
 
 func (e *htmlAnchorElement) Click() bool {
-	result := e.HTMLElement.Click()
+	result := e.htmlElement.Click()
 	if href := e.Href(); result && href != "" {
 		w := e.window()
 		w.Navigate(w.resolveHref(href).Href())
@@ -30,7 +30,7 @@ func (e *htmlAnchorElement) Click() bool {
 
 func (e *htmlAnchorElement) SetAttribute(name string, val string) {
 	win := e.window().History().window
-	e.HTMLElement.SetAttribute(name, val)
+	e.htmlElement.SetAttribute(name, val)
 	if name == "href" {
 		e.URL = url.ParseURLBase(val, win.baseLocation)
 	}
@@ -44,10 +44,7 @@ func (e *htmlAnchorElement) setUrl(f func(*url.URL, string), val string) {
 	e.updateDataAttribute()
 }
 
-func (e htmlAnchorElement) updateDataAttribute() {
-	e.HTMLElement.SetAttribute("href", e.URL.Href())
-
-}
+func (e htmlAnchorElement) updateDataAttribute() { e.SetAttribute("href", e.URL.Href()) }
 
 func (e *htmlAnchorElement) getUrl(f func(*url.URL) string) string {
 	if e.URL == nil {
