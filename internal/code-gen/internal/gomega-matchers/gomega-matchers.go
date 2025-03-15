@@ -13,3 +13,4 @@ var ContainSubstring = gomega.ContainSubstring
 
 var Succeed = gomega.Succeed
 var HaveOccurred = gomega.HaveOccurred
+var MatchRegexp = gomega.MatchRegexp
