@@ -70,6 +70,15 @@ func (s *DocumentActiveElementTestSuite) TestFocusEvents() {
 		"focusin - root-1",
 	}, logs)
 
+	logs = nil
+	newTarget.Blur()
+	s.Assert().Equal([]string{
+		"blur - button-1-2-1",
+		"focusout - button-1-2-1",
+		"focusout - child-1-2",
+		"focusout - root-1",
+	}, logs)
+	s.Assert().Equal(s.doc.Body(), s.doc.ActiveElement())
 }
 
 const activeDocumentTestHtml = `<body>

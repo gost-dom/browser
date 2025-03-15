@@ -14,6 +14,7 @@ type HTMLElement interface {
 	Renderer
 	ChildrenRenderer
 	Click() bool
+	Blur() bool
 	Focus() bool
 	Tabindex() int
 	SetTabindex(int)
@@ -65,15 +66,21 @@ func (e *htmlElement) TagName() string {
 
 func (e *htmlElement) Click() bool { return uievents.Click(e.Element) }
 
+func (e *htmlElement) Blur() bool {
+	uievents.Blur(e.self)
+	uievents.Focusout(e.self)
+	e.htmlDocument.setActiveElement(nil)
+	return true
+}
+
 func (e *htmlElement) Focus() bool {
-	oldTarget := e.htmlDocument.ActiveElement()
-	if oldTarget != nil {
-		uievents.Blur(oldTarget)
-		uievents.Focusout(oldTarget)
+	if oldTarget, ok := e.htmlDocument.ActiveElement().(HTMLElement); ok {
+		oldTarget.Blur()
 	}
-	result := uievents.Focus(e.Element) && uievents.Focusin(e.Element)
+	uievents.Focus(e.Element)
+	uievents.Focusin(e.Element)
 	e.htmlDocument.setActiveElement(e.self)
-	return result
+	return true
 }
 
 func (e *htmlElement) Dataset() DOMStringMap { return e.dataset }
