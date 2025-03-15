@@ -8,7 +8,7 @@ import (
 	"github.com/gost-dom/browser/internal/log"
 )
 
-type htmlScriptElement struct{ *htmlElement }
+type htmlScriptElement struct{ htmlElement }
 
 type HTMLScriptElement = HTMLElement
 

@@ -13,7 +13,7 @@ type HTMLTemplateElement interface {
 }
 
 type htmlTemplateElement struct {
-	*htmlElement
+	htmlElement
 	content dom.DocumentFragment
 }
 

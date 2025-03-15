@@ -29,21 +29,23 @@ type htmlElement struct {
 }
 
 func NewHTMLElement(tagName string, ownerDocument HTMLDocument) HTMLElement {
-	return newHTMLElement(tagName, ownerDocument)
+	el := newHTMLElement(tagName, ownerDocument)
+	result := &el
+	result.SetSelf(result)
+	return result
 }
 
-func newHTMLElement(tagName string, ownerDocument HTMLDocument) *htmlElement {
+func newHTMLElement(tagName string, ownerDocument HTMLDocument) htmlElement {
 	element := dom.NewElement(tagName, ownerDocument)
 	renderer, _ := element.(Renderer)
 	childrenRenderer, _ := element.(ChildrenRenderer)
-	result := &htmlElement{
+	result := htmlElement{
 		Element:          element,
 		Renderer:         renderer,
 		ChildrenRenderer: childrenRenderer,
 		htmlDocument:     ownerDocument,
 		dataset:          DOMStringMap{element},
 	}
-	result.SetSelf(result)
 	return result
 }
 

@@ -6,7 +6,7 @@ import (
 )
 
 type htmlAnchorElement struct {
-	*htmlElement
+	htmlElement
 	URL *url.URL
 }
 

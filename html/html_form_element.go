@@ -86,9 +86,7 @@ type HTMLFormElement interface {
 	RequestSubmit(submitter dom.Element) error
 }
 
-type htmlFormElement struct {
-	*htmlElement
-}
+type htmlFormElement struct{ htmlElement }
 
 func NewHtmlFormElement(ownerDocument HTMLDocument) HTMLFormElement {
 	result := &htmlFormElement{

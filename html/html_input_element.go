@@ -12,7 +12,7 @@ type HTMLInputElement interface {
 	CheckValidity() bool
 }
 
-type htmlInputElement struct{ *htmlElement }
+type htmlInputElement struct{ htmlElement }
 
 func NewHTMLInputElement(ownerDocument HTMLDocument) HTMLInputElement {
 	result := &htmlInputElement{newHTMLElement("input", ownerDocument)}

@@ -8,7 +8,7 @@ type HTMLButtonElement interface {
 	SetType(val string)
 }
 
-type htmlButtonElement struct{ *htmlElement }
+type htmlButtonElement struct{ htmlElement }
 
 func NewHTMLButtonElement(ownerDocument HTMLDocument) HTMLButtonElement {
 	result := &htmlButtonElement{newHTMLElement("button", ownerDocument)}
