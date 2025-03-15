@@ -16,8 +16,8 @@ type HTMLElement interface {
 	Click() bool
 	Blur() bool
 	Focus() bool
-	Tabindex() int
-	SetTabindex(int)
+	TabIndex() int
+	SetTabIndex(int)
 	Autofocus() bool
 	SetAutofocus(bool)
 	Dataset() DOMStringMap
@@ -87,7 +87,7 @@ func (e *htmlElement) Focus() bool {
 
 func (e *htmlElement) Dataset() DOMStringMap { return e.dataset }
 
-func (e *htmlElement) Tabindex() int {
+func (e *htmlElement) TabIndex() int {
 	val, ok := e.GetAttribute("tabindex")
 	res, err := strconv.Atoi(val)
 	if ok && err == nil {
@@ -97,7 +97,7 @@ func (e *htmlElement) Tabindex() int {
 	}
 }
 
-func (e *htmlElement) SetTabindex(i int) { e.SetAttribute("tabindex", strconv.Itoa(i)) }
+func (e *htmlElement) SetTabIndex(i int) { e.SetAttribute("tabindex", strconv.Itoa(i)) }
 
 func (e *htmlElement) Nonce() string         { v, _ := e.GetAttribute("nonce"); return v }
 func (e *htmlElement) SetNonce(nonce string) { e.SetAttribute("nonce", nonce) }

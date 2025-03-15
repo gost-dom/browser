@@ -12,7 +12,7 @@ import (
 func TestHTMLElement(t *testing.T) {
 	t.Parallel()
 	t.Run("Dataset", testHTMLElementDataset)
-	t.Run("Tabindex", testHTMLElementTabindex)
+	t.Run("Tabindex", testHTMLElementTabIndex)
 	t.Run("Autofocus", testHTMLElementAutofocus)
 }
 
@@ -47,7 +47,7 @@ func testHTMLElementDataset(t *testing.T) {
 	assert.False(t, ok, "data-foo-bar found after delete")
 }
 
-func testHTMLElementTabindex(t *testing.T) {
+func testHTMLElementTabIndex(t *testing.T) {
 	t.Parallel()
 	doc := htmltest.ParseHTMLDocumentHelper(t,
 		`<body>
@@ -57,13 +57,13 @@ func testHTMLElementTabindex(t *testing.T) {
 		</body>`,
 	)
 
-	assert.Equal(t, -1, doc.GetHTMLElementById("target-1").Tabindex(), "No tabindex")
-	assert.Equal(t, -1, doc.GetHTMLElementById("target-3").Tabindex(), "No tabindex='foo'")
-	assert.Equal(t, 1, doc.GetHTMLElementById("target-2").Tabindex(), "No tabindex='1'")
+	assert.Equal(t, -1, doc.GetHTMLElementById("target-1").TabIndex(), "No tabindex")
+	assert.Equal(t, -1, doc.GetHTMLElementById("target-3").TabIndex(), "No tabindex='foo'")
+	assert.Equal(t, 1, doc.GetHTMLElementById("target-2").TabIndex(), "No tabindex='1'")
 
 	// Set an invalid index sets the content attribute to zero
 	div := doc.CreateHTMLElement("div")
-	div.SetTabindex(1)
+	div.SetTabIndex(1)
 	g := gomega.NewWithT(t)
 	g.Expect(div).To(HaveAttribute("tabindex", "1"), "tabindex content attribute")
 }
