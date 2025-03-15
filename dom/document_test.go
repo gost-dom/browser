@@ -1,29 +1,28 @@
 package dom_test
 
 import (
-	. "github.com/gost-dom/browser/testing/gomega-matchers"
+	"testing"
 
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
+	. "github.com/gost-dom/browser/testing/gomega-matchers"
+	"github.com/stretchr/testify/assert"
+
+	"github.com/onsi/gomega"
 )
 
-var _ = Describe("Document", func() {
-	It("Is an HTMLElement", func() {
-		doc := ParseHtmlString("")
-		Expect(doc.DocumentElement()).To(BeHTMLElement())
-	})
+func TestDocumentCreateText(t *testing.T) {
+	doc := ParseHtmlString("")
+	text := doc.CreateText("data")
+	assert.Equal(t, doc, text.OwnerDocument())
+}
 
-	It("Has an outerHTML", func() {
-		// Parsing an empty HTML doc generates both head and body
-		doc := ParseHtmlString("")
-		Expect(
-			doc.DocumentElement().OuterHTML(),
-		).To(Equal("<html><head></head><body></body></html>"))
-	})
+func TestDocumentCreateElement(t *testing.T) {
+	doc := ParseHtmlString("")
+	e := doc.CreateElement("div")
+	assert.Equal(t, doc, e.OwnerDocument())
+}
 
-	Describe("FindElementById", func() {
-		It("Should return the right element", func() {
-			doc := ParseHtmlString(`<body>
+func TestDocumentFindElementById(t *testing.T) {
+	doc := ParseHtmlString(`<body>
   <div id="uncle></div>
   <div id="parent">
     <div id="child">
@@ -31,23 +30,20 @@ var _ = Describe("Document", func() {
       <div id="grand-child"></div>
     </div>
   </div></body>`)
-			elm := doc.GetElementById("grand-child")
-			Expect(elm).To(HaveOuterHTML(`<div id="grand-child"></div>`))
-		})
-	})
+	elm := doc.GetElementById("grand-child")
+	gomega.NewWithT(t).Expect(elm).To(HaveOuterHTML(`<div id="grand-child"></div>`))
+}
 
-	It("CreateElement", func() {
-		doc := ParseHtmlString("")
-		e := doc.CreateElement("div")
-		Expect(e.OwnerDocument()).To(Equal(doc))
-	})
+func TestOuterHTML(t *testing.T) {
+	// Parsing an empty HTML doc generates both head and body
+	doc := ParseHtmlString("")
+	assert.Equal(t,
+		"<html><head></head><body></body></html>",
+		doc.DocumentElement().OuterHTML())
+}
+func TestDocumentDocumentElementIsHTMLElement(t *testing.T) {
+	expect := gomega.NewWithT(t).Expect
+	doc := ParseHtmlString("")
+	expect(doc.DocumentElement()).To(BeHTMLElement())
 
-	Describe("CreateText", func() {
-		It("Should have ownerDocument", func() {
-			Skip("Text node miss owner document")
-			doc := ParseHtmlString("")
-			t := doc.CreateText("data")
-			Expect(t.OwnerDocument()).To(Equal(doc))
-		})
-	})
-})
+}

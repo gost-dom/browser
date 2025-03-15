@@ -108,24 +108,19 @@ func (d *document) Head() Element {
 	return nil
 }
 
-func (d *document) CreateAttribute(name string) Attr {
-	return newAttr(name, "", d)
-}
-
-func (d *document) CreateElement(name string) Element {
-	return NewElement(name, d)
-}
-
-func (d *document) CreateText(data string) Text                 { return NewText(data, d) }
-func (d *document) CreateComment(data string) Comment           { return NewComment(data, d) }
-func (d *document) CreateDocumentType(name string) DocumentType { return NewDocumentType(name, d) }
-
+func (d *document) CreateAttribute(name string) Attr  { return newAttr(name, "", d.document) }
+func (d *document) CreateElement(name string) Element { return NewElement(name, d.document) }
+func (d *document) CreateText(data string) Text       { return NewText(data, d.document) }
+func (d *document) CreateComment(data string) Comment { return NewComment(data, d.document) }
 func (d *document) CreateElementNS(_ string, name string) Element {
-	return NewElement(name, d)
+	return NewElement(name, d.document)
+}
+func (d *document) CreateDocumentType(name string) DocumentType {
+	return NewDocumentType(name, d.document)
 }
 
 func (d *document) CreateDocumentFragment() DocumentFragment {
-	return NewDocumentFragment(d)
+	return NewDocumentFragment(d.document)
 }
 
 func (d *document) DocumentElement() Element {
