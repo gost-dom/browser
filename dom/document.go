@@ -26,6 +26,7 @@ type DocumentParentWindow interface {
 
 type Document interface {
 	RootNode
+	ActiveElement() Element
 	Body() Element
 	Head() Element
 	CreateDocumentFragment() DocumentFragment
@@ -43,17 +44,28 @@ type elementConstructor func(doc *document) Element
 
 type document struct {
 	rootNode
-	ownerWindow DocumentParentWindow
+	activeElement Element
+	ownerWindow   DocumentParentWindow
 }
 
 func NewDocument(window DocumentParentWindow) Document {
-	result := &document{newRootNode(nil), window}
+	result := &document{
+		rootNode:    newRootNode(nil),
+		ownerWindow: window,
+	}
 	// Hmmm, can document be replaced; and now the old doc's event goes to a
 	// window they shouldn't?
 	// What about disconnected documents, e.g. `new Document()` in the browser?
 	result.SetParentTarget(window)
 	result.SetSelf(result)
 	return result
+}
+
+func (d document) ActiveElement() Element {
+	if d.activeElement == nil {
+		return d.Body()
+	}
+	return d.activeElement
 }
 
 func (d *document) CloneNode(deep bool) Node {
@@ -139,3 +151,7 @@ func (d *document) createHtmlNode() *html.Node {
 }
 
 func (d *document) NodeType() NodeType { return NodeTypeDocument }
+
+func (d *document) SetActiveElement(e Element) {
+	d.activeElement = e
+}

@@ -4,7 +4,7 @@ package gojahost
 
 import (
 	g "github.com/dop251/goja"
-	dom "github.com/gost-dom/browser/dom"
+	uievents "github.com/gost-dom/browser/internal/uievents"
 )
 
 func init() {
@@ -59,11 +59,11 @@ func init() {
 }
 
 type uIEventWrapper struct {
-	baseInstanceWrapper[dom.UIEvent]
+	baseInstanceWrapper[uievents.UIEvent]
 }
 
 func newUIEventWrapper(instance *GojaContext) wrapper {
-	return &uIEventWrapper{newBaseInstanceWrapper[dom.UIEvent](instance)}
+	return &uIEventWrapper{newBaseInstanceWrapper[uievents.UIEvent](instance)}
 }
 
 func (w uIEventWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime) {

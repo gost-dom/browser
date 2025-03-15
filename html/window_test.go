@@ -322,7 +322,7 @@ var _ = Describe("Window", func() {
 					return n.TextContent() == "Products from absolute url"
 				})
 				Expect(ok).To(BeTrue())
-				link.(dom.Element).Click()
+				link.(html.HTMLElement).Click()
 				Expect(window.Location().Pathname()).To(Equal("/products"))
 			})
 
@@ -331,7 +331,7 @@ var _ = Describe("Window", func() {
 					return n.TextContent() == "Products from relative url"
 				})
 				Expect(ok).To(BeTrue())
-				link.(dom.Element).Click()
+				link.(html.HTMLElement).Click()
 				Expect(window.Location().Pathname()).To(Equal("/products"))
 			})
 		})

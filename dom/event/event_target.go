@@ -134,8 +134,10 @@ func (e *eventTarget) SetCatchAllHandler(handler EventHandler) {
 }
 
 func (e *eventTarget) DispatchEvent(event *Event) bool {
-	event.reset(e.self)
 	log.Debug("Dispatch event", "EventType", event.Type)
+	event.target = e.self
+	event.stopped = false
+	event.cancelled = false
 
 	event.phase = EventPhaseCapture
 	e.dispatchOnParent(event, true)
@@ -149,7 +151,7 @@ func (e *eventTarget) DispatchEvent(event *Event) bool {
 
 	event.phase = EventPhaseNone
 
-	return !(event.cancelable() && event.cancelled)
+	return !(event.Cancelable && event.cancelled)
 }
 
 func (e *eventTarget) dispatchEvent(event *Event, capture bool) {
@@ -197,7 +199,7 @@ func (e *eventTarget) dispatchOnParent(event *Event, capture bool) {
 			e.parentTarget.dispatchOnParent(event, capture)
 			e.parentTarget.dispatchEvent(event, capture)
 		} else {
-			if event.bubbles() {
+			if event.Bubbles {
 				e.parentTarget.dispatchEvent(event, capture)
 				e.parentTarget.dispatchOnParent(event, capture)
 			}

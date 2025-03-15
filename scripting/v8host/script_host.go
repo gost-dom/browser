@@ -14,6 +14,7 @@ import (
 	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
+	"github.com/gost-dom/browser/internal/uievents"
 	"github.com/gost-dom/browser/scripting"
 
 	"github.com/gost-dom/v8go"
@@ -90,11 +91,11 @@ func (c *V8ScriptContext) getInstanceForNode(
 		switch n.Data.(type) {
 		case event.CustomEventInit:
 			return c.getInstanceForNodeByName("CustomEvent", n)
-		case dom.PointerEventInit:
+		case uievents.PointerEventInit:
 			return c.getInstanceForNodeByName("PointerEvent", n)
-		case dom.MouseEventInit:
+		case uievents.MouseEventInit:
 			return c.getInstanceForNodeByName("MouseEvent", n)
-		case dom.UIEventInit:
+		case uievents.UIEventInit:
 			return c.getInstanceForNodeByName("UIEvent", n)
 		default:
 			return c.getInstanceForNodeByName("Event", n)

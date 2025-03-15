@@ -10,6 +10,7 @@ type HTMLDocument interface {
 	dom.Document
 	// unexported
 	getWindow() Window
+	setActiveElement(e dom.Element)
 }
 
 type htmlDocument struct {
@@ -83,3 +84,11 @@ func (d *htmlDocument) CreateElement(name string) dom.Element {
 }
 
 func (d *htmlDocument) getWindow() Window { return d.window }
+
+type SetActiveElementer interface {
+	SetActiveElement(e dom.Element)
+}
+
+func (d *htmlDocument) setActiveElement(e dom.Element) {
+	d.Document.(SetActiveElementer).SetActiveElement(e)
+}

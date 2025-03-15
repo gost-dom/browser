@@ -23,7 +23,6 @@ func (attrs Attributes) Length() int {
 // An Element in the document. Can be either an [HTMLElement] or an [XMLElement]
 type Element interface {
 	ElementContainer
-	ElementEvents
 	ClassList() DOMTokenList
 	HasAttribute(name string) bool
 	GetAttribute(name string) (string, bool)
@@ -44,7 +43,6 @@ type Element interface {
 
 type element struct {
 	node
-	elementEvents
 	ParentNode
 	tagName          string
 	namespace        string
@@ -66,7 +64,6 @@ func NewElement(tagName string, ownerDocument Document) Element {
 		attributes: Attributes(nil),
 	}
 	result.ParentNode = newParentNode(&result.node)
-	result.elementEvents = elementEvents{result}
 	result.SetSelf(result)
 	return result
 }

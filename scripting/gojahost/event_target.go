@@ -1,8 +1,8 @@
 package gojahost
 
 import (
-	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/dom/event"
+	"github.com/gost-dom/browser/internal/uievents"
 
 	"github.com/dop251/goja"
 )
@@ -32,11 +32,11 @@ func newGojaEventListener(r *GojaContext, v goja.Value) event.EventHandler {
 func (h *gojaEventListener) HandleEvent(e *event.Event) error {
 	customEvent := h.instance.globals["Event"]
 	switch e.Data.(type) {
-	case dom.PointerEventInit:
+	case uievents.PointerEventInit:
 		customEvent = h.instance.globals["PointerEvent"]
-	case dom.MouseEventInit:
+	case uievents.MouseEventInit:
 		customEvent = h.instance.globals["MouseEvent"]
-	case dom.UIEventInit:
+	case uievents.UIEventInit:
 		customEvent = h.instance.globals["UIEvent"]
 	case event.CustomEventInit:
 		customEvent = h.instance.globals["CustomEvent"]

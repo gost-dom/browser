@@ -5,6 +5,7 @@ import (
 
 	. "github.com/gost-dom/code-gen/events"
 	. "github.com/gost-dom/code-gen/internal/gomega-matchers"
+	"github.com/gost-dom/code-gen/packagenames"
 	gen "github.com/gost-dom/generators"
 	. "github.com/gost-dom/generators/testing/matchers"
 	"github.com/gost-dom/webref/events"
@@ -13,16 +14,17 @@ import (
 
 func CreateMethodGenerator(specs EventGeneratorSpecs) (res gen.Generator, err error) {
 	api, err := events.Load(specs.Api)
+	target := EventTargetType{specs.SourceType, packagenames.Dom}
 	x := ElementEventGenerator{
-		Api:     api,
-		Element: specs.SourceType,
+		Api:        api,
+		TargetType: target,
 	}
 	for _, e := range x.Events() {
 		if e.Type == specs.EventName {
 			res = EventDispatchMethodGenerator{
-				SourceTypeName: specs.SourceType,
-				Event:          e,
-				Type:           x.Type(),
+				TargetType: target,
+				Event:      e,
+				Type:       x.Type(),
 			}
 			break
 		}
@@ -30,47 +32,28 @@ func CreateMethodGenerator(specs EventGeneratorSpecs) (res gen.Generator, err er
 	return
 }
 
-func TestGenerateElementEventMethod(t *testing.T) {
-	g := gomega.NewWithT(t)
+func TestClickEventDispatcher(t *testing.T) {
+	Expect := gomega.NewWithT(t).Expect
 	r, err := CreateMethodGenerator(EventGeneratorSpecs{
 		Api:        "uievents",
 		SourceType: "Element",
 		EventName:  "click",
 	})
-	g.Expect(err).ToNot(HaveOccurred())
-	g.Expect(r).To(HaveRendered(
-		`func (e *elementEvents) Click() bool {
-	data := e.defaultPointerEventInit()
+	Expect(err).ToNot(HaveOccurred())
+	Expect(r).To(HaveRendered(
+		`// Dispatches a [click event]. Returns the return value from [EventTarget.DispatchEvent].
+//
+// The behaviour dictating the return value depends on the type of event. For
+// more information see the [MDN docs]
+//
+// [click event]: https://developer.mozilla.org/en-US/docs/Web/API/Element/click_event
+// [MDN docs]: https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent#return_value
+func Click(e dom.Element) bool {
+	data := PointerEventInit{}
 	event := &event.Event{Type: "click", Data: data}
 	event.Bubbles = true
 	event.Cancelable = true
-	return e.target.DispatchEvent(event)
+	return e.DispatchEvent(event)
 }`,
 	))
-}
-
-func TestInterfaceGeneration(t *testing.T) {
-	g := gomega.NewWithT(t)
-	api, err := events.Load("uievents")
-	g.Expect(err).ToNot(HaveOccurred())
-	x := ElementEventGenerator{
-		Api:     api,
-		Element: "Element",
-	}
-	res := EventInterfaceGenerator{
-		Element: "Element",
-		Events:  x.Events(),
-	}
-	g.Expect(res).To(HaveRenderedSubstring("type ElementEvents interface {"))
-	g.Expect(res).To(HaveRendered(gomega.MatchRegexp("(?m)^\tClick\\(\\) bool$")))
-}
-
-func TestGenerateEventDispatcher(t *testing.T) {
-	g := gomega.NewWithT(t)
-	res, err := CreateEventSourceGenerator("uievents", "Element")
-	g.Expect(err).ToNot(HaveOccurred())
-	g.Expect(res).To(HaveRendered(gomega.HavePrefix(`type elementEvents struct {
-	target event.EventTarget
-}`)))
-	g.Expect(res).To(HaveRenderedSubstring("func (e *elementEvents) Click() bool {"))
 }
