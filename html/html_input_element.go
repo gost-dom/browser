@@ -35,12 +35,11 @@ func (e *htmlInputElement) SetType(val string) {
 	e.SetAttribute("type", val)
 }
 
-func (e *htmlInputElement) Click() bool {
-	ok := e.htmlElement.Click()
+func (e *htmlInputElement) Click() {
+	ok := e.htmlElement.click()
 	if ok && e.Type() == "submit" {
 		e.trySubmitForm()
 	}
-	return ok
 }
 
 func (e *htmlInputElement) trySubmitForm() {

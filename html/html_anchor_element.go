@@ -19,13 +19,12 @@ func NewHTMLAnchorElement(ownerDoc HTMLDocument) HTMLAnchorElement {
 	return result
 }
 
-func (e *htmlAnchorElement) Click() bool {
-	result := e.htmlElement.Click()
+func (e *htmlAnchorElement) Click() {
+	result := e.htmlElement.click()
 	if href := e.Href(); result && href != "" {
 		w := e.window()
 		w.Navigate(w.resolveHref(href).Href())
 	}
-	return result
 }
 
 func (e *htmlAnchorElement) SetAttribute(name string, val string) {

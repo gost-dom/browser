@@ -67,6 +67,11 @@ See also: https://developer.mozilla.org/en-US/docs/Web/API/Element`,
 		"nodes": {Type: idl.Type{Name: "Node"}},
 	}}
 
+// The Go functions that correspond to a specific event generally return a bool,
+// which corresponds to the return value of DispatchEvent, indicating if the
+// event was cancelled or not.
+var eventOperation = OperationRule{ReturnType: typerule.Bool}
+
 var rules = CustomRules{
 	"url": {
 		"URL": {Operations: OperationRules{
@@ -109,6 +114,9 @@ var rules = CustomRules{
 		"HTMLFormElement": {Operations: OperationRules{
 			"submit":        {HasError: true},
 			"requestSubmit": {HasError: true},
+		}},
+		"HTMLOrSVGElement": {Operations: OperationRules{
+			"focus": {Arguments: ArgumentRules{"options": {}}},
 		}},
 	},
 	"xhr": {

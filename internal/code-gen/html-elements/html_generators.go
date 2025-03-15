@@ -24,6 +24,10 @@ var HTMLPackageConfig = setSpecName("html", GeneratorConfig{
 		InterfaceName:     "HTMLHyperlinkElementUtils",
 		GenerateInterface: true,
 	},
+	"html_or_svg_element": {
+		InterfaceName:     "HTMLOrSVGElement",
+		GenerateInterface: true,
+	},
 })
 
 func CreateHTMLGenerators() ([]FileGeneratorSpec, error) {

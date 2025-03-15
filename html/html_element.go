@@ -13,14 +13,8 @@ type HTMLElement interface {
 	dom.Element
 	Renderer
 	ChildrenRenderer
-	Click() bool
-	Blur() bool
-	Focus() bool
-	TabIndex() int
-	SetTabIndex(int)
-	Autofocus() bool
-	SetAutofocus(bool)
-	Dataset() DOMStringMap
+	HTMLOrSVGElement
+	Click()
 	getHTMLDocument() HTMLDocument
 	window() Window
 }
@@ -66,23 +60,22 @@ func (e *htmlElement) TagName() string {
 	return strings.ToUpper(e.Element.TagName())
 }
 
-func (e *htmlElement) Click() bool { return uievents.Click(e.Element) }
+func (e *htmlElement) click() bool { return uievents.Click(e.Element) }
+func (e *htmlElement) Click()      { e.click() }
 
-func (e *htmlElement) Blur() bool {
+func (e *htmlElement) Blur() {
 	uievents.Blur(e.self)
 	uievents.Focusout(e.self)
 	e.htmlDocument.setActiveElement(nil)
-	return true
 }
 
-func (e *htmlElement) Focus() bool {
+func (e *htmlElement) Focus() {
 	if oldTarget, ok := e.htmlDocument.ActiveElement().(HTMLElement); ok {
 		oldTarget.Blur()
 	}
 	uievents.Focus(e.Element)
 	uievents.Focusin(e.Element)
 	e.htmlDocument.setActiveElement(e.self)
-	return true
 }
 
 func (e *htmlElement) Dataset() DOMStringMap { return e.dataset }

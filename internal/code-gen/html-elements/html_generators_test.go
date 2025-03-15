@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/onsi/gomega"
-	. "github.com/onsi/gomega"
 
+	. "github.com/gost-dom/code-gen/internal/gomega-matchers"
 	g "github.com/gost-dom/generators"
 	. "github.com/gost-dom/generators/testing/matchers"
 )
@@ -37,4 +37,32 @@ func TestHTMLAnchorInterface(t *testing.T) {
 		GenerateHtmlAnchor(),
 	).ToNot(HaveRendered(MatchRegexp(`func \([^(]+\) Host\(\) string`)),
 		"Rendered implementation for URL properties")
+}
+
+func exp(t *testing.T) func(any, ...any) gomega.GomegaAssertion {
+	return func(actual interface{}, extras ...interface{}) gomega.GomegaAssertion {
+		return gomega.NewWithT(t).Expect(actual, extras...)
+	}
+}
+
+func TestGenerateTabindex(t *testing.T) {
+	// This verifies that 'long' becomes an 'int'
+	expect := exp(t)
+	expect(getIdlInterfaceGenerator("html", "HTMLOrSVGElement")).To(HaveRenderedSubstring(
+		"TabIndex() int\n\tSetTabIndex(int)"),
+		"Custom override of attribute type from long->int")
+}
+
+func TestGenerateNoFocusOptions(t *testing.T) {
+	// Verify that the focusoptions are not generated
+	expect := exp(t)
+	expect(getIdlInterfaceGenerator("html", "HTMLOrSVGElement")).To(HaveRenderedSubstring(
+		"\tFocus() bool\n"), "Focus doesn't have options")
+}
+
+func TestGenerateEventHandlerFunction(t *testing.T) {
+	expect := exp(t)
+	expect(getIdlInterfaceGenerator("html", "HTMLOrSVGElement")).To(HaveRenderedSubstring(
+		"\tBlur() bool\n"), "Blur returns a bool")
+
 }
