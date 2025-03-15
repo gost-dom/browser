@@ -27,6 +27,7 @@ type Element interface {
 	HasAttribute(name string) bool
 	GetAttribute(name string) (string, bool)
 	SetAttribute(name string, value string)
+	RemoveAttribute(name string)
 	GetAttributeNode(string) Attr
 	SetAttributeNode(Attr) (Attr, error)
 	RemoveAttributeNode(Attr) (Attr, error)
@@ -125,6 +126,12 @@ func (e *element) GetAttribute(name string) (string, bool) {
 		return a.Value(), true
 	} else {
 		return "", false
+	}
+}
+
+func (e *element) RemoveAttribute(name string) {
+	if a := e.GetAttributeNode(name); a != nil {
+		e.RemoveAttributeNode(a)
 	}
 }
 

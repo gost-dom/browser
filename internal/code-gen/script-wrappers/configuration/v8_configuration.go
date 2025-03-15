@@ -73,7 +73,6 @@ func CreateV8Specs() WebIdlConfigurations {
 		"getAttributeNS",
 		"setAttributeNS",
 		"removeAttributeNode",
-		"removeAttribute",
 		"removeAttributeNS",
 		"toggleAttribute",
 		"toggleAttributeForce",

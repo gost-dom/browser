@@ -137,7 +137,18 @@ func (w elementV8Wrapper) setAttributeNS(info *v8.FunctionCallbackInfo) (*v8.Val
 
 func (w elementV8Wrapper) removeAttribute(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug("V8 Function call: Element.removeAttribute")
-	return nil, errors.New("Element.removeAttribute: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := w.getInstance(info)
+	qualifiedName, err1 := tryParseArg(args, 0, w.decodeDOMString)
+	if args.noOfReadArguments >= 1 {
+		err := errors.Join(err0, err1)
+		if err != nil {
+			return nil, err
+		}
+		instance.RemoveAttribute(qualifiedName)
+		return nil, nil
+	}
+	return nil, errors.New("Element.removeAttribute: Missing arguments")
 }
 
 func (w elementV8Wrapper) removeAttributeNS(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
