@@ -1,6 +1,33 @@
 # Changelog - Gost-DOM
 
 
+## [0.5.0](https://github.com/gost-dom/browser/compare/v0.4.1...v0.5.0) (2025-03-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* This changes some exported names, but most clients
+should be unaffected, as these are names that client code shouldn't have
+been using.
+* This is versioned as breaking, but the changes affect
+exported names that shouldn't be used by client code, so in practice it
+shouldn't be a conflict.
+
+* Remove the requirement for a "New" entity ([71292c6](https://github.com/gost-dom/browser/commit/71292c6858c135de422c9dfc221b548f6ceb7950))
+
+
+### Features
+
+* Add HTMLElement `nonce` IDL attribute ([9a573ab](https://github.com/gost-dom/browser/commit/9a573ab9b2dc60a3810556343186a5e377acf7d2)), closes [#59](https://github.com/gost-dom/browser/issues/59) [#60](https://github.com/gost-dom/browser/issues/60)
+* Add missing RemoveAttribute(string) ([46ccd78](https://github.com/gost-dom/browser/commit/46ccd78fb82b6a572ff49da8dd55fc2913e09658))
+* **dom:** Implement HTMLElement.Dataset() ([9b5e7d0](https://github.com/gost-dom/browser/commit/9b5e7d05bcf2033f1ede325ddd983db6c9c1c54c))
+* Focus element with autofocus attribute ([ddfbd63](https://github.com/gost-dom/browser/commit/ddfbd631e5a6a8068e62fe536d93ce9234bfa4dc))
+* **html:** Add autofocus IDL attribute ([8216632](https://github.com/gost-dom/browser/commit/821663248a2a819f4557fd6188317bdc0bf16677))
+* **html:** Add Focus() and Blur() on HTMLElement ([5377383](https://github.com/gost-dom/browser/commit/5377383167c889332f23dea7419b42f2f45d0898)), closes [#61](https://github.com/gost-dom/browser/issues/61)
+* **html:** Add HTMLElement.Tabindex()/SetTabindex() ([110b67b](https://github.com/gost-dom/browser/commit/110b67beb730941da8098f66067f8f9de836b3d6))
+* Make Event type usable as an object ([63f4e1f](https://github.com/gost-dom/browser/commit/63f4e1f389177bf31aa9d399e5bd2828f5341dbd))
+* **v8:** Support most new HTMLElement IDL attributes ([58906f8](https://github.com/gost-dom/browser/commit/58906f82ea2e05c4cc69e5fe36d2169a63e90676))
+
 ## [0.4.1](https://github.com/gost-dom/browser/compare/v0.4.0...v0.4.1) (2025-03-13)
 
 ### Deprecated
