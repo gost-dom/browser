@@ -1,4 +1,4 @@
-package dom_test
+package html_test
 
 import (
 	"fmt"
@@ -6,37 +6,28 @@ import (
 
 	. "github.com/gost-dom/browser/dom"
 	. "github.com/gost-dom/browser/dom/event"
+	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/testing/eventtest"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
-	"github.com/stretchr/testify/suite"
+	"github.com/stretchr/testify/assert"
 )
 
-type DocumentActiveElementTestSuite struct {
-	suite.Suite
-	doc htmltest.HTMLDocumentHelper
+func TestDefaultActiveElement(t *testing.T) {
+	doc := html.NewHTMLDocument(nil)
+	assert.Equal(t, doc.Body(), doc.ActiveElement(), "Active element is body by default")
 }
 
-func (s *DocumentActiveElementTestSuite) SetupTest() {
-	s.doc = htmltest.ParseHTMLDocumentHelper(s.T(), activeDocumentTestHtml)
-}
-
-func TestDocumentActiveElement(t *testing.T) {
-	suite.Run(t, new(DocumentActiveElementTestSuite))
-}
-
-func (s *DocumentActiveElementTestSuite) TestDefaultActiveElement() {
-	s.Assert().Equal(s.doc.Body(), s.doc.ActiveElement(), "Active element is body by default")
-}
-
-func (s *DocumentActiveElementTestSuite) TestFocusEvents() {
+func TestFocusEvents(t *testing.T) {
+	assert := assert.New(t)
+	doc := htmltest.ParseHTMLDocumentHelper(t, activeDocumentTestHtml)
 	var logs []string
 	var logHandler = func(name string) EventHandler {
 		return eventtest.NewTestHandler(func(e *Event) {
 			logs = append(logs, fmt.Sprintf("%s - %s", e.Type, name))
 		})
 	}
-	nodes, err := s.doc.QuerySelectorAll("div, input, button")
-	s.Assert().NoError(err)
+	nodes, err := doc.QuerySelectorAll("div, input, button")
+	assert.NoError(err)
 	for _, e := range nodes.All() {
 		id, _ := (e.(Element).GetAttribute("id"))
 		e.AddEventListener("focus", logHandler(id))
@@ -44,21 +35,21 @@ func (s *DocumentActiveElementTestSuite) TestFocusEvents() {
 		e.AddEventListener("focusin", logHandler(id))
 		e.AddEventListener("focusout", logHandler(id))
 	}
-	target := s.doc.GetHTMLElementById("input-1-1-1")
+	target := doc.GetHTMLElementById("input-1-1-1")
 	target.Focus()
-	s.Assert().Equal([]string{
+	assert.Equal([]string{
 		"focus - input-1-1-1",
 		"focusin - input-1-1-1",
 		"focusin - child-1-1",
 		"focusin - root-1",
 	}, logs)
-	s.Assert().Equal(target, s.doc.ActiveElement())
+	assert.Equal(target, doc.ActiveElement())
 
 	logs = nil
-	newTarget := s.doc.GetHTMLElementById("button-1-2-1")
+	newTarget := doc.GetHTMLElementById("button-1-2-1")
 	newTarget.Focus()
 
-	s.Assert().Equal([]string{
+	assert.Equal([]string{
 		"blur - input-1-1-1",
 		"focusout - input-1-1-1",
 		"focusout - child-1-1",
@@ -72,13 +63,13 @@ func (s *DocumentActiveElementTestSuite) TestFocusEvents() {
 
 	logs = nil
 	newTarget.Blur()
-	s.Assert().Equal([]string{
+	assert.Equal([]string{
 		"blur - button-1-2-1",
 		"focusout - button-1-2-1",
 		"focusout - child-1-2",
 		"focusout - root-1",
 	}, logs)
-	s.Assert().Equal(s.doc.Body(), s.doc.ActiveElement())
+	assert.Equal(doc.Body(), doc.ActiveElement())
 }
 
 const activeDocumentTestHtml = `<body>
