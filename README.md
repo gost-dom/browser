@@ -45,6 +45,18 @@ up-to-date on progress
 hi!](https://github.com/orgs/gost-dom/discussions)
 - Want to contribute to the project, there's a very rough early [guide describing the overall project structure](./CONTRIBUTING.md)
 
+## Versioning and breaking changes
+
+While still versioned as 0.x, this library will _generally_ follow the
+convention, that a minor version increment indicates a breaking change.
+
+Breaking changes will be announced up-front in the [anouncements
+discussions](https://github.com/orgs/gost-dom/discussions/categories/announcements).
+
+When feasible withing a reasonable amount of work, an alternate solution will be
+made available as part of a deprecation before the the breaking change is
+released.
+
 ## Adding support for library X
 
 The goal is to support all modern JS frameworks, but I can't make tests for all.
