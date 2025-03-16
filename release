@@ -1,0 +1,50 @@
+#!/bin/sh
+
+# This script creates a new version, and then use gorelease to verify that the
+# new version matches a "suggested" version.
+# 
+# Semantic versions are generated based on commit messages, so if this script
+# fails, a change was marked incorrectly.
+#
+# A failure may require manually creating the release, if rewriting commit
+# messages is not possible (e.g., they have been merged to main). This would
+# include explicitly setting a new version no., and updating the changelog
+# manually to reflect changes.
+
+# Get the latest _merged_ tag for this version. (If this is a fix to version
+# 1.9, but a 2.0 is already release, 2.0 shouldn't be merged to this branch and
+# not reachable from here)
+BASE_VERSION=$(git tag --merged | sort -V | tail -1)
+
+pnpm exec commit-and-tag-version
+
+NEW_VERSION=$(git tag --merged | sort -V | tail -1)
+
+if [ "$BASE_VERSION" = "$NEW_VERSION" ]; then
+    echo "Same version after release"
+    echo "Base version: $BASE_VERSION"
+    exit 1
+fi
+
+# RELEASE_OUTPUT=$(gorelease -base=$BASE_VERSION)
+SUGGESTED_VERSION=$(gorelease -base=$BASE_VERSION | grep -E "v\d(\.\d{1,}){2}$" -o)
+# echo "LAST LINE: $(echo $RELEASE_OUTPUT | tail -1)"
+
+if [ "$SUGGESTED_VERSION" = "" ]; then
+    echo "Error detecting suggested release"
+    gorelease -base=$BASE_VERSION
+    echo "Base version: $BASE_VERSION"
+    echo "New version (from commits): $NEW_VERSION"
+    echo "Suggested version (from gorelease): $SUGGESTED_VERSION"
+    exit 1
+fi
+
+if [ "$SUGGESTED_VERSION" != "$NEW_VERSION" ]; then
+    echo "New version does not match suggested version"
+    echo "Base version: $BASE_VERSION"
+    echo "New version (from commits): $NEW_VERSION"
+    echo "Suggested version (from gorelease): $SUGGESTED_VERSION"
+    exit 1
+fi
+
+echo "Suggested: $SUGGESTED_VERSION"

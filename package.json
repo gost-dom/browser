@@ -5,6 +5,9 @@
   "devDependencies": {
     "commit-and-tag-version": "^12.5.0"
   },
+  "scripts": {
+    "release": "commit-and-tag-version"
+  },
   "commit-and-tag-version": {
     "header": "# Changelog - Gost-DOM\n\n",
     "bumpFiles": []
