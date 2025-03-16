@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	app "github.com/gost-dom/browser/internal/test/htmx-app"
+	app "github.com/gost-dom/browser/internal/test/integration/htmx-app"
 )
 
 func main() {

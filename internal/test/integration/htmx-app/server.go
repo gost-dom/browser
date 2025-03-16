@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gost-dom/browser/internal/test/htmx-app/content"
+	"github.com/gost-dom/browser/internal/test/integration/htmx-app/content"
 )
 
 type TestServer struct {

@@ -21,11 +21,10 @@ browser/ # Main entry point,
         interfaces/ # Interfaces generated from webref specs
             url-interfaces/ # Interfaces for the URL spec.
         log/ # Logging functionality
-        test/ # Code used for testing, 
-            htmx-app/ # A test application hosting HTMX, exercised by tests
-            html-app-main/ # Helps run the test app in a _real_ browser.
+        test/ # Test code.
+            integration/ # Contains a simple go web app for testing
             scripttests/ # Common test suite for JavaScript implementations
-        testing/ # Other test code, that makes you wonder, why there is 'test' and 'testing' as two separate folders ...
+        testing/ # Test helpers
     dom/ # Code dom functionality. Node elements, and 
         event/ # EventTarget and Event types
     html/ # Window, HTMLDocument, and specific HTML element implementations
