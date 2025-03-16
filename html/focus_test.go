@@ -6,16 +6,10 @@ import (
 
 	. "github.com/gost-dom/browser/dom"
 	. "github.com/gost-dom/browser/dom/event"
-	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/testing/eventtest"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
 	"github.com/stretchr/testify/assert"
 )
-
-func TestDefaultActiveElement(t *testing.T) {
-	doc := html.NewHTMLDocument(nil)
-	assert.Equal(t, doc.Body(), doc.ActiveElement(), "Active element is body by default")
-}
 
 func TestFocusEvents(t *testing.T) {
 	assert := assert.New(t)

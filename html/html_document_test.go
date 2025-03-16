@@ -7,7 +7,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestEmptyHTMLDocument(t *testing.T) {
+func TestEmptyHTMLDocumentActiveElement(t *testing.T) {
+	doc := NewHTMLDocument(nil)
+	assert.Equal(t, doc.Body(), doc.ActiveElement(), "Active element is body by default")
+}
+
+func TestEmptyHTMLDocumentStructure(t *testing.T) {
 	t.Parallel()
 
 	assert := assert.New(t)
