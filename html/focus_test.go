@@ -66,6 +66,14 @@ func TestFocusEvents(t *testing.T) {
 	assert.Equal(doc.Body(), doc.ActiveElement())
 }
 
+func TestAutofocus(t *testing.T) {
+	doc := htmltest.ParseHTMLDocumentHelper(t,
+		`<body><form><input id="i" name="i" type="text" autofocus/></form></body>`,
+	)
+	input := doc.GetElementById("i")
+	assert.Equal(t, input, doc.ActiveElement())
+}
+
 const activeDocumentTestHtml = `<body>
 	<div id="root-1">
 		<div id="child-1-1">

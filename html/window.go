@@ -176,6 +176,12 @@ func (w *window) parseReader(reader io.Reader) error {
 		// just emit it right await
 		w.document.DispatchEvent(event.New(dom.DocumentEventLoad, nil))
 	}
+	if el, _ := w.document.QuerySelector("[autofocus]"); el != nil {
+		if el, ok := el.(HTMLElement); ok {
+			el.Focus()
+		}
+	}
+
 	return err
 }
 
