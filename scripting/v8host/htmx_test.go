@@ -6,7 +6,7 @@ import (
 
 	"github.com/gost-dom/browser"
 	"github.com/gost-dom/browser/html"
-	app "github.com/gost-dom/browser/internal/test/integration/htmx-app"
+	app "github.com/gost-dom/browser/internal/test/integration/test-app"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 )

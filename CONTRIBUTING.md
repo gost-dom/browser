@@ -86,11 +86,11 @@ and will treat it as a class script source. So as long as the script doesn't
 ### Example
 
 As an example, the project's own _extremely limited_ [HTMX
-test](https://github.com/gost-dom/browser/tree/main/internal/test)
+test](https://github.com/gost-dom/browser/tree/main/internal/test/integration)
 
-- `htmx-app` exports `CreateServer()` that returns an http server.
+- `test-app` exports `CreateServer()` that returns an http server.
 - The server uses `embed` to serve `htmx.js` from `contents/` directory.
-- `htmx-app-main` has a `main` to launch the app for comparison in a real browser.
+- `test-app-main` has a `main` to launch the app for comparison in a real browser.
 
 <!--
 ### Optional: Create a PR to the community-examples
