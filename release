@@ -32,28 +32,25 @@ if [ "$BASE_VERSION" = "$NEW_VERSION" ]; then
     exit 1
 fi
 
-# For some reason, the following fails to extract the suggested version on
-# github, but not locally
+# RELEASE_OUTPUT=$(gorelease -base=$BASE_VERSION)
+SUGGESTED_VERSION=$(gorelease -base=$BASE_VERSION | tail -1 | grep -Po 'v{1,}\d(\.\d{1,}){2}$')
+# echo "LAST LINE: $(echo $RELEASE_OUTPUT | tail -1)"
 
-# # RELEASE_OUTPUT=$(gorelease -base=$BASE_VERSION)
-# SUGGESTED_VERSION=$(gorelease -base=$BASE_VERSION | grep -E "v\d(\.\d{1,}){2}$" -o)
-# # echo "LAST LINE: $(echo $RELEASE_OUTPUT | tail -1)"
-#
-# if [ "$SUGGESTED_VERSION" = "" ]; then
-#     echo "Error detecting suggested release"
-#     gorelease -base=$BASE_VERSION
-#     echo "Base version: $BASE_VERSION"
-#     echo "New version (from commits): $NEW_VERSION"
-#     echo "Suggested version (from gorelease): $SUGGESTED_VERSION"
-#     exit 1
-# fi
-#
-# if [ "$SUGGESTED_VERSION" != "$NEW_VERSION" ]; then
-#     echo "New version does not match suggested version"
-#     echo "Base version: $BASE_VERSION"
-#     echo "New version (from commits): $NEW_VERSION"
-#     echo "Suggested version (from gorelease): $SUGGESTED_VERSION"
-#     exit 1
-# fi
-#
-# echo "Suggested: $SUGGESTED_VERSION"
+if [ "$SUGGESTED_VERSION" = "" ]; then
+    echo "Error detecting suggested release"
+    gorelease -base=$BASE_VERSION
+    echo "Base version: $BASE_VERSION"
+    echo "New version (from commits): $NEW_VERSION"
+    echo "Suggested version (from gorelease): $SUGGESTED_VERSION"
+    exit 1
+fi
+
+if [ "$SUGGESTED_VERSION" != "$NEW_VERSION" ]; then
+    echo "New version does not match suggested version"
+    echo "Base version: $BASE_VERSION"
+    echo "New version (from commits): $NEW_VERSION"
+    echo "Suggested version (from gorelease): $SUGGESTED_VERSION"
+    exit 1
+fi
+
+echo "Suggested: $SUGGESTED_VERSION"
