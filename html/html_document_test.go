@@ -1,44 +1,40 @@
 package html_test
 
 import (
-	. "github.com/gost-dom/browser/html"
-	. "github.com/gost-dom/browser/testing/gomega-matchers"
+	"testing"
 
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
+	. "github.com/gost-dom/browser/html"
+	"github.com/stretchr/testify/assert"
 )
 
-var _ = Describe("HTMLDocument", func() {
-	Describe("Empty document created by `NewDocument`", func() {
-		It("Should have an HTML document element", func() {
-			doc := NewHTMLDocument(nil)
-			Expect(doc.DocumentElement()).To(HaveTag("HTML"))
-		})
+func TestEmptyHTMLDocument(t *testing.T) {
+	t.Parallel()
 
-		It("Should have an empty HEAD", func() {
-			doc := NewHTMLDocument(nil)
-			Expect(doc.Head()).To(HaveTag("HEAD"))
-		})
+	assert := assert.New(t)
+	doc := NewHTMLDocument(nil)
+	docElm := doc.DocumentElement()
+	body := doc.Body()
+	head := doc.Head()
+	assert.Equal("HTML", docElm.TagName(), "Document has an <html> root")
+	assert.Equal("HEAD", head.TagName(), "Document.Head() is a <head>")
+	assert.Equal("BODY", body.TagName(), "Document.Body() is a <body>")
 
-		It("Should have a BODY", func() {
-			doc := NewHTMLDocument(nil)
-			Expect(doc.Body()).To(HaveTag("BODY"))
-		})
-	})
+	assert.Equal(docElm, head.Parent(), "<head> is child of <html>")
+	assert.Equal(docElm, body.Parent(), "<body> is child of <html>")
+}
 
-	Describe("CreateElement", func() {
-		It("Should create the right subclass for an 'a' tag", func() {
-			doc := NewHTMLDocument(nil)
-			e := doc.CreateElement("a")
-			_, ok := e.(HTMLAnchorElement)
-			Expect(ok).To(BeTrue(), "Element was an HTMLAnchorElement")
-		})
+func TestHTMLDocumentCreateElement(t *testing.T) {
+	t.Parallel()
 
-		It("Should create the right subclass for an 'A' tag", func() {
-			doc := NewHTMLDocument(nil)
-			e := doc.CreateElement("A")
-			_, ok := e.(HTMLAnchorElement)
-			Expect(ok).To(BeTrue(), "Element was an HTMLAnchorElement")
-		})
-	})
-})
+	assert := assert.New(t)
+	doc := NewHTMLDocument(nil)
+	{
+		// Separate scopes to isolates cases
+		_, e1IsAnchor := doc.CreateElement("a").(HTMLAnchorElement)
+		assert.True(e1IsAnchor, "CreateElement('a') returns an HTMLAnchorElement")
+	}
+	{
+		_, elIsAnchor := doc.CreateElement("A").(HTMLAnchorElement)
+		assert.True(elIsAnchor, "CreateElement('a') returns an HTMLAnchorElement")
+	}
+}
