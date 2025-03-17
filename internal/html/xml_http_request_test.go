@@ -5,15 +5,17 @@ import (
 	"net/http"
 	"slices"
 	"strings"
+	"testing"
 
 	"github.com/gost-dom/browser/dom/event"
 	. "github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	. "github.com/gost-dom/browser/internal/html"
 	. "github.com/gost-dom/browser/internal/http"
+	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
+	"github.com/gost-dom/browser/internal/testing/gosttest"
+	"github.com/stretchr/testify/suite"
 
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/types"
 )
 
@@ -27,251 +29,181 @@ func newFromHandlerFunc(
 	return NewXmlHttpRequest(client, "", clock)
 }
 
-var _ = Describe("XmlHTTPRequest", func() {
+type XMLHTTPRequestTestSuite struct {
+	gosttest.GomegaSuite
+	handler        http.Handler
+	actualHeader   http.Header
+	actualMethod   string
+	actualReqBody  []byte
+	reqErr         error
+	responseHeader http.Header
+	xhr            XmlHttpRequest
+	timer          *clock.Clock
+}
+
+func TestXMLHTTPRequest(t *testing.T) {
+	t.Parallel()
+	suite.Run(t, new(XMLHTTPRequestTestSuite))
+}
+
+func (s *XMLHTTPRequestTestSuite) SetupTest() {
+	// Create a basic server for testing
+	s.timer = clock.New()
+	s.handler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		s.actualHeader = req.Header
+		s.actualMethod = req.Method
+		if req.Body != nil {
+			s.actualReqBody, s.reqErr = io.ReadAll(req.Body)
+		}
+		for k, vs := range s.responseHeader {
+			for _, v := range vs {
+				w.Header().Add(k, v)
+			}
+		}
+		if s.responseHeader == nil || s.responseHeader.Get("Content-Type") == "" {
+			w.Header().Add("Content-Type", "text/plain")
+		}
+		w.Write([]byte("Hello, World!"))
+	})
+	s.xhr = NewXmlHttpRequest(NewHttpClientFromHandler(s.handler), "", s.timer)
+	s.T().Cleanup(func() {
+		// Allow GC after test run
+		s.handler = nil
+		s.actualHeader = nil
+	})
+
+}
+
+func (s *XMLHTTPRequestTestSuite) TestSynchronousRequest() {
+	s.xhr.Open("GET", "/dummy", RequestOptionAsync(false))
+	s.Expect(s.xhr.Status()).To(Equal(0))
+	s.Expect(s.xhr.Send()).To(Succeed())
+	// Verify request
+	s.Expect(s.actualMethod).To(Equal("GET"))
+	// Verify response
+	s.Expect(s.xhr.Status()).To(Equal(200))
+	// This is the only place we test StatusText; it's dumb wrapper and may
+	// be removed.
+	s.Expect(s.xhr.StatusText()).To(Equal("OK"))
+	s.Expect(s.xhr.ResponseText()).To(Equal("Hello, World!"))
+}
+
+func (s *XMLHTTPRequestTestSuite) TestAsynchronousRequest() {
 	var (
-		handler        http.Handler
-		actualHeader   http.Header
-		actualMethod   string
-		actualReqBody  []byte
-		reqErr         error
-		responseHeader http.Header
-		xhr            XmlHttpRequest
-		timer          *clock.Clock
+		loadStarted bool
+		loadEnded   bool
+		loaded      bool
 	)
+	s.xhr.Open("GET", "/dummy")
+	s.xhr.AddEventListener(
+		XHREventLoadstart,
+		event.NewEventHandlerFunc(func(e *event.Event) error {
+			loadStarted = true
+			return nil
+		}),
+	)
+	s.xhr.AddEventListener(
+		XHREventLoadend,
+		event.NewEventHandlerFunc(func(e *event.Event) error {
+			loadEnded = true
+			return nil
+		}),
+	)
+	s.xhr.AddEventListener(
+		XHREventLoad,
+		event.NewEventHandlerFunc(func(e *event.Event) error {
+			loaded = true
+			return nil
+		}),
+	)
+	s.Expect(s.xhr.Send()).To(Succeed())
+	s.Expect(loadStarted).To(BeTrue(), "loadstart emitted")
+	s.Expect(s.xhr.Status()).To(Equal(0), "Response should not have been received yet")
+	s.Expect(loadEnded).To(BeFalse(), "loadend emitted")
+	s.Expect(loaded).To(BeFalse(), "load emitted")
 
-	JustBeforeEach(func() {
-		// Create a basic server for testing
-		timer = clock.New()
-		handler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-			actualHeader = req.Header
-			actualMethod = req.Method
-			if req.Body != nil {
-				actualReqBody, reqErr = io.ReadAll(req.Body)
-			}
-			for k, vs := range responseHeader {
-				for _, v := range vs {
-					w.Header().Add(k, v)
-				}
-			}
-			if responseHeader == nil || responseHeader.Get("Content-Type") == "" {
-				w.Header().Add("Content-Type", "text/plain")
-			}
-			w.Write([]byte("Hello, World!"))
-		})
-		xhr = NewXmlHttpRequest(NewHttpClientFromHandler(handler), "", timer)
-		DeferCleanup(func() {
-			// Allow GC after test run
-			handler = nil
-			actualHeader = nil
-		})
-	})
+	s.Expect(s.timer.RunAll()).To(Succeed())
 
-	It("Should handle redirects 'correctly'", func() {
-		Skip(
-			"Don't know what's the proper handling of redirects; I assume that it's to not do it. But Go will follow them by default",
-		)
-	})
+	s.Expect(s.xhr.Status()).To(Equal(200))
+	s.Expect(s.xhr.ResponseText()).To(Equal("Hello, World!"))
+}
 
-	It("Should handle Abort()", func() {
-		Skip("Abort not implemented. Skeleton implementation so satisfy JS interface")
-	})
+func (s *XMLHTTPRequestTestSuite) TestFormdataEncoding() {
+	// This test uses blocking requests.
+	// This isn't the ususal case, but the test is much easier to write; and
+	// code being tested is unrelated to blocking/non-blocking.
+	s.xhr.Open("POST", "/dummy", RequestOptionAsync(false))
+	formData := NewFormData()
+	formData.Append("key1", "Value%42")
+	formData.Append("key2", "Value&=42")
+	formData.Append("key3", "International? æøå")
+	s.xhr.SendBody(formData.GetReader())
+	s.Expect(s.reqErr).ToNot(HaveOccurred())
+	s.Expect(s.actualMethod).To(Equal("POST"))
+	actualReqContentType := s.actualHeader.Get("Content-Type")
+	s.Expect(actualReqContentType).To(Equal("application/x-www-form-urlencoded"))
+	s.Expect(
+		string(s.actualReqBody),
+	).To(Equal("key1=Value%2542&key2=Value%26%3D42&key3=International%3F+%C3%A6%C3%B8%C3%A5"))
+}
 
-	It("Should handle OverrideMimeType()", func() {
-		Skip("OverrideMimeType not implemented. Skeleton implementation so satisfy JS interface")
-	})
+func (s *XMLHTTPRequestTestSuite) TestRequestHeaders() {
+	s.xhr.SetRequestHeader("x-test", "42")
+	s.xhr.Open("GET", "/dummy", RequestOptionAsync(false))
+	s.Expect(s.xhr.Send()).To(Succeed())
+	s.Expect(s.actualHeader.Get("x-test")).To(Equal("42"))
+}
 
-	It("Should handle SetWithCredentials / GetWithCredentials()", func() {
-		Skip("WithCredentials not implemented. Skeleton implementation so satisfy JS interface")
-	})
+func (s *XMLHTTPRequestTestSuite) TestResponseHeaders() {
+	s.responseHeader = make(http.Header)
+	s.responseHeader.Add("X-Test-1", "value1")
+	s.responseHeader.Add("X-Test-2", "value2")
+	s.responseHeader.Add("Content-Type", "text/plain")
+	s.xhr.Open("GET", "/dummy", RequestOptionAsync(false))
+	s.xhr.Send()
+	s.Expect(
+		s.xhr.GetAllResponseHeaders(),
+	).To(HaveLines("x-test-1: value1", "x-test-2: value2", "content-type: text/plain"))
 
-	It("Should handle SetTimeout / GetTimeout()", func() {
-		Skip("Timeout not implemented. Skeleton implementation so satisfy JS interface")
-	})
+	s.Expect(s.xhr.GetResponseHeader("missing")).
+		To(BeNil(), "Value of non-existing response header")
+}
 
-	Describe("Synchronous calls", func() {
-		// Most browsers have deprecated this on the main thread, so throrough
-		// support is not necessary until the code support WebWorkers.
+func (s *XMLHTTPRequestTestSuite) TestSameResponseHeaderAddedTwice() {
+	s.responseHeader = make(http.Header)
+	s.responseHeader.Add("X-Test-1", "value1")
+	s.responseHeader.Add("X-Test-2", "value2")
+	s.responseHeader.Add("Content-Type", "text/plain")
+	s.responseHeader.Add("x-test-1", "value3")
 
-		// It was written as the first test as it's the easier case to deal with
-		Describe("Request succeeds", func() {
-			It("Can make a request", func() {
-				xhr.Open("GET", "/dummy", RequestOptionAsync(false))
-				Expect(xhr.Status()).To(Equal(0))
-				Expect(xhr.Send()).To(Succeed())
-				// Verify request
-				Expect(actualMethod).To(Equal("GET"))
-				// Verify response
-				Expect(xhr.Status()).To(Equal(200))
-				// This is the only place we test StatusText; it's dumb wrapper and may
-				// be removed.
-				Expect(xhr.StatusText()).To(Equal("OK"))
-				Expect(xhr.ResponseText()).To(Equal("Hello, World!"))
-			})
-		})
-	})
+	s.xhr.Open("GET", "/dummy", RequestOptionAsync(false))
+	s.xhr.Send()
 
-	Describe("Asynchronous calls", func() {
-		It("Emits a 'loadStart' event", func() {
-			var (
-				loadStarted bool
-				loadEnded   bool
-				loaded      bool
-			)
-			xhr.Open("GET", "/dummy")
-			xhr.AddEventListener(
-				XHREventLoadstart,
-				event.NewEventHandlerFunc(func(e *event.Event) error {
-					loadStarted = true
-					return nil
-				}),
-			)
-			xhr.AddEventListener(
-				XHREventLoadend,
-				event.NewEventHandlerFunc(func(e *event.Event) error {
-					loadEnded = true
-					return nil
-				}),
-			)
-			xhr.AddEventListener(
-				XHREventLoad,
-				event.NewEventHandlerFunc(func(e *event.Event) error {
-					loaded = true
-					return nil
-				}),
-			)
-			By("Sending the request")
-			Expect(xhr.Send()).To(Succeed())
-			Expect(loadStarted).To(BeTrue(), "loadstart emitted")
-			Expect(xhr.Status()).To(Equal(0), "Response should not have been received yet")
-			Expect(loadEnded).To(BeFalse(), "loadend emitted")
-			Expect(loaded).To(BeFalse(), "load emitted")
+	s.Expect(
+		s.xhr.GetAllResponseHeaders(),
+	).To(HaveLines("x-test-1: value1", "x-test-1: value3", "x-test-2: value2", "content-type: text/plain"))
 
-			By("Receiving load event")
-			Expect(timer.RunAll()).To(Succeed())
+	s.Expect(s.xhr.GetResponseHeader("x-test-2")).
+		To(HaveValue(Equal("value2")), "Value of header specified once")
+	s.Expect(s.xhr.GetResponseHeader("x-test-1")).
+		To(HaveValue(Equal("value1, value3")), "Value of header specified twice")
+}
 
-			By("The response should be a success")
-			Expect(xhr.Status()).To(Equal(200))
-			Expect(xhr.ResponseText()).To(Equal("Hello, World!"))
-		})
-	})
+func (s *XMLHTTPRequestTestSuite) TestCookieVisibility() {
+	s.responseHeader = make(http.Header)
+	s.responseHeader.Add("X-Test-1", "value1")
+	s.responseHeader.Add("X-Test-2", "value2")
+	s.responseHeader.Add("Content-Type", "text/plain")
 
-	Describe("FormData encoding", func() {
-		Describe("Without need for multipart encoding", func() {
-			It("Sends the data as form-encoded", func() {
-				// This test uses blocking requests.
-				// This isn't the ususal case, but the test is much easier to write; and
-				// code being tested is unrelated to blocking/non-blocking.
-				xhr.Open("POST", "/dummy", RequestOptionAsync(false))
-				formData := NewFormData()
-				formData.Append("key1", "Value%42")
-				formData.Append("key2", "Value&=42")
-				formData.Append("key3", "International? æøå")
-				xhr.SendBody(formData.GetReader())
-				Expect(reqErr).ToNot(HaveOccurred())
-				Expect(actualMethod).To(Equal("POST"))
-				actualReqContentType := actualHeader.Get("Content-Type")
-				Expect(actualReqContentType).To(Equal("application/x-www-form-urlencoded"))
-				Expect(
-					string(actualReqBody),
-				).To(Equal("key1=Value%2542&key2=Value%26%3D42&key3=International%3F+%C3%A6%C3%B8%C3%A5"))
-			})
-		})
-	})
+	s.xhr.Open("GET", "/dummy", RequestOptionAsync(false))
+	s.xhr.Send()
 
-	Describe("SetRequestHeader", func() {
-		It("Should add the header", func() {
-			xhr.SetRequestHeader("x-test", "42")
-			xhr.Open("GET", "/dummy", RequestOptionAsync(false))
-			Expect(xhr.Send()).To(Succeed())
-			Expect(actualHeader.Get("x-test")).To(Equal("42"))
-		})
-	})
-
-	Describe("Response headers", func() {
-		BeforeEach(func() {
-			responseHeader = make(http.Header)
-			responseHeader.Add("X-Test-1", "value1")
-			responseHeader.Add("X-Test-2", "value2")
-			responseHeader.Add("Content-Type", "text/plain")
-		})
-
-		JustBeforeEach(func() {
-			xhr.Open("GET", "/dummy", RequestOptionAsync(false))
-			xhr.Send()
-		})
-
-		Describe("GetAllResponseHeaders", func() {
-			It("Should return all headers", func() {
-				Expect(
-					xhr.GetAllResponseHeaders(),
-				).To(HaveLines("x-test-1: value1", "x-test-2: value2", "content-type: text/plain"))
-			})
-
-			Describe("Same header is added again", func() {
-				BeforeEach(func() {
-					responseHeader.Add("x-test-1", "value3")
-				})
-
-				It("Should appear twice", func() {
-					Expect(
-						xhr.GetAllResponseHeaders(),
-					).To(HaveLines("x-test-1: value1", "x-test-1: value3", "x-test-2: value2", "content-type: text/plain"))
-				})
-			})
-
-			Describe("Cookies are added", func() {
-				BeforeEach(func() {
-					responseHeader.Add("set-cookie", "foobar-should-not-be-visible")
-				})
-
-				It("Should not include the cookie", func() {
-					Expect(
-						xhr.GetAllResponseHeaders(),
-					).To(HaveLines("x-test-1: value1", "x-test-2: value2", "content-type: text/plain"))
-				})
-			})
-		})
-
-		Describe("GetResponseHeader", func() {
-			BeforeEach(func() {
-				responseHeader.Add("x-test-1", "value3")
-				responseHeader.Add("set-cookie", "foobar-should-not-be-visible")
-			})
-
-			It("Should return nil when headers not yet received", func() {
-				Skip("TODO - write the test, though it _should_ work")
-			})
-
-			It("Should nil when value is missing", func() {
-				Expect(xhr.GetResponseHeader("missing")).To(BeNil())
-			})
-
-			It("Should return one value when only one header", func() {
-				Expect(*xhr.GetResponseHeader("x-test-2")).To(Equal("value2"))
-			})
-
-			It("Should return a comma-separated list when multiple values", func() {
-				Expect(*xhr.GetResponseHeader("x-test-1")).To(Equal("value1, value3"))
-			})
-		})
-	})
-
-	It("Should handle response types", func() {
-		Skip(
-			"Different response types from server should result in different values for `Response()`",
-		)
-	})
-
-	It("Should follow redirects", func() {
-		Skip("Redirects not implemented")
-	})
-
-	Describe("ResponseURL()", func() {
-		It("Should be updated on redirects", func() {
-			Skip("Redirects not implemented")
-		})
-	})
-})
+	s.responseHeader = make(http.Header)
+	s.responseHeader.Add("set-cookie", "foobar-should-not-be-visible")
+	s.Expect(
+		s.xhr.GetAllResponseHeaders(),
+	).To(HaveLines("x-test-1: value1", "x-test-2: value2", "content-type: text/plain"))
+}
 
 func HaveLines(expected ...string) types.GomegaMatcher {
 	return WithTransform(func(s string) []string {

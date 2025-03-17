@@ -7,6 +7,7 @@ package gomegamatchers
 import "github.com/onsi/gomega"
 
 var Equal = gomega.Equal
+var HaveValue = gomega.HaveValue
 var BeEquivalentTo = gomega.BeEquivalentTo
 var BeTrue = gomega.BeTrue
 var BeFalse = gomega.BeFalse
@@ -22,3 +23,4 @@ var BeEmpty = gomega.BeEmpty
 var WithTransform = gomega.WithTransform
 
 var ContainElement = gomega.ContainElement
+var ConsistOf = gomega.ConsistOf
