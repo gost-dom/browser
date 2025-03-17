@@ -49,7 +49,7 @@ func (w htmlInputElementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*
 
 func (w htmlInputElementV8Wrapper) checkValidity(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: HTMLInputElement.checkValidity")
+	log.Debug(w.logger(info), "V8 Function call: HTMLInputElement.checkValidity")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -60,7 +60,7 @@ func (w htmlInputElementV8Wrapper) checkValidity(info *v8.FunctionCallbackInfo) 
 
 func (w htmlInputElementV8Wrapper) type_(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: HTMLInputElement.type")
+	log.Debug(w.logger(info), "V8 Function call: HTMLInputElement.type")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -70,7 +70,7 @@ func (w htmlInputElementV8Wrapper) type_(info *v8.FunctionCallbackInfo) (*v8.Val
 }
 
 func (w htmlInputElementV8Wrapper) setType(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: HTMLInputElement.setType")
+	log.Debug(w.logger(info), "V8 Function call: HTMLInputElement.setType")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	val, err1 := tryParseArg(args, 0, w.decodeDOMString)

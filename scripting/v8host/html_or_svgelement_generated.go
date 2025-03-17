@@ -57,7 +57,7 @@ func (w htmlOrSVGElementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*
 }
 
 func (w htmlOrSVGElementV8Wrapper) blur(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: HTMLOrSVGElement.blur")
+	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.blur")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -67,13 +67,13 @@ func (w htmlOrSVGElementV8Wrapper) blur(info *v8.FunctionCallbackInfo) (*v8.Valu
 }
 
 func (w htmlOrSVGElementV8Wrapper) dataset(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: HTMLOrSVGElement.dataset")
+	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.dataset")
 	return nil, errors.New("HTMLOrSVGElement.dataset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w htmlOrSVGElementV8Wrapper) nonce(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: HTMLOrSVGElement.nonce")
+	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.nonce")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -83,7 +83,7 @@ func (w htmlOrSVGElementV8Wrapper) nonce(info *v8.FunctionCallbackInfo) (*v8.Val
 }
 
 func (w htmlOrSVGElementV8Wrapper) setNonce(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: HTMLOrSVGElement.setNonce")
+	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.setNonce")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	val, err1 := tryParseArg(args, 0, w.decodeDOMString)
@@ -100,7 +100,7 @@ func (w htmlOrSVGElementV8Wrapper) setNonce(info *v8.FunctionCallbackInfo) (*v8.
 
 func (w htmlOrSVGElementV8Wrapper) autofocus(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: HTMLOrSVGElement.autofocus")
+	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.autofocus")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -110,7 +110,7 @@ func (w htmlOrSVGElementV8Wrapper) autofocus(info *v8.FunctionCallbackInfo) (*v8
 }
 
 func (w htmlOrSVGElementV8Wrapper) setAutofocus(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: HTMLOrSVGElement.setAutofocus")
+	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.setAutofocus")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	val, err1 := tryParseArg(args, 0, w.decodeBoolean)
@@ -127,7 +127,7 @@ func (w htmlOrSVGElementV8Wrapper) setAutofocus(info *v8.FunctionCallbackInfo) (
 
 func (w htmlOrSVGElementV8Wrapper) tabIndex(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: HTMLOrSVGElement.tabIndex")
+	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.tabIndex")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -137,7 +137,7 @@ func (w htmlOrSVGElementV8Wrapper) tabIndex(info *v8.FunctionCallbackInfo) (*v8.
 }
 
 func (w htmlOrSVGElementV8Wrapper) setTabIndex(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: HTMLOrSVGElement.setTabIndex")
+	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.setTabIndex")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	val, err1 := tryParseArg(args, 0, w.decodeLong)

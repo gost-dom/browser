@@ -87,7 +87,7 @@ Specific HTML elements have specific behaviour.
 
 The list of supported user interaction is yet quite limited
 
-- `HTMLElement.click()` - implemented on `dom.Element`, due to some weirdness in
+- `HTMLElemet.click()` - implemented on `dom.Element`, due to some weirdness in
   the specs.
 
 ### URL API

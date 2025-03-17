@@ -7,6 +7,7 @@ import (
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/entity"
+	"github.com/gost-dom/browser/internal/log"
 
 	v8 "github.com/gost-dom/v8go"
 )
@@ -161,6 +162,11 @@ func (w converters) toHTMLFormControlsCollection(
 type handleReffedObject[T any] struct {
 	scriptHost *V8ScriptHost
 	converters
+}
+
+func (w handleReffedObject[T]) logger(info *v8.FunctionCallbackInfo) log.Logger {
+	ctx := w.mustGetContext(info)
+	return ctx.window.Logger()
 }
 
 func (o handleReffedObject[T]) mustGetContext(info *v8.FunctionCallbackInfo) *V8ScriptContext {

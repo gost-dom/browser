@@ -3,6 +3,7 @@ package dom
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 	"slices"
 	"strconv"
 	"strings"
@@ -265,7 +266,7 @@ func (c observerCloser) Close() {
 
 func (n *node) GetRootNode(options ...GetRootNodeOptions) Node {
 	if len(options) > 1 {
-		log.Warn("Node.GetRootNode: composed not yet implemented")
+		log.Warn(n.logger(), "Node.GetRootNode: composed not yet implemented")
 	}
 	if n.parent == nil {
 		return n.self
@@ -558,4 +559,11 @@ func (n *node) removedNodeEvent(nodes ...Node) ChangeEvent {
 		Target:       n.self,
 		RemovedNodes: &nodeList{nodes: nodes},
 	}
+}
+
+func (n *node) logger() *slog.Logger {
+	if docLogger, ok := n.document.(log.LogSource); ok {
+		return docLogger.Logger()
+	}
+	return nil
 }

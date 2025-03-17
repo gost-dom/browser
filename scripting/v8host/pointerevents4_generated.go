@@ -67,21 +67,21 @@ func (w pointerEventV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.V
 }
 
 func (w pointerEventV8Wrapper) width(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: PointerEvent.width")
+	log.Debug(w.logger(info), "V8 Function call: PointerEvent.width")
 	return nil, errors.New("PointerEvent.width: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w pointerEventV8Wrapper) height(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: PointerEvent.height")
+	log.Debug(w.logger(info), "V8 Function call: PointerEvent.height")
 	return nil, errors.New("PointerEvent.height: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w pointerEventV8Wrapper) pressure(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: PointerEvent.pressure")
+	log.Debug(w.logger(info), "V8 Function call: PointerEvent.pressure")
 	return nil, errors.New("PointerEvent.pressure: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w pointerEventV8Wrapper) tangentialPressure(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: PointerEvent.tangentialPressure")
+	log.Debug(w.logger(info), "V8 Function call: PointerEvent.tangentialPressure")
 	return nil, errors.New("PointerEvent.tangentialPressure: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

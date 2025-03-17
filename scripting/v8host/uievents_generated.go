@@ -81,42 +81,42 @@ func (w mouseEventV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Val
 }
 
 func (w mouseEventV8Wrapper) getModifierState(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: MouseEvent.getModifierState")
+	log.Debug(w.logger(info), "V8 Function call: MouseEvent.getModifierState")
 	return nil, errors.New("MouseEvent.getModifierState: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w mouseEventV8Wrapper) screenX(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: MouseEvent.screenX")
+	log.Debug(w.logger(info), "V8 Function call: MouseEvent.screenX")
 	return nil, errors.New("MouseEvent.screenX: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w mouseEventV8Wrapper) screenY(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: MouseEvent.screenY")
+	log.Debug(w.logger(info), "V8 Function call: MouseEvent.screenY")
 	return nil, errors.New("MouseEvent.screenY: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w mouseEventV8Wrapper) clientX(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: MouseEvent.clientX")
+	log.Debug(w.logger(info), "V8 Function call: MouseEvent.clientX")
 	return nil, errors.New("MouseEvent.clientX: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w mouseEventV8Wrapper) clientY(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: MouseEvent.clientY")
+	log.Debug(w.logger(info), "V8 Function call: MouseEvent.clientY")
 	return nil, errors.New("MouseEvent.clientY: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w mouseEventV8Wrapper) layerX(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: MouseEvent.layerX")
+	log.Debug(w.logger(info), "V8 Function call: MouseEvent.layerX")
 	return nil, errors.New("MouseEvent.layerX: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w mouseEventV8Wrapper) layerY(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: MouseEvent.layerY")
+	log.Debug(w.logger(info), "V8 Function call: MouseEvent.layerY")
 	return nil, errors.New("MouseEvent.layerY: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w mouseEventV8Wrapper) relatedTarget(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: MouseEvent.relatedTarget")
+	log.Debug(w.logger(info), "V8 Function call: MouseEvent.relatedTarget")
 	return nil, errors.New("MouseEvent.relatedTarget: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
@@ -179,11 +179,11 @@ func (w uIEventV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value,
 }
 
 func (w uIEventV8Wrapper) view(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: UIEvent.view")
+	log.Debug(w.logger(info), "V8 Function call: UIEvent.view")
 	return nil, errors.New("UIEvent.view: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w uIEventV8Wrapper) detail(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: UIEvent.detail")
+	log.Debug(w.logger(info), "V8 Function call: UIEvent.detail")
 	return nil, errors.New("UIEvent.detail: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

@@ -47,7 +47,7 @@ func (w historyV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value,
 }
 
 func (w historyV8Wrapper) go_(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: History.go")
+	log.Debug(w.logger(info), "V8 Function call: History.go")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	delta, err1 := tryParseArgWithDefault(args, 0, w.defaultDelta, w.decodeLong)
@@ -63,7 +63,7 @@ func (w historyV8Wrapper) go_(info *v8.FunctionCallbackInfo) (*v8.Value, error) 
 }
 
 func (w historyV8Wrapper) back(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: History.back")
+	log.Debug(w.logger(info), "V8 Function call: History.back")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -73,7 +73,7 @@ func (w historyV8Wrapper) back(info *v8.FunctionCallbackInfo) (*v8.Value, error)
 }
 
 func (w historyV8Wrapper) forward(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: History.forward")
+	log.Debug(w.logger(info), "V8 Function call: History.forward")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -83,7 +83,7 @@ func (w historyV8Wrapper) forward(info *v8.FunctionCallbackInfo) (*v8.Value, err
 }
 
 func (w historyV8Wrapper) pushState(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: History.pushState")
+	log.Debug(w.logger(info), "V8 Function call: History.pushState")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	data, err1 := tryParseArg(args, 0, w.decodeAny)
@@ -100,7 +100,7 @@ func (w historyV8Wrapper) pushState(info *v8.FunctionCallbackInfo) (*v8.Value, e
 }
 
 func (w historyV8Wrapper) replaceState(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: History.replaceState")
+	log.Debug(w.logger(info), "V8 Function call: History.replaceState")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	data, err1 := tryParseArg(args, 0, w.decodeAny)
@@ -118,7 +118,7 @@ func (w historyV8Wrapper) replaceState(info *v8.FunctionCallbackInfo) (*v8.Value
 
 func (w historyV8Wrapper) length(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: History.length")
+	log.Debug(w.logger(info), "V8 Function call: History.length")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -129,7 +129,7 @@ func (w historyV8Wrapper) length(info *v8.FunctionCallbackInfo) (*v8.Value, erro
 
 func (w historyV8Wrapper) state(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: History.state")
+	log.Debug(w.logger(info), "V8 Function call: History.state")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err

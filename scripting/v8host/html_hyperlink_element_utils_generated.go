@@ -84,7 +84,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) Constructor(info *v8.FunctionCallbac
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) href(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: HTMLHyperlinkElementUtils.href")
+	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.href")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -94,7 +94,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) href(info *v8.FunctionCallbackInfo) 
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setHref(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: HTMLHyperlinkElementUtils.setHref")
+	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setHref")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	val, err1 := tryParseArg(args, 0, w.decodeUSVString)
@@ -111,7 +111,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setHref(info *v8.FunctionCallbackInf
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) origin(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: HTMLHyperlinkElementUtils.origin")
+	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.origin")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -122,7 +122,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) origin(info *v8.FunctionCallbackInfo
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) protocol(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: HTMLHyperlinkElementUtils.protocol")
+	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.protocol")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -132,7 +132,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) protocol(info *v8.FunctionCallbackIn
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setProtocol(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: HTMLHyperlinkElementUtils.setProtocol")
+	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setProtocol")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	val, err1 := tryParseArg(args, 0, w.decodeUSVString)
@@ -149,7 +149,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setProtocol(info *v8.FunctionCallbac
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) username(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: HTMLHyperlinkElementUtils.username")
+	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.username")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -159,7 +159,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) username(info *v8.FunctionCallbackIn
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setUsername(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: HTMLHyperlinkElementUtils.setUsername")
+	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setUsername")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	val, err1 := tryParseArg(args, 0, w.decodeUSVString)
@@ -176,7 +176,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setUsername(info *v8.FunctionCallbac
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) password(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: HTMLHyperlinkElementUtils.password")
+	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.password")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -186,7 +186,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) password(info *v8.FunctionCallbackIn
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setPassword(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: HTMLHyperlinkElementUtils.setPassword")
+	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setPassword")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	val, err1 := tryParseArg(args, 0, w.decodeUSVString)
@@ -203,7 +203,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setPassword(info *v8.FunctionCallbac
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) host(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: HTMLHyperlinkElementUtils.host")
+	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.host")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -213,7 +213,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) host(info *v8.FunctionCallbackInfo) 
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setHost(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: HTMLHyperlinkElementUtils.setHost")
+	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setHost")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	val, err1 := tryParseArg(args, 0, w.decodeUSVString)
@@ -230,7 +230,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setHost(info *v8.FunctionCallbackInf
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) hostname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: HTMLHyperlinkElementUtils.hostname")
+	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.hostname")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -240,7 +240,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) hostname(info *v8.FunctionCallbackIn
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setHostname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: HTMLHyperlinkElementUtils.setHostname")
+	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setHostname")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	val, err1 := tryParseArg(args, 0, w.decodeUSVString)
@@ -257,7 +257,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setHostname(info *v8.FunctionCallbac
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) port(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: HTMLHyperlinkElementUtils.port")
+	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.port")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -267,7 +267,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) port(info *v8.FunctionCallbackInfo) 
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setPort(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: HTMLHyperlinkElementUtils.setPort")
+	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setPort")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	val, err1 := tryParseArg(args, 0, w.decodeUSVString)
@@ -284,7 +284,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setPort(info *v8.FunctionCallbackInf
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) pathname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: HTMLHyperlinkElementUtils.pathname")
+	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.pathname")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -294,7 +294,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) pathname(info *v8.FunctionCallbackIn
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setPathname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: HTMLHyperlinkElementUtils.setPathname")
+	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setPathname")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	val, err1 := tryParseArg(args, 0, w.decodeUSVString)
@@ -311,7 +311,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setPathname(info *v8.FunctionCallbac
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) search(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: HTMLHyperlinkElementUtils.search")
+	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.search")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -321,7 +321,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) search(info *v8.FunctionCallbackInfo
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setSearch(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: HTMLHyperlinkElementUtils.setSearch")
+	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setSearch")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	val, err1 := tryParseArg(args, 0, w.decodeUSVString)
@@ -338,7 +338,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setSearch(info *v8.FunctionCallbackI
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) hash(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: HTMLHyperlinkElementUtils.hash")
+	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.hash")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -348,7 +348,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) hash(info *v8.FunctionCallbackInfo) 
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setHash(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: HTMLHyperlinkElementUtils.setHash")
+	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setHash")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	val, err1 := tryParseArg(args, 0, w.decodeUSVString)

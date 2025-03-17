@@ -5,7 +5,14 @@ import (
 	"log/slog"
 )
 
-var defaultLogger *slog.Logger
+type LogSource interface{ Logger() *slog.Logger }
+type Logger = *slog.Logger
+
+type LoggerLogSource struct{ L *slog.Logger }
+
+func (s LoggerLogSource) Logger() Logger { return s.L }
+
+var defaultLogger Logger
 
 func SetDefault(logger *slog.Logger) {
 	defaultLogger = logger
@@ -22,18 +29,26 @@ func init() {
 	defaultLogger = slog.New(nullHandler{})
 }
 
-func Info(msg string, args ...any) {
-	defaultLogger.Info(msg, args...)
+func logger(source Logger) *slog.Logger {
+	if source != nil {
+		return source
+	} else {
+		return defaultLogger
+	}
 }
 
-func Warn(msg string, args ...any) {
-	defaultLogger.Warn(msg, args...)
+func Info(source Logger, msg string, args ...any) {
+	logger(source).Info(msg, args...)
 }
 
-func Debug(msg string, args ...any) {
-	defaultLogger.Debug(msg, args...)
+func Warn(source Logger, msg string, args ...any) {
+	logger(source).Warn(msg, args...)
 }
 
-func Error(msg string, args ...any) {
-	defaultLogger.Error(msg, args...)
+func Debug(source Logger, msg string, args ...any) {
+	logger(source).Debug(msg, args...)
+}
+
+func Error(source Logger, msg string, args ...any) {
+	logger(source).Error(msg, args...)
 }

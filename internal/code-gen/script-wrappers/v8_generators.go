@@ -134,6 +134,7 @@ func CreateV8FunctionTemplateCallbackBody(
 ) JenGenerator {
 	naming := V8NamingStrategy{data}
 	debug := g.NewValuePackage("Debug", packagenames.Log).Call(
+		g.NewValue(naming.Receiver()).Field("logger").Call(g.Id("info")),
 		g.Lit(fmt.Sprintf("V8 Function call: %s.%s", data.Name(), op.Name)))
 	if op.NotImplemented {
 		errMsg := fmt.Sprintf(

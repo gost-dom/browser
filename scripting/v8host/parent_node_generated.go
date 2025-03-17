@@ -57,7 +57,7 @@ func (w parentNodeV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Val
 
 func (w parentNodeV8Wrapper) querySelector(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: ParentNode.querySelector")
+	log.Debug(w.logger(info), "V8 Function call: ParentNode.querySelector")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	selectors, err1 := tryParseArg(args, 0, w.decodeDOMString)
@@ -78,7 +78,7 @@ func (w parentNodeV8Wrapper) querySelector(info *v8.FunctionCallbackInfo) (*v8.V
 
 func (w parentNodeV8Wrapper) querySelectorAll(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: ParentNode.querySelectorAll")
+	log.Debug(w.logger(info), "V8 Function call: ParentNode.querySelectorAll")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	selectors, err1 := tryParseArg(args, 0, w.decodeDOMString)
@@ -99,7 +99,7 @@ func (w parentNodeV8Wrapper) querySelectorAll(info *v8.FunctionCallbackInfo) (*v
 
 func (w parentNodeV8Wrapper) firstElementChild(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: ParentNode.firstElementChild")
+	log.Debug(w.logger(info), "V8 Function call: ParentNode.firstElementChild")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -110,7 +110,7 @@ func (w parentNodeV8Wrapper) firstElementChild(info *v8.FunctionCallbackInfo) (*
 
 func (w parentNodeV8Wrapper) lastElementChild(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: ParentNode.lastElementChild")
+	log.Debug(w.logger(info), "V8 Function call: ParentNode.lastElementChild")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -121,7 +121,7 @@ func (w parentNodeV8Wrapper) lastElementChild(info *v8.FunctionCallbackInfo) (*v
 
 func (w parentNodeV8Wrapper) childElementCount(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: ParentNode.childElementCount")
+	log.Debug(w.logger(info), "V8 Function call: ParentNode.childElementCount")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err

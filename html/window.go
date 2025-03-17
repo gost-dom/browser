@@ -3,6 +3,7 @@ package html
 import (
 	"errors"
 	"io"
+	"log/slog"
 	"net/http"
 	netURL "net/url"
 	"strings"
@@ -27,6 +28,7 @@ type Clock interface {
 
 // Describes a current browsering context
 type BrowsingContext interface {
+	log.LogSource
 	HTTPClient() http.Client
 	LocationHREF() string
 }
@@ -76,6 +78,7 @@ type window struct {
 	httpClient          http.Client
 	baseLocation        string
 	domParser           domParser
+	logger              *slog.Logger
 }
 
 func newWindow(windowOptions ...WindowOption) *window {
@@ -88,6 +91,7 @@ func newWindow(windowOptions ...WindowOption) *window {
 		httpClient:          options.HttpClient,
 		baseLocation:        options.BaseLocation,
 		scriptEngineFactory: options.ScriptHost,
+		logger:              options.Logger,
 		history:             new(History),
 	}
 	if win.baseLocation == "" {
@@ -193,20 +197,6 @@ func (w *window) parseReader(reader io.Reader) error {
 
 func (w *window) HTTPClient() http.Client { return w.httpClient }
 
-type WindowOptions struct {
-	ScriptHost
-	HttpClient   http.Client
-	BaseLocation string
-}
-
-type WindowOption interface {
-	Apply(options *WindowOptions)
-}
-
-type WindowOptionFunc func(*WindowOptions)
-
-func (f WindowOptionFunc) Apply(options *WindowOptions) { f(options) }
-
 func WindowOptionLocation(location string) WindowOptionFunc {
 	return func(options *WindowOptions) {
 		options.BaseLocation = location
@@ -234,7 +224,7 @@ func (w *window) handleResponse(resp *http.Response) error {
 }
 
 func (w *window) Navigate(href string) error {
-	log.Info("Window.navigate:", "href", href)
+	log.Info(w.Logger(), "Window.navigate:", "href", href)
 	w.History().pushLoad(href)
 	w.initScriptEngine()
 	w.baseLocation = href
@@ -253,7 +243,7 @@ func (w *window) Navigate(href string) error {
 // reload is used internally to load a page into the browser, but without
 // affecting the history
 func (w *window) reload(href string) error {
-	log.Debug("Window.reload:", "href", href)
+	log.Debug(w.Logger(), "Window.reload:", "href", href)
 	w.initScriptEngine()
 	w.baseLocation = href
 	if href == "about:blank" {
@@ -327,3 +317,20 @@ func (w *window) resolveHref(href string) *url.URL {
 	}
 	return r
 }
+
+func (w *window) Logger() log.Logger { return w.logger }
+
+type WindowOptions struct {
+	ScriptHost
+	HttpClient   http.Client
+	BaseLocation string
+	Logger       *slog.Logger
+}
+
+type WindowOption interface {
+	Apply(options *WindowOptions)
+}
+
+type WindowOptionFunc func(*WindowOptions)
+
+func (f WindowOptionFunc) Apply(options *WindowOptions) { f(options) }

@@ -1,6 +1,8 @@
 package html
 
 import (
+	"log/slog"
+
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/internal/log"
 )
@@ -123,7 +125,7 @@ func (h History) currentIdx() int {
 //
 // [replaceState on the History API]: https://developer.mozilla.org/en-US/docs/Web/API/History/replaceState
 func (h *History) PushState(state HistoryState, href string) error {
-	log.Info("History.PushState", "href", href)
+	log.Info(h.logger(), "History.PushState", "href", href)
 	newHref := h.window.setBaseLocation(href)
 	h.pushHistoryEntry(historyEntry{state: state, href: newHref, remote: false})
 	return nil
@@ -146,6 +148,8 @@ func (h *History) pushLoad(href string) {
 func (h History) State() HistoryState {
 	return h.entries[h.currentIdx()].state
 }
+
+func (h *History) logger() *slog.Logger { return h.window.Logger() }
 
 type popStateEvent struct {
 	event.Event

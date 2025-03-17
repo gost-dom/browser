@@ -51,7 +51,7 @@ func (w domTokenListV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.V
 
 func (w domTokenListV8Wrapper) item(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: DOMTokenList.item")
+	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.item")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	index, err1 := tryParseArg(args, 0, w.decodeUnsignedLong)
@@ -68,7 +68,7 @@ func (w domTokenListV8Wrapper) item(info *v8.FunctionCallbackInfo) (*v8.Value, e
 
 func (w domTokenListV8Wrapper) contains(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: DOMTokenList.contains")
+	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.contains")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	token, err1 := tryParseArg(args, 0, w.decodeDOMString)
@@ -84,7 +84,7 @@ func (w domTokenListV8Wrapper) contains(info *v8.FunctionCallbackInfo) (*v8.Valu
 }
 
 func (w domTokenListV8Wrapper) add(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: DOMTokenList.add")
+	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.add")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	tokens, err1 := tryParseArg(args, 0, w.decodeDOMString)
@@ -100,7 +100,7 @@ func (w domTokenListV8Wrapper) add(info *v8.FunctionCallbackInfo) (*v8.Value, er
 }
 
 func (w domTokenListV8Wrapper) remove(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: DOMTokenList.remove")
+	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.remove")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	tokens, err1 := tryParseArg(args, 0, w.decodeDOMString)
@@ -117,7 +117,7 @@ func (w domTokenListV8Wrapper) remove(info *v8.FunctionCallbackInfo) (*v8.Value,
 
 func (w domTokenListV8Wrapper) replace(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: DOMTokenList.replace")
+	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.replace")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	token, err1 := tryParseArg(args, 0, w.decodeDOMString)
@@ -134,13 +134,13 @@ func (w domTokenListV8Wrapper) replace(info *v8.FunctionCallbackInfo) (*v8.Value
 }
 
 func (w domTokenListV8Wrapper) supports(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: DOMTokenList.supports")
+	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.supports")
 	return nil, errors.New("DOMTokenList.supports: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w domTokenListV8Wrapper) length(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: DOMTokenList.length")
+	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.length")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -151,7 +151,7 @@ func (w domTokenListV8Wrapper) length(info *v8.FunctionCallbackInfo) (*v8.Value,
 
 func (w domTokenListV8Wrapper) value(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: DOMTokenList.value")
+	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.value")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -161,7 +161,7 @@ func (w domTokenListV8Wrapper) value(info *v8.FunctionCallbackInfo) (*v8.Value, 
 }
 
 func (w domTokenListV8Wrapper) setValue(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: DOMTokenList.setValue")
+	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.setValue")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	val, err1 := tryParseArg(args, 0, w.decodeDOMString)

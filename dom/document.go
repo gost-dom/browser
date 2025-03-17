@@ -2,8 +2,10 @@ package dom
 
 import (
 	"io"
+	"log/slog"
 
 	"github.com/gost-dom/browser/dom/event"
+	"github.com/gost-dom/browser/internal/log"
 	"golang.org/x/net/html"
 )
 
@@ -44,6 +46,7 @@ type elementConstructor func(doc *document) Element
 
 type document struct {
 	rootNode
+	logger        *slog.Logger
 	activeElement Element
 	ownerWindow   DocumentParentWindow
 }
@@ -58,8 +61,13 @@ func NewDocument(window DocumentParentWindow) Document {
 	// What about disconnected documents, e.g. `new Document()` in the browser?
 	result.SetParentTarget(window)
 	result.SetSelf(result)
+	if logger, isLogSource := window.(log.LogSource); isLogSource {
+		result.logger = logger.Logger()
+	}
 	return result
 }
+
+func (d document) Logger() *slog.Logger { return d.logger }
 
 func (d document) ActiveElement() Element {
 	if d.activeElement == nil {

@@ -79,7 +79,7 @@ func (w eventV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, e
 }
 
 func (w eventV8Wrapper) stopPropagation(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: Event.stopPropagation")
+	log.Debug(w.logger(info), "V8 Function call: Event.stopPropagation")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -89,7 +89,7 @@ func (w eventV8Wrapper) stopPropagation(info *v8.FunctionCallbackInfo) (*v8.Valu
 }
 
 func (w eventV8Wrapper) preventDefault(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: Event.preventDefault")
+	log.Debug(w.logger(info), "V8 Function call: Event.preventDefault")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -100,7 +100,7 @@ func (w eventV8Wrapper) preventDefault(info *v8.FunctionCallbackInfo) (*v8.Value
 
 func (w eventV8Wrapper) type_(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: Event.type")
+	log.Debug(w.logger(info), "V8 Function call: Event.type")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -111,7 +111,7 @@ func (w eventV8Wrapper) type_(info *v8.FunctionCallbackInfo) (*v8.Value, error) 
 
 func (w eventV8Wrapper) target(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: Event.target")
+	log.Debug(w.logger(info), "V8 Function call: Event.target")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -122,7 +122,7 @@ func (w eventV8Wrapper) target(info *v8.FunctionCallbackInfo) (*v8.Value, error)
 
 func (w eventV8Wrapper) currentTarget(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: Event.currentTarget")
+	log.Debug(w.logger(info), "V8 Function call: Event.currentTarget")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -133,7 +133,7 @@ func (w eventV8Wrapper) currentTarget(info *v8.FunctionCallbackInfo) (*v8.Value,
 
 func (w eventV8Wrapper) bubbles(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: Event.bubbles")
+	log.Debug(w.logger(info), "V8 Function call: Event.bubbles")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -144,7 +144,7 @@ func (w eventV8Wrapper) bubbles(info *v8.FunctionCallbackInfo) (*v8.Value, error
 
 func (w eventV8Wrapper) cancelable(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: Event.cancelable")
+	log.Debug(w.logger(info), "V8 Function call: Event.cancelable")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err

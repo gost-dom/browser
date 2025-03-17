@@ -1,6 +1,7 @@
 package html
 
 import (
+	"log/slog"
 	"strconv"
 	"strings"
 
@@ -105,4 +106,11 @@ func (e *htmlElement) SetAutofocus(val bool) {
 	} else {
 		e.RemoveAttribute("autofocus")
 	}
+}
+
+func (e *htmlElement) logger() *slog.Logger {
+	if win := e.window(); win != nil {
+		return win.Logger()
+	}
+	return nil
 }

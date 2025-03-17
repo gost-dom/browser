@@ -56,29 +56,36 @@ type XmlHttpRequest interface {
 
 type xmlHttpRequest struct {
 	event.EventTarget
-	location string
-	client   http.Client
-	async    bool
-	status   int
-	method   string
-	url      string
-	response []byte
-	res      *http.Response
-	headers  http.Header
-	clock    *clock.Clock
+	logSource log.LogSource
+	location  string
+	client    http.Client
+	async     bool
+	status    int
+	method    string
+	url       string
+	response  []byte
+	res       *http.Response
+	headers   http.Header
+	clock     *clock.Clock
 }
 
 func NewXmlHttpRequest(ctx html.BrowsingContext, clock *clock.Clock) XmlHttpRequest {
 	location := ctx.LocationHREF()
-	log.Info("NewXmlHttpRequest", "location", location)
-	return &xmlHttpRequest{
+	result := &xmlHttpRequest{
 		EventTarget: event.NewEventTarget(),
+		logSource:   ctx,
 		location:    location,
 		client:      ctx.HTTPClient(),
 		headers:     make(map[string][]string),
 		clock:       clock,
 		async:       true,
 	}
+	event.SetEventTargetSelf(result)
+	log.Info(result.logSource.Logger(), "NewXmlHttpRequest", "location", location)
+	return result
+}
+func (r *xmlHttpRequest) logger() log.Logger {
+	return r.logSource.Logger()
 }
 
 type RequestOption = func(req *xmlHttpRequest)
@@ -90,7 +97,7 @@ func (req *xmlHttpRequest) Open(
 	// binding layer? Or different methods?
 	url string,
 	options ...RequestOption) {
-	log.Info("XmlHttpRequest.Open", "method", method, "url", url)
+	log.Info(req.logger(), "XmlHttpRequest.Open", "method", method, "url", url)
 
 	req.method = method
 	req.url = url
@@ -105,7 +112,7 @@ func (req *xmlHttpRequest) send(body io.Reader) error {
 	if u := url.ParseURLBase(req.url, req.location); u != nil {
 		reqUrl = u.Href()
 	}
-	log.Info("XmlHttpRequest.send", "url", reqUrl)
+	log.Info(req.logger(), "XmlHttpRequest.send", "url", reqUrl)
 	httpRequest, err := http.NewRequest(req.method, reqUrl, body)
 	if err != nil {
 		return err
@@ -120,7 +127,7 @@ func (req *xmlHttpRequest) send(body io.Reader) error {
 	b := new(bytes.Buffer) // TODO, branch out depending on content-type
 	_, err = b.ReadFrom(res.Body)
 	req.response = b.Bytes()
-	log.Debug("Response received", "Status", res.StatusCode)
+	log.Debug(req.logger(), "Response received", "Status", res.StatusCode)
 	req.DispatchEvent(&event.Event{Type: XHREventLoad})
 	return err
 }

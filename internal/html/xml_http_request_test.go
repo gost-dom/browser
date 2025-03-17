@@ -2,6 +2,7 @@ package html_test
 
 import (
 	"io"
+	"log/slog"
 	"net/http"
 	"slices"
 	"strings"
@@ -26,6 +27,7 @@ type stubBrowsingContext struct {
 
 func (c stubBrowsingContext) HTTPClient() http.Client { return c.client }
 func (c stubBrowsingContext) LocationHREF() string    { return c.url }
+func (c stubBrowsingContext) Logger() *slog.Logger    { return nil }
 
 func newFromHandlerFunc(
 	clock *clock.Clock,

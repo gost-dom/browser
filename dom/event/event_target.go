@@ -1,6 +1,7 @@
 package event
 
 import (
+	"log/slog"
 	"slices"
 
 	"github.com/gost-dom/browser/internal/log"
@@ -56,9 +57,7 @@ func NewEventTarget() EventTarget {
 	return &res
 }
 
-func (t *eventTarget) SetParentTarget(parent EventTarget) {
-	t.parentTarget = parent
-}
+func (t *eventTarget) SetParentTarget(parent EventTarget) { t.parentTarget = parent }
 
 func SetEventTargetSelf(t EventTarget) {
 	t.setSelf(t)
@@ -91,7 +90,7 @@ func (e *eventTarget) AddEventListener(
 	options ...func(*EventListener),
 ) {
 	listener := e.createListener(handler, options)
-	log.Debug("AddEventListener", "EventType", eventType)
+	log.Debug(e.logger(), "AddEventListener", "EventType", eventType)
 	// TODO: Handle options
 	// - once
 	// - passive. Defaults to false,
@@ -134,7 +133,7 @@ func (e *eventTarget) SetCatchAllHandler(handler EventHandler) {
 }
 
 func (e *eventTarget) DispatchEvent(event *Event) bool {
-	log.Debug("Dispatch event", "EventType", event.Type)
+	log.Debug(e.logger(), "Dispatch event", "EventType", event.Type)
 	event.target = e.self
 	event.stopped = false
 	event.cancelled = false
@@ -162,7 +161,7 @@ func (e *eventTarget) dispatchEvent(event *Event, capture bool) {
 	defer func() { event.currentTarget = nil }()
 	if e.catchAllHandler != nil && !capture {
 		if err := e.catchAllHandler.HandleEvent(event); err != nil {
-			log.Debug("Error occurred", "error", err.Error())
+			log.Debug(e.logger(), "Error occurred", "error", err.Error())
 			e.dispatchError(err)
 		}
 	}
@@ -170,7 +169,12 @@ func (e *eventTarget) dispatchEvent(event *Event, capture bool) {
 	listeners := e.lmap[event.Type]
 	for i := 0; i < len(listeners); i++ {
 		l := listeners[i]
-		log.Debug("eventTarget.dispatchEvent: Calling event handler", "type", event.Type)
+		log.Debug(
+			e.logger(),
+			"eventTarget.dispatchEvent: Calling event handler",
+			"type",
+			event.Type,
+		)
 		if l.Capture == capture {
 			if err := l.Handler.HandleEvent(event); err != nil {
 				e.handleError(err)
@@ -185,7 +189,7 @@ func (e *eventTarget) dispatchEvent(event *Event, capture bool) {
 }
 
 func (e *eventTarget) handleError(err error) {
-	log.Error(
+	log.Error(e.logger(),
 		"eventTarget.dispatchEvent: Error occurred in event handler",
 		"error",
 		err.Error(),
@@ -214,4 +218,11 @@ func (e *eventTarget) dispatchError(err error) {
 	} else {
 		e.parentTarget.dispatchError(err)
 	}
+}
+
+func (e *eventTarget) logger() *slog.Logger {
+	if source, ok := e.self.(log.LogSource); ok {
+		return source.Logger()
+	}
+	return nil
 }

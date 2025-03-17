@@ -34,7 +34,16 @@ type globals struct {
 	namedGlobals map[string]*v8.FunctionTemplate
 }
 
+type hostOptions struct {
+	logger log.Logger
+}
+
+type HostOption func(o *hostOptions)
+
+func WithLogger(logger log.Logger) HostOption { return func(o *hostOptions) { o.logger = logger } }
+
 type V8ScriptHost struct {
+	logger          log.Logger
 	mu              *sync.Mutex
 	iso             *v8.Isolate
 	inspector       *v8.Inspector
@@ -208,14 +217,14 @@ func (f consoleAPIMessageFunc) ConsoleAPIMessage(message v8.ConsoleAPIMessage) {
 func (host *V8ScriptHost) consoleAPIMessage(message v8.ConsoleAPIMessage) {
 	switch message.ErrorLevel {
 	case v8.ErrorLevelDebug:
-		log.Debug(message.Message)
+		log.Debug(host.logger, message.Message)
 	case v8.ErrorLevelInfo:
 	case v8.ErrorLevelLog:
-		log.Info(message.Message)
+		log.Info(host.logger, message.Message)
 	case v8.ErrorLevelWarning:
-		log.Warn(message.Message)
+		log.Warn(host.logger, message.Message)
 	case v8.ErrorLevelError:
-		log.Error(message.Message)
+		log.Error(host.logger, message.Message)
 	}
 }
 
@@ -286,7 +295,11 @@ func init() {
 	}
 }
 
-func New() *V8ScriptHost {
+func New(opts ...HostOption) *V8ScriptHost {
+	config := hostOptions{}
+	for _, opt := range opts {
+		opt(&config)
+	}
 	host := &V8ScriptHost{
 		mu:  new(sync.Mutex),
 		iso: v8.NewIsolate(),
@@ -308,6 +321,8 @@ func New() *V8ScriptHost {
 	return host
 }
 
+func (host *V8ScriptHost) Logger() log.Logger { return host.logger }
+
 func (host *V8ScriptHost) Close() {
 	host.mu.Lock()
 	defer host.mu.Unlock()
@@ -318,7 +333,7 @@ func (host *V8ScriptHost) Close() {
 	undisposedCount := len(undiposedContexts)
 
 	if undisposedCount > 0 {
-		log.Warn("Script host shutdown: Not all contexts disposed", "count", len(host.contexts))
+		log.Warn(host.logger, "count", len(host.contexts))
 		for _, ctx := range undiposedContexts {
 			ctx.Close()
 		}
@@ -381,7 +396,8 @@ func (ctx *V8ScriptContext) Close() {
 	}
 	ctx.disposed = true
 	ctx.host.inspector.ContextDestroyed(ctx.v8ctx)
-	log.Debug("ScriptContext: Dispose")
+	log.Debug(ctx.host.logger,
+		"ScriptContext: Dispose")
 	for _, dispose := range ctx.disposers {
 		dispose.dispose()
 	}

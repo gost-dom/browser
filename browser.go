@@ -2,6 +2,7 @@ package browser
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/gost-dom/browser/html"
@@ -11,12 +12,17 @@ import (
 	"github.com/gost-dom/browser/scripting/v8host"
 )
 
+type BrowserOption func(*Browser)
+
+func Logger(l *slog.Logger) BrowserOption { return func(b *Browser) { b.Logger = l } }
+
 // Pretty stupid right now, but should _probably_ allow handling multiple
 // windows/tabs. This used to be the case for _some_ identity providers, but I'm
 // not sure if that even work anymore because of browser security.
 type Browser struct {
 	Client     http.Client
 	ScriptHost ScriptHost
+	Logger     log.Logger
 	windows    []Window
 }
 
@@ -58,21 +64,25 @@ func NewFromHandler(handler http.Handler) *Browser {
 }
 
 // New initialises a new [Browser] with the default script engine.
-func New() *Browser {
-	return &Browser{
+func New(options ...func(*Browser)) *Browser {
+	result := &Browser{
 		ScriptHost: v8host.New(),
 		Client:     NewHttpClient(),
 	}
+	for _, opt := range options {
+		opt(result)
+	}
+	return result
 }
 
-// NewBrowser should not be called. Call New instead.
+// Deprecated: NewBrowser should not be called. Call New instead.
 //
 // This method will selfdestruct in 10 commits
 func NewBrowser() *Browser {
 	return New()
 }
 
-// NewBrowserFromHandler should not be called, call, NewFromHandler instead.
+// Deprecated: NewBrowserFromHandler should not be called, call, NewFromHandler instead.
 //
 // This method will selfdestruct in 10 commits
 func NewBrowserFromHandler(handler http.Handler) *Browser {
@@ -88,7 +98,7 @@ func (b *Browser) createOptions(location string) WindowOptions {
 }
 
 func (b *Browser) Close() {
-	log.Debug("Browser: Close()")
+	log.Debug(b.Logger, "Browser: Close()")
 	for _, win := range b.windows {
 		win.Close()
 	}

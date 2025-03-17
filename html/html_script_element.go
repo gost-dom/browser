@@ -30,7 +30,7 @@ func (e *htmlScriptElement) Connected() {
 		}
 		if resp.StatusCode != 200 {
 			body, _ := io.ReadAll(resp.Body)
-			log.Error("Error from server", "body", string(body), "src", src)
+			log.Error(e.logger(), "Error from server", "body", string(body), "src", src)
 			panic("Bad response")
 		}
 

@@ -53,7 +53,7 @@ func (w htmlAnchorElementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (
 
 func (w htmlAnchorElementV8Wrapper) target(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	ctx := w.mustGetContext(info)
-	log.Debug("V8 Function call: HTMLAnchorElement.target")
+	log.Debug(w.logger(info), "V8 Function call: HTMLAnchorElement.target")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -63,7 +63,7 @@ func (w htmlAnchorElementV8Wrapper) target(info *v8.FunctionCallbackInfo) (*v8.V
 }
 
 func (w htmlAnchorElementV8Wrapper) setTarget(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: HTMLAnchorElement.setTarget")
+	log.Debug(w.logger(info), "V8 Function call: HTMLAnchorElement.setTarget")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	val, err1 := tryParseArg(args, 0, w.decodeDOMString)

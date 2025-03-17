@@ -47,7 +47,7 @@ func (w htmlElementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Va
 }
 
 func (w htmlElementV8Wrapper) click(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug("V8 Function call: HTMLElement.click")
+	log.Debug(w.logger(info), "V8 Function call: HTMLElement.click")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err

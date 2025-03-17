@@ -6,7 +6,7 @@ import (
 )
 
 func (w htmlOrSVGElementV8Wrapper) focus(info *v8go.FunctionCallbackInfo) (*v8go.Value, error) {
-	log.Debug("V8 Function call: HTMLOrSVGElement.focus")
+	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.focus")
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
