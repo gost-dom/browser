@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/gost-dom/browser/dom/event"
+	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/url"
@@ -67,12 +68,13 @@ type xmlHttpRequest struct {
 	clock    *clock.Clock
 }
 
-func NewXmlHttpRequest(client http.Client, location string, clock *clock.Clock) XmlHttpRequest {
+func NewXmlHttpRequest(ctx html.BrowsingContext, clock *clock.Clock) XmlHttpRequest {
+	location := ctx.LocationHREF()
 	log.Info("NewXmlHttpRequest", "location", location)
 	return &xmlHttpRequest{
 		EventTarget: event.NewEventTarget(),
 		location:    location,
-		client:      client,
+		client:      ctx.HTTPClient(),
 		headers:     make(map[string][]string),
 		clock:       clock,
 		async:       true,

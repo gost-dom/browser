@@ -25,6 +25,12 @@ type Clock interface {
 	Advance(time.Duration) error
 }
 
+// Describes a current browsering context
+type BrowsingContext interface {
+	HTTPClient() http.Client
+	LocationHREF() string
+}
+
 type ScriptContext interface {
 	// Run a script, and convert the result to a Go type. Only use this if you
 	// need the return value, otherwise call Run.
@@ -42,6 +48,7 @@ type ScriptContext interface {
 
 type Window interface {
 	event.EventTarget
+	BrowsingContext
 	entity.ObjectIder
 	Document() dom.Document
 	Close()
@@ -53,7 +60,6 @@ type Window interface {
 	ScriptContext() ScriptContext
 	Location() Location
 	History() *History
-	HTTPClient() http.Client
 	ParseFragment(ownerDocument dom.Document, reader io.Reader) (dom.DocumentFragment, error)
 	// unexported
 
@@ -300,9 +306,9 @@ func (w *window) Location() Location {
 	return newLocation(u)
 }
 
-func (w *window) Clock() Clock {
-	return w.scriptContext.Clock()
-}
+func (w *window) Clock() Clock { return w.scriptContext.Clock() }
+
+func (w *window) LocationHREF() string { return w.baseLocation }
 
 func (w *window) Close() {
 	if w.scriptContext != nil {

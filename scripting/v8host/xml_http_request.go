@@ -52,7 +52,7 @@ func (xhr xmlHttpRequestV8Wrapper) CreateInstance(
 	ctx *V8ScriptContext,
 	this *v8.Object,
 ) (*v8.Value, error) {
-	result := NewXmlHttpRequest(ctx.window.HTTPClient(), ctx.window.Location().Href(), ctx.clock)
+	result := NewXmlHttpRequest(ctx.window, ctx.clock)
 	result.SetCatchAllHandler(event.NewEventHandlerFunc(func(event *event.Event) error {
 		prop := "on" + event.Type
 		handler, err := this.Get(prop)

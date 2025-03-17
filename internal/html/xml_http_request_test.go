@@ -19,14 +19,21 @@ import (
 	"github.com/onsi/gomega/types"
 )
 
+type stubBrowsingContext struct {
+	client http.Client
+	url    string
+}
+
+func (c stubBrowsingContext) HTTPClient() http.Client { return c.client }
+func (c stubBrowsingContext) LocationHREF() string    { return c.url }
+
 func newFromHandlerFunc(
 	clock *clock.Clock,
 	f func(http.ResponseWriter, *http.Request),
 ) XmlHttpRequest {
-	client := http.Client{
-		Transport: TestRoundTripper{Handler: http.HandlerFunc(f)},
-	}
-	return NewXmlHttpRequest(client, "", clock)
+	return NewXmlHttpRequest(stubBrowsingContext{
+		client: http.Client{Transport: TestRoundTripper{Handler: http.HandlerFunc(f)}},
+	}, clock)
 }
 
 type XMLHTTPRequestTestSuite struct {
@@ -65,7 +72,11 @@ func (s *XMLHTTPRequestTestSuite) SetupTest() {
 		}
 		w.Write([]byte("Hello, World!"))
 	})
-	s.xhr = NewXmlHttpRequest(NewHttpClientFromHandler(s.handler), "", s.timer)
+	s.xhr = NewXmlHttpRequest(
+		stubBrowsingContext{client: NewHttpClientFromHandler(s.handler)},
+		s.timer,
+	)
+
 	s.T().Cleanup(func() {
 		// Allow GC after test run
 		s.handler = nil
