@@ -15,6 +15,7 @@ codegen-clean:
 	rm -f scripting/*_generated.go
 	rm -f scripting/**/*_generated.go
 	rm -f dom/*_generated.go
+	rm -f internal/**/*_generated.go
 	rm -f html/*_generated.go
 
 .PHONY: codegen-watch codegen-run
@@ -25,6 +26,9 @@ codegen-watch: codegen-clean
 	$(GOW) -w ./internal/code-gen -S="Codegen done" -e="" generate ./...
 
 .PHONY: codegen codegen-build codegen-build-watch
+
+codegen-test:
+	$(MAKE) -C internal/code-gen test
 
 codegen-build:
 	$(MAKE) -C internal/code-gen build
@@ -69,5 +73,5 @@ test-goja:
 ci-build:
 	go build -v ./...
 
-ci: codegen ci-build test
+ci: codegen ci-build test codegen-test
 	git diff --quiet HEAD
