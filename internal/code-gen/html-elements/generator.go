@@ -12,7 +12,7 @@ func writeFile(s FileGeneratorSpec) error {
 	jf := jen.NewFilePath(s.Package)
 	jf.HeaderComment("This file is generated. Do not edit.")
 	jf.Add(s.Generator.Generate())
-	outputFileName := fmt.Sprintf("%s_generated.go", s.Name)
+	outputFileName := fmt.Sprintf("%s_generated.go", s.OutputFile)
 	if writer, err := os.Create(outputFileName); err != nil {
 		return err
 	} else {

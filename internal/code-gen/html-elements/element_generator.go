@@ -196,9 +196,9 @@ func (gen htmlElementGenerator) GenerateAttributes() g.Generator {
 }
 
 type FileGeneratorSpec struct {
-	Name      string
-	Package   string
-	Generator g.Generator
+	OutputFile string
+	Package    string
+	Generator  g.Generator
 }
 
 // GeneratorConfig contains the configuration for which generated files should contain
