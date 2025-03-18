@@ -2,6 +2,7 @@ test:
 	gow -c test ./...
 
 build:
+	go test ./...
 	go build .
 
 build-watch:

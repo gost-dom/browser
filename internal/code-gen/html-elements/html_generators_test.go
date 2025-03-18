@@ -57,12 +57,12 @@ func TestGenerateNoFocusOptions(t *testing.T) {
 	// Verify that the focusoptions are not generated
 	expect := exp(t)
 	expect(getIdlInterfaceGenerator("html", "HTMLOrSVGElement")).To(HaveRenderedSubstring(
-		"\tFocus() bool\n"), "Focus doesn't have options")
+		"\tFocus()\n"), "Focus doesn't have options")
 }
 
 func TestGenerateEventHandlerFunction(t *testing.T) {
 	expect := exp(t)
 	expect(getIdlInterfaceGenerator("html", "HTMLOrSVGElement")).To(HaveRenderedSubstring(
-		"\tBlur() bool\n"), "Blur returns a bool")
+		"\tBlur()\n"), "Blur returns a bool")
 
 }
