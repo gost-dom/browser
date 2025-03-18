@@ -22,8 +22,8 @@ func (s IdlType) Generate() *jen.Statement {
 	switch string(s.Name) {
 	case "boolean":
 		return jen.Id("bool")
-	case "DOMTokenList":
-		return jen.Qual(packagenames.Dom, "DOMTokenList")
+	case "DOMTokenList", "NodeList", "Node":
+		return jen.Qual(packagenames.Dom, s.Name)
 	case "undefined":
 		return nil
 	default:

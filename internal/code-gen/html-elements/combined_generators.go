@@ -8,4 +8,5 @@ var PackageConfigs = PackageGeneratorSpecs{
 	"dom":           DOMPackageConfig,
 	"html":          HTMLPackageConfig,
 	"urlinterfaces": URLPackageConfig,
+	"dominterfaces": DOMInterfacesPackageConfig,
 }
