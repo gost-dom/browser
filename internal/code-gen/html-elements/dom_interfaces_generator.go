@@ -7,8 +7,10 @@ var DOMInterfacesPackageConfig = GeneratorConfig{
 		GenerateInterface: true,
 	},
 	"mutation_record": {
-		InterfaceName:     "MutationRecord",
-		SpecName:          "dom",
-		GenerateInterface: true,
+		InterfaceName:          "MutationRecord",
+		SpecName:               "dom",
+		GenerateInterface:      false,
+		GenerateStruct:         true,
+		GenerateReadonlyStruct: true,
 	},
 }

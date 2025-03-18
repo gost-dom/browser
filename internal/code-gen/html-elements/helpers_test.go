@@ -2,6 +2,7 @@ package htmlelements_test
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"testing"
 
@@ -19,6 +20,16 @@ func newGomega(t *testing.T) expect { return gomega.NewWithT(t).Expect }
 
 type BaseGenerator interface{ GenerateInterface() generator }
 
+func getFileGenerator(packageName, targetFile string) (generators.Generator, error) {
+	packageSpecs, _ := htmlelements.GetPackageGeneratorSpecs(packageName)
+	for outputFile, spec := range packageSpecs {
+		if outputFile == targetFile {
+			return htmlelements.CreateGenerator(spec)
+		}
+	}
+	return nil, errors.New("Unknown package")
+}
+
 func getIdlInterfaceGenerator(
 	packageName string,
 	interfaceName string,
@@ -27,7 +38,7 @@ func getIdlInterfaceGenerator(
 	for _, v := range packageSpecs {
 		if v.InterfaceName == interfaceName {
 			g, err := htmlelements.CreateGenerator(v)
-			return g.GenerateInterface(), err
+			return g, err
 		}
 	}
 	return nil, fmt.Errorf(

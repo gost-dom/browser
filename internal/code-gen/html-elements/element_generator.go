@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/customrules"
+	"github.com/gost-dom/code-gen/internal"
+	"github.com/gost-dom/generators"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )
@@ -33,12 +36,13 @@ type HTMLGeneratorReq struct {
 	// specifies what to generate. So there's a kind of pipline here
 	// Read(intfName, specName) -> Generate(GenStruct, GenCon...) -> Generator
 
-	InterfaceName       string
-	SpecName            string
-	GenerateStruct      bool
-	GenerateConstructor bool
-	GenerateInterface   bool
-	GenerateAttributes  bool
+	InterfaceName          string
+	SpecName               string
+	GenerateStruct         bool
+	GenerateConstructor    bool
+	GenerateInterface      bool
+	GenerateReadonlyStruct bool
+	GenerateAttributes     bool
 }
 
 /* -------- baseGenerator -------- */
@@ -59,6 +63,48 @@ func CreateGenerator(req HTMLGeneratorReq) (baseGenerator, error) {
 		g.NewType(toStructName(req.InterfaceName)),
 		specRules[req.InterfaceName],
 	}, err
+}
+
+func (gen baseGenerator) Generate() *jen.Statement {
+	list := generators.StatementList()
+
+	if gen.req.GenerateInterface {
+		list.Append(gen.GenerateInterface())
+	}
+
+	if gen.req.GenerateReadonlyStruct {
+		list.Append(gen.GenerateReadonlyStruct())
+	}
+
+	return list.Generate()
+}
+
+func (gen baseGenerator) GenerateReadonlyStruct() g.Generator {
+	idlInterfaceName := gen.idlType.Name
+	if len(gen.idlType.Operations) > 0 {
+		panic(
+			fmt.Sprintf(
+				"baseGenerator.CreateReadonlyStruct: IDL interface has operations; expected only readonly attributes. Interface: %s",
+				idlInterfaceName,
+			))
+	}
+	result := g.Struct{
+		Name: g.NewType(idlInterfaceName),
+	}
+	for _, a := range gen.idlType.Attributes {
+		if !a.Readonly {
+			panic(
+				fmt.Sprintf(
+					"baseGenerator.CreateReadonlyStruct: IDL interface has writeable attributes. Interface: %s. Attribute: %s",
+					idlInterfaceName,
+					a.Name,
+				),
+			)
+		}
+		field := internal.UpperCaseFirstLetter(string(a.Name))
+		result.Field(g.Id(field), IdlType(a.Type))
+	}
+	return result
 }
 
 func (gen baseGenerator) GenerateInterface() g.Generator {
@@ -219,7 +265,7 @@ func createGenerators(
 		result[index] = FileGeneratorSpec{
 			k,
 			packageName,
-			generator.GenerateInterface(),
+			generator,
 		}
 		errs[index] = err
 		index++
