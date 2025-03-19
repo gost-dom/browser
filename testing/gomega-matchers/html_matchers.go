@@ -5,7 +5,6 @@ import (
 	. "github.com/gost-dom/browser/html"
 
 	"github.com/onsi/gomega"
-	"github.com/onsi/gomega/format"
 	"github.com/onsi/gomega/gcustom"
 	. "github.com/onsi/gomega/types"
 )
@@ -25,18 +24,6 @@ func (m HtmlElementMatcher) FailureMessage(actual interface{}) (message string) 
 
 func (m HtmlElementMatcher) NegatedFailureMessage(actual interface{}) (message string) {
 	return "Should not be an HTMLElement"
-}
-
-func FormatElement(value any) (result string, ok bool) {
-	var element dom.Element
-	if element, ok = value.(dom.Element); ok {
-		result = element.OuterHTML()
-	}
-	return
-}
-
-func init() {
-	format.RegisterCustomFormatter(FormatElement)
 }
 
 func HaveTextContent(expected interface{}) GomegaMatcher {
