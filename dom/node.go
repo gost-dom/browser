@@ -114,8 +114,6 @@ type Closer interface {
 }
 
 type ChangeEvent struct {
-	// The source of the event.
-	Source Node
 	// The original target of the change.
 	Target     Node
 	AddedNodes NodeList
@@ -171,6 +169,7 @@ type Node interface {
 	cloneChildren() []Node
 	createHtmlNode() *html.Node
 	nodeDocument() Document
+	notify(ChangeEvent)
 }
 
 type node struct {
@@ -540,9 +539,11 @@ func (n *node) RenderChildren(builder *strings.Builder) {
 func (n *node) String() string { return n.self.NodeName() }
 
 func (n *node) notify(event ChangeEvent) {
-	event.Source = n.self
 	for _, o := range n.observers {
 		o.Process(event)
+	}
+	if n.parent != nil {
+		n.parent.notify(event)
 	}
 }
 

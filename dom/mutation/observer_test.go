@@ -31,6 +31,8 @@ type MutationRecorder struct {
 	Records []mutation.Record
 }
 
+func (r *MutationRecorder) Clear() { r.Records = nil }
+
 func (r *MutationRecorder) HandleMutation(recs []mutation.Record, _ *mutation.Observer) {
 	r.Records = append(r.Records, recs...)
 }
@@ -51,7 +53,7 @@ func (r MutationRecorder) AddedNodes() []dom.Node {
 	return slices.Concat(lists...)
 }
 
-func (s *MutationObserverTestSuite) TestAddDomNode() {
+func (s *MutationObserverTestSuite) TestObserveChildListNoSubtree() {
 	var recorder MutationRecorder
 	observer := mutation.NewObserver(&recorder)
 
@@ -64,9 +66,32 @@ func (s *MutationObserverTestSuite) TestAddDomNode() {
 	body.AppendChild(div)
 
 	observer.Flush()
-	// s.Assert().Equal(1, len(recorder.Targets()))
 	s.Assert().Equal([]dom.Node{body}, recorder.Targets())
 	s.Assert().Equal([]dom.Node{div}, recorder.AddedNodes())
+	recorder.Clear()
+
+	div.AppendChild(doc.CreateElement("div"))
+	observer.Flush()
+	s.Assert().Empty(recorder.Records)
+}
+
+func (s *MutationObserverTestSuite) TestObserveChildListWithSubtree() {
+	var recorder MutationRecorder
+	observer := mutation.NewObserver(&recorder)
+
+	doc := html.NewHTMLDocument(nil)
+	body := doc.Body()
+
+	div := doc.CreateElement("div")
+	body.AppendChild(div)
+	observer.Observe(body, mutation.ChildList, mutation.Subtree)
+
+	child := doc.CreateElement("div")
+	div.AppendChild(child)
+
+	observer.Flush()
+	s.Assert().Equal([]dom.Node{div}, recorder.Targets())
+	s.Assert().Equal([]dom.Node{child}, recorder.AddedNodes())
 }
 
 func TestValidOptions(t *testing.T) {

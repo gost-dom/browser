@@ -25,6 +25,7 @@ type Observer struct {
 	pending  []Record
 	closer   dom.Closer
 	options  Options
+	target   dom.Node
 }
 
 func NewObserver(cb Callback) *Observer {
@@ -48,6 +49,7 @@ func (o *Observer) Observe(node dom.Node, options ...func(*Options)) error {
 		)
 	}
 
+	o.target = node
 	o.closer = node.Observe(o)
 	return nil
 }
@@ -90,6 +92,9 @@ func (o *Observer) TakeRecords() (res []Record) {
 }
 
 func (o *Observer) Process(e dom.ChangeEvent) {
+	if e.Target != o.target && !o.options.Subtree {
+		return
+	}
 	r := Record{Target: e.Target, AddedNodes: e.AddedNodes}
 	o.pending = append(o.pending, r)
 }
