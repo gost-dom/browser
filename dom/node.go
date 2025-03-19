@@ -115,8 +115,9 @@ type Closer interface {
 
 type ChangeEvent struct {
 	// The original target of the change.
-	Target     Node
-	AddedNodes NodeList
+	Target       Node
+	AddedNodes   NodeList
+	RemovedNodes NodeList
 }
 
 type Observer interface {
@@ -343,8 +344,8 @@ func (n *node) RemoveChild(node Node) (Node, error) {
 			"Node.removeChild: The node to be removed is not a child of this node",
 		)
 	}
-	// TODO: Notify removed nodes
 	n.childNodes.setNodes(slices.Delete(n.childNodes.All(), idx, idx+1))
+	n.notify(n.removedNodeEvent(node))
 	return node, nil
 }
 
@@ -409,18 +410,16 @@ func (n *node) childElements() []Element {
 
 func (n *node) insertBefore(newNode Node, referenceNode Node) (Node, error) {
 	if referenceNode == nil {
-		// TODO: Notify
 		n.childNodes.append(newNode)
-		n.notify(n.addedNodeEvent(newNode))
 	} else {
 		i := slices.Index(n.childNodes.All(), referenceNode)
 		if i == -1 {
 			return nil, errors.New("Reference node not found")
 		}
-		// TODO: Notify
 		n.childNodes.setNodes(slices.Insert(n.childNodes.All(), i, newNode))
 	}
 	removeNodeFromParent(newNode)
+	n.notify(n.addedNodeEvent(newNode))
 	return newNode, nil
 }
 
@@ -547,9 +546,16 @@ func (n *node) notify(event ChangeEvent) {
 	}
 }
 
-func (n *node) addedNodeEvent(newNode Node) ChangeEvent {
+func (n *node) addedNodeEvent(newNode ...Node) ChangeEvent {
 	return ChangeEvent{
 		Target:     n.self,
-		AddedNodes: &nodeList{Entity: n.Entity, nodes: []Node{newNode}},
+		AddedNodes: &nodeList{nodes: newNode},
+	}
+}
+
+func (n *node) removedNodeEvent(nodes ...Node) ChangeEvent {
+	return ChangeEvent{
+		Target:       n.self,
+		RemovedNodes: &nodeList{nodes: nodes},
 	}
 }

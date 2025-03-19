@@ -10,6 +10,7 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/gosterror"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
+	"github.com/onsi/gomega"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -48,7 +49,19 @@ func (r MutationRecorder) Targets() []dom.Node {
 func (r MutationRecorder) AddedNodes() []dom.Node {
 	lists := make([][]dom.Node, len(r.Records))
 	for i, r := range r.Records {
-		lists[i] = r.AddedNodes.All()
+		if nodes := r.AddedNodes; nodes != nil {
+			lists[i] = nodes.All()
+		}
+	}
+	return slices.Concat(lists...)
+}
+
+func (r MutationRecorder) RemovedNodes() []dom.Node {
+	lists := make([][]dom.Node, len(r.Records))
+	for i, r := range r.Records {
+		if nodes := r.RemovedNodes; nodes != nil {
+			lists[i] = nodes.All()
+		}
 	}
 	return slices.Concat(lists...)
 }
@@ -63,16 +76,25 @@ func (s *MutationObserverTestSuite) TestObserveChildListNoSubtree() {
 	observer.Observe(body, mutation.ChildList)
 
 	div := doc.CreateElement("div")
+	div.SetAttribute("id", "parent")
 	body.AppendChild(div)
 
 	observer.Flush()
 	s.Assert().Equal([]dom.Node{body}, recorder.Targets())
 	s.Assert().Equal([]dom.Node{div}, recorder.AddedNodes())
+	s.Assert().Empty(recorder.RemovedNodes())
 	recorder.Clear()
 
 	div.AppendChild(doc.CreateElement("div"))
 	observer.Flush()
-	s.Assert().Empty(recorder.Records)
+	s.Assert().Empty(recorder.Records, "Child node was notified when subtree=false")
+
+	body.RemoveChild(div)
+	observer.Flush()
+	s.Assert().Equal([]dom.Node{body}, recorder.Targets())
+	g := gomega.NewWithT(s.T())
+	g.Expect(recorder.RemovedNodes()).To(gomega.ConsistOf(div))
+	s.Assert().Empty(recorder.AddedNodes())
 }
 
 func (s *MutationObserverTestSuite) TestObserveChildListWithSubtree() {
