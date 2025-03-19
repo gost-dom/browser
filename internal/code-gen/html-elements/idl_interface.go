@@ -83,12 +83,13 @@ func (t OutputType) Generate() *jen.Statement {
 	return t.Default.Generate()
 }
 
+// Represents an operation specified on an IDL interface. The type is itself a
+// [generators.Generator] for generating the method, potentially multiple
+// methods if the method is overloaded in the source.
 type IdlInterfaceOperation struct {
 	idl.Operation
-	ReturnType     IdlType
-	Rules          customrules.OperationRule
-	ReturnOverride *typerule.TypeRule
-	HasError       bool
+	ReturnType IdlType
+	Rules      customrules.OperationRule
 }
 
 func (o IdlInterfaceOperation) Generate() *jen.Statement {
@@ -137,21 +138,25 @@ func (o IdlInterfaceOperation) Generate() *jen.Statement {
 	return result.Generate()
 }
 
+func (o IdlInterfaceOperation) HasError() bool {
+	return o.Rules.HasError
+}
+
 // ReturnParams return multiple parameters for an operation's return types.
 // The return values can include a bool for methods like GetAttribute, that
 // return (string, bool), indicating if the attribute was found. If hasError is
 // true, an error return type will be added as well.
 func (o IdlInterfaceOperation) ReturnParams() *jen.Statement {
 	result := make([]generators.Generator, 1, 3)
-	if o.ReturnOverride != nil {
-		result[0] = o.ReturnOverride
+	if o.Rules.ReturnType != nil {
+		result[0] = o.Rules.ReturnType
 	} else {
 		s := o.ReturnType
 		result[0] = s
 		if s.Nullable && !s.Nillable() {
 			result = append(result, generators.Id("bool"))
 		}
-		if o.HasError {
+		if o.HasError() {
 			result = append(result, generators.Id("error"))
 		}
 	}

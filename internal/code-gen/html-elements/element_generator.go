@@ -147,13 +147,7 @@ func (gen baseGenerator) GenerateInterface() g.Generator {
 		operationRule := gen.rules.Operations[o.Name]
 		operations = append(
 			operations,
-			IdlInterfaceOperation{
-				o,
-				IdlType(o.ReturnType),
-				operationRule,
-				operationRule.ReturnType,
-				operationRule.HasError,
-			},
+			IdlInterfaceOperation{o, IdlType(o.ReturnType), operationRule},
 		)
 	}
 	result.Attributes = attributes
