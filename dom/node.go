@@ -109,6 +109,22 @@ func (t NodeType) String() string {
 
 type GetRootNodeOptions bool
 
+type Closer interface {
+	Close()
+}
+
+type ChangeEvent struct {
+	// The source of the event.
+	Source Node
+	// The original target of the change.
+	Target     Node
+	AddedNodes NodeList
+}
+
+type Observer interface {
+	Process(ChangeEvent)
+}
+
 type Node interface {
 	entity.ObjectIder
 	event.EventTarget
@@ -145,6 +161,8 @@ type Node interface {
 	// overriding behaviour in super-classes. This is not a behaviour that Go has.
 	SetSelf(node Node)
 
+	Observe(Observer) Closer
+
 	getSelf() Node
 	setParent(Node)
 	setOwnerDocument(owner Document)
@@ -162,6 +180,7 @@ type node struct {
 	childNodes NodeList
 	parent     Node
 	document   Document
+	observers  []Observer
 }
 
 func newNode(ownerDocument Document) node {
@@ -220,6 +239,27 @@ func (n *node) InsertBefore(newChild Node, referenceNode Node) (Node, error) {
 }
 
 func (n *node) ChildNodes() NodeList { return n.childNodes }
+
+func (n *node) Observe(observer Observer) Closer {
+	if slices.Contains(n.observers, observer) {
+		panic("Observer already added to this node")
+	}
+	n.observers = append(n.observers, observer)
+	return observerCloser{n, observer}
+}
+
+func (n *node) removeObserver(o Observer) {
+	n.observers = slices.DeleteFunc(n.observers, func(x Observer) bool { return o == x })
+}
+
+type observerCloser struct {
+	n *node
+	o Observer
+}
+
+func (c observerCloser) Close() {
+	c.n.removeObserver(c.o)
+}
 
 // func (n *node) CloneNode(deep bool) Node { return nil }
 
@@ -304,6 +344,7 @@ func (n *node) RemoveChild(node Node) (Node, error) {
 			"Node.removeChild: The node to be removed is not a child of this node",
 		)
 	}
+	// TODO: Notify removed nodes
 	n.childNodes.setNodes(slices.Delete(n.childNodes.All(), idx, idx+1))
 	return node, nil
 }
@@ -369,12 +410,15 @@ func (n *node) childElements() []Element {
 
 func (n *node) insertBefore(newNode Node, referenceNode Node) (Node, error) {
 	if referenceNode == nil {
+		// TODO: Notify
 		n.childNodes.append(newNode)
+		n.notify(n.addedNodeEvent(newNode))
 	} else {
 		i := slices.Index(n.childNodes.All(), referenceNode)
 		if i == -1 {
 			return nil, errors.New("Reference node not found")
 		}
+		// TODO: Notify
 		n.childNodes.setNodes(slices.Insert(n.childNodes.All(), i, newNode))
 	}
 	removeNodeFromParent(newNode)
@@ -494,3 +538,17 @@ func (n *node) RenderChildren(builder *strings.Builder) {
 }
 
 func (n *node) String() string { return n.self.NodeName() }
+
+func (n *node) notify(event ChangeEvent) {
+	event.Source = n.self
+	for _, o := range n.observers {
+		o.Process(event)
+	}
+}
+
+func (n *node) addedNodeEvent(newNode Node) ChangeEvent {
+	return ChangeEvent{
+		Target:     n.self,
+		AddedNodes: &nodeList{Entity: n.Entity, nodes: []Node{newNode}},
+	}
+}
