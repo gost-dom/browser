@@ -2,6 +2,7 @@ package mutation
 
 import (
 	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/internal/gosterror"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
 )
 
@@ -39,6 +40,12 @@ func (o *Observer) Observe(node dom.Node, options ...func(*Options)) error {
 	o.options = Options{}
 	for _, opt := range options {
 		opt(&o.options)
+	}
+	valid := o.options.ChildList || o.options.Attributes || o.options.CharacterData
+	if !valid {
+		return gosterror.NewTypeError(
+			"MutationObserver.observe: One of 'childList', 'attributes', 'characterData' must not be false",
+		)
 	}
 
 	o.closer = node.Observe(o)

@@ -6,7 +6,9 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/dom/mutation"
+	. "github.com/gost-dom/browser/dom/mutation"
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/gosterror"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -65,6 +67,31 @@ func (s *MutationObserverTestSuite) TestAddDomNode() {
 	// s.Assert().Equal(1, len(recorder.Targets()))
 	s.Assert().Equal([]dom.Node{body}, recorder.Targets())
 	s.Assert().Equal([]dom.Node{div}, recorder.AddedNodes())
+}
+
+func TestValidOptions(t *testing.T) {
+	assert := assert.New(t)
+	var rec = new(MutationRecorder)
+
+	doc := html.NewHTMLDocument(nil)
+
+	assert.NoError(NewObserver(rec).Observe(doc, ChildList), "Error when including ChildList")
+	assert.NoError(NewObserver(rec).Observe(doc, Attributes), "Error when including Attributes")
+	assert.NoError(NewObserver(rec).Observe(doc, CharacterData),
+		"Error when including CharacterData")
+
+	observer := mutation.NewObserver(rec)
+	assert.ErrorIs(observer.Observe(doc), gosterror.TypeError{},
+		"Error when calling with no arguments")
+	assert.ErrorIs(
+		NewObserver(rec).Observe(doc,
+			Subtree,
+			AttributeOldValue,
+			CharacterDataOldValue,
+			AttributeFilter([]string{"dummy"})),
+		gosterror.TypeError{},
+		"Error when _all_ non other options than one of the 3 required is passed",
+	)
 }
 
 func (s *MutationObserverTestSuite) TestRemoveDomNode() {
