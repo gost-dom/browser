@@ -54,47 +54,7 @@ func (i IdlInterface) Generate() *jen.Statement {
 		}
 	}
 	for _, o := range i.Operations {
-		if o.Stringifier && o.Name == "" {
-			continue
-		}
-		name := o.Name
-		opRules := i.Rules.Operations[name]
-		if !o.Static {
-			args := make([]generators.Generator, len(o.Arguments))
-			for i, a := range o.Arguments {
-				argRules, hasArgRules := opRules.Arguments[a.Name]
-				if hasArgRules {
-					args[i] = IdlType(argRules.Type)
-				} else {
-					args[i] = IdlType(a.Type)
-				}
-				if a.Variadic {
-					args[i] = generators.Raw(
-						jen.Id(a.Name).Add(jen.Op("...").Add(args[i].Generate())),
-					)
-				}
-
-				if i < len(o.Arguments)-1 {
-					nextArg := o.Arguments[i+1]
-					if nextArg.Optional {
-						fields = append(fields, generators.Raw(
-							jen.Id(UpperCaseFirstLetter(name)).
-								Params(generators.ToJenCodes(args[0:i+1])...).
-								Add(o.ReturnParams())))
-						name = name + UpperCaseFirstLetter(nextArg.Name)
-					}
-				}
-			}
-
-			if opRules.DocComments != "" {
-				fields = append(fields, generators.Raw(jen.Comment(opRules.DocComments)))
-			}
-			fields = append(fields, generators.Raw(
-				jen.Id(UpperCaseFirstLetter(name)).
-					Params(generators.ToJenCodes(args)...).
-					Add(o.ReturnParams()),
-			))
-		}
+		fields = append(fields, o)
 	}
 	return jen.Type().Add(jen.Id(i.Name)).Interface(generators.ToJenCodes(fields)...)
 }
@@ -126,8 +86,55 @@ func (t OutputType) Generate() *jen.Statement {
 type IdlInterfaceOperation struct {
 	idl.Operation
 	ReturnType     IdlType
+	Rules          customrules.OperationRule
 	ReturnOverride *typerule.TypeRule
 	HasError       bool
+}
+
+func (o IdlInterfaceOperation) Generate() *jen.Statement {
+	if o.Stringifier && o.Name == "" {
+		return nil
+	}
+	name := o.Name
+	opRules := o.Rules
+	result := generators.StatementList()
+	if !o.Static {
+		args := make([]generators.Generator, len(o.Arguments))
+		for i, a := range o.Arguments {
+			argRules, hasArgRules := opRules.Arguments[a.Name]
+			if hasArgRules {
+				args[i] = IdlType(argRules.Type)
+			} else {
+				args[i] = IdlType(a.Type)
+			}
+			if a.Variadic {
+				args[i] = generators.Raw(
+					jen.Id(a.Name).Add(jen.Op("...").Add(args[i].Generate())),
+				)
+			}
+
+			if i < len(o.Arguments)-1 {
+				nextArg := o.Arguments[i+1]
+				if nextArg.Optional {
+					result.Append(generators.Raw(
+						jen.Id(UpperCaseFirstLetter(name)).
+							Params(generators.ToJenCodes(args[0 : i+1])...).
+							Add(o.ReturnParams())))
+					name = name + UpperCaseFirstLetter(nextArg.Name)
+				}
+			}
+		}
+
+		if opRules.DocComments != "" {
+			result.Append(generators.Raw(jen.Comment(opRules.DocComments)))
+		}
+		result.Append(generators.Raw(
+			jen.Id(UpperCaseFirstLetter(name)).
+				Params(generators.ToJenCodes(args)...).
+				Add(o.ReturnParams()),
+		))
+	}
+	return result.Generate()
 }
 
 // ReturnParams return multiple parameters for an operation's return types.

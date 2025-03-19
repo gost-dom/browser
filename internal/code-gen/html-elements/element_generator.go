@@ -150,6 +150,7 @@ func (gen baseGenerator) GenerateInterface() g.Generator {
 			IdlInterfaceOperation{
 				o,
 				IdlType(o.ReturnType),
+				operationRule,
 				operationRule.ReturnType,
 				operationRule.HasError,
 			},
