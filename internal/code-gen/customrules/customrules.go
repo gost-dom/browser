@@ -100,6 +100,16 @@ var rules = CustomRules{
 			"querySelector":    parentNodeQueryOperation,
 			"querySelectorAll": parentNodeQueryOperation,
 		}},
+		"MutationObserver": {Operations: OperationRules{
+			"observe": {
+				HasError: true,
+				Arguments: ArgumentRules{
+					"options": {
+						Type:     idl.Type{Name: "func(*MutationObserverInit)"},
+						Variadic: true,
+					},
+				}},
+		}},
 	},
 	"html": {
 		"Location": {Operations: OperationRules{

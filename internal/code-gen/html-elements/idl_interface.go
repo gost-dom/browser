@@ -179,6 +179,9 @@ type IdlInterfaceOperationArgument struct {
 
 func (a IdlInterfaceOperationArgument) Name() string   { return a.Argument.Name }
 func (a IdlInterfaceOperationArgument) Type() idl.Type { return a.Argument.Type }
-func (a IdlInterfaceOperationArgument) Variadic() bool { return a.Argument.Variadic }
-func (a IdlInterfaceOperationArgument) Optional() bool { return a.Argument.Optional }
+func (a IdlInterfaceOperationArgument) Variadic() bool {
+	return a.Argument.Variadic || a.Rules.Variadic
+}
+
+func (a IdlInterfaceOperationArgument) Optional() bool { return a.Argument.Optional && !a.Variadic() }
 func (a IdlInterfaceOperationArgument) Ignore() bool   { return a.Rules.Ignore }

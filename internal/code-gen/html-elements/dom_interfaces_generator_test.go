@@ -25,3 +25,17 @@ func TestGenerateStructOfReadOnlyProperties(t *testing.T) {
 	OldValue           string
 }`))
 }
+
+func TestGenerationOfExplicitVariadicArgument(t *testing.T) {
+	t.Parallel()
+
+	expect := newGomega(t)
+
+	g, err := getFileGenerator("dominterfaces", "mutation_observer")
+	expect(err).ToNot(HaveOccurred())
+	expect(g).To(HaveRenderedSubstring("type MutationObserver interface {\n"))
+	expect(
+		g,
+	).To(HaveRenderedSubstring("\n\tObserve(dom.Node, ...func(*MutationObserverInit)) error\n"))
+
+}

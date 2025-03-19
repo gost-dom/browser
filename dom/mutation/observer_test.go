@@ -13,7 +13,7 @@ import (
 )
 
 func TestMutationObserverConformsToTheIDLSpecs(t *testing.T) {
-	var observer any = &mutation.Observer{}
+	var observer dominterfaces.MutationObserver = &mutation.Observer{}
 
 	_, observerConforms := observer.(dominterfaces.MutationObserver)
 	assert.True(t, observerConforms,
@@ -56,7 +56,7 @@ func (s *MutationObserverTestSuite) TestAddDomNode() {
 	doc := html.NewHTMLDocument(nil)
 	body := doc.Body()
 
-	observer.ObserveOptions(body, mutation.Options{ChildList: true})
+	observer.Observe(body, mutation.ChildList)
 
 	div := doc.CreateElement("div")
 	body.AppendChild(div)

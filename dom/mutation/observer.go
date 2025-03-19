@@ -11,8 +11,6 @@ type Callback interface {
 	HandleMutation([]Record, *Observer)
 }
 
-type Options = dominterfaces.MutationObserverInit
-
 type CallbackFunc func([]Record, *Observer)
 
 func (f CallbackFunc) HandleMutation(r []Record, o *Observer) { f(r, o) }
@@ -25,20 +23,29 @@ type Observer struct {
 	Callback Callback
 	pending  []Record
 	closer   dom.Closer
+	options  Options
 }
 
 func NewObserver(cb Callback) *Observer {
 	return &Observer{Callback: cb}
 }
 
-func (o *Observer) Observe(dom.Node) {
-	panic("This function should be removed, empty options are invalid. Why it the value optional?")
-}
-
 // Start observing for changes for a specific dom node.
 //
 // Panics if the observer does not have a handler.
-func (o *Observer) ObserveOptions(node dom.Node, options Options) {
+func (o *Observer) Observe(node dom.Node, options ...func(*Options)) error {
+	o.assertCanObserve()
+
+	o.options = Options{}
+	for _, opt := range options {
+		opt(&o.options)
+	}
+
+	o.closer = node.Observe(o)
+	return nil
+}
+
+func (o Observer) assertCanObserve() {
 	if o.Callback == nil {
 		// Why panic and not ignore?
 		//
@@ -62,7 +69,6 @@ func (o *Observer) ObserveOptions(node dom.Node, options Options) {
 	if o.closer != nil {
 		panic("Observer.ObserveOptions: Observer is already observing a DOM node")
 	}
-	o.closer = node.Observe(o)
 }
 
 func (o *Observer) Disconnect() {
