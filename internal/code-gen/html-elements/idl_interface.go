@@ -87,41 +87,48 @@ func (t OutputType) Generate() *jen.Statement {
 // [generators.Generator] for generating the method, potentially multiple
 // methods if the method is overloaded in the source.
 type IdlInterfaceOperation struct {
-	idl.Operation
-	ReturnType IdlType
-	Rules      customrules.OperationRule
+	IdlOperation idl.Operation
+	Arguments    []IdlInterfaceOperationArgument
+	ReturnType   IdlType
+	Rules        customrules.OperationRule
 }
 
+func (o IdlInterfaceOperation) Stringifier() bool { return o.IdlOperation.Stringifier }
+func (o IdlInterfaceOperation) Name() string      { return o.IdlOperation.Name }
+func (o IdlInterfaceOperation) Static() bool      { return o.IdlOperation.Static }
+
 func (o IdlInterfaceOperation) Generate() *jen.Statement {
-	if o.Stringifier && o.Name == "" {
+	if o.Stringifier() && o.Name() == "" {
 		return nil
 	}
-	name := o.Name
+	name := o.Name()
 	opRules := o.Rules
 	result := generators.StatementList()
-	if !o.Static {
-		args := make([]generators.Generator, len(o.Arguments))
+	if !o.Static() {
+		args := make([]generators.Generator, 0, len(o.Arguments))
 		for i, a := range o.Arguments {
-			argRules, hasArgRules := opRules.Arguments[a.Name]
-			if hasArgRules {
-				args[i] = IdlType(argRules.Type)
-			} else {
-				args[i] = IdlType(a.Type)
+			if a.Ignore() {
+				continue
 			}
-			if a.Variadic {
-				args[i] = generators.Raw(
-					jen.Id(a.Name).Add(jen.Op("...").Add(args[i].Generate())),
+			var arg generators.Generator = IdlType(a.Type())
+			if a.Rules.OverridesType() {
+				arg = IdlType(a.Rules.Type)
+			}
+			if a.Variadic() {
+				arg = generators.Raw(
+					jen.Id(a.Name()).Add(jen.Op("...").Add(arg.Generate())),
 				)
 			}
+			args = append(args, arg)
 
 			if i < len(o.Arguments)-1 {
 				nextArg := o.Arguments[i+1]
-				if nextArg.Optional {
+				if nextArg.Optional() {
 					result.Append(generators.Raw(
 						jen.Id(UpperCaseFirstLetter(name)).
-							Params(generators.ToJenCodes(args[0 : i+1])...).
+							Params(generators.ToJenCodes(args)...).
 							Add(o.ReturnParams())))
-					name = name + UpperCaseFirstLetter(nextArg.Name)
+					name = name + UpperCaseFirstLetter(nextArg.Name())
 				}
 			}
 		}
@@ -166,3 +173,14 @@ func (o IdlInterfaceOperation) ReturnParams() *jen.Statement {
 /* -------- IdlInterfaceInclude -------- */
 
 type IdlInterfaceInclude struct{ idl.Interface }
+
+type IdlInterfaceOperationArgument struct {
+	Argument idl.Argument
+	Rules    customrules.ArgumentRule
+}
+
+func (a IdlInterfaceOperationArgument) Name() string   { return a.Argument.Name }
+func (a IdlInterfaceOperationArgument) Type() idl.Type { return a.Argument.Type }
+func (a IdlInterfaceOperationArgument) Variadic() bool { return a.Argument.Variadic }
+func (a IdlInterfaceOperationArgument) Optional() bool { return a.Argument.Optional }
+func (a IdlInterfaceOperationArgument) Ignore() bool   { return a.Rules.Ignore }

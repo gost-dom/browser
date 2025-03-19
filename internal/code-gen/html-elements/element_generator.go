@@ -145,9 +145,22 @@ func (gen baseGenerator) GenerateInterface() g.Generator {
 			}
 		}
 		operationRule := gen.rules.Operations[o.Name]
+		getArg := func(name string) (res customrules.ArgumentRule) {
+			if operationRule.Arguments != nil {
+				res = operationRule.Arguments[name]
+			}
+			return
+		}
+		arguments := make([]IdlInterfaceOperationArgument, len(o.Arguments))
+		for i, arg := range o.Arguments {
+			arguments[i] = IdlInterfaceOperationArgument{
+				Argument: arg,
+				Rules:    getArg(arg.Name),
+			}
+		}
 		operations = append(
 			operations,
-			IdlInterfaceOperation{o, IdlType(o.ReturnType), operationRule},
+			IdlInterfaceOperation{o, arguments, IdlType(o.ReturnType), operationRule},
 		)
 	}
 	result.Attributes = attributes

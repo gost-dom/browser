@@ -48,7 +48,10 @@ type ArgumentRules map[string]ArgumentRule
 type ArgumentRule struct {
 	Type     idl.Type
 	Variadic bool
+	Ignore   bool
 }
+
+func (r ArgumentRule) OverridesType() bool { return r.Type != idl.Type{} }
 
 type AttributeTypeRule struct {
 	Name    string
@@ -116,7 +119,7 @@ var rules = CustomRules{
 			"requestSubmit": {HasError: true},
 		}},
 		"HTMLOrSVGElement": {Operations: OperationRules{
-			"focus": {Arguments: ArgumentRules{"options": {}}},
+			"focus": {Arguments: ArgumentRules{"options": {Ignore: true}}},
 		}},
 	},
 	"xhr": {
