@@ -14,7 +14,7 @@ type ParentNode interface {
 
 	   See also: https://developer.mozilla.org/en-US/docs/Web/API/Element
 	*/
-	Prepend(nodes ...Node) error
+	Prepend(...Node) error
 	/*
 	   Note that the IDL operation accepts either string or node values. This interface
 	   requires an explicit a [Node]. Use [Document.CreateText] to convert a string to
@@ -22,7 +22,7 @@ type ParentNode interface {
 
 	   See also: https://developer.mozilla.org/en-US/docs/Web/API/Element
 	*/
-	Append(nodes ...Node) error
+	Append(...Node) error
 	/*
 	   Note that the IDL operation accepts either string or node values. This interface
 	   requires an explicit a [Node]. Use [Document.CreateText] to convert a string to
@@ -30,7 +30,7 @@ type ParentNode interface {
 
 	   See also: https://developer.mozilla.org/en-US/docs/Web/API/Element
 	*/
-	ReplaceChildren(nodes ...Node) error
+	ReplaceChildren(...Node) error
 	QuerySelector(string) (Element, error)
 	QuerySelectorAll(string) (NodeList, error)
 }

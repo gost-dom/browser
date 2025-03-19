@@ -115,9 +115,7 @@ func (o IdlInterfaceOperation) Generate() *jen.Statement {
 				arg = IdlType(a.Rules.Type)
 			}
 			if a.Variadic() {
-				arg = generators.Raw(
-					jen.Id(a.Name()).Add(jen.Op("...").Add(arg.Generate())),
-				)
+				arg = generators.Raw(jen.Op("...").Add(arg.Generate()))
 			}
 			args = append(args, arg)
 

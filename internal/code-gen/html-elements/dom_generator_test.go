@@ -31,7 +31,7 @@ func (s *DomSuite) TestGenerateParentNode() {
 	generator, err := getIdlInterfaceGenerator("dom", "ParentNode")
 	s.Expect(err).ToNot(HaveOccurred())
 	output := codegentest.RenderInPackage(s.T(), packagenames.Dom, generator)
-	s.Expect(output).To(ContainSubstring("Append(nodes ...Node) error\n"))
+	s.Expect(output).To(ContainSubstring("Append(...Node) error\n"))
 }
 
 func TestGeneratedDomTypes(t *testing.T) {
