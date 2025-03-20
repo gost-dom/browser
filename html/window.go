@@ -26,9 +26,9 @@ type Clock interface {
 	Advance(time.Duration) error
 }
 
-// Describes a current browsering context
+// Describes a current browser context
 type BrowsingContext interface {
-	log.LogSource
+	Logger() *slog.Logger
 	HTTPClient() http.Client
 	LocationHREF() string
 }
@@ -41,8 +41,8 @@ type ScriptContext interface {
 	// returned.
 	Eval(script string) (any, error)
 	// Run a script. This is should be used instead of eval when the return value
-	// is not needed, as eval could generate an error if the value cannot be
-	// converted to a go-type.
+	// is not needed, as eval returns an error when the return value cannot be
+	// converted to a go type.
 	Run(script string) error
 	Clock() Clock
 	Close()

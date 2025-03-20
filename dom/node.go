@@ -128,6 +128,7 @@ type observer interface {
 type Node interface {
 	entity.ObjectIder
 	event.EventTarget
+	Logger() log.Logger
 	AppendChild(node Node) (Node, error)
 	GetRootNode(options ...GetRootNodeOptions) Node
 	ChildNodes() NodeList
@@ -213,6 +214,7 @@ func (n *node) cloneChildren() []Node {
 //
 // [MDN docs for appendChild]: https://developer.mozilla.org/en-US/docs/Web/API/Node/appendChild
 func (n *node) AppendChild(node Node) (Node, error) {
+	log.Debug(n.Logger(), "Node.AppendChild", "target", n.String(), "child", node.NodeName())
 	_, err := n.self.InsertBefore(node, nil)
 	return node, err
 }
@@ -266,7 +268,7 @@ func (c observerCloser) Close() {
 
 func (n *node) GetRootNode(options ...GetRootNodeOptions) Node {
 	if len(options) > 1 {
-		log.Warn(n.logger(), "Node.GetRootNode: composed not yet implemented")
+		log.Warn(n.Logger(), "Node.GetRootNode: composed not yet implemented")
 	}
 	if n.parent == nil {
 		return n.self
@@ -561,7 +563,7 @@ func (n *node) removedNodeEvent(nodes ...Node) ChangeEvent {
 	}
 }
 
-func (n *node) logger() *slog.Logger {
+func (n *node) Logger() *slog.Logger {
 	if docLogger, ok := n.document.(log.LogSource); ok {
 		return docLogger.Logger()
 	}

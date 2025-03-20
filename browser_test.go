@@ -158,16 +158,29 @@ func TestCookies(t *testing.T) {
 func TestLogOutput(t *testing.T) {
 	var b bytes.Buffer
 	Expect := gomega.NewWithT(t).Expect
-	logger := slog.New(slog.NewTextHandler(&b, nil))
+	logger := slog.New(slog.NewTextHandler(&b, &slog.HandlerOptions{
+		Level: slog.LevelDebug,
+	}))
 	browser := New(
 		WithHandler(http.HandlerFunc(cookieHandler)),
 		WithLogger(logger),
 	)
-	logger.Info("Test")
 	win, err := browser.Open("http://localhost/")
 	Expect(err).ToNot(HaveOccurred())
 	win.Run("console.log('foo bar')")
 	Expect(b.String()).To(ContainSubstring("foo bar"))
+	// Expect(b.String()).ToNot(ContainSubstring("Dispatch event"))
+
+	b.Reset()
+	win.DispatchEvent(event.NewCustomEvent("dummy", event.CustomEventInit{}))
+	Expect(b.String()).To(ContainSubstring(`msg="Dispatch event"`))
+
+	b.Reset()
+	win.Document().Body().AppendChild(win.Document().CreateElement("div"))
+	win.Document().Body().DispatchEvent(event.NewCustomEvent("dummy", event.CustomEventInit{}))
+	Expect(b.String()).To(ContainSubstring(`msg=Node.AppendChild`))
+	Expect(b.String()).To(ContainSubstring(`msg="Dispatch event"`))
+	b.Reset()
 }
 
 func cookieHandler(w http.ResponseWriter, r *http.Request) {

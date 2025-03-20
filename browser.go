@@ -111,6 +111,7 @@ func (b *Browser) createOptions(location string) WindowOptions {
 		ScriptHost:   b.ScriptHost,
 		HttpClient:   b.Client,
 		BaseLocation: location,
+		Logger:       b.Logger,
 	}
 }
 
