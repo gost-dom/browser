@@ -20,6 +20,18 @@ type browserConfig struct {
 type BrowserOption func(*browserConfig)
 
 func WithLogger(l *slog.Logger) BrowserOption { return func(b *browserConfig) { b.logger = l } }
+
+// WithHandler configures the browser's [http.Client] to use an
+// [http.Roundtripper] that bypasses the TCP stack and calls directly into the
+// specified handler as a normal function call.
+//
+// Note: There is a current limitation that NO requests from the browser will be
+// sent when using this. So sites will not work if they
+//   - Depend on content from CDN
+//   - Depend on an external service, e.g., an identity provider.
+//
+// That is a limitation that was the result of prioritising more important, and
+// higher risk features.
 func WithHandler(h http.Handler) BrowserOption {
 	return func(b *browserConfig) { b.client = NewHttpClientFromHandler(h) }
 }
@@ -60,22 +72,11 @@ func (b *Browser) Open(location string) (window Window, err error) {
 	return
 }
 
-// NewFromHandler initialises a new [Browser] with the default script engine and
-// sets up the internal [http.Client] used with an [http.Roundtripper] that
-// bypasses the TCP stack and calls directly into the
+// NewFromHandler initialises a new [Browser] with with an [http.Handler]
 //
-// Note: There is a current limitation that NO requests from the browser will be
-// sent when using this. So sites will not work if they
-//   - Depend on content from CDN
-//   - Depend on an external service, e.g., an identity provider.
-//
-// That is a limitation that was the result of prioritising more important, and
-// higher risk features.
+// Deprecated: Prefer browser.New(browser.WithHandler(...)) instead.
 func NewFromHandler(handler http.Handler) *Browser {
-	return &Browser{
-		ScriptHost: v8host.New(),
-		Client:     NewHttpClientFromHandler(handler),
-	}
+	return New(WithHandler(handler))
 }
 
 // New initialises a new [Browser] with the default script engine.
