@@ -5,9 +5,8 @@ import (
 	"testing"
 
 	"github.com/gost-dom/browser/dom"
-	"github.com/gost-dom/browser/dom/mutation"
-	. "github.com/gost-dom/browser/dom/mutation"
 	"github.com/gost-dom/browser/html"
+	. "github.com/gost-dom/browser/internal/dom/mutation"
 	"github.com/gost-dom/browser/internal/gosterror"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
 	"github.com/onsi/gomega"
@@ -16,7 +15,7 @@ import (
 )
 
 func TestMutationObserverConformsToTheIDLSpecs(t *testing.T) {
-	var observer dominterfaces.MutationObserver = &mutation.Observer{}
+	var observer dominterfaces.MutationObserver = &Observer{}
 
 	_, observerConforms := observer.(dominterfaces.MutationObserver)
 	assert.True(t, observerConforms,
@@ -29,12 +28,12 @@ type MutationObserverTestSuite struct {
 }
 
 type MutationRecorder struct {
-	Records []mutation.Record
+	Records []Record
 }
 
 func (r *MutationRecorder) Clear() { r.Records = nil }
 
-func (r *MutationRecorder) HandleMutation(recs []mutation.Record, _ *mutation.Observer) {
+func (r *MutationRecorder) HandleMutation(recs []Record, _ *Observer) {
 	r.Records = append(r.Records, recs...)
 }
 
@@ -68,12 +67,12 @@ func (r MutationRecorder) RemovedNodes() []dom.Node {
 
 func (s *MutationObserverTestSuite) TestObserveChildListNoSubtree() {
 	var recorder MutationRecorder
-	observer := mutation.NewObserver(&recorder)
+	observer := NewObserver(&recorder)
 
 	doc := html.NewHTMLDocument(nil)
 	body := doc.Body()
 
-	observer.Observe(body, mutation.ChildList)
+	observer.Observe(body, ChildList)
 
 	div := doc.CreateElement("div")
 	div.SetAttribute("id", "parent")
@@ -99,14 +98,14 @@ func (s *MutationObserverTestSuite) TestObserveChildListNoSubtree() {
 
 func (s *MutationObserverTestSuite) TestObserveChildListWithSubtree() {
 	var recorder MutationRecorder
-	observer := mutation.NewObserver(&recorder)
+	observer := NewObserver(&recorder)
 
 	doc := html.NewHTMLDocument(nil)
 	body := doc.Body()
 
 	div := doc.CreateElement("div")
 	body.AppendChild(div)
-	observer.Observe(body, mutation.ChildList, mutation.Subtree)
+	observer.Observe(body, ChildList, Subtree)
 
 	child := doc.CreateElement("div")
 	div.AppendChild(child)
@@ -127,7 +126,7 @@ func TestValidOptions(t *testing.T) {
 	assert.NoError(NewObserver(rec).Observe(doc, CharacterData),
 		"Error when including CharacterData")
 
-	observer := mutation.NewObserver(rec)
+	observer := NewObserver(rec)
 	assert.ErrorIs(observer.Observe(doc), gosterror.TypeError{},
 		"Error when calling with no arguments")
 	assert.ErrorIs(
