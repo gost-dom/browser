@@ -158,10 +158,6 @@ func (s *ElementTestSuite) TestTextContent() {
 	s.Assert().Equal(NodeTypeText, d.ChildNodes().Item(0).NodeType())
 }
 
-func (s *ElementTestSuite) TestSetTextContentRemovesChildren() {
-	s.T().Skip("Not implemented")
-}
-
 func TestElement(t *testing.T) {
 	t.Parallel()
 	suite.Run(t, new(ElementTestSuite))

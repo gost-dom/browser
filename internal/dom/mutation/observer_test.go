@@ -140,10 +140,6 @@ func TestValidOptions(t *testing.T) {
 	)
 }
 
-func (s *MutationObserverTestSuite) TestRemoveDomNode() {
-	s.T().Skip("TODO: Implement")
-}
-
 func Test(t *testing.T) {
 	suite.Run(t, new(MutationObserverTestSuite))
 }
