@@ -120,7 +120,7 @@ type ChangeEvent struct {
 	RemovedNodes NodeList
 }
 
-type Observer interface {
+type observer interface {
 	Process(ChangeEvent)
 }
 
@@ -160,7 +160,7 @@ type Node interface {
 	// overriding behaviour in super-classes. This is not a behaviour that Go has.
 	SetSelf(node Node)
 
-	Observe(Observer) Closer
+	Observe(observer) Closer
 
 	getSelf() Node
 	setParent(Node)
@@ -180,7 +180,7 @@ type node struct {
 	childNodes NodeList
 	parent     Node
 	document   Document
-	observers  []Observer
+	observers  []observer
 }
 
 func newNode(ownerDocument Document) node {
@@ -240,7 +240,7 @@ func (n *node) InsertBefore(newChild Node, referenceNode Node) (Node, error) {
 
 func (n *node) ChildNodes() NodeList { return n.childNodes }
 
-func (n *node) Observe(observer Observer) Closer {
+func (n *node) Observe(observer observer) Closer {
 	if slices.Contains(n.observers, observer) {
 		panic("Observer already added to this node")
 	}
@@ -248,13 +248,13 @@ func (n *node) Observe(observer Observer) Closer {
 	return observerCloser{n, observer}
 }
 
-func (n *node) removeObserver(o Observer) {
-	n.observers = slices.DeleteFunc(n.observers, func(x Observer) bool { return o == x })
+func (n *node) removeObserver(o observer) {
+	n.observers = slices.DeleteFunc(n.observers, func(x observer) bool { return o == x })
 }
 
 type observerCloser struct {
 	n *node
-	o Observer
+	o observer
 }
 
 func (c observerCloser) Close() {
