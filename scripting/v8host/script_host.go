@@ -301,8 +301,9 @@ func New(opts ...HostOption) *V8ScriptHost {
 		opt(&config)
 	}
 	host := &V8ScriptHost{
-		mu:  new(sync.Mutex),
-		iso: v8.NewIsolate(),
+		mu:     new(sync.Mutex),
+		iso:    v8.NewIsolate(),
+		logger: config.logger,
 	}
 	host.inspectorClient = v8.NewInspectorClient(consoleAPIMessageFunc(host.consoleAPIMessage))
 	host.inspector = v8.NewInspector(host.iso, host.inspectorClient)

@@ -1,7 +1,9 @@
 package browser_test
 
 import (
+	"bytes"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"testing"
 
@@ -135,7 +137,7 @@ func (s *CookiesTestSuite) TestCookiesArePersistedInSameBrowser() {
 
 func (s *CookiesTestSuite) TestCookiesAreNotReusedInNewBrowser() {
 	Expect := gomega.NewWithT(s.T()).Expect
-	browser := NewBrowserFromHandler(http.HandlerFunc(cookieHandler))
+	browser := New(WithHandler(http.HandlerFunc(cookieHandler)))
 	win, err := browser.Open("http://localhost/")
 	Expect(err).ToNot(HaveOccurred())
 	el := win.Document().GetElementById("gost")
@@ -151,6 +153,21 @@ func (s *CookiesTestSuite) TestCookiesAreNotReusedInNewBrowser() {
 
 func TestCookies(t *testing.T) {
 	suite.Run(t, new(CookiesTestSuite))
+}
+
+func TestLogOutput(t *testing.T) {
+	var b bytes.Buffer
+	Expect := gomega.NewWithT(t).Expect
+	logger := slog.New(slog.NewTextHandler(&b, nil))
+	browser := New(
+		WithHandler(http.HandlerFunc(cookieHandler)),
+		WithLogger(logger),
+	)
+	logger.Info("Test")
+	win, err := browser.Open("http://localhost/")
+	Expect(err).ToNot(HaveOccurred())
+	win.Run("console.log('foo bar')")
+	Expect(b.String()).To(ContainSubstring("foo bar"))
 }
 
 func cookieHandler(w http.ResponseWriter, r *http.Request) {

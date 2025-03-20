@@ -12,9 +12,17 @@ import (
 	"github.com/gost-dom/browser/scripting/v8host"
 )
 
-type BrowserOption func(*Browser)
+type browserConfig struct {
+	client http.Client
+	logger *slog.Logger
+}
 
-func Logger(l *slog.Logger) BrowserOption { return func(b *Browser) { b.Logger = l } }
+type BrowserOption func(*browserConfig)
+
+func WithLogger(l *slog.Logger) BrowserOption { return func(b *browserConfig) { b.logger = l } }
+func WithHandler(h http.Handler) BrowserOption {
+	return func(b *browserConfig) { b.client = NewHttpClientFromHandler(h) }
+}
 
 // Pretty stupid right now, but should _probably_ allow handling multiple
 // windows/tabs. This used to be the case for _some_ identity providers, but I'm
@@ -24,6 +32,13 @@ type Browser struct {
 	ScriptHost ScriptHost
 	Logger     log.Logger
 	windows    []Window
+}
+
+func (b *Browser) NewWindow() Window {
+	window := html.NewWindow(b.createOptions(""))
+	b.windows = append(b.windows, window)
+	return window
+
 }
 
 // Open will open a new [html.Window], loading the specified location. If the
@@ -65,12 +80,14 @@ func NewFromHandler(handler http.Handler) *Browser {
 
 // New initialises a new [Browser] with the default script engine.
 func New(options ...BrowserOption) *Browser {
-	result := &Browser{
-		ScriptHost: v8host.New(),
-		Client:     NewHttpClient(),
+	config := &browserConfig{client: NewHttpClient()}
+	for _, o := range options {
+		o(config)
 	}
-	for _, opt := range options {
-		opt(result)
+	result := &Browser{
+		Client:     config.client,
+		Logger:     config.logger,
+		ScriptHost: v8host.New(v8host.WithLogger(config.logger)),
 	}
 	return result
 }
