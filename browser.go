@@ -64,7 +64,7 @@ func NewFromHandler(handler http.Handler) *Browser {
 }
 
 // New initialises a new [Browser] with the default script engine.
-func New(options ...func(*Browser)) *Browser {
+func New(options ...BrowserOption) *Browser {
 	result := &Browser{
 		ScriptHost: v8host.New(),
 		Client:     NewHttpClient(),
