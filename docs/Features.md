@@ -21,11 +21,9 @@ Opening windows with isolated script context, sharing a cookie store.
 The browser supports plain JavaScript, either as content in a `<script>`
 element, or `<script src="">`.
 
-### Script loading
-
 - `async` or `defer` attributes are ignored, and the script is executed when
 mounted in the DOM. 
-- ESM is not supported.
+- ESM is not supported, [#64](https://github.com/gost-dom/browser/issues/64).
 - WASM is not supported.
 
 ### Script runtime
@@ -55,9 +53,10 @@ implementations to be build independently.
 
 ### DOM API
 
-- Only supports HTML documents. XML and XHTML documents, as well as namespaces are not supported.
+- Only supports HTML documents. No support for XML or XHTML documents, as well as namespaces.
 - `Element.outerHTML` and `innerHTML` output is not properly escaped.
 - No support for shadow DOM.
+- MutationObserver - [In progress](https://github.com/gost-dom/browser/issues/65)
 
 ### HTML API
 
@@ -111,4 +110,4 @@ be directed back to Go code, see [Getting started](./Getting-started.md)
 
 ### History
 
-- Updating history does not cause the browser to navigate
+- Setting attributes on `window.history` has no effect, i.e., it doesn't navigate.
