@@ -92,7 +92,7 @@ The list of supported user interaction is yet quite limited
 
 ### URL API
 
-- Doesn't support object URLs
+- Doesn't support object URLs https://github.com/gost-dom/browser/issues/69
 
 ### XHR API
 

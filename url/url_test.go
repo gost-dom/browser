@@ -113,14 +113,6 @@ func (s *URLTestSuite) TestParseURLWithBase() {
 	).To(HaveHref("http://bar.example.com/bar#baz"))
 }
 
-func (s *URLTestSuite) TestCreateObjectURL() {
-	s.T().Skip("URL.CreateObjectURL not yet implemented")
-}
-
-func (s *URLTestSuite) TestRevokeObjectURL() {
-	s.T().Skip("URL.CreateObjectURL not yet implemented")
-}
-
 func (s *URLTestSuite) TestSearch() {
 	u := ParseURL("https://example.com:1234/path/name?foo=bar")
 	u.SetSearch("q=help")
