@@ -17,9 +17,11 @@ set -e
 # 1.9, but a 2.0 is already release, 2.0 shouldn't be merged to this branch and
 # not reachable from here)
 BASE_VERSION=$(git tag --merged | sort -V | tail -1)
+echo "Base version: $BASE_VERSION"
 
 pnpm exec commit-and-tag-version
 
+exit 0
 
 # Hmm for some reason the following fails to extract the suggested version from
 # gorelease output on github, but works locally.
