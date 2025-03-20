@@ -20,7 +20,8 @@ func NewHTMLScriptElement(ownerDocument HTMLDocument) HTMLElement {
 
 func (e *htmlScriptElement) Connected() {
 	var script = ""
-	if src, hasSrc := e.GetAttribute("src"); !hasSrc {
+	src, hasSrc := e.GetAttribute("src")
+	if !hasSrc {
 		script = e.TextContent()
 	} else {
 		window, _ := e.htmlDocument.getWindow().(*window)
@@ -39,7 +40,10 @@ func (e *htmlScriptElement) Connected() {
 		script = string(buf.Bytes())
 
 	}
-	e.window().Run(script)
+	if err := e.window().Run(script); err != nil {
+		log.Error(e.Logger(), "Script error", "src", src)
+	}
+
 }
 
 func (e *htmlScriptElement) AppendChild(n dom.Node) (dom.Node, error) {

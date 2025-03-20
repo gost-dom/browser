@@ -177,7 +177,7 @@ func (e *eventTarget) dispatchEvent(event *Event, capture bool) {
 		)
 		if l.Capture == capture {
 			if err := l.Handler.HandleEvent(event); err != nil {
-				e.handleError(err)
+				e.handleError(event, err)
 			}
 			if l.Once {
 				listeners = slices.Delete(listeners, i, i+1)
@@ -188,11 +188,11 @@ func (e *eventTarget) dispatchEvent(event *Event, capture bool) {
 	}
 }
 
-func (e *eventTarget) handleError(err error) {
+func (e *eventTarget) handleError(event *Event, err error) {
 	log.Error(e.logger(),
 		"eventTarget.dispatchEvent: Error occurred in event handler",
-		"error",
-		err.Error(),
+		"type", event.Type,
+		"error", err.Error(),
 	)
 	e.dispatchError(err)
 }
