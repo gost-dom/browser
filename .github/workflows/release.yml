@@ -1,3 +1,6 @@
+# Builds and verifies the project.
+# Create a changelog based on commit messages, commits, and tags
+# Calculates the new version based on conventional commit.
 name: Release
 
 on:
