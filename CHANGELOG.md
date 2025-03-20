@@ -1,6 +1,13 @@
 # Changelog - Gost-DOM
 
 
+## [0.5.1](https://github.com/gost-dom/browser/compare/v0.5.0...v0.5.1) (2025-03-20)
+
+
+### Features
+
+* Browser-scoped logger ([a401acc](https://github.com/gost-dom/browser/commit/a401accf677b1da49a16b1a9e6782dcedb1518d0))
+
 ## [0.5.0](https://github.com/gost-dom/browser/compare/v0.4.1...v0.5.0) (2025-03-16)
 
 
