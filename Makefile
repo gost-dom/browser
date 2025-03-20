@@ -7,6 +7,12 @@ GOW_FLAGS := $(RAW)
 # Expects an existing stable version of `gow`.
 GOW := gow $(GOW_FLAGS)
 
+.PHONY: changes
+changes:
+	echo "Changes since \c"
+	git tag --merged | sort -V | tail -1
+	gorelease -base=`git tag --merged | sort -V | tail -1`
+
 .PHONY: main
 main: codegen-watch
 
