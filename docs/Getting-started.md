@@ -210,9 +210,26 @@ corresponds to the `class` content attribute is not called `class` but `classNam
 
 ## Logging
 
-You can inject an `log/slog.Logger` calling `SetDefaultLogger` in
-the `browser/logger` package.
+By default, Gost does not write to stdout. You can inject a global logger
+`*log/slog.Logger` calling `SetDefaultLogger` in the `browser/logger` package.
 
-This works on a global scale. A future enhancement might be to allow injecting
-the logger into a browser, allowing tests more control of log output on a
-test-by-test case.
+Each browser also supports you to inject a browser scoped logger.
+
+```
+browser := browser.New(
+    browser.WithLogger(logger), // *slog.Logger instance
+    browser.WithHandler(rootHTTPHandler),
+)
+win, _ := browser.Open(url)
+```
+
+### Log levels and verbosity
+
+There isn't a concrete logging strategy, except all error cases should be
+logged.
+
+- Most JavaScript API calls will log a debug statement.
+- Some internal Go calls will log at the debug level.
+- Some high level functions log at info level, e.g., `Window.Navigate`.
+- `console` functions will log with the appropriate level.
+- Errors, including unhandled JavaScript errors will generate error logs
