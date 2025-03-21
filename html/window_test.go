@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
@@ -72,6 +73,10 @@ func (s *WindowNavigationTestSuite) SetupTest() {
 		)
 		w.Write([]byte(respBody))
 	})
+	m.HandleFunc("/infinite-redirects", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/infinite-redirects", 301)
+	})
+
 	s.win = htmltest.NewWindowHelper(s.T(), NewWindowFromHandler(m))
 	s.win.Navigate("https://example.com/page-1")
 }
@@ -84,4 +89,9 @@ func (s *WindowNavigationTestSuite) TestRedirectGetRequests() {
 	s.Assert().Equal("/page-1", s.win.Location().Pathname())
 	s.win.HTMLDocument().GetHTMLElementById("link").Click()
 	s.Assert().Equal("https://example.com/new-page-2", s.win.Location().Href())
+}
+
+func (s *WindowNavigationTestSuite) TestInfinteRedirects() {
+	err := s.win.Navigate("/infinite-redirects")
+	s.Assert().ErrorIs(err, html.ErrTooManyRedirects, "Error is too many redirects")
 }

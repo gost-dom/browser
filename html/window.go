@@ -16,6 +16,8 @@ import (
 	"github.com/gost-dom/browser/url"
 )
 
+var ErrTooManyRedirects = errors.New("Too many redirects")
+
 type ScriptHost interface {
 	NewContext(window Window) ScriptContext
 	Close()
@@ -110,7 +112,7 @@ func newWindow(windowOptions ...WindowOption) *window {
 
 func (w *window) checkRedirect(req *http.Request, via []*http.Request) error {
 	if len(via) > 9 {
-		return errors.New("Too many redirects")
+		return ErrTooManyRedirects
 	}
 	w.history.ReplaceState(EMPTY_STATE, req.URL.String())
 	return nil
