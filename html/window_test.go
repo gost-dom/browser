@@ -2,9 +2,11 @@ package html_test
 
 import (
 	"strings"
+	"testing"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"github.com/stretchr/testify/suite"
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/dom/event"
@@ -16,257 +18,27 @@ import (
 	"github.com/gost-dom/browser/testing/testservers"
 )
 
+type WindowTestSuite struct {
+	gosttest.GomegaSuite
+}
+
+func (s *WindowTestSuite) TestDocumentIsAnHTMLDocument() {
+	win, err := NewWindowReader(strings.NewReader("<html><body></body></html>"))
+	s.Expect(err).ToNot(HaveOccurred())
+	s.Expect(win.Document().DocumentElement()).To(BeHTMLElement())
+}
+
+func (s *WindowTestSuite) TestDocumentWithDOCTYPE() {
+	win, err := NewWindowReader(strings.NewReader("<!DOCTYPE HTML><html><body></body></html>"))
+	s.Expect(err).ToNot(HaveOccurred())
+	s.Expect(win.Document().FirstChild().NodeType()).To(Equal(dom.NodeTypeDocumentType))
+}
+
+func TestWindow(t *testing.T) {
+	suite.Run(t, new(WindowTestSuite))
+}
+
 var _ = Describe("Window", func() {
-	It("Should have a document.documentElement instance of HTMLElement", func() {
-		win, err := NewWindowReader(strings.NewReader("<html><body></body></html>"))
-		Expect(err).ToNot(HaveOccurred())
-		Expect(win.Document().DocumentElement()).To(BeHTMLElement())
-	})
-
-	It("Should respect the <!DOCTYPE>", func() {
-		win, err := NewWindowReader(strings.NewReader("<!DOCTYPE HTML><html><body></body></html>"))
-		Expect(err).ToNot(HaveOccurred())
-		Expect(win.Document().FirstChild().NodeType()).To(Equal(dom.NodeTypeDocumentType))
-	})
-
-	Describe("History()", func() {
-		var win html.Window
-		var h *gosttest.EchoHandler
-
-		BeforeEach(func() {
-			h = new(gosttest.EchoHandler)
-			win = html.NewWindow(windowOptionHandler(h))
-			DeferCleanup(func() { win = nil; h = nil }) // Allow GC
-		})
-
-		It("Should have a length of one when starting", func() {
-			Expect(win.History().Length()).To(Equal(1))
-		})
-
-		It("Should have a length of two when navigating", func() {
-			Expect(win.Navigate("/page-2")).To(Succeed())
-			Expect(win.History().Length()).To(Equal(2))
-		})
-
-		It("Should reload, but keep the length on Go(0)", func() {
-			Expect(win.Navigate("/page-2")).To(Succeed())
-			Expect(win.History().Length()).To(Equal(2))
-			Expect(h.RequestCount()).To(Equal(1)) // about:blank wasn't a request
-			Expect(win.History().Go(0)).To(Succeed())
-			Expect(win.History().Length()).To(Equal(2))
-			Expect(h.RequestCount()).To(Equal(2)) // about:blank wasn't a request
-		})
-
-		It("Should have a length of two when navigating", func() {
-			Expect(win.Navigate("/page-2")).To(Succeed())
-			Expect(win.History().Length()).To(Equal(2))
-			Expect(win.Document()).To(HaveH1("/page-2"))
-		})
-
-		It("Should go back, but keep the length", func() {
-			Expect(win.Navigate("/page-2")).To(Succeed())
-			Expect(win.History().Go(-1)).To(Succeed())
-			Expect(win.Document()).To(HaveH1("Gost-DOM"))
-			Expect(win.Location().Href()).To(Equal("about:blank"))
-		})
-
-		It("Should truncate history when going forward", func() {
-			Expect(win.Navigate("/page-2")).To(Succeed())
-			Expect(win.Navigate("/page-3")).To(Succeed())
-			Expect(win.Navigate("/page-4")).To(Succeed())
-			Expect(win.Navigate("/page-5")).To(Succeed())
-			Expect(win.History().Length()).To(Equal(5))
-			Expect(win.History().Go(-3)).To(Succeed())
-			Expect(win.History().Length()).To(Equal(5))
-			Expect(win.Navigate("/page-6")).To(Succeed())
-			Expect(win.History().Length()).To(Equal(3))
-			Expect(win.Location().Pathname()).To(Equal("/page-6"))
-		})
-
-		Describe("popstate event", func() {
-			// Initial state is about:blank
-			BeforeEach(func() {
-				Expect(win.Navigate("/page-2")).To(Succeed())
-			})
-
-			It("Should do what when the target entry has a state, but was reloaded?", func() {
-				Skip("Research")
-			})
-
-			Describe("Call replaceState with state, then pustState", func() {
-				BeforeEach(func() {
-					Expect(win.History().ReplaceState("page-2 state", "")).To(Succeed())
-					Expect(win.History().PushState(EMPTY_STATE, "/page-3")).To(Succeed())
-				})
-
-				It("Should dispatch a popstate event with the state", func() {
-					var actualEvent *event.Event
-					win.AddEventListener(
-						"popstate",
-						event.NewEventHandlerFunc(func(e *event.Event) error {
-							actualEvent = e
-							return nil
-						}),
-					)
-					Expect(win.History().Go(-1)).To(Succeed())
-
-					Expect(actualEvent).ToNot(BeNil(), "Event was dispatched")
-					popEvent, ok := actualEvent.Data.(PopStateEventInit)
-					Expect(ok).To(BeTrue(), "Event is a popstateevent")
-					Expect(popEvent.State).To(BeEquivalentTo("page-2 state"), "Event state")
-				})
-			})
-		})
-
-		It("Go should return a Security error if the document is not fully active", func() {
-			Skip("TODO")
-			/*
-			   https://developer.mozilla.org/en-US/docs/Web/API/History/go
-
-			   Thrown if the associated document is not fully active, or if the
-			   provided url parameter is not a valid URL. Browsers also throttle navigations
-			   and may throw this error, generate a warning, or ignore the call if it's called
-			   too frequently
-			*/
-		})
-
-		Describe("ReplaceState", func() {
-			It("Should change 'location' but keep stack count", func() {
-				Expect(win.Navigate("/page-2")).To(Succeed())
-				Expect(win.History().Length()).To(Equal(2))
-				Expect(win.History().ReplaceState(EMPTY_STATE, "/page-3"))
-				Expect(h.RequestCount()).To(Equal(1))
-				Expect(win.History().Length()).To(Equal(2))
-				Expect(win.Location().Pathname()).To(Equal("/page-3"))
-			})
-
-			It("Should return an error on different origin", func() {
-				Skip("TODO")
-			})
-
-			It("Should keep the same URL when the href is empty", func() {
-				Skip("TODO")
-			})
-		})
-
-		Describe("PushState", func() {
-			It("Should return a Security error if the document is not fully active", func() {
-				Skip("TODO")
-				/*
-				   https://developer.mozilla.org/en-US/docs/Web/API/History/pushState
-
-				   Thrown if the associated document is not fully active, or if the
-				   provided url parameter is not a valid URL. Browsers also throttle navigations
-				   and may throw this error, generate a warning, or ignore the call if it's called
-				   too frequently
-				*/
-			})
-
-			Describe("Simple push and back", func() {
-				BeforeEach(func() {
-					Expect(win.Navigate("/page-2")).To(Succeed())
-					Expect(win.Navigate("/page-3")).To(Succeed())
-
-					Expect(win.History().Length()).To(Equal(3))
-					Expect(win.History().PushState(EMPTY_STATE, "/page-4"))
-				})
-
-				It("Should not emit a hashchange event when just adding a hash", func() {
-					eventDispatched := false
-					win.AddEventListener(
-						"hashchange",
-						event.NewEventHandlerFunc(func(e *event.Event) error {
-							eventDispatched = true
-							return nil
-						}),
-					)
-					Expect(win.History().PushState(EMPTY_STATE, "/page-4#target"))
-					Expect(eventDispatched).To(BeFalse())
-				})
-
-				It("Should change 'location' and increase stack count, without a request", func() {
-					Expect(win.History().Length()).To(Equal(4))
-					Expect(win.History().Length()).To(Equal(4))
-					Expect(win.Location().Pathname()).To(Equal("/page-4"))
-					Expect(h.RequestCount()).To(Equal(2), "No of request _after_ replaceState")
-				})
-
-				It("Navigates back without a request", func() {
-					Expect(win.History().Back()).To(Succeed())
-					Expect(win.History().Length()).To(Equal(4))
-					Expect(win.Location().Pathname()).To(Equal("/page-3"))
-					Expect(h.RequestCount()).To(Equal(2), "No of request _after_ back")
-				})
-
-				It("Should push the current URL if called with empty URL", func() {
-					Skip("TODO")
-				})
-			})
-
-			Describe("History with multiple pushState and navigation intermixed", func() {
-				BeforeEach(func() {
-					Expect(win.Navigate("/page-2")).To(Succeed())
-					Expect(win.Navigate("/page-3")).To(Succeed())
-					Expect(win.History().Length()).To(Equal(3))
-					Expect(win.History().PushState(EMPTY_STATE, "/page-4"))
-					Expect(win.History().PushState(EMPTY_STATE, "/page-5"))
-					Expect(win.Navigate("/page-6")).To(Succeed())
-					Expect(win.Navigate("/page-7")).To(Succeed())
-					Expect(win.History().PushState(EMPTY_STATE, "/page-8"))
-					Expect(win.History().PushState(EMPTY_STATE, "/page-9"))
-					Expect(win.History().Length()).To(Equal(9))
-					Expect(h.RequestCount()).To(Equal(4))
-				})
-
-				It("Should not issue an HTTP request on go(-2)", func() {
-					Expect(win.History().Go(-2)).To(Succeed())
-					Expect(win.History().Length()).To(Equal(9))
-					Expect(h.RequestCount()).To(Equal(4))
-					Expect(win.Document().GetElementById("heading")).To(HaveTextContent("/page-7"))
-				})
-
-				It("Should issue an HTTP request on go(-3)", func() {
-					Expect(win.History().Go(-3)).To(Succeed())
-					Expect(win.History().Length()).To(Equal(9))
-					Expect(h.RequestCount()).To(Equal(5))
-					Expect(win.Document().GetElementById("heading")).To(HaveTextContent("/page-6"))
-				})
-
-				Describe("After history.go(-5)", func() {
-					BeforeEach(func() {
-						Expect(win.History().Go(-5)).To(Succeed())
-					})
-
-					It("Should have loaded page 4", func() {
-						Expect(
-							win.Document().GetElementById("heading"),
-						).To(HaveTextContent("/page-4"))
-					})
-
-					It("Should have issued a new request", func() {
-						Expect(win.History().Length()).To(Equal(9))
-						Expect(h.RequestCount()).To(Equal(5))
-					})
-
-					It("Should not issue a new request on go(1)", func() {
-						Expect(win.History().Go(1)).To(Succeed())
-						Expect(win.History().Length()).To(Equal(9))
-						Expect(h.RequestCount()).To(Equal(5))
-					})
-
-					It("Should issue a new request on go(2)", func() {
-						Expect(win.History().Go(2)).To(Succeed())
-						Expect(win.History().Length()).To(Equal(9))
-						Expect(h.RequestCount()).To(Equal(6))
-						Expect(
-							win.Document().GetElementById("heading"),
-						).To(HaveTextContent("/page-6"))
-					})
-				})
-			})
-		})
-	})
-
 	Describe("Location()", func() {
 		var window Window
 
