@@ -15,6 +15,7 @@ import (
 	. "github.com/gost-dom/browser/internal/html"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 
 	"github.com/onsi/gomega/types"
@@ -216,6 +217,23 @@ func (s *XMLHTTPRequestTestSuite) TestCookieVisibility() {
 	s.Expect(
 		s.xhr.GetAllResponseHeaders(),
 	).To(HaveLines("x-test-1: value1", "x-test-2: value2", "content-type: text/plain"))
+}
+
+func TestXMLHTTPRequestRedirect(t *testing.T) {
+	m := http.NewServeMux()
+	m.Handle("GET /redirect", http.RedirectHandler("/redirect-temp", 301))
+	m.Handle("GET /redirect-temp", http.RedirectHandler("/redirected-url", 301))
+	m.HandleFunc("GET /redirected-url", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Handled"))
+	})
+	xhr := NewXmlHttpRequest(
+		stubBrowsingContext{client: gosthttp.NewHttpClientFromHandler(m)},
+		clock.New(),
+	)
+	xhr.Open("GET", "https://example.com/redirect", RequestOptionAsync(false))
+	xhr.Send()
+
+	assert.Equal(t, "https://example.com/redirected-url", xhr.ResponseURL())
 }
 
 func HaveLines(expected ...string) types.GomegaMatcher {

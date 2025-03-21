@@ -159,7 +159,7 @@ func (req *xmlHttpRequest) Status() int { return req.status }
 // be in JS wrapper layer
 func (req *xmlHttpRequest) StatusText() string { return http.StatusText(req.status) }
 
-func (req *xmlHttpRequest) ResponseURL() string { return req.url }
+func (req *xmlHttpRequest) ResponseURL() string { return req.res.Request.URL.String() }
 
 func (req *xmlHttpRequest) Response() string { return req.ResponseText() }
 
