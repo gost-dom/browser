@@ -126,15 +126,7 @@ func OpenWindowFromLocation(location string, windowOptions ...WindowOption) (Win
 		options.BaseLocation = location
 	}
 	result := newWindow(options)
-	resp, err := result.httpClient.Get(location)
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != 200 {
-		return nil, errors.New("Non-ok Response")
-	}
-	err = result.parseReader(resp.Body)
-	return result, err
+	return result, result.get(location)
 }
 
 func (w *window) initScriptEngine() {
@@ -217,14 +209,6 @@ func (w *window) Document() dom.Document {
 	return w.document
 }
 
-func (w *window) handleResponse(resp *http.Response) error {
-	if resp.StatusCode != 200 {
-		return errors.New("Non-ok Response")
-	}
-	return w.parseReader(resp.Body)
-
-}
-
 func (w *window) Navigate(href string) error {
 	log.Info(w.Logger(), "Window.navigate:", "href", href)
 	w.History().pushLoad(href)
@@ -234,11 +218,7 @@ func (w *window) Navigate(href string) error {
 		w.document = NewHTMLDocument(w)
 		return nil
 	} else {
-		resp, err := w.httpClient.Get(href)
-		if err != nil {
-			return err
-		}
-		return w.handleResponse(resp)
+		return w.get(href)
 	}
 }
 
@@ -252,20 +232,26 @@ func (w *window) reload(href string) error {
 		w.document = NewHTMLDocument(w)
 		return nil
 	} else {
-		resp, err := w.httpClient.Get(href)
-		if err != nil {
-			return err
-		}
-		return w.handleResponse(resp)
+		return w.get(href)
 	}
+}
+
+func (w *window) get(href string) (err error) {
+	if req, err := http.NewRequest("GET", href, nil); err == nil {
+		err = w.fetchRequest(req)
+	}
+	return err
 }
 
 func (w *window) fetchRequest(req *http.Request) error {
 	resp, err := w.httpClient.Do(req)
-	if err == nil {
-		err = w.handleResponse(resp)
+	if err != nil {
+		return err
 	}
-	return err
+	if resp.StatusCode != 200 {
+		return errors.New("Non-ok Response")
+	}
+	return w.parseReader(resp.Body)
 }
 
 func (w *window) LoadHTML(html string) error {
