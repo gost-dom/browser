@@ -1,6 +1,14 @@
 # Changelog - Gost-DOM
 
 
+## [0.5.2](https://github.com/gost-dom/browser/compare/v0.5.1...v0.5.2) (2025-03-22)
+
+
+### Features
+
+* Handle form post 307/308 status codes ([70fb78a](https://github.com/gost-dom/browser/commit/70fb78a96f58b78d9d3d0b6ad46202bb8c963157))
+* Improve logging of error cases ([31b6453](https://github.com/gost-dom/browser/commit/31b645333a6ada705cc1abdb8a485ab97b15f9ce))
+
 ## [0.5.1](https://github.com/gost-dom/browser/compare/v0.5.0...v0.5.1) (2025-03-20)
 
 
