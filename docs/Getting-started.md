@@ -198,7 +198,7 @@ By default, Gost does not write to stdout. You can inject a global logger
 
 Each browser also supports you to inject a browser scoped logger.
 
-```
+```go
 browser := browser.New(
     browser.WithLogger(logger), // *slog.Logger instance
     browser.WithHandler(rootHTTPHandler),
