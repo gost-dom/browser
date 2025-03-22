@@ -1,6 +1,13 @@
 # Changelog - Gost-DOM
 
 
+## [0.5.3](https://github.com/gost-dom/browser/compare/v0.5.2...v0.5.3) (2025-03-22)
+
+
+### Features
+
+* Handle new location after redirects ([92fcabb](https://github.com/gost-dom/browser/commit/92fcabb9b132d1ddf09c594bb006d3fd8ef198bf))
+
 ## [0.5.2](https://github.com/gost-dom/browser/compare/v0.5.1...v0.5.2) (2025-03-22)
 
 
