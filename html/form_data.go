@@ -124,8 +124,8 @@ func (d *FormData) Has(name string) bool {
 	return slices.IndexFunc(d.Entries, elementByName(name)) != -1
 }
 
-func (d *FormData) GetReader() io.Reader {
-	return strings.NewReader(d.QueryString())
+func (d *FormData) GetReader() io.ReadCloser {
+	return io.NopCloser(strings.NewReader(d.QueryString()))
 }
 
 // QueryString returns the formdata as a &-separated URL encoded key-value pair.

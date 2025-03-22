@@ -20,7 +20,7 @@ const (
 )
 
 type GetReader interface {
-	GetReader() io.Reader
+	GetReader() io.ReadCloser
 }
 
 type FormDataEventInit struct {
@@ -110,6 +110,7 @@ func (e *htmlFormElement) Elements() dom.NodeList {
 }
 
 func (e *htmlFormElement) submitFormData(formData *FormData) error {
+	fmt.Println("Submit data", e.Method(), e.Action())
 	e.DispatchEvent(newFormDataEvent(formData))
 
 	var (
@@ -121,8 +122,8 @@ func (e *htmlFormElement) submitFormData(formData *FormData) error {
 		targetURL := replaceSearchParams(e.action(), searchParams)
 		req, err = http.NewRequest("GET", targetURL, nil)
 	} else {
-		getReader := GetReader(formData)
-		req, err = http.NewRequest("POST", e.Action(), getReader.GetReader())
+		req, err = http.NewRequest("POST", e.Action(), formData.GetReader())
+		req.GetBody = func() (io.ReadCloser, error) { return formData.GetReader(), nil }
 		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	}
 	if err != nil {

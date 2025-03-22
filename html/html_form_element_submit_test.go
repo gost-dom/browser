@@ -1,6 +1,7 @@
 package html_test
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -52,11 +53,14 @@ type WindowFixture struct {
 	form          html.HTMLFormElement
 	actualRequest *http.Request
 	submittedForm url.Values
+	handler       http.Handler
 }
 
 func (f *WindowFixture) Setup() {
-	win := html.NewWindow(html.WindowOptions{
-		HttpClient: gosthttp.NewHttpClientFromHandler(
+	handler := f.handler
+	if handler == nil {
+		fmt.Println("Overwrite handler")
+		handler =
 			http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 				if req.ParseForm() != nil {
 					panic("Error parsing form")
@@ -64,8 +68,10 @@ func (f *WindowFixture) Setup() {
 				f.actualRequest = req
 				f.submittedForm = req.Form
 				f.requests = append(f.requests, req)
-			}),
-		),
+			})
+	}
+	win := html.NewWindow(html.WindowOptions{
+		HttpClient:   gosthttp.NewHttpClientFromHandler(handler),
 		BaseLocation: string(f.BaseLocationFixture),
 	})
 	f.Window = htmltest.NewWindowHelper(f.TB, win)
@@ -297,4 +303,34 @@ func TestHTMLFormElementSubmitInputWithClickResetButton(t *testing.T) {
 	w.Submitter.SetType("reset")
 	w.Submitter.Click()
 	w.Assert().Nil(w.submittedForm, "A form was submitted")
+}
+
+func TestResubmitFormOn307Redirects(t *testing.T) {
+	var (
+		actualRequest *http.Request
+		submittedForm url.Values
+	)
+
+	mux := http.NewServeMux()
+	mux.Handle("POST /form-destination", http.RedirectHandler("/form-redirected", 307))
+	mux.HandleFunc("POST /form-redirected", func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		actualRequest = r
+		submittedForm = r.Form
+	})
+
+	w, setup := InitFixture(
+		t,
+		&HTMLFormSubmitInputFixture{},
+		BaseLocationFixture("http://example.com/forms"),
+	)
+
+	w.HTMLFormFixture.handler = mux
+	setup.Setup()
+	form := w.Form()
+	form.SetMethod("post")
+	form.SetAction("/form-destination")
+	form.Submit()
+	w.Assert().NotNil(actualRequest, "Request sent to the redirected location")
+	w.Assert().Equal([]string{"bar"}, submittedForm["foo"], "Form on second request")
 }
