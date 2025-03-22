@@ -84,10 +84,12 @@ Specific HTML elements have specific behaviour.
 
 #### User interaction
 
-The list of supported user interaction is yet quite limited
+The list of supported user interaction is quite limited.
 
-- `HTMLElemet.click()` - implemented on `dom.Element`, due to some weirdness in
-  the specs.
+- `HTMLElemet.click()`
+
+However, you can set `value` content attributes on input fields until proper
+keyboard typing is simulated.
 
 ### URL API
 
