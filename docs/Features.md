@@ -61,7 +61,6 @@ implementations to be build independently.
 ### HTML API
 
 - Opening a window returns an error if the server response with a non-200 status code.
-- Redirects are not followed.
 - All HTML elements have the correct class in JavaScript, but only a few have
 element-specific behaviour is implemented..
 
@@ -74,13 +73,13 @@ Specific HTML elements have specific behaviour.
 
 - `<a>` Click will navigate to the resource. Fragments are not handled (i.e., a
   fragment link generates an HTTP request, but shouldn't)
-- `<form>` (be aware of missing redirects)
+- `<form>`
     - `<input>`
-    - `<button>`/`<input type="submit">` When clicked inside a form, submits. Overriding `method` and `action` is not implemented.
-        - [Issue #10](https://github.com/gost-dom/browser/issues/10)
-    - Reset behaviour is not implemented (either as a call to `.reset()` or a
-    - Missing validation. [Issue #30](https://github.com/gost-dom/browser/issues/30)
-    reset button.
+    - `<button>`/`<input type="submit">` When clicked inside a form, submits.
+        - Overriding `method` and `action` is not implemented. #10
+    - Reset behaviour is not implemented (either as a call to `.reset()` or 
+      clicking a reset button/input element
+    - Missing validation. #30
 - `<template>` exposes its HTML children as children of the `content` attribute.
 
 #### User interaction

@@ -122,7 +122,7 @@ meaning to support content swapping, XHR, forms, and cookies; in order to
 identify risks and architectural flaws.
 
 But many features were not fully implemented, e.g., you cannot navigate by
-assigning `history.href`, and redirect responses are not followed.
+assigning `history.href`.
 
 ### Memory Leaks
 
