@@ -23,4 +23,5 @@ var BeEmpty = gomega.BeEmpty
 var WithTransform = gomega.WithTransform
 
 var ContainElement = gomega.ContainElement
+var HaveKeyWithValue = gomega.HaveKeyWithValue
 var ConsistOf = gomega.ConsistOf
