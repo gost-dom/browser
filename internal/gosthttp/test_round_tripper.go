@@ -24,7 +24,9 @@ func (h TestRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
 		serverReq.Body = nullReader{}
 	}
 	h.ServeHTTP(rec, serverReq)
-	return rec.Result(), nil
+	resp := rec.Result()
+	resp.Request = req
+	return resp, nil
 }
 
 // nullReader is just a reader with no content. When _sending_ an HTTP request,

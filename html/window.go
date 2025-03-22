@@ -16,6 +16,8 @@ import (
 	"github.com/gost-dom/browser/url"
 )
 
+var ErrTooManyRedirects = errors.New("Too many redirects")
+
 type ScriptHost interface {
 	NewContext(window Window) ScriptContext
 	Close()
@@ -106,6 +108,14 @@ func newWindow(windowOptions ...WindowOption) *window {
 	win.document = NewHTMLDocument(win)
 	event.SetEventTargetSelf(win)
 	return win
+}
+
+func (w *window) checkRedirect(req *http.Request, via []*http.Request) error {
+	if len(via) > 9 {
+		return ErrTooManyRedirects
+	}
+	w.history.ReplaceState(EMPTY_STATE, req.URL.String())
+	return nil
 }
 
 func NewWindow(windowOptions ...WindowOption) Window {
@@ -209,8 +219,13 @@ func (w *window) Document() dom.Document {
 	return w.document
 }
 
-func (w *window) Navigate(href string) error {
+func (w *window) Navigate(href string) (err error) {
 	log.Info(w.Logger(), "Window.navigate:", "href", href)
+	defer func() {
+		if err != nil {
+			log.Warn(w.logger, "Window.navigate: Error response", "err", err.Error())
+		}
+	}()
 	w.History().pushLoad(href)
 	w.initScriptEngine()
 	w.baseLocation = href
@@ -236,15 +251,23 @@ func (w *window) reload(href string) error {
 	}
 }
 
-func (w *window) get(href string) (err error) {
+func (w *window) get(href string) error {
 	if req, err := http.NewRequest("GET", href, nil); err == nil {
-		err = w.fetchRequest(req)
+		return w.fetchRequest(req)
+	} else {
+		return err
 	}
-	return err
 }
 
+// fetchRequest handles "User agent" requests. I.e., navigation by clicking a
+// link, submitting a form, of calling a JS API that makes the browser itself
+// navigate to a new URL.
 func (w *window) fetchRequest(req *http.Request) error {
-	resp, err := w.httpClient.Do(req)
+	// Create a copy of the client, and set the CheckRedirect to a function that
+	// updates the window location to reflect the new URL.
+	client := w.httpClient
+	client.CheckRedirect = w.checkRedirect
+	resp, err := client.Do(req)
 	if err != nil {
 		return err
 	}
