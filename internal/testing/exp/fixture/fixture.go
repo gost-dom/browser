@@ -125,11 +125,19 @@ func (f FixtureSetup[T]) setup(val reflect.Value) Setuper {
 		}
 		setups.append(f.setup(val.FieldByIndex(field.Index)))
 	}
-	if setup, ok := val.Interface().(Setuper); ok {
+	actualVal := val.Interface()
+	if setup, ok := actualVal.(Setuper); ok {
 		setups.append(setup)
 	} else if val.CanAddr() {
 		if setup, ok := val.Addr().Interface().(Setuper); ok {
 			setups.append(setup)
+		}
+	}
+	if init, ok := actualVal.(FixtureInit); ok {
+		init.SetTB(f.TB)
+	} else if val.CanAddr() {
+		if init, ok := val.Addr().Interface().(FixtureInit); ok {
+			init.SetTB(f.TB)
 		}
 	}
 	// var res *NullSetup
