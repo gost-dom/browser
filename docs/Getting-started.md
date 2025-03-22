@@ -62,7 +62,6 @@ There are some crucial points you should be aware of:
 - JavaScript served from CDN doesn't work (in the recommended usage)
 - The host name is ignored, but not quite! (in the recommended usage)
 - `setTimeout` and `setInterval` handlers require you to "advance the clock"
-- Redirects are not followed
 
 ### JavaScript served from CDN doesn't work
 
@@ -121,22 +120,6 @@ decrease. So `RunAll()` will currently panic if there are any `setInterval`
 handlers that doesn't get cleared. Likewise, if `setInterval` is always called
 with zero delay, it will too ([which is a missing
 behaviour](https://github.com/gost-dom/browser/issues/45)
-
-### Redirects are not followed
-
-TLDR; Gost basically cannot handle plain HTML forms because redirects are not
-followed, but HTMX powered forms work.
-
-If you call `HTMLAnchorElement.Click()`,
-`HTMLFormElement.Submit()`/`.RequestSubmit()`, or `.Click()` on a submit button
-in a form (`<button>` or `<input type="button">`), Gost-DOM will request the new
-resource, and render the returned HTML.
-
-HTMX powered forms **do work**, because HTMX handles form using XHR, and it
-handles the response.
-
-Let us know, if this is a problem for you. It is one of the next planned
-features, but user feedback has great effect on priority.
 
 ## The DOM API
 
