@@ -10,13 +10,13 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
     steps:
-      - name: Get latest version tag
-        id: latest_version
-        run: echo "VERSION=$(git tag --merged | sort -V | tail -1)" >> $GITHUB_OUTPUT
       - name: Checkout code
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - name: Get latest version tag
+        id: latest_version
+        run: echo "VERSION=$(git tag --merged | sort -V | tail -1)" >> $GITHUB_OUTPUT
       - name: Changelog
         uses: Bullrich/generate-release-changelog@master
         id: Changelog
