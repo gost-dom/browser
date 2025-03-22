@@ -1,8 +1,8 @@
-package http
+package gosthttp
 
 import (
 	"context"
-	netHttp "net/http"
+	"net/http"
 	"testing"
 
 	"github.com/onsi/gomega"
@@ -12,11 +12,11 @@ import (
 func TestHttpHandlerCreateContext(t *testing.T) {
 	t.Parallel()
 	var ctx context.Context
-	server := func(w netHttp.ResponseWriter, r *netHttp.Request) {
+	server := func(w http.ResponseWriter, r *http.Request) {
 		ctx = r.Context()
 	}
 
-	client := NewHttpClientFromHandler(netHttp.HandlerFunc(server))
+	client := NewHttpClientFromHandler(http.HandlerFunc(server))
 	r, err := client.Get("http://localhost/foo")
 
 	g := gomega.NewWithT(t)

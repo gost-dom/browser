@@ -6,7 +6,7 @@ import (
 
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
-	. "github.com/gost-dom/browser/internal/http"
+	"github.com/gost-dom/browser/internal/gosthttp"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -35,7 +35,7 @@ var _ = Describe("V8 XmlHttpRequest", func() {
 		window = html.NewWindow(html.WindowOptions{
 			BaseLocation: "http://example.com",
 			ScriptHost:   host,
-			HttpClient:   NewHttpClientFromHandler(server),
+			HttpClient:   gosthttp.NewHttpClientFromHandler(server),
 		})
 		Expect(err).ToNot(HaveOccurred())
 		DeferCleanup(func() {

@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/gost-dom/browser/html"
-	. "github.com/gost-dom/browser/internal/http"
+	"github.com/gost-dom/browser/internal/gosthttp"
 	"github.com/gost-dom/browser/internal/test"
 	"github.com/gost-dom/browser/internal/test/scripttests"
 	"github.com/gost-dom/browser/logger"
@@ -27,7 +27,7 @@ var scriptTestSuite *scripttests.ScriptTestSuite
 func OpenTestWindowFromHandler(location string, handler http.Handler) (html.Window, error) {
 	win, err := html.OpenWindowFromLocation(location, html.WindowOptions{
 		ScriptHost: host,
-		HttpClient: NewHttpClientFromHandler(handler),
+		HttpClient: gosthttp.NewHttpClientFromHandler(handler),
 	})
 	DeferCleanup(func() {
 		if win != nil {

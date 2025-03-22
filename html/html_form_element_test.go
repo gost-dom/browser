@@ -8,7 +8,7 @@ import (
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/html"
-	. "github.com/gost-dom/browser/internal/http"
+	"github.com/gost-dom/browser/internal/gosthttp"
 	"github.com/gost-dom/browser/internal/testing/eventtest"
 	. "github.com/gost-dom/browser/internal/testing/htmltest"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
@@ -72,7 +72,7 @@ var _ = Describe("HTML Form", func() {
 			DeferCleanup(func() { requests = nil; submittedForm = nil })
 
 			window = NewWindowHelper(GinkgoTB(), NewWindow(WindowOptions{
-				HttpClient: NewHttpClientFromHandler(
+				HttpClient: gosthttp.NewHttpClientFromHandler(
 					http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 						if req.ParseForm() != nil {
 							panic("Error parsing form")

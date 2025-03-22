@@ -11,8 +11,8 @@ import (
 	"github.com/gost-dom/browser/dom/event"
 	. "github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
+	"github.com/gost-dom/browser/internal/gosthttp"
 	. "github.com/gost-dom/browser/internal/html"
-	. "github.com/gost-dom/browser/internal/http"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/stretchr/testify/suite"
@@ -34,7 +34,7 @@ func newFromHandlerFunc(
 	f func(http.ResponseWriter, *http.Request),
 ) XmlHttpRequest {
 	return NewXmlHttpRequest(stubBrowsingContext{
-		client: http.Client{Transport: TestRoundTripper{Handler: http.HandlerFunc(f)}},
+		client: http.Client{Transport: gosthttp.TestRoundTripper{Handler: http.HandlerFunc(f)}},
 	}, clock)
 }
 
@@ -75,7 +75,7 @@ func (s *XMLHTTPRequestTestSuite) SetupTest() {
 		w.Write([]byte("Hello, World!"))
 	})
 	s.xhr = NewXmlHttpRequest(
-		stubBrowsingContext{client: NewHttpClientFromHandler(s.handler)},
+		stubBrowsingContext{client: gosthttp.NewHttpClientFromHandler(s.handler)},
 		s.timer,
 	)
 

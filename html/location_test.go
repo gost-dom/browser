@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gost-dom/browser/html"
-	domHTTP "github.com/gost-dom/browser/internal/http"
+	"github.com/gost-dom/browser/internal/gosthttp"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -16,7 +16,7 @@ var _ = Describe("Window.Location", func() {
 			func(res http.ResponseWriter, req *http.Request) { res.Write([]byte("<html></html>")) },
 		)
 		windowOptions := html.WindowOptions{
-			HttpClient: domHTTP.NewHttpClientFromHandler(handler),
+			HttpClient: gosthttp.NewHttpClientFromHandler(handler),
 		}
 		win, err := html.OpenWindowFromLocation(location, windowOptions)
 		Expect(err).ToNot(HaveOccurred())

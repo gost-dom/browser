@@ -7,7 +7,7 @@ import (
 
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/html"
-	. "github.com/gost-dom/browser/internal/http"
+	. "github.com/gost-dom/browser/internal/gosthttp"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting/v8host"
 )

@@ -1,27 +1,27 @@
-package http
+package gosthttp
 
 import (
-	netHTTP "net/http"
+	"net/http"
 	"net/http/cookiejar"
 )
 
-func NewHttpClientFromHandler(handler netHTTP.Handler) netHTTP.Client {
+func NewHttpClientFromHandler(handler http.Handler) http.Client {
 	cookiejar, err := cookiejar.New(nil)
 	if err != nil {
 		panic(err)
 	}
-	return netHTTP.Client{
+	return http.Client{
 		Transport: TestRoundTripper{Handler: handler},
 		Jar:       cookiejar,
 	}
 }
 
-func NewHttpClient() netHTTP.Client {
+func NewHttpClient() http.Client {
 	cookiejar, err := cookiejar.New(nil)
 	if err != nil {
 		panic(err)
 	}
-	return netHTTP.Client{
+	return http.Client{
 		Jar: cookiejar,
 	}
 }
