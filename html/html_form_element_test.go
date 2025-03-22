@@ -1,8 +1,10 @@
 package html_test
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
+	"testing"
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/dom/event"
@@ -10,50 +12,80 @@ import (
 	. "github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/gosthttp"
 	"github.com/gost-dom/browser/internal/testing/eventtest"
+	"github.com/gost-dom/browser/internal/testing/gosttest"
 	. "github.com/gost-dom/browser/internal/testing/htmltest"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
+	"github.com/stretchr/testify/suite"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
+type HTMLFormElementTestSuite struct {
+	gosttest.GomegaSuite
+	win  html.Window
+	doc  html.HTMLDocument
+	form html.HTMLFormElement
+}
+
+func TestHTMLFormElement(t *testing.T) {
+	suite.Run(t, new(HTMLFormElementTestSuite))
+}
+
+func (s *HTMLFormElementTestSuite) SetupTest() {
+	s.win = NewWindowHelper(s.T(), NewWindow(WindowOptions{
+		BaseLocation: "http://example.com/forms/example-form.html?original-query=original-value",
+	}))
+
+	s.doc = NewHTMLDocument(s.win)
+	s.form = s.doc.CreateElement("form").(HTMLFormElement)
+}
+
+func (s *HTMLFormElementTestSuite) createForm() HTMLFormElement {
+	return s.doc.CreateElement("form").(HTMLFormElement)
+}
+
+func (s *HTMLFormElementTestSuite) TestMethodIDLAttribute() {
+	form := s.createForm()
+
+	s.Assert().Equal("get", form.Method(), "Default value for HTMLFormElement.method")
+
+	form.SetMethod("new value")
+	s.Expect(form).To(HaveAttribute("method", "new value"),
+		"Content attribute when setting IDL to invalid value")
+	s.Expect(form.Method()).To(Equal("get"),
+		"IDL method attribute when set to an invalid value")
+
+	for _, value := range []string{"post", "POST", "PoSt"} {
+		form.SetMethod(value)
+		s.Expect(form.Method()).To(Equal("post"),
+			fmt.Sprintf("IDL method attribute, set to %s", value),
+		)
+	}
+}
+
+func (s *HTMLFormElementTestSuite) TestActionIDLAttribute() {
+	form := s.createForm()
+
+	s.Assert().Equal(s.win.LocationHREF(), form.Action(), "Default value for action IDL attribute")
+
+	form.SetAction("/foo-bar")
+	s.Expect(form).
+		To(HaveAttribute("action", "/foo-bar"), "Action content attribute with absolute path")
+	s.Expect(form.Action()).
+		To(Equal("http://example.com/foo-bar"), "Action IDL attribute when set to an absolute path")
+
+	form.SetAttribute("action", "submit-target")
+	s.Expect(form).To(
+		HaveAttribute("action", "submit-target"),
+		"Action content attribute with relative path")
+
+	s.Expect(form.Action()).To(
+		Equal("http://example.com/forms/submit-target"),
+		"Action IDL attribute when set to a relative path")
+}
+
 var _ = Describe("HTML Form", func() {
-	Describe("Method property", func() {
-		var form HTMLFormElement
-		BeforeEach(func() {
-			doc := NewHTMLDocument(nil)
-			form = doc.CreateElement("form").(HTMLFormElement)
-		})
-
-		Describe("Setting the value", func() {
-			It("Should update the attribute", func() {
-				form.SetMethod("new value")
-				Expect(form).To(HaveAttribute("method", "new value"))
-				Expect(form).ToNot(BeNil())
-			})
-		})
-
-		Describe("Getting the value", func() {
-			It("Should return 'get' by default", func() {
-				Expect(form.Method()).To(Equal("get"))
-			})
-
-			It("Should return 'post' when set to 'post', 'POST', 'PoSt', etc.", func() {
-				for _, value := range []string{"post", "POST", "PoSt"} {
-					form.SetMethod(value)
-					Expect(form.Method()).To(Equal("post"))
-				}
-			})
-
-			It("Should return 'get' when assigned an invalid value", func() {
-				form.SetMethod("post")
-				Expect(form.Method()).To(Equal("post"))
-				form.SetMethod("invalid")
-				Expect(form.Method()).To(Equal("get"))
-			})
-		})
-	})
-
 	Describe("Submit behaviour", func() {
 		var window WindowHelper
 		var requests []*http.Request
@@ -103,28 +135,6 @@ var _ = Describe("HTML Form", func() {
 		})
 
 		Describe("Method and action behaviour", func() {
-
-			Describe("Action", func() {
-				Describe("Get", func() {
-					It("Should return the document location when not set", func() {
-						Expect(form.Action()).To(Equal(window.Location().Href()))
-					})
-				})
-
-				Describe("Set", func() {
-					It(
-						"Should update the action attribute, and update action property to relative url",
-						func() {
-							form.SetAction("/foo-bar")
-							Expect(
-								form,
-							).To(HaveAttribute("action", "/foo-bar"))
-							Expect(form.Action()).To(Equal("http://example.com/foo-bar"))
-						},
-					)
-				})
-			})
-
 			Describe("No method of action specified", func() {
 				It("Should make a GET request to the original location", func() {
 					form.Submit()
