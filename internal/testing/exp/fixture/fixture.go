@@ -7,9 +7,6 @@ import (
 )
 
 type FixtureInit interface {
-	// Exported name for a helper, as it's intended to eventually make it to its
-	// own package.
-
 	SetTB(testing.TB)
 }
 
@@ -33,9 +30,6 @@ func (s *setups) append(setup Setuper) {
 func (s *NullSetup) Setup() {}
 
 type Fixture struct {
-	// Exported name for a helper, as it's intended to eventually make it to its
-	// own package.
-
 	testing.TB
 }
 
