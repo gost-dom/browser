@@ -1,12 +1,11 @@
 module github.com/gost-dom/browser
 
-go 1.23.4
-
-toolchain go1.23.6
+go 1.23.6
 
 require (
 	github.com/dop251/goja v0.0.0-20241024094426-79f3a7efcdbd
 	github.com/gost-dom/css v0.1.0
+	github.com/gost-dom/fixture v0.1.0
 	github.com/gost-dom/v8go v0.0.0-20250226155312-422158da51fa
 	github.com/onsi/ginkgo/v2 v2.22.2
 	github.com/onsi/gomega v1.36.2

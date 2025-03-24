@@ -19,6 +19,8 @@ github.com/google/pprof v0.0.0-20241210010833-40e02aabc2ad h1:a6HEuzUHeKH6hwfN/Z
 github.com/google/pprof v0.0.0-20241210010833-40e02aabc2ad/go.mod h1:vavhavw2zAxS5dIdcRluK6cSGGPlZynqzFM8NdvU144=
 github.com/gost-dom/css v0.1.0 h1:O4aXjnYonQH1EDwKysXCQOgGVLwCWd/+HJeGO15sDIE=
 github.com/gost-dom/css v0.1.0/go.mod h1:BYfl+dr6Dzl6RoKn4op6TynJ7GmFqP0kFCM44NEVgNs=
+github.com/gost-dom/fixture v0.1.0 h1:7PnEpkuww1QBOh4gyoR8updPfyosHJfxmFRY+2t05+w=
+github.com/gost-dom/fixture v0.1.0/go.mod h1:7mSGaBhOfi/NO+YiD426CQ1DTkko62vYxoSVRmveqqY=
 github.com/gost-dom/v8go v0.0.0-20250226155312-422158da51fa h1:3aeBc/+rftAe2hHJy1YvUXI90qCQpmep2n26N+Ljhl4=
 github.com/gost-dom/v8go v0.0.0-20250226155312-422158da51fa/go.mod h1:JQOTnkUY77lDSgrMlPMlUCLONzDS/kycRc8ZtbiZDm0=
 github.com/onsi/ginkgo/v2 v2.22.2 h1:/3X8Panh8/WwhU/3Ssa6rCKqPLuAkVY2I0RoyDLySlU=

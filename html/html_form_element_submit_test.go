@@ -11,10 +11,10 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/gosthttp"
 	"github.com/gost-dom/browser/internal/testing/eventtest"
-	. "github.com/gost-dom/browser/internal/testing/exp/fixture"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
+	"github.com/gost-dom/fixture"
 	"github.com/onsi/gomega"
 	"github.com/onsi/gomega/types"
 	"github.com/stretchr/testify/assert"
@@ -24,7 +24,7 @@ type InitialHTMLFixture string
 type BaseLocationFixture string
 
 type AssertFixture struct {
-	Fixture
+	fixture.Fixture
 	assert *assert.Assertions
 	gomega gomega.Gomega
 }
@@ -54,7 +54,7 @@ func (f *HTTPHandlerFixture) Setup() {
 
 type WindowFixture struct {
 	AssertFixture
-	BaseLocationFixture
+	*BaseLocationFixture
 	InitialHTMLFixture
 	*HTTPHandlerFixture
 	Window htmltest.WindowHelper
@@ -66,11 +66,17 @@ type WindowFixture struct {
 }
 
 func (f *WindowFixture) Setup() {
+	if f.Window.Window != nil {
+		return
+	}
 	fmt.Println("Setup window")
-	win := html.NewWindow(html.WindowOptions{
-		HttpClient:   gosthttp.NewHttpClientFromHandler(f.HTTPHandlerFixture),
-		BaseLocation: string(f.BaseLocationFixture),
-	})
+	opts := html.WindowOptions{
+		HttpClient: gosthttp.NewHttpClientFromHandler(f.HTTPHandlerFixture),
+	}
+	if f.BaseLocationFixture != nil {
+		opts.BaseLocation = string(*f.BaseLocationFixture)
+	}
+	win := html.NewWindow(opts)
 	f.Window = htmltest.NewWindowHelper(f.TB, win)
 
 	f.Helper()
@@ -86,18 +92,25 @@ func (f *WindowFixture) Setup() {
 type DefaultWindowFixture struct {
 	WindowFixture
 	*HTTPHandlerFixture
+	initialized bool
 }
 
 func (f *DefaultWindowFixture) Setup() {
-	fmt.Println("Setup default window")
-	f.HTTPHandlerFixture.ServeMux.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
-		if req.ParseForm() != nil {
-			panic("Error parsing form")
-		}
-		f.actualRequest = req
-		f.submittedForm = req.Form
-		f.requests = append(f.requests, req)
-	})
+	if !f.initialized {
+		fmt.Println("Setup default window")
+		f.HTTPHandlerFixture.ServeMux.HandleFunc(
+			"/",
+			func(res http.ResponseWriter, req *http.Request) {
+				if req.ParseForm() != nil {
+					panic("Error parsing form")
+				}
+				f.actualRequest = req
+				f.submittedForm = req.Form
+				f.requests = append(f.requests, req)
+			},
+		)
+		f.initialized = true
+	}
 }
 
 func AssertType[T any](t testing.TB, actual any) (res T) {
@@ -124,9 +137,11 @@ type HTMLFormFixture struct {
 }
 
 func TestSubmitForm(t *testing.T) {
-	w, setup := InitFixture(t, &DefaultWindowFixture{}, BaseLocationFixture(
-		"http://example.com/forms/example-form.html?original-query=original-value",
-	))
+	w, setup := fixture.Init(t, &struct {
+		DefaultWindowFixture
+		Location *BaseLocationFixture
+	}{})
+	*w.Location = "http://example.com/forms/example-form.html?original-query=original-value"
 	setup.Setup()
 
 	var submitEventDispatched bool
@@ -148,9 +163,11 @@ func TestSubmitForm(t *testing.T) {
 }
 
 func TestHTMLFormElementSubmitPost(t *testing.T) {
-	w, setup := InitFixture(t, &DefaultWindowFixture{}, BaseLocationFixture(
-		"http://example.com/forms/example-form.html?original-query=original-value",
-	))
+	w, setup := fixture.Init(t, &struct {
+		DefaultWindowFixture
+		Location *BaseLocationFixture
+	}{})
+	*w.Location = "http://example.com/forms/example-form.html?original-query=original-value"
 	setup.Setup()
 
 	form := w.Form()
@@ -181,7 +198,7 @@ func (f *HTMLFormSubmitButtonFixture) Setup() {
 }
 
 func TestHTMLFormElementSubmitWithClickButton(t *testing.T) {
-	w, setup := InitFixture(t, &HTMLFormSubmitButtonFixture{})
+	w, setup := fixture.Init(t, &HTMLFormSubmitButtonFixture{})
 	setup.Setup()
 
 	w.Submitter.Click()
@@ -192,7 +209,7 @@ func TestHTMLFormElementSubmitWithClickButton(t *testing.T) {
 }
 
 func TestHTMLFormElementSubmitWithClickButtonAndWeirdCasing(t *testing.T) {
-	w, setup := InitFixture(t, &HTMLFormSubmitButtonFixture{})
+	w, setup := fixture.Init(t, &HTMLFormSubmitButtonFixture{})
 	setup.Setup()
 
 	w.Submitter.SetType("SuBMit")
@@ -204,7 +221,7 @@ func TestHTMLFormElementSubmitWithClickButtonAndWeirdCasing(t *testing.T) {
 }
 
 func TestHTMLFormElementSubmitWithClickResetButton(t *testing.T) {
-	w, setup := InitFixture(t, &HTMLFormSubmitButtonFixture{})
+	w, setup := fixture.Init(t, &HTMLFormSubmitButtonFixture{})
 	setup.Setup()
 
 	w.Submitter.SetType("reset")
@@ -213,7 +230,7 @@ func TestHTMLFormElementSubmitWithClickResetButton(t *testing.T) {
 }
 
 func TestHTMLFormElementRequestSubmitWithoutSubmitter(t *testing.T) {
-	w, setup := InitFixture(t, &HTMLFormSubmitButtonFixture{})
+	w, setup := fixture.Init(t, &HTMLFormSubmitButtonFixture{})
 	setup.Setup()
 
 	w.Assert().NoError(w.Form().RequestSubmit(nil))
@@ -223,7 +240,7 @@ func TestHTMLFormElementRequestSubmitWithoutSubmitter(t *testing.T) {
 }
 
 func TestHTMLFormElementRequestSubmitPreventDefault(t *testing.T) {
-	w, setup := InitFixture(t, &HTMLFormSubmitButtonFixture{})
+	w, setup := fixture.Init(t, &HTMLFormSubmitButtonFixture{})
 	setup.Setup()
 
 	var submitEventDispatched bool
@@ -237,7 +254,7 @@ func TestHTMLFormElementRequestSubmitPreventDefault(t *testing.T) {
 }
 
 func TestHTMLFormElementRequestSubmitWithSubmitter(t *testing.T) {
-	w, setup := InitFixture(t, &HTMLFormSubmitButtonFixture{})
+	w, setup := fixture.Init(t, &HTMLFormSubmitButtonFixture{})
 	setup.Setup()
 
 	w.Assert().NoError(w.Form().RequestSubmit(w.Submitter))
@@ -247,7 +264,7 @@ func TestHTMLFormElementRequestSubmitWithSubmitter(t *testing.T) {
 }
 
 func TestHTMLFormElementPreventDefaultOnSubmitButton(t *testing.T) {
-	w, setup := InitFixture(t, &HTMLFormSubmitButtonFixture{})
+	w, setup := fixture.Init(t, &HTMLFormSubmitButtonFixture{})
 	setup.Setup()
 
 	w.Submitter.AddEventListener("click", eventtest.NewTestHandler(func(e *event.Event) {
@@ -258,7 +275,7 @@ func TestHTMLFormElementPreventDefaultOnSubmitButton(t *testing.T) {
 }
 
 func TestHTMLFormElementFormDataEvent(t *testing.T) {
-	w, setup := InitFixture(t, &HTMLFormSubmitButtonFixture{})
+	w, setup := fixture.Init(t, &HTMLFormSubmitButtonFixture{})
 	setup.Setup()
 
 	var eventBubbles bool
@@ -300,7 +317,7 @@ func (f *HTMLFormSubmitInputFixture) Setup() {
 }
 
 func TestHTMLFormElementSubmitButtonWithClickButton(t *testing.T) {
-	w, setup := InitFixture(t, &HTMLFormSubmitInputFixture{})
+	w, setup := fixture.Init(t, &HTMLFormSubmitInputFixture{})
 	setup.Setup()
 
 	w.Submitter.Click()
@@ -311,7 +328,7 @@ func TestHTMLFormElementSubmitButtonWithClickButton(t *testing.T) {
 }
 
 func TestHTMLFormElementSubmitInputWithClickResetButton(t *testing.T) {
-	w, setup := InitFixture(t, &HTMLFormSubmitInputFixture{})
+	w, setup := fixture.Init(t, &HTMLFormSubmitInputFixture{})
 	setup.Setup()
 
 	w.Submitter.SetType("reset")
@@ -325,14 +342,15 @@ func TestResubmitFormOn307Redirects(t *testing.T) {
 		submittedForm url.Values
 	)
 
-	w, setup := InitFixture(
+	w, setup := fixture.Init(
 		t,
 		&struct {
 			HTMLFormSubmitInputFixture
 			*HTTPHandlerFixture
+			*BaseLocationFixture
 		}{},
-		BaseLocationFixture("http://example.com/forms"),
 	)
+	*w.BaseLocationFixture = "http://example.com/forms"
 	fmt.Println("*** SETUP")
 
 	setup.Setup()
