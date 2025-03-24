@@ -110,7 +110,6 @@ func (e *htmlFormElement) Elements() dom.NodeList {
 }
 
 func (e *htmlFormElement) submitFormData(formData *FormData) error {
-	fmt.Println("Submit data", e.Method(), e.Action())
 	e.DispatchEvent(newFormDataEvent(formData))
 
 	var (
