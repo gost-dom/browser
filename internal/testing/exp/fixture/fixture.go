@@ -27,6 +27,12 @@ func (s *setups) append(setup Setuper) {
 	*s = append(*s, setup)
 }
 
+func (s *setups) tryAppend(val any) {
+	if setup, ok := val.(Setuper); ok {
+		s.append(setup)
+	}
+}
+
 func (s *NullSetup) Setup() {}
 
 type Fixture struct {
@@ -34,26 +40,6 @@ type Fixture struct {
 }
 
 func (f *Fixture) SetTB(tb testing.TB) { f.TB = tb }
-
-func typePkgPath(t reflect.Type) (string, bool) {
-	k := t.Kind()
-	if k == reflect.Pointer {
-		t = t.Elem()
-		k = t.Kind()
-	}
-	if k == reflect.Struct {
-		return t.PkgPath(), true
-	}
-	return "", false
-}
-
-// valuePkgPath is specifically for filtering struct types based on their
-// package path. The use of an ok return value is solely for this specific
-// purpose alone; and the function may not be a good fit in other applications.
-func valuePkgPath(val reflect.Value) (string, bool) {
-	t := val.Type()
-	return typePkgPath(t)
-}
 
 func (f *FixtureSetup[T]) Setup() Setuper {
 	vType := reflect.TypeFor[T]()
@@ -63,19 +49,19 @@ func (f *FixtureSetup[T]) Setup() Setuper {
 	}
 	vType = vType.Elem()
 	f.pkgPath = vType.PkgPath()
+	f.depVals = make([]reflect.Value, len(f.Deps))
+	for i, d := range f.Deps {
+		f.depVals[i] = reflect.ValueOf(d)
+	}
 	return f.setup(reflect.ValueOf(f.Fixture))
 }
 
 func (f FixtureSetup[T]) defaultInclude(val reflect.Value) bool {
-	var currPath, expPath string
-	var ok bool
-	if currPath, ok = valuePkgPath(val); ok {
-		expPath, ok = typePkgPath(reflect.TypeFor[T]())
+	var underlyingType = val.Type()
+	if underlyingType.Kind() == reflect.Pointer {
+		underlyingType = underlyingType.Elem()
 	}
-	if !ok {
-		return false
-	}
-	return strings.HasPrefix(currPath, expPath)
+	return strings.HasSuffix(underlyingType.Name(), "Fixture")
 }
 
 func (f FixtureSetup[T]) include(val reflect.Value) bool {
@@ -91,51 +77,77 @@ type FixtureSetup[T FixtureInit] struct {
 	Include func(val reflect.Value) bool
 	Deps    []any
 
+	depVals []reflect.Value
 	pkgPath string
 }
 
-func (f FixtureSetup[T]) setup(val reflect.Value) Setuper {
+func (f *FixtureSetup[T]) setupStruct(val reflect.Value, typ reflect.Type) *setups {
 	var setups = new(setups)
-	if !f.include(val) {
-		return setups
+fields:
+	for _, field := range reflect.VisibleFields(typ) {
+		if len(field.Index) > 1 || !field.IsExported() {
+			// Don't set fields of embedded or unexported fields
+			continue
+		}
+		fieldVal := val.FieldByIndex(field.Index)
+		if !f.include(fieldVal) {
+			continue
+		}
+		for _, depVal := range f.depVals {
+			if field.Type == depVal.Type() {
+				fieldVal.Set(depVal)
+				continue fields
+			}
+		}
+		if field.Type.Kind() == reflect.Pointer && fieldVal.IsNil() {
+			fieldVal.Set(reflect.New(field.Type.Elem()))
+			f.depVals = append(f.depVals, fieldVal)
+		}
+		setups.append(f.setup(fieldVal))
 	}
+	return setups
+}
+
+func (f *FixtureSetup[T]) setup(val reflect.Value) Setuper {
+	var setups = new(setups)
 	if val.Kind() == reflect.Pointer {
 		if val.IsNil() {
 			return &NullSetup{}
 		}
 		val = val.Elem()
 	}
+
 	typ := val.Type()
-	for _, field := range reflect.VisibleFields(typ) {
-		if len(field.Index) > 1 { // Don't set fields of embedded members
-			continue
-		}
-		for _, dep := range f.Deps {
-			depVal := reflect.ValueOf(dep)
-			if field.Type == reflect.TypeOf(dep) {
-				val.FieldByIndex(field.Index).Set(depVal)
-				continue
-			}
-		}
-		setups.append(f.setup(val.FieldByIndex(field.Index)))
+	if typ.Kind() == reflect.Struct {
+		setups.append(f.setupStruct(val, typ))
 	}
-	actualVal := val.Interface()
-	if setup, ok := actualVal.(Setuper); ok {
-		setups.append(setup)
-	} else if val.CanAddr() {
-		if setup, ok := val.Addr().Interface().(Setuper); ok {
-			setups.append(setup)
-		}
+
+	if !val.CanAddr() {
+		asAny := val.Interface()
+		setups.tryAppend(asAny)
+		f.tryInit(asAny)
+	} else {
+		// val must be addressable, as both Setup and Init are mutating functions.
+		//
+		// Val itself may be a non-pointer field in a pointer struct, which
+		// means val.Interface() itself is not a Setuper or Initer*, but we can
+		// still get a pointer using Addr() because it's inside an addressable
+		// struct.
+		//
+		// \* While a non-pointer val may _implement_ the interfaces, the
+		// implementation would be wrong, as they couldn't mutate.
+
+		asAny := val.Addr().Interface()
+		setups.tryAppend(asAny)
+		f.tryInit(asAny)
 	}
-	if init, ok := actualVal.(FixtureInit); ok {
-		init.SetTB(f.TB)
-	} else if val.CanAddr() {
-		if init, ok := val.Addr().Interface().(FixtureInit); ok {
-			init.SetTB(f.TB)
-		}
-	}
-	// var res *NullSetup
 	return setups
+}
+
+func (s *FixtureSetup[T]) tryInit(val any) {
+	if init, ok := val.(FixtureInit); ok {
+		init.SetTB(s.TB)
+	}
 }
 
 func InitFixture[T FixtureInit](
