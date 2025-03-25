@@ -11,6 +11,6 @@ func CharacterData(o *Options)         { o.CharacterData = true }
 func AttributeOldValue(o *Options)     { o.AttributeOldValue = true }
 func CharacterDataOldValue(o *Options) { o.CharacterDataOldValue = true }
 
-func AttributeFilter(val []string) func(*Options) {
+func AttributeFilter(val ...string) func(*Options) {
 	return func(o *Options) { o.AttributeFilter = val }
 }
