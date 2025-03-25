@@ -20,7 +20,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type InitialHTMLFixture string
 type BaseLocationFixture string
 
 type AssertFixture struct {
@@ -55,21 +54,16 @@ func (f *HTTPHandlerFixture) Setup() {
 type WindowFixture struct {
 	AssertFixture
 	*BaseLocationFixture
-	InitialHTMLFixture
 	*HTTPHandlerFixture
 	Window htmltest.WindowHelper
 
-	requests      []*http.Request
-	form          html.HTMLFormElement
-	actualRequest *http.Request
-	submittedForm url.Values
+	form html.HTMLFormElement
 }
 
 func (f *WindowFixture) Setup() {
 	if f.Window.Window != nil {
 		return
 	}
-	fmt.Println("Setup window")
 	opts := html.WindowOptions{
 		HttpClient: gosthttp.NewHttpClientFromHandler(f.HTTPHandlerFixture),
 	}
@@ -89,10 +83,16 @@ func (f *WindowFixture) Setup() {
 	))
 }
 
+type HandlerFixture struct {
+}
+
 type DefaultWindowFixture struct {
 	WindowFixture
 	*HTTPHandlerFixture
-	initialized bool
+	initialized   bool
+	actualRequest *http.Request
+	submittedForm url.Values
+	requests      []*http.Request
 }
 
 func (f *DefaultWindowFixture) Setup() {
@@ -342,11 +342,9 @@ func TestResubmitFormOn307Redirects(t *testing.T) {
 		submittedForm url.Values
 	)
 
-	w, setup := fixture.Init(
-		t,
+	w, setup := fixture.Init(t,
 		&struct {
 			HTMLFormSubmitInputFixture
-			*HTTPHandlerFixture
 			*BaseLocationFixture
 		}{},
 	)
