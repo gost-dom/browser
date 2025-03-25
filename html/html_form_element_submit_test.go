@@ -20,8 +20,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type BaseLocationFixture string
-
 type AssertFixture struct {
 	fixture.Fixture
 	assert *assert.Assertions
@@ -35,7 +33,7 @@ func (f *AssertFixture) Assert() *assert.Assertions {
 	return f.assert
 }
 
-func (f AssertFixture) Expect(actual interface{}, extra ...interface{}) types.Assertion {
+func (f *AssertFixture) Expect(actual interface{}, extra ...interface{}) types.Assertion {
 	if f.gomega == nil {
 		f.gomega = gomega.NewWithT(f.TB)
 	}
@@ -47,13 +45,12 @@ type HTTPHandlerFixture struct {
 }
 
 func (f *HTTPHandlerFixture) Setup() {
-	fmt.Println("Setup handler")
 	f.ServeMux = http.NewServeMux()
 }
 
 type WindowFixture struct {
 	AssertFixture
-	*BaseLocationFixture
+	BaseLocation string
 	*HTTPHandlerFixture
 	Window htmltest.WindowHelper
 
@@ -65,10 +62,8 @@ func (f *WindowFixture) Setup() {
 		return
 	}
 	opts := html.WindowOptions{
-		HttpClient: gosthttp.NewHttpClientFromHandler(f.HTTPHandlerFixture),
-	}
-	if f.BaseLocationFixture != nil {
-		opts.BaseLocation = string(*f.BaseLocationFixture)
+		BaseLocation: f.BaseLocation,
+		HttpClient:   gosthttp.NewHttpClientFromHandler(f.HTTPHandlerFixture),
 	}
 	win := html.NewWindow(opts)
 	f.Window = htmltest.NewWindowHelper(f.TB, win)
@@ -81,9 +76,6 @@ func (f *WindowFixture) Setup() {
 			</form>
 		</body>`,
 	))
-}
-
-type HandlerFixture struct {
 }
 
 type DefaultWindowFixture struct {
@@ -139,9 +131,8 @@ type HTMLFormFixture struct {
 func TestSubmitForm(t *testing.T) {
 	w, setup := fixture.Init(t, &struct {
 		DefaultWindowFixture
-		Location *BaseLocationFixture
 	}{})
-	*w.Location = "http://example.com/forms/example-form.html?original-query=original-value"
+	w.BaseLocation = "http://example.com/forms/example-form.html?original-query=original-value"
 	setup.Setup()
 
 	var submitEventDispatched bool
@@ -149,10 +140,10 @@ func TestSubmitForm(t *testing.T) {
 		submitEventDispatched = true
 	}))
 	w.Form().Submit()
+
 	w.Expect(w.actualRequest.Method).To(Equal("GET"))
-	w.Expect(
-		w.actualRequest.URL.String(),
-	).To(Equal("http://example.com/forms/example-form.html?foo=bar"))
+	w.Expect(w.actualRequest.URL.String()).
+		To(Equal("http://example.com/forms/example-form.html?foo=bar"))
 
 	w.Assert().Equal("/forms/example-form.html", w.actualRequest.URL.Path,
 		"Form post path")
@@ -163,11 +154,8 @@ func TestSubmitForm(t *testing.T) {
 }
 
 func TestHTMLFormElementSubmitPost(t *testing.T) {
-	w, setup := fixture.Init(t, &struct {
-		DefaultWindowFixture
-		Location *BaseLocationFixture
-	}{})
-	*w.Location = "http://example.com/forms/example-form.html?original-query=original-value"
+	w, setup := fixture.Init(t, &DefaultWindowFixture{})
+	w.BaseLocation = "http://example.com/forms/example-form.html?original-query=original-value"
 	setup.Setup()
 
 	form := w.Form()
@@ -342,22 +330,17 @@ func TestResubmitFormOn307Redirects(t *testing.T) {
 		submittedForm url.Values
 	)
 
-	w, setup := fixture.Init(t,
-		&struct {
-			HTMLFormSubmitInputFixture
-			*BaseLocationFixture
-		}{},
-	)
-	*w.BaseLocationFixture = "http://example.com/forms"
-	fmt.Println("*** SETUP")
-
+	w, setup := fixture.Init(t, &HTMLFormSubmitInputFixture{})
+	w.BaseLocation = "http://example.com/forms"
 	setup.Setup()
+
 	w.Handle("POST /form-destination", http.RedirectHandler("/form-redirected", 307))
 	w.HandleFunc("POST /form-redirected", func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		actualRequest = r
 		submittedForm = r.Form
 	})
+
 	form := w.Form()
 	form.SetMethod("post")
 	form.SetAction("/form-destination")
