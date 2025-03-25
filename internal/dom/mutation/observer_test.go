@@ -27,44 +27,6 @@ type MutationObserverTestSuite struct {
 	suite.Suite
 }
 
-type MutationRecorder struct {
-	Records []Record
-}
-
-func (r *MutationRecorder) Clear() { r.Records = nil }
-
-func (r *MutationRecorder) HandleMutation(recs []Record, _ *Observer) {
-	r.Records = append(r.Records, recs...)
-}
-
-func (r MutationRecorder) Targets() []dom.Node {
-	result := make([]dom.Node, len(r.Records))
-	for i, r := range r.Records {
-		result[i] = r.Target
-	}
-	return result
-}
-
-func (r MutationRecorder) AddedNodes() []dom.Node {
-	lists := make([][]dom.Node, len(r.Records))
-	for i, r := range r.Records {
-		if nodes := r.AddedNodes; nodes != nil {
-			lists[i] = nodes.All()
-		}
-	}
-	return slices.Concat(lists...)
-}
-
-func (r MutationRecorder) RemovedNodes() []dom.Node {
-	lists := make([][]dom.Node, len(r.Records))
-	for i, r := range r.Records {
-		if nodes := r.RemovedNodes; nodes != nil {
-			lists[i] = nodes.All()
-		}
-	}
-	return slices.Concat(lists...)
-}
-
 func (s *MutationObserverTestSuite) TestObserveChildListNoSubtree() {
 	var recorder MutationRecorder
 	observer := NewObserver(&recorder)
@@ -115,8 +77,8 @@ func (s *MutationObserverTestSuite) TestObserveChildListWithSubtree() {
 	s.Assert().Equal([]dom.Node{child}, recorder.AddedNodes())
 }
 
-func TestValidOptions(t *testing.T) {
-	assert := assert.New(t)
+func (s *MutationObserverTestSuite) TestValidOptions() {
+	assert := s.Assert()
 	var rec = new(MutationRecorder)
 
 	doc := html.NewHTMLDocument(nil)
@@ -161,3 +123,41 @@ the removal itself has been delivered.**
 source: https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver/observe
 
 */
+
+type MutationRecorder struct {
+	Records []Record
+}
+
+func (r *MutationRecorder) Clear() { r.Records = nil }
+
+func (r *MutationRecorder) HandleMutation(recs []Record, _ *Observer) {
+	r.Records = append(r.Records, recs...)
+}
+
+func (r MutationRecorder) Targets() []dom.Node {
+	result := make([]dom.Node, len(r.Records))
+	for i, r := range r.Records {
+		result[i] = r.Target
+	}
+	return result
+}
+
+func (r MutationRecorder) AddedNodes() []dom.Node {
+	lists := make([][]dom.Node, len(r.Records))
+	for i, r := range r.Records {
+		if nodes := r.AddedNodes; nodes != nil {
+			lists[i] = nodes.All()
+		}
+	}
+	return slices.Concat(lists...)
+}
+
+func (r MutationRecorder) RemovedNodes() []dom.Node {
+	lists := make([][]dom.Node, len(r.Records))
+	for i, r := range r.Records {
+		if nodes := r.RemovedNodes; nodes != nil {
+			lists[i] = nodes.All()
+		}
+	}
+	return slices.Concat(lists...)
+}
