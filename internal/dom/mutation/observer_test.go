@@ -10,7 +10,9 @@ import (
 	. "github.com/gost-dom/browser/internal/dom/mutation"
 	"github.com/gost-dom/browser/internal/gosterror"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
+	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
+	_ "github.com/gost-dom/browser/testing/gomega-matchers"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -28,15 +30,6 @@ type MutationObserverTestSuite struct {
 	gosttest.GomegaSuite
 }
 
-type MutationTestHelper struct {
-	MutationRecorder
-	observer *mutation.Observer
-}
-
-func (h *MutationTestHelper) Flush() {
-	h.MutationRecorder.Flush()
-}
-
 func (s *MutationObserverTestSuite) TestObserveChildListNoSubtree() {
 	doc := html.NewHTMLDocument(nil)
 	body := doc.Body()
@@ -50,27 +43,29 @@ func (s *MutationObserverTestSuite) TestObserveChildListNoSubtree() {
 	body.AppendChild(div)
 	div.AppendChild(grandChild)
 
-	recorder.Flush()
-	subtreeRecorder.Flush()
+	s.Expect(recorder).To(HaveRecorded(
+		And(HaveType("childList"), HaveTarget(body), HaveAddedNodes(div)),
+	))
+	s.Expect(subtreeRecorder).To(HaveRecorded(
+		And(HaveType("childList"), HaveTarget(body), HaveAddedNodes(div)),
+		And(HaveType("childList"), HaveTarget(div), HaveAddedNodes(grandChild)),
+	))
+	s.Expect(subtreeRecorder.RemovedNodes()).To(BeEmpty())
 
-	s.Assert().Equal([]dom.Node{body}, recorder.Targets())
-	s.Assert().Equal([]dom.Node{div}, recorder.AddedNodes())
-	s.Assert().Equal([]dom.Node{body, div}, subtreeRecorder.Targets())
-	s.Assert().Equal([]dom.Node{div, grandChild}, subtreeRecorder.AddedNodes())
-	s.Assert().Empty(subtreeRecorder.RemovedNodes())
-
-	recorder.Clear()
+	recorder.Clear() // Clear so we can see in isolation what is removed
 	subtreeRecorder.Clear()
 
 	div.RemoveChild(grandChild)
 	body.RemoveChild(div)
-	recorder.Flush()
-	subtreeRecorder.Flush()
 
-	s.Assert().Equal([]dom.Node{body}, recorder.Targets())
-	s.Assert().Equal([]dom.Node{div}, recorder.RemovedNodes())
-	s.Assert().Equal([]dom.Node{div, body}, subtreeRecorder.Targets())
-	s.Assert().Equal([]dom.Node{grandChild, div}, subtreeRecorder.RemovedNodes())
+	s.Expect(recorder).To(HaveRecorded(
+		And(HaveType("childList"), HaveTarget(body), HaveRemovedNodes(div), HaveNoAddedNodes())))
+
+	s.Expect(subtreeRecorder).To(HaveRecorded(
+		And(HaveTarget(div), HaveRemovedNodes(grandChild), HaveNoAddedNodes()),
+		And(HaveType("childList"), HaveTarget(body), HaveRemovedNodes(div), HaveNoAddedNodes()),
+	))
+
 	s.Assert().Empty(subtreeRecorder.AddedNodes())
 }
 
@@ -188,11 +183,4 @@ func (r MutationRecorder) RemovedNodes() []dom.Node {
 		}
 	}
 	return slices.Concat(lists...)
-}
-
-func initMutationRecorder(target dom.Node, options ...func(*Options)) *MutationTestHelper {
-	var res MutationTestHelper
-	res.observer = NewObserver(&res.MutationRecorder, &res.MutationRecorder)
-	res.observer.Observe(target, options...)
-	return &res
 }

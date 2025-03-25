@@ -26,3 +26,4 @@ var ContainElement = gomega.ContainElement
 var HaveKeyWithValue = gomega.HaveKeyWithValue
 var ConsistOf = gomega.ConsistOf
 var HaveExactElements = gomega.HaveExactElements
+var And = gomega.And

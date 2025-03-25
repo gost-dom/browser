@@ -130,7 +130,12 @@ func (o *Observer) Process(e dom.ChangeEvent) {
 	if e.Target != o.target && !o.options.Subtree {
 		return
 	}
-	r := Record{Target: e.Target, AddedNodes: e.AddedNodes, RemovedNodes: e.RemovedNodes}
+	r := Record{
+		Type:         "childList",
+		Target:       e.Target,
+		AddedNodes:   e.AddedNodes,
+		RemovedNodes: e.RemovedNodes,
+	}
 	o.pending = append(o.pending, r)
 }
 
