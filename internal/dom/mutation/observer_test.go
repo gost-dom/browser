@@ -91,10 +91,33 @@ func (s *MutationObserverTestSuite) TestValidOptions() {
 			Subtree,
 			AttributeOldValue,
 			CharacterDataOldValue,
-			AttributeFilter([]string{"dummy"})),
+			AttributeFilter("dummy")),
 		gosterror.TypeError{},
 		"Error when _all_ non other options than one of the 3 required is passed",
 	)
+}
+
+func (s *MutationObserverTestSuite) TestAttributeChanges() {
+	doc := html.NewHTMLDocument(nil)
+	parent := doc.CreateElement("div")
+	child := doc.CreateElement("div")
+	doc.Body().AppendChild(parent)
+	parent.AppendChild(child)
+	parent.SetAttribute("data-x", "Old value")
+
+	childRecorder := initMutationRecorder(parent, ChildList)
+	rec1 := initMutationRecorder(parent, Attributes)
+	// rec2 := initMutationRecorder(parent, Attributes, AttributeFilter("data-x", "data-y"))
+	// rec3 := initMutationRecorder(parent, Attributes, Subtree)
+	// rec4 := initMutationRecorder(parent, Attributes, AttributeOldValue)
+
+	parent.SetAttribute("data-x", "New x value")
+	parent.SetAttribute("data-y", "New y value")
+	parent.SetAttribute("data-z", "New z value")
+	rec1.Flush()
+	s.Assert().Empty(childRecorder.Records, "ChildList mutations")
+	s.Assert().Equal(3, len(rec1.Records))
+
 }
 
 func Test(t *testing.T) {
