@@ -11,61 +11,37 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/gosthttp"
 	"github.com/gost-dom/browser/internal/testing/eventtest"
+	"github.com/gost-dom/browser/internal/testing/fixtures"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 	"github.com/gost-dom/fixture"
-	"github.com/onsi/gomega"
-	"github.com/onsi/gomega/types"
-	"github.com/stretchr/testify/assert"
 )
 
-type AssertFixture struct {
-	fixture.Fixture
-	assert *assert.Assertions
-	gomega gomega.Gomega
-}
-
-func (f *AssertFixture) Assert() *assert.Assertions {
-	if f.assert == nil {
-		f.assert = assert.New(f.TB)
-	}
-	return f.assert
-}
-
-func (f *AssertFixture) Expect(actual interface{}, extra ...interface{}) types.Assertion {
-	if f.gomega == nil {
-		f.gomega = gomega.NewWithT(f.TB)
-	}
-	return f.gomega.Expect(actual, extra...)
-}
-
-type HTTPHandlerFixture struct {
-	*http.ServeMux
-}
+type HTTPHandlerFixture struct{ *http.ServeMux }
 
 func (f *HTTPHandlerFixture) Setup() {
-	f.ServeMux = http.NewServeMux()
+	if f.ServeMux == nil {
+		f.ServeMux = http.NewServeMux()
+	}
 }
 
 type WindowFixture struct {
-	AssertFixture
-	BaseLocation string
+	fixtures.AssertFixture
 	*HTTPHandlerFixture
-	Window htmltest.WindowHelper
 
-	form html.HTMLFormElement
+	Window       htmltest.WindowHelper
+	BaseLocation string
 }
 
 func (f *WindowFixture) Setup() {
 	if f.Window.Window != nil {
 		return
 	}
-	opts := html.WindowOptions{
+	win := html.NewWindow(html.WindowOptions{
 		BaseLocation: f.BaseLocation,
 		HttpClient:   gosthttp.NewHttpClientFromHandler(f.HTTPHandlerFixture),
-	}
-	win := html.NewWindow(opts)
+	})
 	f.Window = htmltest.NewWindowHelper(f.TB, win)
 
 	f.Helper()
@@ -129,9 +105,7 @@ type HTMLFormFixture struct {
 }
 
 func TestSubmitForm(t *testing.T) {
-	w, setup := fixture.Init(t, &struct {
-		DefaultWindowFixture
-	}{})
+	w, setup := fixture.Init(t, &DefaultWindowFixture{})
 	w.BaseLocation = "http://example.com/forms/example-form.html?original-query=original-value"
 	setup.Setup()
 
