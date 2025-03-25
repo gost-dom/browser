@@ -60,6 +60,7 @@ format](https://github.com/angular/angular/blob/main/contributing-docs/commit-me
 |--------------|-----------------------------------------------------------------------|
 | **build**    | Changes that affect the build scripts                                 |
 | **ci**       | Changes to the CI configuration                                       |
+| **cleanup**  | Remove dead code, print statements, or comments                       |
 | **docs**     | Documentation only changes                                            |
 | **drop**     | An existing feature is removed or no longer supported                 |
 | **feat**     | A new feature                                                         |
