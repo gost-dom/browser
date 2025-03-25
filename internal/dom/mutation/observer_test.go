@@ -9,7 +9,7 @@ import (
 	. "github.com/gost-dom/browser/internal/dom/mutation"
 	"github.com/gost-dom/browser/internal/gosterror"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
-	"github.com/onsi/gomega"
+	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -24,57 +24,49 @@ func TestMutationObserverConformsToTheIDLSpecs(t *testing.T) {
 }
 
 type MutationObserverTestSuite struct {
-	suite.Suite
+	gosttest.GomegaSuite
 }
 
 func (s *MutationObserverTestSuite) TestObserveChildListNoSubtree() {
 	var recorder MutationRecorder
+	var subtreeRecorder MutationRecorder
 	observer := NewObserver(&recorder)
+	subtreeObserver := NewObserver(&subtreeRecorder)
 
 	doc := html.NewHTMLDocument(nil)
 	body := doc.Body()
 
 	observer.Observe(body, ChildList)
+	subtreeObserver.Observe(body, ChildList, Subtree)
 
 	div := doc.CreateElement("div")
+	grandChild := doc.CreateElement("div")
 	div.SetAttribute("id", "parent")
 	body.AppendChild(div)
+	div.AppendChild(grandChild)
 
 	observer.Flush()
+	subtreeObserver.Flush()
+
 	s.Assert().Equal([]dom.Node{body}, recorder.Targets())
 	s.Assert().Equal([]dom.Node{div}, recorder.AddedNodes())
-	s.Assert().Empty(recorder.RemovedNodes())
+	s.Assert().Equal([]dom.Node{body, div}, subtreeRecorder.Targets())
+	s.Assert().Equal([]dom.Node{div, grandChild}, subtreeRecorder.AddedNodes())
+	s.Assert().Empty(subtreeRecorder.RemovedNodes())
+
 	recorder.Clear()
+	subtreeRecorder.Clear()
 
-	div.AppendChild(doc.CreateElement("div"))
-	observer.Flush()
-	s.Assert().Empty(recorder.Records, "Child node was notified when subtree=false")
-
+	div.RemoveChild(grandChild)
 	body.RemoveChild(div)
 	observer.Flush()
+	subtreeObserver.Flush()
+
 	s.Assert().Equal([]dom.Node{body}, recorder.Targets())
-	g := gomega.NewWithT(s.T())
-	g.Expect(recorder.RemovedNodes()).To(gomega.ConsistOf(div))
-	s.Assert().Empty(recorder.AddedNodes())
-}
-
-func (s *MutationObserverTestSuite) TestObserveChildListWithSubtree() {
-	var recorder MutationRecorder
-	observer := NewObserver(&recorder)
-
-	doc := html.NewHTMLDocument(nil)
-	body := doc.Body()
-
-	div := doc.CreateElement("div")
-	body.AppendChild(div)
-	observer.Observe(body, ChildList, Subtree)
-
-	child := doc.CreateElement("div")
-	div.AppendChild(child)
-
-	observer.Flush()
-	s.Assert().Equal([]dom.Node{div}, recorder.Targets())
-	s.Assert().Equal([]dom.Node{child}, recorder.AddedNodes())
+	s.Assert().Equal([]dom.Node{div}, recorder.RemovedNodes())
+	s.Assert().Equal([]dom.Node{div, body}, subtreeRecorder.Targets())
+	s.Assert().Equal([]dom.Node{grandChild, div}, subtreeRecorder.RemovedNodes())
+	s.Assert().Empty(subtreeRecorder.AddedNodes())
 }
 
 func (s *MutationObserverTestSuite) TestValidOptions() {
