@@ -6,6 +6,7 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/dom/mutation"
 	. "github.com/gost-dom/browser/internal/dom/mutation"
 	"github.com/gost-dom/browser/internal/gosterror"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
@@ -27,17 +28,21 @@ type MutationObserverTestSuite struct {
 	gosttest.GomegaSuite
 }
 
-func (s *MutationObserverTestSuite) TestObserveChildListNoSubtree() {
-	var recorder MutationRecorder
-	var subtreeRecorder MutationRecorder
-	observer := NewObserver(&recorder)
-	subtreeObserver := NewObserver(&subtreeRecorder)
+type MutationTestHelper struct {
+	MutationRecorder
+	observer *mutation.Observer
+}
 
+func (h *MutationTestHelper) Flush() {
+	h.observer.Flush()
+}
+
+func (s *MutationObserverTestSuite) TestObserveChildListNoSubtree() {
 	doc := html.NewHTMLDocument(nil)
 	body := doc.Body()
 
-	observer.Observe(body, ChildList)
-	subtreeObserver.Observe(body, ChildList, Subtree)
+	recorder := initMutationRecorder(body, ChildList)
+	subtreeRecorder := initMutationRecorder(body, ChildList, Subtree)
 
 	div := doc.CreateElement("div")
 	grandChild := doc.CreateElement("div")
@@ -45,8 +50,8 @@ func (s *MutationObserverTestSuite) TestObserveChildListNoSubtree() {
 	body.AppendChild(div)
 	div.AppendChild(grandChild)
 
-	observer.Flush()
-	subtreeObserver.Flush()
+	recorder.Flush()
+	subtreeRecorder.Flush()
 
 	s.Assert().Equal([]dom.Node{body}, recorder.Targets())
 	s.Assert().Equal([]dom.Node{div}, recorder.AddedNodes())
@@ -59,8 +64,8 @@ func (s *MutationObserverTestSuite) TestObserveChildListNoSubtree() {
 
 	div.RemoveChild(grandChild)
 	body.RemoveChild(div)
-	observer.Flush()
-	subtreeObserver.Flush()
+	recorder.Flush()
+	subtreeRecorder.Flush()
 
 	s.Assert().Equal([]dom.Node{body}, recorder.Targets())
 	s.Assert().Equal([]dom.Node{div}, recorder.RemovedNodes())
@@ -152,4 +157,11 @@ func (r MutationRecorder) RemovedNodes() []dom.Node {
 		}
 	}
 	return slices.Concat(lists...)
+}
+
+func initMutationRecorder(target dom.Node, options ...func(*Options)) *MutationTestHelper {
+	var res MutationTestHelper
+	res.observer = NewObserver(&res.MutationRecorder)
+	res.observer.Observe(target, options...)
+	return &res
 }
