@@ -163,6 +163,7 @@ func (e *element) SetAttributeNode(node Attr) (Attr, error) {
 			return a, nil
 		}
 	}
+	node.setParent(e.selfElement)
 	e.attributes = append(e.attributes, node)
 	return nil, nil
 }
@@ -199,9 +200,7 @@ func (e *element) SetAttribute(name string, value string) {
 	if a := e.GetAttributeNode(name); a != nil {
 		a.SetValue(value)
 	} else {
-		a := newAttr(name, value, e.OwnerDocument())
-		a.setParent(e.selfElement)
-		e.attributes = append(e.attributes, a)
+		e.SetAttributeNode(newAttr(name, value, e.OwnerDocument()))
 	}
 }
 
