@@ -224,20 +224,16 @@ func (n *node) InsertBefore(newChild Node, referenceNode Node) (Node, error) {
 		return nil, err
 	}
 	if fragment, ok := newChild.(DocumentFragment); ok {
-		for fragment.ChildNodes().Length() > 0 {
-			if _, err := n.InsertBefore(fragment.ChildNodes().Item(0), referenceNode); err != nil {
+		c := fragment.FirstChild()
+		for c != nil {
+			if _, err := n.insertBefore(c, referenceNode); err != nil {
 				return nil, err
 			}
+			c = fragment.FirstChild()
 		}
 		return fragment, nil
 	}
 	result, err := n.insertBefore(newChild, referenceNode)
-	if err == nil {
-		newChild.setParent(n.self)
-	}
-	if newChild.IsConnected() {
-		newChild.Connected()
-	}
 	return result, err
 }
 
@@ -423,6 +419,10 @@ func (n *node) insertBefore(newNode Node, referenceNode Node) (Node, error) {
 	}
 	removeNodeFromParent(newNode)
 	n.notify(n.addedNodeEvent(newNode))
+	newNode.setParent(n.self)
+	if newNode.IsConnected() {
+		newNode.Connected()
+	}
 	return newNode, nil
 }
 
