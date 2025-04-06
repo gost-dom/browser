@@ -130,25 +130,30 @@ func (o *Observer) Process(e dom.ChangeEvent) {
 	if e.Target != o.target && !o.options.Subtree {
 		return
 	}
+	r := Record{
+		Type:   string(e.Type),
+		Target: e.Target,
+	}
 	switch e.Type {
 	case dom.ChangeEventAttributes:
 		if !o.options.Attributes {
 			return
 		}
+		if o.options.AttributeOldValue {
+			r.OldValue = e.OldValue
+		}
+
 	case dom.ChangeEventCData:
 		if !o.options.CharacterData {
 			return
 		}
+
 	case dom.ChangeEventChildList:
 		if !o.options.ChildList {
 			return
 		}
-	}
-	r := Record{
-		Type:         string(e.Type),
-		Target:       e.Target,
-		AddedNodes:   e.AddedNodes,
-		RemovedNodes: e.RemovedNodes,
+		r.AddedNodes = e.AddedNodes
+		r.RemovedNodes = e.RemovedNodes
 	}
 	o.pending = append(o.pending, r)
 }

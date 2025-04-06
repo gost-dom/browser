@@ -128,6 +128,7 @@ type ChangeEvent struct {
 	Type         ChangeEventType
 	AddedNodes   NodeList
 	RemovedNodes NodeList
+	OldValue     string
 }
 
 type observer interface {
