@@ -114,9 +114,18 @@ type Closer interface {
 	Close()
 }
 
+type ChangeEventType string
+
+const (
+	ChangeEventChildList  ChangeEventType = "childList"
+	ChangeEventAttributes ChangeEventType = "attributes"
+	ChangeEventCData      ChangeEventType = "characterData"
+)
+
 type ChangeEvent struct {
 	// The original target of the change.
 	Target       Node
+	Type         ChangeEventType
 	AddedNodes   NodeList
 	RemovedNodes NodeList
 }
@@ -542,6 +551,7 @@ func (n *node) notify(event ChangeEvent) {
 func (n *node) addedNodeEvent(newNode ...Node) ChangeEvent {
 	return ChangeEvent{
 		Target:     n.self,
+		Type:       ChangeEventChildList,
 		AddedNodes: &nodeList{nodes: newNode},
 	}
 }
@@ -549,6 +559,7 @@ func (n *node) addedNodeEvent(newNode ...Node) ChangeEvent {
 func (n *node) removedNodeEvent(nodes ...Node) ChangeEvent {
 	return ChangeEvent{
 		Target:       n.self,
+		Type:         ChangeEventChildList,
 		RemovedNodes: &nodeList{nodes: nodes},
 	}
 }

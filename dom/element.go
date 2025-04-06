@@ -160,12 +160,19 @@ func (e *element) SetAttributeNode(node Attr) (Attr, error) {
 	for i, a := range e.attributes {
 		if a.Name() == node.Name() && a.NamespaceURI() == node.NamespaceURI() {
 			e.attributes[i] = node
+			e.notify(e.attributeChangedEvent(node, a))
 			return a, nil
 		}
 	}
 	node.setParent(e.selfElement)
+
+	e.notify(e.attributeChangedEvent(node, nil))
 	e.attributes = append(e.attributes, node)
 	return nil, nil
+}
+
+func (e *element) attributeChangedEvent(_, _ Attr) ChangeEvent {
+	return ChangeEvent{Target: e.self, Type: ChangeEventAttributes}
 }
 
 func (e *element) RemoveAttributeNode(node Attr) (Attr, error) {
@@ -173,6 +180,7 @@ func (e *element) RemoveAttributeNode(node Attr) (Attr, error) {
 		if a == node {
 			e.attributes = slices.Delete(e.attributes, i, i+1)
 			node.setParent(nil)
+			e.notify(e.attributeChangedEvent(nil, node))
 			return node, nil
 		}
 	}
@@ -198,6 +206,7 @@ func (e *element) Attributes() NamedNodeMap {
 
 func (e *element) SetAttribute(name string, value string) {
 	if a := e.GetAttributeNode(name); a != nil {
+		e.notify(e.attributeChangedEvent(a, nil))
 		a.SetValue(value)
 	} else {
 		e.SetAttributeNode(newAttr(name, value, e.OwnerDocument()))
