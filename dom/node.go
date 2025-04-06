@@ -428,9 +428,6 @@ func (n *node) insertBefore(newNode Node, referenceNode Node) (Node, error) {
 
 type nodeIterator struct{ Node }
 
-func toHtmlNode(node Node) *html.Node {
-	return nodeIterator{node}.toHtmlNode(nil)
-}
 func toHtmlNodeAndMap(node Node) (*html.Node, map[*html.Node]Node) {
 	m := make(map[*html.Node]Node)
 	result := nodeIterator{node}.toHtmlNode(m)
