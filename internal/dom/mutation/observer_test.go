@@ -149,6 +149,41 @@ func Test(t *testing.T) {
 	suite.Run(t, new(MutationObserverTestSuite))
 }
 
+func (s *MutationObserverTestSuite) TestChangeCDataValue() {
+	doc := html.NewHTMLDocument(nil)
+	textNode := doc.CreateText("Original value")
+	commentNode := doc.CreateComment("Original comment")
+	doc.Body().AppendChild(textNode)
+	doc.Body().AppendChild(commentNode)
+
+	rec1 := initMutationRecorder(doc.Body(), CharacterData, Subtree)
+	rec2 := initMutationRecorder(doc.Body(), CharacterData)
+	rec3 := initMutationRecorder(textNode, CharacterData, CharacterDataOldValue)
+	rec4 := initMutationRecorder(commentNode, CharacterData, CharacterDataOldValue)
+
+	textNode.SetData("New value")
+	commentNode.SetData("New comment")
+
+	s.Expect(rec2.MutationRecorder.Records).To(BeEmpty())
+	s.Expect(rec1).To(HaveRecorded(
+		And(
+			HaveType(string(dom.ChangeEventCData)),
+			HaveTarget(textNode),
+			HaveOldValue(""),
+		),
+		And(
+			HaveType(string(dom.ChangeEventCData)),
+			HaveTarget(commentNode),
+		), // , HaveOldValue("Original value")),
+	))
+	s.Expect(rec3).To(HaveRecorded(
+		And(HaveType(string(dom.ChangeEventCData)), HaveOldValue("Original value")),
+	))
+	s.Expect(rec4).To(HaveRecorded(
+		And(HaveType(string(dom.ChangeEventCData)), HaveOldValue("Original comment")),
+	))
+}
+
 /*
 TODO: Note this about subtree monitoring:
 

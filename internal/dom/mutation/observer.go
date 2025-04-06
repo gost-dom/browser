@@ -147,6 +147,9 @@ func (o *Observer) Process(e dom.ChangeEvent) {
 		if !o.options.CharacterData {
 			return
 		}
+		if o.options.CharacterDataOldValue {
+			r.OldValue = e.OldValue
+		}
 
 	case dom.ChangeEventChildList:
 		if !o.options.ChildList {
