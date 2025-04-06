@@ -16,6 +16,11 @@ type MutationTestHelper struct {
 	observer *mutation.Observer
 }
 
+func (h *MutationTestHelper) Clear() {
+	h.Flush()
+	h.MutationRecorder.Clear()
+}
+
 func (h *MutationTestHelper) Flush() {
 	h.MutationRecorder.Flush()
 }
@@ -55,6 +60,18 @@ func HaveNoAddedNodes() types.GomegaMatcher {
 	})
 }
 
+func HavePrevSibling(node dom.Node) types.GomegaMatcher {
+	var m types.GomegaMatcher
+	if node == nil {
+		m = BeNil()
+	} else {
+		m = Equal(node)
+	}
+	return gcustom.MakeMatcher(func(r mutation.Record) (bool, error) {
+		return m.Match(r.PreviousSibling)
+	})
+}
+
 func HaveAddedNodes(nodes ...dom.Node) types.GomegaMatcher {
 	m := HaveExactElements(nodes)
 	return gcustom.MakeMatcher(func(r mutation.Record) (bool, error) {
@@ -65,7 +82,11 @@ func HaveAddedNodes(nodes ...dom.Node) types.GomegaMatcher {
 func HaveRemovedNodes(nodes ...dom.Node) types.GomegaMatcher {
 	m := HaveExactElements(nodes)
 	return gcustom.MakeMatcher(func(r mutation.Record) (bool, error) {
-		return m.Match(r.RemovedNodes.All())
+		var nodes []dom.Node
+		if r.RemovedNodes != nil {
+			nodes = r.RemovedNodes.All()
+		}
+		return m.Match(nodes)
 	})
 }
 

@@ -124,11 +124,12 @@ const (
 
 type ChangeEvent struct {
 	// The original target of the change.
-	Target       Node
-	Type         ChangeEventType
-	AddedNodes   NodeList
-	RemovedNodes NodeList
-	OldValue     string
+	Target          Node
+	Type            ChangeEventType
+	AddedNodes      NodeList
+	RemovedNodes    NodeList
+	OldValue        string
+	PreviousSibling Node
 }
 
 type observer interface {
@@ -347,8 +348,9 @@ func (n *node) RemoveChild(node Node) (Node, error) {
 			"Node.removeChild: The node to be removed is not a child of this node",
 		)
 	}
+	prevSibling := node.PreviousSibling()
 	n.childNodes.setNodes(slices.Delete(n.childNodes.All(), idx, idx+1))
-	n.notify(n.removedNodeEvent(node))
+	n.notify(n.removedNodeEvent(prevSibling, node))
 	return node, nil
 }
 
@@ -421,11 +423,11 @@ func (n *node) insertBefore(newNode Node, referenceNode Node) (Node, error) {
 		}
 		n.childNodes.setNodes(slices.Insert(n.childNodes.All(), i, newNode))
 	}
-	n.notify(n.addedNodeEvent(newNode))
 	newNode.setParent(n.self)
 	if newNode.IsConnected() {
 		newNode.Connected()
 	}
+	n.notify(n.addedNodeEvent(newNode))
 	return newNode, nil
 }
 
@@ -549,19 +551,21 @@ func (n *node) notify(event ChangeEvent) {
 	}
 }
 
-func (n *node) addedNodeEvent(newNode ...Node) ChangeEvent {
+func (n *node) addedNodeEvent(newNode Node) ChangeEvent {
 	return ChangeEvent{
-		Target:     n.self,
-		Type:       ChangeEventChildList,
-		AddedNodes: &nodeList{nodes: newNode},
+		Target:          n.self,
+		Type:            ChangeEventChildList,
+		PreviousSibling: newNode.PreviousSibling(),
+		AddedNodes:      &nodeList{nodes: []Node{newNode}},
 	}
 }
 
-func (n *node) removedNodeEvent(nodes ...Node) ChangeEvent {
+func (n *node) removedNodeEvent(prevSibling, node Node) ChangeEvent {
 	return ChangeEvent{
-		Target:       n.self,
-		Type:         ChangeEventChildList,
-		RemovedNodes: &nodeList{nodes: nodes},
+		Target:          n.self,
+		Type:            ChangeEventChildList,
+		PreviousSibling: prevSibling,
+		RemovedNodes:    &nodeList{nodes: []Node{node}},
 	}
 }
 

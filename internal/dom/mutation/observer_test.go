@@ -40,6 +40,7 @@ func (s *MutationObserverTestSuite) TestObserveChildListNoSubtree() {
 
 	div := doc.CreateElement("div")
 	grandChild := doc.CreateElement("div")
+	grandChild.SetAttribute("id", "grand")
 	div.SetAttribute("id", "parent")
 	body.AppendChild(div)
 	div.AppendChild(grandChild)
@@ -49,9 +50,26 @@ func (s *MutationObserverTestSuite) TestObserveChildListNoSubtree() {
 	))
 	s.Expect(subtreeRecorder).To(HaveRecorded(
 		And(HaveType("childList"), HaveTarget(body), HaveAddedNodes(div)),
-		And(HaveType("childList"), HaveTarget(div), HaveAddedNodes(grandChild)),
+		And(
+			HaveType("childList"),
+			HaveTarget(div),
+			HaveAddedNodes(grandChild),
+			HavePrevSibling(nil),
+		),
 	))
 	s.Expect(subtreeRecorder.RemovedNodes()).To(BeEmpty())
+
+	recorder.Clear() // Clear so we can see in isolation what is removed
+	subtreeRecorder.Clear()
+
+	newGrand := doc.CreateElement("div")
+	newGrand.SetAttribute("id", "new-grand")
+	div.AppendChild(newGrand)
+	s.Expect(subtreeRecorder).To(HaveRecorded(
+		And(HaveType("childList"), HaveTarget(div), HavePrevSibling(grandChild)),
+	))
+
+	div.RemoveChild(newGrand)
 
 	recorder.Clear() // Clear so we can see in isolation what is removed
 	subtreeRecorder.Clear()
@@ -154,7 +172,9 @@ type MutationRecorder struct {
 	Records  []Record
 }
 
-func (r *MutationRecorder) Clear() { r.Records = nil }
+func (r *MutationRecorder) Clear() {
+	r.Records = nil
+}
 
 func (r *MutationRecorder) ensureFlushers() {
 	if r.flushers == nil {
