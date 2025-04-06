@@ -112,6 +112,7 @@ func (s *MutationObserverTestSuite) TestAttributeChanges() {
 	// rec3 := initMutationRecorder(parent, Attributes, Subtree)
 	// rec4 := initMutationRecorder(parent, Attributes, AttributeOldValue)
 
+	parent.AppendChild(doc.CreateElement("div")) // Should not be recorded
 	parent.SetAttribute("data-x", "New x value")
 	parent.SetAttribute("data-y", "New y value")
 	parent.SetAttribute("data-z", "New z value")
@@ -120,6 +121,8 @@ func (s *MutationObserverTestSuite) TestAttributeChanges() {
 	s.Assert().Equal(3, len(rec1.Records))
 	s.Expect(rec1.Records).
 		To(gomega.HaveEach(gomega.HaveField("Type", string(dom.ChangeEventAttributes))))
+	s.Expect(rec1.Records).
+		To(gomega.HaveEach(gomega.HaveField("Target", Equal(parent))))
 }
 
 func Test(t *testing.T) {

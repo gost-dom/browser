@@ -130,6 +130,20 @@ func (o *Observer) Process(e dom.ChangeEvent) {
 	if e.Target != o.target && !o.options.Subtree {
 		return
 	}
+	switch e.Type {
+	case dom.ChangeEventAttributes:
+		if !o.options.Attributes {
+			return
+		}
+	case dom.ChangeEventCData:
+		if !o.options.CharacterData {
+			return
+		}
+	case dom.ChangeEventChildList:
+		if !o.options.ChildList {
+			return
+		}
+	}
 	r := Record{
 		Type:         string(e.Type),
 		Target:       e.Target,
