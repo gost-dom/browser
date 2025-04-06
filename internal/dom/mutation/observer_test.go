@@ -103,7 +103,7 @@ func (s *MutationObserverTestSuite) TestAttributeChanges() {
 	parent.SetAttribute("data-x", "Old value")
 
 	childRecorder := initMutationRecorder(parent, ChildList)
-	rec1 := initMutationRecorder(parent, Attributes)
+	rec1 := initMutationRecorder(parent, Attributes, AttributeOldValue)
 	// rec2 := initMutationRecorder(parent, Attributes, AttributeFilter("data-x", "data-y"))
 	// rec3 := initMutationRecorder(parent, Attributes, Subtree)
 	// rec4 := initMutationRecorder(parent, Attributes, AttributeOldValue)
@@ -119,6 +119,8 @@ func (s *MutationObserverTestSuite) TestAttributeChanges() {
 		To(gomega.HaveEach(gomega.HaveField("Type", string(dom.ChangeEventAttributes))))
 	s.Expect(rec1.Records).
 		To(gomega.HaveEach(gomega.HaveField("Target", Equal(parent))))
+
+	s.Expect(rec1.Records[0].OldValue).To(Equal("Old value"))
 }
 
 func Test(t *testing.T) {
