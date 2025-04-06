@@ -124,7 +124,7 @@ func (s *MutationObserverTestSuite) TestAttributeChanges() {
 	s.Expect(rec1.Records).
 		To(gomega.HaveEach(gomega.HaveField("Target", Equal(parent))))
 
-	s.Expect(rec1.Records[0].OldValue).To(Equal("Old value"))
+	s.Expect(rec1.Records[0]).To(HaveOldValue("Old value"))
 }
 
 func Test(t *testing.T) {

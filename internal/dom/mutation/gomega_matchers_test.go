@@ -33,6 +33,12 @@ func HaveType(t string) types.GomegaMatcher {
 	})
 }
 
+func HaveOldValue(expected string) types.GomegaMatcher {
+	return gcustom.MakeMatcher(func(r mutation.Record) (bool, error) {
+		return (r.OldValue == expected), nil
+	}).WithTemplate("Mutation record old attribute value\n    Expected value: {{ .Data }}\n    Actual value: {{ .Actual.OldValue }}", expected)
+}
+
 func HaveTarget(t dom.Node) types.GomegaMatcher {
 	return gcustom.MakeMatcher(func(r mutation.Record) (bool, error) {
 		return (r.Target == t), nil
