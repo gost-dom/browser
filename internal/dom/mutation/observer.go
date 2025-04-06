@@ -131,7 +131,7 @@ func (o *Observer) Process(e dom.ChangeEvent) {
 		return
 	}
 	r := Record{
-		Type:         "childList",
+		Type:         string(e.Type),
 		Target:       e.Target,
 		AddedNodes:   e.AddedNodes,
 		RemovedNodes: e.RemovedNodes,

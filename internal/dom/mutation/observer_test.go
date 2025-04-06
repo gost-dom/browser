@@ -13,6 +13,7 @@ import (
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	_ "github.com/gost-dom/browser/testing/gomega-matchers"
+	"github.com/onsi/gomega"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -117,7 +118,8 @@ func (s *MutationObserverTestSuite) TestAttributeChanges() {
 	rec1.Flush()
 	s.Assert().Empty(childRecorder.Records, "ChildList mutations")
 	s.Assert().Equal(3, len(rec1.Records))
-
+	s.Expect(rec1.Records).
+		To(gomega.HaveEach(gomega.HaveField("Type", string(dom.ChangeEventAttributes))))
 }
 
 func Test(t *testing.T) {
