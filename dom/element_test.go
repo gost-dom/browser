@@ -10,7 +10,6 @@ import (
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 	"github.com/stretchr/testify/suite"
 
-	. "github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
 )
 
@@ -163,10 +162,9 @@ func TestElement(t *testing.T) {
 	suite.Run(t, new(ElementTestSuite))
 }
 
-var _ = Describe("Element", func() {
-	Describe("InsertAdjacentHTML", func() {
-		It("Should insert correctly 'beforeBegin'", func() {
-			doc := ParseHtmlString(`<body>
+func TestElementInsertAdjacentHTMLBeforeBegin(t *testing.T) {
+	gomega := gomega.NewWithT(t)
+	doc := ParseHtmlString(`<body>
   <div id="1">El 1</div>
   <div id="2">El 2
     <div>El 2-a</div>
@@ -174,12 +172,12 @@ var _ = Describe("Element", func() {
   </div>
   <div id="3">El 1</div>
 </body>`)
-			el := doc.GetElementById("2")
-			gomega.Expect(el.InsertAdjacentHTML(
-				"beforebegin",
-				"<div>1st new child</div><div>2nd new child</div>",
-			)).To(Succeed())
-			gomega.Expect(doc.Body()).To(HaveOuterHTML(`<body>
+	el := doc.GetElementById("2")
+	gomega.Expect(el.InsertAdjacentHTML(
+		"beforebegin",
+		"<div>1st new child</div><div>2nd new child</div>",
+	)).To(Succeed())
+	gomega.Expect(doc.Body()).To(HaveOuterHTML(`<body>
   <div id="1">El 1</div>
   <div>1st new child</div><div>2nd new child</div><div id="2">El 2
     <div>El 2-a</div>
@@ -187,11 +185,11 @@ var _ = Describe("Element", func() {
   </div>
   <div id="3">El 1</div>
 </body>`))
+}
 
-		})
-
-		It("Should insert correctly 'afterBegin'", func() {
-			doc := ParseHtmlString(`<body>
+func TestElementInsertAdjacentHTMLAfterBegin(t *testing.T) {
+	gomega := gomega.NewWithT(t)
+	doc := ParseHtmlString(`<body>
   <div id="1">El 1</div>
   <div id="2">El 2
     <div>El 2-a</div>
@@ -199,15 +197,15 @@ var _ = Describe("Element", func() {
   </div>
   <div id="3">El 1</div>
 </body>`)
-			el, err := (doc.QuerySelector("[id='2']"))
-			gomega.Expect(err).ToNot(HaveOccurred())
-			gomega.Expect(
-				el.InsertAdjacentHTML(
-					"afterbegin",
-					"<div>1st new child</div><div>2nd new child</div>",
-				),
-			).To(Succeed())
-			gomega.Expect(doc.Body()).To(HaveOuterHTML(`<body>
+	el, err := (doc.QuerySelector("[id='2']"))
+	gomega.Expect(err).ToNot(HaveOccurred())
+	gomega.Expect(
+		el.InsertAdjacentHTML(
+			"afterbegin",
+			"<div>1st new child</div><div>2nd new child</div>",
+		),
+	).To(Succeed())
+	gomega.Expect(doc.Body()).To(HaveOuterHTML(`<body>
   <div id="1">El 1</div>
   <div id="2"><div>1st new child</div><div>2nd new child</div>El 2
     <div>El 2-a</div>
@@ -215,11 +213,11 @@ var _ = Describe("Element", func() {
   </div>
   <div id="3">El 1</div>
 </body>`))
+}
 
-		})
-
-		It("Should insert correctly 'beforeEnd'", func() {
-			doc := ParseHtmlString(`<body>
+func TestElementInsertAdjacentHTMLBeforeEnd(t *testing.T) {
+	gomega := gomega.NewWithT(t)
+	doc := ParseHtmlString(`<body>
   <div id="1">El 1</div>
   <div id="2">El 2
     <div>El 2-a</div>
@@ -227,15 +225,15 @@ var _ = Describe("Element", func() {
   </div>
   <div id="3">El 1</div>
 </body>`)
-			el, err := (doc.QuerySelector("[id='2']"))
-			gomega.Expect(err).ToNot(HaveOccurred())
-			gomega.Expect(
-				el.InsertAdjacentHTML(
-					"beforeend",
-					"<div>1st new child</div><div>2nd new child</div>",
-				),
-			).To(Succeed())
-			gomega.Expect(doc.Body()).To(HaveOuterHTML(`<body>
+	el, err := (doc.QuerySelector("[id='2']"))
+	gomega.Expect(err).ToNot(HaveOccurred())
+	gomega.Expect(
+		el.InsertAdjacentHTML(
+			"beforeend",
+			"<div>1st new child</div><div>2nd new child</div>",
+		),
+	).To(Succeed())
+	gomega.Expect(doc.Body()).To(HaveOuterHTML(`<body>
   <div id="1">El 1</div>
   <div id="2">El 2
     <div>El 2-a</div>
@@ -243,11 +241,11 @@ var _ = Describe("Element", func() {
   <div>1st new child</div><div>2nd new child</div></div>
   <div id="3">El 1</div>
 </body>`))
+}
 
-		})
-
-		It("Should insert correctly 'afterend'", func() {
-			doc := ParseHtmlString(`<body>
+func TestElementInsertAdjacentHTMLAfterEnd(t *testing.T) {
+	gomega := gomega.NewWithT(t)
+	doc := ParseHtmlString(`<body>
   <div id="1">El 1</div>
   <div id="2">El 2
     <div>El 2-a</div>
@@ -255,15 +253,15 @@ var _ = Describe("Element", func() {
   </div>
   <div id="3">El 1</div>
 </body>`)
-			el, err := (doc.QuerySelector("[id='2']"))
-			gomega.Expect(err).ToNot(HaveOccurred())
-			gomega.Expect(
-				el.InsertAdjacentHTML(
-					"afterend",
-					"<div>1st new child</div><div>2nd new child</div>",
-				),
-			).To(Succeed())
-			gomega.Expect(doc.Body()).To(HaveOuterHTML(`<body>
+	el, err := (doc.QuerySelector("[id='2']"))
+	gomega.Expect(err).ToNot(HaveOccurred())
+	gomega.Expect(
+		el.InsertAdjacentHTML(
+			"afterend",
+			"<div>1st new child</div><div>2nd new child</div>",
+		),
+	).To(Succeed())
+	gomega.Expect(doc.Body()).To(HaveOuterHTML(`<body>
   <div id="1">El 1</div>
   <div id="2">El 2
     <div>El 2-a</div>
@@ -271,112 +269,115 @@ var _ = Describe("Element", func() {
   </div><div>1st new child</div><div>2nd new child</div>
   <div id="3">El 1</div>
 </body>`))
-		})
-	})
+}
 
-	Describe("HTML Rendering", func() {
-		It("Should support OuterHTML", func() {
-			doc := ParseHtmlString(`<body><div id="2">El 2
+func TestElementOuterHTML(t *testing.T) {
+	gomega := gomega.NewWithT(t)
+	// NOTE: Whitespace is part of the parsed HTML as #text nodes
+	doc := ParseHtmlString(`<body><div id="2">El 2
     <div>El 2-a</div>
     <div>El 2-b</div>
   </div></body>`)
-			gomega.Expect(doc.Body().OuterHTML()).To(Equal(`<body><div id="2">El 2
+	gomega.Expect(doc.Body().OuterHTML()).To(Equal(`<body><div id="2">El 2
     <div>El 2-a</div>
     <div>El 2-b</div>
   </div></body>`))
-			gomega.Expect(doc.Body().InnerHTML()).To(Equal(`<div id="2">El 2
+	gomega.Expect(doc.Body().InnerHTML()).To(Equal(`<div id="2">El 2
     <div>El 2-a</div>
     <div>El 2-b</div>
   </div>`))
-		})
-	})
+}
 
-	Describe("Append/Prepend/ReplaceChildren/Children", func() {
-		// These should ideaaly be tested on both Element, Document, and
-		// DocumentFragment. The functions are defined in the ParentNode
-		// mixin interface that all 3 share.
+// ParentElementTestSuite describes functionality in the ParentNode IDL
+// interface mixin, which is used by both Element, Document, and
+// DocumentFragment.
+//
+// Ideally, these tests should be executed on all 3 types
+type ParentElementTestSuite struct {
+	gosttest.GomegaSuite
+}
 
-		It("Should add elements in 'Append'", func() {
-			doc := ParseHtmlString(`<body>a<div>b</div>c</body>`)
-			b := doc.Body()
-			divE := doc.CreateElement("div")
-			divE.SetTextContent("e")
-			b.Append(
-				doc.CreateText("d"),
-				divE,
-				doc.CreateText("f"),
-			)
-			gomega.Expect(b).To(HaveOuterHTML(`<body>a<div>b</div>cd<div>e</div>f</body>`))
-		})
+func TestParentElement(t *testing.T) {
+	suite.Run(t, new(ParentElementTestSuite))
+}
 
-		It("Should add elements first in 'Prepend'", func() {
-			doc := ParseHtmlString(`<body>a<div>b</div>c</body>`)
-			b := doc.Body()
-			divE := doc.CreateElement("div")
-			divE.SetTextContent("e")
-			b.Prepend(
-				doc.CreateText("d"),
-				divE,
-				doc.CreateText("f"),
-			)
-			gomega.Expect(b).To(HaveOuterHTML(`<body>d<div>e</div>fa<div>b</div>c</body>`))
-		})
+func (s *ParentElementTestSuite) TestAppend() {
+	doc := ParseHtmlString(`<body>a<div>b</div>c</body>`)
+	b := doc.Body()
+	divE := doc.CreateElement("div")
+	divE.SetTextContent("e")
+	b.Append(
+		doc.CreateText("d"),
+		divE,
+		doc.CreateText("f"),
+	)
+	s.Expect(b).To(HaveOuterHTML(`<body>a<div>b</div>cd<div>e</div>f</body>`))
+}
 
-		It("Should replace elements first in 'ReplaceChildren'", func() {
-			doc := ParseHtmlString(`<body>a<div>b</div>c</body>`)
-			b := doc.Body()
-			divE := doc.CreateElement("div")
-			divE.SetTextContent("e")
-			b.ReplaceChildren(
-				doc.CreateText("d"),
-				divE,
-				doc.CreateText("f"),
-			)
-			gomega.Expect(b).To(HaveOuterHTML(`<body>d<div>e</div>f</body>`))
-		})
+func (s *ParentElementTestSuite) TestPrepend() {
+	doc := ParseHtmlString(`<body>a<div>b</div>c</body>`)
+	b := doc.Body()
+	divE := doc.CreateElement("div")
+	divE.SetTextContent("e")
+	b.Prepend(
+		doc.CreateText("d"),
+		divE,
+		doc.CreateText("f"),
+	)
+	s.Expect(b).To(HaveOuterHTML(`<body>d<div>e</div>fa<div>b</div>c</body>`))
+}
 
-		It("Should iterate elements in 'Children'", func() {
-			doc := ParseHtmlString(
-				`<body>a<div id="el-1">b</div>c<div id="el-2">d</div>e<div name="el-3">f</div>g</body>`,
-			)
-			b := doc.Body()
-			c := b.Children()
+func (s *ParentElementTestSuite) TestReplaceChildren() {
+	doc := ParseHtmlString(`<body>a<div>b</div>c</body>`)
+	b := doc.Body()
+	divE := doc.CreateElement("div")
+	divE.SetTextContent("e")
+	b.ReplaceChildren(
+		doc.CreateText("d"),
+		divE,
+		doc.CreateText("f"),
+	)
+	s.Expect(b).To(HaveOuterHTML(`<body>d<div>e</div>f</body>`))
+}
 
-			gomega.Expect(c.Length()).To(Equal(3))
-			gomega.Expect(c.Item(0)).To(HaveOuterHTML(`<div id="el-1">b</div>`))
-			gomega.Expect(c.Item(1)).To(HaveAttribute("id", "el-2"))
-			gomega.Expect(c.Item(2)).To(HaveAttribute("name", "el-3"))
+func (s *ParentElementTestSuite) TestIterateChildren() {
+	doc := ParseHtmlString(
+		`<body>a<div id="el-1">b</div>c<div id="el-2">d</div>e<div name="el-3">f</div>g</body>`,
+	)
+	b := doc.Body()
+	c := b.Children()
 
-			gomega.Expect(c.Item(-1)).To(BeNil())
-			gomega.Expect(c.Item(3)).To(BeNil())
+	s.Expect(c.Length()).To(Equal(3))
+	s.Expect(c.Item(0)).To(HaveOuterHTML(`<div id="el-1">b</div>`))
+	s.Expect(c.Item(1)).To(HaveAttribute("id", "el-2"))
+	s.Expect(c.Item(2)).To(HaveAttribute("name", "el-3"))
 
-			gomega.Expect(c.NamedItem("el-1")).To(HaveAttribute("id", "el-1"))
-			gomega.Expect(c.NamedItem("el-2")).To(HaveAttribute("id", "el-2"))
-			gomega.Expect(c.NamedItem("el-3")).To(HaveAttribute("name", "el-3"))
-		})
+	s.Expect(c.Item(-1)).To(BeNil())
+	s.Expect(c.Item(3)).To(BeNil())
 
-		Describe("First/Last element", func() {
-			It("Should return elements when they exist", func() {
-				doc := ParseHtmlString(
-					`<body>a<div id="el-1">b</div>c<div id="el-2">d</div>e<div name="el-3">f</div>g</body>`,
-				)
-				b := doc.Body()
-				gomega.Expect(b.FirstElementChild()).To(HaveAttribute("id", "el-1"))
-				gomega.Expect(b.LastElementChild()).To(HaveOuterHTML(`<div name="el-3">f</div>`))
-			})
+	s.Expect(c.NamedItem("el-1")).To(HaveAttribute("id", "el-1"))
+	s.Expect(c.NamedItem("el-2")).To(HaveAttribute("id", "el-2"))
+	s.Expect(c.NamedItem("el-3")).To(HaveAttribute("name", "el-3"))
+}
 
-			It("Should nil when there are only non-element children", func() {
-				doc := ParseHtmlString(
-					`<body>body text</body>`,
-				)
-				b := doc.Body()
-				gomega.Expect(b.FirstElementChild()).To(BeNil())
-				gomega.Expect(b.LastElementChild()).To(BeNil())
-			})
-		})
+func (s *ParentElementTestSuite) TestFirstLastOnExistingElement() {
+	doc := ParseHtmlString(
+		`<body>a<div id="el-1">b</div>c<div id="el-2">d</div>e<div name="el-3">f</div>g</body>`,
+	)
+	b := doc.Body()
+	s.Expect(b.FirstElementChild()).To(HaveAttribute("id", "el-1"))
+	s.Expect(b.LastElementChild()).To(HaveOuterHTML(`<div name="el-3">f</div>`))
+}
 
-		It("Should handle empty string correctly in 'NamedItem'", func() {
-			Skip("Need to research")
-		})
-	})
-})
+func (s *ParentElementTestSuite) TestFirstLastWithNonElement() {
+	doc := ParseHtmlString(
+		`<body>body text</body>`,
+	)
+	b := doc.Body()
+	s.Expect(b.FirstElementChild()).To(BeNil())
+	s.Expect(b.LastElementChild()).To(BeNil())
+}
+
+func (s *ParentElementTestSuite) TestEmptyString() {
+	s.T().Skip("How to handle empty string in NamedItem")
+}
