@@ -36,6 +36,8 @@ func (t NewV8FunctionTemplate) Generate() *jen.Statement {
 
 type V8TargetGenerators struct{}
 
+func (gen V8TargetGenerators) PlatformInfoArg() Generator { return g.Id("info") }
+
 func (gen V8TargetGenerators) CreateInitFunction(data ESConstructorData) g.Generator {
 	return g.FunctionDefinition{
 		Name: "init",
@@ -44,6 +46,13 @@ func (gen V8TargetGenerators) CreateInitFunction(data ESConstructorData) g.Gener
 			g.Lit(data.Inheritance),
 			g.Id(prototypeFactoryFunctionName(data))),
 	}
+}
+
+func (gen V8TargetGenerators) ReturnError(errGen g.Generator) g.Generator {
+	return g.Return(g.Nil,
+		// jen.Qual("errors", "New").Call(jen.Lit(errMsg))
+		g.NewValuePackage("New", "errors").Call(errGen),
+	)
 }
 
 func (gen V8TargetGenerators) WrapperStructGenerators() PlatformWrapperStructGenerators {
@@ -117,17 +126,17 @@ func (gen V8TargetGenerators) CreateMethodCallbackBody(
 	debug := g.NewValuePackage("Debug", packagenames.Log).Call(
 		g.NewValue(naming.Receiver()).Field("logger").Call(g.Id("info")),
 		g.Lit(fmt.Sprintf("V8 Function call: %s.%s", data.Name(), op.Name)))
-	if op.NotImplemented {
-		errMsg := fmt.Sprintf(
-			"%s.%s: Not implemented. Create an issue: %s",
-			data.Name(),
-			op.Name,
-			packagenames.ISSUE_URL,
-		)
-		return g.StatementList(
-			debug,
-			g.Return(g.Nil, g.Raw(jen.Qual("errors", "New").Call(jen.Lit(errMsg)))))
-	}
+	// if op.NotImplemented {
+	// 	errMsg := fmt.Sprintf(
+	// 		"%s.%s: Not implemented. Create an issue: %s",
+	// 		data.Name(),
+	// 		op.Name,
+	// 		packagenames.ISSUE_URL,
+	// 	)
+	// 	return g.StatementList(
+	// 		debug,
+	// 		g.Return(g.Nil, g.Raw(jen.Qual("errors", "New").Call(jen.Lit(errMsg)))))
+	// }
 	receiver := WrapperInstance{g.NewValue(naming.Receiver())}
 	instance := g.NewValue("instance")
 	readArgsResult := ReadArguments(data, op)

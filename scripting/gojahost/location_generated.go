@@ -5,6 +5,7 @@ package gojahost
 import (
 	g "github.com/dop251/goja"
 	html "github.com/gost-dom/browser/html"
+	log "github.com/gost-dom/browser/internal/log"
 )
 
 func init() {
@@ -36,14 +37,17 @@ func (w locationWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime)
 }
 
 func (w locationWrapper) assign(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Location.assign")
 	panic("Location.assign: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w locationWrapper) replace(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Location.replace")
 	panic("Location.replace: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w locationWrapper) reload(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Location.reload")
 	panic("Location.reload: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
@@ -54,6 +58,7 @@ func (w locationWrapper) href(c g.FunctionCall) g.Value {
 }
 
 func (w locationWrapper) setHref(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Location.setHref")
 	panic("Location.setHref: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
@@ -70,6 +75,7 @@ func (w locationWrapper) protocol(c g.FunctionCall) g.Value {
 }
 
 func (w locationWrapper) setProtocol(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Location.setProtocol")
 	panic("Location.setProtocol: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
@@ -80,6 +86,7 @@ func (w locationWrapper) host(c g.FunctionCall) g.Value {
 }
 
 func (w locationWrapper) setHost(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Location.setHost")
 	panic("Location.setHost: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
@@ -90,6 +97,7 @@ func (w locationWrapper) hostname(c g.FunctionCall) g.Value {
 }
 
 func (w locationWrapper) setHostname(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Location.setHostname")
 	panic("Location.setHostname: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
@@ -100,6 +108,7 @@ func (w locationWrapper) port(c g.FunctionCall) g.Value {
 }
 
 func (w locationWrapper) setPort(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Location.setPort")
 	panic("Location.setPort: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
@@ -110,6 +119,7 @@ func (w locationWrapper) pathname(c g.FunctionCall) g.Value {
 }
 
 func (w locationWrapper) setPathname(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Location.setPathname")
 	panic("Location.setPathname: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
@@ -120,6 +130,7 @@ func (w locationWrapper) search(c g.FunctionCall) g.Value {
 }
 
 func (w locationWrapper) setSearch(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Location.setSearch")
 	panic("Location.setSearch: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
@@ -130,9 +141,11 @@ func (w locationWrapper) hash(c g.FunctionCall) g.Value {
 }
 
 func (w locationWrapper) setHash(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Location.setHash")
 	panic("Location.setHash: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w locationWrapper) ancestorOrigins(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Location.ancestorOrigins")
 	panic("Location.ancestorOrigins: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

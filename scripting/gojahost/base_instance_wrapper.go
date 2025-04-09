@@ -1,6 +1,7 @@
 package gojahost
 
 import (
+	"log/slog"
 	"strings"
 
 	"github.com/dop251/goja"
@@ -17,6 +18,10 @@ type baseInstanceWrapper[T any] struct {
 
 func (w baseInstanceWrapper[T]) vm() *goja.Runtime {
 	return w.ctx.vm
+}
+
+func (w baseInstanceWrapper[T]) logger(c g.FunctionCall) *slog.Logger {
+	return w.ctx.window.Logger()
 }
 
 func newBaseInstanceWrapper[T any](instance *GojaContext) baseInstanceWrapper[T] {

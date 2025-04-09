@@ -4,6 +4,7 @@ package gojahost
 
 import (
 	g "github.com/dop251/goja"
+	log "github.com/gost-dom/browser/internal/log"
 	uievents "github.com/gost-dom/browser/internal/uievents"
 )
 
@@ -23,34 +24,42 @@ func (w mouseEventWrapper) initializePrototype(prototype *g.Object, vm *g.Runtim
 }
 
 func (w mouseEventWrapper) getModifierState(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: MouseEvent.getModifierState")
 	panic("MouseEvent.getModifierState: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w mouseEventWrapper) screenX(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: MouseEvent.screenX")
 	panic("MouseEvent.screenX: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w mouseEventWrapper) screenY(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: MouseEvent.screenY")
 	panic("MouseEvent.screenY: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w mouseEventWrapper) clientX(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: MouseEvent.clientX")
 	panic("MouseEvent.clientX: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w mouseEventWrapper) clientY(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: MouseEvent.clientY")
 	panic("MouseEvent.clientY: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w mouseEventWrapper) layerX(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: MouseEvent.layerX")
 	panic("MouseEvent.layerX: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w mouseEventWrapper) layerY(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: MouseEvent.layerY")
 	panic("MouseEvent.layerY: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w mouseEventWrapper) relatedTarget(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: MouseEvent.relatedTarget")
 	panic("MouseEvent.relatedTarget: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
@@ -72,9 +81,11 @@ func (w uIEventWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime) 
 }
 
 func (w uIEventWrapper) view(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: UIEvent.view")
 	panic("UIEvent.view: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w uIEventWrapper) detail(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: UIEvent.detail")
 	panic("UIEvent.detail: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

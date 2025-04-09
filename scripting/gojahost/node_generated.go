@@ -5,6 +5,7 @@ package gojahost
 import (
 	g "github.com/dop251/goja"
 	dom "github.com/gost-dom/browser/dom"
+	log "github.com/gost-dom/browser/internal/log"
 )
 
 func init() {
@@ -123,6 +124,7 @@ func (w nodeWrapper) parentElement(c g.FunctionCall) g.Value {
 }
 
 func (w nodeWrapper) childNodes(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Node.childNodes")
 	panic("Node.childNodes: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 

@@ -1,8 +1,12 @@
 package wrappers
 
 import (
+	"fmt"
+
 	"github.com/dave/jennifer/jen"
+	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/generators"
+	g "github.com/gost-dom/generators"
 )
 
 type Generator = generators.Generator
@@ -43,6 +47,8 @@ type TargetGenerators interface {
 
 	CreateMethodCallbackBody(ESConstructorData, ESOperation) Generator
 	WrapperStructGenerators() PlatformWrapperStructGenerators
+	ReturnError(Generator) Generator
+	PlatformInfoArg() Generator
 }
 
 // PrototypeWrapperGenerator generates code to create a JavaScript prototype
@@ -93,14 +99,44 @@ type MethodCallback struct {
 
 func (c MethodCallback) Generate() *jen.Statement {
 	typeGenerators := c.platform.WrapperStructGenerators()
+	receiver := generators.Id("w")
 	return generators.FunctionDefinition{
 		Receiver: generators.FunctionArgument{
-			Name: generators.Id("w"),
+			Name: receiver,
 			Type: typeGenerators.WrapperStructType(c.data.Name()),
 		},
 		Name:     c.op.CallbackMethodName(),
 		Args:     typeGenerators.CallbackMethodArgs(), // generators.Arg(generators.Id("info"), v8FunctionCallbackInfoPtr),
 		RtnTypes: typeGenerators.CallbackMethodRetTypes(),
-		Body:     c.platform.CreateMethodCallbackBody(c.data, c.op),
+		Body:     MethodCallbackBody{c.data, c.op, receiver, c.platform},
 	}.Generate()
+}
+
+type MethodCallbackBody struct {
+	data     ESConstructorData
+	op       ESOperation
+	receiver g.Generator
+	platform TargetGenerators
+}
+
+func (c MethodCallbackBody) Generate() *jen.Statement {
+	debug := g.NewValuePackage("Debug", packagenames.Log).Call(
+		g.ValueOf(c.receiver).Field("logger").Call(c.platform.PlatformInfoArg()),
+		g.Lit(fmt.Sprintf("V8 Function call: %s.%s", c.data.Name(), c.op.Name)))
+
+	if c.op.NotImplemented {
+		errMsg := fmt.Sprintf(
+			"%s.%s: Not implemented. Create an issue: %s",
+			c.data.Name(),
+			c.op.Name,
+			packagenames.ISSUE_URL,
+		)
+		return g.StatementList(
+			debug,
+			c.platform.ReturnError(
+				(g.Lit(errMsg)))).Generate()
+		// jen.Qual("errors", "New").Call(jen.Lit(errMsg))))
+		// g.Return(g.Nil, g.Raw(jen.Qual("errors", "New").Call(jen.Lit(errMsg))))).Generate()
+	}
+	return c.platform.CreateMethodCallbackBody(c.data, c.op).Generate()
 }

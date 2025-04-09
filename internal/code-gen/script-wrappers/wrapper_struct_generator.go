@@ -92,3 +92,5 @@ func (g WrapperStructGenerator) Body() Generator {
 	wrapperType := structGens.WrapperStructType(idlInterfaceName)
 	return generators.Return(wrapperType.CreateInstance(fieldInitializers...).Reference())
 }
+
+func (g WrapperStructGenerator) PlatformInfoArg() Generator { return generators.Id("info") }

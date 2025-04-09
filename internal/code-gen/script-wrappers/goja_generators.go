@@ -40,6 +40,8 @@ func (s GojaNamingStrategy) ReceiverName() string {
 
 type GojaTargetGenerators struct{}
 
+func (gen GojaTargetGenerators) PlatformInfoArg() g.Generator { return g.Id("c") }
+
 // CreateConstructor has no effect for Goja. It's currently based on a system
 // that it automatically creates the constructors based on whether or not they
 // call the ingerface
@@ -116,6 +118,10 @@ func (gen GojaTargetGenerators) CreatePrototypeInitializerBody(
 	}
 
 	return body
+}
+
+func (gen GojaTargetGenerators) ReturnError(errGen g.Generator) g.Generator {
+	return g.Raw(jen.Panic(errGen.Generate()))
 }
 
 func (gen GojaTargetGenerators) CreateMethodCallbackBody(
