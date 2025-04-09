@@ -43,8 +43,7 @@ func ParseFragment(
 	result := ownerDocument.CreateDocumentFragment()
 	if err == nil {
 		for _, child := range nodes {
-			element := createElementFromNode(ownerDocument, result, child)
-			result.AppendChild(element)
+			iterate(ownerDocument, result, child)
 		}
 	}
 	return result, err
@@ -87,7 +86,7 @@ func parseIntoDocument(doc dom.Document, r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	iterate(doc, doc, node)
+	iterateChildren(doc, doc, node)
 	return nil
 }
 
@@ -128,23 +127,27 @@ func createElementFromNode(
 	}
 	newNode = newElm
 	newNode = rules.AppendChild(parent, newElm)
-	iterate(d, newNode, source)
+	iterateChildren(d, newNode, source)
 	return newElm
 }
 
-func iterate(d dom.Document, dest dom.Node, source *html.Node) {
+func iterateChildren(d dom.Document, dest dom.Node, source *html.Node) {
 	for child := range source.ChildNodes() {
-		switch child.Type {
-		case html.ElementNode:
-			createElementFromNode(d, dest, child)
-		case html.TextNode:
-			dest.AppendChild(d.CreateText(child.Data))
-		case html.DoctypeNode:
-			dest.AppendChild(d.CreateDocumentType(child.Data))
-		case html.CommentNode:
-			dest.AppendChild(d.CreateComment(child.Data))
-		default:
-			panic(fmt.Sprintf("Node not yet supported: %v", child.Type))
-		}
+		iterate(d, dest, child)
+	}
+}
+
+func iterate(d dom.Document, dest dom.Node, child *html.Node) {
+	switch child.Type {
+	case html.ElementNode:
+		createElementFromNode(d, dest, child)
+	case html.TextNode:
+		dest.AppendChild(d.CreateText(child.Data))
+	case html.DoctypeNode:
+		dest.AppendChild(d.CreateDocumentType(child.Data))
+	case html.CommentNode:
+		dest.AppendChild(d.CreateComment(child.Data))
+	default:
+		panic(fmt.Sprintf("Node not yet supported: %v", child.Type))
 	}
 }

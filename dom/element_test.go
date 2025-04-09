@@ -175,11 +175,11 @@ func TestElementInsertAdjacentHTMLBeforeBegin(t *testing.T) {
 	el := doc.GetElementById("2")
 	gomega.Expect(el.InsertAdjacentHTML(
 		"beforebegin",
-		"<div>1st new child</div><div>2nd new child</div>",
+		"<div>1st new child</div>Text node<div>2nd new child</div>",
 	)).To(Succeed())
 	gomega.Expect(doc.Body()).To(HaveOuterHTML(`<body>
   <div id="1">El 1</div>
-  <div>1st new child</div><div>2nd new child</div><div id="2">El 2
+  <div>1st new child</div>Text node<div>2nd new child</div><div id="2">El 2
     <div>El 2-a</div>
     <div>El 2-b</div>
   </div>
