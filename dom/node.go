@@ -130,6 +130,7 @@ type ChangeEvent struct {
 	RemovedNodes    NodeList
 	OldValue        string
 	PreviousSibling Node
+	NextSibling     Node
 }
 
 type observer interface {
@@ -433,12 +434,18 @@ func (n *node) insertBefore(node Node, referenceNode Node) error {
 //
 // replaceNodes panics if index < 0 or index + count > len(n.childNodes.Length()).
 func (n *node) replaceNodes(index, count int, node Node) error {
-	var prevSibling Node
+	var (
+		prevSibling Node
+		nextSibling Node
+	)
 
 	newNodes := expandNode(node)
 	children := slices.Clone(n.ChildNodes().All())
 	if index > 0 {
 		prevSibling = children[index-1]
+	}
+	if index+count < len(children) {
+		nextSibling = children[index+count]
 	}
 
 	removedNodes := slices.Clone(children[index : index+count])
@@ -459,6 +466,7 @@ func (n *node) replaceNodes(index, count int, node Node) error {
 		Target:          n.self,
 		Type:            ChangeEventChildList,
 		PreviousSibling: prevSibling,
+		NextSibling:     nextSibling,
 		AddedNodes:      &nodeList{nodes: newNodes},
 		RemovedNodes:    &nodeList{nodes: removedNodes},
 	})

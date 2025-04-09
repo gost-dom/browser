@@ -158,6 +158,7 @@ func (o *Observer) Process(e dom.ChangeEvent) {
 		r.AddedNodes = e.AddedNodes
 		r.RemovedNodes = e.RemovedNodes
 		r.PreviousSibling = e.PreviousSibling
+		r.NextSibling = e.NextSibling
 	}
 	o.pending = append(o.pending, r)
 }

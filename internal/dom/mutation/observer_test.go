@@ -63,14 +63,26 @@ func (s *MutationObserverTestSuite) TestObserveChildListNoSubtree() {
 	recorder.Clear() // Clear so we can see in isolation what is removed
 	subtreeRecorder.Clear()
 
-	newGrand := doc.CreateElement("div")
-	newGrand.SetAttribute("id", "new-grand")
-	div.AppendChild(newGrand)
+	newGrand2 := doc.CreateElement("div")
+	newGrand1 := doc.CreateElement("div")
+	newGrand1.SetAttribute("id", "new-grand")
+	div.AppendChild(newGrand2)
+
+	recorder.Clear() // Clear so we can see in isolation what is removed
+	subtreeRecorder.Clear()
+
+	div.InsertBefore(newGrand1, newGrand2)
 	s.Expect(subtreeRecorder).To(HaveRecorded(
-		And(HaveType("childList"), HaveTarget(div), HavePrevSibling(grandChild)),
+		And(
+			HaveType("childList"),
+			HaveTarget(div),
+			HavePrevSibling(grandChild),
+			HaveNextSibling(newGrand2),
+		),
 	))
 
-	div.RemoveChild(newGrand)
+	div.RemoveChild(newGrand2)
+	div.RemoveChild(newGrand1)
 
 	recorder.Clear() // Clear so we can see in isolation what is removed
 	subtreeRecorder.Clear()
