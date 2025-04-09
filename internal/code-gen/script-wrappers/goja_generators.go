@@ -5,6 +5,7 @@ import (
 
 	"github.com/dave/jennifer/jen"
 	. "github.com/gost-dom/code-gen/internal"
+	"github.com/gost-dom/code-gen/script-wrappers/model"
 	"github.com/gost-dom/generators"
 	g "github.com/gost-dom/generators"
 )
@@ -18,7 +19,7 @@ var (
 )
 
 type GojaNamingStrategy struct {
-	ESConstructorData
+	model.ESConstructorData
 }
 
 func (s GojaNamingStrategy) PrototypeWrapperBaseName() string {
@@ -44,15 +45,15 @@ func (gen GojaTargetGenerators) PlatformInfoArg() g.Generator { return g.Id("c")
 // CreateConstructor has no effect for Goja. It's currently based on a system
 // that it automatically creates the constructors based on whether or not they
 // call the ingerface
-func (gen GojaTargetGenerators) CreateHostInitializer(ESConstructorData) g.Generator {
+func (gen GojaTargetGenerators) CreateHostInitializer(model.ESConstructorData) g.Generator {
 	return g.Noop
 }
 
-func (gen GojaTargetGenerators) CreateConstructorCallback(ESConstructorData) g.Generator {
+func (gen GojaTargetGenerators) CreateConstructorCallback(model.ESConstructorData) g.Generator {
 	return g.Noop
 }
 
-func (gen GojaTargetGenerators) CreateInitFunction(data ESConstructorData) g.Generator {
+func (gen GojaTargetGenerators) CreateInitFunction(data model.ESConstructorData) g.Generator {
 	naming := GojaNamingStrategy{data}
 	return g.FunctionDefinition{
 		Name: "init",
@@ -68,7 +69,7 @@ func (gen GojaTargetGenerators) CreateInitFunction(data ESConstructorData) g.Gen
 // CreatePrototypeInitializer creates the "initializePrototype" method, which
 // sets all the properties on the prototypes on this class.
 func (gen GojaTargetGenerators) CreatePrototypeInitializer(
-	data ESConstructorData,
+	data model.ESConstructorData,
 	body g.Generator,
 ) g.Generator {
 	naming := GojaNamingStrategy{data}
@@ -87,7 +88,7 @@ func (gen GojaTargetGenerators) CreatePrototypeInitializer(
 }
 
 func (gen GojaTargetGenerators) CreatePrototypeInitializerBody(
-	data ESConstructorData,
+	data model.ESConstructorData,
 ) g.Generator {
 	naming := GojaNamingStrategy{data}
 	receiver := g.NewValue(naming.ReceiverName())
@@ -124,8 +125,8 @@ func (gen GojaTargetGenerators) ReturnErrMsg(errGen g.Generator) g.Generator {
 }
 
 func (gen GojaTargetGenerators) CreateMethodCallbackBody(
-	data ESConstructorData,
-	op ESOperation,
+	data model.ESConstructorData,
+	op model.ESOperation,
 ) g.Generator {
 	callArgument := g.Id("c")
 	naming := GojaNamingStrategy{data}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	. "github.com/gost-dom/code-gen/internal"
+	. "github.com/gost-dom/code-gen/script-wrappers/model"
 	"github.com/gost-dom/code-gen/stdgen"
 	g "github.com/gost-dom/generators"
 

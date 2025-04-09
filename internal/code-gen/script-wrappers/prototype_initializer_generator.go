@@ -3,6 +3,7 @@ package wrappers
 import (
 	"github.com/dave/jennifer/jen"
 	. "github.com/gost-dom/code-gen/internal"
+	. "github.com/gost-dom/code-gen/script-wrappers/model"
 	"github.com/gost-dom/generators"
 	gen "github.com/gost-dom/generators"
 )

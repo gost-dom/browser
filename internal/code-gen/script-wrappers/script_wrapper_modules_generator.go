@@ -11,6 +11,7 @@ import (
 	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/code-gen/script-wrappers/configuration"
+	. "github.com/gost-dom/code-gen/script-wrappers/model"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )

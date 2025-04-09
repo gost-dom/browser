@@ -1,6 +1,7 @@
 package wrappers
 
 import (
+	. "github.com/gost-dom/code-gen/script-wrappers/model"
 	g "github.com/gost-dom/generators"
 )
 
@@ -29,8 +30,7 @@ func (builder ConstructorBuilder) NewFunctionTemplateOfWrappedMethod(name string
 
 type PrototypeInstaller struct {
 	v8Iso
-	Proto v8PrototypeTemplate
-	// InstanceTmpl v8InstanceTemplate
+	Proto   v8PrototypeTemplate
 	Wrapper WrapperInstance
 }
 
