@@ -73,21 +73,29 @@ func HavePrevSibling(node dom.Node) types.GomegaMatcher {
 }
 
 func HaveAddedNodes(nodes ...dom.Node) types.GomegaMatcher {
-	m := HaveExactElements(nodes)
+	var Data struct {
+		Actual  []dom.Node
+		Matcher types.GomegaMatcher
+	}
+	Data.Matcher = HaveExactElements(nodes)
 	return gcustom.MakeMatcher(func(r mutation.Record) (bool, error) {
-		return m.Match(r.AddedNodes.All())
-	})
+		Data.Actual = r.AddedNodes.All()
+		return Data.Matcher.Match(Data.Actual)
+	}).WithTemplate("Have added nodes\nActual: {{ .Data.Actual }}\n{{ .Data.Matcher.Formatted }}", &Data)
 }
 
 func HaveRemovedNodes(nodes ...dom.Node) types.GomegaMatcher {
-	m := HaveExactElements(nodes)
+	var Data struct {
+		Actual  []dom.Node
+		Matcher types.GomegaMatcher
+	}
+	Data.Matcher = HaveExactElements(nodes)
 	return gcustom.MakeMatcher(func(r mutation.Record) (bool, error) {
-		var nodes []dom.Node
 		if r.RemovedNodes != nil {
-			nodes = r.RemovedNodes.All()
+			Data.Actual = r.RemovedNodes.All()
 		}
-		return m.Match(nodes)
-	})
+		return Data.Matcher.Match(Data.Actual)
+	}).WithTemplate("Have removed nodes\nActual: {{ .Data.Actual }}\n{{ .Data.Matcher.Formatted }}", &Data)
 }
 
 func HaveRecorded(expected ...types.GomegaMatcher) types.GomegaMatcher {
