@@ -55,7 +55,7 @@ func HaveOuterHTML(expected interface{}) GomegaMatcher {
 	}
 	return gcustom.MakeMatcher(func(e dom.Element) (bool, error) {
 		return matcher.Match(e.OuterHTML())
-	}).WithTemplate("Expected:\n{{.FormattedActual}}\n{{.To}} have outerHTML {{.Data.FailureMessage .Actual.OuterHTML}}", matcher)
+	}).WithTemplate("Error asserting outerHTML:\n{{.FormattedActual}}\n{{.Data.FailureMessage .Actual.OuterHTML}}", matcher)
 }
 
 func HaveTag(expected string) GomegaMatcher {
