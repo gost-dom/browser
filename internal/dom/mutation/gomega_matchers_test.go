@@ -60,6 +60,17 @@ func HaveNoAddedNodes() types.GomegaMatcher {
 	})
 }
 
+func HaveNextSibling(node dom.Node) types.GomegaMatcher {
+	var m types.GomegaMatcher
+	if node == nil {
+		m = BeNil()
+	} else {
+		m = Equal(node)
+	}
+	return gcustom.MakeMatcher(func(r mutation.Record) (bool, error) {
+		return m.Match(r.NextSibling)
+	})
+}
 func HavePrevSibling(node dom.Node) types.GomegaMatcher {
 	var m types.GomegaMatcher
 	if node == nil {
