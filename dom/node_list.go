@@ -5,7 +5,11 @@ import "github.com/gost-dom/browser/internal/entity"
 type NodeList interface {
 	entity.ObjectIder
 	Length() int
+
+	// Item returns the node with the specified zero-based index. If the index
+	// is out of range, the function returns nil.
 	Item(index int) Node
+
 	All() []Node
 	setNodes([]Node)
 	append(Node)
@@ -15,10 +19,6 @@ type nodeList struct {
 	entity.Entity
 	nodes []Node
 }
-
-type staticNodeSource []Node
-
-func (s staticNodeSource) ChildNodes() []Node { return s }
 
 func (l *nodeList) Length() int { return len(l.nodes) }
 
