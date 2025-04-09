@@ -6,14 +6,11 @@ import (
 	"strings"
 
 	"github.com/gost-dom/code-gen/customrules"
-	. "github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/code-gen/script-wrappers/configuration"
 	. "github.com/gost-dom/code-gen/script-wrappers/model"
 	"github.com/gost-dom/code-gen/stdgen"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
-
-	"github.com/dave/jennifer/jen"
 )
 
 func createData(
@@ -159,18 +156,18 @@ func createOperation(
 }
 
 func ReturnOnAnyError(errNames []g.Generator) g.Generator {
-	if len(errNames) == 0 {
+	switch len(errNames) {
+	case 0:
 		return g.Noop
+	case 1:
+		return returnIfError(errNames[0])
+	default:
+		err := g.Id("err")
+		return g.StatementList(
+			g.Assign(err, stdgen.ErrorsJoin(errNames...)),
+			returnIfError(err),
+		)
 	}
-	if len(errNames) == 1 {
-		return ReturnOnError{err: errNames[0]}
-	}
-	return g.StatementList(
-		g.Assign(g.Id("err"),
-			stdgen.ErrorsJoin(errNames...),
-		),
-		ReturnOnError{},
-	)
 }
 
 func IsNodeType(typeName string) bool {
@@ -204,21 +201,9 @@ func SanitizeVarName(name string) string {
 	return name
 }
 
-func idlNameToUnexportedGoName(s string) string {
-	return LowerCaseFirstLetter(IdlNameToGoName(s))
-}
-
-type ReturnOnError struct {
-	err g.Generator
-}
-
-func (ret ReturnOnError) Generate() *jen.Statement {
-	err := ret.err
-	if err == nil {
-		err = g.Id("err")
-	}
+func returnIfError(err g.Generator) g.Generator {
 	return g.IfStmt{
-		Condition: g.Neq{Lhs: err, Rhs: g.Nil}, //g.Raw(err.Generate().Op("!=").Nil()),
+		Condition: g.Neq{Lhs: err, Rhs: g.Nil},
 		Block:     g.Return(g.Nil, err),
-	}.Generate()
+	}
 }
