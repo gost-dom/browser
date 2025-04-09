@@ -12,7 +12,7 @@ type NodeList interface {
 
 	All() []Node
 	setNodes([]Node)
-	append(Node)
+	append(...Node)
 }
 
 type nodeList struct {
@@ -31,4 +31,4 @@ func (l *nodeList) Item(index int) Node {
 
 func (l *nodeList) All() []Node           { return l.nodes }
 func (l *nodeList) setNodes(nodes []Node) { l.nodes = nodes }
-func (l *nodeList) append(node Node)      { l.nodes = append(l.nodes, node) }
+func (l *nodeList) append(nodes ...Node)  { l.nodes = append(l.nodes, nodes...) }
