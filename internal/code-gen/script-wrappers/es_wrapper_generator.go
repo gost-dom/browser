@@ -137,6 +137,7 @@ func createOperation(
 			IdlType:      arg.IdlType,
 			ArgumentSpec: esArgumentSpec,
 			Ignore:       esArgumentSpec.Ignored,
+			CustomRule:   opRules.Argument(arg.Name),
 		}
 		if len(arg.IdlType.Types) > 0 {
 			slog.Warn(

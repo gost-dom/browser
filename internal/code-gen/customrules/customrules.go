@@ -43,6 +43,13 @@ type OperationRule struct {
 	ReturnType  *TypeRule
 }
 
+func (r OperationRule) Argument(name string) ArgumentRule {
+	if r.Arguments == nil {
+		return ArgumentRule{}
+	}
+	return r.Arguments[name]
+}
+
 type ArgumentRules map[string]ArgumentRule
 
 type ArgumentRule struct {

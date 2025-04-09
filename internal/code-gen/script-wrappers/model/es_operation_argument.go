@@ -3,6 +3,7 @@ package model
 import (
 	"fmt"
 
+	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/script-wrappers/configuration"
 	"github.com/gost-dom/webref/idl/legacy"
 )
@@ -14,6 +15,7 @@ type ESOperationArgument struct {
 	Variadic     bool
 	IdlType      legacy.IdlTypes
 	ArgumentSpec configuration.ESMethodArgument
+	CustomRule   customrules.ArgumentRule
 	Ignore       bool
 }
 
