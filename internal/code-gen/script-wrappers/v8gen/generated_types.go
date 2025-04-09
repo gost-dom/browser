@@ -1,25 +1,15 @@
 // The types here are abstractions over concrete types in generated code,
 // helping function lookup code being easier to read.
 
-package wrappers
+package v8gen
 
 import (
 	g "github.com/gost-dom/generators"
 )
 
-const scriptHostName = "scriptHost"
-
 type v8ArgInfo g.Value
 
 func (info v8ArgInfo) GetV8Context() g.Generator { return g.Value(info).Method("Context").Call() }
-
-type WrapperInstance struct{ g.Value }
-
-func (i WrapperInstance) GetScriptHost() g.Value { return i.Field(scriptHostName) }
-
-func (i WrapperInstance) MustGetContext(info g.Generator) g.Generator {
-	return i.Method("mustGetContext").Call(info)
-}
 
 type v8PrototypeTemplate struct{ g.Value }
 
@@ -51,11 +41,4 @@ func (proto v8PrototypeTemplate) SetAccessorProperty(
 	args[0] = g.Lit(name)
 	copy(args[1:], arguments)
 	return proto.Method("SetAccessorProperty").Call(args...)
-}
-
-// Provides helpers for functions that needs an iso as the first argument
-type v8Iso struct{ g.Value }
-
-func (iso v8Iso) NewFunctionTemplate(cb g.Generator) g.Generator {
-	return NewV8FunctionTemplate{iso.Value, cb}
 }

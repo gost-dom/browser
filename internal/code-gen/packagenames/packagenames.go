@@ -2,10 +2,13 @@ package packagenames
 
 import "fmt"
 
+// Names that relate to the project name, which would only change if the project
+// is moved/renamed.
 const (
 	NAME      = "gost-dom"
 	BASE_PKG  = "github.com/gost-dom/browser"
 	ISSUE_URL = "https://github.com/gost-dom/browser/issues"
+	// alternate url: "https://github.com/gost-dom/browser/issues?q=sort%3Aupdated-desc+is%3Aissue+is%3Aopen"
 
 	Dom      = BASE_PKG + "/dom"
 	Events   = Dom + "/event"
@@ -14,6 +17,8 @@ const (
 	Gojahost = BASE_PKG + "/scripting/gojahost"
 	Log      = BASE_PKG + "/internal/log"
 	UIEvents = BASE_PKG + "/internal/uievents"
+	V8go     = "github.com/gost-dom/v8go"
+	Goja     = "github.com/dop251/goja"
 )
 
 var names = map[string]string{

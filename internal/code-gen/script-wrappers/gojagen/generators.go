@@ -1,21 +1,14 @@
-package wrappers
+package gojagen
 
 import (
 	"fmt"
 
 	"github.com/dave/jennifer/jen"
 	. "github.com/gost-dom/code-gen/internal"
+	wrappers "github.com/gost-dom/code-gen/script-wrappers"
 	"github.com/gost-dom/code-gen/script-wrappers/model"
 	"github.com/gost-dom/generators"
 	g "github.com/gost-dom/generators"
-)
-
-var (
-	gojaFc      = g.Raw(jen.Qual(gojaSrc, "FunctionCall"))
-	gojaValue   = g.Raw(jen.Qual(gojaSrc, "Value"))
-	gojaObj     = g.Raw(jen.Op("*").Qual(gojaSrc, "Object"))
-	gojaRuntime = g.Raw(jen.Op("*").Qual(gojaSrc, "Runtime"))
-	flagTrue    = g.Raw(jen.Qual(gojaSrc, "FLAG_TRUE"))
 )
 
 type GojaNamingStrategy struct {
@@ -145,7 +138,7 @@ func (gen GojaTargetGenerators) CreateMethodCallbackBody(
 		readArgs,
 	)
 	if op.HasResult() {
-		converter := fmt.Sprintf("to%s", idlNameToGoName(op.RetType.TypeName))
+		converter := fmt.Sprintf("to%s", op.RetTypeName())
 		if op.GetHasError() {
 			list.Append(
 				g.AssignMany(g.List(
@@ -177,7 +170,7 @@ func (gen GojaTargetGenerators) CreateMethodCallbackBody(
 	return list
 }
 
-func (g GojaTargetGenerators) WrapperStructGenerators() PlatformWrapperStructGenerators {
+func (g GojaTargetGenerators) WrapperStructGenerators() wrappers.PlatformWrapperStructGenerators {
 	return g
 }
 
@@ -189,32 +182,32 @@ func (g GojaTargetGenerators) WrapperStructConstructorName(interfaceName string)
 	return fmt.Sprintf("new%sWrapper", interfaceName)
 }
 
-func (g GojaTargetGenerators) WrapperStructConstructorRetType(string) Generator {
+func (g GojaTargetGenerators) WrapperStructConstructorRetType(string) g.Generator {
 	return generators.Id("wrapper")
 }
 
-func (g GojaTargetGenerators) EmbeddedType(wrappedType Generator) Generator {
+func (g GojaTargetGenerators) EmbeddedType(wrappedType g.Generator) g.Generator {
 	return generators.NewType("baseInstanceWrapper").TypeParam(wrappedType)
 }
 
-func (g GojaTargetGenerators) EmbeddedTypeConstructor(wrappedType Generator) generators.Value {
+func (g GojaTargetGenerators) EmbeddedTypeConstructor(wrappedType g.Generator) g.Value {
 	return generators.NewValue("newBaseInstanceWrapper").TypeParam(wrappedType)
 }
 
-func (g GojaTargetGenerators) HostArg() Generator {
+func (g GojaTargetGenerators) HostArg() g.Generator {
 	return generators.Id("instance")
 }
 
-func (g GojaTargetGenerators) HostType() Generator {
+func (g GojaTargetGenerators) HostType() g.Generator {
 	return generators.NewType("GojaContext").Pointer()
 }
 
-func (g GojaTargetGenerators) CallbackMethodArgs() generators.FunctionArgumentList {
+func (g GojaTargetGenerators) CallbackMethodArgs() g.FunctionArgumentList {
 	callArgument := generators.Id("c")
 	return generators.Arg(callArgument, gojaFc)
 }
 
-func (g GojaTargetGenerators) CallbackMethodRetTypes() []generators.Generator {
+func (g GojaTargetGenerators) CallbackMethodRetTypes() []g.Generator {
 	return []generators.Generator{gojaValue}
 }
 

@@ -1,11 +1,12 @@
-package wrappers
+package gojagen
 
 import (
 	"github.com/gost-dom/code-gen/packagenames"
+	wrappers "github.com/gost-dom/code-gen/script-wrappers"
 	"github.com/gost-dom/code-gen/script-wrappers/configuration"
 )
 
-func NewGojaWrapperModuleGenerator() ScriptWrapperModulesGenerator {
+func NewGojaWrapperModuleGenerator() wrappers.ScriptWrapperModulesGenerator {
 	specs := configuration.CreateSpecs()
 	dom := specs.Module("dom")
 	domNode := dom.Type("Node")
@@ -27,7 +28,7 @@ func NewGojaWrapperModuleGenerator() ScriptWrapperModulesGenerator {
 	location.Method("replace").SetNotImplemented()
 	location.Method("ancestorOrigins").SetNotImplemented()
 
-	return ScriptWrapperModulesGenerator{
+	return wrappers.ScriptWrapperModulesGenerator{
 		Specs:            specs,
 		PackagePath:      packagenames.Gojahost,
 		TargetGenerators: GojaTargetGenerators{},

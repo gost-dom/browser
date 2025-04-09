@@ -16,21 +16,6 @@ import (
 	"github.com/dave/jennifer/jen"
 )
 
-var (
-	v8FunctionTemplatePtr     = g.NewTypePackage("FunctionTemplate", v8).Pointer()
-	v8FunctionCallbackInfoPtr = g.NewTypePackage("FunctionCallbackInfo", v8).Pointer()
-	v8ObjectTemplatePtr       = g.NewTypePackage("ObjectTemplate", v8).Pointer()
-	v8Value                   = g.NewTypePackage("Value", v8).Pointer()
-	v8ReadOnly                = g.Raw(jen.Qual(v8, "ReadOnly"))
-	v8None                    = g.Raw(jen.Qual(v8, "None"))
-	scriptHostPtr             = g.NewType("V8ScriptHost").Pointer()
-)
-
-const (
-	v8      = "github.com/gost-dom/v8go"
-	gojaSrc = "github.com/dop251/goja"
-)
-
 func createData(
 	spec idl.Spec,
 	interfaceConfig *configuration.IdlInterfaceConfiguration,
@@ -104,7 +89,7 @@ func CreateAttributes(
 		if !attribute.Readonly {
 			setter = new(ESOperation)
 			*setter = *getter
-			setter.Name = fmt.Sprintf("set%s", idlNameToGoName(getter.Name))
+			setter.Name = fmt.Sprintf("set%s", IdlNameToGoName(getter.Name))
 			methodCustomization := interfaceConfig.GetMethodCustomization(setter.Name)
 			setter.NotImplemented = setter.NotImplemented || methodCustomization.NotImplemented
 			setter.CustomImplementation = setter.CustomImplementation ||
@@ -112,7 +97,7 @@ func CreateAttributes(
 			setter.RetType = idl.NewRetTypeUndefined()
 			setter.Arguments = []ESOperationArgument{{
 				Name:     "val",
-				Type:     idlNameToGoName(attribute.Type.Name),
+				Type:     IdlNameToGoName(attribute.Type.Name),
 				Optional: false,
 				Variadic: false,
 			}}
@@ -121,7 +106,7 @@ func CreateAttributes(
 		getter.NotImplemented = getterCustomization.NotImplemented || getter.NotImplemented
 		getter.CustomImplementation = getterCustomization.CustomImplementation ||
 			getter.CustomImplementation
-		res = append(res, ESAttribute{attribute.Name, getter, setter})
+		res = append(res, ESAttribute{Name: attribute.Name, Getter: getter, Setter: setter})
 	}
 	return
 }
@@ -188,8 +173,6 @@ func ReturnOnAnyError(errNames []g.Generator) g.Generator {
 	)
 }
 
-type JenGenerator = g.Generator
-
 func IsNodeType(typeName string) bool {
 	loweredName := strings.ToLower(typeName)
 	switch loweredName {
@@ -206,12 +189,12 @@ func IsNodeType(typeName string) bool {
 	return false
 }
 
-// sanitizeVarName create a valid go variable name from a variable to avoid
+// SanitizeVarName create a valid go variable name from a variable to avoid
 // invalid generated code due to
 //
 //   - The name is a reserved word, e.g. `type`.
 //   - The name already an identifiers in scope (not yet implemented)
-func sanitizeVarName(name string) string {
+func SanitizeVarName(name string) string {
 	switch name {
 	case "type":
 		return "type_"
@@ -221,16 +204,8 @@ func sanitizeVarName(name string) string {
 	return name
 }
 
-func idlNameToGoName(s string) string {
-	words := strings.Split(s, " ")
-	for i, word := range words {
-		words[i] = UpperCaseFirstLetter(word)
-	}
-	return strings.Join(words, "")
-}
-
 func idlNameToUnexportedGoName(s string) string {
-	return LowerCaseFirstLetter(idlNameToGoName(s))
+	return LowerCaseFirstLetter(IdlNameToGoName(s))
 }
 
 type ReturnOnError struct {

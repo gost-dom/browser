@@ -11,7 +11,8 @@ import (
 
 	"github.com/gost-dom/code-gen/events"
 	htmlelements "github.com/gost-dom/code-gen/html-elements"
-	wrappers "github.com/gost-dom/code-gen/script-wrappers"
+	"github.com/gost-dom/code-gen/script-wrappers/gojagen"
+	"github.com/gost-dom/code-gen/script-wrappers/v8gen"
 )
 
 func getWriter(output string) io.Writer {
@@ -38,12 +39,12 @@ func main() {
 	flag.Parse()
 	switch *generatorType {
 	case "goja":
-		gen := wrappers.NewGojaWrapperModuleGenerator()
+		gen := gojagen.NewGojaWrapperModuleGenerator()
 		exitOnError(gen.GenerateScriptWrappers())
 		os.Exit(0)
 		return
 	case "scripting":
-		gen := wrappers.NewScriptWrapperModulesGenerator()
+		gen := v8gen.NewScriptWrapperModulesGenerator()
 		exitOnError(gen.GenerateScriptWrappers())
 		os.Exit(0)
 		return

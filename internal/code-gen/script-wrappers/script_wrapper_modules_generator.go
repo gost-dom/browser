@@ -19,9 +19,8 @@ import (
 func writeGenerator(writer io.Writer, packagePath string, generator g.Generator) error {
 	file := jen.NewFilePath(packagePath)
 	file.HeaderComment("This file is generated. Do not edit.")
-	// file.ImportName(dom, "browser")
-	file.ImportAlias(v8, "v8")
-	file.ImportAlias(gojaSrc, "g")
+	file.ImportAlias(packagenames.V8go, "v8")
+	file.ImportAlias(packagenames.Goja, "g")
 	file.Add(generator.Generate())
 	return file.Render(writer)
 }
@@ -121,14 +120,4 @@ func (gen ScriptWrapperModulesGenerator) writeModuleSingleFile(
 
 func (gen ScriptWrapperModulesGenerator) GenerateScriptWrappers() error {
 	return gen.writeModules(gen.Specs)
-}
-
-func NewScriptWrapperModulesGenerator() ScriptWrapperModulesGenerator {
-	specs := configuration.CreateV8Specs()
-
-	return ScriptWrapperModulesGenerator{
-		Specs:            specs,
-		PackagePath:      packagenames.V8host,
-		TargetGenerators: V8TargetGenerators{},
-	}
 }

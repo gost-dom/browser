@@ -8,6 +8,8 @@ import (
 	gen "github.com/gost-dom/generators"
 )
 
+var scriptHost = gen.NewValue("scriptHost")
+
 type WrapperStructGenerator struct {
 	Platform TargetGenerators
 	Data     ESConstructorData

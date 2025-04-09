@@ -1,9 +1,11 @@
-package wrappers
+package v8gen
 
 import (
 	"fmt"
+	"strings"
 
 	. "github.com/gost-dom/code-gen/internal"
+	wrappers "github.com/gost-dom/code-gen/script-wrappers"
 	. "github.com/gost-dom/code-gen/script-wrappers/model"
 	"github.com/gost-dom/code-gen/stdgen"
 	g "github.com/gost-dom/generators"
@@ -11,16 +13,17 @@ import (
 	"github.com/dave/jennifer/jen"
 )
 
+func idlNameToGoName(s string) string {
+	words := strings.Split(s, " ")
+	for i, word := range words {
+		words[i] = UpperCaseFirstLetter(word)
+	}
+	return strings.Join(words, "")
+}
+
 var scriptHost = g.NewValue("scriptHost")
 
-type NewV8FunctionTemplate struct {
-	iso JenGenerator
-	f   JenGenerator
-}
-
-type V8NamingStrategy struct {
-	ESConstructorData
-}
+type V8NamingStrategy struct{ ESConstructorData }
 
 func (s V8NamingStrategy) Receiver() string { return "w" }
 func (s V8NamingStrategy) PrototypeWrapperBaseName() string {
@@ -29,10 +32,6 @@ func (s V8NamingStrategy) PrototypeWrapperBaseName() string {
 
 func (s V8NamingStrategy) PrototypeWrapperName() string {
 	return LowerCaseFirstLetter(s.PrototypeWrapperBaseName())
-}
-
-func (t NewV8FunctionTemplate) Generate() *jen.Statement {
-	return jen.Qual(v8, "NewFunctionTemplateWithError").Call(t.iso.Generate(), t.f.Generate())
 }
 
 type V8TargetGenerators struct{}
@@ -53,14 +52,14 @@ func (gen V8TargetGenerators) ReturnErrMsg(errGen g.Generator) g.Generator {
 	return g.Return(g.Nil, stdgen.ErrorsNew(errGen))
 }
 
-func (gen V8TargetGenerators) WrapperStructGenerators() PlatformWrapperStructGenerators {
+func (gen V8TargetGenerators) WrapperStructGenerators() wrappers.PlatformWrapperStructGenerators {
 	return V8WrapperStructGenerators{}
 }
 
 func (gen V8TargetGenerators) CreatePrototypeInitializer(
 	data ESConstructorData,
-	body JenGenerator,
-) JenGenerator {
+	body g.Generator,
+) g.Generator {
 	naming := V8NamingStrategy{data}
 	receiver := g.NewValue(naming.Receiver())
 	builder := NewConstructorBuilder()
@@ -77,7 +76,7 @@ func (gen V8TargetGenerators) CreatePrototypeInitializer(
 
 func (gen V8TargetGenerators) CreatePrototypeInitializerBody(
 	data ESConstructorData,
-) JenGenerator {
+) g.Generator {
 	naming := V8NamingStrategy{data}
 	receiver := g.NewValue(naming.Receiver())
 	builder := NewConstructorBuilder()
@@ -93,10 +92,10 @@ func (gen V8TargetGenerators) CreatePrototypeInitializerBody(
 	)
 }
 
-func (gen V8TargetGenerators) CreateConstructorCallback(data ESConstructorData) JenGenerator {
+func (gen V8TargetGenerators) CreateConstructorCallback(data ESConstructorData) g.Generator {
 	naming := V8NamingStrategy{data}
 	var body g.Generator
-	if IsNodeType(data.IdlInterfaceName) {
+	if wrappers.IsNodeType(data.IdlInterfaceName) {
 		body = CreateV8IllegalConstructorBody(data)
 	} else {
 		body = CreateV8ConstructorWrapperBody(data)
@@ -119,7 +118,7 @@ func (gen V8TargetGenerators) CreateConstructorCallback(data ESConstructorData) 
 func (gen V8TargetGenerators) CreateMethodCallbackBody(
 	data ESConstructorData,
 	op ESOperation,
-) JenGenerator {
+) g.Generator {
 	naming := V8NamingStrategy{data}
 	receiver := WrapperInstance{g.NewValue(naming.Receiver())}
 	instance := g.NewValue("instance")
@@ -286,7 +285,7 @@ func CreateV8WrapperMethodInstanceInvocations(
 				g.IfStmt{
 					Condition: g.Raw(jen.Id("args").Dot("noOfReadArguments").Op(">=").Lit(i)),
 					Block: g.StatementList(
-						ReturnOnAnyError(errNames),
+						wrappers.ReturnOnAnyError(errNames),
 						callInstance,
 					),
 				}))
@@ -300,7 +299,7 @@ func CreateV8WrapperMethodInstanceInvocations(
 				break
 			}
 		} else {
-			statements.Append(ReturnOnAnyError(errNames))
+			statements.Append(wrappers.ReturnOnAnyError(errNames))
 			statements.Append(callInstance)
 		}
 	}
@@ -457,7 +456,7 @@ func ReadArguments(data ESConstructorData, op ESOperation) (res V8ReadArguments)
 	res.Args = make([]V8ReadArg, 0, argCount)
 	statements := g.StatementList()
 	for i, arg := range op.Arguments {
-		argName := g.Id(sanitizeVarName(arg.Name))
+		argName := g.Id(wrappers.SanitizeVarName(arg.Name))
 		errName := g.Id(fmt.Sprintf("err%d", i+1))
 		if arg.Ignore {
 			continue

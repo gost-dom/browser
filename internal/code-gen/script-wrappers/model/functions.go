@@ -6,7 +6,7 @@ import (
 	. "github.com/gost-dom/code-gen/internal"
 )
 
-func idlNameToGoName(s string) string {
+func IdlNameToGoName(s string) string {
 	words := strings.Split(s, " ")
 	for i, word := range words {
 		words[i] = UpperCaseFirstLetter(word)

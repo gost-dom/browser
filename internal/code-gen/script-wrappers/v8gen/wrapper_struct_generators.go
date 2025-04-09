@@ -1,10 +1,11 @@
-package wrappers
+package v8gen
 
 import (
 	"fmt"
 
 	. "github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/generators"
+	g "github.com/gost-dom/generators"
 )
 
 type V8WrapperStructGenerators struct{}
@@ -19,23 +20,25 @@ func (g V8WrapperStructGenerators) WrapperStructConstructorName(interfaceName st
 
 func (g V8WrapperStructGenerators) WrapperStructConstructorRetType(
 	idlInterfaceName string,
-) Generator {
+) g.Generator {
 	return g.WrapperStructType(idlInterfaceName).Pointer()
 }
 
-func (g V8WrapperStructGenerators) EmbeddedType(wrappedType Generator) Generator {
+func (g V8WrapperStructGenerators) EmbeddedType(wrappedType g.Generator) g.Generator {
 	return generators.NewType("handleReffedObject").TypeParam(wrappedType)
 }
 
-func (g V8WrapperStructGenerators) EmbeddedTypeConstructor(wrappedType Generator) generators.Value {
+func (g V8WrapperStructGenerators) EmbeddedTypeConstructor(
+	wrappedType g.Generator,
+) generators.Value {
 	return generators.NewValue("newHandleReffedObject").TypeParam(wrappedType)
 }
 
-func (g V8WrapperStructGenerators) HostArg() Generator {
+func (g V8WrapperStructGenerators) HostArg() g.Generator {
 	return generators.Id("scriptHost")
 }
 
-func (g V8WrapperStructGenerators) HostType() Generator {
+func (g V8WrapperStructGenerators) HostType() g.Generator {
 	return scriptHostPtr
 }
 

@@ -35,6 +35,10 @@ func (o ESOperation) Encoder() string {
 	if o.RetType.Nullable {
 		converter += "Nullable"
 	}
-	converter += idlNameToGoName(o.RetType.TypeName)
+	converter += IdlNameToGoName(o.RetType.TypeName)
 	return converter
+}
+
+func (o ESOperation) RetTypeName() string {
+	return IdlNameToGoName(o.RetType.TypeName)
 }

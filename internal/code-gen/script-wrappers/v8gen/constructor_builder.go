@@ -1,4 +1,4 @@
-package wrappers
+package v8gen
 
 import (
 	. "github.com/gost-dom/code-gen/script-wrappers/model"
@@ -36,7 +36,7 @@ type PrototypeInstaller struct {
 
 func (builder PrototypeInstaller) InstallFunctionHandlers(
 	data ESConstructorData,
-) JenGenerator {
+) g.Generator {
 	generators := make([]g.Generator, 0, len(data.Operations))
 	for _, op := range data.Operations {
 		if !op.MethodCustomization.Ignored {
@@ -58,7 +58,7 @@ func (builder PrototypeInstaller) InstallAttributeHandlers(
 	if length == 0 {
 		return g.Noop
 	}
-	generators := make([]JenGenerator, 1, length+1)
+	generators := make([]g.Generator, 1, length+1)
 	generators[0] = g.Line
 	for op := range data.AttributesToInstall() {
 		generators = append(generators, builder.InstallAttributeHandler(op))
