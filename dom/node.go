@@ -296,6 +296,9 @@ func (n *node) setOwnerDocument(owner Document) {
 	}
 }
 func (n *node) setParent(parent Node) {
+	if n.parent != nil {
+		n.parent.RemoveChild(n.getSelf())
+	}
 	if parent != nil {
 		parentOwner := parent.nodeDocument()
 		if n.document != parentOwner {
@@ -325,15 +328,6 @@ func (n *node) IsSameNode(other Node) (result bool) {
 
 func (n *node) NodeName() string {
 	return "#node"
-}
-
-// removeNodeFromParent removes the node from the current parent, _if_ it has
-// one. Does nothing for disconnected nodes.
-func removeNodeFromParent(node Node) {
-	parent := node.Parent()
-	if parent != nil {
-		parent.RemoveChild(node)
-	}
 }
 
 func (n *node) RemoveChild(node Node) (Node, error) {
@@ -417,7 +411,6 @@ func (n *node) insertBefore(newNode Node, referenceNode Node) (Node, error) {
 		}
 		n.childNodes.setNodes(slices.Insert(n.childNodes.All(), i, newNode))
 	}
-	removeNodeFromParent(newNode)
 	n.notify(n.addedNodeEvent(newNode))
 	newNode.setParent(n.self)
 	if newNode.IsConnected() {
