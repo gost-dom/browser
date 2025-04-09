@@ -54,7 +54,6 @@ func NewDOMParser() domParser { return domParser{} }
 
 type ElementSteps interface {
 	AppendChild(parent dom.Node, child dom.Node) dom.Node
-	Connected(n dom.Element)
 }
 
 type BaseRules struct{}
@@ -66,8 +65,6 @@ func (r BaseRules) AppendChild(parent dom.Node, child dom.Node) dom.Node {
 	}
 	return res
 }
-
-func (r BaseRules) Connected(n dom.Element) {}
 
 type TemplateElementRules struct{ BaseRules }
 
@@ -92,16 +89,6 @@ func parseIntoDocument(doc dom.Document, r io.Reader) error {
 	}
 	iterate(doc, doc, node)
 	return nil
-}
-
-func cloneNode(n *html.Node) *html.Node {
-	return &html.Node{
-		Type:      n.Type,
-		Data:      n.Data,
-		DataAtom:  n.DataAtom,
-		Namespace: n.Namespace,
-		Attr:      n.Attr,
-	}
 }
 
 // convertNS converts the namespace URI from x/net/html to the _right_
@@ -142,12 +129,6 @@ func createElementFromNode(
 	newNode = newElm
 	newNode = rules.AppendChild(parent, newElm)
 	iterate(d, newNode, source)
-	// ?
-	if rules != nil {
-		if newElm.IsConnected() {
-			rules.Connected(newElm)
-		}
-	}
 	return newElm
 }
 
