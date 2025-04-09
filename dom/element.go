@@ -35,6 +35,7 @@ type Element interface {
 	InsertAdjacentHTML(position string, text string) error
 	OuterHTML() string
 	InnerHTML() string
+	SetInnerHTML(string) error
 	TagName() string
 	Matches(string) (bool, error)
 	// unexported
@@ -110,6 +111,14 @@ func (e *element) InnerHTML() string {
 	writer := &strings.Builder{}
 	e.renderChildren(writer)
 	return writer.String()
+}
+
+func (e *element) SetInnerHTML(html string) error {
+	fragment, err := e.nodeDocument().parseFragment(strings.NewReader(html))
+	if err == nil {
+		err = e.ReplaceChildren(fragment)
+	}
+	return err
 }
 
 func (e *element) HasAttribute(name string) bool {

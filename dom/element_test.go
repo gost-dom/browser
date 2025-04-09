@@ -288,6 +288,14 @@ func TestElementOuterHTML(t *testing.T) {
   </div>`))
 }
 
+func TestSetElementInnerHTML(t *testing.T) {
+	doc := ParseHtmlString(`<body>body text</body>`)
+	doc.Body().SetInnerHTML(`<div id="1">Foo</div>Bar<div id="2">Baz</div>`)
+	gomega.NewWithT(t).
+		Expect(doc.Body().InnerHTML()).
+		To(Equal(`<div id="1">Foo</div>Bar<div id="2">Baz</div>`))
+}
+
 // ParentElementTestSuite describes functionality in the ParentNode IDL
 // interface mixin, which is used by both Element, Document, and
 // DocumentFragment.
