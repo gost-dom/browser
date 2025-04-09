@@ -330,7 +330,6 @@ type V8InstanceInvocationResult struct {
 }
 
 func (c V8InstanceInvocation) PerformCall() (genRes V8InstanceInvocationResult) {
-	args := []g.Generator{}
 	genRes.HasError = c.Op.GetHasError()
 	genRes.HasValue = c.Op.HasResult() // != "undefined"
 	var stmt *jen.Statement
@@ -348,15 +347,12 @@ func (c V8InstanceInvocation) PerformCall() (genRes V8InstanceInvocationResult) 
 		stmt = stmt.Op(":=")
 	}
 
-	for _, a := range c.Args {
-		args = append(args, a)
-	}
 	list := g.StatementListStmt{}
 	var evaluation g.Value
 	if c.Instance == nil {
-		evaluation = g.NewValue(idlNameToGoName(c.Name)).Call(args...)
+		evaluation = g.NewValue(idlNameToGoName(c.Name)).Call(c.Args...)
 	} else {
-		evaluation = c.Instance.Method(idlNameToGoName(c.Name)).Call(args...)
+		evaluation = c.Instance.Method(idlNameToGoName(c.Name)).Call(c.Args...)
 	}
 	if stmt == nil {
 		list.Append(evaluation)
