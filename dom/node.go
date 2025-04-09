@@ -235,17 +235,10 @@ func (n *node) InsertBefore(newChild Node, referenceNode Node) (Node, error) {
 		return nil, err
 	}
 	if fragment, ok := newChild.(DocumentFragment); ok {
-		c := fragment.FirstChild()
-		for c != nil {
-			if _, err := n.insertBefore(c, referenceNode); err != nil {
-				return nil, err
-			}
-			c = fragment.FirstChild()
-		}
-		return fragment, nil
+		return fragment, n.insertBefore(fragment, referenceNode)
 	}
-	result, err := n.insertBefore(newChild, referenceNode)
-	return result, err
+	err := n.insertBefore(newChild, referenceNode)
+	return newChild, err
 }
 
 func (n *node) ChildNodes() NodeList { return n.childNodes }
@@ -348,10 +341,7 @@ func (n *node) RemoveChild(node Node) (Node, error) {
 			"Node.removeChild: The node to be removed is not a child of this node",
 		)
 	}
-	prevSibling := node.PreviousSibling()
-	n.childNodes.setNodes(slices.Delete(n.childNodes.All(), idx, idx+1))
-	n.notify(n.removedNodeEvent(prevSibling, node))
-	return node, nil
+	return node, n.replaceNodes(idx, 1, nil)
 }
 
 // assertCanAddNode verifies that the node can be added as a child. The function
@@ -413,22 +403,67 @@ func (n *node) childElements() []Element {
 	return res
 }
 
-func (n *node) insertBefore(newNode Node, referenceNode Node) (Node, error) {
+func (n *node) insertBefore(node Node, referenceNode Node) error {
+	var index int
 	if referenceNode == nil {
-		n.childNodes.append(newNode)
+		index = n.childNodes.Length()
 	} else {
-		i := slices.Index(n.childNodes.All(), referenceNode)
-		if i == -1 {
-			return nil, errors.New("Reference node not found")
+		index = slices.Index(n.childNodes.All(), referenceNode)
+		if index == -1 {
+			return errors.New("Reference node not found")
 		}
-		n.childNodes.setNodes(slices.Insert(n.childNodes.All(), i, newNode))
 	}
-	newNode.setParent(n.self)
-	if newNode.IsConnected() {
-		newNode.Connected()
+	return n.replaceNodes(index, 0, node)
+}
+
+// replaceNodes removes count nodes from index, and inserts the content of node
+// at the position.
+//
+// replaceNodes does not validate the node, and should only be called by an
+// exported function that
+//
+// Which new nodes depend on the node. If node is nil,
+// the specified nodes will be removed, and no new nodes inserted. If node is a
+// [DocumentFragment], the children of the fragment is inserted. Otherwise, a
+// single node is inserted
+//
+// If count is zero, the new node is inserted before the node at the specified
+// index if index < len(n.childNodes.Length()), otherwise it is appended after
+// the last element.
+//
+// replaceNodes panics if index < 0 or index + count > len(n.childNodes.Length()).
+func (n *node) replaceNodes(index, count int, node Node) error {
+	var prevSibling Node
+
+	newNodes := expandNode(node)
+	children := slices.Clone(n.ChildNodes().All())
+	if index > 0 {
+		prevSibling = children[index-1]
 	}
-	n.notify(n.addedNodeEvent(newNode))
-	return newNode, nil
+
+	removedNodes := slices.Clone(children[index : index+count])
+	children = slices.Replace(children, index, index+count, newNodes...)
+	n.childNodes.setNodes(children)
+
+	for _, node := range removedNodes {
+		node.setParent(nil)
+	}
+	for _, node := range newNodes {
+		node.setParent(n.self)
+		if node.IsConnected() {
+			node.Connected()
+		}
+	}
+
+	n.notify(ChangeEvent{
+		Target:          n.self,
+		Type:            ChangeEventChildList,
+		PreviousSibling: prevSibling,
+		AddedNodes:      &nodeList{nodes: newNodes},
+		RemovedNodes:    &nodeList{nodes: removedNodes},
+	})
+	return nil
+
 }
 
 type nodeIterator struct{ Node }
@@ -548,24 +583,6 @@ func (n *node) notify(event ChangeEvent) {
 	}
 	if n.parent != nil {
 		n.parent.notify(event)
-	}
-}
-
-func (n *node) addedNodeEvent(newNode Node) ChangeEvent {
-	return ChangeEvent{
-		Target:          n.self,
-		Type:            ChangeEventChildList,
-		PreviousSibling: newNode.PreviousSibling(),
-		AddedNodes:      &nodeList{nodes: []Node{newNode}},
-	}
-}
-
-func (n *node) removedNodeEvent(prevSibling, node Node) ChangeEvent {
-	return ChangeEvent{
-		Target:          n.self,
-		Type:            ChangeEventChildList,
-		PreviousSibling: prevSibling,
-		RemovedNodes:    &nodeList{nodes: []Node{node}},
 	}
 }
 

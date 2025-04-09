@@ -13,6 +13,7 @@ import (
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	_ "github.com/gost-dom/browser/testing/gomega-matchers"
+	matchers "github.com/gost-dom/browser/testing/gomega-matchers"
 	"github.com/onsi/gomega"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -86,6 +87,28 @@ func (s *MutationObserverTestSuite) TestObserveChildListNoSubtree() {
 	))
 
 	s.Assert().Empty(subtreeRecorder.AddedNodes())
+}
+
+func (s *MutationObserverTestSuite) TestSetInnerHTMLRemovesChildren() {
+	doc := html.NewHTMLDocument(html.NewWindow())
+	body := doc.Body()
+	parent := doc.CreateElement("div")
+	body.Append(parent)
+	d1 := doc.CreateElement("div")
+	d2 := doc.CreateElement("div")
+
+	rec := initMutationRecorder(parent, ChildList)
+	parent.Append(d1, d2)
+
+	s.Expect(rec).To(HaveRecorded(HaveAddedNodes(d1, d2)))
+
+	rec.Clear()
+	parent.SetInnerHTML("<div>Foo</div>")
+	s.Expect(rec).To(HaveRecorded(
+		And(
+			HaveRemovedNodes(d1, d2),
+			HaveAddedNodes(matchers.HaveOuterHTML("<div>Foo</div>")),
+		)))
 }
 
 func (s *MutationObserverTestSuite) TestValidOptions() {
