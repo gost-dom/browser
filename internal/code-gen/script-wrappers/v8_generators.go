@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	. "github.com/gost-dom/code-gen/internal"
+	"github.com/gost-dom/code-gen/stdgen"
 	g "github.com/gost-dom/generators"
 
 	"github.com/dave/jennifer/jen"
@@ -48,9 +49,7 @@ func (gen V8TargetGenerators) CreateInitFunction(data ESConstructorData) g.Gener
 }
 
 func (gen V8TargetGenerators) ReturnErrMsg(errGen g.Generator) g.Generator {
-	return g.Return(g.Nil,
-		g.NewValuePackage("New", "errors").Call(errGen),
-	)
+	return g.Return(g.Nil, stdgen.ErrorsNew(errGen))
 }
 
 func (gen V8TargetGenerators) WrapperStructGenerators() PlatformWrapperStructGenerators {
@@ -294,7 +293,7 @@ func CreateV8WrapperMethodInstanceInvocations(
 				statements.Append(
 					g.Return(
 						g.Nil,
-						g.Raw(jen.Qual("errors", "New").Call(jen.Lit(missingArgsConts))),
+						stdgen.ErrorsNew(g.Lit(missingArgsConts)),
 					),
 				)
 				break

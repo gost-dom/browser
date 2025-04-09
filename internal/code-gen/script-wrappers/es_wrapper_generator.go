@@ -10,6 +10,7 @@ import (
 	. "github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/code-gen/script-wrappers/configuration"
+	"github.com/gost-dom/code-gen/stdgen"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 	legacy "github.com/gost-dom/webref/idl/legacy"
@@ -298,10 +299,14 @@ func (d ESConstructorData) WrapperFunctionsToGenerate() iter.Seq[ESOperation] {
 		}
 		for _, a := range d.Attributes {
 			if a.Getter != nil && !a.Getter.CustomImplementation {
-				yield(*a.Getter)
+				if !yield(*a.Getter) {
+					return
+				}
 			}
 			if a.Setter != nil && !a.Setter.CustomImplementation {
-				yield(*a.Setter)
+				if !yield(*a.Setter) {
+					return
+				}
 			}
 		}
 	}
@@ -318,11 +323,7 @@ func ReturnOnAnyError(errNames []g.Generator) g.Generator {
 	}
 	return g.StatementList(
 		g.Assign(g.Id("err"),
-			g.Raw(jen.Qual("errors", "Join").CallFunc(func(g *jen.Group) {
-				for _, e := range errNames {
-					g.Add(e.Generate())
-				}
-			})),
+			stdgen.ErrorsJoin(errNames...),
 		),
 		ReturnOnError{},
 	)
