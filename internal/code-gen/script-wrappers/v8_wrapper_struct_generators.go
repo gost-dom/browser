@@ -38,3 +38,11 @@ func (g V8WrapperStructGenerators) HostArg() Generator {
 func (g V8WrapperStructGenerators) HostType() Generator {
 	return scriptHostPtr
 }
+
+func (g V8WrapperStructGenerators) CallbackMethodArgs() generators.FunctionArgumentList {
+	return generators.Arg(generators.Id("info"), v8FunctionCallbackInfoPtr)
+}
+
+func (g V8WrapperStructGenerators) CallbackMethodRetTypes() []generators.Generator {
+	return generators.List(v8Value, generators.Id("error"))
+}

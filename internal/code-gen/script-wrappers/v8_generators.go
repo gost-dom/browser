@@ -109,25 +109,6 @@ func (gen V8TargetGenerators) CreateConstructorCallback(data ESConstructorData) 
 	)
 }
 
-func (gen V8TargetGenerators) CreateMethodCallback(
-	data ESConstructorData,
-	op ESOperation,
-) JenGenerator {
-	naming := V8NamingStrategy{data}
-	return g.StatementList(
-		g.Line,
-		g.FunctionDefinition{
-			Receiver: g.FunctionArgument{
-				Name: g.Id(naming.Receiver()),
-				Type: g.Id(naming.PrototypeWrapperName()),
-			},
-			Name:     op.CallbackMethodName(),
-			Args:     g.Arg(g.Id("info"), v8FunctionCallbackInfoPtr),
-			RtnTypes: g.List(v8Value, g.Id("error")),
-			Body:     gen.CreateMethodCallbackBody(data, op),
-		})
-}
-
 func (gen V8TargetGenerators) CreateMethodCallbackBody(
 	data ESConstructorData,
 	op ESOperation,

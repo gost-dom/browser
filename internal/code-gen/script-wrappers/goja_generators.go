@@ -118,26 +118,6 @@ func (gen GojaTargetGenerators) CreatePrototypeInitializerBody(
 	return body
 }
 
-func (gen GojaTargetGenerators) CreateMethodCallback(
-	data ESConstructorData,
-	op ESOperation,
-) g.Generator {
-	naming := GojaNamingStrategy{data}
-	callArgument := g.Id("c")
-	return g.StatementList(
-		g.Line,
-		g.FunctionDefinition{
-			Receiver: g.FunctionArgument{
-				Name: g.Id(naming.ReceiverName()),
-				Type: g.Id(naming.PrototypeWrapperTypeName()),
-			},
-			Name:     op.CallbackMethodName(),
-			Args:     g.Arg(callArgument, gojaFc),
-			RtnTypes: g.List(gojaValue),
-			Body:     gen.CreateMethodCallbackBody(data, op),
-		})
-}
-
 func (gen GojaTargetGenerators) CreateMethodCallbackBody(
 	data ESConstructorData,
 	op ESOperation,
@@ -230,6 +210,15 @@ func (g GojaTargetGenerators) HostArg() Generator {
 
 func (g GojaTargetGenerators) HostType() Generator {
 	return generators.NewType("GojaContext").Pointer()
+}
+
+func (g GojaTargetGenerators) CallbackMethodArgs() generators.FunctionArgumentList {
+	callArgument := generators.Id("c")
+	return generators.Arg(callArgument, gojaFc)
+}
+
+func (g GojaTargetGenerators) CallbackMethodRetTypes() []generators.Generator {
+	return []generators.Generator{gojaValue}
 }
 
 func panicOnNotNil(lhs g.Generator) g.Generator {

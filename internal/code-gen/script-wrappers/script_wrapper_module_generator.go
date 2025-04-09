@@ -16,6 +16,8 @@ type PlatformWrapperStructGenerators interface {
 	WrapperStructConstructorRetType(interfaceName string) Generator
 	EmbeddedType(wrappedType Generator) Generator
 	EmbeddedTypeConstructor(wrappedType Generator) generators.Value
+	CallbackMethodArgs() generators.FunctionArgumentList
+	CallbackMethodRetTypes() []generators.Generator
 	HostArg() Generator
 	HostType() Generator
 }
@@ -38,10 +40,8 @@ type TargetGenerators interface {
 	// CreateConstructorCallback generates the function to be called whan
 	// JavaScript code constructs an instance.
 	CreateConstructorCallback(ESConstructorData) Generator
-	// CreateMethodCallback generates the function to be called when
-	// JavaScript code calls a method on an instance.
-	CreateMethodCallback(ESConstructorData, ESOperation) Generator
 
+	CreateMethodCallbackBody(ESConstructorData, ESOperation) Generator
 	WrapperStructGenerators() PlatformWrapperStructGenerators
 }
 
@@ -77,7 +77,30 @@ func (g PrototypeWrapperGenerator) Generate() *jen.Statement {
 func (g PrototypeWrapperGenerator) MethodCallbacks(data ESConstructorData) Generator {
 	list := generators.StatementList()
 	for op := range data.WrapperFunctionsToGenerate() {
-		list.Append(g.Platform.CreateMethodCallback(data, op))
+		list.Append(
+			generators.Line,
+			MethodCallback{data, op, g.Platform},
+		)
 	}
 	return list
+}
+
+type MethodCallback struct {
+	data     ESConstructorData
+	op       ESOperation
+	platform TargetGenerators
+}
+
+func (c MethodCallback) Generate() *jen.Statement {
+	typeGenerators := c.platform.WrapperStructGenerators()
+	return generators.FunctionDefinition{
+		Receiver: generators.FunctionArgument{
+			Name: generators.Id("w"),
+			Type: typeGenerators.WrapperStructType(c.data.Name()),
+		},
+		Name:     c.op.CallbackMethodName(),
+		Args:     typeGenerators.CallbackMethodArgs(), // generators.Arg(generators.Id("info"), v8FunctionCallbackInfoPtr),
+		RtnTypes: typeGenerators.CallbackMethodRetTypes(),
+		Body:     c.platform.CreateMethodCallbackBody(c.data, c.op),
+	}.Generate()
 }
