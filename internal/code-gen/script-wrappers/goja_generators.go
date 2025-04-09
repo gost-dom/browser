@@ -134,15 +134,15 @@ func (gen GojaTargetGenerators) CreateMethodCallback(
 			Name:     op.CallbackMethodName(),
 			Args:     g.Arg(callArgument, gojaFc),
 			RtnTypes: g.List(gojaValue),
-			Body:     gen.CreateWrapperMethodBody(data, op, callArgument),
+			Body:     gen.CreateMethodCallbackBody(data, op),
 		})
 }
 
-func (gen GojaTargetGenerators) CreateWrapperMethodBody(
+func (gen GojaTargetGenerators) CreateMethodCallbackBody(
 	data ESConstructorData,
 	op ESOperation,
-	callArgument g.Generator,
 ) g.Generator {
+	callArgument := g.Id("c")
 	if op.NotImplemented {
 		msg := fmt.Sprintf(
 			"%s.%s: Not implemented. Create an issue: %s",

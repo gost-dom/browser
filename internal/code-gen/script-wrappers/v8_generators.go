@@ -124,11 +124,11 @@ func (gen V8TargetGenerators) CreateMethodCallback(
 			Name:     op.CallbackMethodName(),
 			Args:     g.Arg(g.Id("info"), v8FunctionCallbackInfoPtr),
 			RtnTypes: g.List(v8Value, g.Id("error")),
-			Body:     CreateV8FunctionTemplateCallbackBody(data, op),
+			Body:     gen.CreateMethodCallbackBody(data, op),
 		})
 }
 
-func CreateV8FunctionTemplateCallbackBody(
+func (gen V8TargetGenerators) CreateMethodCallbackBody(
 	data ESConstructorData,
 	op ESOperation,
 ) JenGenerator {
