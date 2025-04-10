@@ -374,7 +374,7 @@ func (c V8InstanceInvocation) GetGenerator() V8InstanceInvocationResult {
 			list.Append(g.Return(g.Nil, g.Nil))
 		}
 	} else {
-		retType := c.Op.RetType
+		retType := c.Op.LegacyRetType
 		if retType.IsNode() {
 			genRes.RequireContext = true
 			valueReturn := (g.Return(g.Raw(jen.Id("ctx").Dot("getInstanceForNode").Call(jen.Id("result")))))

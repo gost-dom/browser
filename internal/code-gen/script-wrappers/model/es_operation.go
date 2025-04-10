@@ -8,7 +8,8 @@ import (
 type ESOperation struct {
 	Name                 string
 	NotImplemented       bool
-	RetType              idl.RetType
+	LegacyRetType        idl.RetType
+	RetType              idl.Type
 	HasError             bool
 	CustomImplementation bool
 	MethodCustomization  configuration.ESMethodWrapper
@@ -24,7 +25,7 @@ func (op ESOperation) GetHasError() bool {
 }
 
 func (op ESOperation) HasResult() bool {
-	return op.RetType.IsDefined()
+	return op.RetType.Name != "undefined"
 }
 
 func (o ESOperation) Encoder() string {
@@ -32,13 +33,13 @@ func (o ESOperation) Encoder() string {
 		return e
 	}
 	converter := "to"
-	if o.RetType.Nullable {
+	if o.LegacyRetType.Nullable {
 		converter += "Nullable"
 	}
-	converter += IdlNameToGoName(o.RetType.TypeName)
+	converter += IdlNameToGoName(o.LegacyRetType.TypeName)
 	return converter
 }
 
 func (o ESOperation) RetTypeName() string {
-	return IdlNameToGoName(o.RetType.TypeName)
+	return IdlNameToGoName(o.LegacyRetType.TypeName)
 }

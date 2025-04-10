@@ -1,7 +1,5 @@
 package configuration
 
-import "github.com/gost-dom/webref/idl"
-
 // IdlInterfaceConfiguration contains information about how to generate
 // prototype objects for an interface in the IDL.
 //
@@ -9,7 +7,6 @@ import "github.com/gost-dom/webref/idl"
 // will allow deviating from the defaults.
 type IdlInterfaceConfiguration struct {
 	DomSpec       *WebIdlConfiguration
-	IdlInterface  idl.Interface
 	TypeName      string
 	RunCustomCode bool
 	WrapperType   string

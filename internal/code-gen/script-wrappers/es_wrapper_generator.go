@@ -21,27 +21,40 @@ func createData(
 	if !ok {
 		panic("Missing type")
 	}
+	// if interfaceConfig.IdlInterface.Name != interfaceConfig.TypeName {
+	// 	panic(
+	// 		fmt.Sprintf(
+	// 			"Type mismatch, %s = %s",
+	// 			interfaceConfig.IdlInterface.Name,
+	// 			interfaceConfig.TypeName,
+	// 		),
+	// 	)
+	// }
 	idlInterface := idlName.IdlInterface
 	wrappedTypeName := idlInterface.Name
+	if idlInterface.Name != interfaceConfig.TypeName {
+		panic(fmt.Sprintf("createData error: %s = %s", idlInterface.Name, interfaceConfig.TypeName))
+	}
 	return ESConstructorData{
 		Spec:             interfaceConfig,
 		IdlInterfaceName: wrappedTypeName,
 		RunCustomCode:    interfaceConfig.RunCustomCode,
 		Inheritance:      idlInterface.Inheritance,
 		IdlInterface:     idlInterface,
-		Constructor:      CreateConstructor(interfaceConfig, idlName),
-		Operations:       CreateInstanceMethods(interfaceConfig, idlName),
-		Attributes:       CreateAttributes(interfaceConfig, idlName),
+		Constructor:      CreateConstructor(idlInterface, interfaceConfig, idlName),
+		Operations:       CreateInstanceMethods(idlInterface, interfaceConfig, idlName),
+		Attributes:       CreateAttributes(idlInterface, interfaceConfig, idlName),
 	}
 }
 
 func CreateConstructor(
+	idlInterface idl.Interface,
 	interfaceConfig *configuration.IdlInterfaceConfiguration,
 	idlName idl.TypeSpec) *ESOperation {
 	if c, ok := idlName.Constructor(); ok {
 		fmt.Printf("Create constructor %s '%s'\n", interfaceConfig.TypeName, c.Name)
 		c.Name = "constructor"
-		result := createOperation(interfaceConfig, c)
+		result := createOperation(idlInterface, interfaceConfig, c)
 		return &result
 	} else {
 		return nil
@@ -49,16 +62,18 @@ func CreateConstructor(
 }
 
 func CreateInstanceMethods(
+	idlInterface idl.Interface,
 	interfaceConfig *configuration.IdlInterfaceConfiguration,
 	idlName idl.TypeSpec) (result []ESOperation) {
 	for instanceMethod := range idlName.InstanceMethods() {
-		op := createOperation(interfaceConfig, instanceMethod)
+		op := createOperation(idlInterface, interfaceConfig, instanceMethod)
 		result = append(result, op)
 	}
 	return
 }
 
 func CreateAttributes(
+	idlInterface idl.Interface,
 	interfaceConfig *configuration.IdlInterfaceConfiguration,
 	idlName idl.TypeSpec,
 ) (res []ESAttribute) {
@@ -71,16 +86,15 @@ func CreateAttributes(
 			getter *ESOperation
 			setter *ESOperation
 		)
-		// r := attribute.AttributeType()
-		// rtnType := r.TypeName
 		getter = &ESOperation{
 			Name:                 attribute.Name,
 			NotImplemented:       methodCustomization.NotImplemented,
 			CustomImplementation: methodCustomization.CustomImplementation,
-			RetType: idl.RetType{
+			LegacyRetType: idl.RetType{
 				TypeName: attribute.Type.Name,
 				Nullable: attribute.Type.Nullable,
 			},
+			RetType:             attribute.Type,
 			MethodCustomization: methodCustomization,
 		}
 		if !attribute.Readonly {
@@ -91,7 +105,8 @@ func CreateAttributes(
 			setter.NotImplemented = setter.NotImplemented || methodCustomization.NotImplemented
 			setter.CustomImplementation = setter.CustomImplementation ||
 				methodCustomization.CustomImplementation
-			setter.RetType = idl.NewRetTypeUndefined()
+			setter.LegacyRetType = idl.NewRetTypeUndefined()
+			setter.RetType = IdlTypeUndefined
 			setter.Arguments = []ESOperationArgument{{
 				Name:     "val",
 				Type:     IdlNameToGoName(attribute.Type.Name),
@@ -109,19 +124,22 @@ func CreateAttributes(
 }
 
 func createOperation(
+	idlInterface idl.Interface,
 	typeSpec *configuration.IdlInterfaceConfiguration,
 	member idl.MemberSpec,
 ) ESOperation {
 	specRules := customrules.GetSpecRules(typeSpec.DomSpec.Name)
 	intfRules := specRules[typeSpec.TypeName]
 	opRules := intfRules.Operations[member.Name]
-
 	methodCustomization := typeSpec.GetMethodCustomization(member.Name)
+	idlOperation, _ := idlInterface.GetOperation(member.Name)
+
 	op := ESOperation{
 		Name:                 member.Name,
 		NotImplemented:       methodCustomization.NotImplemented,
 		CustomImplementation: methodCustomization.CustomImplementation,
-		RetType:              member.ReturnType(),
+		LegacyRetType:        member.ReturnType(),
+		RetType:              idlOperation.ReturnType,
 		MethodCustomization:  methodCustomization,
 		HasError:             opRules.HasError,
 		Arguments:            []ESOperationArgument{},
