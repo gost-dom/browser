@@ -77,7 +77,3 @@ func (suite *ScriptTestSuite) LoadHTML(h string) *ScriptTestContext {
 func (suite *ScriptTestSuite) NewWindow() html.Window {
 	return suite.NewContext().Window
 }
-
-func (suite *ScriptTestSuite) CreateAllGinkgoTests() {
-	suite.CreateEventTargetTests()
-}

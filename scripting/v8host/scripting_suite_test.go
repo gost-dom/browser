@@ -42,7 +42,6 @@ func init() {
 
 	host = New()
 	scriptTestSuite = scripttests.NewScriptTestSuite(host, "v8")
-	scriptTestSuite.CreateAllGinkgoTests()
 
 	BeforeSuite(func() {
 	})

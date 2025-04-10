@@ -17,4 +17,5 @@ func RunSuites(t *testing.T, h html.ScriptHost) {
 	t.Run("Window", runSuite(NewWindowTestSuite(h)))
 	t.Run("UIEvents", runSuite(NewUIEventTestSuite(h)))
 	t.Run("Document", runSuite(NewDocumentSuite(h)))
+	t.Run("EventTarget", runSuite(NewEventTargetTestSuite(h)))
 }

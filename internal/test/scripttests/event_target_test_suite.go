@@ -2,133 +2,90 @@ package scripttests
 
 import (
 	"github.com/gost-dom/browser/dom/event"
-	. "github.com/onsi/ginkgo/v2"
+	"github.com/gost-dom/browser/html"
 	. "github.com/onsi/gomega"
 )
 
-func (suite *ScriptTestSuite) CreateEventTargetTests() {
-	prefix := suite.Prefix
+type EventTargetTestSuite struct {
+	ScriptHostSuite
+}
 
-	Describe(prefix+"EventTarget", func() {
-		var ctx *ScriptTestContext
+func NewEventTargetTestSuite(h html.ScriptHost) *EventTargetTestSuite {
+	return &EventTargetTestSuite{ScriptHostSuite: *NewScriptHostSuite(h)}
+}
 
-		BeforeEach(func() {
-			ctx = suite.NewContext()
-		})
+func (s *EventTargetTestSuite) TestPrototype() {
+	s.Expect(s.mustEval("typeof (new EventTarget())")).To(Equal("object"))
+	s.Expect(s.mustEval("(new EventTarget()) instanceof EventTarget")).To(BeTrue())
+}
 
-		It("New event target is an EventTarget", func() {
-			Expect(ctx.Eval("typeof (new EventTarget())")).To(Equal("object"))
-			Expect(ctx.Eval("(new EventTarget()) instanceof EventTarget")).To(BeTrue())
-		})
+func (s *EventTargetTestSuite) TestCancelable() {
+	s.Expect(s.mustEval(`
+		const target = new EventTarget();
+		target.addEventListener("custom", e => { e.preventDefault() });
+		target.dispatchEvent(new CustomEvent("custom"))
+	`)).To(BeTrue(), "Event shouldn't be cancelable by default")
 
-		It("Isn't cancellable by default", func() {
-			Expect(ctx.Eval(`
-				const target = new EventTarget();
-				target.addEventListener("custom", e => { e.preventDefault() });
-				target.dispatchEvent(new CustomEvent("custom"))
-			`)).To(BeTrue())
-		})
+	s.Expect(s.mustEval(`
+		const target2 = new EventTarget();
+		target2.addEventListener("custom", e => { e.preventDefault() });
+		target2.dispatchEvent(new CustomEvent("custom", {cancelable: true }))
+	`)).To(BeFalse())
+}
 
-		It("Can be cancelled", func() {
-			Expect(ctx.Eval(`
-				const target = new EventTarget();
-				target.addEventListener("custom", e => { e.preventDefault() });
-				target.dispatchEvent(new CustomEvent("custom", {cancelable: true }))
-			`)).To(BeFalse())
-		})
+func (s *EventTargetTestSuite) TestDOMEventBubbleNotSpecified() {
+	s.mustLoadHTML(`<div id="parent"><div id="target"></div></div>`)
+	s.mustRun(`
+		var targetCalled = false;
+		var parentCalled = false;
+		const target = document.getElementById("target")
+		target.addEventListener("go:home", e => { targetCalled = true });
+		document.getElementById("parent").addEventListener(
+			"go:home",
+			e => { parentCalled = true });
+		target.dispatchEvent(new CustomEvent("go:home", {}))
+	`)
+	s.Expect(s.mustEval("targetCalled")).To(BeTrue(), "Target handler called")
+	s.Expect(s.mustEval("parentCalled")).To(BeFalse(), "Parent handler called")
+}
 
-		It("Doesn't bubble by default", func() {
-			if suite.SkipDOM {
-				Skip("Suite doesn't support a DOM")
-			}
-			ctx.Window.LoadHTML(`<div id="parent"><div id="target"></div></div>`)
-			Expect(ctx.Run(`
-				var targetCalled = false;
-				var parentCalled = false;
-				const target = document.getElementById("target")
-				target.addEventListener("go:home", e => { targetCalled = true });
-				document.getElementById("parent").addEventListener(
-					"go:home",
-					e => { parentCalled = true });
-				target.dispatchEvent(new CustomEvent("go:home", {}))
-			`)).To(Succeed())
-			Expect(ctx.Eval("targetCalled")).To(BeTrue(), "Target handler called")
-			Expect(ctx.Eval("parentCalled")).To(BeFalse(), "Parent handler called")
-		})
+func (s *EventTargetTestSuite) TestDOMEventBubble() {
+	s.mustLoadHTML(`<div id="parent"><div id="target"></div></div>`)
+	s.mustRun(`
+		var targetCalled = false;
+		var parentCalled = false;
+		const target = document.getElementById("target")
+		target.addEventListener("go:home", e => { targetCalled = true });
+		document.getElementById("parent").addEventListener(
+			"go:home",
+			e => { parentCalled = true });
+		target.dispatchEvent(new CustomEvent("go:home", { bubbles: true }))
+	`)
+	s.Assert().Equal(true, s.mustEval("targetCalled"))
+	s.Assert().Equal(true, s.mustEval("parentCalled"))
+}
 
-		It("Bubbles when specified in the constructor", func() {
-			if suite.SkipDOM {
-				Skip("Suite doesn't support a DOM")
-			}
-			ctx.Window.LoadHTML(`<div id="parent"><div id="target"></div></div>`)
-			Expect(ctx.Run(`
-				var targetCalled = false;
-				var parentCalled = false;
-				const target = document.getElementById("target")
-				target.addEventListener("go:home", e => { targetCalled = true });
-				document.getElementById("parent").addEventListener(
-					"go:home",
-					e => { parentCalled = true });
-				target.dispatchEvent(new CustomEvent("go:home", { bubbles: true }))
-			`)).To(Succeed())
-			Expect(ctx.Eval("targetCalled")).To(BeTrue())
-			Expect(ctx.Eval("parentCalled")).To(BeTrue())
-		})
+func (s *EventTargetTestSuite) TestCallingEventListener() {
+	s.mustRun(`
+		var callCount = 0
+		function listener() { callCount++ };
+		const target = new EventTarget();
+		target.addEventListener('custom', listener);
+		target.dispatchEvent(new CustomEvent('custom'));
+	`)
+	s.Assert().EqualValues(1, s.mustEval("callCount"))
+}
 
-		It("Is an EventTarget", func() {
-			Expect(ctx.Eval("(new EventTarget()) instanceof EventTarget")).To(BeTrue())
-		})
-
-		It("Can call an added event listener", func() {
-			Expect(ctx.Eval(`
-				var callCount = 0
-				function listener() { callCount++ };
-				const target = new EventTarget();
-				target.addEventListener('custom', listener);
-				target.dispatchEvent(new CustomEvent('custom'));`)).Error().ToNot(HaveOccurred())
-			Expect(ctx.Eval("callCount")).To(BeEquivalentTo(1))
-		})
-
-		It("Event from Go code will propagate to JS", func() {
-			Expect(ctx.Eval(`
-				var callCount = 0
-				function listener() { callCount++ };
-				const target = window;
-				target.addEventListener('custom', listener);
-			`)).Error().ToNot(HaveOccurred())
-			ctx.Window.DispatchEvent(event.NewCustomEvent("custom", event.CustomEventInit{}))
-			Expect(ctx.Eval("callCount")).To(BeEquivalentTo(1))
-		})
-
-		Describe("Events", func() {
-			Describe("Custom events dispatched from Go-code", func() {
-				It("Should be of type Event", func() {
-					Expect(ctx.Eval(`
-						var event;
-						window.addEventListener('custom', e => { event = e });`,
-					)).Error().ToNot(HaveOccurred())
-					ctx.Window.DispatchEvent(
-						event.NewCustomEvent("custom", event.CustomEventInit{}),
-					)
-					Expect(
-						ctx.Eval(`Object.getPrototypeOf(event) === CustomEvent.prototype`),
-					).To(BeTrue())
-					Expect(ctx.Eval(`event instanceof Event`)).To(BeTrue())
-				})
-			})
-
-			It("Should have a type", func() {
-				Expect(ctx.Eval(`
-					var event;
-					window.addEventListener('custom', e => { event = e });
-					window.dispatchEvent(new CustomEvent('custom'));
-					event.type`,
-				)).To(Equal("custom"))
-				By("Inheriting directly from event")
-				Expect(
-					ctx.Eval(`Object.getPrototypeOf(event) === CustomEvent.prototype`),
-				).To(BeTrue())
-			})
-		})
-	})
+func (s *EventTargetTestSuite) TestPropagateGoEventToJS() {
+	s.mustRun(`
+		var callCount = 0
+		var event;
+		function listener(e) { event = e; callCount++ };
+		const target = window;
+		target.addEventListener('custom', listener);
+	`)
+	s.window.DispatchEvent(event.NewCustomEvent("custom", event.CustomEventInit{}))
+	s.Assert().EqualValues(1, s.mustEval("callCount"))
+	s.Assert().Equal(true, s.mustEval(`Object.getPrototypeOf(event) === CustomEvent.prototype`))
+	s.Assert().Equal("custom", s.mustEval(`event.type`), "type of actual event")
 }
