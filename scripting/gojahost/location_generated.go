@@ -52,6 +52,7 @@ func (w locationWrapper) reload(c g.FunctionCall) g.Value {
 }
 
 func (w locationWrapper) href(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Location.href")
 	instance := w.getInstance(c)
 	result := instance.Href()
 	return w.toUSVString(result)
@@ -63,12 +64,14 @@ func (w locationWrapper) setHref(c g.FunctionCall) g.Value {
 }
 
 func (w locationWrapper) origin(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Location.origin")
 	instance := w.getInstance(c)
 	result := instance.Origin()
 	return w.toUSVString(result)
 }
 
 func (w locationWrapper) protocol(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Location.protocol")
 	instance := w.getInstance(c)
 	result := instance.Protocol()
 	return w.toUSVString(result)
@@ -80,6 +83,7 @@ func (w locationWrapper) setProtocol(c g.FunctionCall) g.Value {
 }
 
 func (w locationWrapper) host(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Location.host")
 	instance := w.getInstance(c)
 	result := instance.Host()
 	return w.toUSVString(result)
@@ -91,6 +95,7 @@ func (w locationWrapper) setHost(c g.FunctionCall) g.Value {
 }
 
 func (w locationWrapper) hostname(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Location.hostname")
 	instance := w.getInstance(c)
 	result := instance.Hostname()
 	return w.toUSVString(result)
@@ -102,6 +107,7 @@ func (w locationWrapper) setHostname(c g.FunctionCall) g.Value {
 }
 
 func (w locationWrapper) port(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Location.port")
 	instance := w.getInstance(c)
 	result := instance.Port()
 	return w.toUSVString(result)
@@ -113,6 +119,7 @@ func (w locationWrapper) setPort(c g.FunctionCall) g.Value {
 }
 
 func (w locationWrapper) pathname(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Location.pathname")
 	instance := w.getInstance(c)
 	result := instance.Pathname()
 	return w.toUSVString(result)
@@ -124,6 +131,7 @@ func (w locationWrapper) setPathname(c g.FunctionCall) g.Value {
 }
 
 func (w locationWrapper) search(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Location.search")
 	instance := w.getInstance(c)
 	result := instance.Search()
 	return w.toUSVString(result)
@@ -135,6 +143,7 @@ func (w locationWrapper) setSearch(c g.FunctionCall) g.Value {
 }
 
 func (w locationWrapper) hash(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Location.hash")
 	instance := w.getInstance(c)
 	result := instance.Hash()
 	return w.toUSVString(result)

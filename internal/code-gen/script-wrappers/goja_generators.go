@@ -5,7 +5,6 @@ import (
 
 	"github.com/dave/jennifer/jen"
 	. "github.com/gost-dom/code-gen/internal"
-	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/generators"
 	g "github.com/gost-dom/generators"
 )
@@ -120,7 +119,7 @@ func (gen GojaTargetGenerators) CreatePrototypeInitializerBody(
 	return body
 }
 
-func (gen GojaTargetGenerators) ReturnError(errGen g.Generator) g.Generator {
+func (gen GojaTargetGenerators) ReturnErrMsg(errGen g.Generator) g.Generator {
 	return g.Raw(jen.Panic(errGen.Generate()))
 }
 
@@ -129,15 +128,6 @@ func (gen GojaTargetGenerators) CreateMethodCallbackBody(
 	op ESOperation,
 ) g.Generator {
 	callArgument := g.Id("c")
-	if op.NotImplemented {
-		msg := fmt.Sprintf(
-			"%s.%s: Not implemented. Create an issue: %s",
-			data.Name(),
-			op.Name,
-			packagenames.ISSUE_URL,
-		)
-		return g.Raw(jen.Panic(jen.Lit(msg)))
-	}
 	naming := GojaNamingStrategy{data}
 	receiver := g.NewValue(naming.ReceiverName())
 	instance := g.NewValue("instance")

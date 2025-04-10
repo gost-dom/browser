@@ -143,8 +143,8 @@ func (w htmlFormElementV8Wrapper) setAcceptCharset(info *v8.FunctionCallbackInfo
 }
 
 func (w htmlFormElementV8Wrapper) action(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.action")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -200,8 +200,8 @@ func (w htmlFormElementV8Wrapper) setEncoding(info *v8.FunctionCallbackInfo) (*v
 }
 
 func (w htmlFormElementV8Wrapper) method(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.method")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -252,8 +252,8 @@ func (w htmlFormElementV8Wrapper) relList(info *v8.FunctionCallbackInfo) (*v8.Va
 }
 
 func (w htmlFormElementV8Wrapper) elements(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.elements")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err

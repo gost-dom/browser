@@ -52,8 +52,8 @@ func (w htmlAnchorElementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (
 }
 
 func (w htmlAnchorElementV8Wrapper) target(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: HTMLAnchorElement.target")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err

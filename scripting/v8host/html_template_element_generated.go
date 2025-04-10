@@ -63,8 +63,8 @@ func (w htmlTemplateElementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo)
 }
 
 func (w htmlTemplateElementV8Wrapper) content(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: HTMLTemplateElement.content")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err

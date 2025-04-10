@@ -72,8 +72,8 @@ func (w htmlOrSVGElementV8Wrapper) dataset(info *v8.FunctionCallbackInfo) (*v8.V
 }
 
 func (w htmlOrSVGElementV8Wrapper) nonce(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.nonce")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -99,8 +99,8 @@ func (w htmlOrSVGElementV8Wrapper) setNonce(info *v8.FunctionCallbackInfo) (*v8.
 }
 
 func (w htmlOrSVGElementV8Wrapper) autofocus(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.autofocus")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -126,8 +126,8 @@ func (w htmlOrSVGElementV8Wrapper) setAutofocus(info *v8.FunctionCallbackInfo) (
 }
 
 func (w htmlOrSVGElementV8Wrapper) tabIndex(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.tabIndex")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err

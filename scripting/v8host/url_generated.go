@@ -100,8 +100,8 @@ func (w urlV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, err
 }
 
 func (w urlV8Wrapper) toJSON(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: URL.toJSON")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -115,8 +115,8 @@ func (w urlV8Wrapper) toJSON(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 }
 
 func (w urlV8Wrapper) href(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: URL.href")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -131,8 +131,8 @@ func (w urlV8Wrapper) setHref(info *v8.FunctionCallbackInfo) (*v8.Value, error) 
 }
 
 func (w urlV8Wrapper) origin(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: URL.origin")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -142,8 +142,8 @@ func (w urlV8Wrapper) origin(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 }
 
 func (w urlV8Wrapper) protocol(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: URL.protocol")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -178,8 +178,8 @@ func (w urlV8Wrapper) setPassword(info *v8.FunctionCallbackInfo) (*v8.Value, err
 }
 
 func (w urlV8Wrapper) host(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: URL.host")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -194,8 +194,8 @@ func (w urlV8Wrapper) setHost(info *v8.FunctionCallbackInfo) (*v8.Value, error) 
 }
 
 func (w urlV8Wrapper) hostname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: URL.hostname")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -210,8 +210,8 @@ func (w urlV8Wrapper) setHostname(info *v8.FunctionCallbackInfo) (*v8.Value, err
 }
 
 func (w urlV8Wrapper) port(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: URL.port")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -226,8 +226,8 @@ func (w urlV8Wrapper) setPort(info *v8.FunctionCallbackInfo) (*v8.Value, error) 
 }
 
 func (w urlV8Wrapper) pathname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: URL.pathname")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -242,8 +242,8 @@ func (w urlV8Wrapper) setPathname(info *v8.FunctionCallbackInfo) (*v8.Value, err
 }
 
 func (w urlV8Wrapper) search(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: URL.search")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -263,8 +263,8 @@ func (w urlV8Wrapper) searchParams(info *v8.FunctionCallbackInfo) (*v8.Value, er
 }
 
 func (w urlV8Wrapper) hash(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: URL.hash")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err

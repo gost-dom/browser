@@ -50,8 +50,8 @@ func (w domTokenListV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.V
 }
 
 func (w domTokenListV8Wrapper) item(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.item")
+	ctx := w.mustGetContext(info)
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	index, err1 := tryParseArg(args, 0, w.decodeUnsignedLong)
@@ -67,8 +67,8 @@ func (w domTokenListV8Wrapper) item(info *v8.FunctionCallbackInfo) (*v8.Value, e
 }
 
 func (w domTokenListV8Wrapper) contains(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.contains")
+	ctx := w.mustGetContext(info)
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	token, err1 := tryParseArg(args, 0, w.decodeDOMString)
@@ -116,8 +116,8 @@ func (w domTokenListV8Wrapper) remove(info *v8.FunctionCallbackInfo) (*v8.Value,
 }
 
 func (w domTokenListV8Wrapper) replace(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.replace")
+	ctx := w.mustGetContext(info)
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	token, err1 := tryParseArg(args, 0, w.decodeDOMString)
@@ -139,8 +139,8 @@ func (w domTokenListV8Wrapper) supports(info *v8.FunctionCallbackInfo) (*v8.Valu
 }
 
 func (w domTokenListV8Wrapper) length(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.length")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -150,8 +150,8 @@ func (w domTokenListV8Wrapper) length(info *v8.FunctionCallbackInfo) (*v8.Value,
 }
 
 func (w domTokenListV8Wrapper) value(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.value")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err

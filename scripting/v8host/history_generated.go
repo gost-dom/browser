@@ -117,8 +117,8 @@ func (w historyV8Wrapper) replaceState(info *v8.FunctionCallbackInfo) (*v8.Value
 }
 
 func (w historyV8Wrapper) length(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: History.length")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -128,8 +128,8 @@ func (w historyV8Wrapper) length(info *v8.FunctionCallbackInfo) (*v8.Value, erro
 }
 
 func (w historyV8Wrapper) state(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: History.state")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err

@@ -83,8 +83,8 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) Constructor(info *v8.FunctionCallbac
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) href(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.href")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -110,8 +110,8 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setHref(info *v8.FunctionCallbackInf
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) origin(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.origin")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -121,8 +121,8 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) origin(info *v8.FunctionCallbackInfo
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) protocol(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.protocol")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -148,8 +148,8 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setProtocol(info *v8.FunctionCallbac
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) username(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.username")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -175,8 +175,8 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setUsername(info *v8.FunctionCallbac
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) password(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.password")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -202,8 +202,8 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setPassword(info *v8.FunctionCallbac
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) host(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.host")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -229,8 +229,8 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setHost(info *v8.FunctionCallbackInf
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) hostname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.hostname")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -256,8 +256,8 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setHostname(info *v8.FunctionCallbac
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) port(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.port")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -283,8 +283,8 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setPort(info *v8.FunctionCallbackInf
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) pathname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.pathname")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -310,8 +310,8 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setPathname(info *v8.FunctionCallbac
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) search(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.search")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -337,8 +337,8 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setSearch(info *v8.FunctionCallbackI
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) hash(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.hash")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err

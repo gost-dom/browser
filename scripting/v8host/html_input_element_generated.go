@@ -48,8 +48,8 @@ func (w htmlInputElementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*
 }
 
 func (w htmlInputElementV8Wrapper) checkValidity(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: HTMLInputElement.checkValidity")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -59,8 +59,8 @@ func (w htmlInputElementV8Wrapper) checkValidity(info *v8.FunctionCallbackInfo) 
 }
 
 func (w htmlInputElementV8Wrapper) type_(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: HTMLInputElement.type")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err

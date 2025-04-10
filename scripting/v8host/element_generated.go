@@ -162,8 +162,8 @@ func (w elementV8Wrapper) toggleAttribute(info *v8.FunctionCallbackInfo) (*v8.Va
 }
 
 func (w elementV8Wrapper) hasAttribute(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: Element.hasAttribute")
+	ctx := w.mustGetContext(info)
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	qualifiedName, err1 := tryParseArg(args, 0, w.decodeDOMString)
@@ -214,8 +214,8 @@ func (w elementV8Wrapper) attachShadow(info *v8.FunctionCallbackInfo) (*v8.Value
 }
 
 func (w elementV8Wrapper) matches(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: Element.matches")
+	ctx := w.mustGetContext(info)
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	selectors, err1 := tryParseArg(args, 0, w.decodeDOMString)
@@ -275,8 +275,8 @@ func (w elementV8Wrapper) localName(info *v8.FunctionCallbackInfo) (*v8.Value, e
 }
 
 func (w elementV8Wrapper) tagName(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: Element.tagName")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err
@@ -316,8 +316,8 @@ func (w elementV8Wrapper) setSlot(info *v8.FunctionCallbackInfo) (*v8.Value, err
 }
 
 func (w elementV8Wrapper) attributes(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
 	log.Debug(w.logger(info), "V8 Function call: Element.attributes")
+	ctx := w.mustGetContext(info)
 	instance, err := w.getInstance(info)
 	if err != nil {
 		return nil, err

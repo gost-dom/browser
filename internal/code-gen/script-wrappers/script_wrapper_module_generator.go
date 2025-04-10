@@ -5,6 +5,7 @@ import (
 
 	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/packagenames"
+	"github.com/gost-dom/code-gen/stdgen"
 	"github.com/gost-dom/generators"
 	g "github.com/gost-dom/generators"
 )
@@ -47,7 +48,11 @@ type TargetGenerators interface {
 
 	CreateMethodCallbackBody(ESConstructorData, ESOperation) Generator
 	WrapperStructGenerators() PlatformWrapperStructGenerators
-	ReturnError(Generator) Generator
+
+	// Generate a return statement with an error messages. Goja is
+	// non-idiomatic, and the return value is converted to a panic. V8go is
+	// idiomatic, and this generates a return nil, errors.New(msg)
+	ReturnErrMsg(Generator) Generator
 	PlatformInfoArg() Generator
 }
 
@@ -106,7 +111,7 @@ func (c MethodCallback) Generate() *jen.Statement {
 			Type: typeGenerators.WrapperStructType(c.data.Name()),
 		},
 		Name:     c.op.CallbackMethodName(),
-		Args:     typeGenerators.CallbackMethodArgs(), // generators.Arg(generators.Id("info"), v8FunctionCallbackInfoPtr),
+		Args:     typeGenerators.CallbackMethodArgs(),
 		RtnTypes: typeGenerators.CallbackMethodRetTypes(),
 		Body:     MethodCallbackBody{c.data, c.op, receiver, c.platform},
 	}.Generate()
@@ -119,24 +124,26 @@ type MethodCallbackBody struct {
 	platform TargetGenerators
 }
 
-func (c MethodCallbackBody) Generate() *jen.Statement {
-	debug := g.NewValuePackage("Debug", packagenames.Log).Call(
-		g.ValueOf(c.receiver).Field("logger").Call(c.platform.PlatformInfoArg()),
-		g.Lit(fmt.Sprintf("V8 Function call: %s.%s", c.data.Name(), c.op.Name)))
+func (b MethodCallbackBody) Generate() (res *jen.Statement) {
+	statements := g.StatementList()
+	defer func() { res = statements.Generate() }()
 
-	if c.op.NotImplemented {
-		errMsg := fmt.Sprintf(
-			"%s.%s: Not implemented. Create an issue: %s",
-			c.data.Name(),
-			c.op.Name,
-			packagenames.ISSUE_URL,
-		)
-		return g.StatementList(
-			debug,
-			c.platform.ReturnError(
-				(g.Lit(errMsg)))).Generate()
-		// jen.Qual("errors", "New").Call(jen.Lit(errMsg))))
-		// g.Return(g.Nil, g.Raw(jen.Qual("errors", "New").Call(jen.Lit(errMsg))))).Generate()
+	statements.Append(stdgen.LogDebug(
+		g.ValueOf(b.receiver).Field("logger").Call(b.platform.PlatformInfoArg()),
+		g.Lit(fmt.Sprintf("V8 Function call: %s.%s", b.data.Name(), b.op.Name))))
+
+	if b.op.NotImplemented {
+		statements.Append(b.ReturnNotImplementedError())
+		return
 	}
-	return c.platform.CreateMethodCallbackBody(c.data, c.op).Generate()
+	statements.Append(b.platform.CreateMethodCallbackBody(b.data, b.op))
+	return
+}
+
+func (b MethodCallbackBody) ReturnNotImplementedError() g.Generator {
+	errMsg := fmt.Sprintf(
+		"%s.%s: Not implemented. Create an issue: %s",
+		b.data.Name(), b.op.Name, packagenames.ISSUE_URL,
+	)
+	return b.platform.ReturnErrMsg(g.Lit(errMsg))
 }

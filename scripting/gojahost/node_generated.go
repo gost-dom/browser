@@ -41,6 +41,7 @@ func (w nodeWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime) {
 }
 
 func (w nodeWrapper) getRootNode(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Node.getRootNode")
 	instance := w.getInstance(c)
 	options := w.decodeGetRootNodeOptions(c.Arguments[0])
 	result := instance.GetRootNode(options)
@@ -48,6 +49,7 @@ func (w nodeWrapper) getRootNode(c g.FunctionCall) g.Value {
 }
 
 func (w nodeWrapper) cloneNode(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Node.cloneNode")
 	instance := w.getInstance(c)
 	subtree := w.decodeboolean(c.Arguments[0])
 	result := instance.CloneNode(subtree)
@@ -55,6 +57,7 @@ func (w nodeWrapper) cloneNode(c g.FunctionCall) g.Value {
 }
 
 func (w nodeWrapper) isSameNode(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Node.isSameNode")
 	instance := w.getInstance(c)
 	otherNode := w.decodeNode(c.Arguments[0])
 	result := instance.IsSameNode(otherNode)
@@ -62,6 +65,7 @@ func (w nodeWrapper) isSameNode(c g.FunctionCall) g.Value {
 }
 
 func (w nodeWrapper) contains(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Node.contains")
 	instance := w.getInstance(c)
 	other := w.decodeNode(c.Arguments[0])
 	result := instance.Contains(other)
@@ -69,6 +73,7 @@ func (w nodeWrapper) contains(c g.FunctionCall) g.Value {
 }
 
 func (w nodeWrapper) insertBefore(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Node.insertBefore")
 	instance := w.getInstance(c)
 	node := w.decodeNode(c.Arguments[0])
 	child := w.decodeNode(c.Arguments[1])
@@ -80,6 +85,7 @@ func (w nodeWrapper) insertBefore(c g.FunctionCall) g.Value {
 }
 
 func (w nodeWrapper) appendChild(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Node.appendChild")
 	instance := w.getInstance(c)
 	node := w.decodeNode(c.Arguments[0])
 	result, err := instance.AppendChild(node)
@@ -90,6 +96,7 @@ func (w nodeWrapper) appendChild(c g.FunctionCall) g.Value {
 }
 
 func (w nodeWrapper) removeChild(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Node.removeChild")
 	instance := w.getInstance(c)
 	child := w.decodeNode(c.Arguments[0])
 	result, err := instance.RemoveChild(child)
@@ -100,24 +107,28 @@ func (w nodeWrapper) removeChild(c g.FunctionCall) g.Value {
 }
 
 func (w nodeWrapper) nodeName(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Node.nodeName")
 	instance := w.getInstance(c)
 	result := instance.NodeName()
 	return w.toDOMString(result)
 }
 
 func (w nodeWrapper) isConnected(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Node.isConnected")
 	instance := w.getInstance(c)
 	result := instance.IsConnected()
 	return w.toBoolean(result)
 }
 
 func (w nodeWrapper) ownerDocument(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Node.ownerDocument")
 	instance := w.getInstance(c)
 	result := instance.OwnerDocument()
 	return w.toDocument(result)
 }
 
 func (w nodeWrapper) parentElement(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Node.parentElement")
 	instance := w.getInstance(c)
 	result := instance.ParentElement()
 	return w.toElement(result)
@@ -129,18 +140,21 @@ func (w nodeWrapper) childNodes(c g.FunctionCall) g.Value {
 }
 
 func (w nodeWrapper) firstChild(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Node.firstChild")
 	instance := w.getInstance(c)
 	result := instance.FirstChild()
 	return w.toNode(result)
 }
 
 func (w nodeWrapper) previousSibling(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Node.previousSibling")
 	instance := w.getInstance(c)
 	result := instance.PreviousSibling()
 	return w.toNode(result)
 }
 
 func (w nodeWrapper) nextSibling(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Node.nextSibling")
 	instance := w.getInstance(c)
 	result := instance.NextSibling()
 	return w.toNode(result)
