@@ -32,6 +32,8 @@ func NewObserver(cb Callback) *Observer {
 	return &Observer{Callback: cb}
 }
 
+type ObserveOption = func(*Options)
+
 // Start observing for changes for a specific dom node.
 //
 // Panics if the observer does not have a handler.
