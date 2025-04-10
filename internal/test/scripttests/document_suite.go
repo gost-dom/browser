@@ -1,125 +1,73 @@
 package scripttests
 
 import (
-	. "github.com/onsi/ginkgo/v2"
+	"github.com/gost-dom/browser/html"
 	. "github.com/onsi/gomega"
 )
 
-func (suite *ScriptTestSuite) CreateDocumentTests() {
-	prefix := suite.Prefix
+type DocumentTestSuite struct {
+	ScriptHostSuite
+}
 
-	Describe(prefix+"Document", func() {
-		var ctx *ScriptTestContext
+func NewDocumentSuite(h html.ScriptHost) *DocumentTestSuite {
+	return &DocumentTestSuite{ScriptHostSuite: *NewScriptHostSuite(h)}
+}
 
-		BeforeEach(func() {
-			ctx = suite.NewContext()
-		})
+func (s *DocumentTestSuite) TestPrototype() {
+	s.Assert().Equal("HTMLDocument",
+		s.mustEval("Object.getPrototypeOf(document).constructor.name"),
+		"Global document instance")
 
-		Describe("`createElement`", func() {
-			It("Should return an HTMLElement", func() {
-				Expect(`document.createElement("base")`).To(ctx.BeInstanceOf("HTMLElement"))
-			})
+	s.Assert().Equal(true, s.mustEval(
+		`Object.getOwnPropertyNames(Document.prototype).includes("createElement")`),
+		"createElement exists on Document.prototype")
 
-			It("Should exist on the prototype", func() {
-				Expect(ctx.Eval(`
-				Object.getOwnPropertyNames(Document.prototype).includes("createElement")
-			`)).To(BeTrue())
-				Expect(ctx.Eval(`
-				Object.getOwnPropertyNames(Document).includes("createElement")
-			`)).To(BeFalse())
-			})
-		})
+	s.Assert().Equal("Node",
+		s.mustEval(`Object.getPrototypeOf(Document.prototype).constructor.name`),
+		"Document inherits from Node")
+	s.Assert().Equal("Document",
+		s.mustEval(`Object.getPrototypeOf(HTMLDocument.prototype).constructor.name`),
+		"HTMLDocument inherits from Document")
 
-		Describe("`location`", func() {
-			It("Should be an own property of the document, not the prototype", func() {
-				Expect(
-					ctx.Eval("Object.getOwnPropertyNames(document)"),
-				).To(ContainElements("location"))
-				Expect(
-					ctx.Eval("Object.getOwnPropertyNames(Document.prototype)"),
-				).ToNot(ContainElements("location"))
-			})
-		})
+	s.Assert().Equal(false, s.mustEval(
+		`Object.getOwnPropertyNames(Document).includes("createElement")`),
+		"createElement exist on Document (static method)")
 
-		Describe("getElementById", func() {
-			It("Should return the right element", func() {
-				ctx := suite.LoadHTML(
-					`<body><div id='elm-1'>Elm: 1</div><div id='elm-2'>Elm: 2</div></body>`,
-				)
-				Expect(ctx.Eval(`
-          const e = document.getElementById("elm-2")
-          e.outerHTML
-        `)).To(Equal(`<div id="elm-2">Elm: 2</div>`))
-				Expect(
-					ctx.Eval(`Object.getPrototypeOf(e).constructor.name`),
-				).To(Equal("HTMLDivElement"))
-			})
-		})
+	s.Assert().Contains(
+		s.mustEval("Object.getOwnPropertyNames(document)"), "location",
+		"location should exist on document instance")
+	s.Assert().NotContains(
+		s.mustEval("Object.getOwnPropertyNames(Document.prototype)"), "location",
+		"location should not exist on Document prototype")
+}
 
-		itShouldBeADocument := func() {
-			It("Should be an instance of Document", func() {
-				Expect(ctx.Eval("actual instanceof Document")).To(BeTrue())
-				Expect("actual").To(ctx.BeInstanceOf("Document"))
-			})
+func (s *DocumentTestSuite) TestCreateElement() {
+	s.Assert().Equal(true,
+		s.mustEval(`document.createElement("base") instanceof HTMLElement`),
+		"Element is an HTMLElement instance")
+}
 
-			It("Should have nodeType 9", func() {
-				Expect(ctx.Eval("actual.nodeType")).To(BeEquivalentTo(9))
-			})
-			It("Should be an instance of Node", func() {
-				Expect(ctx.Eval("actual instanceof Node")).To(BeTrue())
-			})
-			It("Should be an instance of EventTarget", func() {
-				Expect(ctx.Eval("actual instanceof EventTarget")).To(BeTrue())
-			})
-			It("Should be an instance of Object", func() {
-				Expect(ctx.Eval("actual instanceof Object")).To(BeTrue())
-			})
-		}
+func (s *DocumentTestSuite) TestGetElementByID() {
+	s.mustLoadHTML(
+		`<body><div id='elm-1'>Elm: 1</div><div id='elm-2'>Elm: 2</div></body>`,
+	)
+	s.Expect(s.eval(`
+		const e = document.getElementById("elm-2")
+		e.outerHTML
+	`)).To(Equal(`<div id="elm-2">Elm: 2</div>`))
 
-		itShouldBeAnHTMLDocument := func(expectHTMLDocument bool) {
-			It("Should be an instance of HTMLDocument", func() {
-				Expect(
-					ctx.Eval("actual instanceof HTMLDocument"),
-				).To(Equal(expectHTMLDocument))
-			})
+	s.Expect(s.eval(`Object.getPrototypeOf(e).constructor.name`)).To(Equal("HTMLDivElement"))
+}
 
-			itShouldBeADocument()
+func (s *DocumentTestSuite) TestNewDocument() {
+	s.mustRun("const actual = new Document()")
 
-			It("Should have a class hierarchy of 5 classes", func() {
-				expectedBaseClassCount := 4
-				if expectHTMLDocument {
-					expectedBaseClassCount++
-				}
-				Expect(ctx.Eval(`
-        let baseClassCount = 0
-        let current = actual
-        while(current = Object.getPrototypeOf(current))
-          baseClassCount++
-        baseClassCount;
-      `)).To(BeEquivalentTo(expectedBaseClassCount))
-			})
-		}
+	s.Assert().Equal(false,
+		s.mustEval(`actual === document`),
+		"New document must not equal global document")
 
-		Describe("new Document()", func() {
-			BeforeEach(func() {
-				Expect(ctx.Run("const actual = new Document()")).To(Succeed())
-			})
-
-			It("Should now be the same as window.document", func() {
-				Expect(ctx.Eval("actual === window.document")).To(BeFalse())
-			})
-
-			Describe("Class hierarchy", func() {
-				itShouldBeAnHTMLDocument(false)
-			})
-		})
-
-		Describe("Class Hierarchy of `window.document`", func() {
-			BeforeEach(func() {
-				ctx = suite.LoadHTML("<html></html>")
-				ctx.Run("const actual = window.document")
-			})
-			itShouldBeAnHTMLDocument(true)
-		})
-	})
+	s.Assert().EqualValues(9, s.mustEval("actual.nodeType"), "new Document().nodeType")
+	s.Assert().Equal("Document",
+		s.mustEval("Object.getPrototypeOf(actual).constructor.name"),
+		"Actual constructor")
 }

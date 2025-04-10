@@ -12,6 +12,11 @@ type ScriptHostSuite struct {
 	window     htmltest.WindowHelper
 }
 
+func (s *ScriptHostSuite) mustLoadHTML(html string) {
+	s.T().Helper()
+	s.Assert().NoError(s.window.LoadHTML(html))
+}
+
 func (s *ScriptHostSuite) SetupTest() {
 	s.window = htmltest.NewWindowHelper(s.T(), html.NewWindow(html.WindowOptions{
 		ScriptHost: s.scriptHost,
@@ -38,6 +43,18 @@ func (s *ScriptHostSuite) TeardownTest() {
 // If the return value is not used, call run; to avoid panic/error
 func (s *ScriptHostSuite) eval(script string) (any, error) {
 	return s.window.Eval(script)
+}
+
+func (s *ScriptHostSuite) mustRun(script string) {
+	s.T().Helper()
+	s.Assert().NoError(s.run(script))
+}
+
+func (s *ScriptHostSuite) mustEval(script string) any {
+	s.T().Helper()
+	res, err := s.eval(script)
+	s.Assert().NoError(err)
+	return res
 }
 
 // Runs a script, and discards the returned value.

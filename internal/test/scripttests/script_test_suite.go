@@ -79,6 +79,5 @@ func (suite *ScriptTestSuite) NewWindow() html.Window {
 }
 
 func (suite *ScriptTestSuite) CreateAllGinkgoTests() {
-	suite.CreateDocumentTests()
 	suite.CreateEventTargetTests()
 }

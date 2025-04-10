@@ -46,7 +46,7 @@ func (h WindowHelper) MustLoadHTML(html string) {
 	h.t.Helper()
 
 	if err := h.Window.LoadHTML(html); err != nil {
-		h.t.Fatalf("Error loading HTML: %s\nHTML: %s", err.Error(), html)
+		h.t.Errorf("Error loading HTML: %s\nHTML: %s", err.Error(), html)
 	}
 }
 
