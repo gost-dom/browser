@@ -41,12 +41,8 @@ func configureDOMEvent(domSpecs *WebIdlConfiguration) {
 	event.Method("composedPath").Ignore()
 	event.Method("stopImmediatePropagation").Ignore()
 	event.Method("isTrusted").Ignore()
-	event.Method("CancelBubble").Ignore()
 	event.Method("cancelBubble").Ignore()
-	event.Method("TimeStamp").Ignore()
 	event.Method("timeStamp").Ignore()
-	event.Method("ReturnValue").Ignore()
 	event.Method("returnValue").Ignore()
 	event.Method("srcElement").Ignore()
-	event.Method("defaultPrevented").Ignore()
 }

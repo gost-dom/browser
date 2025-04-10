@@ -92,7 +92,6 @@ func (e *eventTarget) AddEventListener(
 	listener := e.createListener(handler, options)
 	log.Debug(e.logger(), "AddEventListener", "EventType", eventType)
 	// TODO: Handle options
-	// - once
 	// - passive. Defaults to false,
 	// - signal - TODO: Implement AbortSignal
 	// Browser specific

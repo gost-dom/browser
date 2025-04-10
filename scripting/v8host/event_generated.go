@@ -53,6 +53,10 @@ func (w eventV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 		v8.NewFunctionTemplateWithError(iso, w.cancelable),
 		nil,
 		v8.None)
+	prototypeTmpl.SetAccessorProperty("defaultPrevented",
+		v8.NewFunctionTemplateWithError(iso, w.defaultPrevented),
+		nil,
+		v8.None)
 }
 
 func (w eventV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -110,4 +114,15 @@ func (w eventV8Wrapper) currentTarget(info *v8.FunctionCallbackInfo) (*v8.Value,
 	}
 	result := instance.CurrentTarget()
 	return w.toNullableEventTarget(ctx, result)
+}
+
+func (w eventV8Wrapper) defaultPrevented(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+	log.Debug(w.logger(info), "V8 Function call: Event.defaultPrevented")
+	ctx := w.mustGetContext(info)
+	instance, err := w.getInstance(info)
+	if err != nil {
+		return nil, err
+	}
+	result := instance.DefaultPrevented()
+	return w.toBoolean(ctx, result)
 }

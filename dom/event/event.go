@@ -67,3 +67,4 @@ func (e *Event) PreventDefault()            { e.cancelled = true }
 func (e *Event) EventPhase() EventPhase     { return e.phase }
 func (e *Event) Target() EventTarget        { return e.target }
 func (e *Event) CurrentTarget() EventTarget { return e.currentTarget }
+func (e *Event) DefaultPrevented() bool     { return e.cancelled }

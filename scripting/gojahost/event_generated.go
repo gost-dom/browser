@@ -20,6 +20,7 @@ func (w eventWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime) {
 	prototype.DefineAccessorProperty("eventPhase", w.ctx.vm.ToValue(w.eventPhase), nil, g.FLAG_TRUE, g.FLAG_TRUE)
 	prototype.DefineAccessorProperty("bubbles", w.ctx.vm.ToValue(w.bubbles), nil, g.FLAG_TRUE, g.FLAG_TRUE)
 	prototype.DefineAccessorProperty("cancelable", w.ctx.vm.ToValue(w.cancelable), nil, g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("defaultPrevented", w.ctx.vm.ToValue(w.defaultPrevented), nil, g.FLAG_TRUE, g.FLAG_TRUE)
 }
 
 func (w eventWrapper) stopPropagation(c g.FunctionCall) g.Value {
@@ -48,4 +49,11 @@ func (w eventWrapper) currentTarget(c g.FunctionCall) g.Value {
 	instance := w.getInstance(c)
 	result := instance.CurrentTarget()
 	return w.toEventTarget(result)
+}
+
+func (w eventWrapper) defaultPrevented(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Event.defaultPrevented")
+	instance := w.getInstance(c)
+	result := instance.DefaultPrevented()
+	return w.toBoolean(result)
 }
