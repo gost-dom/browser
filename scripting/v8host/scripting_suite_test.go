@@ -8,7 +8,6 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/gosthttp"
 	"github.com/gost-dom/browser/internal/test"
-	"github.com/gost-dom/browser/internal/test/scripttests"
 	"github.com/gost-dom/browser/logger"
 	. "github.com/gost-dom/browser/scripting/v8host"
 	. "github.com/onsi/ginkgo/v2"
@@ -21,8 +20,6 @@ func TestScripting(t *testing.T) {
 }
 
 var host *V8ScriptHost
-
-var scriptTestSuite *scripttests.ScriptTestSuite
 
 func OpenTestWindowFromHandler(location string, handler http.Handler) (html.Window, error) {
 	win, err := html.OpenWindowFromLocation(location, html.WindowOptions{
@@ -41,10 +38,6 @@ func init() {
 	logger.SetDefault(test.CreateTestLogger(slog.LevelWarn))
 
 	host = New()
-	scriptTestSuite = scripttests.NewScriptTestSuite(host, "v8")
-
-	BeforeSuite(func() {
-	})
 
 	AfterSuite(func() {
 		host.Close()
