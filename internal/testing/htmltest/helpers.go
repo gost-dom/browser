@@ -42,6 +42,14 @@ func (win WindowHelper) HTMLDocument() HTMLDocumentHelper {
 	return NewHTMLDocumentHelper(win.t, win.Document())
 }
 
+func (h WindowHelper) MustLoadHTML(html string) {
+	h.t.Helper()
+
+	if err := h.Window.LoadHTML(html); err != nil {
+		h.t.Fatalf("Error loading HTML: %s\nHTML: %s", err.Error(), html)
+	}
+}
+
 // Helper type on top of html.HTMLDocument to provide useful helper functions
 // for testing.
 type HTMLDocumentHelper struct {
