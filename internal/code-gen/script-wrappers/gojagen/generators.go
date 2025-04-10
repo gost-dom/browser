@@ -95,7 +95,7 @@ func (gen GojaTargetGenerators) CreatePrototypeInitializerBody(
 	for a := range data.AttributesToInstall() {
 		var getter, setter g.Generator
 		if a.Getter != nil {
-			getter = vm.Field("ToValue").Call(receiver.Field(a.Getter.Name))
+			getter = vm.Field("ToValue").Call(receiver.Field(a.Getter.CallbackMethodName()))
 		} else {
 			getter = g.Nil
 		}
@@ -165,6 +165,7 @@ func (gen GojaTargetGenerators) CreateMethodCallbackBody(
 
 		} else {
 			list.Append(instance.Field(UpperCaseFirstLetter(op.Name)).Call(argNames...))
+			list.Append(g.Return(g.Nil))
 		}
 	}
 	return list

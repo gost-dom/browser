@@ -3,23 +3,16 @@ package v8host
 import (
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/internal/entity"
+	"github.com/gost-dom/browser/internal/log"
 	v8 "github.com/gost-dom/v8go"
 )
 
-// the eventWrapper type is a temporary solution because the code generator
-// creates function calls, not field lookups.
-//
-// Once that if fixed, this type can be removed.
-type eventWrapper struct{ *event.Event }
+type eventV8Wrapper struct {
+	handleReffedObject[*event.Event]
+}
 
-func (w eventWrapper) Type() string {
-	return w.Event.Type
-}
-func (w eventWrapper) Cancelable() bool {
-	return w.Event.Cancelable
-}
-func (w eventWrapper) Bubbles() bool {
-	return w.Event.Bubbles
+func newEventV8Wrapper(scriptHost *V8ScriptHost) *eventV8Wrapper {
+	return &eventV8Wrapper{newHandleReffedObject[*event.Event](scriptHost)}
 }
 
 func (w eventV8Wrapper) defaultEventInit() eventInitWrapper {
@@ -32,9 +25,7 @@ func (w eventV8Wrapper) CreateInstance(
 	type_ string,
 	o eventInitWrapper,
 ) (*v8.Value, error) {
-	e := eventWrapper{
-		&event.Event{Type: type_, Bubbles: o.bubbles, Cancelable: o.cancelable, Data: o.init},
-	}
+	e := &event.Event{Type: type_, Bubbles: o.bubbles, Cancelable: o.cancelable, Data: o.init}
 	return w.store(e, ctx, this)
 }
 
@@ -57,4 +48,31 @@ func (w eventV8Wrapper) eventPhase(info *v8.FunctionCallbackInfo) (*v8.Value, er
 		return nil, err
 	}
 	return v8.NewValue(w.iso(), uint32(instance.EventPhase()))
+}
+
+func (w eventV8Wrapper) type_(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+	log.Debug(w.logger(info), "V8 Function call: Event.type")
+	instance, err := w.getInstance(info)
+	if err != nil {
+		return nil, err
+	}
+	return v8.NewValue(w.iso(), instance.Type)
+}
+
+func (w eventV8Wrapper) cancelable(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+	log.Debug(w.logger(info), "V8 Function call: Event.cancelable")
+	instance, err := w.getInstance(info)
+	if err != nil {
+		return nil, err
+	}
+	return v8.NewValue(w.iso(), instance.Cancelable)
+}
+
+func (w eventV8Wrapper) bubbles(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+	log.Debug(w.logger(info), "V8 Function call: Event.bubbles")
+	instance, err := w.getInstance(info)
+	if err != nil {
+		return nil, err
+	}
+	return v8.NewValue(w.iso(), instance.Bubbles)
 }

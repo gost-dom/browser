@@ -54,7 +54,6 @@ func init() {
 	installClass("Window", "Node", newWindowWrapper)
 	installClass("Document", "Node", newDocumentWrapper)
 	installClass("HTMLDocument", "Document", newHTMLDocumentWrapper)
-	installClass("Event", "", newEventWrapperAsWrapper)
 	installClass("CustomEvent", "Event", newCustomEventWrapper)
 	installClass("Element", "Node", newElementWrapper)
 	installClass("HTMLElement", "Element", newGenericElementWrapper)

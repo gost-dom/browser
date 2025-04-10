@@ -12,14 +12,6 @@ func init() {
 	registerJSClass("Event", "", createEventPrototype)
 }
 
-type eventV8Wrapper struct {
-	handleReffedObject[eventWrapper]
-}
-
-func newEventV8Wrapper(scriptHost *V8ScriptHost) *eventV8Wrapper {
-	return &eventV8Wrapper{newHandleReffedObject[eventWrapper](scriptHost)}
-}
-
 func createEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	iso := scriptHost.iso
 	wrapper := newEventV8Wrapper(scriptHost)
@@ -98,17 +90,6 @@ func (w eventV8Wrapper) preventDefault(info *v8.FunctionCallbackInfo) (*v8.Value
 	return nil, nil
 }
 
-func (w eventV8Wrapper) type_(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: Event.type")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
-	if err != nil {
-		return nil, err
-	}
-	result := instance.Type()
-	return w.toDOMString(ctx, result)
-}
-
 func (w eventV8Wrapper) target(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Event.target")
 	ctx := w.mustGetContext(info)
@@ -129,26 +110,4 @@ func (w eventV8Wrapper) currentTarget(info *v8.FunctionCallbackInfo) (*v8.Value,
 	}
 	result := instance.CurrentTarget()
 	return w.toNullableEventTarget(ctx, result)
-}
-
-func (w eventV8Wrapper) bubbles(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: Event.bubbles")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
-	if err != nil {
-		return nil, err
-	}
-	result := instance.Bubbles()
-	return w.toBoolean(ctx, result)
-}
-
-func (w eventV8Wrapper) cancelable(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: Event.cancelable")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
-	if err != nil {
-		return nil, err
-	}
-	result := instance.Cancelable()
-	return w.toBoolean(ctx, result)
 }

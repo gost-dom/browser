@@ -25,9 +25,6 @@ func (g WrapperStructGenerator) Generate() *jen.Statement {
 
 func (g WrapperStructGenerator) WrappedType() Generator {
 	idlInterfaceName := g.Data.Name()
-	if idlInterfaceName == "Event" {
-		return gen.NewType("eventWrapper")
-	}
 
 	return gen.NewTypePackage(idlInterfaceName, g.Data.GetInternalPackage())
 }
