@@ -11,6 +11,10 @@
 
 ## [0.5.3](https://github.com/gost-dom/browser/compare/v0.5.2...v0.5.3) (2025-03-22)
 
+### ⚠ DEPRECATED
+
+Constant `event.EventPhaseBubbline` deprecated because of a typo. Use
+`EventPhaseBubbling` instead.
 
 ### Features
 
