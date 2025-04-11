@@ -26,9 +26,10 @@ func (s *HTMLInputElementTestSuite) TestDefaultValue() {
 func (s *HTMLInputElementTestSuite) TestClickCheckbox() {
 	e := html.NewHTMLInputElement(nil)
 	e.SetType("checkbox")
-	s.Assert().False(e.Checked())
+	s.Assert().False(e.Checked(), "Checkbox should be false by default")
+
 	e.Click()
-	s.Assert().True(e.Checked())
+	s.Assert().True(e.Checked(), "Checkbox should be true when clicked")
 
 	e.AddEventListener("click", eventtest.PreventDefaultHandler())
 	e.Click()

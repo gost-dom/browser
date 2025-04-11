@@ -12,6 +12,7 @@ import (
 	"github.com/gost-dom/browser/internal/testing/eventtest"
 	"github.com/gost-dom/browser/internal/testing/fixtures"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
+	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 	"github.com/gost-dom/fixture"
@@ -297,26 +298,19 @@ func TestHTMLFormElementSubmitInputWithClickResetButton(t *testing.T) {
 }
 
 func TestResubmitFormOn307Redirects(t *testing.T) {
-	var (
-		actualRequest *http.Request
-		submittedForm url.Values
-	)
-
 	w, setup := fixture.Init(t, &HTMLFormSubmitInputFixture{})
 	w.BaseLocation = "http://example.com/forms"
 	setup.Setup()
 
+	rec := &gosttest.HttpRequestFormRecorder{T: t}
 	w.Handle("POST /form-destination", http.RedirectHandler("/form-redirected", 307))
-	w.HandleFunc("POST /form-redirected", func(w http.ResponseWriter, r *http.Request) {
-		r.ParseForm()
-		actualRequest = r
-		submittedForm = r.Form
-	})
+	w.Handle("POST /form-redirected", rec)
 
 	form := w.Form()
 	form.SetMethod("post")
 	form.SetAction("/form-destination")
 	form.Submit()
-	w.Assert().NotNil(actualRequest, "Request sent to the redirected location")
-	w.Assert().Equal([]string{"bar"}, submittedForm["foo"], "Form on second request")
+
+	w.Assert().Equal(1, len(rec.Requests), "Request sent to the redirected location")
+	w.Assert().Equal([]string{"bar"}, rec.Single().PostForm["foo"])
 }
