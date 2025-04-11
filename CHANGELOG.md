@@ -1,6 +1,14 @@
 # Changelog - Gost-DOM
 
 
+## [0.5.4](https://github.com/gost-dom/browser/compare/v0.5.3...v0.5.4) (2025-04-11)
+
+
+### Bug Fixes
+
+* "Fix" typo in event phase const name ([cd7b4bc](https://github.com/gost-dom/browser/commit/cd7b4bc8986b99f5721bf1f5058208a31285c942))
+* InsertAdjacentHTML only handled elements ([a5276cf](https://github.com/gost-dom/browser/commit/a5276cf19f6cfa64dc7e847b3230655c0d19f4ab))
+
 ## [0.5.3](https://github.com/gost-dom/browser/compare/v0.5.2...v0.5.3) (2025-03-22)
 
 
