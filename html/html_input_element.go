@@ -10,18 +10,27 @@ type HTMLInputElement interface {
 	SetType(value string)
 	Name() string
 	CheckValidity() bool
+	Checked() bool
+	SetChecked(bool)
 }
 
-type htmlInputElement struct{ htmlElement }
+type htmlInputElement struct {
+	htmlElement
+	checked bool
+}
 
 func NewHTMLInputElement(ownerDocument HTMLDocument) HTMLInputElement {
-	result := &htmlInputElement{newHTMLElement("input", ownerDocument)}
+	result := &htmlInputElement{
+		htmlElement: newHTMLElement("input", ownerDocument),
+	}
 	result.SetSelf(result)
 	return result
 }
 
 func (e *htmlInputElement) Name() string        { return e.GetAttributeNode("name").Value() }
 func (e *htmlInputElement) CheckValidity() bool { return true }
+func (e *htmlInputElement) Checked() bool       { return e.checked }
+func (e *htmlInputElement) SetChecked(b bool)   { e.checked = b }
 
 func (e *htmlInputElement) Type() string {
 	t, _ := e.GetAttribute("type")
@@ -36,9 +45,14 @@ func (e *htmlInputElement) SetType(val string) {
 }
 
 func (e *htmlInputElement) Click() {
-	ok := e.htmlElement.click()
-	if ok && e.Type() == "submit" {
+	if ok := e.htmlElement.click(); !ok {
+		return
+	}
+	switch e.Type() {
+	case "submit":
 		e.trySubmitForm()
+	case "checkbox":
+		e.SetChecked(!e.checked)
 	}
 }
 

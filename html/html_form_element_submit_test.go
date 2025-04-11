@@ -1,7 +1,6 @@
 package html_test
 
 import (
-	"fmt"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -65,7 +64,6 @@ type DefaultWindowFixture struct {
 
 func (f *DefaultWindowFixture) Setup() {
 	if !f.initialized {
-		fmt.Println("Setup default window")
 		f.HTTPHandlerFixture.ServeMux.HandleFunc(
 			"/",
 			func(res http.ResponseWriter, req *http.Request) {

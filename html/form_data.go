@@ -35,6 +35,11 @@ func NewFormDataForm(form HTMLFormElement) *FormData {
 			switch inputElement.Type() {
 			case "submit":
 				continue
+			case "checkbox":
+				name, _ := inputElement.GetAttribute("name")
+				if inputElement.Checked() {
+					formData.Append(name, "on")
+				}
 			default:
 				// TODO, handle no values
 				name, _ := inputElement.GetAttribute("name")
