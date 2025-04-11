@@ -1,6 +1,13 @@
 # Changelog - Gost-DOM
 
 
+## [0.5.5](https://github.com/gost-dom/browser/compare/v0.5.4...v0.5.5) (2025-04-11)
+
+
+### Features
+
+* **dom:** Handle checkbox input types ([992fee9](https://github.com/gost-dom/browser/commit/992fee9d8bebb2872f4ed612ab226e27b2864344))
+
 ## [0.5.4](https://github.com/gost-dom/browser/compare/v0.5.3...v0.5.4) (2025-04-11)
 
 
