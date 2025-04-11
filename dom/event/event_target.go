@@ -121,7 +121,7 @@ func (e *eventTarget) RemoveEventListener(
 	listeners := e.lmap[eventType]
 	for i, l := range listeners {
 		if l.Handler.Equals(handler) && l.Capture == listener.Capture {
-			e.lmap[eventType] = append(listeners[:i], listeners[i+1:]...)
+			e.lmap[eventType] = slices.Delete(listeners, i, i+1)
 			return
 		}
 	}
