@@ -14,6 +14,7 @@ package customrules
 import (
 	"github.com/gost-dom/code-gen/customrules/typerule"
 	. "github.com/gost-dom/code-gen/customrules/typerule"
+	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/webref/idl"
 )
 
@@ -26,13 +27,20 @@ type CustomRules map[string]SpecRules
 // file. The key is the name of the interface the rule applies to
 type SpecRules map[string]InterfaceRule
 
+type Package string
+
 // InterfaceRule specifies the rules for a specific interface or interface
 // mixin.
 type InterfaceRule struct {
-	Operations OperationRules
+	InterfacePackage Package
+	Operations       OperationRules
 }
 
 type OperationRules map[string]OperationRule
+
+const (
+	DomInterfaces = Package(packagenames.DomInterfaces)
+)
 
 type OperationRule struct {
 	// By default, an operation is assumed to not generate an error. Override
@@ -107,16 +115,18 @@ var rules = CustomRules{
 			"querySelector":    parentNodeQueryOperation,
 			"querySelectorAll": parentNodeQueryOperation,
 		}},
-		"MutationObserver": {Operations: OperationRules{
-			"observe": {
-				HasError: true,
-				Arguments: ArgumentRules{
-					"options": {
-						Type:     idl.Type{Name: "func(*MutationObserverInit)"},
-						Variadic: true,
-					},
-				}},
-		}},
+		"MutationObserver": {
+			InterfacePackage: DomInterfaces,
+			Operations: OperationRules{
+				"observe": {
+					HasError: true,
+					Arguments: ArgumentRules{
+						"options": {
+							Type:     idl.Type{Name: "func(*MutationObserverInit)"},
+							Variadic: true,
+						},
+					}},
+			}},
 	},
 	"html": {
 		"Location": {Operations: OperationRules{

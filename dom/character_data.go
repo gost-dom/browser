@@ -9,9 +9,14 @@ import (
 
 /* -------- CharacterData -------- */
 
+// CharacterData is a "base type" for [Text], [Comment], and
+// [CDataSection], and [ProcessingInstruction].
+//
+// See also: https://developer.mozilla.org/en-US/docs/Web/API/CharacterData
 type CharacterData interface {
 	Node
 	Data() string
+	SetData(string)
 	Length() int
 }
 
@@ -22,6 +27,16 @@ type characterData struct {
 
 func (n *characterData) Data() string {
 	return n.data
+}
+
+func (d *characterData) SetData(data string) {
+	oldValue := d.data
+	d.data = data
+	d.notify(ChangeEvent{
+		Target:   d.self,
+		Type:     ChangeEventCData,
+		OldValue: oldValue,
+	})
 }
 
 func (n *characterData) Length() int {

@@ -10,15 +10,16 @@ const (
 	ISSUE_URL = "https://github.com/gost-dom/browser/issues"
 	// alternate url: "https://github.com/gost-dom/browser/issues?q=sort%3Aupdated-desc+is%3Aissue+is%3Aopen"
 
-	Dom      = BASE_PKG + "/dom"
-	Events   = Dom + "/event"
-	Html     = BASE_PKG + "/html"
-	V8host   = BASE_PKG + "/scripting/v8host"
-	Gojahost = BASE_PKG + "/scripting/gojahost"
-	Log      = BASE_PKG + "/internal/log"
-	UIEvents = BASE_PKG + "/internal/uievents"
-	V8go     = "github.com/gost-dom/v8go"
-	Goja     = "github.com/dop251/goja"
+	Dom           = BASE_PKG + "/dom"
+	Events        = Dom + "/event"
+	Html          = BASE_PKG + "/html"
+	V8host        = BASE_PKG + "/scripting/v8host"
+	Gojahost      = BASE_PKG + "/scripting/gojahost"
+	Log           = BASE_PKG + "/internal/log"
+	UIEvents      = BASE_PKG + "/internal/uievents"
+	DomInterfaces = BASE_PKG + "/internal/interfaces/dom-interfaces"
+	V8go          = "github.com/gost-dom/v8go"
+	Goja          = "github.com/dop251/goja"
 )
 
 var names = map[string]string{

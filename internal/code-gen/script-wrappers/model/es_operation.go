@@ -33,10 +33,15 @@ func (o ESOperation) Encoder() string {
 		return e
 	}
 	converter := "to"
-	if o.LegacyRetType.Nullable {
+	t := o.RetType
+	if t.Kind == idl.KindSequence {
+		converter += "Sequence"
+		t = *t.TypeParam
+	}
+	if t.Nullable {
 		converter += "Nullable"
 	}
-	converter += IdlNameToGoName(o.LegacyRetType.TypeName)
+	converter += IdlNameToGoName(t.Name)
 	return converter
 }
 
