@@ -1,17 +1,23 @@
 package html_test
 
 import (
-	"github.com/gost-dom/browser/html"
+	"testing"
 
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
+	"github.com/gost-dom/browser/html"
+	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
+	"github.com/gost-dom/browser/internal/testing/gosttest"
+	"github.com/stretchr/testify/suite"
 )
 
-var _ = Describe("HTMLInputElement", func() {
-	Describe("Type", func() {
-		It("Has a default value of 'text'", func() {
-			e := html.NewHTMLInputElement(nil)
-			Expect(e.Type()).To(Equal("text"))
-		})
-	})
-})
+type HTMLInputElementTestSuite struct {
+	gosttest.GomegaSuite
+}
+
+func TestHTMLInputElement(t *testing.T) {
+	suite.Run(t, new(HTMLInputElementTestSuite))
+}
+
+func (s *HTMLInputElementTestSuite) TestDefaultValue() {
+	e := html.NewHTMLInputElement(nil)
+	s.Expect(e.Type()).To(Equal("text"))
+}
