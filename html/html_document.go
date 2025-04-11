@@ -79,6 +79,8 @@ func (d *htmlDocument) CreateElement(name string) dom.Element {
 		return NewHTMLScriptElement(d)
 	case "a":
 		return NewHTMLAnchorElement(d)
+	case "label":
+		return NewHTMLLabelElement(d)
 	}
 	return NewHTMLElement(name, d)
 }
