@@ -1,6 +1,18 @@
 # Changelog - Gost-DOM
 
 
+## [0.5.6](https://github.com/gost-dom/browser/compare/v0.5.5...v0.5.6) (2025-04-21)
+
+
+### Features
+
+* **html:** Click label forwards to "input" ([921c8f1](https://github.com/gost-dom/browser/commit/921c8f1ccd8bdc12b7beb2f665fd38c4f325e5c2))
+
+
+### Bug Fixes
+
+* Fix weird issue with parallel tests ([178f64e](https://github.com/gost-dom/browser/commit/178f64e5bf53a7993a6687ea4992d972b299a1e7))
+
 ## [0.5.5](https://github.com/gost-dom/browser/compare/v0.5.4...v0.5.5) (2025-04-11)
 
 
