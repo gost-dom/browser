@@ -8,7 +8,10 @@ import (
 )
 
 func runSuite(s suite.TestingSuite) func(t *testing.T) {
-	return func(t *testing.T) { suite.Run(t, s) }
+	return func(t *testing.T) {
+		t.Parallel()
+		suite.Run(t, s)
+	}
 }
 
 func RunSuites(t *testing.T, h html.ScriptHost) {

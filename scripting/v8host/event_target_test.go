@@ -4,11 +4,16 @@ import (
 	"testing"
 
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/scripting/v8host"
 	"github.com/onsi/gomega"
 	. "github.com/onsi/gomega"
 )
 
 func TestV8EventTargetAddRemoveListeners(t *testing.T) {
+	t.Parallel()
+	host := v8host.New()
+	t.Cleanup(func() { host.Close() })
+
 	g := gomega.NewWithT(t)
 	win := html.NewWindow(html.WindowOptionHost(host))
 	t.Cleanup(win.Close)

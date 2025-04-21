@@ -357,7 +357,6 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 	errorCallback := func(err error) {
 		w.DispatchEvent(event.NewErrorEvent(err))
 	}
-	global = context.v8ctx.Global()
 	context.eventLoop = newEventLoop(context, errorCallback)
 	host.inspector.ContextCreated(context.v8ctx)
 	err := installPolyfills(context)
@@ -371,7 +370,7 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 			),
 		)
 	}
-	context.cacheNode(global, w)
+	context.cacheNode(context.v8ctx.Global(), w)
 	host.addContext(context)
 
 	return context
