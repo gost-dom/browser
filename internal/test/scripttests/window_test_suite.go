@@ -10,18 +10,18 @@ type WindowTestSuite struct {
 }
 
 func (s *WindowTestSuite) TestGlobalInstance() {
-	s.Expect(s.eval("globalThis === window")).To(BeTrue())
+	s.Expect(s.Eval("globalThis === window")).To(BeTrue())
 }
 
 func (s *WindowTestSuite) TestWindowInheritance() {
-	s.Expect(s.eval("window instanceof EventTarget")).To(BeTrue())
-	s.Expect(s.eval("Object.getPrototypeOf(window).constructor === Window")).To(BeTrue())
+	s.Expect(s.Eval("window instanceof EventTarget")).To(BeTrue())
+	s.Expect(s.Eval("Object.getPrototypeOf(window).constructor === Window")).To(BeTrue())
 }
 
 func (s *WindowTestSuite) TestWindowConstructor() {
-	s.Expect(s.eval("Window && typeof Window")).To(Equal("function"))
-	s.Expect(s.run("Window()")).ToNot(Succeed())
-	s.Expect(s.eval(
+	s.Expect(s.Eval("Window && typeof Window")).To(Equal("function"))
+	s.Expect(s.RunScript("Window()")).ToNot(Succeed())
+	s.Expect(s.Eval(
 		`let error;
 		try { new Window() } catch(err) { 
 			error = err;
@@ -31,15 +31,15 @@ func (s *WindowTestSuite) TestWindowConstructor() {
 }
 
 func (s *WindowTestSuite) TestDocumentProperty() {
-	s.Expect(s.eval("document instanceof Document")).To(BeTrue())
-	s.Expect(s.eval(`
+	s.Expect(s.Eval("document instanceof Document")).To(BeTrue())
+	s.Expect(s.Eval(`
 		const keys = []
 		for (let key in window) {
 			keys.push(key);
 		}
 		keys
 	`)).To(ContainElement("document"), "document is an enumerable property")
-	s.Expect(s.eval(
+	s.Expect(s.Eval(
 		`const a = window.document;
 		const b = window.document;
 		a === b`,
@@ -48,7 +48,7 @@ func (s *WindowTestSuite) TestDocumentProperty() {
 
 func (s *WindowTestSuite) TestConstructorName() {
 	s.T().Skip("The Window function doesn't have a name. We might need to add setName to v8go")
-	s.Expect(s.eval("window.constructor.name")).To(Equal("Window"))
+	s.Expect(s.Eval("window.constructor.name")).To(Equal("Window"))
 }
 
 func NewWindowTestSuite(h html.ScriptHost) *WindowTestSuite {
@@ -56,7 +56,7 @@ func NewWindowTestSuite(h html.ScriptHost) *WindowTestSuite {
 }
 
 func (s *WindowTestSuite) TestDOMContentLoaded() {
-	s.Expect(s.window.LoadHTML(`<body><script>
+	s.Expect(s.Window.LoadHTML(`<body><script>
   scripts = []
   function listener1() {
     scripts.push("DOMContentLoaded")
@@ -67,5 +67,5 @@ func (s *WindowTestSuite) TestDOMContentLoaded() {
   window.document.addEventListener("DOMContentLoaded", listener1);
   window.document.addEventListener("load", listener2);
 </script></body>`)).To(Succeed())
-	s.Expect(s.eval("scripts.join(',')")).To(Equal("DOMContentLoaded,load"))
+	s.Expect(s.Eval("scripts.join(',')")).To(Equal("DOMContentLoaded,load"))
 }

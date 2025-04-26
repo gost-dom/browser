@@ -15,21 +15,21 @@ func NewUIEventTestSuite(h html.ScriptHost) *UIEventTestSuite {
 
 func (s *UIEventTestSuite) TestEventInheritance() {
 	s.Assert().
-		NoError(s.run("const getSuperclassName = (o) => Object.getPrototypeOf(o.prototype).constructor.name"))
-	s.Expect(s.eval(`getSuperclassName(PointerEvent)`)).
+		NoError(s.RunScript("const getSuperclassName = (o) => Object.getPrototypeOf(o.prototype).constructor.name"))
+	s.Expect(s.Eval(`getSuperclassName(PointerEvent)`)).
 		To(Equal("MouseEvent"), "Pointer event superclass")
-	s.Expect(s.eval(`getSuperclassName(MouseEvent)`)).
+	s.Expect(s.Eval(`getSuperclassName(MouseEvent)`)).
 		To(Equal("UIEvent"), "MouseEvent event superclass")
-	s.Expect(s.eval(`getSuperclassName(UIEvent)`)).
+	s.Expect(s.Eval(`getSuperclassName(UIEvent)`)).
 		To(Equal("Event"), "UIEvent event superclass")
 }
 
 func (s *UIEventTestSuite) TestClickEventIsAPointerEvent() {
-	s.window.LoadHTML(`<body><div id="foo"></div></body>`)
-	s.Assert().NoError(s.run(`
+	s.Window.LoadHTML(`<body><div id="foo"></div></body>`)
+	s.Assert().NoError(s.RunScript(`
 		let event
 		document.getElementById("foo").addEventListener("click", e => { event = e })
 	`))
-	s.window.HTMLDocument().GetHTMLElementById("foo").Click()
-	s.Expect(s.eval(`event instanceof PointerEvent`)).To(BeTrue(), "Event is an event")
+	s.Window.HTMLDocument().GetHTMLElementById("foo").Click()
+	s.Expect(s.Eval(`event instanceof PointerEvent`)).To(BeTrue(), "Event is an event")
 }

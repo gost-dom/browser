@@ -14,8 +14,8 @@ func NewLocationSuite(h html.ScriptHost) *LocationSuite {
 }
 
 func (s *LocationSuite) TestGlobalScope() {
-	s.Expect(s.eval("typeof Location")).To(Equal("function"))
-	s.Expect(s.eval("Object.getPrototypeOf(location) === Location"))
+	s.Expect(s.Eval("typeof Location")).To(Equal("function"))
+	s.Expect(s.Eval("Object.getPrototypeOf(location) === Location"))
 }
 
 func (s *LocationSuite) TestHrefEqualsDocumentLocation() {
