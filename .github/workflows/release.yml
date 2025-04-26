@@ -43,5 +43,5 @@ jobs:
       - name: Push version
         # Push the release to 'main' branch if it's ahead of main.
         run: |
-          if git merge-base --is-ancestor remotes/origin/main HEAD; then git push origin HEAD:main; fi
           git push --tags
+          if git merge-base --is-ancestor remotes/origin/main HEAD; then git push origin HEAD:main; fi
