@@ -61,7 +61,9 @@ type Window interface {
 	Clock() Clock
 	Navigate(string) error // TODO: Remove, perhaps? for testing
 	LoadHTML(string) error // TODO: Remove, for testing
+	// Eval calls [ScriptContext.Eval]
 	Eval(string) (any, error)
+	// Run calls [ScriptContext.Run]
 	Run(string) error
 	ScriptContext() ScriptContext
 	Location() Location
