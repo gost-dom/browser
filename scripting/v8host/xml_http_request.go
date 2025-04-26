@@ -82,8 +82,6 @@ func (xhr xmlHttpRequestV8Wrapper) open(
 	method, err0 := tryParseArg(args, 0, xhr.decodeUSVString)
 	url, err1 := tryParseArg(args, 1, xhr.decodeUSVString)
 	async, err2 := tryParseArg(args, 2, xhr.decodeBoolean)
-	// username, err3 := TryParseArg(args, 1, u.DecodeUSVString)
-	// password, err4 := TryParseArg(args, 1, u.DecodeUSVString)
 	instance, errInstance := xhr.getInstance(info)
 	if args.noOfReadArguments > 2 {
 		if err = errors.Join(err0, err1, err2, errInstance); err != nil {
