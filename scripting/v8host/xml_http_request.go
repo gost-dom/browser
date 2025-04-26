@@ -30,6 +30,12 @@ func (xhr xmlHttpRequestV8Wrapper) decodeXMLHttpRequestBodyInit(
 	ctx *V8ScriptContext,
 	val *v8.Value,
 ) (io.Reader, error) {
+	if val == nil {
+		return nil, nil
+	}
+	if val.IsUndefined() || val.IsNull() {
+		return nil, nil
+	}
 	if val.IsString() {
 		return strings.NewReader(val.String()), nil
 	}

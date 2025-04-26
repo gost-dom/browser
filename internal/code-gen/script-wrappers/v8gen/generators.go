@@ -352,6 +352,10 @@ func ReadArguments(data ESConstructorData, op ESOperation) (res V8ReadArguments)
 		if hasDefault {
 			statements.Append(g.AssignMany(g.List(argName, errName),
 				g.NewValue("tryParseArgWithDefault").Call(gConverters...)))
+		} else if arg.IdlArg.Type.Nullable {
+			statements.Append(g.AssignMany(
+				g.List(argName, errName),
+				g.NewValue("tryParseArgNullableType").Call(gConverters...)))
 		} else {
 			statements.Append(g.AssignMany(
 				g.List(argName, errName),

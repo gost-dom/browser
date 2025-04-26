@@ -5,11 +5,13 @@ import (
 
 	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/script-wrappers/configuration"
+	"github.com/gost-dom/webref/idl"
 	"github.com/gost-dom/webref/idl/legacy"
 )
 
 type ESOperationArgument struct {
 	Name         string
+	IdlArg       idl.Argument
 	Type         string
 	Optional     bool
 	Variadic     bool

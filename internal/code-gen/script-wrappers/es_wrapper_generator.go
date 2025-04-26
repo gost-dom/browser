@@ -54,7 +54,13 @@ func CreateConstructor(
 	if c, ok := idlName.Constructor(); ok {
 		fmt.Printf("Create constructor %s '%s'\n", interfaceConfig.TypeName, c.Name)
 		c.Name = "constructor"
-		result := createOperation(idlInterface, interfaceConfig, c)
+		// TODO: Fix for constructor overloads
+		result := createOperation(
+			idlInterface,
+			interfaceConfig,
+			c,
+			idlInterface.Constructors[0].Arguments,
+		)
 		return &result
 	} else {
 		return nil
@@ -66,7 +72,12 @@ func CreateInstanceMethods(
 	interfaceConfig *configuration.IdlInterfaceConfiguration,
 	idlName idl.TypeSpec) (result []ESOperation) {
 	for instanceMethod := range idlName.InstanceMethods() {
-		op := createOperation(idlInterface, interfaceConfig, instanceMethod)
+		idlOperation, found := idlInterface.GetOperation(instanceMethod.Name)
+		if !found {
+			panic("Method not found: " + instanceMethod.Name)
+		}
+
+		op := createOperation(idlInterface, interfaceConfig, instanceMethod, idlOperation.Arguments)
 		result = append(result, op)
 	}
 	return
@@ -127,6 +138,7 @@ func createOperation(
 	idlInterface idl.Interface,
 	typeSpec *configuration.IdlInterfaceConfiguration,
 	member idl.MemberSpec,
+	idlArgs []idl.Argument,
 ) ESOperation {
 	specRules := customrules.GetSpecRules(typeSpec.DomSpec.Name)
 	intfRules := specRules[typeSpec.TypeName]
@@ -144,13 +156,14 @@ func createOperation(
 		HasError:             opRules.HasError,
 		Arguments:            []ESOperationArgument{},
 	}
-	for _, arg := range member.Arguments {
+	for i, arg := range member.Arguments {
 		var esArgumentSpec configuration.ESMethodArgument
 		if arg := methodCustomization.Argument(arg.Name); arg != nil {
 			esArgumentSpec = *arg
 		}
 		esArg := ESOperationArgument{
 			Name:         arg.Name,
+			IdlArg:       idlArgs[i],
 			Optional:     arg.Optional && !esArgumentSpec.Required,
 			IdlType:      arg.IdlType,
 			ArgumentSpec: esArgumentSpec,

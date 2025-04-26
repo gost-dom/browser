@@ -2,6 +2,7 @@ package v8host
 
 import (
 	"errors"
+	"fmt"
 
 	v8 "github.com/gost-dom/v8go"
 )
@@ -193,26 +194,6 @@ func (h prototypeBuilder[T]) CreateFunctionStringToString(name string, fn func(T
 	})
 }
 
-func tryParseArgs[T interface{}](
-	ctx *V8ScriptContext,
-	args []*v8.Value,
-	index int,
-	parsers ...func(*V8ScriptContext, *v8.Value) (T, error),
-) (res T, err error) {
-	if index >= len(args) {
-		err = errors.New("Index out of range")
-		return
-	}
-	for _, parser := range parsers {
-		res, err = parser(ctx, args[index])
-		if err == nil {
-			return
-		}
-	}
-	err = errors.New("TODO")
-	return
-}
-
 func tryParseArg[T any](
 	args *argumentHelper,
 	index int,
@@ -222,9 +203,31 @@ func tryParseArg[T any](
 	if value == nil {
 		return
 	}
+	errs := make([]error, len(parsers))
+	for i, parser := range parsers {
+		result, errs[i] = parser(args.ctx, value)
+		if errs[i] == nil {
+			return
+		}
+	}
+	err = fmt.Errorf("tryParseArg: argument at index %d: %w", index, errors.Join(errs...))
+	return
+}
+
+func tryParseArgNullableType[T any](
+	args *argumentHelper,
+	index int,
+	parsers ...func(*V8ScriptContext, *v8.Value) (res T, err error),
+) (result T, err error) {
+	value := args.getArg(index)
+	if value == nil {
+		args.acceptIndex(index)
+		return
+	}
 	for _, parser := range parsers {
 		result, err = parser(args.ctx, value)
 		if err == nil {
+			args.acceptIndex(index)
 			return
 		}
 	}
@@ -239,7 +242,7 @@ func tryParseArgWithDefault[T any](
 	parsers ...func(*V8ScriptContext, *v8.Value) (T, error),
 ) (result T, err error) {
 	if index >= len(args.Args()) {
-		args.noOfReadArguments++
+		args.acceptIndex(index)
 		return defaultValue(), nil
 	} else {
 		return tryParseArg(args, index, parsers...)

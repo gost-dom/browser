@@ -37,6 +37,12 @@ type XmlHttpRequest interface {
 	event.EventTarget
 	Abort() error
 	Open(string, string, ...RequestOption)
+
+	// Deprecated: This just callse [XmlHttpRequest.SendBody] passing a nil body. This will
+	// eventually change to accept a body argument of type [io.Reader];
+	//
+	// For a smooth transition, chande all calls to this function to call
+	// [XmlHttpRequest.SendBody] passing nil.
 	Send() error
 	SendBody(body io.Reader) error
 	Status() int

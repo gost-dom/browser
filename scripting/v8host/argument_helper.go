@@ -18,6 +18,15 @@ func newArgumentHelper(host *V8ScriptHost, info *v8.FunctionCallbackInfo) *argum
 	return &argumentHelper{info, ctx, 0}
 }
 
+// acceptIndex informs argumentHelper that argument at index was accepted. This
+// affects when we query about how many arguments were read, in order to
+// determine which overload to call in the system.
+func (args *argumentHelper) acceptIndex(index int) {
+	if args.noOfReadArguments <= index {
+		args.noOfReadArguments = index + 1
+	}
+}
+
 // getValueArg returns the argument with the specified index, or undefined if
 // the argument doesn't exist.
 func (h argumentHelper) getValueArg(index int) *v8.Value {
@@ -70,10 +79,6 @@ func (h argumentHelper) getStringArg(index int) (string, error) {
 	}
 	arg := args[index]
 	return arg.String(), nil
-	// if arg.IsString() {
-	// 	return arg.String(), nil
-	// }
-	// return "", h.newTypeError("Expected string", arg)
 }
 
 func (h *argumentHelper) getArg(index int) *v8.Value {

@@ -128,7 +128,7 @@ func (w nodeV8Wrapper) isSameNode(info *v8.FunctionCallbackInfo) (*v8.Value, err
 	ctx := w.mustGetContext(info)
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
-	otherNode, err1 := tryParseArg(args, 0, w.decodeNode)
+	otherNode, err1 := tryParseArgNullableType(args, 0, w.decodeNode)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -145,7 +145,7 @@ func (w nodeV8Wrapper) contains(info *v8.FunctionCallbackInfo) (*v8.Value, error
 	ctx := w.mustGetContext(info)
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
-	other, err1 := tryParseArg(args, 0, w.decodeNode)
+	other, err1 := tryParseArgNullableType(args, 0, w.decodeNode)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -163,7 +163,7 @@ func (w nodeV8Wrapper) insertBefore(info *v8.FunctionCallbackInfo) (*v8.Value, e
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	node, err1 := tryParseArg(args, 0, w.decodeNode)
-	child, err2 := tryParseArg(args, 1, w.decodeNode)
+	child, err2 := tryParseArgNullableType(args, 1, w.decodeNode)
 	if args.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {

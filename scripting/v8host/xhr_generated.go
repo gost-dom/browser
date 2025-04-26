@@ -106,7 +106,7 @@ func (w xmlHttpRequestV8Wrapper) send(info *v8.FunctionCallbackInfo) (*v8.Value,
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.send")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
-	body, err1 := tryParseArg(args, 0, w.decodeDocument, w.decodeXMLHttpRequestBodyInit)
+	body, err1 := tryParseArgNullableType(args, 0, w.decodeDocument, w.decodeXMLHttpRequestBodyInit)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
