@@ -80,12 +80,13 @@ log.[^3]
 
 ### Commit scopes
 
-| Scope | Description |
-|-|-|
-| **dom** | Internal DOM model |
-| **html** | Internal HTML representation |
-| **readme** | Readme file changes. Only applicable for `docs` type  |
-| **codegen** | Changes to the code generator |
+| Scope       | Description                                           |
+|-------------|-------------------------------------------------------|
+| **dom**     | Internal DOM model                                    |
+| **html**    | Internal HTML representation                          |
+| **v8**      | V8 script host                                        |
+| **readme**  | Readme file changes. Only applicable for `docs` type  |
+| **codegen** | Changes to the code generator                         |
 
 A "feature" scoped with `dom` or `html` signifies that any relevant JavaScript
 bindings are missing.
