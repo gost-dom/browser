@@ -1,6 +1,13 @@
 # Changelog - Gost-DOM
 
 
+## [0.5.7](https://github.com/gost-dom/browser/compare/v0.5.6...v0.5.7) (2025-04-26)
+
+
+### Bug Fixes
+
+* **v8:** Node.insertBefore failed on missing ref ([d7dca66](https://github.com/gost-dom/browser/commit/d7dca6685ec7389f161ee3964dda3cad86a1b856))
+
 ## [0.5.6](https://github.com/gost-dom/browser/compare/v0.5.5...v0.5.6) (2025-04-21)
 
 
