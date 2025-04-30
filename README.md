@@ -5,11 +5,11 @@
 Gost-DOM is a headless browser written in Go intended to write tests of web
 application in Go that relies on JavaScript. Properties of Gost-DOM-based tests:
 
-- Tests run in parallel due to complete _complete isolation_[^2]
+- Tests run in parallel due to complete _complete isolation_[^1]
 - No erratic behaviour due to 100% predictable UI reactions.
 - "Blazingly fast". No out-of-process calls, not even thread boundaries. Web
   application code runs in the test thread, so a panic in your code keeps a full
-  stack trace to the test case. [^3]
+  stack trace to the test case. [^2]
 - Dependencies can be replaced while testing.
 
 Yet Gost-DOM still uses HTTP request and responses for verification, testing the
@@ -121,8 +121,78 @@ The 0.1 focus was to support a common session based login-flow using HTMX,
 meaning to support content swapping, XHR, forms, and cookies; in order to
 identify risks and architectural flaws.
 
-But many features were not fully implemented, e.g., you cannot navigate by
-assigning `history.href`.
+### Current focus
+
+Lately, little progress has been made, as I have been focusing on using this for
+an application; to help discover issues; and help prioritise.
+
+But I want to see this support [Datastar](https://data-star.dev/), another
+hypermedia framework. This brings some larger changes that have been underway
+for some time; but this also requires significant additions to v8go:
+
+- ESM support
+- ECMAScript object property handlers
+- [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver)
+  support.
+
+In addition, some existing features are incorrectly implemented, such as live
+collections.
+
+A side project worked on in parallel is to support Goja as an alternate script
+engine; though it has had little attention for some time.
+
+#### ESM support
+
+Datastar is distrubuted ECMAScript modules, not scripts. So for Gost-DOM to
+support Datastar, ESM support is needed.
+
+However, v8go, which is the link to V8 doesn't expose Module compilation and
+execution. I am working on extending v8go to support ESM. This isn't trivial.
+
+#### ECMAScript object property handlers
+
+"Handlers" is a feature in V8, where access to properties on an object can be
+intercepted by native code. Gost-DOM uses a modified version of v8go that has
+where support for indexed getters was hastily added to progresss and explore the
+problem space.
+
+But full hander support will be needed for e.g.,
+[`HTMLElement.dataset`][dataset] support.
+
+#### MutationObserver
+
+DataStar uses the [MutationObserver] API
+
+Currently, a Go version exists as an `internal` module. The API is not yet
+exposed to JavaScript.
+
+The mutation observer API is also intended to serve as support for test code
+describing behaviour at a higher and more accessibility-friendly manner.
+
+E.g., rather than checking that a `role="Alert"` was not present _before_
+form submit, but present after, you could verify that submitting an invalid form
+causes an _announcement_ to be made.
+
+#### Fix already implemented features
+
+Many of the already implemented features or APIs are not completely implemented,
+a few examples.
+
+- Assigning to the `history` doesn't navigate
+- [Live collections](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCollection) are static.
+- Submit buttons cannot override form method and action.
+
+To give users a better chance of predicting what works, and what doesn't, it is
+an aim to make sure that existing features work as they would in a real browser.
+
+#### Goja support
+
+V8 depends on Cgo, but [Goja](https://github.com/dop251/goja) is a pure Go
+JavaScript engine. While it may not be as complete as V8, it could be a usable
+alternative for many projects providing a pure Go option.
+
+V8 support will not go away, so there's always a fallback, if important JS
+features are lacking from Goja.
 
 ### Memory Leaks
 
@@ -149,44 +219,6 @@ feature.
 For that reason; and because it's not a problem for the intended use case, I
 have postponed dealing with that issue.
 
-### Next up
-
-Currently there are two main focus areas
-
-- Element focus
-- Fix already implemented features
-
-A side project worked on in parallel is to support Goja as an alternate script engine.
-
-#### Element focus
-
-Implement focus behaviour, including `focus()` and `blur()` methods, and their
-Go counterparts, including the relevant events.
-
-This is primarily a priority not because just adding `autofocus` on an input
-element that is swapped in by HTMX causes an JavaScript error to be thrown.
-
-#### Fix already implemented features
-
-Many of the already implemented features or APIs are not completely implemented,
-a few examples.
-
-- Assigning to the `history` doesn't navigate
-- [Live collections](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCollection) are static.
-- Submit buttons cannot override form method and action.
-
-To give users a better chance of predicting what works, and what doesn't, it is
-an aim to make sure that existing features work as they would in a real browser.
-
-#### Goja support
-
-V8 depends on Cgo, but [Goja](https://github.com/dop251/goja) is a pure Go
-JavaScript engine. While it may not be as complete as V8, it could be a usable
-alternative for many projects providing a pure Go option.
-
-
-V8 support will not go away, so there's always a fallback, if important JS
-features are lacking from Goja.
 
 ### Future goals
 
@@ -283,8 +315,9 @@ This library contains [code derived](./scripting/v8host/polyfills/xpath) from th
 
 ---
 
-[^1]: Current focus is to support HTMX apps, but eventually React/Angular,
-    whatever front-end framework you use, will work in Gost-DOM.
-[^2]: Complete isolation depends on _your code_, e.g., if you don't replace
+[^1]: Complete isolation depends on _your code_, e.g., if you don't replace
     database dependencies, they are not isolated.
-[^3]: This depends on how you configure Gost-DOM. 
+[^2]: This depends on how you configure Gost-DOM. 
+
+[dataset]: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset
+[MutationObserver]: https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
