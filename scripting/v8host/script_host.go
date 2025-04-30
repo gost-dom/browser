@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"maps"
+	"runtime"
 	"slices"
 	"sync"
 
@@ -16,6 +17,56 @@ import (
 	"github.com/gost-dom/browser/scripting"
 	"github.com/gost-dom/v8go"
 )
+
+// MAX_POOL_SIZE sets a limit to the number of script hosts that will be pooled
+// for reuse. By default Go will run as many tests in parallel as you have CPU
+// cores, so there shouldn't be a reason for a larger pool, but this provides a
+// bit of flexibility.
+var MAX_POOL_SIZE = runtime.NumCPU() * 2
+
+// A pool of unused V8ScriptHost instances. When a host is disposed calling
+// [V8ScriptHost.Close], it will be added to the pool.
+type scriptHostPool struct {
+	m        sync.Mutex
+	isolates []*V8ScriptHost
+}
+
+func (pool *scriptHostPool) releaseAll() []*V8ScriptHost {
+	pool.m.Lock()
+	defer pool.m.Unlock()
+
+	res := pool.isolates
+	pool.isolates = nil
+	return res
+}
+
+func (pool *scriptHostPool) add(iso *V8ScriptHost) bool {
+	pool.m.Lock()
+	defer pool.m.Unlock()
+
+	if len(pool.isolates) >= MAX_POOL_SIZE {
+		return false
+	} else {
+		pool.isolates = append(pool.isolates, iso)
+		return true
+	}
+}
+
+func (pool *scriptHostPool) tryGet() (iso *V8ScriptHost, found bool) {
+	pool.m.Lock()
+	defer pool.m.Unlock()
+
+	l := len(pool.isolates)
+	if l == 0 {
+		return nil, false
+	}
+
+	iso = pool.isolates[l-1]
+	pool.isolates = pool.isolates[0 : l-1]
+	return iso, true
+}
+
+var pool = &scriptHostPool{}
 
 // disposable represents a resource that needs cleanup when a context is closed.
 // E.g., cgo handles that need to be released.
@@ -175,32 +226,39 @@ func init() {
 	}
 }
 
-func New(opts ...HostOption) *V8ScriptHost {
-	config := hostOptions{}
-	for _, opt := range opts {
-		opt(&config)
+func createHostInstance(config hostOptions) *V8ScriptHost {
+	var host *V8ScriptHost
+	res, hostReused := pool.tryGet()
+
+	if hostReused {
+		host = res
+		host.disposed = false
+		host.logger = config.logger
+	} else {
+		host = &V8ScriptHost{
+			mu:     new(sync.Mutex),
+			iso:    v8go.NewIsolate(),
+			logger: config.logger,
+		}
 	}
-	host := &V8ScriptHost{
-		mu:     new(sync.Mutex),
-		iso:    v8go.NewIsolate(),
-		logger: config.logger,
-	}
+
 	host.inspectorClient = v8go.NewInspectorClient(consoleAPIMessageFunc(host.consoleAPIMessage))
 	host.inspector = v8go.NewInspector(host.iso, host.inspectorClient)
 
-	host.iso.SetPromiseRejectedCallback(host.promiseRejected)
-
-	globalInstalls := createGlobals(host)
-	host.globals = globals{make(map[string]*v8go.FunctionTemplate)}
-	for _, globalInstall := range globalInstalls {
-		host.globals.namedGlobals[globalInstall.name] = globalInstall.constructor
+	if !hostReused {
+		host.iso.SetPromiseRejectedCallback(host.promiseRejected)
+		globalInstalls := createGlobals(host)
+		host.globals = globals{make(map[string]*v8go.FunctionTemplate)}
+		for _, globalInstall := range globalInstalls {
+			host.globals.namedGlobals[globalInstall.name] = globalInstall.constructor
+		}
+		constructors := host.globals.namedGlobals
+		window := constructors["Window"]
+		host.windowTemplate = window.InstanceTemplate()
+		host.contexts = make(map[*v8go.Context]*V8ScriptContext)
+		installGlobals(window, host, globalInstalls)
+		installEventLoopGlobals(host, host.windowTemplate)
 	}
-	constructors := host.globals.namedGlobals
-	window := constructors["Window"]
-	host.windowTemplate = window.InstanceTemplate()
-	host.contexts = make(map[*v8go.Context]*V8ScriptContext)
-	installGlobals(window, host, globalInstalls)
-	installEventLoopGlobals(host, host.windowTemplate)
 	return host
 }
 
@@ -237,8 +295,22 @@ func (host *V8ScriptHost) Logger() log.Logger {
 	return host.logger
 }
 
+func New(opts ...HostOption) *V8ScriptHost {
+	config := hostOptions{}
+	for _, opt := range opts {
+		opt(&config)
+	}
+
+	res := createHostInstance(config)
+	res.logger = config.logger
+	return res
+}
+
+// Close informs that client code is done using this script host. The host will
+// be placed into a pool;
 func (host *V8ScriptHost) Close() {
 	host.setDisposed()
+
 	undisposedContexts := host.undisposedContexts()
 	undisposedCount := len(undisposedContexts)
 
@@ -253,9 +325,20 @@ func (host *V8ScriptHost) Close() {
 			ctx.Close()
 		}
 	}
+
 	host.inspectorClient.Dispose()
 	host.inspector.Dispose()
-	host.iso.Dispose()
+
+	if !pool.add(host) {
+		host.iso.Close()
+	}
+}
+
+// Dispose all pooled isolates
+func Shutdown() {
+	for _, host := range pool.releaseAll() {
+		host.iso.Dispose()
+	}
 }
 
 func (host *V8ScriptHost) undisposedContexts() []*V8ScriptContext {
