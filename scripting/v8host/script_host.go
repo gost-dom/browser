@@ -17,6 +17,45 @@ import (
 	"github.com/gost-dom/v8go"
 )
 
+// A pool of unused V8ScriptHost instances. When a host is disposed calling
+// [V8ScriptHost.Close], it will be added to the pool.
+type scriptHostPool struct {
+	m        sync.Mutex
+	isolates []*V8ScriptHost
+}
+
+func (pool *scriptHostPool) releaseAll() []*V8ScriptHost {
+	pool.m.Lock()
+	defer pool.m.Unlock()
+
+	res := pool.isolates
+	pool.isolates = nil
+	return res
+}
+
+func (pool *scriptHostPool) add(iso *V8ScriptHost) {
+	pool.m.Lock()
+	defer pool.m.Unlock()
+
+	pool.isolates = append(pool.isolates, iso)
+}
+
+func (pool *scriptHostPool) tryGet() (iso *V8ScriptHost, found bool) {
+	pool.m.Lock()
+	defer pool.m.Unlock()
+
+	l := len(pool.isolates)
+	if l == 0 {
+		return nil, false
+	}
+
+	iso = pool.isolates[l-1]
+	pool.isolates = pool.isolates[0 : l-1]
+	return iso, true
+}
+
+var pool = &scriptHostPool{}
+
 // disposable represents a resource that needs cleanup when a context is closed.
 // E.g., cgo handles that need to be released.
 type disposable interface{ dispose() }
@@ -175,11 +214,11 @@ func init() {
 	}
 }
 
-func New(opts ...HostOption) *V8ScriptHost {
-	config := hostOptions{}
-	for _, opt := range opts {
-		opt(&config)
+func createHostInstance(config hostOptions) *V8ScriptHost {
+	if res, ok := pool.tryGet(); ok {
+		return res
 	}
+
 	host := &V8ScriptHost{
 		mu:     new(sync.Mutex),
 		iso:    v8go.NewIsolate(),
@@ -237,6 +276,19 @@ func (host *V8ScriptHost) Logger() log.Logger {
 	return host.logger
 }
 
+func New(opts ...HostOption) *V8ScriptHost {
+	config := hostOptions{}
+	for _, opt := range opts {
+		opt(&config)
+	}
+
+	res := createHostInstance(config)
+	res.logger = config.logger
+	return res
+}
+
+// Close informs that client code is done using this script host. The host will
+// be placed into a pool;
 func (host *V8ScriptHost) Close() {
 	host.setDisposed()
 	undisposedContexts := host.undisposedContexts()
@@ -253,9 +305,17 @@ func (host *V8ScriptHost) Close() {
 			ctx.Close()
 		}
 	}
-	host.inspectorClient.Dispose()
-	host.inspector.Dispose()
-	host.iso.Dispose()
+
+	pool.add(host)
+}
+
+// Dispose all pooled isolates
+func Shutdown() {
+	for _, host := range pool.releaseAll() {
+		host.inspectorClient.Dispose()
+		host.inspector.Dispose()
+		host.iso.Dispose()
+	}
 }
 
 func (host *V8ScriptHost) undisposedContexts() []*V8ScriptContext {
@@ -307,3 +367,124 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 
 	return context
 }
+
+// <<<<<<< HEAD
+// =======
+//
+// func (ctx *V8ScriptContext) Clock() html.Clock { return ctx.clock }
+//
+// func (host *V8ScriptHost) addContext(ctx *V8ScriptContext) {
+// 	host.mu.Lock()
+// 	defer host.mu.Unlock()
+// 	host.contexts[ctx.v8ctx] = ctx
+// }
+//
+// func (ctx *V8ScriptContext) Close() {
+// 	if ctx.disposed {
+// 		panic("Context already disposed")
+// 	}
+// 	ctx.disposed = true
+// 	ctx.host.inspector.ContextDestroyed(ctx.v8ctx)
+// 	log.Debug(ctx.host.logger,
+// 		"ScriptContext: Dispose")
+// 	for _, dispose := range ctx.disposers {
+// 		dispose.dispose()
+// 	}
+// 	delete(ctx.host.contexts, ctx.v8ctx)
+// 	ctx.v8ctx.Close()
+// }
+//
+// func (ctx *V8ScriptContext) addDisposer(disposer disposable) {
+// 	ctx.disposers = append(ctx.disposers, disposer)
+// }
+//
+// func (ctx *V8ScriptContext) runScript(script string) (res *v8.Value, err error) {
+// 	res, err = ctx.v8ctx.RunScript(script, "")
+// 	ctx.eventLoop.tick()
+// 	return
+// }
+//
+// func (ctx *V8ScriptContext) Run(script string) error {
+// 	_, err := ctx.runScript(script)
+// 	return err
+// }
+//
+// func (ctx *V8ScriptContext) Eval(script string) (interface{}, error) {
+// 	result, err := ctx.runScript(script)
+// 	if err == nil {
+// 		return v8ValueToGoValue(result)
+// 	}
+// 	return nil, err
+// }
+//
+// func (ctx *V8ScriptContext) EvalCore(script string) (any, error) {
+// 	return ctx.runScript(script)
+// }
+//
+// func (ctx *V8ScriptContext) RunFunction(script string, arguments ...any) (res any, err error) {
+// 	var (
+// 		v  *v8.Value
+// 		f  *v8.Function
+// 		ok bool
+// 	)
+// 	if v, err = ctx.runScript(script); err == nil {
+// 		f, err = v.AsFunction()
+// 	}
+// 	if err == nil {
+// 		args := make([]v8.Valuer, len(arguments))
+// 		for i, a := range arguments {
+// 			if args[i], ok = a.(v8.Valuer); !ok {
+// 				err = fmt.Errorf("V8ScriptContext.RunFunction: Arguments is not a V8 value: %d", i)
+// 			}
+// 		}
+// 		return f.Call(ctx.v8ctx.Global(), args...)
+// 	}
+// 	return
+// }
+//
+// func (ctx *V8ScriptContext) Export(val any) (any, error) {
+// 	if res, ok := val.(*v8.Value); ok {
+// 		return v8ValueToGoValue(res)
+// 	} else {
+// 		return nil, errors.New("V8ScriptContext.Export: value not a V8 value")
+// 	}
+// }
+//
+// func v8ValueToGoValue(result *v8go.Value) (interface{}, error) {
+// 	if result == nil {
+// 		return nil, nil
+// 	}
+// 	if result.IsBoolean() {
+// 		return result.Boolean(), nil
+// 	}
+// 	if result.IsInt32() {
+// 		return result.Int32(), nil
+// 	}
+// 	if result.IsString() {
+// 		return result.String(), nil
+// 	}
+// 	if result.IsNull() {
+// 		return nil, nil
+// 	}
+// 	if result.IsUndefined() {
+// 		return nil, nil
+// 	}
+// 	if result.IsArray() {
+// 		obj, _ := result.AsObject()
+// 		length, err := obj.Get("length")
+// 		l := length.Uint32()
+// 		errs := make([]error, l+1)
+// 		errs[0] = err
+// 		result := make([]any, l)
+// 		for i := uint32(0); i < l; i++ {
+// 			val, err := obj.GetIdx(i)
+// 			if err == nil {
+// 				result[i], err = v8ValueToGoValue(val)
+// 			}
+// 			errs[i+1] = err
+// 		}
+// 		return result, errors.Join(errs...)
+// 	}
+// 	return nil, fmt.Errorf("Value not yet supported: %v", *result)
+// }
+// >>>>>>> a12e9dc (Creating a pool of isolates)
