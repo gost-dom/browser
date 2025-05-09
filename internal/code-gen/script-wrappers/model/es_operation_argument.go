@@ -23,7 +23,7 @@ type ESOperationArgument struct {
 
 func (a ESOperationArgument) OptionalInGo() bool {
 	hasDefault := a.ArgumentSpec.HasDefault
-	return a.Optional && !hasDefault
+	return a.Optional && !hasDefault && !a.CustomRule.Variadic
 }
 
 func (a ESOperationArgument) DefaultValueInGo() (name string, ok bool) {

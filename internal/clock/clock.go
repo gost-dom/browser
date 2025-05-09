@@ -283,7 +283,7 @@ func OfTime(t time.Time) NewClockOption {
 func OfIsoString(iso string) NewClockOption {
 	t, err := time.Parse(time.RFC3339, iso)
 	if err != nil {
-		panic(fmt.Errorf("clock.IsoTime: error parsing string - %w", err))
+		panic(fmt.Sprintf("clock.IsoTime: error parsing string - %v", err))
 	}
 	return OfTime(t)
 }

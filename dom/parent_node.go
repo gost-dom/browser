@@ -1,6 +1,10 @@
 package dom
 
-import "github.com/gost-dom/css"
+import (
+	"slices"
+
+	"github.com/gost-dom/css"
+)
 
 // parentNode implements the functions defined in the [ParentNode] IDL Mixin
 // interface.
@@ -13,43 +17,73 @@ func newParentNode(n *node) ParentNode {
 }
 
 func (n parentNode) Append(nodes ...Node) (err error) {
-	if node := n.nodeOfNodes(nodes); node != nil {
+	if node := n.collapseNodes(nodes); node != nil {
 		_, err = n.node.self.InsertBefore(node, nil)
 	}
 	return
 }
 
 func (n parentNode) Prepend(nodes ...Node) (err error) {
-	if node := n.nodeOfNodes(nodes); node != nil {
+	if node := n.collapseNodes(nodes); node != nil {
 		_, err = n.node.self.InsertBefore(node, n.node.FirstChild())
 	}
 	return
 }
 
 func (n parentNode) ReplaceChildren(nodes ...Node) (err error) {
-	if node := n.nodeOfNodes(nodes); node != nil {
+	if node := n.collapseNodes(nodes); node != nil {
 		if err = n.node.assertCanAddNode(node); err == nil {
-			for c := n.node.FirstChild(); c != nil; c = n.node.FirstChild() {
-				n.node.RemoveChild(c)
-			}
-			n.node.self.InsertBefore(node, nil)
+			return n.node.replaceNodes(0, n.node.childNodes.Length(), node)
 		}
 	}
 	return
 }
 
-func (n parentNode) nodeOfNodes(nodes []Node) Node {
+func (n parentNode) collapseNodes(nodes []Node) Node {
+	return collapseNodes(n.node.OwnerDocument(), nodes)
+}
+
+// nodeOfNodes creates a single node from a list of nodes. The return value
+// depends on the length of the list
+//
+// - If the list is empty it returns nil
+// - If the list contains a single element, it returns the element
+// - If the list contains multiple elements, it returns a [DocumentFragment]
+//
+// This helps implement the WHAT cookbook rules, which explains that multiple
+// arguments to [ParentNode.Append] or [ParentNode.ReplaceChildren] should treat
+// multiple children as a document fragment. This makes the valid child
+// validation easier, as the same rule applies for single vs. multiple elements.
+func collapseNodes(owner Document, nodes []Node) Node {
 	switch len(nodes) {
 	case 0:
 		return nil
 	case 1:
 		return nodes[0]
 	default:
-		fragment := n.node.getSelf().OwnerDocument().CreateDocumentFragment()
+		fragment := owner.CreateDocumentFragment()
 		for _, n := range nodes {
 			fragment.AppendChild(n)
 		}
 		return fragment
+	}
+}
+
+// expandFragment is the opposite of [collapseNodes], it returns a single [Node]
+// into a list of nodes.
+//
+// - A nil value returns a nil slice (empty slice)
+// - A [DocumentFragment] returns its children
+// - Any other node returns a single-element slice of itself.
+func expandNode(node Node) []Node {
+	if node == nil {
+		return nil
+	}
+
+	if _, ok := node.(DocumentFragment); ok {
+		return slices.Clone(node.ChildNodes().All())
+	} else {
+		return []Node{node}
 	}
 }
 

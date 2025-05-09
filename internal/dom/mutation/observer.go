@@ -32,6 +32,8 @@ func NewObserver(cb Callback) *Observer {
 	return &Observer{Callback: cb}
 }
 
+type ObserveOption = func(*Options)
+
 // Start observing for changes for a specific dom node.
 //
 // Panics if the observer does not have a handler.
@@ -95,7 +97,36 @@ func (o *Observer) Process(e dom.ChangeEvent) {
 	if e.Target != o.target && !o.options.Subtree {
 		return
 	}
-	r := Record{Target: e.Target, AddedNodes: e.AddedNodes, RemovedNodes: e.RemovedNodes}
+	r := Record{
+		Type:   string(e.Type),
+		Target: e.Target,
+	}
+	switch e.Type {
+	case dom.ChangeEventAttributes:
+		if !o.options.Attributes {
+			return
+		}
+		if o.options.AttributeOldValue {
+			r.OldValue = e.OldValue
+		}
+
+	case dom.ChangeEventCData:
+		if !o.options.CharacterData {
+			return
+		}
+		if o.options.CharacterDataOldValue {
+			r.OldValue = e.OldValue
+		}
+
+	case dom.ChangeEventChildList:
+		if !o.options.ChildList {
+			return
+		}
+		r.AddedNodes = e.AddedNodes
+		r.RemovedNodes = e.RemovedNodes
+		r.PreviousSibling = e.PreviousSibling
+		r.NextSibling = e.NextSibling
+	}
 	o.pending = append(o.pending, r)
 }
 
