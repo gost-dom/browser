@@ -1,6 +1,7 @@
 package browser_test
 
 import (
+	"net/http"
 	"testing"
 
 	"github.com/gost-dom/browser"
@@ -9,6 +10,16 @@ import (
 	"github.com/onsi/gomega"
 	"github.com/stretchr/testify/assert"
 )
+
+// initBrowser creates a browser with the most useful options. This browser will
+// by default fail a test if an error is logged, meaning an uncaught JavaScript
+// error will result in a test error.
+func initBrowser(t testing.TB, handler http.Handler) *browser.Browser {
+	return browser.New(
+		browser.WithHandler(handler),
+		browser.WithLogger(gosttest.NewTestLogger(t)),
+	)
+}
 
 func TestModule(t *testing.T) {
 	const indexHTML = `
@@ -31,11 +42,7 @@ func TestModule(t *testing.T) {
 		"https://example.com/index.html": [2]string{"text/html", indexHTML},
 		"https://example.com/module.js":  [2]string{"text/javascript", moduleJS},
 	}
-	browser := browser.New(
-		browser.WithHandler(server),
-		browser.WithLogger(gosttest.NewTestLogger(t)),
-	)
-	win, err := browser.Open("https://example.com/index.html")
+	win, err := initBrowser(t, server).Open("https://example.com/index.html")
 	assert.NoError(t, err)
 	g := gomega.NewWithT(t)
 	g.Expect(
