@@ -39,16 +39,14 @@ func (i *GojaContext) run(str string) (goja.Value, error) {
 }
 
 func (i *GojaContext) Run(str string) error {
-	_, err := i.run(str)
-	return err
+	s, e1 := i.Compile(str)
+	return errors.Join(e1, s.Run())
 }
 
 func (i *GojaContext) Eval(str string) (res any, err error) {
-	if gojaVal, err := i.run(str); err == nil {
-		return gojaVal.Export(), nil
-	} else {
-		return nil, err
-	}
+	s, e1 := i.Compile(str)
+	r, e2 := s.Eval()
+	return r, errors.Join(e1, e2)
 }
 
 func (i *GojaContext) EvalCore(str string) (res any, err error) {
@@ -212,5 +210,29 @@ func newGojaCallbackContext(
 	return &callbackContext{
 		gojaCallbackScope{ctx, call.This, nil},
 		call.Arguments, 0,
+	}
+}
+
+func (c *GojaContext) Compile(script string) (html.Script, error) {
+	return GojaScript{c, script}, nil
+}
+
+/* -------- GojaScript -------- */
+
+type GojaScript struct {
+	context *GojaContext
+	script  string
+}
+
+func (s GojaScript) Run() error {
+	_, err := s.context.run(s.script)
+	return err
+}
+
+func (s GojaScript) Eval() (res any, err error) {
+	if gojaVal, err := s.context.run(s.script); err == nil {
+		return gojaVal.Export(), nil
+	} else {
+		return nil, err
 	}
 }
