@@ -203,20 +203,6 @@ func (w *window) parseReader(reader io.Reader) error {
 
 func (w *window) HTTPClient() http.Client { return w.httpClient }
 
-func WindowOptionLocation(location string) WindowOptionFunc {
-	return func(options *WindowOptions) {
-		options.BaseLocation = location
-	}
-}
-
-func WindowOptionHost(host ScriptHost) WindowOptionFunc {
-	return func(options *WindowOptions) { options.ScriptHost = host }
-}
-
-func (o WindowOptions) Apply(options *WindowOptions) {
-	*options = o
-}
-
 func (w *window) Document() dom.Document {
 	return w.document
 }
@@ -347,3 +333,19 @@ type WindowOption interface {
 type WindowOptionFunc func(*WindowOptions)
 
 func (f WindowOptionFunc) Apply(options *WindowOptions) { f(options) }
+
+func WindowOptionLocation(location string) WindowOptionFunc {
+	return func(options *WindowOptions) { options.BaseLocation = location }
+}
+
+func WindowOptionHost(host ScriptHost) WindowOptionFunc {
+	return func(options *WindowOptions) { options.ScriptHost = host }
+}
+
+func WindowOptionHTTPClient(client http.Client) WindowOptionFunc {
+	return func(options *WindowOptions) { options.HttpClient = client }
+}
+
+func (o WindowOptions) Apply(options *WindowOptions) {
+	*options = o
+}
