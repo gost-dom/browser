@@ -22,6 +22,7 @@ func NewHTMLScriptElement(ownerDocument HTMLDocument) HTMLElement {
 func (e *htmlScriptElement) Connected() {
 	var err error
 	src, hasSrc := e.GetAttribute("src")
+	scriptType, _ := e.GetAttribute("type")
 	window, _ := e.htmlDocument.getWindow().(*window)
 	if !hasSrc {
 		if e.script, err = window.scriptContext.Compile(e.TextContent()); err != nil {
@@ -30,9 +31,16 @@ func (e *htmlScriptElement) Connected() {
 		}
 	} else {
 		src = window.resolveHref(src).Href()
-		if e.script, err = window.scriptContext.DownloadScript(src); err != nil {
-			log.Error(e.Logger(), "HTMLScriptElement: download script error", "src", src, "err", err)
-			return
+		if scriptType == "module" {
+			if e.script, err = window.scriptContext.DownloadModule(src); err != nil {
+				log.Error(e.Logger(), "HTMLScriptElement: download script error", "src", src, "err", err)
+				return
+			}
+		} else {
+			if e.script, err = window.scriptContext.DownloadScript(src); err != nil {
+				log.Error(e.Logger(), "HTMLScriptElement: download script error", "src", src, "err", err)
+				return
+			}
 		}
 		if _, deferScript := e.GetAttribute("defer"); deferScript {
 			window.deferScript(e)
