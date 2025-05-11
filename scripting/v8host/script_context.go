@@ -2,7 +2,6 @@ package v8host
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"runtime/cgo"
 	"strings"
@@ -11,10 +10,12 @@ import (
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
+	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/internal/uievents"
 	"github.com/gost-dom/browser/scripting"
+	"github.com/gost-dom/browser/url"
 	"github.com/gost-dom/v8go"
 
 	v8 "github.com/gost-dom/v8go"
@@ -30,6 +31,7 @@ type V8ScriptContext struct {
 	disposers  []disposable
 	clock      *clock.Clock
 	disposed   bool
+	resolver   moduleResolver
 }
 
 func (h *V8ScriptHost) getContext(v8ctx *v8.Context) (*V8ScriptContext, bool) {
@@ -175,8 +177,35 @@ func (ctx *V8ScriptContext) Compile(script string) (html.Script, error) {
 	return ctx.compile(script), nil
 }
 
-func (ctx *V8ScriptContext) download(url string) (string, error) {
-	resp, err := ctx.host.httpClient.Get(url)
+func (ctx *V8ScriptContext) DownloadScript(url string) (html.Script, error) {
+	script, err := ctx.resolver.download(url)
+	if err != nil {
+		return nil, err
+	}
+	return ctx.Compile(script)
+}
+
+func (ctx *V8ScriptContext) DownloadModule(url string) (html.Script, error) {
+	module, err := ctx.resolver.downloadAndCompile(url)
+	if err = module.InstantiateModule(ctx.v8ctx, &ctx.resolver); err != nil {
+		return nil, fmt.Errorf("gost: v8host: module instantiation: %w", err)
+	}
+	return V8Module{ctx, module}, nil
+}
+
+type resolvedModule struct {
+	scriptID int
+	location string
+	module   *v8go.Module
+}
+
+type moduleResolver struct {
+	host    *V8ScriptHost
+	modules []resolvedModule
+}
+
+func (r *moduleResolver) download(url string) (string, error) {
+	resp, err := r.host.httpClient.Get(url)
 	if err != nil {
 		return "", fmt.Errorf("gost: v8host: download errors: %w", err)
 	}
@@ -191,40 +220,60 @@ func (ctx *V8ScriptContext) download(url string) (string, error) {
 			resp.StatusCode,
 			url,
 		)
-		ctx.host.logger.Error("Script download error", "err", err, "body", script)
+		r.host.logger.Error("Script download error", "err", err, "body", script)
 		return "", err
 	}
 	return script, nil
 }
 
-func (ctx *V8ScriptContext) DownloadScript(url string) (html.Script, error) {
-	script, err := ctx.download(url)
-	if err != nil {
-		return nil, err
+func (r *moduleResolver) cached(url string) *v8go.Module {
+	for _, m := range r.modules {
+		if m.location == url {
+			return m.module
+		}
 	}
-	return ctx.Compile(script)
+	return nil
 }
 
-func (ctx *V8ScriptContext) DownloadModule(url string) (html.Script, error) {
-	script, err := ctx.download(url)
+func (r *moduleResolver) downloadAndCompile(url string) (*v8go.Module, error) {
+	if cached := r.cached(url); cached != nil {
+		return cached, nil
+	}
+
+	script, err := r.download(url)
 	if err != nil {
 		return nil, err
 	}
-	module, err := v8.CompileModule(ctx.host.iso, script, url)
+	module, err := v8.CompileModule(r.host.iso, script, url)
 	if err != nil {
 		return nil, fmt.Errorf("gost: v8host: module compilation: %w", err)
 	}
-	if err = module.InstantiateModule(ctx.v8ctx, ctx); err != nil {
-		return nil, fmt.Errorf("gost: v8host: module instantiation: %w", err)
-	}
-	return V8Module{ctx, module}, nil
+	r.modules = append(r.modules, resolvedModule{module.ScriptID(), url, module})
+	return module, nil
 }
 
-func (ctx *V8ScriptContext) ResolveModule(
+func (r *moduleResolver) get(scriptID int) (resolvedModule, bool) {
+	for _, m := range r.modules {
+		if m.scriptID == scriptID {
+			return m, true
+		}
+	}
+	return resolvedModule{}, false
+}
+
+func (r *moduleResolver) ResolveModule(
 	v8ctx *v8go.Context,
 	spec string,
 	attr v8go.ImportAttributes,
 	ref *v8go.Module,
 ) (*v8go.Module, error) {
-	return nil, errors.New("gost: v8host: TODO: ResolveModule")
+	refModule, found := r.get(ref.ScriptID())
+	if !found {
+		return nil, fmt.Errorf(
+			"gost: referrer not cached. This is a bug in Gost-DOM. Please file an issue at: %s",
+			constants.BUG_USSUE_URL,
+		)
+	}
+	url := url.ParseURLBase(spec, refModule.location).Href()
+	return r.downloadAndCompile(url)
 }

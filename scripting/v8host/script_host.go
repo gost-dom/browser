@@ -242,11 +242,12 @@ var global *v8.Object
 
 func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 	context := &V8ScriptContext{
-		host:    host,
-		clock:   clock.New(),
-		v8ctx:   v8.NewContext(host.iso, host.windowTemplate),
-		window:  w,
-		v8nodes: make(map[entity.ObjectId]*v8.Value),
+		host:     host,
+		clock:    clock.New(),
+		v8ctx:    v8.NewContext(host.iso, host.windowTemplate),
+		window:   w,
+		v8nodes:  make(map[entity.ObjectId]*v8.Value),
+		resolver: moduleResolver{host: host},
 	}
 	errorCallback := func(err error) {
 		w.DispatchEvent(event.NewErrorEvent(err))
