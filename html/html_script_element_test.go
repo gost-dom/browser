@@ -6,6 +6,7 @@ import (
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/gosthttp"
+	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -40,7 +41,7 @@ func TestScriptElementSourceResolution(t *testing.T) {
 		<body><h1>Script Test Page</h1></body>
 	</html>`
 	dummyScript := "// dummy script with no behaviour"
-	srv := StaticFileServer{
+	srv := gosttest.StaticFileServer{
 		"http://example.com/index.html":              [2]string{"text/html", indexHTML},
 		"http://example.com/script.js":               [2]string{"text/javascript", dummyScript},
 		"http://example.com/folder/index.html":       [2]string{"text/html", indexHTML},
@@ -104,21 +105,3 @@ func (r HTTPRequestRecorder) URLs() []string {
 
 // Clear deletes all recorded Requests.
 func (r *HTTPRequestRecorder) Clear() { r.Requests = nil }
-
-// StaticFileServer is a simple HTTP server serving GET requests based on a map
-// of paths. Each
-//
-// The 2-element array is optimised for succinct test code. As a result, the
-// type fails to document what the elements do, but working test code is
-// readable, as "text/html" is easily identified as a MIME type.
-type StaticFileServer map[string][2]string
-
-func (s StaticFileServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	content, found := s[r.URL.String()]
-	if !found {
-		w.WriteHeader(404)
-		return
-	}
-	w.Header().Add("Content-Type", content[0])
-	w.Write([]byte(content[1]))
-}
