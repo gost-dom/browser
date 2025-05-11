@@ -50,13 +50,32 @@ type ScriptContext interface {
 	//
 	// If the evaluated JS value cannot be converted to a Go value, an error is
 	// returned.
+	//
+	// Deprecated: Call Compile and then eval the compiled script
 	Eval(script string) (any, error)
 	// Run a script. This is should be used instead of eval when the return value
 	// is not needed, as eval returns an error when the return value cannot be
 	// converted to a go type.
+	//
+	// Deprecated: Call Compile and then run the compiled script
 	Run(script string) error
+	// Compile a script that can later be executed.
+	Compile(script string) (Script, error)
 	Clock() Clock
 	Close()
+}
+
+type Script interface {
+	// Run a script, and convert the result to a Go type. Only use this if you
+	// need the return value, otherwise call Run.
+	//
+	// If the evaluated JS value cannot be converted to a Go value, an error is
+	// returned.
+	Eval() (any, error)
+	// Run a script. This is should be used instead of eval when the return value
+	// is not needed, as eval returns an error when the return value cannot be
+	// converted to a go type.
+	Run() error
 }
 
 type Window interface {

@@ -25,6 +25,14 @@ func (c dummyScriptContext) Close()                   {}
 func (c dummyScriptContext) Clock() html.Clock        { return c.win.Clock() }
 func (c dummyScriptContext) Eval(string) (any, error) { return nil, nil }
 func (c dummyScriptContext) Run(string) error         { return nil }
+func (c dummyScriptContext) Compile(string) (html.Script, error) {
+	return dummyScript{}, nil
+}
+
+type dummyScript struct{}
+
+func (c dummyScript) Eval() (any, error) { return nil, nil }
+func (c dummyScript) Run() error         { return nil }
 
 func TestScriptElementSourceResolution(t *testing.T) {
 	indexHTML := `

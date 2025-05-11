@@ -151,10 +151,10 @@ func (ctx *V8ScriptContext) Eval(script string) (any, error) {
 	return ctx.compile(script).Eval()
 }
 
-func (ctx *V8ScriptContext) compile(script string) V8Script {
+func (ctx *V8ScriptContext) compile(script string) html.Script {
 	return V8Script{ctx, script}
 }
 
-func (ctx *V8ScriptContext) Compile(script string) (V8Script, error) {
+func (ctx *V8ScriptContext) Compile(script string) (html.Script, error) {
 	return ctx.compile(script), nil
 }
