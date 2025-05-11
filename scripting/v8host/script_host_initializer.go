@@ -19,11 +19,12 @@ func (c *ScriptEngineConfigurer) AddConfigurator(configurer js.Configurator[jsTy
 
 func (c *ScriptEngineConfigurer) createHost(config hostOptions) *V8ScriptHost {
 	host := &V8ScriptHost{
-		mu:       new(sync.Mutex),
-		iso:      v8go.NewIsolate(),
-		logger:   config.logger,
-		globals:  globals{make(map[string]v8Class)},
-		contexts: make(map[*v8go.Context]*V8ScriptContext),
+		mu:         new(sync.Mutex),
+		iso:        v8go.NewIsolate(),
+		httpClient: config.httpClient,
+		logger:     config.logger,
+		globals:    globals{make(map[string]v8Class)},
+		contexts:   make(map[*v8go.Context]*V8ScriptContext),
 	}
 	host.iso.SetPromiseRejectedCallback(host.promiseRejected)
 	host.windowTemplate = v8go.NewObjectTemplate(host.iso)

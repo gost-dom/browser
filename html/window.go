@@ -54,6 +54,8 @@ type ScriptContext interface {
 	Run(script string) error
 	// Compile a script that can later be executed.
 	Compile(script string) (Script, error)
+	// Download a script from the specified url
+	DownloadScript(url string) (Script, error)
 	Clock() Clock
 	Close()
 }
