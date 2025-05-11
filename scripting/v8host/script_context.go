@@ -2,6 +2,7 @@ package v8host
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"runtime/debug"
 
@@ -179,4 +180,8 @@ func (ctx *V8ScriptContext) DownloadScript(url string) (html.Script, error) {
 		return nil, err
 	}
 	return ctx.Compile(script)
+}
+
+func (ctx *V8ScriptContext) DownloadModule(url string) (html.Script, error) {
+	return nil, errors.New("v8: esm not yet supported")
 }

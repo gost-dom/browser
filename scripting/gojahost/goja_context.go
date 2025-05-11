@@ -221,6 +221,10 @@ func (c *GojaContext) DownloadScript(script string) (html.Script, error) {
 	return nil, errors.New("TODO")
 }
 
+func (c *GojaContext) DownloadModule(script string) (html.Script, error) {
+	return nil, errors.New("gojahost: ECMAScript modules not supported by gojehost")
+}
+
 /* -------- GojaScript -------- */
 
 type GojaScript struct {
