@@ -251,6 +251,8 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 		v8ctx:   v8ctx,
 		window:  w,
 		v8nodes: make(map[entity.ObjectId]jsValue),
+		// global:   newV8Object(host.iso, v8ctx.Global()),
+		resolver: moduleResolver{host: host},
 	}
 	if _, err := context.runScript("Object.setPrototypeOf(globalThis, globalThis.Window.prototype)"); err != nil {
 		panic(err)
