@@ -1,6 +1,7 @@
 package html_test
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"testing"
@@ -43,6 +44,10 @@ func (c dummyScriptContext) DownloadScript(url string) (html.Script, error) {
 		return nil, fmt.Errorf("bad status code: %d, scr: %s", res.StatusCode, url)
 	}
 	return dummyScript{}, nil
+}
+
+func (c dummyScriptContext) DownloadModule(url string) (html.Script, error) {
+	return nil, errors.New("TODO")
 }
 
 type dummyScript struct{}
