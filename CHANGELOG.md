@@ -1,6 +1,18 @@
 # Changelog - Gost-DOM
 
 
+## [0.5.8](https://github.com/gost-dom/browser/compare/v0.5.7...v0.5.8) (2025-05-11)
+
+
+### Features
+
+* **html:** Add WindowOptionHTTPClient ([b50b6f8](https://github.com/gost-dom/browser/commit/b50b6f8340e0a0da8752e17e4d9658d230c4ed1a))
+
+
+### Bug Fixes
+
+* **html:** Resolve script src in context of document location ([29c8ea2](https://github.com/gost-dom/browser/commit/29c8ea2de71a6f57ebae1c3f85b6427cbcd1a8d2))
+
 ## [0.5.7](https://github.com/gost-dom/browser/compare/v0.5.6...v0.5.7) (2025-04-26)
 
 
