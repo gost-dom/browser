@@ -3,6 +3,9 @@ package v8host_test
 import (
 	"net/http"
 
+	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/gosthttp"
+	"github.com/gost-dom/browser/scripting/v8host"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
@@ -16,7 +19,11 @@ var _ = Describe("Load from server", func() {
 				res.Write([]byte("<body>Hello, World!</body>"))
 			}),
 		)
-		window, err := OpenTestWindowFromHandler("/index.html", server)
+		client := gosthttp.NewHttpClientFromHandler(server)
+		window, err := html.OpenWindowFromLocation("/index.html", html.WindowOptions{
+			ScriptHost: v8host.New(v8host.WithHTTPClient(&client)),
+			HttpClient: client,
+		})
 		Expect(err).ToNot(HaveOccurred())
 		Expect(window.Document().Body().OuterHTML()).To(Equal("<body>Hello, World!</body>"))
 	})
@@ -45,7 +52,11 @@ var _ = Describe("Load from server", func() {
 		)
 		// Verify, create a browser communicating with this. Open the HTML file, and
 		// verify the side effect by inspecting global JS scope.
-		win, err := OpenTestWindowFromHandler("/index.html", server)
+		client := gosthttp.NewHttpClientFromHandler(server)
+		win, err := html.OpenWindowFromLocation("/index.html", html.WindowOptions{
+			ScriptHost: v8host.New(v8host.WithHTTPClient(&client)),
+			HttpClient: client,
+		})
 		Expect(err).ToNot(HaveOccurred())
 		Expect(win.Eval("window.scriptLoaded")).To(BeTrue())
 	})

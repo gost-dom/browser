@@ -1,6 +1,7 @@
 package v8host
 
 import (
+	"bytes"
 	"fmt"
 	"runtime/debug"
 
@@ -156,4 +157,26 @@ func (ctx *V8ScriptContext) compile(script string) html.Script {
 
 func (ctx *V8ScriptContext) Compile(script string) (html.Script, error) {
 	return ctx.compile(script), nil
+}
+
+func (ctx *V8ScriptContext) DownloadScript(url string) (html.Script, error) {
+	resp, err := ctx.host.httpClient.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	buf := bytes.NewBuffer([]byte{})
+	buf.ReadFrom(resp.Body)
+	script := string(buf.Bytes())
+
+	if resp.StatusCode != 200 {
+		err := fmt.Errorf(
+			"v8host: ScriptContext: bad status code: %d, downloading %s",
+			resp.StatusCode,
+			url,
+		)
+		ctx.host.logger.Error("Script download error", "err", err, "body", script)
+		return nil, err
+	}
+	return ctx.Compile(script)
 }
