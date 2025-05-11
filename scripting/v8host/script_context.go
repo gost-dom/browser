@@ -31,13 +31,13 @@ type V8ScriptContext struct {
 	disposed   bool
 }
 
-func (h *V8ScriptHost) netContext(v8ctx *v8.Context) (*V8ScriptContext, bool) {
+func (h *V8ScriptHost) getContext(v8ctx *v8.Context) (*V8ScriptContext, bool) {
 	ctx, ok := h.contexts[v8ctx]
 	return ctx, ok
 }
 
 func (h *V8ScriptHost) mustGetContext(v8ctx *v8.Context) *V8ScriptContext {
-	if ctx, ok := h.netContext(v8ctx); ok {
+	if ctx, ok := h.getContext(v8ctx); ok {
 		return ctx
 	}
 	panic("Unknown v8 context")
