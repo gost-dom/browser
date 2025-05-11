@@ -104,6 +104,10 @@ func (c *GojaContext) Compile(script string) (html.Script, error) {
 	return GojaScript{c, script}, nil
 }
 
+func (c *GojaContext) DownloadScript(script string) (html.Script, error) {
+	return nil, errors.New("TODO")
+}
+
 /* -------- GojaScript -------- */
 
 type GojaScript struct {
