@@ -416,12 +416,34 @@ func (ctx *V8ScriptContext) runScript(script string) (res *v8.Value, err error) 
 }
 
 func (ctx *V8ScriptContext) Run(script string) error {
-	_, err := ctx.runScript(script)
-	return err
+	return ctx.compile(script).Run()
 }
 
 func (ctx *V8ScriptContext) Eval(script string) (any, error) {
-	result, err := ctx.runScript(script)
+	return ctx.compile(script).Eval()
+}
+
+func (ctx *V8ScriptContext) compile(script string) html.Script {
+	return V8Script{ctx, script}
+}
+
+func (ctx *V8ScriptContext) Compile(script string) (html.Script, error) {
+	return ctx.compile(script), nil
+}
+
+type V8Script struct {
+	ctx    *V8ScriptContext
+	script string
+}
+
+func (s V8Script) Run() error {
+	_, err := s.ctx.runScript(s.script)
+	return err
+}
+
+func (s V8Script) Eval() (any, error) {
+
+	result, err := s.ctx.runScript(s.script)
 	if err == nil {
 		return v8ValueToGoValue(result)
 	}
