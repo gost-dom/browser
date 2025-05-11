@@ -25,6 +25,7 @@ func (e *htmlScriptElement) Connected() {
 		script = e.TextContent()
 	} else {
 		window, _ := e.htmlDocument.getWindow().(*window)
+		src = window.resolveHref(src).Href()
 		resp, err := window.httpClient.Get(src)
 		if err != nil {
 			panic(err)
