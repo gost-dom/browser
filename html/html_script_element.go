@@ -1,60 +1,49 @@
 package html
 
 import (
-	"io"
-	"strings"
-
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/internal/log"
 )
 
 type htmlScriptElement struct {
 	htmlElement
-	script string
+	script Script
 	src    string
 }
 
 type HTMLScriptElement = HTMLElement
 
 func NewHTMLScriptElement(ownerDocument HTMLDocument) HTMLElement {
-	var result HTMLScriptElement = &htmlScriptElement{newHTMLElement("script", ownerDocument), "", ""}
+	var result HTMLScriptElement = &htmlScriptElement{newHTMLElement("script", ownerDocument), nil, ""}
 	result.SetSelf(result)
 	return result
 }
 
 func (e *htmlScriptElement) Connected() {
-	var hasSrc bool
-	e.src, hasSrc = e.GetAttribute("src")
+	var err error
+	src, hasSrc := e.GetAttribute("src")
+	window, _ := e.htmlDocument.getWindow().(*window)
 	if !hasSrc {
-		e.script = e.TextContent()
+		if e.script, err = window.scriptContext.Compile(e.TextContent()); err != nil {
+			log.Error(e.Logger(), "HTMLScriptElement: compile error", "src", src, "err", err)
+			return
+		}
 	} else {
-		window, _ := e.htmlDocument.getWindow().(*window)
-		e.src = window.resolveHref(e.src).Href()
-		resp, err := window.httpClient.Get(e.src)
-		if err != nil {
-			panic(err)
+		src = window.resolveHref(src).Href()
+		if e.script, err = window.scriptContext.DownloadScript(src); err != nil {
+			log.Error(e.Logger(), "HTMLScriptElement: download script error", "src", src, "err", err)
+			return
 		}
-		if resp.StatusCode != 200 {
-			body, _ := io.ReadAll(resp.Body)
-			log.Error(e.logger(), "Error from server", "body", string(body), "src", e.src)
-			panic("Bad response")
-		}
-
-		var buf strings.Builder
-		io.Copy(&buf, resp.Body)
-		e.script = buf.String()
-
 		if _, deferScript := e.GetAttribute("defer"); deferScript {
 			window.deferScript(e)
 			return
 		}
 	}
-
 	e.run()
 }
 
 func (e *htmlScriptElement) run() {
-	if err := e.window().Run(e.script); err != nil {
+	if err := e.script.Run(); err != nil {
 		// TODO: Dispatch "error" event
 		log.Error(e.Logger(), "Script error", "src", e.src, log.ErrAttr(err))
 	}

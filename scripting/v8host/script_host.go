@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"maps"
+	"net/http"
 	"runtime"
 	"slices"
 	"sync"
@@ -78,12 +79,16 @@ type globals struct {
 }
 
 type hostOptions struct {
-	logger log.Logger
+	httpClient *http.Client
+	logger     log.Logger
 }
 
 type HostOption func(o *hostOptions)
 
 func WithLogger(logger log.Logger) HostOption { return func(o *hostOptions) { o.logger = logger } }
+func WithHTTPClient(client *http.Client) HostOption {
+	return func(o *hostOptions) { o.httpClient = client }
+}
 
 type V8ScriptHost struct {
 	logger          log.Logger
@@ -94,6 +99,7 @@ type V8ScriptHost struct {
 	windowTemplate  *v8go.ObjectTemplate
 	globals         globals
 	scripts         [][2]string
+	httpClient      *http.Client
 	contexts        map[*v8go.Context]*V8ScriptContext
 	disposed        bool
 	iterator        v8Iterator
@@ -182,6 +188,7 @@ func New(opts ...HostOption) *V8ScriptHost {
 
 	res := createHostInstance(config)
 	res.logger = config.logger
+	res.httpClient = config.httpClient
 	return res
 }
 

@@ -104,10 +104,12 @@ func New(options ...BrowserOption) *Browser {
 		o(config)
 	}
 	result := &Browser{
-		Client:     config.client,
-		Logger:     config.logger,
-		ScriptHost: config.host,
-		ctx:        config.ctx,
+		Client: config.client,
+		Logger: config.logger,
+		ScriptHost: v8host.New(v8host.WithLogger(config.logger),
+			v8host.WithHTTPClient(&config.client),
+		),
+		ctx: config.ctx,
 	}
 	if result.ScriptHost == nil {
 		result.ownsHost = true
