@@ -1,7 +1,6 @@
 package html_test
 
 import (
-	"net/http"
 	"testing"
 
 	"github.com/gost-dom/browser/html"
@@ -49,7 +48,7 @@ func TestScriptElementSourceResolution(t *testing.T) {
 		"http://example.com/folder/script.js":        [2]string{"text/javascript", dummyScript},
 	}
 
-	rec := &HTTPRequestRecorder{Handler: srv}
+	rec := gosttest.NewHTTPRequestRecorder(t, srv)
 	options := []html.WindowOption{
 		html.WindowOptionHTTPClient(gosthttp.NewHttpClientFromHandler(rec)),
 		html.WindowOptionHost(dummyScriptHost{}),
@@ -81,27 +80,3 @@ func TestScriptElementSourceResolution(t *testing.T) {
 		"http://example.com/script.js",
 	}, rec.URLs())
 }
-
-// HTTPRequestRecorder is an HTTPHandler middleware that keeps a record of all
-// incoming request objects.
-type HTTPRequestRecorder struct {
-	Handler  http.Handler
-	Requests []*http.Request
-}
-
-func (rec *HTTPRequestRecorder) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	rec.Requests = append(rec.Requests, r)
-	rec.Handler.ServeHTTP(w, r)
-}
-
-// URLs return all URL strings recorded
-func (r HTTPRequestRecorder) URLs() []string {
-	res := make([]string, len(r.Requests))
-	for i, req := range r.Requests {
-		res[i] = req.URL.String()
-	}
-	return res
-}
-
-// Clear deletes all recorded Requests.
-func (r *HTTPRequestRecorder) Clear() { r.Requests = nil }

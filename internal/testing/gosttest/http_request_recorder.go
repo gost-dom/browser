@@ -5,26 +5,40 @@ import (
 	"testing"
 )
 
-// HttpRequestFormRecorder is a very simple http.Handler that just records the
-// incoming requests, and returns a 200 status.
-//
-// The recorder automatically calls [http/Request.ParseForm] to make form data
-// availeble.
-type HttpRequestFormRecorder struct {
+// HTTPRequestRecorder is an HTTPHandler middleware that keeps a record of all
+// incoming request objects.
+type HTTPRequestRecorder struct {
 	T        testing.TB
+	Handler  http.Handler
 	Requests []*http.Request
 }
 
-func (rec *HttpRequestFormRecorder) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	rec.Requests = append(rec.Requests, r)
+func NewHTTPRequestRecorder(t testing.TB, handler http.Handler) *HTTPRequestRecorder {
+	return &HTTPRequestRecorder{T: t, Handler: handler}
 }
 
-// Single asserts that a single request was made
-func (r HttpRequestFormRecorder) Single() *http.Request {
+func (rec *HTTPRequestRecorder) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	rec.Requests = append(rec.Requests, r)
+	rec.Handler.ServeHTTP(w, r)
+}
+
+// URLs return all URL strings recorded
+func (r HTTPRequestRecorder) URLs() []string {
+	res := make([]string, len(r.Requests))
+	for i, req := range r.Requests {
+		res[i] = req.URL.String()
+	}
+	return res
+}
+
+// Clear deletes all recorded Requests.
+func (r *HTTPRequestRecorder) Clear() { r.Requests = nil }
+
+func (r *HTTPRequestRecorder) Single() *http.Request {
 	r.T.Helper()
-	if len(r.Requests) != 1 {
-		r.T.Errorf("Expected single recorded request. Got: %d", len(r.Requests))
+	if l := len(r.Requests); l != 1 {
+		r.T.Errorf("HTTPRequestRecorder: expected single request. No of requests: %d", l)
+		return nil
 	}
 	return r.Requests[0]
 }

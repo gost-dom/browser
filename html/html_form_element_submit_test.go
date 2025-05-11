@@ -302,7 +302,7 @@ func TestResubmitFormOn307Redirects(t *testing.T) {
 	w.BaseLocation = "http://example.com/forms"
 	setup.Setup()
 
-	rec := &gosttest.HttpRequestFormRecorder{T: t}
+	rec := gosttest.NewHTTPRequestRecorder(t, ParseFormHandler)
 	w.Handle("POST /form-destination", http.RedirectHandler("/form-redirected", 307))
 	w.Handle("POST /form-redirected", rec)
 

@@ -18,7 +18,7 @@ func TestHTMLFormElementWithCheckbox(t *testing.T) {
 }
 
 func (s *HTMLFormElementWithCheckboxTestSuite) TestSubmitWithCheckboxes() {
-	rec := &gosttest.HttpRequestFormRecorder{T: s.T()}
+	rec := gosttest.NewHTTPRequestRecorder(s.T(), ParseFormHandler)
 	win := htmltest.NewWindowHelper(s.T(), NewWindowFromHandler(rec))
 	win.LoadHTML(`<body>
 		<form method="post">
