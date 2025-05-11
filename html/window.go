@@ -63,6 +63,8 @@ type ScriptContext interface {
 	Compile(script string) (Script, error)
 	// Download a script from the specified url
 	DownloadScript(url string) (Script, error)
+	// Download an ECMAScript Module from the specified url
+	DownloadModule(url string) (Script, error)
 	Clock() Clock
 	Close()
 }
