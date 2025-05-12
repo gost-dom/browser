@@ -84,7 +84,6 @@ func (s *EventLoopTestSuite) TestQueueMicrotask() {
 		),
 	).To(BeFalse())
 	Expect(s.ctx.Eval(`window.taskExecuted`)).To(BeTrue())
-
 }
 
 func (s *EventLoopTestSuite) TestInterval() {
