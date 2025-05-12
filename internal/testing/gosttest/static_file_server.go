@@ -1,6 +1,9 @@
 package gosttest
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+)
 
 // StaticFileServer is a simple HTTP server serving GET requests based on a map
 // of URLs to static file content.
@@ -10,14 +13,26 @@ import "net/http"
 // optimised for succinct test code. As a result, the type does not properly
 // describe what element is for, but working test code is readable, as
 // the actual values are easily recognised.
-type StaticFileServer map[string][2]string
+type StaticFileServer map[string]StaticFile
+
+type StaticFile [2]string
+
+func (f StaticFile) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", f[0])
+	fmt.Fprint(w, f[1])
+}
+
+func StaticHTML(html string) StaticFile { return StaticFile{"text/html", html} }
+func StaticJS(js string) StaticFile     { return StaticFile{"text/javascript", js} }
 
 func (s StaticFileServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	content, found := s[r.URL.String()]
 	if !found {
+		content, found = s[r.URL.Path]
+	}
+	if !found {
 		w.WriteHeader(404)
 		return
 	}
-	w.Header().Add("Content-Type", content[0])
-	w.Write([]byte(content[1]))
+	content.ServeHTTP(w, r)
 }

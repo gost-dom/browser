@@ -10,6 +10,7 @@ import (
 	. "github.com/gost-dom/browser"
 	"github.com/gost-dom/browser/dom/event"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
+	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 
@@ -22,44 +23,36 @@ type BrowserTestSuite struct {
 }
 
 func (s *BrowserTestSuite) TestReadFromHTTPHandler() {
-	Expect := gomega.NewWithT(s.T()).Expect
-	handler := (http.HandlerFunc)(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(200)
-		w.Header().Add("Content-Type", "text/html") // For good measure, not used yet"
-		w.Write([]byte("<html></html>"))
-	})
-	browser := NewBrowserFromHandler(handler)
-	result, err := browser.Open("/")
-	Expect(err).ToNot(HaveOccurred())
-	element := result.Document().DocumentElement()
+	browser := NewBrowserFromHandler(gosttest.StaticHTML("<html></html>"))
 
-	Expect(element.NodeName()).To(Equal("HTML"))
-	Expect(element.TagName()).To(Equal("HTML"))
+	result, err := browser.Open("/")
+	s.Assert().NoError(err)
+
+	element := result.Document().DocumentElement()
+	s.Assert().Equal("HTML", element.NodeName())
+	s.Assert().Equal("HTML", element.TagName())
 }
 
 func (s *BrowserTestSuite) TestExecuteScript() {
 	Expect := gomega.NewWithT(s.T()).Expect
-	// This is not necessarily desired behaviour right now.
-	server := http.NewServeMux()
-	server.Handle(
-		"GET /index.html",
-		http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-			res.Write([]byte(`<body>
-					<div id='target'></div>
-					<script>
-						const target = document.getElementById('target');
-						target.textContent = "42"
-					</script>
-				</body>`))
-		}),
-	)
+	server := gosttest.StaticFileServer{
+		"/index.html": gosttest.StaticHTML(
+			`<body>
+				<div id='target'></div>
+				<script>
+					const target = document.getElementById('target');
+					target.textContent = "42"
+				</script>
+			</body>`),
+	}
 	browser := NewBrowserFromHandler(server)
 	s.T().Cleanup(browser.Close)
 
 	win, err := browser.Open("/index.html")
+	s.Assert().NoError(err)
 	Expect(err).ToNot(HaveOccurred())
 	target := win.Document().GetElementById("target")
-	Expect(target).To(HaveOuterHTML(Equal(`<div id="target">42</div>`)))
+	Expect(target).To(HaveOuterHTML(`<div id="target">42</div>`))
 }
 
 func TestBrowserSuite(t *testing.T) {
@@ -98,8 +91,8 @@ func (s *BrowserNavigationTestSuite) TestClickLink() {
 	s.Expect(heading).To(HaveTextContent(Equal("Page B")))
 	s.Expect(window.ScriptContext().Eval("loadedB")).To(Equal("PAGE B"))
 
-	// The global state should have been cleared
-	s.Expect(window.ScriptContext().Eval("typeof loadedA")).To(Equal("undefined"))
+	s.Expect(window.ScriptContext().Eval("typeof loadedA")).
+		To(Equal("undefined"), "Global state cleared after clicking a link to navigate")
 }
 
 func (s *BrowserNavigationTestSuite) TestNavigationAbortedByEventHandler() {
@@ -169,7 +162,6 @@ func TestLogOutput(t *testing.T) {
 	Expect(err).ToNot(HaveOccurred())
 	win.Run("console.log('foo bar')")
 	Expect(b.String()).To(ContainSubstring("foo bar"))
-	// Expect(b.String()).ToNot(ContainSubstring("Dispatch event"))
 
 	b.Reset()
 	win.DispatchEvent(event.NewCustomEvent("dummy", event.CustomEventInit{}))
@@ -189,29 +181,21 @@ func cookieHandler(w http.ResponseWriter, r *http.Request) {
 		gost = c.Value
 	}
 	w.Header().Add("Set-Cookie", "gost=Hello, World!")
-	w.Write([]byte(fmt.Sprintf(`<body><div id="gost">%s</div></body>`, gost)))
+	fmt.Fprintf(w, `<body><div id="gost">%s</div></body>`, gost)
 }
 
 func newBrowserNavigateTestServer() http.Handler {
-	server := http.NewServeMux()
-	server.HandleFunc("GET /a.html",
-		func(res http.ResponseWriter, req *http.Request) {
-			res.Write([]byte(
-				`<body>
-					<h1>Page A</h1>
-					<a href="b.html">Load B</a>
-					<script>loadedA = "PAGE A"</script>
-				</body>`))
-		})
-
-	server.HandleFunc("GET /b.html",
-		func(res http.ResponseWriter, req *http.Request) {
-			res.Write([]byte(`
-				<body>
-					<h1>Page B</h1>
-					<script>loadedB = "PAGE B"</script>
-				</body>`))
-		})
-
-	return server
+	return gosttest.StaticFileServer{
+		"/a.html": gosttest.StaticHTML(
+			`<body>
+				<h1>Page A</h1>
+				<a href="b.html">Load B</a>
+				<script>loadedA = "PAGE A"</script>
+			</body>`),
+		"/b.html": gosttest.StaticHTML(
+			`<body>
+				<h1>Page B</h1>
+				<script>loadedB = "PAGE B"</script>
+			</body>`),
+	}
 }
