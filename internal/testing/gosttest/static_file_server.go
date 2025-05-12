@@ -34,7 +34,7 @@ func StaticJS(js string) StaticFile { return StaticFile{"text/javascript", js} }
 
 func (s StaticFileServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
-		w.WriteHeader(404)
+		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
 	if content, found := s[r.URL.Path]; found {
