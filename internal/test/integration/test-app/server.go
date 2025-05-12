@@ -20,7 +20,11 @@ func (s *TestServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func CreateServer() *TestServer {
 	mux := http.NewServeMux()
 	count := 1
-	mux.Handle("GET /", http.FileServer(http.FS(content.FS)))
+	fs := http.FileServer(http.FS(content.FS))
+	mux.Handle("GET /", fs)
+
+	mux.Handle("GET /datastarapi/", http.StripPrefix("/datastarapi", NewDatastarMux()))
+
 	mux.HandleFunc("POST /counter/increment", func(w http.ResponseWriter, r *http.Request) {
 		count++
 		w.Write([]byte(fmt.Sprintf("Count: %d", count)))
