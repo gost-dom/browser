@@ -1,29 +1,81 @@
 package v8host
 
 import (
+	"errors"
 	"fmt"
+	"log/slog"
+	"time"
 
 	"github.com/gost-dom/v8go"
+	v8 "github.com/gost-dom/v8go"
 )
 
 // V8Module represents a compiled ECMAScript module
 type V8Module struct {
-	ctx    *V8ScriptContext
-	module *v8go.Module
+	ctx      *V8ScriptContext
+	module   *v8go.Module
+	logger   *slog.Logger
+	location string
 }
 
 func (mod V8Module) Run() error {
-	_, err := mod.module.Evaluate(mod.ctx.v8ctx)
+	p, err := mod.module.Evaluate(mod.ctx.v8ctx)
 	if err != nil {
 		err = fmt.Errorf("gost: v8host: run module: %w", err)
+	} else {
+		if _, err = awaitPromise(mod.ctx.v8ctx, p); err != nil {
+			err = fmt.Errorf("gost: v8host: awaiting module: %w", err)
+		}
 	}
 	return err
 }
 
 func (mod V8Module) Eval() (any, error) {
-	_, err := mod.module.Evaluate(mod.ctx.v8ctx)
-	if err != nil {
-		err = fmt.Errorf("gost: v8host: evaluate module: %w", err)
+	return nil, mod.Run()
+}
+
+func awaitPromise(ctx *v8.Context, val *v8.Value) (*v8.Value, error) {
+	timeout := time.After(time.Second)
+	resolve := make(chan *v8.Value)
+	reject := make(chan error)
+
+	if !val.IsPromise() {
+		return val, nil
 	}
-	return nil, err
+	p, _ := val.AsPromise()
+
+	p.Then(func(info *v8.FunctionCallbackInfo) *v8.Value {
+		args := info.Args()
+		if len(args) > 0 {
+			resolve <- args[0]
+			return args[0]
+		} else {
+			resolve <- nil
+			return nil
+		}
+	}, func(info *v8.FunctionCallbackInfo) *v8.Value {
+		args := info.Args()
+		if len(args) > 0 && args[0] != nil {
+			val := args[0]
+			if val.IsNativeError() {
+				exc, _ := val.AsException()
+				reject <- exc
+			} else {
+				reject <- fmt.Errorf("Non-Error rejection: %s", val.String())
+			}
+		} else {
+			reject <- errors.New("Suspicious reject call. No argument provided")
+		}
+		return nil
+	})
+	go ctx.PerformMicrotaskCheckpoint()
+
+	select {
+	case <-timeout:
+		return nil, errors.New("Timeout waiting for promise")
+	case val := <-resolve:
+		return val, nil
+	case err := <-reject:
+		return nil, err
+	}
 }
