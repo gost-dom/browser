@@ -1,0 +1,3 @@
+#!/bin/sh
+
+nodemon -e go,html,js --signal SIGTERM --exec go run ./test-app-main
