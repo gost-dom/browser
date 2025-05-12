@@ -18,6 +18,13 @@ func newEventLoopWrapper(instance *GojaContext) eventLoopWrapper {
 
 func (w eventLoopWrapper) initializeWindows(prototype *goja.Object, _ *goja.Runtime) {
 	prototype.DefineDataProperty(
+		"queueMicrotask",
+		w.ctx.vm.ToValue(w.queueMicrotask),
+		goja.FLAG_FALSE,
+		goja.FLAG_TRUE,
+		goja.FLAG_TRUE,
+	)
+	prototype.DefineDataProperty(
 		"setInterval",
 		w.ctx.vm.ToValue(w.setInterval),
 		goja.FLAG_FALSE,
@@ -69,6 +76,20 @@ func (l eventLoopWrapper) setTimeout(c goja.FunctionCall) goja.Value {
 func (l eventLoopWrapper) clearTimeout(c goja.FunctionCall) goja.Value {
 	id := c.Argument(0).ToInteger()
 	l.ctx.clock.Cancel(clock.TaskHandle(id))
+	return nil
+}
+
+func (l eventLoopWrapper) queueMicrotask(c goja.FunctionCall) goja.Value {
+	f, ok := goja.AssertFunction(c.Argument(0))
+	if !ok {
+		panic(l.ctx.vm.NewTypeError("setTimeout: Argument must be a function"))
+	}
+	l.ctx.clock.AddSafeMicrotask(func() {
+		_, err := f(l.ctx.vm.GlobalObject())
+		if err != nil {
+			l.ctx.window.DispatchEvent(event.NewErrorEvent(err))
+		}
+	})
 	return nil
 }
 

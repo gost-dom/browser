@@ -72,6 +72,21 @@ func (s *EventLoopTestSuite) TestDispatchError() {
 	Expect(s.ctx.Eval(`val`)).To(BeEquivalentTo(42))
 }
 
+func (s *EventLoopTestSuite) TestQueueMicrotask() {
+	Expect := gomega.NewWithT(s.T()).Expect
+	Expect(
+		s.ctx.Eval(`
+				window.taskExecuted = false;
+				window.queueMicrotask(() => {
+					window.taskExecuted = true;
+				});
+				window.taskExecuted `,
+		),
+	).To(BeFalse())
+	Expect(s.ctx.Eval(`window.taskExecuted`)).To(BeTrue())
+
+}
+
 func (s *EventLoopTestSuite) TestInterval() {
 	Expect := gomega.NewWithT(s.T()).Expect
 	Expect(s.ctx.Eval(`
@@ -99,6 +114,7 @@ func (s *EventLoopTestSuite) TestGlobals() {
 	Expect(windowNames).To(ContainElement("clearTimeout"))
 	Expect(windowNames).To(ContainElement("setInterval"))
 	Expect(windowNames).To(ContainElement("clearInterval"))
+	Expect(windowNames).To(ContainElement("queueMicrotask"))
 
 	prototypeNames, err := s.ctx.Eval("Object.getOwnPropertyNames(Window.prototype)")
 	Expect(err).ToNot(HaveOccurred())
@@ -106,4 +122,5 @@ func (s *EventLoopTestSuite) TestGlobals() {
 	Expect(prototypeNames).ToNot(ContainElement("clearTimeout"))
 	Expect(prototypeNames).ToNot(ContainElement("setInterval"))
 	Expect(prototypeNames).ToNot(ContainElement("clearInterval"))
+	Expect(prototypeNames).ToNot(ContainElement("queueMicrotask"))
 }

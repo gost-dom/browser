@@ -43,6 +43,25 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 	iso := host.iso
 
 	globalObjectTemplate.Set(
+		"queueMicrotask",
+		v8.NewFunctionTemplateWithError(
+			iso,
+			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+				ctx := host.mustGetContext(info.Context())
+				helper := newArgumentHelper(host, info)
+				f, err := helper.getFunctionArg(0)
+				if err == nil {
+					ctx.clock.AddSafeMicrotask(func() {
+						if _, err := f.Call(info.Context().Global()); err != nil {
+							ctx.eventLoop.errorCb(err)
+						}
+					})
+				}
+				return nil, err
+			},
+		),
+	)
+	globalObjectTemplate.Set(
 		"setTimeout",
 		v8.NewFunctionTemplateWithError(
 			iso,
