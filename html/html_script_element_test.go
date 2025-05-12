@@ -41,11 +41,11 @@ func TestScriptElementSourceResolution(t *testing.T) {
 	</html>`
 	dummyScript := "// dummy script with no behaviour"
 	srv := gosttest.StaticFileServer{
-		"http://example.com/index.html":              [2]string{"text/html", indexHTML},
-		"http://example.com/script.js":               [2]string{"text/javascript", dummyScript},
-		"http://example.com/folder/index.html":       [2]string{"text/html", indexHTML},
-		"http://example.com/folder/root-source.html": [2]string{"text/html", rootSrcHTML},
-		"http://example.com/folder/script.js":        [2]string{"text/javascript", dummyScript},
+		"/index.html":              gosttest.StaticHTML(indexHTML),
+		"/script.js":               gosttest.StaticJS(dummyScript),
+		"/folder/index.html":       gosttest.StaticHTML(indexHTML),
+		"/folder/root-source.html": gosttest.StaticHTML(rootSrcHTML),
+		"/folder/script.js":        gosttest.StaticJS(dummyScript),
 	}
 
 	rec := gosttest.NewHTTPRequestRecorder(t, srv)

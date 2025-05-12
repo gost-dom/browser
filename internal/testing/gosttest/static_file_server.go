@@ -5,34 +5,41 @@ import (
 	"net/http"
 )
 
-// StaticFileServer is a simple HTTP server serving GET requests based on a map
-// of URLs to static file content.
+// StaticFileServer is a simple [http.Handler] that can simplify test code that
+// only needs to configure static files.
 //
-// The content is represented by a 2-element string array containing the
-// Content-Type response header, and response body respectively. The type is
-// optimised for succinct test code. As a result, the type does not properly
-// describe what element is for, but working test code is readable, as
-// the actual values are easily recognised.
+// As it has a map as an underlying type, you can create the entire http handler
+// as a Go map literal, making it simpler to configure than creating a new mux.
 type StaticFileServer map[string]StaticFile
 
-type StaticFile [2]string
-
-func (f StaticFile) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Content-Type", f[0])
-	fmt.Fprint(w, f[1])
+// A simple [http.Handler] that serves static file content. Type type is a pair
+// of MIMEType and body content.
+type StaticFile struct {
+	MIMEType string
+	Body     string
 }
 
+func (f StaticFile) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", f.MIMEType)
+	fmt.Fprint(w, f.Body)
+}
+
+// StaticHTML creates an [http.Handler] that serves static content with the MIME
+// type, "text/html".
 func StaticHTML(html string) StaticFile { return StaticFile{"text/html", html} }
-func StaticJS(js string) StaticFile     { return StaticFile{"text/javascript", js} }
+
+// StaticJS creates an [http.Handler] that serves static content with the MIME
+// type, "text/javascript".
+func StaticJS(js string) StaticFile { return StaticFile{"text/javascript", js} }
 
 func (s StaticFileServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	content, found := s[r.URL.String()]
-	if !found {
-		content, found = s[r.URL.Path]
-	}
-	if !found {
+	if r.Method != "GET" {
 		w.WriteHeader(404)
 		return
 	}
-	content.ServeHTTP(w, r)
+	if content, found := s[r.URL.Path]; found {
+		content.ServeHTTP(w, r)
+	} else {
+		w.WriteHeader(404)
+	}
 }
