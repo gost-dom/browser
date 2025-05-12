@@ -177,7 +177,7 @@ func (ctx *V8ScriptContext) DownloadModule(url string) (html.Script, error) {
 	if err = module.InstantiateModule(ctx.v8ctx, &ctx.resolver); err != nil {
 		return nil, fmt.Errorf("gost: v8host: module instantiation: %w", err)
 	}
-	return V8Module{ctx, module}, nil
+	return V8Module{ctx, module, ctx.host.logger, url}, nil
 }
 
 type resolvedModule struct {
