@@ -85,6 +85,7 @@ type window struct {
 	baseLocation        string
 	domParser           domParser
 	logger              *slog.Logger
+	deferredScripts     []*htmlScriptElement
 }
 
 func newWindow(windowOptions ...WindowOption) *window {
@@ -110,6 +111,10 @@ func newWindow(windowOptions ...WindowOption) *window {
 	win.document = NewHTMLDocument(win)
 	event.SetEventTargetSelf(win)
 	return win
+}
+
+func (w *window) deferScript(e *htmlScriptElement) {
+	w.deferredScripts = append(w.deferredScripts, e)
 }
 
 func (w *window) checkRedirect(req *http.Request, via []*http.Request) error {
@@ -186,6 +191,9 @@ func NewWindowReader(reader io.Reader, windowOptions ...WindowOption) (Window, e
 
 func (w *window) parseReader(reader io.Reader) error {
 	err := w.domParser.ParseReader(w, &w.document, reader)
+	for _, s := range w.deferredScripts {
+		s.run()
+	}
 	if err == nil {
 		w.document.DispatchEvent(event.New(dom.DocumentEventDOMContentLoaded, nil))
 		// 'load' is emitted when css and images are loaded, not relevant yet, so
