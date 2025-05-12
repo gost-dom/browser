@@ -12,7 +12,7 @@ import (
 // as a Go map literal, making it simpler to configure than creating a new mux.
 type StaticFileServer map[string]StaticFile
 
-// A simple [http.Handler] that serves static file content. Type type is a pair
+// A simple [http.Handler] that serves static file content. This type is a pair
 // of MIMEType and body content.
 type StaticFile struct {
 	MIMEType string
@@ -40,6 +40,6 @@ func (s StaticFileServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if content, found := s[r.URL.Path]; found {
 		content.ServeHTTP(w, r)
 	} else {
-		w.WriteHeader(404)
+		w.WriteHeader(http.StatusNotFound)
 	}
 }
