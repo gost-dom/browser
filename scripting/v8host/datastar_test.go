@@ -14,7 +14,7 @@ func TestDatastar(t *testing.T) {
 	server := app.CreateServer()
 	b := htmltest.NewBrowserHelper(t, browser.New(
 		browser.WithHandler(server),
-		browser.WithLogger(gosttest.NewTestLogger(t, gosttest.MinLogLevel(slog.LevelDebug))),
+		browser.WithLogger(gosttest.NewTestLogger(t, gosttest.MinLogLevel(slog.LevelInfo))),
 	))
 	win := b.OpenWindow("https://example.com/ds")
 	win.HTMLDocument().GetHTMLElementById("fetch-events-button").Click()
