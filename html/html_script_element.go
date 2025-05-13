@@ -57,6 +57,12 @@ func (e *htmlScriptElement) Connected() {
 }
 
 func (e *htmlScriptElement) run() {
+	if e.script == nil {
+		src, _ := e.GetAttribute("src")
+		log.Warn(e.Logger(), "Script now valid", "src", src)
+		return
+	}
+
 	if err := e.script.Run(); err != nil {
 		log.Error(e.Logger(), "Script error", "src", e.src, "err", err)
 	}
