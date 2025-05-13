@@ -53,8 +53,13 @@ export function walkDOM(element, callback) {
     return null;
   }
   const dataset = element.dataset;
-  if ("starIgnore" in dataset) {
-    return null;
+  console.log("Get starIgnore");
+  try {
+    if ("starIgnore" in dataset) {
+      return null;
+    }
+  } catch (err) {
+    console.error("Error getting starIgnore", err);
   }
   if (!("starIgnore__self" in dataset)) {
     callback(element);

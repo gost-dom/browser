@@ -200,7 +200,7 @@ func configureHTMLSpecs(htmlSpecs *WebIdlConfiguration) {
 
 	htmlSvg := htmlSpecs.Type("HTMLOrSVGElement")
 	htmlSvg.Method("focus").SetCustomImplementation()
-	htmlSvg.Method("dataset").SetNotImplemented()
+	htmlSvg.Method("dataset").SetCustomImplementation()
 
 	form := htmlSpecs.Type("HTMLFormElement")
 	form.Method("requestSubmit").Argument("submitter").SetHasDefault()

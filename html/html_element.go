@@ -45,7 +45,7 @@ func newHTMLElement(tagName string, ownerDocument HTMLDocument) htmlElement {
 		Renderer:         renderer,
 		ChildrenRenderer: childrenRenderer,
 		htmlDocument:     ownerDocument,
-		dataset:          DOMStringMap{element},
+		dataset:          DOMStringMap{Element: element},
 	}
 	return result
 }
@@ -81,7 +81,7 @@ func (e *htmlElement) Focus() {
 	e.htmlDocument.setActiveElement(e.self)
 }
 
-func (e *htmlElement) Dataset() DOMStringMap { return e.dataset }
+func (e *htmlElement) Dataset() *DOMStringMap { return &e.dataset }
 
 func (e *htmlElement) TabIndex() int {
 	val, ok := e.GetAttribute("tabindex")
