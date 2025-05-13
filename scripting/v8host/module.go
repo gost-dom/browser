@@ -27,6 +27,9 @@ func (mod V8Module) Run() error {
 			err = fmt.Errorf("gost: v8host: awaiting module: %w", err)
 		}
 	}
+	if err == nil {
+		mod.ctx.clock.Tick()
+	}
 	return err
 }
 
