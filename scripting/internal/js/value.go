@@ -62,6 +62,7 @@ type Class[T any] interface {
 	CreatePrototypeAttribute(name string, getter FunctionCallback[T], setter FunctionCallback[T])
 	CreateInstanceAttribute(name string, getter FunctionCallback[T], setter FunctionCallback[T])
 	CreateIndexedHandler(getter HandlerGetterCallback[T, int])
+	CreateNamedHandler(getter HandlerGetterCallback[T, Value[T]])
 }
 
 // Constructor represents a JavaScript "class" that wraps a Go object.

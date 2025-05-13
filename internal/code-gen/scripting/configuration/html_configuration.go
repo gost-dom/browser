@@ -16,7 +16,7 @@ func ConfigureHTMLSpecs(specs *WebIdlConfigurations) {
 
 	htmlSvg := htmlSpecs.Type("HTMLOrSVGElement")
 	htmlSvg.Method("focus").SetCustomImplementation()
-	htmlSvg.Method("dataset").SetNotImplemented()
+	htmlSvg.Method("dataset").SetCustomImplementation()
 
 	history := htmlSpecs.Type("History")
 	history.OverrideWrappedType = &GoType{

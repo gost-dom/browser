@@ -43,11 +43,6 @@ func (w HTMLOrSVGElement[T]) blur(cbCtx js.CallbackContext[T]) (js.Value[T], err
 	return nil, nil
 }
 
-func (w HTMLOrSVGElement[T]) dataset(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLOrSVGElement.dataset")
-	return nil, errors.New("HTMLOrSVGElement.dataset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
-}
-
 func (w HTMLOrSVGElement[T]) nonce(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: HTMLOrSVGElement.nonce")
 	instance, err := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
