@@ -2,6 +2,7 @@ package v8host
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
@@ -199,9 +200,10 @@ func getWrappedInstance[T any](object *v8.Object) (res T, err error) {
 	field := object.GetInternalField(0)
 	handle := field.ExternalHandle()
 	var ok bool
-	res, ok = handle.Value().(T)
+	value := handle.Value()
+	res, ok = value.(T)
 	if !ok {
-		err = errors.New("Not a valid type stored in the handle")
+		err = fmt.Errorf("Not a valid type stored in the handle. %t", value)
 	}
 	return
 }
