@@ -211,6 +211,10 @@ func getWrappedInstance[T any](object *v8.Object) (res T, err error) {
 	return
 }
 
-func (o handleReffedObject[T]) getInstance(info *v8.FunctionCallbackInfo) (T, error) {
+type callbackInfo interface {
+	This() *v8.Object
+}
+
+func (o handleReffedObject[T]) getInstance(info callbackInfo) (T, error) {
 	return getWrappedInstance[T](info.This())
 }
