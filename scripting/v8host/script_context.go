@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"runtime/debug"
+	"strings"
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
@@ -163,7 +164,7 @@ func (ctx *V8ScriptContext) Compile(script string) (html.Script, error) {
 }
 
 func (ctx *V8ScriptContext) DownloadScript(url string) (html.Script, error) {
-	script, err := ctx.resolver.download(url)
+	script, _, err := ctx.resolver.download(url, false)
 	if err != nil {
 		return nil, err
 	}
@@ -172,6 +173,9 @@ func (ctx *V8ScriptContext) DownloadScript(url string) (html.Script, error) {
 
 func (ctx *V8ScriptContext) DownloadModule(url string) (html.Script, error) {
 	module, err := ctx.resolver.downloadAndCompile(url)
+	if err != nil {
+		return nil, err
+	}
 	if err = module.InstantiateModule(ctx.v8ctx, &ctx.resolver); err != nil {
 		return nil, fmt.Errorf("gost: v8host: module instantiation: %w", err)
 	}
@@ -189,26 +193,53 @@ type moduleResolver struct {
 	modules []resolvedModule
 }
 
-func (r *moduleResolver) download(url string) (string, error) {
+func (r *moduleResolver) download(
+	url string,
+	allowRetry bool,
+) (script string, retUrl string, err error) {
 	resp, err := r.host.httpClient.Get(url)
+	defer func() {
+		log.Debug(
+			r.host.logger,
+			"Fetch script",
+			"url",
+			url,
+			"status",
+			resp.StatusCode,
+			"script",
+			script,
+			"content-type", resp.Header.Get("Content-Type"),
+		)
+	}()
 	if err != nil {
-		return "", fmt.Errorf("gost: v8host: download errors: %w", err)
+		return "", url, fmt.Errorf("gost: v8host: download errors: %w", err)
 	}
 	defer resp.Body.Close()
 	buf := bytes.NewBuffer([]byte{})
 	buf.ReadFrom(resp.Body)
-	script := string(buf.Bytes())
+	script = string(buf.Bytes())
+
+	couldRetry := resp.StatusCode == 404 ||
+		!strings.HasPrefix(resp.Header.Get("Content-Type"), "text/javascript")
+
+	if couldRetry && allowRetry {
+		if script, url, err := r.download(url+".js", false); err == nil {
+			return script, url, err
+		}
+		if script, url, err := r.download(url+"/index.js", false); err == nil {
+			return script, url, err
+		}
+	}
 
 	if resp.StatusCode != 200 {
 		err := fmt.Errorf(
-			"gost: v8host: ScriptContext: bad status code: %d, downloading %s",
+			"gost: v8host: moduleResolve: bad status code: %d, downloading %s",
 			resp.StatusCode,
 			url,
 		)
-		r.host.logger.Error("Script download error", "err", err, "body", script)
-		return "", err
+		return "", url, err
 	}
-	return script, nil
+	return script, url, nil
 }
 
 func (r *moduleResolver) cached(url string) *v8go.Module {
@@ -220,12 +251,17 @@ func (r *moduleResolver) cached(url string) *v8go.Module {
 	return nil
 }
 
-func (r *moduleResolver) downloadAndCompile(url string) (*v8go.Module, error) {
+func (r *moduleResolver) downloadAndCompile(url string) (mod *v8go.Module, err error) {
+	defer func() {
+		if err != nil {
+			log.Error(r.host.logger, "Error compiling module", "err", err)
+		}
+	}()
 	if cached := r.cached(url); cached != nil {
 		return cached, nil
 	}
 
-	script, err := r.download(url)
+	script, url, err := r.download(url, true)
 	if err != nil {
 		return nil, err
 	}
@@ -260,5 +296,15 @@ func (r *moduleResolver) ResolveModule(
 		)
 	}
 	url := url.ParseURLBase(spec, refModule.location).Href()
+	log.Debug(
+		r.host.logger,
+		"Resolve module import",
+		"ref",
+		refModule.location,
+		"spec",
+		spec,
+		"url",
+		url,
+	)
 	return r.downloadAndCompile(url)
 }

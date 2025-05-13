@@ -1,0 +1,314 @@
+import { Hash, attrHash, elUniqId, walkDOM } from "../utils/dom";
+import { camel } from "../utils/text";
+import { effect } from "../vendored/preact-core";
+import { DSP, DSS } from "./consts";
+import { initErr, runtimeErr } from "./errors";
+import { SignalsRoot } from "./signals";
+import { PluginType, Requirement } from "./types";
+const signals = new SignalsRoot();
+const actions = {};
+const plugins = [];
+// Map of cleanup functions by element ID, keyed by a dataset key-value hash
+const removals = new Map();
+let mutationObserver = null;
+let alias = "";
+export function setAlias(value) {
+  alias = value;
+}
+export function load(...pluginsToLoad) {
+  for (const plugin of pluginsToLoad) {
+    const ctx = {
+      plugin,
+      signals,
+      effect: (cb) => effect(cb),
+      actions,
+      removals,
+      applyToElement,
+    };
+    let globalInitializer;
+    switch (plugin.type) {
+      case PluginType.Action: {
+        actions[plugin.name] = plugin;
+        break;
+      }
+      case PluginType.Attribute: {
+        const ap = plugin;
+        plugins.push(ap);
+        globalInitializer = ap.onGlobalInit;
+        break;
+      }
+      case PluginType.Watcher: {
+        const wp = plugin;
+        globalInitializer = wp.onGlobalInit;
+        break;
+      }
+      default: {
+        throw initErr("InvalidPluginType", ctx);
+      }
+    }
+    if (globalInitializer) {
+      globalInitializer(ctx);
+    }
+  }
+  // Sort attribute plugins by descending length then alphabetically
+  plugins.sort((a, b) => {
+    const lenDiff = b.name.length - a.name.length;
+    if (lenDiff !== 0) return lenDiff;
+    return a.name.localeCompare(b.name);
+  });
+}
+// Apply all plugins to all elements in the DOM
+export function apply() {
+  console.log("APPLY");
+  // Delay applying plugins to give custom plugins a chance to load
+  queueMicrotask(() => {
+    console.log("APPLYING");
+    applyToElement(document.documentElement);
+    observe();
+  });
+}
+// Apply all plugins to the element and its children
+function applyToElement(rootElement) {
+  walkDOM(rootElement, (el) => {
+    // Check if the element has any data attributes already
+    const toApply = new Array();
+    const elCleanups = removals.get(el.id) || new Map();
+    const toCleanup = new Map([...elCleanups]);
+    const hashes = new Map();
+    // Apply the plugins to the element in order of application
+    // since DOMStringMap is ordered, we can be deterministic
+    for (const datasetKey of Object.keys(el.dataset)) {
+      // Ignore data attributes that don’t start with the alias
+      if (!datasetKey.startsWith(alias)) {
+        break;
+      }
+      const datasetValue = el.dataset[datasetKey] || "";
+      const currentHash = attrHash(datasetKey, datasetValue);
+      hashes.set(datasetKey, currentHash);
+      // If the hash hasn't changed, ignore
+      // otherwise keep the old cleanup and add new to applys
+      if (elCleanups.has(currentHash)) {
+        toCleanup.delete(currentHash);
+      } else {
+        toApply.push(datasetKey);
+      }
+    }
+    // Clean up any old plugins and apply the new ones
+    for (const [_, cleanup] of toCleanup) {
+      cleanup();
+    }
+    for (const key of toApply) {
+      const h = hashes.get(key);
+      applyAttributePlugin(el, key, h);
+    }
+  });
+}
+// Set up a mutation observer to run plugin removal and apply functions
+function observe() {
+  if (mutationObserver) {
+    return;
+  }
+  mutationObserver = new MutationObserver((mutations) => {
+    const toRemove = new Set();
+    const toApply = new Set();
+    for (const { target, type, addedNodes, removedNodes } of mutations) {
+      switch (type) {
+        case "childList":
+          {
+            for (const node of removedNodes) {
+              toRemove.add(node);
+            }
+            for (const node of addedNodes) {
+              toApply.add(node);
+            }
+          }
+          break;
+        case "attributes": {
+          toApply.add(target);
+          break;
+        }
+      }
+    }
+    for (const el of toRemove) {
+      const elTracking = removals.get(el.id);
+      if (elTracking) {
+        for (const [hash, cleanup] of elTracking) {
+          cleanup();
+          elTracking.delete(hash);
+        }
+        if (elTracking.size === 0) {
+          removals.delete(el.id);
+        }
+      }
+    }
+    for (const el of toApply) {
+      applyToElement(el);
+    }
+  });
+  mutationObserver.observe(document.body, {
+    attributes: true,
+    attributeOldValue: true,
+    childList: true,
+    subtree: true,
+  });
+}
+function applyAttributePlugin(el, camelCasedKey, hash) {
+  // Extract the raw key from the dataset
+  const rawKey = camel(camelCasedKey.slice(alias.length));
+  // Find the plugin that matches, since the plugins are sorted by length descending and alphabetically. The first match will be the most specific.
+  const plugin = plugins.find((p) => {
+    // Ignore keys with the plugin name as a prefix (ignores `classes` but not `classBold`)
+    const regex = new RegExp(`^${p.name}([A-Z]|_|$)`);
+    return regex.test(rawKey);
+  });
+  // Skip if no plugin is found
+  if (!plugin) return;
+  // Ensure the element has an id
+  if (!el.id.length) el.id = elUniqId(el);
+  // Extract the key and modifiers
+  let [key, ...rawModifiers] = rawKey.slice(plugin.name.length).split(/\_\_+/);
+  const hasKey = key.length > 0;
+  if (hasKey) {
+    key = camel(key);
+  }
+  const value = el.dataset[camelCasedKey] || "";
+  const hasValue = value.length > 0;
+  // Create the runtime context
+  const ctx = {
+    signals,
+    applyToElement,
+    effect: (cb) => effect(cb),
+    actions,
+    removals,
+    genRX: () => genRX(ctx, ...(plugin.argNames || [])),
+    plugin,
+    el,
+    rawKey,
+    key,
+    value,
+    mods: new Map(),
+  };
+  // Check the requirements
+  const keyReq = plugin.keyReq || Requirement.Allowed;
+  if (hasKey) {
+    if (keyReq === Requirement.Denied) {
+      throw runtimeErr(`${plugin.name}KeyNotAllowed`, ctx);
+    }
+  } else if (keyReq === Requirement.Must) {
+    throw runtimeErr(`${plugin.name}KeyRequired`, ctx);
+  }
+  const valReq = plugin.valReq || Requirement.Allowed;
+  if (hasValue) {
+    if (valReq === Requirement.Denied) {
+      throw runtimeErr(`${plugin.name}ValueNotAllowed`, ctx);
+    }
+  } else if (valReq === Requirement.Must) {
+    throw runtimeErr(`${plugin.name}ValueRequired`, ctx);
+  }
+  // Check for exclusive requirements
+  if (keyReq === Requirement.Exclusive || valReq === Requirement.Exclusive) {
+    if (hasKey && hasValue) {
+      throw runtimeErr(`${plugin.name}KeyAndValueProvided`, ctx);
+    }
+    if (!hasKey && !hasValue) {
+      throw runtimeErr(`${plugin.name}KeyOrValueRequired`, ctx);
+    }
+  }
+  for (const rawMod of rawModifiers) {
+    const [label, ...mod] = rawMod.split(".");
+    ctx.mods.set(camel(label), new Set(mod.map((t) => t.toLowerCase())));
+  }
+  // Load the plugin
+  const cleanup = plugin.onLoad(ctx) ?? (() => {});
+  // Store the cleanup function
+  let elTracking = removals.get(el.id);
+  if (!elTracking) {
+    elTracking = new Map();
+    removals.set(el.id, elTracking);
+  }
+  elTracking.set(hash, cleanup);
+}
+function genRX(ctx, ...argNames) {
+  let userExpression = "";
+  // This regex allows Datastar expressions to support nested
+  // regex and strings that contain ; without breaking.
+  //
+  // Each of these regex defines a block type we want to match
+  // (importantly we ignore the content within these blocks):
+  //
+  // regex            \/(\\\/|[^\/])*\/
+  // double quotes      "(\\"|[^\"])*"
+  // single quotes      '(\\'|[^'])*'
+  // ticks              `(\\`|[^`])*`
+  //
+  // We also want to match the non delimiter part of statements
+  // note we only support ; statement delimiters:
+  //
+  // [^;]
+  //
+  const statementRe =
+    /(\/(\\\/|[^\/])*\/|"(\\"|[^\"])*"|'(\\'|[^'])*'|`(\\`|[^`])*`|[^;])+/gm;
+  const statements = ctx.value.trim().match(statementRe);
+  if (statements) {
+    const lastIdx = statements.length - 1;
+    const last = statements[lastIdx].trim();
+    if (!last.startsWith("return")) {
+      statements[lastIdx] = `return (${last});`;
+    }
+    userExpression = statements.join(";\n");
+  }
+  // Ignore any escaped values
+  const escaped = new Map();
+  const escapeRe = new RegExp(`(?:${DSP})(.*?)(?:${DSS})`, "gm");
+  for (const match of userExpression.matchAll(escapeRe)) {
+    const k = match[1];
+    const v = new Hash("dsEscaped").with(k).string;
+    escaped.set(v, k);
+    userExpression = userExpression.replace(DSP + k + DSS, v);
+  }
+  const fnCall = /@(\w*)\(/gm;
+  const matches = userExpression.matchAll(fnCall);
+  const methodsCalled = new Set();
+  for (const match of matches) {
+    methodsCalled.add(match[1]);
+  }
+  // Replace any action calls
+  const actionsRe = new RegExp(`@(${Object.keys(actions).join("|")})\\(`, "gm");
+  // Add ctx to action calls
+  userExpression = userExpression.replaceAll(
+    actionsRe,
+    "ctx.actions.$1.fn(ctx,"
+  );
+  // Replace any signal calls
+  const signalNames = ctx.signals.paths();
+  if (signalNames.length) {
+    // Match any valid `$signalName` followed by a non-word character or end of string
+    const signalsRe = new RegExp(`\\$(${signalNames.join("|")})(\\W|$)`, "gm");
+    userExpression = userExpression.replaceAll(
+      signalsRe,
+      `ctx.signals.signal('$1').value$2`
+    );
+  }
+  // Replace any escaped values
+  for (const [k, v] of escaped) {
+    userExpression = userExpression.replace(k, v);
+  }
+  const fnContent = `return (() => {\n${userExpression}\n})()`; // Wrap in IIFE
+  ctx.fnContent = fnContent;
+  try {
+    const fn = new Function("ctx", ...argNames, fnContent);
+    return (...args) => {
+      try {
+        return fn(ctx, ...args);
+      } catch (error) {
+        throw runtimeErr("ExecuteExpression", ctx, {
+          error: error.message,
+        });
+      }
+    };
+  } catch (error) {
+    throw runtimeErr("GenerateExpression", ctx, {
+      error: error.message,
+    });
+  }
+}
