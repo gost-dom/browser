@@ -266,3 +266,10 @@ func (c v8Class) CreateIndexedHandler(getter js.HandlerGetterCallback[jsTypePara
 		return toV8Value(res), err
 	})
 }
+
+func (c v8Class) CreateNamedHandler(getter js.HandlerGetterCallback[jsTypeParam, jsValue]) {
+	// c.inst.SetIndexedHandler(func(info *v8go.FunctionCallbackInfo) (*v8go.Value, error) {
+	// 	res, err := getter(newIndexedGetterCallbackContext(c.host, info))
+	// 	return toV8Value(res), err
+	// })
+}

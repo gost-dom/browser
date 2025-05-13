@@ -16,3 +16,7 @@ func Bootstrap[T any](reg js.ClassBuilder[T]) {
 	js.RegisterClass(reg, "Location", "", NewLocation)
 	js.RegisterClass(reg, "Window", "EventTarget", NewWindow)
 }
+
+func InitBuilder[T any](reg js.ClassBuilder[T]) {
+	Bootstrap[T](reg)
+}

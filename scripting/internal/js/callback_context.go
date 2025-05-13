@@ -13,6 +13,8 @@ import (
 var ErrMissingArgument = errors.New("missing argument")
 var ErrNoInternalValue = errors.New("object does not have an internal instance")
 
+var NotIntercepted = errors.New("Not intercepted")
+
 // disposable represents a resource that needs cleanup when a context is closed.
 // E.g., cgo handles that need to be released.
 type Disposable interface{ Dispose() }
