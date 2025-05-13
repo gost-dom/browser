@@ -29,6 +29,8 @@ func testHTMLElementDataset(t *testing.T) {
 	)
 	target := doc.GetHTMLElementById("target")
 
+	assert.Equal(t, []string{"foo", "fooBar"}, target.Dataset().Keys())
+
 	v, ok := target.Dataset().Get("foo")
 	assert.True(t, ok)
 	assert.Equal(t, "foo", v)
@@ -45,6 +47,7 @@ func testHTMLElementDataset(t *testing.T) {
 	target.Dataset().Delete("foo-bar")
 	_, ok = target.Dataset().Get("fooBar")
 	assert.False(t, ok, "data-foo-bar found after delete")
+
 }
 
 func testHTMLElementTabIndex(t *testing.T) {

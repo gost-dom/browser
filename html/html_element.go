@@ -45,7 +45,7 @@ func newHTMLElement(tagName string, ownerDocument HTMLDocument) htmlElement {
 		Renderer:         renderer,
 		ChildrenRenderer: childrenRenderer,
 		htmlDocument:     ownerDocument,
-		dataset:          DOMStringMap{element},
+		dataset:          DOMStringMap{Element: element},
 	}
 	return result
 }
