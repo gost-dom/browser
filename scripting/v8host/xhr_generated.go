@@ -198,18 +198,15 @@ func (w xmlHttpRequestV8Wrapper) timeout(info *v8.FunctionCallbackInfo) (*v8.Val
 
 func (w xmlHttpRequestV8Wrapper) setTimeout(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.setTimeout")
-	args := newArgumentHelper(w.scriptHost, info)
+	ctx := w.mustGetContext(info)
 	instance, err0 := w.getInstance(info)
-	val, err1 := tryParseArg(args, 0, w.decodeUnsignedLong)
-	if args.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return nil, err
-		}
-		instance.SetTimeout(val)
-		return nil, nil
+	val, err1 := parseSetterArg(ctx, info, w.decodeUnsignedLong)
+	err := errors.Join(err0, err1)
+	if err != nil {
+		return nil, err
 	}
-	return nil, errors.New("XMLHttpRequest.setTimeout: Missing arguments")
+	instance.SetTimeout(val)
+	return nil, nil
 }
 
 func (w xmlHttpRequestV8Wrapper) withCredentials(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -225,18 +222,15 @@ func (w xmlHttpRequestV8Wrapper) withCredentials(info *v8.FunctionCallbackInfo) 
 
 func (w xmlHttpRequestV8Wrapper) setWithCredentials(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.setWithCredentials")
-	args := newArgumentHelper(w.scriptHost, info)
+	ctx := w.mustGetContext(info)
 	instance, err0 := w.getInstance(info)
-	val, err1 := tryParseArg(args, 0, w.decodeBoolean)
-	if args.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return nil, err
-		}
-		instance.SetWithCredentials(val)
-		return nil, nil
+	val, err1 := parseSetterArg(ctx, info, w.decodeBoolean)
+	err := errors.Join(err0, err1)
+	if err != nil {
+		return nil, err
 	}
-	return nil, errors.New("XMLHttpRequest.setWithCredentials: Missing arguments")
+	instance.SetWithCredentials(val)
+	return nil, nil
 }
 
 func (w xmlHttpRequestV8Wrapper) responseURL(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

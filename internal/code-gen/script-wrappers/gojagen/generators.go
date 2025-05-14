@@ -117,6 +117,46 @@ func (gen GojaTargetGenerators) ReturnErrMsg(errGen g.Generator) g.Generator {
 	return g.Raw(jen.Panic(errGen.Generate()))
 }
 
+func (gen GojaTargetGenerators) CreateAttributeGetter(
+	data model.ESConstructorData,
+	op model.ESOperation,
+	eval func(g.Generator) g.Generator,
+) g.Generator {
+	// return gen.CreateMethodCallbackBody(data, op)
+	callArgument := g.Id("c")
+	naming := GojaNamingStrategy{data}
+	receiver := g.NewValue(naming.ReceiverName())
+	instance := g.NewValue("instance")
+	return g.StatementList(
+		g.Assign(instance, receiver.Field("getInstance").Call(callArgument)),
+		gen.ConvertResult(op, receiver, eval(instance)),
+	)
+}
+
+func (gen GojaTargetGenerators) CreateAttributeSetter(
+	data model.ESConstructorData,
+	op model.ESOperation,
+	updateValue func(g.Generator, g.Generator) g.Generator,
+) g.Generator {
+	callArgument := g.Id("c")
+	naming := GojaNamingStrategy{data}
+	receiver := g.NewValue(naming.ReceiverName())
+	instance := g.NewValue("instance")
+	readArgs := g.StatementList()
+	argNames := make([]g.Generator, len(op.Arguments))
+	for i, a := range op.Arguments {
+		argNames[i] = g.Id(a.Name)
+		value := g.Raw(callArgument.Generate().Dot("Arguments").Index(jen.Lit(i)))
+		converter := fmt.Sprintf("decode%s", a.Type)
+		readArgs.Append(g.Assign(argNames[i], receiver.Field(converter).Call(value)))
+	}
+	return g.StatementList(
+		g.Assign(instance, receiver.Field("getInstance").Call(callArgument)),
+		readArgs,
+		gen.ConvertResult(op, receiver, updateValue(instance, argNames[0])),
+	)
+}
+
 func (gen GojaTargetGenerators) CreateMethodCallbackBody(
 	data model.ESConstructorData,
 	op model.ESOperation,
@@ -133,38 +173,46 @@ func (gen GojaTargetGenerators) CreateMethodCallbackBody(
 		converter := fmt.Sprintf("decode%s", a.Type)
 		readArgs.Append(g.Assign(argNames[i], receiver.Field(converter).Call(value)))
 	}
-	list := g.StatementList(
+	return g.StatementList(
 		g.Assign(instance, receiver.Field("getInstance").Call(callArgument)),
 		readArgs,
+		gen.ConvertResult(op, receiver,
+			instance.Field(UpperCaseFirstLetter(op.Name)).Call(argNames...),
+		),
 	)
+}
+
+func (gen GojaTargetGenerators) ConvertResult(
+	op model.ESOperation,
+	receiver g.Value,
+	evaluate g.Generator,
+) g.Generator {
+	list := g.StatementList()
 	if op.HasResult() {
 		converter := op.Encoder()
 		if op.GetHasError() {
 			list.Append(
 				g.AssignMany(g.List(
 					g.Id("result"), g.Id("err")),
-					instance.Field(UpperCaseFirstLetter(op.Name)).Call(argNames...),
+					evaluate,
 				),
 				panicOnNotNil(g.Id("err")),
 			)
 		} else {
 			list.Append(
-				g.Assign(
-					g.Id("result"),
-					instance.Field(UpperCaseFirstLetter(op.Name)).Call(argNames...),
-				),
+				g.Assign(g.Id("result"), evaluate),
 			)
 		}
 		list.Append(g.Return(receiver.Field(converter).Call(g.Id("result"))))
 	} else {
 		if op.GetHasError() {
 			list.Append(
-				g.Assign(g.Id("err"), instance.Field(UpperCaseFirstLetter(op.Name)).Call(argNames...)),
+				g.Assign(g.Id("err"), evaluate),
 				panicOnNotNil(g.Id("err")),
 			)
 
 		} else {
-			list.Append(instance.Field(UpperCaseFirstLetter(op.Name)).Call(argNames...))
+			list.Append(evaluate)
 			list.Append(g.Return(g.Nil))
 		}
 	}

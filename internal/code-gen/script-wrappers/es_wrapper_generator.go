@@ -185,12 +185,12 @@ func ReturnOnAnyError(errNames []g.Generator) g.Generator {
 	case 0:
 		return g.Noop
 	case 1:
-		return returnIfError(errNames[0])
+		return ReturnIfError(errNames[0])
 	default:
 		err := g.Id("err")
 		return g.StatementList(
 			g.Assign(err, stdgen.ErrorsJoin(errNames...)),
-			returnIfError(err),
+			ReturnIfError(err),
 		)
 	}
 }
@@ -210,7 +210,7 @@ func SanitizeVarName(name string) string {
 	return name
 }
 
-func returnIfError(err g.Generator) g.Generator {
+func ReturnIfError(err g.Generator) g.Generator {
 	return g.IfStmt{
 		Condition: g.Neq{Lhs: err, Rhs: g.Nil},
 		Block:     g.Return(g.Nil, err),

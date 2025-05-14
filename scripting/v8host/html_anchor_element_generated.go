@@ -64,16 +64,13 @@ func (w htmlAnchorElementV8Wrapper) target(info *v8.FunctionCallbackInfo) (*v8.V
 
 func (w htmlAnchorElementV8Wrapper) setTarget(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLAnchorElement.setTarget")
-	args := newArgumentHelper(w.scriptHost, info)
+	ctx := w.mustGetContext(info)
 	instance, err0 := w.getInstance(info)
-	val, err1 := tryParseArg(args, 0, w.decodeDOMString)
-	if args.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return nil, err
-		}
-		instance.SetTarget(val)
-		return nil, nil
+	val, err1 := parseSetterArg(ctx, info, w.decodeDOMString)
+	err := errors.Join(err0, err1)
+	if err != nil {
+		return nil, err
 	}
-	return nil, errors.New("HTMLAnchorElement.setTarget: Missing arguments")
+	instance.SetTarget(val)
+	return nil, nil
 }

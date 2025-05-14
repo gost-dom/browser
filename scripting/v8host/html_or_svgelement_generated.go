@@ -84,18 +84,15 @@ func (w htmlOrSVGElementV8Wrapper) nonce(info *v8.FunctionCallbackInfo) (*v8.Val
 
 func (w htmlOrSVGElementV8Wrapper) setNonce(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.setNonce")
-	args := newArgumentHelper(w.scriptHost, info)
+	ctx := w.mustGetContext(info)
 	instance, err0 := w.getInstance(info)
-	val, err1 := tryParseArg(args, 0, w.decodeDOMString)
-	if args.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return nil, err
-		}
-		instance.SetNonce(val)
-		return nil, nil
+	val, err1 := parseSetterArg(ctx, info, w.decodeDOMString)
+	err := errors.Join(err0, err1)
+	if err != nil {
+		return nil, err
 	}
-	return nil, errors.New("HTMLOrSVGElement.setNonce: Missing arguments")
+	instance.SetNonce(val)
+	return nil, nil
 }
 
 func (w htmlOrSVGElementV8Wrapper) autofocus(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -111,18 +108,15 @@ func (w htmlOrSVGElementV8Wrapper) autofocus(info *v8.FunctionCallbackInfo) (*v8
 
 func (w htmlOrSVGElementV8Wrapper) setAutofocus(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.setAutofocus")
-	args := newArgumentHelper(w.scriptHost, info)
+	ctx := w.mustGetContext(info)
 	instance, err0 := w.getInstance(info)
-	val, err1 := tryParseArg(args, 0, w.decodeBoolean)
-	if args.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return nil, err
-		}
-		instance.SetAutofocus(val)
-		return nil, nil
+	val, err1 := parseSetterArg(ctx, info, w.decodeBoolean)
+	err := errors.Join(err0, err1)
+	if err != nil {
+		return nil, err
 	}
-	return nil, errors.New("HTMLOrSVGElement.setAutofocus: Missing arguments")
+	instance.SetAutofocus(val)
+	return nil, nil
 }
 
 func (w htmlOrSVGElementV8Wrapper) tabIndex(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -138,16 +132,13 @@ func (w htmlOrSVGElementV8Wrapper) tabIndex(info *v8.FunctionCallbackInfo) (*v8.
 
 func (w htmlOrSVGElementV8Wrapper) setTabIndex(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.setTabIndex")
-	args := newArgumentHelper(w.scriptHost, info)
+	ctx := w.mustGetContext(info)
 	instance, err0 := w.getInstance(info)
-	val, err1 := tryParseArg(args, 0, w.decodeLong)
-	if args.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return nil, err
-		}
-		instance.SetTabIndex(val)
-		return nil, nil
+	val, err1 := parseSetterArg(ctx, info, w.decodeLong)
+	err := errors.Join(err0, err1)
+	if err != nil {
+		return nil, err
 	}
-	return nil, errors.New("HTMLOrSVGElement.setTabIndex: Missing arguments")
+	instance.SetTabIndex(val)
+	return nil, nil
 }

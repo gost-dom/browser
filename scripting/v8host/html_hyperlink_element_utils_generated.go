@@ -95,18 +95,15 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) href(info *v8.FunctionCallbackInfo) 
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setHref(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setHref")
-	args := newArgumentHelper(w.scriptHost, info)
+	ctx := w.mustGetContext(info)
 	instance, err0 := w.getInstance(info)
-	val, err1 := tryParseArg(args, 0, w.decodeUSVString)
-	if args.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return nil, err
-		}
-		instance.SetHref(val)
-		return nil, nil
+	val, err1 := parseSetterArg(ctx, info, w.decodeUSVString)
+	err := errors.Join(err0, err1)
+	if err != nil {
+		return nil, err
 	}
-	return nil, errors.New("HTMLHyperlinkElementUtils.setHref: Missing arguments")
+	instance.SetHref(val)
+	return nil, nil
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) origin(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -133,18 +130,15 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) protocol(info *v8.FunctionCallbackIn
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setProtocol(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setProtocol")
-	args := newArgumentHelper(w.scriptHost, info)
+	ctx := w.mustGetContext(info)
 	instance, err0 := w.getInstance(info)
-	val, err1 := tryParseArg(args, 0, w.decodeUSVString)
-	if args.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return nil, err
-		}
-		instance.SetProtocol(val)
-		return nil, nil
+	val, err1 := parseSetterArg(ctx, info, w.decodeUSVString)
+	err := errors.Join(err0, err1)
+	if err != nil {
+		return nil, err
 	}
-	return nil, errors.New("HTMLHyperlinkElementUtils.setProtocol: Missing arguments")
+	instance.SetProtocol(val)
+	return nil, nil
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) username(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -160,18 +154,15 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) username(info *v8.FunctionCallbackIn
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setUsername(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setUsername")
-	args := newArgumentHelper(w.scriptHost, info)
+	ctx := w.mustGetContext(info)
 	instance, err0 := w.getInstance(info)
-	val, err1 := tryParseArg(args, 0, w.decodeUSVString)
-	if args.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return nil, err
-		}
-		instance.SetUsername(val)
-		return nil, nil
+	val, err1 := parseSetterArg(ctx, info, w.decodeUSVString)
+	err := errors.Join(err0, err1)
+	if err != nil {
+		return nil, err
 	}
-	return nil, errors.New("HTMLHyperlinkElementUtils.setUsername: Missing arguments")
+	instance.SetUsername(val)
+	return nil, nil
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) password(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -187,18 +178,15 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) password(info *v8.FunctionCallbackIn
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setPassword(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setPassword")
-	args := newArgumentHelper(w.scriptHost, info)
+	ctx := w.mustGetContext(info)
 	instance, err0 := w.getInstance(info)
-	val, err1 := tryParseArg(args, 0, w.decodeUSVString)
-	if args.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return nil, err
-		}
-		instance.SetPassword(val)
-		return nil, nil
+	val, err1 := parseSetterArg(ctx, info, w.decodeUSVString)
+	err := errors.Join(err0, err1)
+	if err != nil {
+		return nil, err
 	}
-	return nil, errors.New("HTMLHyperlinkElementUtils.setPassword: Missing arguments")
+	instance.SetPassword(val)
+	return nil, nil
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) host(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -214,18 +202,15 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) host(info *v8.FunctionCallbackInfo) 
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setHost(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setHost")
-	args := newArgumentHelper(w.scriptHost, info)
+	ctx := w.mustGetContext(info)
 	instance, err0 := w.getInstance(info)
-	val, err1 := tryParseArg(args, 0, w.decodeUSVString)
-	if args.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return nil, err
-		}
-		instance.SetHost(val)
-		return nil, nil
+	val, err1 := parseSetterArg(ctx, info, w.decodeUSVString)
+	err := errors.Join(err0, err1)
+	if err != nil {
+		return nil, err
 	}
-	return nil, errors.New("HTMLHyperlinkElementUtils.setHost: Missing arguments")
+	instance.SetHost(val)
+	return nil, nil
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) hostname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -241,18 +226,15 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) hostname(info *v8.FunctionCallbackIn
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setHostname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setHostname")
-	args := newArgumentHelper(w.scriptHost, info)
+	ctx := w.mustGetContext(info)
 	instance, err0 := w.getInstance(info)
-	val, err1 := tryParseArg(args, 0, w.decodeUSVString)
-	if args.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return nil, err
-		}
-		instance.SetHostname(val)
-		return nil, nil
+	val, err1 := parseSetterArg(ctx, info, w.decodeUSVString)
+	err := errors.Join(err0, err1)
+	if err != nil {
+		return nil, err
 	}
-	return nil, errors.New("HTMLHyperlinkElementUtils.setHostname: Missing arguments")
+	instance.SetHostname(val)
+	return nil, nil
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) port(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -268,18 +250,15 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) port(info *v8.FunctionCallbackInfo) 
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setPort(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setPort")
-	args := newArgumentHelper(w.scriptHost, info)
+	ctx := w.mustGetContext(info)
 	instance, err0 := w.getInstance(info)
-	val, err1 := tryParseArg(args, 0, w.decodeUSVString)
-	if args.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return nil, err
-		}
-		instance.SetPort(val)
-		return nil, nil
+	val, err1 := parseSetterArg(ctx, info, w.decodeUSVString)
+	err := errors.Join(err0, err1)
+	if err != nil {
+		return nil, err
 	}
-	return nil, errors.New("HTMLHyperlinkElementUtils.setPort: Missing arguments")
+	instance.SetPort(val)
+	return nil, nil
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) pathname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -295,18 +274,15 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) pathname(info *v8.FunctionCallbackIn
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setPathname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setPathname")
-	args := newArgumentHelper(w.scriptHost, info)
+	ctx := w.mustGetContext(info)
 	instance, err0 := w.getInstance(info)
-	val, err1 := tryParseArg(args, 0, w.decodeUSVString)
-	if args.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return nil, err
-		}
-		instance.SetPathname(val)
-		return nil, nil
+	val, err1 := parseSetterArg(ctx, info, w.decodeUSVString)
+	err := errors.Join(err0, err1)
+	if err != nil {
+		return nil, err
 	}
-	return nil, errors.New("HTMLHyperlinkElementUtils.setPathname: Missing arguments")
+	instance.SetPathname(val)
+	return nil, nil
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) search(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -322,18 +298,15 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) search(info *v8.FunctionCallbackInfo
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setSearch(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setSearch")
-	args := newArgumentHelper(w.scriptHost, info)
+	ctx := w.mustGetContext(info)
 	instance, err0 := w.getInstance(info)
-	val, err1 := tryParseArg(args, 0, w.decodeUSVString)
-	if args.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return nil, err
-		}
-		instance.SetSearch(val)
-		return nil, nil
+	val, err1 := parseSetterArg(ctx, info, w.decodeUSVString)
+	err := errors.Join(err0, err1)
+	if err != nil {
+		return nil, err
 	}
-	return nil, errors.New("HTMLHyperlinkElementUtils.setSearch: Missing arguments")
+	instance.SetSearch(val)
+	return nil, nil
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) hash(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -349,16 +322,13 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) hash(info *v8.FunctionCallbackInfo) 
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setHash(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setHash")
-	args := newArgumentHelper(w.scriptHost, info)
+	ctx := w.mustGetContext(info)
 	instance, err0 := w.getInstance(info)
-	val, err1 := tryParseArg(args, 0, w.decodeUSVString)
-	if args.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return nil, err
-		}
-		instance.SetHash(val)
-		return nil, nil
+	val, err1 := parseSetterArg(ctx, info, w.decodeUSVString)
+	err := errors.Join(err0, err1)
+	if err != nil {
+		return nil, err
 	}
-	return nil, errors.New("HTMLHyperlinkElementUtils.setHash: Missing arguments")
+	instance.SetHash(val)
+	return nil, nil
 }

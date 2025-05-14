@@ -87,6 +87,64 @@ func (gen V8TargetGenerators) CreateConstructorCallback(data ESConstructorData) 
 	)
 }
 
+func (gen V8TargetGenerators) CreateAttributeGetter(
+	data ESConstructorData,
+	op ESOperation,
+	eval func(g.Generator) g.Generator,
+) g.Generator {
+	instance := g.NewValue("instance")
+	err := g.NewValue("err")
+	naming := V8NamingStrategy{data}
+	receiver := WrapperInstance{g.NewValue(naming.Receiver())}
+
+	x := V8InstanceInvocation{
+		Name:     "",
+		Args:     nil,
+		Op:       op,
+		Instance: &instance,
+		Receiver: receiver,
+	}
+	return g.StatementList(
+		V8RequireContext(receiver),
+		GetInstanceAndError(instance, err, data),
+		wrappers.ReturnIfError(err),
+		x.ConvertResult(eval(instance)),
+	)
+}
+
+func (gen V8TargetGenerators) CreateAttributeSetter(
+	data ESConstructorData,
+	op ESOperation,
+	set func(g.Generator, g.Generator) g.Generator,
+) g.Generator {
+	var (
+		err      = g.Id("err0")
+		err1     = g.Id("err1")
+		val      = g.Id("val")
+		instance = g.NewValue("instance")
+	)
+
+	naming := V8NamingStrategy{data}
+	receiver := WrapperInstance{g.NewValue(naming.Receiver())}
+
+	args := append(
+		[]g.Generator{g.Id("ctx"), g.Id("info")},
+		decodersForArg(receiver, op.Arguments[0])...,
+	)
+	parsedArg := g.NewValue("parseSetterArg").
+		Call(args...)
+
+	return g.StatementList(
+		V8RequireContext(receiver),
+		GetInstanceAndError(instance, err, data),
+		g.AssignMany(g.List(val, err1), parsedArg),
+
+		wrappers.ReturnOnAnyError([]g.Generator{err, err1}),
+		set(instance, val),
+		g.Return(g.Nil, g.Nil),
+	)
+}
+
 func (gen V8TargetGenerators) CreateMethodCallbackBody(
 	data ESConstructorData,
 	op ESOperation,

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/gost-dom/code-gen/customrules"
 	. "github.com/gost-dom/code-gen/internal"
 	wrappers "github.com/gost-dom/code-gen/script-wrappers"
 	"github.com/gost-dom/code-gen/script-wrappers/model"
@@ -242,12 +241,6 @@ func (c V8InstanceInvocation) ConvertResult(
 	return list
 }
 
-type ConvertReturnValue struct {
-	receiver g.Generator
-	idl.Operation
-	*customrules.OperationRule
-}
-
 func (c V8InstanceInvocation) ConvertReturnValue(retType idl.Type) g.Generator {
 	if model.IsNodeType(retType.Name) {
 		return g.Return(g.Raw(jen.Id("ctx").Dot("getInstanceForNode").Call(jen.Id("result"))))
@@ -305,11 +298,30 @@ func AssignArgs(data ESConstructorData, op ESOperation) g.Generator {
 	)
 }
 
+func decodersForArg(receiver g.Generator, arg ESOperationArgument) []g.Generator {
+	var convertNames []string
+	if arg.Type != "" {
+		convertNames = []string{fmt.Sprintf("decode%s", idlNameToGoName(arg.Type))}
+	} else {
+		types := arg.IdlType.IdlType.IType.Types
+		convertNames = make([]string, len(types))
+		for i, t := range types {
+			convertNames[i] = fmt.Sprintf("decode%s", t.IType.TypeName)
+		}
+	}
+	res := make([]g.Generator, len(convertNames))
+	for i, n := range convertNames {
+		res[i] = g.ValueOf(receiver).Field(n)
+	}
+	return res
+}
+
 func ReadArguments(data ESConstructorData, op ESOperation) (res V8ReadArguments) {
 	naming := V8NamingStrategy{data}
 	argCount := len(op.Arguments)
 	res.Args = make([]V8ReadArg, 0, argCount)
 	statements := g.StatementList()
+	receiver := g.NewValue(naming.Receiver())
 	for i, arg := range op.Arguments {
 		argName := g.Id(wrappers.SanitizeVarName(arg.Name))
 		errName := g.Id(fmt.Sprintf("err%d", i+1))
@@ -323,25 +335,14 @@ func ReadArguments(data ESConstructorData, op ESOperation) (res V8ReadArguments)
 			Index:    i,
 		})
 
-		var convertNames []string
-		if arg.Type != "" {
-			convertNames = []string{fmt.Sprintf("decode%s", idlNameToGoName(arg.Type))}
-		} else {
-			types := arg.IdlType.IdlType.IType.Types
-			convertNames = make([]string, len(types))
-			for i, t := range types {
-				convertNames[i] = fmt.Sprintf("decode%s", t.IType.TypeName)
-			}
-		}
+		var dec = decodersForArg(receiver, arg)
 
 		gConverters := []g.Generator{g.Id("args"), g.Lit(i)}
 		defaultName, hasDefault := arg.DefaultValueInGo()
 		if hasDefault {
 			gConverters = append(gConverters, g.NewValue(naming.Receiver()).Field(defaultName))
 		}
-		for _, n := range convertNames {
-			gConverters = append(gConverters, g.NewValue(naming.Receiver()).Field(n))
-		}
+		gConverters = append(gConverters, dec...)
 		if hasDefault {
 			statements.Append(g.AssignMany(g.List(argName, errName),
 				g.NewValue("tryParseArgWithDefault").Call(gConverters...)))
