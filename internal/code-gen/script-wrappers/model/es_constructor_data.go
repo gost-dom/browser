@@ -58,23 +58,11 @@ func (d ESConstructorData) AttributesToInstall() iter.Seq[ESAttribute] {
 	}
 }
 
-func (d ESConstructorData) WrapperFunctionsToGenerate() iter.Seq[ESOperation] {
+func (d ESConstructorData) OperationCallbackInfos() iter.Seq[ESOperation] {
 	return func(yield func(ESOperation) bool) {
 		for op := range d.WrapperFunctionsToInstall() {
 			if !op.MethodCustomization.CustomImplementation && !yield(op) {
 				return
-			}
-		}
-		for _, a := range d.Attributes {
-			if a.Getter != nil && !a.Getter.CustomImplementation {
-				if !yield(*a.Getter) {
-					return
-				}
-			}
-			if a.Setter != nil && !a.Setter.CustomImplementation {
-				if !yield(*a.Setter) {
-					return
-				}
 			}
 		}
 	}

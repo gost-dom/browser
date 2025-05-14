@@ -80,19 +80,39 @@ func (g PrototypeWrapperGenerator) Generate() *jen.Statement {
 		g.Platform.CreateHostInitializer(g.Data),
 		PrototypeInitializerGenerator(g),
 		g.Platform.CreateConstructorCallback(g.Data),
-		g.MethodCallbacks(g.Data),
+		g.CreateOperationCallbacks(g.Data),
+		g.CreateAttributeCallbacks(g.Data),
 	)
 
 	return list.Generate()
 }
 
-func (g PrototypeWrapperGenerator) MethodCallbacks(data ESConstructorData) Generator {
+func (g PrototypeWrapperGenerator) CreateOperationCallbacks(data ESConstructorData) Generator {
 	list := generators.StatementList()
-	for op := range data.WrapperFunctionsToGenerate() {
+	for op := range data.OperationCallbackInfos() {
 		list.Append(
 			generators.Line,
 			MethodCallback{data, op, g.Platform},
 		)
+	}
+	return list
+}
+
+func (g PrototypeWrapperGenerator) CreateAttributeCallbacks(data ESConstructorData) Generator {
+	list := generators.StatementList()
+	for _, attr := range data.Attributes {
+		if attr.Getter != nil && !attr.Getter.CustomImplementation {
+			list.Append(
+				generators.Line,
+				MethodCallback{data, *attr.Getter, g.Platform},
+			)
+		}
+		if attr.Setter != nil && !attr.Setter.CustomImplementation {
+			list.Append(
+				generators.Line,
+				MethodCallback{data, *attr.Setter, g.Platform},
+			)
+		}
 	}
 	return list
 }
