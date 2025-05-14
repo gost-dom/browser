@@ -212,17 +212,13 @@ func (c V8InstanceInvocation) AssignValues(evaluation g.Generator) g.Generator {
 		g.Id("callErr")}, evaluation)
 }
 
-func (c V8InstanceInvocation) PerformCall() (genRes V8InstanceInvocationResult) {
+func (c V8InstanceInvocation) ConvertResult(
+	evaluation g.Generator,
+) g.Generator {
 	hasError := c.Op.GetHasError()
 	hasValue := c.Op.HasResult() // != "undefined"
 
 	list := g.StatementListStmt{}
-	var evaluation g.Value
-	if c.Instance == nil {
-		evaluation = g.NewValue(idlNameToGoName(c.Name)).Call(c.Args...)
-	} else {
-		evaluation = c.Instance.Method(idlNameToGoName(c.Name)).Call(c.Args...)
-	}
 	list.Append(c.AssignValues(evaluation))
 
 	if !hasValue {
@@ -232,7 +228,6 @@ func (c V8InstanceInvocation) PerformCall() (genRes V8InstanceInvocationResult) 
 			list.Append(g.Return(g.Nil, g.Nil))
 		}
 	} else {
-		genRes.RequireContext = true
 		returnValue := c.ConvertReturnValue(c.Op.RetType)
 		if hasError {
 			list.Append(g.IfStmt{
@@ -244,15 +239,8 @@ func (c V8InstanceInvocation) PerformCall() (genRes V8InstanceInvocationResult) 
 			list.Append(returnValue)
 		}
 	}
-	genRes.Generator = list
-	return
+	return list
 }
-
-// func EvaluateMethodInvocation(
-// 	g.Generator,
-// ) g.Generator {
-// 	return call(args)
-// }
 
 type ConvertReturnValue struct {
 	receiver g.Generator
@@ -269,9 +257,12 @@ func (c V8InstanceInvocation) ConvertReturnValue(retType idl.Type) g.Generator {
 	}
 }
 
-func (c V8InstanceInvocation) GetGenerator() V8InstanceInvocationResult {
-	genRes := c.PerformCall()
-	return genRes
+func (c V8InstanceInvocation) GetGenerator() g.Generator {
+	if c.Instance == nil {
+		return c.ConvertResult(g.NewValue(idlNameToGoName(c.Name)).Call(c.Args...))
+	} else {
+		return c.ConvertResult(c.Instance.Method(idlNameToGoName(c.Name)).Call(c.Args...))
+	}
 }
 
 func CreateV8IllegalConstructorBody(data ESConstructorData) g.Generator {

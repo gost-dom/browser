@@ -101,15 +101,14 @@ func (gen V8TargetGenerators) CreateMethodCallbackBody(
 	}
 	requireContext := false
 	var CreateCall = func(functionName string, argnames []g.Generator, op ESOperation) g.Generator {
-		callInstance := V8InstanceInvocation{
+		requireContext = requireContext || op.HasResult()
+		return V8InstanceInvocation{
 			Name:     functionName,
 			Args:     argnames,
 			Op:       op,
 			Instance: &instance,
 			Receiver: receiver,
 		}.GetGenerator()
-		requireContext = requireContext || callInstance.RequireContext
-		return callInstance.Generator
 	}
 	statements := g.StatementList(
 		AssignArgs(data, op),
