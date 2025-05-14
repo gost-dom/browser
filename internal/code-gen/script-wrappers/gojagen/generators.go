@@ -138,7 +138,7 @@ func (gen GojaTargetGenerators) CreateMethodCallbackBody(
 		readArgs,
 	)
 	if op.HasResult() {
-		converter := fmt.Sprintf("to%s", op.RetTypeName())
+		converter := op.Encoder()
 		if op.GetHasError() {
 			list.Append(
 				g.AssignMany(g.List(

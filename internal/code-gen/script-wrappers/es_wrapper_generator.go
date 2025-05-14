@@ -3,7 +3,6 @@ package wrappers
 import (
 	"fmt"
 	"log/slog"
-	"strings"
 
 	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/script-wrappers/configuration"
@@ -101,12 +100,8 @@ func CreateAttributes(
 			Name:                 attribute.Name,
 			NotImplemented:       methodCustomization.NotImplemented,
 			CustomImplementation: methodCustomization.CustomImplementation,
-			LegacyRetType: idl.RetType{
-				TypeName: attribute.Type.Name,
-				Nullable: attribute.Type.Nullable,
-			},
-			RetType:             attribute.Type,
-			MethodCustomization: methodCustomization,
+			RetType:              attribute.Type,
+			MethodCustomization:  methodCustomization,
 		}
 		if !attribute.Readonly {
 			setter = new(ESOperation)
@@ -116,7 +111,6 @@ func CreateAttributes(
 			setter.NotImplemented = setter.NotImplemented || methodCustomization.NotImplemented
 			setter.CustomImplementation = setter.CustomImplementation ||
 				methodCustomization.CustomImplementation
-			setter.LegacyRetType = idl.NewRetTypeUndefined()
 			setter.RetType = IdlTypeUndefined
 			setter.Arguments = []ESOperationArgument{{
 				Name:     "val",
@@ -150,7 +144,6 @@ func createOperation(
 		Name:                 member.Name,
 		NotImplemented:       methodCustomization.NotImplemented,
 		CustomImplementation: methodCustomization.CustomImplementation,
-		LegacyRetType:        member.ReturnType(),
 		RetType:              idlOperation.ReturnType,
 		MethodCustomization:  methodCustomization,
 		HasError:             opRules.HasError,
@@ -200,22 +193,6 @@ func ReturnOnAnyError(errNames []g.Generator) g.Generator {
 			returnIfError(err),
 		)
 	}
-}
-
-func IsNodeType(typeName string) bool {
-	loweredName := strings.ToLower(typeName)
-	switch loweredName {
-	case "node":
-		return true
-	case "document":
-		return true
-	case "documentfragment":
-		return true
-	}
-	if strings.HasSuffix(loweredName, "element") {
-		return true
-	}
-	return false
 }
 
 // SanitizeVarName create a valid go variable name from a variable to avoid

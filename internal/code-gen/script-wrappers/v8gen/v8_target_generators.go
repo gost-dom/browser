@@ -2,6 +2,7 @@ package v8gen
 
 import (
 	wrappers "github.com/gost-dom/code-gen/script-wrappers"
+	"github.com/gost-dom/code-gen/script-wrappers/model"
 	. "github.com/gost-dom/code-gen/script-wrappers/model"
 	"github.com/gost-dom/code-gen/stdgen"
 	g "github.com/gost-dom/generators"
@@ -66,7 +67,7 @@ func (gen V8TargetGenerators) CreatePrototypeInitializerBody(
 func (gen V8TargetGenerators) CreateConstructorCallback(data ESConstructorData) g.Generator {
 	naming := V8NamingStrategy{data}
 	var body g.Generator
-	if wrappers.IsNodeType(data.IdlInterfaceName) {
+	if model.IsNodeType(data.IdlInterfaceName) {
 		body = CreateV8IllegalConstructorBody(data)
 	} else {
 		body = CreateV8ConstructorWrapperBody(data)

@@ -33,7 +33,7 @@ func (s IdlType) Generate() *jen.Statement {
 
 func (t IdlType) IsString() bool {
 	switch t.Name {
-	case "DOMString", "USVString":
+	case "DOMString", "USVString", "ByteString":
 		return true
 	}
 	return false

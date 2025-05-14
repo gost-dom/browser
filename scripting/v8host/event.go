@@ -29,7 +29,7 @@ func (w eventV8Wrapper) CreateInstance(
 	return w.store(e, ctx, this)
 }
 
-func (w eventV8Wrapper) toNullableEventTarget(
+func (w eventV8Wrapper) toEventTarget(
 	ctx *V8ScriptContext,
 	e event.EventTarget,
 ) (*v8.Value, error) {

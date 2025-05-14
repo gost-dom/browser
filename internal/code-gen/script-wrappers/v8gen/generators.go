@@ -7,6 +7,7 @@ import (
 	"github.com/gost-dom/code-gen/customrules"
 	. "github.com/gost-dom/code-gen/internal"
 	wrappers "github.com/gost-dom/code-gen/script-wrappers"
+	"github.com/gost-dom/code-gen/script-wrappers/model"
 	. "github.com/gost-dom/code-gen/script-wrappers/model"
 	"github.com/gost-dom/code-gen/stdgen"
 	g "github.com/gost-dom/generators"
@@ -260,7 +261,7 @@ type ConvertReturnValue struct {
 }
 
 func (c V8InstanceInvocation) ConvertReturnValue(retType idl.Type) g.Generator {
-	if wrappers.IsNodeType(retType.Name) {
+	if model.IsNodeType(retType.Name) {
 		return g.Return(g.Raw(jen.Id("ctx").Dot("getInstanceForNode").Call(jen.Id("result"))))
 	} else {
 		converter := c.Op.Encoder()
