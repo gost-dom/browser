@@ -64,20 +64,13 @@ func createFormData(host *V8ScriptHost) *v8.FunctionTemplate {
 	entryIterator := newIterator(
 		host,
 		func(instance html.FormDataEntry, ctx *V8ScriptContext) (*v8.Value, error) {
-			// TODO, no option to create an array, totally a hack!
-			arr, e1 := ctx.runScript("(k,v) => [k,v]")
-			if e1 != nil {
-				return nil, e1
-			}
-			f, e2 := arr.AsFunction()
-			k, e3 := v8.NewValue(iso, instance.Name)
-			v, e4 := v8.NewValue(iso, string(instance.Value))
-			err := errors.Join(e2, e3, e4)
+			k, e1 := v8.NewValue(iso, instance.Name)
+			v, e2 := v8.NewValue(iso, string(instance.Value))
+			err := errors.Join(e1, e2)
 			if err != nil {
 				return nil, err
 			}
-			res, err := f.Call(v8.Null(iso), k, v)
-			return res, err
+			return toArray(ctx.v8ctx, k, v)
 		})
 	builder.SetDefaultInstanceLookup()
 	protoBuilder := builder.NewPrototypeBuilder()
