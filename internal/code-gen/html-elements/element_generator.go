@@ -72,7 +72,7 @@ func (gen baseGenerator) Generate() *jen.Statement {
 		list.Append(gen.GenerateInterface())
 	}
 
-	if gen.req.GenerateReadonlyStruct {
+	if gen.req.GenerateReadonlyStruct || gen.rules.OutputType == customrules.OutputTypeStruct {
 		list.Append(gen.GenerateReadonlyStruct())
 	}
 

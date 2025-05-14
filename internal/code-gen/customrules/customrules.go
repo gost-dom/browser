@@ -22,14 +22,26 @@ import (
 // represent the types described in "dom.idl" in the webref specifications
 type CustomRules map[string]SpecRules
 
+type Package string
+
 // SpecRules define the rules for all the types in a single IDL specification
 // file. The key is the name of the interface the rule applies to
 type SpecRules map[string]InterfaceRule
 
+// Specifies how the type is represented in the internal Go model.
+type OutputType string
+
+const (
+	OutputTypeInterface OutputType = "interface"
+	OutputTypeStruct    OutputType = "struct"
+)
+
 // InterfaceRule specifies the rules for a specific interface or interface
 // mixin.
 type InterfaceRule struct {
-	Operations OperationRules
+	InterfacePackage Package
+	OutputType       OutputType
+	Operations       OperationRules
 }
 
 type OperationRules map[string]OperationRule
@@ -117,6 +129,9 @@ var rules = CustomRules{
 					},
 				}},
 		}},
+		"MutationRecord": {
+			OutputType: OutputTypeStruct,
+		},
 	},
 	"html": {
 		"Location": {Operations: OperationRules{
