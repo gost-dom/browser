@@ -34,20 +34,24 @@ func createData(
 	if idlInterface.Name != interfaceConfig.TypeName {
 		panic(fmt.Sprintf("createData error: %s = %s", idlInterface.Name, interfaceConfig.TypeName))
 	}
+	specRules := customrules.GetSpecRules(interfaceConfig.DomSpec.Name)
+	intfRules := specRules[interfaceConfig.TypeName]
 	return ESConstructorData{
 		Spec:             interfaceConfig,
+		CustomRule:       intfRules,
 		IdlInterfaceName: wrappedTypeName,
 		RunCustomCode:    interfaceConfig.RunCustomCode,
 		Inheritance:      idlInterface.Inheritance,
 		IdlInterface:     idlInterface,
-		Constructor:      CreateConstructor(idlInterface, interfaceConfig, idlName),
-		Operations:       CreateInstanceMethods(idlInterface, interfaceConfig, idlName),
+		Constructor:      CreateConstructor(idlInterface, intfRules, interfaceConfig, idlName),
+		Operations:       CreateInstanceMethods(idlInterface, intfRules, interfaceConfig, idlName),
 		Attributes:       CreateAttributes(idlInterface, interfaceConfig, idlName),
 	}
 }
 
 func CreateConstructor(
 	idlInterface idl.Interface,
+	intfRule customrules.InterfaceRule,
 	interfaceConfig *configuration.IdlInterfaceConfiguration,
 	idlName idl.TypeSpec) *ESOperation {
 	if c, ok := idlName.Constructor(); ok {
@@ -56,6 +60,7 @@ func CreateConstructor(
 		// TODO: Fix for constructor overloads
 		result := createOperation(
 			idlInterface,
+			intfRule,
 			interfaceConfig,
 			c,
 			idlInterface.Constructors[0].Arguments,
@@ -68,6 +73,7 @@ func CreateConstructor(
 
 func CreateInstanceMethods(
 	idlInterface idl.Interface,
+	intfRule customrules.InterfaceRule,
 	interfaceConfig *configuration.IdlInterfaceConfiguration,
 	idlName idl.TypeSpec) (result []ESOperation) {
 	for instanceMethod := range idlName.InstanceMethods() {
@@ -76,7 +82,13 @@ func CreateInstanceMethods(
 			panic("Method not found: " + instanceMethod.Name)
 		}
 
-		op := createOperation(idlInterface, interfaceConfig, instanceMethod, idlOperation.Arguments)
+		op := createOperation(
+			idlInterface,
+			intfRule,
+			interfaceConfig,
+			instanceMethod,
+			idlOperation.Arguments,
+		)
 		result = append(result, op)
 	}
 	return
@@ -130,12 +142,11 @@ func CreateAttributes(
 
 func createOperation(
 	idlInterface idl.Interface,
+	intfRules customrules.InterfaceRule,
 	typeSpec *configuration.IdlInterfaceConfiguration,
 	member idl.MemberSpec,
 	idlArgs []idl.Argument,
 ) ESOperation {
-	specRules := customrules.GetSpecRules(typeSpec.DomSpec.Name)
-	intfRules := specRules[typeSpec.TypeName]
 	opRules := intfRules.Operations[member.Name]
 	methodCustomization := typeSpec.GetMethodCustomization(member.Name)
 	idlOperation, _ := idlInterface.GetOperation(member.Name)

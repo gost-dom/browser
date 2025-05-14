@@ -3,6 +3,7 @@ package model
 import (
 	"iter"
 
+	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/code-gen/script-wrappers/configuration"
 	"github.com/gost-dom/webref/idl"
@@ -10,6 +11,7 @@ import (
 
 type ESConstructorData struct {
 	Spec             *configuration.IdlInterfaceConfiguration
+	CustomRule       customrules.InterfaceRule
 	IdlInterface     idl.Interface
 	IdlInterfaceName string
 	Inheritance      string
