@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/gost-dom/code-gen/customrules"
 	. "github.com/gost-dom/code-gen/internal"
 	wrappers "github.com/gost-dom/code-gen/script-wrappers"
 	. "github.com/gost-dom/code-gen/script-wrappers/model"
 	"github.com/gost-dom/code-gen/stdgen"
 	g "github.com/gost-dom/generators"
+	"github.com/gost-dom/webref/idl"
 
 	"github.com/dave/jennifer/jen"
 )
@@ -115,7 +117,6 @@ func CreateV8WrapperMethodInstanceInvocations(
 	createCallInstance func(string, []g.Generator, ESOperation) g.Generator,
 	extraError bool,
 ) g.Generator {
-	// arguments := op.Arguments
 	statements := g.StatementList()
 	missingArgsConts := fmt.Sprintf("%s.%s: Missing arguments", prototype.Name(), op.Name)
 	for i := len(args); i >= 0; i-- {
@@ -190,28 +191,29 @@ type V8InstanceInvocation struct {
 
 type V8InstanceInvocationResult struct {
 	Generator      g.Generator
-	HasValue       bool
-	HasError       bool
 	RequireContext bool
 }
 
+func (c V8InstanceInvocation) AssignValues(evaluation g.Generator) g.Generator {
+	HasError := c.Op.GetHasError()
+	HasValue := c.Op.HasResult()
+	if !HasError && !HasValue {
+		return evaluation
+	}
+	if HasError && !HasValue {
+		return g.Assign(g.Id("callErr"), evaluation)
+	}
+	if !HasError && HasValue {
+		return g.Assign(g.Id("result"), evaluation)
+	}
+	return g.AssignMany([]g.Generator{
+		g.Id("result"),
+		g.Id("callErr")}, evaluation)
+}
+
 func (c V8InstanceInvocation) PerformCall() (genRes V8InstanceInvocationResult) {
-	genRes.HasError = c.Op.GetHasError()
-	genRes.HasValue = c.Op.HasResult() // != "undefined"
-	var stmt *jen.Statement
-	if genRes.HasValue {
-		stmt = jen.Id("result")
-	}
-	if genRes.HasError {
-		if stmt != nil {
-			stmt = stmt.Op(",").Id("callErr")
-		} else {
-			stmt = jen.Id("callErr")
-		}
-	}
-	if stmt != nil {
-		stmt = stmt.Op(":=")
-	}
+	hasError := c.Op.GetHasError()
+	hasValue := c.Op.HasResult() // != "undefined"
 
 	list := g.StatementListStmt{}
 	var evaluation g.Value
@@ -220,55 +222,54 @@ func (c V8InstanceInvocation) PerformCall() (genRes V8InstanceInvocationResult) 
 	} else {
 		evaluation = c.Instance.Method(idlNameToGoName(c.Name)).Call(c.Args...)
 	}
-	if stmt == nil {
-		list.Append(evaluation)
-	} else {
-		list.Append(g.Raw(stmt.Add(evaluation.Generate())))
-	}
-	genRes.Generator = list
-	return
-}
+	list.Append(c.AssignValues(evaluation))
 
-func (c V8InstanceInvocation) GetGenerator() V8InstanceInvocationResult {
-	genRes := c.PerformCall()
-	list := g.StatementList()
-	list.Append(genRes.Generator)
-	if !genRes.HasValue {
-		if genRes.HasError {
+	if !hasValue {
+		if hasError {
 			list.Append(g.Return(g.Nil, g.Id("callErr")))
 		} else {
 			list.Append(g.Return(g.Nil, g.Nil))
 		}
 	} else {
-		retType := c.Op.LegacyRetType
-		if retType.IsNode() {
-			genRes.RequireContext = true
-			valueReturn := (g.Return(g.Raw(jen.Id("ctx").Dot("getInstanceForNode").Call(jen.Id("result")))))
-			if genRes.HasError {
-				list.Append(g.IfStmt{
-					Condition: g.Neq{Lhs: g.Id("callErr"), Rhs: g.Nil},
-					Block:     g.Return(g.Nil, g.Id("callErr")),
-					Else:      valueReturn,
-				})
-			} else {
-				list.Append(valueReturn)
-			}
+		genRes.RequireContext = true
+		returnValue := c.ConvertReturnValue(c.Op.RetType)
+		if hasError {
+			list.Append(g.IfStmt{
+				Condition: g.Neq{Lhs: g.Id("callErr"), Rhs: g.Nil},
+				Block:     g.Return(g.Nil, g.Id("callErr")),
+				Else:      returnValue,
+			})
 		} else {
-			converter := c.Op.Encoder()
-			genRes.RequireContext = true
-			valueReturn := g.Return(c.Receiver.Method(converter).Call(g.Id("ctx"), g.Id("result")))
-			if genRes.HasError {
-				list.Append(g.IfStmt{
-					Condition: g.Neq{Lhs: g.Id("callErr"), Rhs: g.Nil},
-					Block:     g.Return(g.Nil, g.Id("callErr")),
-					Else:      valueReturn,
-				})
-			} else {
-				list.Append(valueReturn)
-			}
+			list.Append(returnValue)
 		}
 	}
 	genRes.Generator = list
+	return
+}
+
+// func EvaluateMethodInvocation(
+// 	g.Generator,
+// ) g.Generator {
+// 	return call(args)
+// }
+
+type ConvertReturnValue struct {
+	receiver g.Generator
+	idl.Operation
+	*customrules.OperationRule
+}
+
+func (c V8InstanceInvocation) ConvertReturnValue(retType idl.Type) g.Generator {
+	if wrappers.IsNodeType(retType.Name) {
+		return g.Return(g.Raw(jen.Id("ctx").Dot("getInstanceForNode").Call(jen.Id("result"))))
+	} else {
+		converter := c.Op.Encoder()
+		return g.Return(c.Receiver.Method(converter).Call(g.Id("ctx"), g.Id("result")))
+	}
+}
+
+func (c V8InstanceInvocation) GetGenerator() V8InstanceInvocationResult {
+	genRes := c.PerformCall()
 	return genRes
 }
 
