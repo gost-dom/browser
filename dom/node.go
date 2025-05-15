@@ -256,17 +256,6 @@ func (n *node) removeObserver(o observer) {
 	n.observers = slices.DeleteFunc(n.observers, func(x observer) bool { return o == x })
 }
 
-type observerCloser struct {
-	n *node
-	o observer
-}
-
-func (c observerCloser) Close() {
-	c.n.removeObserver(c.o)
-}
-
-// func (n *node) CloneNode(deep bool) Node { return nil }
-
 func (n *node) GetRootNode(options ...GetRootNodeOptions) Node {
 	if len(options) > 1 {
 		log.Warn(n.Logger(), "Node.GetRootNode: composed not yet implemented")
@@ -474,25 +463,6 @@ func (n *node) replaceNodes(index, count int, node Node) error {
 
 }
 
-type nodeIterator struct{ Node }
-
-func toHtmlNodeAndMap(node Node) (*html.Node, map[*html.Node]Node) {
-	m := make(map[*html.Node]Node)
-	result := nodeIterator{node}.toHtmlNode(m)
-	return result, m
-}
-
-func (n nodeIterator) toHtmlNode(m map[*html.Node]Node) *html.Node {
-	htmlNode := n.Node.createHtmlNode()
-	if m != nil {
-		m[htmlNode] = n.Node
-	}
-	for _, child := range n.nodes() {
-		htmlNode.AppendChild(nodeIterator{child}.toHtmlNode(m))
-	}
-	return htmlNode
-}
-
 func (n *node) OwnerDocument() Document {
 	if _, isDoc := n.getSelf().(Document); isDoc {
 		return nil
@@ -599,4 +569,36 @@ func (n *node) Logger() *slog.Logger {
 		return docLogger.Logger()
 	}
 	return nil
+}
+
+/* -------- observerCloser -------- */
+
+type observerCloser struct {
+	n *node
+	o observer
+}
+
+func (c observerCloser) Close() {
+	c.n.removeObserver(c.o)
+}
+
+/* -------- nodeIterator -------- */
+
+type nodeIterator struct{ Node }
+
+func toHtmlNodeAndMap(node Node) (*html.Node, map[*html.Node]Node) {
+	m := make(map[*html.Node]Node)
+	result := nodeIterator{node}.toHtmlNode(m)
+	return result, m
+}
+
+func (n nodeIterator) toHtmlNode(m map[*html.Node]Node) *html.Node {
+	htmlNode := n.Node.createHtmlNode()
+	if m != nil {
+		m[htmlNode] = n.Node
+	}
+	for _, child := range n.nodes() {
+		htmlNode.AppendChild(nodeIterator{child}.toHtmlNode(m))
+	}
+	return htmlNode
 }
