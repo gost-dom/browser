@@ -204,7 +204,7 @@ func (s *MutationObserverTestSuite) TestChangeCDataValue() {
 		And(
 			HaveType(string(dom.ChangeEventCData)),
 			HaveTarget(textNode),
-			HaveOldValue(""),
+			HaveOldValue(BeNil()),
 		),
 		And(
 			HaveType(string(dom.ChangeEventCData)),

@@ -140,7 +140,7 @@ func (o *Observer) Process(e dom.ChangeEvent) {
 			return
 		}
 		if o.options.AttributeOldValue {
-			r.OldValue = e.OldValue
+			r.OldValue = &e.OldValue
 		}
 
 	case dom.ChangeEventCData:
@@ -148,7 +148,7 @@ func (o *Observer) Process(e dom.ChangeEvent) {
 			return
 		}
 		if o.options.CharacterDataOldValue {
-			r.OldValue = e.OldValue
+			r.OldValue = &e.OldValue
 		}
 
 	case dom.ChangeEventChildList:

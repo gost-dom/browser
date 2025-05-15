@@ -31,6 +31,15 @@ func (s IdlType) Generate() *jen.Statement {
 	}
 }
 
+type IdlTypeForStruct idl.Type
+
+func (s IdlTypeForStruct) Generate() *jen.Statement {
+	if IdlType(s).IsString() && s.Nullable {
+		return jen.Op("*").Id("string")
+	}
+	return IdlType(s).Generate()
+}
+
 func (t IdlType) IsString() bool {
 	switch t.Name {
 	case "DOMString", "USVString", "ByteString":

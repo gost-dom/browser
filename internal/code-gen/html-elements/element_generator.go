@@ -102,7 +102,7 @@ func (gen baseGenerator) GenerateReadonlyStruct() g.Generator {
 			)
 		}
 		field := internal.UpperCaseFirstLetter(string(a.Name))
-		result.Field(g.Id(field), IdlType(a.Type))
+		result.Field(g.Id(field), IdlTypeForStruct(a.Type))
 	}
 	return result
 }
