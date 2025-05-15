@@ -143,7 +143,11 @@ func CreateV8WrapperMethodInstanceInvocations(
 
 		callArgs := make([]g.Generator, i)
 		for idx, a := range currentArgs {
-			callArgs[idx] = a.ArgName
+			arg := a.ArgName
+			if a.Argument.CustomRule.Variadic {
+				arg = g.Raw(arg.Generate().Op("..."))
+			}
+			callArgs[idx] = arg
 		}
 		callInstance := createCallInstance(functionName, callArgs, op)
 		if i > 0 {

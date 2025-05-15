@@ -34,10 +34,14 @@ func (d ESConstructorData) Includes() []idl.Interface {
 }
 
 func (d ESConstructorData) GetInternalPackage() string {
-	if d.Name() == "Event" {
+	switch d.Name() {
+	case "Event":
 		return packagenames.Events
+	case "MutationObserver", "MutationRecord":
+		return packagenames.DomInterfaces
+	default:
+		return packagenames.PackageName(d.Spec.DomSpec.Name)
 	}
-	return packagenames.PackageName(d.Spec.DomSpec.Name)
 }
 
 func (d ESConstructorData) WrapperFunctionsToInstall() iter.Seq[ESOperation] {

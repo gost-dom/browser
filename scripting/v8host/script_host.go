@@ -130,6 +130,23 @@ func (c *V8ScriptContext) getInstanceForNode(
 	}
 }
 
+func (c *V8ScriptContext) createJSInstanceForObjectOfType(
+	constructor string,
+	instance any,
+) (*v8.Value, error) {
+	iso := c.host.iso
+	if instance == nil {
+		return v8.Null(iso), nil
+	}
+	prototype, ok := c.host.globals.namedGlobals[constructor]
+	if !ok {
+		panic("Bad constructor name")
+	}
+	jsThis, err := prototype.InstanceTemplate().NewInstance(c.v8ctx)
+	storeObjectHandleInV8Instance(instance, c, jsThis)
+	return jsThis.Value, err
+}
+
 func (c *V8ScriptContext) getInstanceForNodeByName(
 	constructor string,
 	node entity.ObjectIder,
@@ -154,7 +171,9 @@ func (c *V8ScriptContext) getInstanceForNodeByName(
 }
 
 func (c *V8ScriptContext) getCachedNode(this *v8.Object) (entity.ObjectIder, bool) {
-
+	if this.InternalFieldCount() < 1 {
+		return nil, false
+	}
 	h := this.GetInternalField(0).ExternalHandle()
 	r, ok := h.Value().(entity.ObjectIder)
 	return r, ok

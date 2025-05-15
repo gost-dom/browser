@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/dave/jennifer/jen"
+	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/code-gen/packagenames"
 	. "github.com/gost-dom/code-gen/script-wrappers/model"
@@ -237,7 +238,12 @@ func (b AttributeGetterCallbackBody) Generate() (res *jen.Statement) {
 	}
 	statements.Append(
 		b.platform.CreateAttributeGetter(b.data, b.op, func(instance g.Generator) g.Generator {
-			return g.ValueOf(instance).Field(internal.UpperCaseFirstLetter(b.op.Name)).Call()
+			field := g.ValueOf(instance).Field(internal.UpperCaseFirstLetter(b.op.Name))
+			if b.data.CustomRule.OutputType == customrules.OutputTypeStruct {
+				return field
+			} else {
+				return field.Call()
+			}
 		}),
 	)
 	return
@@ -267,7 +273,12 @@ func (b AttributeSetterCallbackBody) Generate() (res *jen.Statement) {
 			b.data,
 			b.op,
 			func(instance g.Generator, val g.Generator) g.Generator {
-				return g.ValueOf(instance).Field(internal.UpperCaseFirstLetter(b.op.Name)).Call(val)
+				field := g.ValueOf(instance).Field(internal.UpperCaseFirstLetter(b.op.Name))
+				if b.data.CustomRule.OutputType == customrules.OutputTypeStruct {
+					return g.Reassign(field, val)
+				} else {
+					return field.Call(val)
+				}
 			},
 		),
 	)

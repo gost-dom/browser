@@ -165,8 +165,9 @@ func (o *Observer) Process(e dom.ChangeEvent) {
 	o.pending = append(o.pending, r)
 }
 
-// Deprecated: Flush is a temporary solution while developing, and is not
-// intended to be called by client code.
+// Flush sends recorded events to the registered event handler. You generally
+// don't need to call flush, as events should be pushed when returning to the
+// "event loop".
 func (o *Observer) Flush() {
 	records := o.TakeRecords()
 	if len(records) > 0 {
