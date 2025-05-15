@@ -6,7 +6,6 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
-	"github.com/gost-dom/browser/internal/dom/mutation"
 	. "github.com/gost-dom/browser/internal/dom/mutation"
 	"github.com/gost-dom/browser/internal/gosterror"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
@@ -161,16 +160,16 @@ func (s *MutationObserverTestSuite) TestAttributeChanges() {
 
 	childRecorder := initMutationRecorder(parent, ChildList)
 	rec1 := initMutationRecorder(parent, Attributes, AttributeOldValue)
-	// rec2 := initMutationRecorder(parent, Attributes, AttributeFilter("data-x", "data-y"))
-	// rec3 := initMutationRecorder(parent, Attributes, Subtree)
-	// rec4 := initMutationRecorder(parent, Attributes, AttributeOldValue)
 
 	parent.AppendChild(doc.CreateElement("div")) // Should not be recorded
 	parent.SetAttribute("data-x", "New x value")
 	parent.SetAttribute("data-y", "New y value")
 	parent.SetAttribute("data-z", "New z value")
+
 	rec1.Flush()
-	s.Assert().Empty(childRecorder.Records, "ChildList mutations")
+	childRecorder.Flush()
+
+	s.Assert().Equal(1, len(childRecorder.Records))
 	s.Assert().Equal(3, len(rec1.Records))
 	s.Expect(rec1.Records).
 		To(gomega.HaveEach(gomega.HaveField("Type", string(dom.ChangeEventAttributes))))
@@ -238,39 +237,12 @@ source: https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver/observ
 */
 
 type MutationRecorder struct {
-	flushers map[mutation.Flusher]struct{}
-	Records  []Record
+	FlusherSet
+	Records []Record
 }
 
 func (r *MutationRecorder) Clear() {
 	r.Records = nil
-}
-
-func (r *MutationRecorder) ensureFlushers() {
-	if r.flushers == nil {
-		r.flushers = make(map[mutation.Flusher]struct{})
-	}
-}
-
-func (r *MutationRecorder) AddFlusher(f Flusher) {
-	if f == nil {
-		panic("MutationRecorder.AddFlusher: f is nil")
-	}
-	r.ensureFlushers()
-	r.flushers[f] = struct{}{}
-}
-
-func (r *MutationRecorder) RemoveFlusher(f Flusher) {
-	if _, found := r.flushers[f]; !found {
-		panic("MutationRecorder.RemoveFlusher: flusher is not added")
-	}
-	delete(r.flushers, f)
-}
-
-func (r *MutationRecorder) Flush() {
-	for f := range r.flushers {
-		f.Flush()
-	}
 }
 
 func (r *MutationRecorder) HandleMutation(recs []Record, _ *Observer) {

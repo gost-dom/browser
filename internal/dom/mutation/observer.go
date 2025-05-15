@@ -65,6 +65,8 @@ func NewObserver(f Flushers, cb Callback) *Observer {
 	return &Observer{Flushers: f, Callback: cb}
 }
 
+type ObserveOption = func(*Options)
+
 // Start observing for changes for a specific dom node.
 //
 // Panics if the observer does not have a handler.
