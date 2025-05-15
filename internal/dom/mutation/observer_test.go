@@ -6,6 +6,7 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/dom/mutation"
 	. "github.com/gost-dom/browser/internal/dom/mutation"
 	"github.com/gost-dom/browser/internal/gosterror"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
@@ -28,10 +29,38 @@ type MutationObserverTestSuite struct {
 }
 
 type MutationRecorder struct {
-	Records []Record
+	flushers map[mutation.Flusher]struct{}
+	Records  []Record
 }
 
 func (r *MutationRecorder) Clear() { r.Records = nil }
+
+func (r *MutationRecorder) ensureFlushers() {
+	if r.flushers == nil {
+		r.flushers = make(map[mutation.Flusher]struct{})
+	}
+}
+
+func (r *MutationRecorder) AddFlusher(f Flusher) {
+	if f == nil {
+		panic("MutationRecorder.AddFlusher: f is nil")
+	}
+	r.ensureFlushers()
+	r.flushers[f] = struct{}{}
+}
+
+func (r *MutationRecorder) RemoveFlusher(f Flusher) {
+	if _, found := r.flushers[f]; !found {
+		panic("MutationRecorder.RemoveFlusher: flusher is not added")
+	}
+	delete(r.flushers, f)
+}
+
+func (r *MutationRecorder) Flush() {
+	for f := range r.flushers {
+		f.Flush()
+	}
+}
 
 func (r *MutationRecorder) HandleMutation(recs []Record, _ *Observer) {
 	r.Records = append(r.Records, recs...)
@@ -67,7 +96,7 @@ func (r MutationRecorder) RemovedNodes() []dom.Node {
 
 func (s *MutationObserverTestSuite) TestObserveChildListNoSubtree() {
 	var recorder MutationRecorder
-	observer := NewObserver(&recorder)
+	observer := NewObserver(&recorder, &recorder)
 
 	doc := html.NewHTMLDocument(nil)
 	body := doc.Body()
@@ -78,18 +107,18 @@ func (s *MutationObserverTestSuite) TestObserveChildListNoSubtree() {
 	div.SetAttribute("id", "parent")
 	body.AppendChild(div)
 
-	observer.Flush()
+	recorder.Flush()
 	s.Assert().Equal([]dom.Node{body}, recorder.Targets())
 	s.Assert().Equal([]dom.Node{div}, recorder.AddedNodes())
 	s.Assert().Empty(recorder.RemovedNodes())
 	recorder.Clear()
 
 	div.AppendChild(doc.CreateElement("div"))
-	observer.Flush()
+	recorder.Flush()
 	s.Assert().Empty(recorder.Records, "Child node was notified when subtree=false")
 
 	body.RemoveChild(div)
-	observer.Flush()
+	recorder.Flush()
 	s.Assert().Equal([]dom.Node{body}, recorder.Targets())
 	g := gomega.NewWithT(s.T())
 	g.Expect(recorder.RemovedNodes()).To(gomega.ConsistOf(div))
@@ -97,8 +126,8 @@ func (s *MutationObserverTestSuite) TestObserveChildListNoSubtree() {
 }
 
 func (s *MutationObserverTestSuite) TestObserveChildListWithSubtree() {
-	var recorder MutationRecorder
-	observer := NewObserver(&recorder)
+	recorder := &MutationRecorder{}
+	observer := NewObserver(recorder, recorder)
 
 	doc := html.NewHTMLDocument(nil)
 	body := doc.Body()
@@ -110,7 +139,7 @@ func (s *MutationObserverTestSuite) TestObserveChildListWithSubtree() {
 	child := doc.CreateElement("div")
 	div.AppendChild(child)
 
-	observer.Flush()
+	recorder.Flush()
 	s.Assert().Equal([]dom.Node{div}, recorder.Targets())
 	s.Assert().Equal([]dom.Node{child}, recorder.AddedNodes())
 }
@@ -121,16 +150,19 @@ func TestValidOptions(t *testing.T) {
 
 	doc := html.NewHTMLDocument(nil)
 
-	assert.NoError(NewObserver(rec).Observe(doc, ChildList), "Error when including ChildList")
-	assert.NoError(NewObserver(rec).Observe(doc, Attributes), "Error when including Attributes")
-	assert.NoError(NewObserver(rec).Observe(doc, CharacterData),
+	assert.NoError(NewObserver(rec, rec).Observe(doc, ChildList), "Error when including ChildList")
+	assert.NoError(
+		NewObserver(rec, rec).Observe(doc, Attributes),
+		"Error when including Attributes",
+	)
+	assert.NoError(NewObserver(rec, rec).Observe(doc, CharacterData),
 		"Error when including CharacterData")
 
-	observer := NewObserver(rec)
+	observer := NewObserver(rec, rec)
 	assert.ErrorIs(observer.Observe(doc), gosterror.TypeError{},
 		"Error when calling with no arguments")
 	assert.ErrorIs(
-		NewObserver(rec).Observe(doc,
+		NewObserver(rec, rec).Observe(doc,
 			Subtree,
 			AttributeOldValue,
 			CharacterDataOldValue,
