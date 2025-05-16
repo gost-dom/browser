@@ -13,6 +13,7 @@ type ESConstructorData struct {
 	Spec             *configuration.IdlInterfaceConfiguration
 	CustomRule       customrules.InterfaceRule
 	IdlInterface     idl.Interface
+	SkipConstructor  bool
 	IdlInterfaceName string
 	Inheritance      string
 	Operations       []ESOperation

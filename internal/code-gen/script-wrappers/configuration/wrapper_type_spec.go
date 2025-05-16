@@ -14,6 +14,7 @@ type IdlInterfaceConfiguration struct {
 	// for DomTokenList to include the iterator code as part of the wrapper
 	// type.
 	SkipWrapper     bool
+	SkipConstructor bool
 	IncludeIncludes bool
 	Customization   map[string]*ESMethodWrapper
 }
