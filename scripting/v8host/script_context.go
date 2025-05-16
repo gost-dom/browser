@@ -205,8 +205,6 @@ func (r *moduleResolver) download(
 			url,
 			"status",
 			resp.StatusCode,
-			"script",
-			script,
 			"content-type", resp.Header.Get("Content-Type"),
 		)
 	}()
