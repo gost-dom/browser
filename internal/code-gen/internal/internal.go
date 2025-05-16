@@ -9,7 +9,7 @@ import (
 // A list of possible acronyms that an interface can start with. Used as a very
 // simple way to generate sensible unexported names for wrapper types. E.g.,
 // HTMLTemplateElement -> htmlTemplateElement.
-var KnownAcronyms = []string{"HTML", "URL", "DOM", "XML"}
+var KnownAcronyms = []string{"HTML", "URL", "DOM", "XML", "ID"}
 
 func UpperCaseFirstLetter(s string) string {
 	strLen := len(s)

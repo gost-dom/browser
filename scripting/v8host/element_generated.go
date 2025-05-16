@@ -69,7 +69,7 @@ func (w elementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("id",
 		v8.NewFunctionTemplateWithError(iso, w.id),
-		v8.NewFunctionTemplateWithError(iso, w.setId),
+		v8.NewFunctionTemplateWithError(iso, w.setID),
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("className",
 		v8.NewFunctionTemplateWithError(iso, w.className),
@@ -287,12 +287,26 @@ func (w elementV8Wrapper) tagName(info *v8.FunctionCallbackInfo) (*v8.Value, err
 
 func (w elementV8Wrapper) id(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Element.id")
-	return nil, errors.New("Element.id: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	ctx := w.mustGetContext(info)
+	instance, err := w.getInstance(info)
+	if err != nil {
+		return nil, err
+	}
+	result := instance.ID()
+	return w.toDOMString(ctx, result)
 }
 
-func (w elementV8Wrapper) setId(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: Element.setId")
-	return nil, errors.New("Element.setId: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func (w elementV8Wrapper) setID(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+	log.Debug(w.logger(info), "V8 Function call: Element.setID")
+	ctx := w.mustGetContext(info)
+	instance, err0 := w.getInstance(info)
+	val, err1 := parseSetterArg(ctx, info, w.decodeDOMString)
+	err := errors.Join(err0, err1)
+	if err != nil {
+		return nil, err
+	}
+	instance.SetID(val)
+	return nil, nil
 }
 
 func (w elementV8Wrapper) className(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

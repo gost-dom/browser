@@ -38,7 +38,11 @@ type Element interface {
 	SetInnerHTML(string) error
 	TagName() string
 	Matches(string) (bool, error)
+	ID() string
+	SetID(string)
+
 	// unexported
+
 	getAttributes() Attributes
 	getSelfElement() Element
 }
@@ -95,6 +99,15 @@ func (e *element) NodeName() string {
 
 func (e *element) TagName() string {
 	return strings.ToLower(e.tagName)
+}
+
+func (e *element) ID() string {
+	id, _ := e.GetAttribute("id")
+	return id
+}
+
+func (e *element) SetID(val string) {
+	e.SetAttribute("id", val)
 }
 
 func (e *element) ClassList() DOMTokenList {

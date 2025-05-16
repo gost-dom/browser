@@ -71,7 +71,6 @@ func CreateV8Specs() WebIdlConfigurations {
 		"namespaceURI",
 		"prefix",
 		"localName",
-		"id",
 		"shadowRoot",
 		"slot",
 		"className",
