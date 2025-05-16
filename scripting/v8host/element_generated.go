@@ -92,6 +92,7 @@ func (w elementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 		nil,
 		v8.None)
 	w.parentNode.installPrototype(prototypeTmpl)
+	w.nonDocumentTypeChildNode.installPrototype(prototypeTmpl)
 }
 
 func (w elementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

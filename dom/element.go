@@ -23,6 +23,7 @@ func (attrs Attributes) Length() int {
 // An Element in the document. Can be either an [HTMLElement] or an [XMLElement]
 type Element interface {
 	ElementContainer
+	NonDocumentTypeChildNode
 	ClassList() DOMTokenList
 	HasAttribute(name string) bool
 	GetAttribute(name string) (string, bool)
@@ -339,4 +340,30 @@ func (e *element) CloneNode(deep bool) Node {
 		res.Append(e.cloneChildren()...)
 	}
 	return res
+}
+
+func (e *element) NextElementSibling() Element {
+	var n Node = e
+	for {
+		n = n.NextSibling()
+		if n == nil {
+			return nil
+		}
+		if res, ok := n.(Element); ok {
+			return res
+		}
+	}
+}
+
+func (e *element) PreviousElementSibling() Element {
+	var n Node = e
+	for {
+		n = n.PreviousSibling()
+		if n == nil {
+			return nil
+		}
+		if res, ok := n.(Element); ok {
+			return res
+		}
+	}
 }

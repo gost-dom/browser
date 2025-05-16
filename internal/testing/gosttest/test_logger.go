@@ -15,6 +15,7 @@ type TestingLogHandler struct {
 func (l TestingLogHandler) Enabled(_ context.Context, lvl slog.Level) bool {
 	return lvl >= slog.LevelInfo
 }
+
 func (l TestingLogHandler) Handle(_ context.Context, r slog.Record) error {
 	l.TB.Helper()
 	var b strings.Builder
@@ -33,7 +34,8 @@ func (l TestingLogHandler) Handle(_ context.Context, r slog.Record) error {
 }
 
 func (l TestingLogHandler) WithAttrs(attrs []slog.Attr) slog.Handler { return l }
-func (l TestingLogHandler) WithGroup(name string) slog.Handler       { return l }
+
+func (l TestingLogHandler) WithGroup(name string) slog.Handler { return l }
 
 func NewTestLogger(t testing.TB) *slog.Logger {
 	return slog.New(TestingLogHandler{TB: t})

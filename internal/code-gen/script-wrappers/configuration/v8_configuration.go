@@ -37,6 +37,8 @@ func CreateV8Specs() WebIdlConfigurations {
 	domSpecs := specs.Module("dom")
 	configureMutationObserver(domSpecs)
 
+	domSpecs.Type("NonDocumentTypeChildNode")
+
 	parentNode := domSpecs.Type("ParentNode")
 	parentNode.Method("children").Ignore()
 	parentNode.Method("append").SetCustomImplementation()

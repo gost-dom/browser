@@ -3,10 +3,12 @@ package v8host_test
 import (
 	"testing"
 
+	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/internal/test/scripttests"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/scripting/v8host"
+	"github.com/onsi/gomega"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -75,4 +77,29 @@ func (s *ElementTestSuite) TestQuerySelector() {
 	s.MustRunScript(`const e = document.getElementById("1")`)
 	s.Expect(s.Eval(`typeof e.querySelector`)).To(Equal("function"))
 	s.Expect(s.Eval(`typeof e.querySelectorAll`)).To(Equal("function"))
+}
+
+func TestElementSiblings(t *testing.T) {
+	g := gomega.NewWithT(t)
+	win := initBrowser(t, nil).NewWindow()
+	win.LoadHTML(`
+  	<body>
+		<div id="e-1"></div>
+		text node
+		<div id="e-2"></div>
+		text node
+		<div id="e-3"></div>
+		<script>const e = document.getElementById("e-2")</script>
+	</body>`)
+	g.Expect(win.Eval(`e.previousSibling.nodeType`)).
+		To(BeEquivalentTo(dom.NodeTypeText), "nextSibling node type")
+	g.Expect(win.Eval(`e.previousElementSibling.nodeType`)).
+		To(BeEquivalentTo(dom.NodeTypeElement), "nextElementSibling node type")
+	g.Expect(win.Eval(`e.previousElementSibling.id`)).To(Equal("e-1"), "nextElementSibling id")
+
+	g.Expect(win.Eval(`e.nextSibling.nodeType`)).
+		To(BeEquivalentTo(dom.NodeTypeText), "nextSibling node type")
+	g.Expect(win.Eval(`e.nextElementSibling.nodeType`)).
+		To(BeEquivalentTo(dom.NodeTypeElement), "nextElementSibling node type")
+	g.Expect(win.Eval(`e.nextElementSibling.id`)).To(Equal("e-3"), "nextElementSibling id")
 }
