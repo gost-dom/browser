@@ -3,6 +3,7 @@ package html
 import (
 	"regexp"
 	"strings"
+	"unicode"
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/internal/entity"
@@ -19,6 +20,7 @@ type DOMStringMap struct {
 }
 
 var camelCaseDetector = regexp.MustCompile("[a-z][A-Z]")
+var kebabCaseDetector = regexp.MustCompile("[a-z]-[a-z]")
 
 // toKebab converts a camelCase string to a kebab-case string.
 //
@@ -33,6 +35,19 @@ func toKebab(str string) string {
 
 func encodeDataAttrKey(key string) string {
 	return "data-" + toKebab(key)
+}
+
+func decodeDataAttrKey(attr dom.Attr) (s string, ok bool) {
+	name := attr.Name()
+	trimmed := strings.TrimPrefix(name, "data-")
+	if ok = trimmed != name && attr.NamespaceURI() == ""; !ok {
+		return
+	}
+	return kebabCaseDetector.ReplaceAllStringFunc(trimmed, func(match string) string {
+		runes := []rune(match)
+		return string([]rune{runes[0], unicode.ToUpper(runes[1])})
+	}), true
+
 }
 
 func (m DOMStringMap) Get(key string) (val string, exists bool) {
@@ -52,8 +67,7 @@ func (m DOMStringMap) Delete(key string) {
 func (m DOMStringMap) Keys() []string {
 	var res []string
 	for a := range m.Element.Attributes().All() {
-		name := a.Name()
-		if strings.HasPrefix(name, "data-") && a.NamespaceURI() == "" {
+		if name, ok := decodeDataAttrKey(a); ok {
 			res = append(res, name)
 		}
 	}
