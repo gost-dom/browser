@@ -10,7 +10,7 @@ import (
 type TestingLogHandler struct {
 	testing.TB
 	AllowErrors bool
-	MinLogLevel int
+	MinLogLevel slog.Level
 }
 
 func (l TestingLogHandler) Enabled(_ context.Context, lvl slog.Level) bool {
@@ -40,7 +40,7 @@ func (l TestingLogHandler) WithGroup(name string) slog.Handler { return l }
 
 type HandlerOption = func(*TestingLogHandler)
 
-func MinLogLevel(lvl int) HandlerOption {
+func MinLogLevel(lvl slog.Level) HandlerOption {
 	return func(h *TestingLogHandler) { h.MinLogLevel = lvl }
 }
 
