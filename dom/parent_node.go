@@ -3,6 +3,7 @@ package dom
 import (
 	"slices"
 
+	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/css"
 )
 
@@ -109,6 +110,7 @@ func (f parentNode) ChildElementCount() int {
 }
 
 func (n parentNode) QuerySelector(pattern string) (Element, error) {
+	log.Debug(n.node.Logger(), "parentNode.QuerySelector", "pattern", pattern)
 	nodes, err := n.QuerySelectorAll(pattern)
 	if err != nil {
 		return nil, err
