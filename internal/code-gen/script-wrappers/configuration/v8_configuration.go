@@ -35,6 +35,7 @@ func CreateV8Specs() WebIdlConfigurations {
 	)
 
 	domSpecs := specs.Module("dom")
+	configureMutationObserver(domSpecs)
 
 	parentNode := domSpecs.Type("ParentNode")
 	parentNode.Method("children").Ignore()
@@ -268,4 +269,9 @@ func CreateV8Specs() WebIdlConfigurations {
 	// htmlSpecs.Type("HTMLHyperlinkElementUtils")
 
 	return specs
+}
+
+func configureMutationObserver(domSpecs *WebIdlConfiguration) {
+	domSpecs.Type("MutationObserver")
+	domSpecs.Type("MutationRecord")
 }

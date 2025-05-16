@@ -160,11 +160,24 @@ func (e *element) SetAttributeNode(node Attr) (Attr, error) {
 	for i, a := range e.attributes {
 		if a.Name() == node.Name() && a.NamespaceURI() == node.NamespaceURI() {
 			e.attributes[i] = node
+			e.notify(e.attributeChangedEvent(a, a.Value()))
 			return a, nil
 		}
 	}
+	node.setParent(e.selfElement)
+
+	e.notify(e.attributeChangedEvent(node, ""))
 	e.attributes = append(e.attributes, node)
 	return nil, nil
+}
+
+func (e *element) attributeChangedEvent(attr Attr, oldVal string) ChangeEvent {
+	return ChangeEvent{
+		Target:   e.self,
+		Type:     ChangeEventAttributes,
+		Attr:     attr,
+		OldValue: oldVal,
+	}
 }
 
 func (e *element) RemoveAttributeNode(node Attr) (Attr, error) {
@@ -172,6 +185,7 @@ func (e *element) RemoveAttributeNode(node Attr) (Attr, error) {
 		if a == node {
 			e.attributes = slices.Delete(e.attributes, i, i+1)
 			node.setParent(nil)
+			e.notify(e.attributeChangedEvent(a, a.Value()))
 			return node, nil
 		}
 	}
@@ -197,11 +211,11 @@ func (e *element) Attributes() NamedNodeMap {
 
 func (e *element) SetAttribute(name string, value string) {
 	if a := e.GetAttributeNode(name); a != nil {
+		prevVal := a.Value()
 		a.SetValue(value)
+		e.notify(e.attributeChangedEvent(a, prevVal))
 	} else {
-		a := newAttr(name, value, e.OwnerDocument())
-		a.setParent(e.selfElement)
-		e.attributes = append(e.attributes, a)
+		e.SetAttributeNode(newAttr(name, value, e.OwnerDocument()))
 	}
 }
 
@@ -286,11 +300,7 @@ func (e *element) Matches(pattern string) (res bool, err error) {
 	dummy.Append(clone)
 	el, err := dummy.QuerySelectorAll(pattern)
 	if err == nil {
-		for _, e := range el.All() {
-			if e == clone {
-				return true, nil
-			}
-		}
+		return slices.Contains(el.All(), clone), nil
 	}
 	return false, err
 }

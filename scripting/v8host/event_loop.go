@@ -21,20 +21,6 @@ func (l *eventLoop) tick() error {
 	return l.ctx.clock.Tick()
 }
 
-func newWorkItem(fn *v8.Function) workItem {
-	return workItem{fn}
-}
-
-// dispatch places an item on the event loop to be executed immediately
-func (l *eventLoop) dispatch(task clock.TaskCallback, delay int) {
-	l.ctx.clock.AddSafeTask(func() {
-		if err := task(); err != nil { //w.fn.Call(l.globalObject); err != nil {
-			l.errorCb(err)
-		}
-	},
-		time.Duration(delay)*time.Millisecond)
-}
-
 func newEventLoop(context *V8ScriptContext, cb func(error)) *eventLoop {
 	return &eventLoop{context, cb}
 }

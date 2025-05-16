@@ -12,6 +12,15 @@ type Callback interface {
 	HandleMutation([]Record, *Observer)
 }
 
+type Flusher interface {
+	Flush()
+}
+
+type Flushers interface {
+	AddFlusher(Flusher)
+	RemoveFlusher(Flusher)
+}
+
 type CallbackFunc func([]Record, *Observer)
 
 func (f CallbackFunc) HandleMutation(r []Record, o *Observer) { f(r, o) }
@@ -20,7 +29,22 @@ type RecordCallbackFunc func([]Record)
 
 func (f RecordCallbackFunc) HandleMutation(r []Record, _ *Observer) { f(r) }
 
+// Observer implements behaviour of the [MutationObserver], allowing client code
+// to react to changes to the DOM. Mutation events are not published
+// immediately; but before control returns to the event loop, (i.e. if an event
+// hander generates two mutation events, an observer will not receive any events
+// before the function has finished executing). The records can be pulled from
+// the [Observer.TakeRecords] function.
+//
+// Client code must first call [MutationObserver.Observe], specifying what to
+// listen for.
+//
+// The Observer must be initialized with both a [Flushers], allowing it to
+// register to receive notifications; and a Callback.
+//
+// [MutationObserver]: https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
 type Observer struct {
+	Flushers Flushers
 	Callback Callback
 	pending  []Record
 	closer   dom.Closer
@@ -28,14 +52,26 @@ type Observer struct {
 	target   dom.Node
 }
 
-func NewObserver(cb Callback) *Observer {
-	return &Observer{Callback: cb}
+// NewObserver creates a new observer registering with the [Flushers] f and the
+// callback cb. NewObserver doesn't do anything except setting exported fields.
+// The function panics if either f or cb are nil.
+func NewObserver(f Flushers, cb Callback) *Observer {
+	if f == nil {
+		panic("mutation: NewObserver: f cannot be nil")
+	}
+	if cb == nil {
+		panic("mutation: NewObserver: cb cannot be nil")
+	}
+	return &Observer{Flushers: f, Callback: cb}
 }
+
+type ObserveOption = func(*Options)
 
 // Start observing for changes for a specific dom node.
 //
 // Panics if the observer does not have a handler.
 func (o *Observer) Observe(node dom.Node, options ...func(*Options)) error {
+	o.Flushers.AddFlusher(o)
 	o.assertCanObserve()
 
 	o.options = Options{}
@@ -81,6 +117,7 @@ func (o Observer) assertCanObserve() {
 }
 
 func (o *Observer) Disconnect() {
+	o.Flushers.RemoveFlusher(o)
 	o.closer.Close()
 	o.closer = nil
 }
@@ -95,12 +132,46 @@ func (o *Observer) Process(e dom.ChangeEvent) {
 	if e.Target != o.target && !o.options.Subtree {
 		return
 	}
-	r := Record{Target: e.Target, AddedNodes: e.AddedNodes, RemovedNodes: e.RemovedNodes}
+	r := Record{
+		Type:   string(e.Type),
+		Target: e.Target,
+	}
+	switch e.Type {
+	case dom.ChangeEventAttributes:
+		name := e.Attr.Name()
+		ns := e.Attr.NamespaceURI()
+		r.AttributeName = &name
+		r.AttributeNamespace = &ns
+		if !o.options.Attributes {
+			return
+		}
+		if o.options.AttributeOldValue {
+			r.OldValue = &e.OldValue
+		}
+
+	case dom.ChangeEventCData:
+		if !o.options.CharacterData {
+			return
+		}
+		if o.options.CharacterDataOldValue {
+			r.OldValue = &e.OldValue
+		}
+
+	case dom.ChangeEventChildList:
+		if !o.options.ChildList {
+			return
+		}
+		r.AddedNodes = e.AddedNodes
+		r.RemovedNodes = e.RemovedNodes
+		r.PreviousSibling = e.PreviousSibling
+		r.NextSibling = e.NextSibling
+	}
 	o.pending = append(o.pending, r)
 }
 
-// Deprecated: Flush is a temporary solution while developing, and is not
-// intended to be called by client code.
+// Flush sends recorded events to the registered event handler. You generally
+// don't need to call flush, as events should be pushed when returning to the
+// "event loop".
 func (o *Observer) Flush() {
 	records := o.TakeRecords()
 	if len(records) > 0 {

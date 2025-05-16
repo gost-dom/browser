@@ -11,7 +11,7 @@ type MutationRecord struct {
 	RemovedNodes       dom.NodeList
 	PreviousSibling    dom.Node
 	NextSibling        dom.Node
-	AttributeName      string
-	AttributeNamespace string
-	OldValue           string
+	AttributeName      *string
+	AttributeNamespace *string
+	OldValue           *string
 }

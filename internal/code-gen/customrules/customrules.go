@@ -14,6 +14,7 @@ package customrules
 import (
 	"github.com/gost-dom/code-gen/customrules/typerule"
 	. "github.com/gost-dom/code-gen/customrules/typerule"
+	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/webref/idl"
 )
 
@@ -22,17 +23,33 @@ import (
 // represent the types described in "dom.idl" in the webref specifications
 type CustomRules map[string]SpecRules
 
+type Package string
+
 // SpecRules define the rules for all the types in a single IDL specification
 // file. The key is the name of the interface the rule applies to
 type SpecRules map[string]InterfaceRule
 
+// Specifies how the type is represented in the internal Go model.
+type OutputType string
+
+const (
+	OutputTypeInterface OutputType = "interface"
+	OutputTypeStruct    OutputType = "struct"
+)
+
 // InterfaceRule specifies the rules for a specific interface or interface
 // mixin.
 type InterfaceRule struct {
-	Operations OperationRules
+	InterfacePackage Package
+	OutputType       OutputType
+	Operations       OperationRules
 }
 
 type OperationRules map[string]OperationRule
+
+const (
+	DomInterfaces = Package(packagenames.DomInterfaces)
+)
 
 type OperationRule struct {
 	// By default, an operation is assumed to not generate an error. Override
@@ -107,16 +124,22 @@ var rules = CustomRules{
 			"querySelector":    parentNodeQueryOperation,
 			"querySelectorAll": parentNodeQueryOperation,
 		}},
-		"MutationObserver": {Operations: OperationRules{
-			"observe": {
-				HasError: true,
-				Arguments: ArgumentRules{
-					"options": {
-						Type:     idl.Type{Name: "func(*MutationObserverInit)"},
-						Variadic: true,
-					},
-				}},
-		}},
+		"MutationObserver": {
+			InterfacePackage: DomInterfaces,
+			Operations: OperationRules{
+				"observe": {
+					HasError: true,
+					Arguments: ArgumentRules{
+						"options": {
+							Type:     idl.Type{Name: "func(*MutationObserverInit)"},
+							Variadic: true,
+						},
+					}},
+			}},
+		"MutationRecord": {
+			InterfacePackage: DomInterfaces,
+			OutputType:       OutputTypeStruct,
+		},
 	},
 	"html": {
 		"Location": {Operations: OperationRules{

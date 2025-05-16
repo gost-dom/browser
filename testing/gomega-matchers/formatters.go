@@ -16,6 +16,14 @@ func FormatElement(value any) (result string, ok bool) {
 	return
 }
 
+func formatNode(value any) (result string, ok bool) {
+	var node dom.Node
+	if node, ok = value.(dom.Node); ok {
+		result = node.NodeName()
+	}
+	return
+}
+
 func formatNodeList(value any) (result string, ok bool) {
 	var list dom.NodeList
 	if list, ok = value.(dom.NodeList); ok {
@@ -37,4 +45,5 @@ func formatNodeList(value any) (result string, ok bool) {
 func init() {
 	format.RegisterCustomFormatter(FormatElement)
 	format.RegisterCustomFormatter(formatNodeList)
+	format.RegisterCustomFormatter(formatNode)
 }

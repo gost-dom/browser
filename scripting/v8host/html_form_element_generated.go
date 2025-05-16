@@ -155,18 +155,15 @@ func (w htmlFormElementV8Wrapper) action(info *v8.FunctionCallbackInfo) (*v8.Val
 
 func (w htmlFormElementV8Wrapper) setAction(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.setAction")
-	args := newArgumentHelper(w.scriptHost, info)
+	ctx := w.mustGetContext(info)
 	instance, err0 := w.getInstance(info)
-	val, err1 := tryParseArg(args, 0, w.decodeUSVString)
-	if args.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return nil, err
-		}
-		instance.SetAction(val)
-		return nil, nil
+	val, err1 := parseSetterArg(ctx, info, w.decodeUSVString)
+	err := errors.Join(err0, err1)
+	if err != nil {
+		return nil, err
 	}
-	return nil, errors.New("HTMLFormElement.setAction: Missing arguments")
+	instance.SetAction(val)
+	return nil, nil
 }
 
 func (w htmlFormElementV8Wrapper) autocomplete(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -212,18 +209,15 @@ func (w htmlFormElementV8Wrapper) method(info *v8.FunctionCallbackInfo) (*v8.Val
 
 func (w htmlFormElementV8Wrapper) setMethod(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.setMethod")
-	args := newArgumentHelper(w.scriptHost, info)
+	ctx := w.mustGetContext(info)
 	instance, err0 := w.getInstance(info)
-	val, err1 := tryParseArg(args, 0, w.decodeDOMString)
-	if args.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return nil, err
-		}
-		instance.SetMethod(val)
-		return nil, nil
+	val, err1 := parseSetterArg(ctx, info, w.decodeDOMString)
+	err := errors.Join(err0, err1)
+	if err != nil {
+		return nil, err
 	}
-	return nil, errors.New("HTMLFormElement.setMethod: Missing arguments")
+	instance.SetMethod(val)
+	return nil, nil
 }
 
 func (w htmlFormElementV8Wrapper) target(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

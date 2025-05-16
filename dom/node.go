@@ -114,11 +114,24 @@ type Closer interface {
 	Close()
 }
 
+type ChangeEventType string
+
+const (
+	ChangeEventChildList  ChangeEventType = "childList"
+	ChangeEventAttributes ChangeEventType = "attributes"
+	ChangeEventCData      ChangeEventType = "characterData"
+)
+
 type ChangeEvent struct {
 	// The original target of the change.
-	Target       Node
-	AddedNodes   NodeList
-	RemovedNodes NodeList
+	Target          Node
+	Attr            Attr
+	Type            ChangeEventType
+	AddedNodes      NodeList
+	RemovedNodes    NodeList
+	OldValue        string
+	PreviousSibling Node
+	NextSibling     Node
 }
 
 type observer interface {
@@ -224,21 +237,10 @@ func (n *node) InsertBefore(newChild Node, referenceNode Node) (Node, error) {
 		return nil, err
 	}
 	if fragment, ok := newChild.(DocumentFragment); ok {
-		for fragment.ChildNodes().Length() > 0 {
-			if _, err := n.InsertBefore(fragment.ChildNodes().Item(0), referenceNode); err != nil {
-				return nil, err
-			}
-		}
-		return fragment, nil
+		return fragment, n.insertBefore(fragment, referenceNode)
 	}
-	result, err := n.insertBefore(newChild, referenceNode)
-	if err == nil {
-		newChild.setParent(n.self)
-	}
-	if newChild.IsConnected() {
-		newChild.Connected()
-	}
-	return result, err
+	err := n.insertBefore(newChild, referenceNode)
+	return newChild, err
 }
 
 func (n *node) ChildNodes() NodeList { return n.childNodes }
@@ -254,17 +256,6 @@ func (n *node) Observe(observer observer) Closer {
 func (n *node) removeObserver(o observer) {
 	n.observers = slices.DeleteFunc(n.observers, func(x observer) bool { return o == x })
 }
-
-type observerCloser struct {
-	n *node
-	o observer
-}
-
-func (c observerCloser) Close() {
-	c.n.removeObserver(c.o)
-}
-
-// func (n *node) CloneNode(deep bool) Node { return nil }
 
 func (n *node) GetRootNode(options ...GetRootNodeOptions) Node {
 	if len(options) > 1 {
@@ -300,6 +291,9 @@ func (n *node) setOwnerDocument(owner Document) {
 	}
 }
 func (n *node) setParent(parent Node) {
+	if n.parent != nil {
+		n.parent.RemoveChild(n.getSelf())
+	}
 	if parent != nil {
 		parentOwner := parent.nodeDocument()
 		if n.document != parentOwner {
@@ -331,15 +325,6 @@ func (n *node) NodeName() string {
 	return "#node"
 }
 
-// removeNodeFromParent removes the node from the current parent, _if_ it has
-// one. Does nothing for disconnected nodes.
-func removeNodeFromParent(node Node) {
-	parent := node.Parent()
-	if parent != nil {
-		parent.RemoveChild(node)
-	}
-}
-
 func (n *node) RemoveChild(node Node) (Node, error) {
 	idx := slices.Index(n.childNodes.All(), node)
 	if idx == -1 {
@@ -347,9 +332,7 @@ func (n *node) RemoveChild(node Node) (Node, error) {
 			"Node.removeChild: The node to be removed is not a child of this node",
 		)
 	}
-	n.childNodes.setNodes(slices.Delete(n.childNodes.All(), idx, idx+1))
-	n.notify(n.removedNodeEvent(node))
-	return node, nil
+	return node, n.replaceNodes(idx, 1, nil)
 }
 
 // assertCanAddNode verifies that the node can be added as a child. The function
@@ -361,6 +344,9 @@ func (n *node) RemoveChild(node Node) (Node, error) {
 // [Element.Append] before adding, to avoid a partial update if the last
 // argument was invalid.
 func (n *node) assertCanAddNode(newNode Node) error {
+	if newNode == nil {
+		return nil
+	}
 	parentType := n.getSelf().NodeType()
 	childType := newNode.NodeType()
 	if !parentType.canHaveChildren() {
@@ -411,41 +397,77 @@ func (n *node) childElements() []Element {
 	return res
 }
 
-func (n *node) insertBefore(newNode Node, referenceNode Node) (Node, error) {
+func (n *node) insertBefore(node Node, referenceNode Node) error {
+	var index int
 	if referenceNode == nil {
-		n.childNodes.append(newNode)
+		index = n.childNodes.Length()
 	} else {
-		i := slices.Index(n.childNodes.All(), referenceNode)
-		if i == -1 {
-			return nil, errors.New("Reference node not found")
+		index = slices.Index(n.childNodes.All(), referenceNode)
+		if index == -1 {
+			return errors.New("Reference node not found")
 		}
-		n.childNodes.setNodes(slices.Insert(n.childNodes.All(), i, newNode))
 	}
-	removeNodeFromParent(newNode)
-	n.notify(n.addedNodeEvent(newNode))
-	return newNode, nil
+	return n.replaceNodes(index, 0, node)
 }
 
-type nodeIterator struct{ Node }
-
-func toHtmlNode(node Node) *html.Node {
-	return nodeIterator{node}.toHtmlNode(nil)
-}
-func toHtmlNodeAndMap(node Node) (*html.Node, map[*html.Node]Node) {
-	m := make(map[*html.Node]Node)
-	result := nodeIterator{node}.toHtmlNode(m)
-	return result, m
-}
-
-func (n nodeIterator) toHtmlNode(m map[*html.Node]Node) *html.Node {
-	htmlNode := n.Node.createHtmlNode()
-	if m != nil {
-		m[htmlNode] = n.Node
+// replaceNodes removes count nodes from index, and inserts the content of node
+// at the position.
+//
+// replaceNodes does not validate the node, and should only be called by an
+// exported function that
+//
+// Which new nodes depend on the node. If node is nil,
+// the specified nodes will be removed, and no new nodes inserted. If node is a
+// [DocumentFragment], the children of the fragment is inserted. Otherwise, a
+// single node is inserted
+//
+// If count is zero, the new node is inserted before the node at the specified
+// index if index < len(n.childNodes.Length()), otherwise it is appended after
+// the last element.
+//
+// replaceNodes panics if index < 0 or index + count > len(n.childNodes.Length()).
+func (n *node) replaceNodes(index, count int, node Node) error {
+	if err := n.assertCanAddNode(node); err != nil {
+		return err
 	}
-	for _, child := range n.nodes() {
-		htmlNode.AppendChild(nodeIterator{child}.toHtmlNode(m))
+
+	var (
+		prevSibling Node
+		nextSibling Node
+	)
+	newNodes := expandNode(node)
+	children := slices.Clone(n.ChildNodes().All())
+	if index > 0 {
+		prevSibling = children[index-1]
 	}
-	return htmlNode
+	if index+count < len(children) {
+		nextSibling = children[index+count]
+	}
+
+	removedNodes := slices.Clone(children[index : index+count])
+	children = slices.Replace(children, index, index+count, newNodes...)
+	n.childNodes.setNodes(children)
+
+	for _, node := range removedNodes {
+		node.setParent(nil)
+	}
+	for _, node := range newNodes {
+		node.setParent(n.self)
+		if node.IsConnected() {
+			node.Connected()
+		}
+	}
+
+	n.notify(ChangeEvent{
+		Target:          n.self,
+		Type:            ChangeEventChildList,
+		PreviousSibling: prevSibling,
+		NextSibling:     nextSibling,
+		AddedNodes:      &nodeList{nodes: newNodes},
+		RemovedNodes:    &nodeList{nodes: removedNodes},
+	})
+	return nil
+
 }
 
 func (n *node) OwnerDocument() Document {
@@ -549,23 +571,41 @@ func (n *node) notify(event ChangeEvent) {
 	}
 }
 
-func (n *node) addedNodeEvent(newNode ...Node) ChangeEvent {
-	return ChangeEvent{
-		Target:     n.self,
-		AddedNodes: &nodeList{nodes: newNode},
-	}
-}
-
-func (n *node) removedNodeEvent(nodes ...Node) ChangeEvent {
-	return ChangeEvent{
-		Target:       n.self,
-		RemovedNodes: &nodeList{nodes: nodes},
-	}
-}
-
 func (n *node) Logger() *slog.Logger {
 	if docLogger, ok := n.document.(log.LogSource); ok {
 		return docLogger.Logger()
 	}
 	return nil
+}
+
+/* -------- observerCloser -------- */
+
+type observerCloser struct {
+	n *node
+	o observer
+}
+
+func (c observerCloser) Close() {
+	c.n.removeObserver(c.o)
+}
+
+/* -------- nodeIterator -------- */
+
+type nodeIterator struct{ Node }
+
+func toHtmlNodeAndMap(node Node) (*html.Node, map[*html.Node]Node) {
+	m := make(map[*html.Node]Node)
+	result := nodeIterator{node}.toHtmlNode(m)
+	return result, m
+}
+
+func (n nodeIterator) toHtmlNode(m map[*html.Node]Node) *html.Node {
+	htmlNode := n.Node.createHtmlNode()
+	if m != nil {
+		m[htmlNode] = n.Node
+	}
+	for _, child := range n.nodes() {
+		htmlNode.AppendChild(nodeIterator{child}.toHtmlNode(m))
+	}
+	return htmlNode
 }

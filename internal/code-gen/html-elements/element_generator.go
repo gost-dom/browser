@@ -72,7 +72,7 @@ func (gen baseGenerator) Generate() *jen.Statement {
 		list.Append(gen.GenerateInterface())
 	}
 
-	if gen.req.GenerateReadonlyStruct {
+	if gen.req.GenerateReadonlyStruct || gen.rules.OutputType == customrules.OutputTypeStruct {
 		list.Append(gen.GenerateReadonlyStruct())
 	}
 
@@ -102,7 +102,7 @@ func (gen baseGenerator) GenerateReadonlyStruct() g.Generator {
 			)
 		}
 		field := internal.UpperCaseFirstLetter(string(a.Name))
-		result.Field(g.Id(field), IdlType(a.Type))
+		result.Field(g.Id(field), IdlTypeForStruct(a.Type))
 	}
 	return result
 }

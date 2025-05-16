@@ -3,7 +3,6 @@ package wrappers
 import (
 	"fmt"
 	"log/slog"
-	"strings"
 
 	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/script-wrappers/configuration"
@@ -35,20 +34,24 @@ func createData(
 	if idlInterface.Name != interfaceConfig.TypeName {
 		panic(fmt.Sprintf("createData error: %s = %s", idlInterface.Name, interfaceConfig.TypeName))
 	}
+	specRules := customrules.GetSpecRules(interfaceConfig.DomSpec.Name)
+	intfRules := specRules[interfaceConfig.TypeName]
 	return ESConstructorData{
 		Spec:             interfaceConfig,
+		CustomRule:       intfRules,
 		IdlInterfaceName: wrappedTypeName,
 		RunCustomCode:    interfaceConfig.RunCustomCode,
 		Inheritance:      idlInterface.Inheritance,
 		IdlInterface:     idlInterface,
-		Constructor:      CreateConstructor(idlInterface, interfaceConfig, idlName),
-		Operations:       CreateInstanceMethods(idlInterface, interfaceConfig, idlName),
+		Constructor:      CreateConstructor(idlInterface, intfRules, interfaceConfig, idlName),
+		Operations:       CreateInstanceMethods(idlInterface, intfRules, interfaceConfig, idlName),
 		Attributes:       CreateAttributes(idlInterface, interfaceConfig, idlName),
 	}
 }
 
 func CreateConstructor(
 	idlInterface idl.Interface,
+	intfRule customrules.InterfaceRule,
 	interfaceConfig *configuration.IdlInterfaceConfiguration,
 	idlName idl.TypeSpec) *ESOperation {
 	if c, ok := idlName.Constructor(); ok {
@@ -57,6 +60,7 @@ func CreateConstructor(
 		// TODO: Fix for constructor overloads
 		result := createOperation(
 			idlInterface,
+			intfRule,
 			interfaceConfig,
 			c,
 			idlInterface.Constructors[0].Arguments,
@@ -69,6 +73,7 @@ func CreateConstructor(
 
 func CreateInstanceMethods(
 	idlInterface idl.Interface,
+	intfRule customrules.InterfaceRule,
 	interfaceConfig *configuration.IdlInterfaceConfiguration,
 	idlName idl.TypeSpec) (result []ESOperation) {
 	for instanceMethod := range idlName.InstanceMethods() {
@@ -77,7 +82,13 @@ func CreateInstanceMethods(
 			panic("Method not found: " + instanceMethod.Name)
 		}
 
-		op := createOperation(idlInterface, interfaceConfig, instanceMethod, idlOperation.Arguments)
+		op := createOperation(
+			idlInterface,
+			intfRule,
+			interfaceConfig,
+			instanceMethod,
+			idlOperation.Arguments,
+		)
 		result = append(result, op)
 	}
 	return
@@ -101,12 +112,8 @@ func CreateAttributes(
 			Name:                 attribute.Name,
 			NotImplemented:       methodCustomization.NotImplemented,
 			CustomImplementation: methodCustomization.CustomImplementation,
-			LegacyRetType: idl.RetType{
-				TypeName: attribute.Type.Name,
-				Nullable: attribute.Type.Nullable,
-			},
-			RetType:             attribute.Type,
-			MethodCustomization: methodCustomization,
+			RetType:              attribute.Type,
+			MethodCustomization:  methodCustomization,
 		}
 		if !attribute.Readonly {
 			setter = new(ESOperation)
@@ -116,7 +123,6 @@ func CreateAttributes(
 			setter.NotImplemented = setter.NotImplemented || methodCustomization.NotImplemented
 			setter.CustomImplementation = setter.CustomImplementation ||
 				methodCustomization.CustomImplementation
-			setter.LegacyRetType = idl.NewRetTypeUndefined()
 			setter.RetType = IdlTypeUndefined
 			setter.Arguments = []ESOperationArgument{{
 				Name:     "val",
@@ -136,12 +142,11 @@ func CreateAttributes(
 
 func createOperation(
 	idlInterface idl.Interface,
+	intfRules customrules.InterfaceRule,
 	typeSpec *configuration.IdlInterfaceConfiguration,
 	member idl.MemberSpec,
 	idlArgs []idl.Argument,
 ) ESOperation {
-	specRules := customrules.GetSpecRules(typeSpec.DomSpec.Name)
-	intfRules := specRules[typeSpec.TypeName]
 	opRules := intfRules.Operations[member.Name]
 	methodCustomization := typeSpec.GetMethodCustomization(member.Name)
 	idlOperation, _ := idlInterface.GetOperation(member.Name)
@@ -150,7 +155,6 @@ func createOperation(
 		Name:                 member.Name,
 		NotImplemented:       methodCustomization.NotImplemented,
 		CustomImplementation: methodCustomization.CustomImplementation,
-		LegacyRetType:        member.ReturnType(),
 		RetType:              idlOperation.ReturnType,
 		MethodCustomization:  methodCustomization,
 		HasError:             opRules.HasError,
@@ -192,30 +196,14 @@ func ReturnOnAnyError(errNames []g.Generator) g.Generator {
 	case 0:
 		return g.Noop
 	case 1:
-		return returnIfError(errNames[0])
+		return ReturnIfError(errNames[0])
 	default:
 		err := g.Id("err")
 		return g.StatementList(
 			g.Assign(err, stdgen.ErrorsJoin(errNames...)),
-			returnIfError(err),
+			ReturnIfError(err),
 		)
 	}
-}
-
-func IsNodeType(typeName string) bool {
-	loweredName := strings.ToLower(typeName)
-	switch loweredName {
-	case "node":
-		return true
-	case "document":
-		return true
-	case "documentfragment":
-		return true
-	}
-	if strings.HasSuffix(loweredName, "element") {
-		return true
-	}
-	return false
 }
 
 // SanitizeVarName create a valid go variable name from a variable to avoid
@@ -233,7 +221,7 @@ func SanitizeVarName(name string) string {
 	return name
 }
 
-func returnIfError(err g.Generator) g.Generator {
+func ReturnIfError(err g.Generator) g.Generator {
 	return g.IfStmt{
 		Condition: g.Neq{Lhs: err, Rhs: g.Nil},
 		Block:     g.Return(g.Nil, err),

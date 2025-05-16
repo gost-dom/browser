@@ -6,9 +6,11 @@ import (
 
 	. "github.com/gost-dom/code-gen/internal"
 	wrappers "github.com/gost-dom/code-gen/script-wrappers"
+	"github.com/gost-dom/code-gen/script-wrappers/model"
 	. "github.com/gost-dom/code-gen/script-wrappers/model"
 	"github.com/gost-dom/code-gen/stdgen"
 	g "github.com/gost-dom/generators"
+	"github.com/gost-dom/webref/idl"
 
 	"github.com/dave/jennifer/jen"
 )
@@ -115,7 +117,6 @@ func CreateV8WrapperMethodInstanceInvocations(
 	createCallInstance func(string, []g.Generator, ESOperation) g.Generator,
 	extraError bool,
 ) g.Generator {
-	// arguments := op.Arguments
 	statements := g.StatementList()
 	missingArgsConts := fmt.Sprintf("%s.%s: Missing arguments", prototype.Name(), op.Name)
 	for i := len(args); i >= 0; i-- {
@@ -142,7 +143,11 @@ func CreateV8WrapperMethodInstanceInvocations(
 
 		callArgs := make([]g.Generator, i)
 		for idx, a := range currentArgs {
-			callArgs[idx] = a.ArgName
+			arg := a.ArgName
+			if a.Argument.CustomRule.Variadic {
+				arg = g.Raw(arg.Generate().Op("..."))
+			}
+			callArgs[idx] = arg
 		}
 		callInstance := createCallInstance(functionName, callArgs, op)
 		if i > 0 {
@@ -190,86 +195,71 @@ type V8InstanceInvocation struct {
 
 type V8InstanceInvocationResult struct {
 	Generator      g.Generator
-	HasValue       bool
-	HasError       bool
 	RequireContext bool
 }
 
-func (c V8InstanceInvocation) PerformCall() (genRes V8InstanceInvocationResult) {
-	genRes.HasError = c.Op.GetHasError()
-	genRes.HasValue = c.Op.HasResult() // != "undefined"
-	var stmt *jen.Statement
-	if genRes.HasValue {
-		stmt = jen.Id("result")
+func (c V8InstanceInvocation) AssignValues(evaluation g.Generator) g.Generator {
+	HasError := c.Op.GetHasError()
+	HasValue := c.Op.HasResult()
+	if !HasError && !HasValue {
+		return evaluation
 	}
-	if genRes.HasError {
-		if stmt != nil {
-			stmt = stmt.Op(",").Id("callErr")
-		} else {
-			stmt = jen.Id("callErr")
-		}
+	if HasError && !HasValue {
+		return g.Assign(g.Id("callErr"), evaluation)
 	}
-	if stmt != nil {
-		stmt = stmt.Op(":=")
+	if !HasError && HasValue {
+		return g.Assign(g.Id("result"), evaluation)
 	}
-
-	list := g.StatementListStmt{}
-	var evaluation g.Value
-	if c.Instance == nil {
-		evaluation = g.NewValue(idlNameToGoName(c.Name)).Call(c.Args...)
-	} else {
-		evaluation = c.Instance.Method(idlNameToGoName(c.Name)).Call(c.Args...)
-	}
-	if stmt == nil {
-		list.Append(evaluation)
-	} else {
-		list.Append(g.Raw(stmt.Add(evaluation.Generate())))
-	}
-	genRes.Generator = list
-	return
+	return g.AssignMany([]g.Generator{
+		g.Id("result"),
+		g.Id("callErr")}, evaluation)
 }
 
-func (c V8InstanceInvocation) GetGenerator() V8InstanceInvocationResult {
-	genRes := c.PerformCall()
-	list := g.StatementList()
-	list.Append(genRes.Generator)
-	if !genRes.HasValue {
-		if genRes.HasError {
+func (c V8InstanceInvocation) ConvertResult(
+	evaluation g.Generator,
+) g.Generator {
+	hasError := c.Op.GetHasError()
+	hasValue := c.Op.HasResult() // != "undefined"
+
+	list := g.StatementListStmt{}
+	list.Append(c.AssignValues(evaluation))
+
+	if !hasValue {
+		if hasError {
 			list.Append(g.Return(g.Nil, g.Id("callErr")))
 		} else {
 			list.Append(g.Return(g.Nil, g.Nil))
 		}
 	} else {
-		retType := c.Op.LegacyRetType
-		if retType.IsNode() {
-			genRes.RequireContext = true
-			valueReturn := (g.Return(g.Raw(jen.Id("ctx").Dot("getInstanceForNode").Call(jen.Id("result")))))
-			if genRes.HasError {
-				list.Append(g.IfStmt{
-					Condition: g.Neq{Lhs: g.Id("callErr"), Rhs: g.Nil},
-					Block:     g.Return(g.Nil, g.Id("callErr")),
-					Else:      valueReturn,
-				})
-			} else {
-				list.Append(valueReturn)
-			}
+		returnValue := c.ConvertReturnValue(c.Op.RetType)
+		if hasError {
+			list.Append(g.IfStmt{
+				Condition: g.Neq{Lhs: g.Id("callErr"), Rhs: g.Nil},
+				Block:     g.Return(g.Nil, g.Id("callErr")),
+				Else:      returnValue,
+			})
 		} else {
-			converter := c.Op.Encoder()
-			genRes.RequireContext = true
-			valueReturn := g.Return(c.Receiver.Method(converter).Call(g.Id("ctx"), g.Id("result")))
-			if genRes.HasError {
-				list.Append(g.IfStmt{
-					Condition: g.Neq{Lhs: g.Id("callErr"), Rhs: g.Nil},
-					Block:     g.Return(g.Nil, g.Id("callErr")),
-					Else:      valueReturn,
-				})
-			} else {
-				list.Append(valueReturn)
-			}
+			list.Append(returnValue)
 		}
 	}
-	genRes.Generator = list
-	return genRes
+	return list
+}
+
+func (c V8InstanceInvocation) ConvertReturnValue(retType idl.Type) g.Generator {
+	if model.IsNodeType(retType.Name) {
+		return g.Return(g.Raw(jen.Id("ctx").Dot("getInstanceForNode").Call(jen.Id("result"))))
+	} else {
+		converter := c.Op.Encoder()
+		return g.Return(c.Receiver.Method(converter).Call(g.Id("ctx"), g.Id("result")))
+	}
+}
+
+func (c V8InstanceInvocation) GetGenerator() g.Generator {
+	if c.Instance == nil {
+		return c.ConvertResult(g.NewValue(idlNameToGoName(c.Name)).Call(c.Args...))
+	} else {
+		return c.ConvertResult(c.Instance.Method(idlNameToGoName(c.Name)).Call(c.Args...))
+	}
 }
 
 func CreateV8IllegalConstructorBody(data ESConstructorData) g.Generator {
@@ -312,11 +302,30 @@ func AssignArgs(data ESConstructorData, op ESOperation) g.Generator {
 	)
 }
 
+func decodersForArg(receiver g.Generator, arg ESOperationArgument) []g.Generator {
+	var convertNames []string
+	if arg.Type != "" {
+		convertNames = []string{fmt.Sprintf("decode%s", idlNameToGoName(arg.Type))}
+	} else {
+		types := arg.IdlType.IdlType.IType.Types
+		convertNames = make([]string, len(types))
+		for i, t := range types {
+			convertNames[i] = fmt.Sprintf("decode%s", t.IType.TypeName)
+		}
+	}
+	res := make([]g.Generator, len(convertNames))
+	for i, n := range convertNames {
+		res[i] = g.ValueOf(receiver).Field(n)
+	}
+	return res
+}
+
 func ReadArguments(data ESConstructorData, op ESOperation) (res V8ReadArguments) {
 	naming := V8NamingStrategy{data}
 	argCount := len(op.Arguments)
 	res.Args = make([]V8ReadArg, 0, argCount)
 	statements := g.StatementList()
+	receiver := g.NewValue(naming.Receiver())
 	for i, arg := range op.Arguments {
 		argName := g.Id(wrappers.SanitizeVarName(arg.Name))
 		errName := g.Id(fmt.Sprintf("err%d", i+1))
@@ -330,25 +339,14 @@ func ReadArguments(data ESConstructorData, op ESOperation) (res V8ReadArguments)
 			Index:    i,
 		})
 
-		var convertNames []string
-		if arg.Type != "" {
-			convertNames = []string{fmt.Sprintf("decode%s", idlNameToGoName(arg.Type))}
-		} else {
-			types := arg.IdlType.IdlType.IType.Types
-			convertNames = make([]string, len(types))
-			for i, t := range types {
-				convertNames[i] = fmt.Sprintf("decode%s", t.IType.TypeName)
-			}
-		}
+		var dec = decodersForArg(receiver, arg)
 
 		gConverters := []g.Generator{g.Id("args"), g.Lit(i)}
 		defaultName, hasDefault := arg.DefaultValueInGo()
 		if hasDefault {
 			gConverters = append(gConverters, g.NewValue(naming.Receiver()).Field(defaultName))
 		}
-		for _, n := range convertNames {
-			gConverters = append(gConverters, g.NewValue(naming.Receiver()).Field(n))
-		}
+		gConverters = append(gConverters, dec...)
 		if hasDefault {
 			statements.Append(g.AssignMany(g.List(argName, errName),
 				g.NewValue("tryParseArgWithDefault").Call(gConverters...)))

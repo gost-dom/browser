@@ -181,7 +181,7 @@ func newHandleReffedObject[T any](host *V8ScriptHost) handleReffedObject[T] {
 
 func (o handleReffedObject[T]) iso() *v8.Isolate { return o.scriptHost.iso }
 
-func (o handleReffedObject[T]) store(
+func storeObjectHandleInV8Instance(
 	value any,
 	ctx *V8ScriptContext,
 	this *v8.Object,
@@ -195,9 +195,17 @@ func (o handleReffedObject[T]) store(
 		ctx.v8nodes[objectId] = this.Value
 	}
 
-	internalField := v8.NewValueExternalHandle(o.scriptHost.iso, handle)
+	internalField := v8.NewValueExternalHandle(ctx.v8ctx.Isolate(), handle)
 	this.SetInternalField(0, internalField)
 	return this.Value, nil
+}
+
+func (o handleReffedObject[T]) store(
+	value any,
+	ctx *V8ScriptContext,
+	this *v8.Object,
+) (*v8.Value, error) {
+	return storeObjectHandleInV8Instance(value, ctx, this)
 }
 
 func getWrappedInstance[T any](object *v8.Object) (res T, err error) {

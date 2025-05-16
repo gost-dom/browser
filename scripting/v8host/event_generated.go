@@ -102,7 +102,7 @@ func (w eventV8Wrapper) target(info *v8.FunctionCallbackInfo) (*v8.Value, error)
 		return nil, err
 	}
 	result := instance.Target()
-	return w.toNullableEventTarget(ctx, result)
+	return w.toEventTarget(ctx, result)
 }
 
 func (w eventV8Wrapper) currentTarget(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -113,7 +113,7 @@ func (w eventV8Wrapper) currentTarget(info *v8.FunctionCallbackInfo) (*v8.Value,
 		return nil, err
 	}
 	result := instance.CurrentTarget()
-	return w.toNullableEventTarget(ctx, result)
+	return w.toEventTarget(ctx, result)
 }
 
 func (w eventV8Wrapper) defaultPrevented(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

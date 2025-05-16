@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"github.com/dave/jennifer/jen"
+	"github.com/gost-dom/code-gen/customrules"
+	"github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/code-gen/packagenames"
 	. "github.com/gost-dom/code-gen/script-wrappers/model"
 	"github.com/gost-dom/code-gen/stdgen"
@@ -48,6 +50,12 @@ type TargetGenerators interface {
 	CreateConstructorCallback(ESConstructorData) Generator
 
 	CreateMethodCallbackBody(ESConstructorData, ESOperation) Generator
+	CreateAttributeGetter(ESConstructorData, ESOperation, func(Generator) Generator) Generator
+	CreateAttributeSetter(
+		ESConstructorData,
+		ESOperation,
+		func(Generator, Generator) Generator,
+	) Generator
 	WrapperStructGenerators() PlatformWrapperStructGenerators
 
 	// Generate a return statement with an error messages. Goja is
@@ -80,30 +88,67 @@ func (g PrototypeWrapperGenerator) Generate() *jen.Statement {
 		g.Platform.CreateHostInitializer(g.Data),
 		PrototypeInitializerGenerator(g),
 		g.Platform.CreateConstructorCallback(g.Data),
-		g.MethodCallbacks(g.Data),
+		g.CreateOperationCallbacks(g.Data),
+		g.CreateAttributeCallbacks(g.Data),
 	)
 
 	return list.Generate()
 }
 
-func (g PrototypeWrapperGenerator) MethodCallbacks(data ESConstructorData) Generator {
+func (g PrototypeWrapperGenerator) CreateOperationCallbacks(data ESConstructorData) Generator {
 	list := generators.StatementList()
-	for op := range data.WrapperFunctionsToGenerate() {
+	receiver := generators.Id("w")
+	for op := range data.OperationCallbackInfos() {
 		list.Append(
 			generators.Line,
-			MethodCallback{data, op, g.Platform},
+			MethodCallback{
+				receiver,
+				data,
+				op,
+				g.Platform,
+				MethodCallbackBody{receiver, data, op, g.Platform},
+			},
 		)
 	}
 	return list
 }
 
-type MethodCallback struct {
+func (gen PrototypeWrapperGenerator) CreateAttributeCallbacks(data ESConstructorData) Generator {
+	list := generators.StatementList()
+	receiver := generators.Id("w")
+	for _, attr := range data.Attributes {
+		if attr.Getter != nil && !attr.Getter.CustomImplementation {
+			list.Append(
+				generators.Line,
+				MethodCallback{receiver, data, *attr.Getter, gen.Platform,
+					AttributeGetterCallbackBody{
+						receiver, data, *attr.Getter, gen.Platform,
+					},
+				},
+			)
+		}
+		if attr.Setter != nil && !attr.Setter.CustomImplementation {
+			list.Append(
+				generators.Line,
+				MethodCallback{receiver, data, *attr.Setter, gen.Platform,
+					AttributeSetterCallbackBody{
+						receiver, data, *attr.Setter, gen.Platform,
+					},
+				},
+			)
+		}
+	}
+	return list
+}
+
+type AttributeGetterCallback struct {
 	data     ESConstructorData
 	op       ESOperation
 	platform TargetGenerators
+	body     Generator
 }
 
-func (c MethodCallback) Generate() *jen.Statement {
+func (c AttributeGetterCallback) Generate() *jen.Statement {
 	typeGenerators := c.platform.WrapperStructGenerators()
 	receiver := generators.Id("w")
 	return generators.FunctionDefinition{
@@ -114,14 +159,37 @@ func (c MethodCallback) Generate() *jen.Statement {
 		Name:     c.op.CallbackMethodName(),
 		Args:     typeGenerators.CallbackMethodArgs(),
 		RtnTypes: typeGenerators.CallbackMethodRetTypes(),
-		Body:     MethodCallbackBody{c.data, c.op, receiver, c.platform},
+		Body:     c.body,
+	}.Generate()
+
+}
+
+type MethodCallback struct {
+	receiver Generator
+	data     ESConstructorData
+	op       ESOperation
+	platform TargetGenerators
+	body     Generator
+}
+
+func (c MethodCallback) Generate() *jen.Statement {
+	typeGenerators := c.platform.WrapperStructGenerators()
+	return generators.FunctionDefinition{
+		Receiver: generators.FunctionArgument{
+			Name: c.receiver,
+			Type: typeGenerators.WrapperStructType(c.data.Name()),
+		},
+		Name:     c.op.CallbackMethodName(),
+		Args:     typeGenerators.CallbackMethodArgs(),
+		RtnTypes: typeGenerators.CallbackMethodRetTypes(),
+		Body:     c.body,
 	}.Generate()
 }
 
 type MethodCallbackBody struct {
+	receiver g.Generator
 	data     ESConstructorData
 	op       ESOperation
-	receiver g.Generator
 	platform TargetGenerators
 }
 
@@ -147,4 +215,72 @@ func (b MethodCallbackBody) ReturnNotImplementedError() g.Generator {
 		b.data.Name(), b.op.Name, packagenames.ISSUE_URL,
 	)
 	return b.platform.ReturnErrMsg(g.Lit(errMsg))
+}
+
+type AttributeGetterCallbackBody struct {
+	receiver g.Generator
+	data     ESConstructorData
+	op       ESOperation
+	platform TargetGenerators
+}
+
+func (b AttributeGetterCallbackBody) Generate() (res *jen.Statement) {
+	statements := g.StatementList()
+	defer func() { res = statements.Generate() }()
+
+	statements.Append(stdgen.LogDebug(
+		g.ValueOf(b.receiver).Field("logger").Call(b.platform.PlatformInfoArg()),
+		g.Lit(fmt.Sprintf("V8 Function call: %s.%s", b.data.Name(), b.op.Name))))
+
+	if b.op.NotImplemented {
+		statements.Append(MethodCallbackBody(b).ReturnNotImplementedError())
+		return
+	}
+	statements.Append(
+		b.platform.CreateAttributeGetter(b.data, b.op, func(instance g.Generator) g.Generator {
+			field := g.ValueOf(instance).Field(internal.UpperCaseFirstLetter(b.op.Name))
+			if b.data.CustomRule.OutputType == customrules.OutputTypeStruct {
+				return field
+			} else {
+				return field.Call()
+			}
+		}),
+	)
+	return
+}
+
+type AttributeSetterCallbackBody struct {
+	receiver g.Generator
+	data     ESConstructorData
+	op       ESOperation
+	platform TargetGenerators
+}
+
+func (b AttributeSetterCallbackBody) Generate() (res *jen.Statement) {
+	statements := g.StatementList()
+	defer func() { res = statements.Generate() }()
+
+	statements.Append(stdgen.LogDebug(
+		g.ValueOf(b.receiver).Field("logger").Call(b.platform.PlatformInfoArg()),
+		g.Lit(fmt.Sprintf("V8 Function call: %s.%s", b.data.Name(), b.op.Name))))
+
+	if b.op.NotImplemented {
+		statements.Append(MethodCallbackBody(b).ReturnNotImplementedError())
+		return
+	}
+	statements.Append(
+		b.platform.CreateAttributeSetter(
+			b.data,
+			b.op,
+			func(instance g.Generator, val g.Generator) g.Generator {
+				field := g.ValueOf(instance).Field(internal.UpperCaseFirstLetter(b.op.Name))
+				if b.data.CustomRule.OutputType == customrules.OutputTypeStruct {
+					return g.Reassign(field, val)
+				} else {
+					return field.Call(val)
+				}
+			},
+		),
+	)
+	return
 }

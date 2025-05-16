@@ -40,8 +40,8 @@ func TestModule(t *testing.T) {
 		})
 	`
 	server := gosttest.StaticFileServer{
-		"https://example.com/index.html": [2]string{"text/html", indexHTML},
-		"https://example.com/module.js":  [2]string{"text/javascript", moduleJS},
+		"/index.html": gosttest.StaticHTML(indexHTML),
+		"/module.js":  gosttest.StaticJS(moduleJS),
 	}
 	win, err := initBrowser(t, server).Open("https://example.com/index.html")
 	assert.NoError(t, err)
@@ -68,8 +68,8 @@ func TestModuleImportPaths(t *testing.T) {
 		})
 	`
 	server := gosttest.StaticFileServer{
-		"https://example.com/index.html": [2]string{"text/html", indexHTML},
-		"https://example.com/module.js": [2]string{"text/javascript", `
+		"/index.html": gosttest.StaticHTML(indexHTML),
+		"/module.js": gosttest.StaticJS(`
 				import * as importValues from "./script.js";
 				import featureA from "./feature-a/index.js";
 				document.addEventListener("DOMContentLoaded", () => {
@@ -78,20 +78,20 @@ func TestModuleImportPaths(t *testing.T) {
 						featureA,
 					})
 				})
-			`},
-		"https://example.com/script.js": [2]string{"text/javascript", `
+			`),
+		"/script.js": gosttest.StaticJS(`
 				export const self = "/script.js";
-			`},
-		"https://example.com/feature-a/index.js": [2]string{"text/javascript", `
+			`),
+		"/feature-a/index.js": gosttest.StaticJS(`
 				import * as importValues from "./script.js";
 				export default {
 					self: "/feature-a/index.js",
 					importValues,
 				}
-			`},
-		"https://example.com/feature-a/script.js": [2]string{"text/javascript", `
+			`),
+		"/feature-a/script.js": gosttest.StaticJS(`
 				export const self = "/feature-a/script.js";
-			`},
+			`),
 	}
 	win, err := initBrowser(t, server).Open("https://example.com/index.html")
 	assert.NoError(t, err)
@@ -121,8 +121,8 @@ func TestModuleCyclicDeps(t *testing.T) {
 		</html>`
 
 	server := gosttest.StaticFileServer{
-		"https://example.com/index.html": [2]string{"text/html", indexHTML},
-		"https://example.com/a.js": [2]string{"text/html", `
+		"/index.html": gosttest.StaticHTML(indexHTML),
+		"/a.js": gosttest.StaticJS(`
 				import * as b from "./b.js";
 				let keys
 				try {
@@ -133,8 +133,8 @@ func TestModuleCyclicDeps(t *testing.T) {
 				export const keysFromB = keys.join(",")
 				export const valueFromA = () => "valueFromA";
 				export const printA = () => "a-" + b.valueFromB();
-			`},
-		"https://example.com/b.js": [2]string{"text/html", `
+			`),
+		"/b.js": gosttest.StaticJS(`
 				import * as a from "./a.js";
 				let keys
 				try {
@@ -145,8 +145,8 @@ func TestModuleCyclicDeps(t *testing.T) {
 				export const keysFromA = keys.join(",")
 				export const valueFromB = () => "valueFromB";
 				export const printB = () => "b-" + a.valueFromA();
-			`},
-		"https://example.com/module.js": [2]string{"text/html", `
+			`),
+		"/module.js": gosttest.StaticHTML(`
 				import * as a from "./a.js"
 				import * as b from "./b.js"
 				document.addEventListener("DOMContentLoaded", () => {
@@ -155,7 +155,7 @@ func TestModuleCyclicDeps(t *testing.T) {
 					document.getElementById("tgt-3").textContent = String(a.keysFromB)
 					document.getElementById("tgt-4").textContent = String(b.keysFromA)
 				})
-			`},
+			`),
 	}
 
 	win, err := initBrowser(t, server).Open("https://example.com/index.html")

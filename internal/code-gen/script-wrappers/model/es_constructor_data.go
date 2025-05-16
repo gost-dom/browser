@@ -3,6 +3,7 @@ package model
 import (
 	"iter"
 
+	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/code-gen/script-wrappers/configuration"
 	"github.com/gost-dom/webref/idl"
@@ -10,6 +11,7 @@ import (
 
 type ESConstructorData struct {
 	Spec             *configuration.IdlInterfaceConfiguration
+	CustomRule       customrules.InterfaceRule
 	IdlInterface     idl.Interface
 	IdlInterfaceName string
 	Inheritance      string
@@ -32,10 +34,14 @@ func (d ESConstructorData) Includes() []idl.Interface {
 }
 
 func (d ESConstructorData) GetInternalPackage() string {
-	if d.Name() == "Event" {
+	switch d.Name() {
+	case "Event":
 		return packagenames.Events
+	case "MutationObserver", "MutationRecord":
+		return packagenames.DomInterfaces
+	default:
+		return packagenames.PackageName(d.Spec.DomSpec.Name)
 	}
-	return packagenames.PackageName(d.Spec.DomSpec.Name)
 }
 
 func (d ESConstructorData) WrapperFunctionsToInstall() iter.Seq[ESOperation] {
@@ -58,23 +64,11 @@ func (d ESConstructorData) AttributesToInstall() iter.Seq[ESAttribute] {
 	}
 }
 
-func (d ESConstructorData) WrapperFunctionsToGenerate() iter.Seq[ESOperation] {
+func (d ESConstructorData) OperationCallbackInfos() iter.Seq[ESOperation] {
 	return func(yield func(ESOperation) bool) {
 		for op := range d.WrapperFunctionsToInstall() {
 			if !op.MethodCustomization.CustomImplementation && !yield(op) {
 				return
-			}
-		}
-		for _, a := range d.Attributes {
-			if a.Getter != nil && !a.Getter.CustomImplementation {
-				if !yield(*a.Getter) {
-					return
-				}
-			}
-			if a.Setter != nil && !a.Setter.CustomImplementation {
-				if !yield(*a.Setter) {
-					return
-				}
 			}
 		}
 	}
