@@ -58,5 +58,5 @@ func (w DOMStringMap[T]) NamedPropertyEnumerator(
 	for i, key := range keys {
 		retVal[i] = fact.NewString(key)
 	}
-	return nil, nil
+	return retVal, nil
 }
