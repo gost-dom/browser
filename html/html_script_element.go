@@ -55,6 +55,7 @@ func (e *htmlScriptElement) run() {
 	if err := e.script.Run(); err != nil {
 		log.Error(e.Logger(), "Script error", "src", e.src, "err", err)
 	}
+	log.Info(e.Logger(), "Script done")
 }
 
 func (e *htmlScriptElement) AppendChild(n dom.Node) (dom.Node, error) {
