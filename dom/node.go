@@ -125,6 +125,7 @@ const (
 type ChangeEvent struct {
 	// The original target of the change.
 	Target          Node
+	Attr            Attr
 	Type            ChangeEventType
 	AddedNodes      NodeList
 	RemovedNodes    NodeList

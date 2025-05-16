@@ -138,6 +138,10 @@ func (o *Observer) Process(e dom.ChangeEvent) {
 	}
 	switch e.Type {
 	case dom.ChangeEventAttributes:
+		name := e.Attr.Name()
+		ns := e.Attr.NamespaceURI()
+		r.AttributeName = &name
+		r.AttributeNamespace = &ns
 		if !o.options.Attributes {
 			return
 		}

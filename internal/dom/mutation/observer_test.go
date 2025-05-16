@@ -175,6 +175,7 @@ func (s *MutationObserverTestSuite) TestAttributeChanges() {
 		To(gomega.HaveEach(gomega.HaveField("Type", string(dom.ChangeEventAttributes))))
 	s.Expect(rec1.Records).
 		To(gomega.HaveEach(gomega.HaveField("Target", Equal(parent))))
+	s.Expect(rec1.Records[0]).To(gomega.HaveField("AttributeName", HaveValue(Equal("data-x"))))
 
 	s.Expect(rec1.Records[0]).To(HaveOldValue("Old value"))
 }
