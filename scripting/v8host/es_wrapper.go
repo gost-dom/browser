@@ -174,6 +174,10 @@ type handleReffedObject[T, U any] struct {
 	converters[U]
 }
 
+func (o handleReffedObject[T, U]) mustGetContext(info *v8.FunctionCallbackInfo) *V8ScriptContext {
+	return o.scriptHost.mustGetContext(info.Context())
+}
+
 func newHandleReffedObject[T any](host *V8ScriptHost) handleReffedObject[T, jsTypeParam] {
 	return handleReffedObject[T, jsTypeParam]{
 		scriptHost: host,
@@ -209,5 +213,6 @@ func getWrappedInstance[T any](object *v8.Object) (res T, err error) {
 }
 
 type callbackInfo interface {
+	Context() *v8.Context
 	This() *v8.Object
 }

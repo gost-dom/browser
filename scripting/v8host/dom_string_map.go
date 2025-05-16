@@ -49,7 +49,7 @@ func (w domStringMapV8Wrapper) NamedPropertyGet(
 	if val, found := instance.Get(property.String()); found {
 		return v8.NewValue(w.iso(), val)
 	}
-	return nil, nil
+	return nil, v8.NotIntercepted
 }
 
 func (w domStringMapV8Wrapper) NamedPropertyEnumerator(
@@ -64,5 +64,5 @@ func (w domStringMapV8Wrapper) NamedPropertyEnumerator(
 	for i, key := range keys {
 		retVal[i], err = v8.NewValue(w.iso(), key)
 	}
-	return nil, nil
+	return retVal, nil
 }

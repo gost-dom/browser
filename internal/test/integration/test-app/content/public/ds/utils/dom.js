@@ -53,9 +53,10 @@ export function walkDOM(element, callback) {
     return null;
   }
   const dataset = element.dataset;
-  console.log("Get starIgnore");
+  console.log("Get starIgnore", Object.keys(dataset));
   try {
     if ("starIgnore" in dataset) {
+      console.log("starIgnore return", dataset.starIgnore);
       return null;
     }
   } catch (err) {
@@ -66,6 +67,7 @@ export function walkDOM(element, callback) {
   }
   let el = element.firstElementChild;
   while (el) {
+    console.log("firstChild");
     walkDOM(el, callback);
     el = el.nextElementSibling;
   }
