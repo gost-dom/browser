@@ -57,8 +57,9 @@ func (e *htmlScriptElement) Connected() {
 }
 
 func (e *htmlScriptElement) run() {
+	var src string
 	if e.script == nil {
-		src, _ := e.GetAttribute("src")
+		src, _ = e.GetAttribute("src")
 		log.Warn(e.Logger(), "Script now valid", "src", src)
 		return
 	}
@@ -66,7 +67,10 @@ func (e *htmlScriptElement) run() {
 	if err := e.script.Run(); err != nil {
 		log.Error(e.Logger(), "Script error", "src", e.src, "err", err)
 	}
-	log.Info(e.Logger(), "Script done")
+	if src == "" {
+		src = e.window().LocationHREF()
+	}
+	log.Info(e.Logger(), "Script executed", "src", src)
 }
 
 func (e *htmlScriptElement) AppendChild(n dom.Node) (dom.Node, error) {
