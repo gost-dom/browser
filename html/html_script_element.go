@@ -20,6 +20,7 @@ func NewHTMLScriptElement(ownerDocument HTMLDocument) HTMLElement {
 }
 
 func (e *htmlScriptElement) Connected() {
+	log.Info(e.logger(), "<script> connected", "element", e)
 	var err error
 	src, hasSrc := e.GetAttribute("src")
 	scriptType, _ := e.GetAttribute("type")
@@ -52,7 +53,6 @@ func (e *htmlScriptElement) Connected() {
 
 func (e *htmlScriptElement) run() {
 	if err := e.script.Run(); err != nil {
-		// TODO: Dispatch "error" event
 		log.Error(e.Logger(), "Script error", "src", e.src, "err", err)
 	}
 }
