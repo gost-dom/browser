@@ -31,10 +31,9 @@ func (n parentNode) Prepend(nodes ...Node) (err error) {
 }
 
 func (n parentNode) ReplaceChildren(nodes ...Node) (err error) {
-	if node := n.collapseNodes(nodes); node != nil {
-		if err = n.node.assertCanAddNode(node); err == nil {
-			return n.node.replaceNodes(0, n.node.childNodes.Length(), node)
-		}
+	node := n.collapseNodes(nodes)
+	if err = n.node.assertCanAddNode(node); err == nil {
+		return n.node.replaceNodes(0, n.node.childNodes.Length(), node)
 	}
 	return
 }

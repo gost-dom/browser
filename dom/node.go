@@ -344,6 +344,9 @@ func (n *node) RemoveChild(node Node) (Node, error) {
 // [Element.Append] before adding, to avoid a partial update if the last
 // argument was invalid.
 func (n *node) assertCanAddNode(newNode Node) error {
+	if newNode == nil {
+		return nil
+	}
 	parentType := n.getSelf().NodeType()
 	childType := newNode.NodeType()
 	if !parentType.canHaveChildren() {
@@ -424,11 +427,14 @@ func (n *node) insertBefore(node Node, referenceNode Node) error {
 //
 // replaceNodes panics if index < 0 or index + count > len(n.childNodes.Length()).
 func (n *node) replaceNodes(index, count int, node Node) error {
+	if err := n.assertCanAddNode(node); err != nil {
+		return err
+	}
+
 	var (
 		prevSibling Node
 		nextSibling Node
 	)
-
 	newNodes := expandNode(node)
 	children := slices.Clone(n.ChildNodes().All())
 	if index > 0 {

@@ -348,6 +348,9 @@ func (s *ParentElementTestSuite) TestReplaceChildren() {
 		doc.CreateText("f"),
 	)
 	s.Expect(b).To(HaveOuterHTML(`<body>d<div>e</div>f</body>`))
+
+	b.ReplaceChildren()
+	s.Expect(b).To(HaveOuterHTML(`<body></body>`))
 }
 
 func (s *ParentElementTestSuite) TestIterateChildren() {
