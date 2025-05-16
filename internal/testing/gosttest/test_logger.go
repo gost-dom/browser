@@ -9,11 +9,12 @@ import (
 
 type TestingLogHandler struct {
 	testing.TB
-	allowErrors bool
+	AllowErrors bool
+	MinLogLevel int
 }
 
 func (l TestingLogHandler) Enabled(_ context.Context, lvl slog.Level) bool {
-	return lvl >= slog.LevelInfo
+	return lvl >= slog.Level(l.MinLogLevel)
 }
 
 func (l TestingLogHandler) Handle(_ context.Context, r slog.Record) error {
@@ -25,7 +26,7 @@ func (l TestingLogHandler) Handle(_ context.Context, r slog.Record) error {
 		b.WriteString("\n")
 		return true
 	})
-	if r.Level < slog.LevelError || l.allowErrors {
+	if r.Level < slog.LevelError || l.AllowErrors {
 		l.TB.Logf("%v: %s\n%s", r.Level, r.Message, b.String())
 	} else {
 		l.TB.Errorf("%v: %s\n%s", r.Level, r.Message, b.String())
@@ -37,6 +38,18 @@ func (l TestingLogHandler) WithAttrs(attrs []slog.Attr) slog.Handler { return l 
 
 func (l TestingLogHandler) WithGroup(name string) slog.Handler { return l }
 
-func NewTestLogger(t testing.TB) *slog.Logger {
-	return slog.New(TestingLogHandler{TB: t})
+type HandlerOption = func(*TestingLogHandler)
+
+func MinLogLevel(lvl int) HandlerOption {
+	return func(h *TestingLogHandler) { h.MinLogLevel = lvl }
+}
+
+func AllowErrors() HandlerOption { return func(h *TestingLogHandler) { h.AllowErrors = true } }
+
+func NewTestLogger(t testing.TB, opts ...func(*TestingLogHandler)) *slog.Logger {
+	handler := TestingLogHandler{TB: t}
+	for _, o := range opts {
+		o(&handler)
+	}
+	return slog.New(handler)
 }
