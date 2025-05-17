@@ -41,14 +41,18 @@ func (builder PrototypeInstaller) InstallFunctionHandlers(
 	for _, op := range data.Operations {
 		if !op.MethodCustomization.Ignored {
 			generators = append(generators,
-				builder.Proto.Set(
-					op.Name,
-					builder.NewFunctionTemplate(builder.Wrapper.Field(op.CallbackMethodName())),
-				),
+				builder.InstallFunction(op.Name, op.CallbackMethodName()),
 			)
 		}
 	}
 	return g.StatementList(generators...)
+}
+
+func (builder PrototypeInstaller) InstallFunction(name, cbMethod string) g.Generator {
+	return builder.Proto.Set(
+		name,
+		builder.NewFunctionTemplate(builder.Wrapper.Field(cbMethod)),
+	)
 }
 
 func (builder PrototypeInstaller) InstallAttributeHandlers(
