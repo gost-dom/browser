@@ -3,6 +3,7 @@ package v8host
 import (
 	"errors"
 	"fmt"
+	"iter"
 	"runtime/cgo"
 
 	"github.com/gost-dom/browser/internal/constants"
@@ -106,7 +107,7 @@ func (w urlSearchParamsV8Wrapper) toSequenceUSVString(
 
 func (w urlSearchParamsV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) {
 	iso := w.scriptHost.iso
-	it := newPairIterator(
+	it := newIterator2(
 		w.scriptHost,
 		func(k string, v string, ctx *V8ScriptContext) (*v8.Value, *v8.Value, error) {
 			log.Info(w.scriptHost.logger, "Iterate", "key", k, "value", v)
@@ -116,18 +117,33 @@ func (w urlSearchParamsV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemp
 		},
 	)
 	fmt.Println("Install iterator")
-	template := constructor.PrototypeTemplate()
-	template.SetSymbol(
-		v8.SymbolIterator(iso),
-		v8.NewFunctionTemplateWithError(iso,
-			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-				log.Info(w.logger(info), "ITERATOR")
-				ctx := w.mustGetContext(info)
-				instance, err := w.getInstance(info)
-				if err != nil {
-					return nil, err
-				}
-				return it.newIteratorInstanceOfIterable(ctx, instance)
-			}),
-	)
+	it.installPrototype(constructor)
+}
+
+type Keys[K, V any] struct {
+	iter iterable2[K, V]
+}
+
+func (k Keys[K, V]) All() iter.Seq[K] {
+	return func(yield func(K) bool) {
+		for k := range k.iter.All() {
+			if !yield(k) {
+				return
+			}
+		}
+	}
+}
+
+type iterValues[K, V any] struct {
+	iter iterable2[K, V]
+}
+
+func (k iterValues[K, V]) All() iter.Seq[V] {
+	return func(yield func(V) bool) {
+		for _, v := range k.iter.All() {
+			if !yield(v) {
+				return
+			}
+		}
+	}
 }

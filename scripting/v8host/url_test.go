@@ -15,6 +15,8 @@ func TestURL(t *testing.T) {
 }
 
 func TestURLSearchParams(t *testing.T) {
+	// This test reflect an implementation that doesn't follow the spec in that
+	// query params aren't returned in the order they are specified.
 	win := initWindow(t)
 	assert.Equal(t, "value", win.MustEval(`
 		{
@@ -35,17 +37,47 @@ func TestURLSearchParams(t *testing.T) {
 		x === y
 	`))
 
-	assert.Equal(t, `f,foo,b,bar`, win.MustEval(`
+	assert.ElementsMatch(t, []any{"f,foo", "b,bar"}, win.MustEval(`
 		{
 			const events = []
 			console.log("constructor", p2.__proto__.constructor.name)
 			for (const [k,v] of p2) {
-				events.push(k);
-				events.push(v)
+				events.push(`+"`${k},${v}`"+`);
 			}
+			events;
+		}
+	`))
 
-			// p2.forEach((k, v) => { events.push(k); events.push(v) })
-			events.join(",")
+	assert.ElementsMatch(t, []any{"f,foo", "b,bar"}, win.MustEval(`
+		{
+			const events = []
+			console.log("constructor", p2.__proto__.constructor.name)
+			for (const [k,v] of p2.entries()) {
+				events.push(`+"`${k},${v}`"+`);
+			}
+			events
+		}
+	`))
+
+	assert.ElementsMatch(t, []any{"f", "b"}, win.MustEval(`
+		{
+			const events = []
+			console.log("constructor", p2.__proto__.constructor.name)
+			for (const k of p2.keys()) {
+				events.push(k);
+			}
+			events
+		}
+	`))
+
+	assert.ElementsMatch(t, []any{"foo", "bar"}, win.MustEval(`
+		{
+			const events = []
+			console.log("constructor", p2.__proto__.constructor.name)
+			for (const k of p2.values()) {
+				events.push(k);
+			}
+			events
 		}
 	`))
 }

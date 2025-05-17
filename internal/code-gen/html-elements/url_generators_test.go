@@ -39,3 +39,10 @@ func TestURLSearchParamsOptionalArgs(t *testing.T) {
 		g,
 	).To(HaveRenderedSubstring("\tDelete(string)\n\tDeleteValue(string, string)\n"))
 }
+
+func TestURLSearchParamsIterable(t *testing.T) {
+	expect := newGomega(t)
+	expect(getIdlInterfaceGenerator("urlinterfaces", "URLSearchParams")).To(HaveRenderedSubstring(
+		"\tAll() iter.Seq2[string, string]\n"), "URLSearchParams is iterable")
+
+}

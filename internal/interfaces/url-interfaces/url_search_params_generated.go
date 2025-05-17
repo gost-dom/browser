@@ -2,7 +2,10 @@
 
 package urlinterfaces
 
-import "fmt"
+import (
+	"fmt"
+	"iter"
+)
 
 type URLSearchParams interface {
 	fmt.Stringer
@@ -16,4 +19,5 @@ type URLSearchParams interface {
 	HasValue(string, string) bool
 	Set(string, string)
 	Sort()
+	All() iter.Seq2[string, string]
 }
