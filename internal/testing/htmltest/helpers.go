@@ -39,6 +39,12 @@ func NewWindowHelper(t testing.TB, win html.Window) WindowHelper {
 	return WindowHelper{win, t}
 }
 
+func (win WindowHelper) MustRun(script string) {
+	win.t.Helper()
+	err := win.Run(script)
+	assert.NoError(win.t, err)
+}
+
 func (win WindowHelper) MustEval(script string) any {
 	win.t.Helper()
 	res, err := win.Eval(script)
