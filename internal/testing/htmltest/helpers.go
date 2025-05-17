@@ -7,6 +7,7 @@ import (
 	"github.com/gost-dom/browser"
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
+	"github.com/stretchr/testify/assert"
 )
 
 type BrowserHelper struct {
@@ -36,6 +37,13 @@ type WindowHelper struct {
 
 func NewWindowHelper(t testing.TB, win html.Window) WindowHelper {
 	return WindowHelper{win, t}
+}
+
+func (win WindowHelper) MustEval(script string) any {
+	win.t.Helper()
+	res, err := win.Eval(script)
+	assert.NoError(win.t, err)
+	return res
 }
 
 func (win WindowHelper) HTMLDocument() HTMLDocumentHelper {
