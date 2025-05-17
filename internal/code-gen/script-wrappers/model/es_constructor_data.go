@@ -13,7 +13,6 @@ type ESConstructorData struct {
 	Spec             *configuration.IdlInterfaceConfiguration
 	CustomRule       customrules.InterfaceRule
 	IdlInterface     idl.Interface
-	SkipConstructor  bool
 	IdlInterfaceName string
 	Inheritance      string
 	Operations       []ESOperation
@@ -40,6 +39,8 @@ func (d ESConstructorData) GetInternalPackage() string {
 		return packagenames.Events
 	case "MutationObserver", "MutationRecord":
 		return packagenames.DomInterfaces
+	case "URLSearchParams":
+		return packagenames.URLInterfaces
 	default:
 		return packagenames.PackageName(d.Spec.DomSpec.Name)
 	}
