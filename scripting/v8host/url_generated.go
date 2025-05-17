@@ -361,23 +361,6 @@ func (w urlSearchParamsV8Wrapper) delete(info *v8.FunctionCallbackInfo) (*v8.Val
 	return nil, errors.New("URLSearchParams.delete: Missing arguments")
 }
 
-func (w urlSearchParamsV8Wrapper) get(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: URLSearchParams.get")
-	ctx := w.mustGetContext(info)
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := w.getInstance(info)
-	name, err1 := tryParseArg(args, 0, w.decodeUSVString)
-	if args.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return nil, err
-		}
-		result := instance.Get(name)
-		return w.toNullableUSVString(ctx, result)
-	}
-	return nil, errors.New("URLSearchParams.get: Missing arguments")
-}
-
 func (w urlSearchParamsV8Wrapper) getAll(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: URLSearchParams.getAll")
 	ctx := w.mustGetContext(info)
