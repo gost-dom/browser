@@ -7,6 +7,7 @@ import (
 
 	"github.com/gost-dom/browser/internal/constants"
 	urlinterfaces "github.com/gost-dom/browser/internal/interfaces/url-interfaces"
+	log "github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
 	"github.com/gost-dom/browser/url"
 
@@ -101,4 +102,32 @@ func (w urlSearchParamsV8Wrapper) toSequenceUSVString(
 		vs[i], _ = v8.NewValue(ctx.host.iso, v)
 	}
 	return toArray(ctx.v8ctx, vs...)
+}
+
+func (w urlSearchParamsV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) {
+	iso := w.scriptHost.iso
+	it := newPairIterator(
+		w.scriptHost,
+		func(k string, v string, ctx *V8ScriptContext) (*v8.Value, *v8.Value, error) {
+			log.Info(w.scriptHost.logger, "Iterate", "key", k, "value", v)
+			r1, e1 := v8.NewValue(iso, k)
+			r2, e2 := v8.NewValue(iso, v)
+			return r1, r2, errors.Join(e1, e2)
+		},
+	)
+	fmt.Println("Install iterator")
+	template := constructor.PrototypeTemplate()
+	template.SetSymbol(
+		v8.SymbolIterator(iso),
+		v8.NewFunctionTemplateWithError(iso,
+			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+				log.Info(w.logger(info), "ITERATOR")
+				ctx := w.mustGetContext(info)
+				instance, err := w.getInstance(info)
+				if err != nil {
+					return nil, err
+				}
+				return it.newIteratorInstanceOfIterable(ctx, instance)
+			}),
+	)
 }

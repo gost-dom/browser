@@ -5,6 +5,7 @@ import (
 	"iter"
 
 	"github.com/gost-dom/browser/internal/entity"
+	"github.com/gost-dom/v8go"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -138,5 +139,146 @@ func (i iterator[T]) createNotDoneIteratorResult(
 	}
 	result.Set("done", false)
 	result.Set("value", value)
+	return result.Value, nil
+}
+
+/* -------- pairIterator -------- */
+
+type pairIterator[K, V any] struct {
+	host           *V8ScriptHost
+	ot             *v8.ObjectTemplate
+	resultTemplate *v8.ObjectTemplate
+	entityLookup   pairEntityLookup[K, V]
+}
+
+type pairEntityLookup[K, V any] func(k K, v V, ctx *V8ScriptContext) (*v8.Value, *v8.Value, error)
+
+func newPairIterator[T, V any](
+	host *V8ScriptHost,
+	entityLookup pairEntityLookup[T, V],
+) pairIterator[T, V] {
+	iso := host.iso
+	// TODO, once we have weak handles in v8, we can release the iterator when it
+	// goes out of scope.
+	iterator := pairIterator[T, V]{
+		host,
+		v8.NewObjectTemplate(host.iso),
+		v8.NewObjectTemplate(host.iso),
+		entityLookup,
+	}
+	iterator.ot.Set("next", v8.NewFunctionTemplateWithError(host.iso, iterator.next))
+	iterator.ot.SetSymbol(
+		v8.SymbolIterator(iso),
+		v8.NewFunctionTemplateWithError(host.iso, iterator.newIterator),
+	)
+	iterator.ot.SetInternalFieldCount(2)
+	return iterator
+}
+
+type pairIterable[K, V any] interface {
+	All() iter.Seq2[K, V]
+}
+
+type pairIteratorInstance[K, V any] struct {
+	entity.Entity
+	items pairIterable[K, V]
+	next  func() (K, V, bool)
+	stop  func()
+}
+
+// func seqOfSlice[T any](items []T) iter.Seq[T] {
+// 	return func(yield func(T) bool) {
+// 		for _, item := range items {
+// 			if !yield(item) {
+// 				return
+// 			}
+// 		}
+// 	}
+// }
+// type sliceIterable[T any] struct {
+// 	items []T
+// }
+//
+// func (i sliceIterable[T]) All() iter.Seq[T] {
+// 	return seqOfSlice(i.items)
+// }
+//
+// func (i pairIterator[K,V]) newIteratorInstance(context *V8ScriptContext, items []T) (*v8.Value, error) {
+// 	return i.newIteratorInstanceOfIterable(context, sliceIterable[T]{items})
+// }
+
+func (i pairIterator[K, V]) newIteratorInstanceOfIterable(
+	context *V8ScriptContext,
+	items pairIterable[K, V],
+) (*v8.Value, error) {
+	seq := items.All()
+	next, stop := iter.Pull2(seq)
+
+	iterator := &pairIteratorInstance[K, V]{
+		items: items,
+		next:  next,
+		stop:  stop,
+	}
+	res, err := i.ot.NewInstance(context.v8ctx)
+	if err == nil {
+		return context.cacheNode(res, iterator)
+	}
+	return res.Value, err
+}
+
+// func (i pairIterator[T]) iso() *v8.Isolate { return i.host.iso }
+
+func (i pairIterator[K, V]) next(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+	ctx := i.host.mustGetContext(info.Context())
+	instance, err := getInstanceFromThis[*pairIteratorInstance[K, V]](ctx, info.This())
+	if err != nil {
+		return nil, err
+	}
+	next := instance.next
+	stop := instance.stop
+	index := info.This().GetInternalField(1).Int32()
+	if k, v, ok := next(); !ok {
+		stop()
+		return i.createDoneIteratorResult(ctx.v8ctx)
+	} else {
+		val1, val2, err1 := i.entityLookup(k, v, ctx)
+		result, err2 := i.createNotDoneIteratorResult(ctx.v8ctx, val1, val2)
+		err3 := info.This().SetInternalField(1, index+1)
+		return result, errors.Join(err1, err2, err3)
+	}
+}
+
+func (i pairIterator[K, V]) newIterator(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+	ctx := i.host.mustGetContext(info.Context())
+	instance, err := getInstanceFromThis[*pairIteratorInstance[K, V]](ctx, info.This())
+	if err != nil {
+		return nil, err
+	}
+	return i.newIteratorInstanceOfIterable(ctx, instance.items)
+}
+
+func (i pairIterator[K, V]) createDoneIteratorResult(ctx *v8.Context) (*v8.Value, error) {
+	result, err := i.resultTemplate.NewInstance(ctx)
+	if err != nil {
+		return nil, err
+	}
+	result.Set("done", true)
+	return result.Value, nil
+}
+
+func (i pairIterator[K, V]) createNotDoneIteratorResult(
+	ctx *v8.Context,
+	key, value *v8go.Value,
+) (*v8.Value, error) {
+	result, err := i.resultTemplate.NewInstance(ctx)
+	if err != nil {
+		return nil, err
+	}
+	pair, err := toArray(ctx, key, value)
+	if err != nil {
+		return nil, err
+	}
+	result.Set("done", false)
+	result.Set("value", pair)
 	return result.Value, nil
 }
