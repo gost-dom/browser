@@ -8,6 +8,7 @@ import (
 	"github.com/gost-dom/code-gen/customrules/typerule"
 	. "github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/generators"
+	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )
 
@@ -21,6 +22,7 @@ type IdlInterface struct {
 	Attributes     []IdlInterfaceAttribute
 	Operations     []IdlInterfaceOperation
 	Includes       []IdlInterfaceInclude
+	IterableTypes  []IdlType
 }
 
 func (i IdlInterface) Generate() *jen.Statement {
@@ -56,7 +58,27 @@ func (i IdlInterface) Generate() *jen.Statement {
 	for _, o := range i.Operations {
 		fields = append(fields, o)
 	}
+	switch len(i.IterableTypes) {
+	case 0:
+		{
+		}
+	case 1:
+		fields = append(fields, iterator(i.IterableTypes[0]))
+	case 2:
+		fields = append(fields, iterator2(i.IterableTypes[0], i.IterableTypes[1]))
+	}
 	return jen.Type().Add(jen.Id(i.Name)).Interface(generators.ToJenCodes(fields)...)
+}
+
+func iterator(t IdlType) g.Generator {
+	return generators.Raw(
+		jen.Id("All").Params().Qual("iter", "Seq2").Index(t.Generate()),
+	)
+}
+func iterator2(k, v IdlType) g.Generator {
+	return generators.Raw(
+		jen.Id("All").Params().Qual("iter", "Seq2").Types(k.Generate(), v.Generate()),
+	)
 }
 
 /* -------- IdlInterfaceAttribute -------- */
