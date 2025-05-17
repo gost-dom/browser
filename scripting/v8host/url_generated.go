@@ -301,6 +301,7 @@ func createURLSearchParamsPrototype(scriptHost *V8ScriptHost) *v8.FunctionTempla
 
 	wrapper.installPrototype(constructor.PrototypeTemplate())
 
+	wrapper.CustomInitialiser(constructor)
 	return constructor
 }
 func (w urlSearchParamsV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {

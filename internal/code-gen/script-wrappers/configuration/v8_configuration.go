@@ -19,6 +19,7 @@ func CreateV8Specs() WebIdlConfigurations {
 	urlSpecs := specs.Module("url")
 	urlSearchParams := urlSpecs.Type("URLSearchParams")
 	urlSearchParams.SkipConstructor = true
+	urlSearchParams.RunCustomCode = true
 	urlSearchParams.Method("get").SetCustomImplementation()
 
 	url := urlSpecs.Type("URL")

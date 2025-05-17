@@ -34,4 +34,18 @@ func TestURLSearchParams(t *testing.T) {
 		const y = p2.urlSearchParams
 		x === y
 	`))
+
+	assert.Equal(t, `f,foo,b,bar`, win.MustEval(`
+		{
+			const events = []
+			console.log("constructor", p2.__proto__.constructor.name)
+			for (const [k,v] of p2) {
+				events.push(k);
+				events.push(v)
+			}
+
+			// p2.forEach((k, v) => { events.push(k); events.push(v) })
+			events.join(",")
+		}
+	`))
 }
