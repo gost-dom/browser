@@ -15,6 +15,7 @@ type IdlInterfaceConfiguration struct {
 	// type.
 	SkipWrapper     bool
 	SkipConstructor bool
+	IncludeIterable bool
 	IncludeIncludes bool
 	Customization   map[string]*ESMethodWrapper
 }
