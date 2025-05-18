@@ -149,14 +149,14 @@ type iterator2[K, V any] struct {
 
 type iteratorValueLookup2[K, V any] func(k K, v V, ctx *V8ScriptContext) (*v8.Value, *v8.Value, error)
 
-func newIterator2[T, V any](
+func newIterator2[K, V any](
 	host *V8ScriptHost,
-	entityLookup iteratorValueLookup2[T, V],
-) iterator2[T, V] {
+	entityLookup iteratorValueLookup2[K, V],
+) iterator2[K, V] {
 	iso := host.iso
 	// TODO, once we have weak handles in v8, we can release the iterator when it
 	// goes out of scope.
-	iterator := iterator2[T, V]{
+	iterator := iterator2[K, V]{
 		host,
 		v8.NewObjectTemplate(host.iso),
 		v8.NewObjectTemplate(host.iso),

@@ -100,7 +100,7 @@ func (f v8ValueFactory) String(s string) abstraction.Value {
 	return f.mustVal(v8go.NewValue(f.iso(), s))
 }
 
-// val is just a simple helper to crete Value wrappers on top of v8go values
+// mustVal is just a simple helper to crete Value wrappers on top of v8go values
 // where construction is assumed to succeed
 func (f v8ValueFactory) mustVal(val *v8go.Value, err error) abstraction.Value {
 	if err != nil {
@@ -125,7 +125,7 @@ func As[T any](val any, err error) (rtnVal T, rtnErr error) {
 	}
 	var ok bool
 	if rtnVal, ok = val.(T); !ok {
-		rtnErr = fmt.Errorf("instance not instance of %T", rtnVal)
+		rtnErr = fmt.Errorf("val is not of type %T", rtnVal)
 	}
 	return
 }
