@@ -29,6 +29,17 @@ func TestURLSearchParamsFromIterable(t *testing.T) {
 	got, _ := usp.Get("f")
 	assert.Equal(t, "foo", got)
 	assert.Equal(t, []string{"bar", "baz"}, usp.GetAll("b"))
+
+	usp = win.MustEval(`
+		{
+			new URLSearchParams({
+				f: "foo",
+				b: "bar"
+			})
+		}
+	`).(urlinterfaces.URLSearchParams)
+	assert.Equal(t, []string{"foo"}, usp.GetAll("f"))
+	assert.Equal(t, []string{"bar"}, usp.GetAll("b"))
 }
 
 func TestURLSearchParams(t *testing.T) {

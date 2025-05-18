@@ -57,6 +57,7 @@ func (w urlV8Wrapper) CreateInstanceBase(
 
 func (w urlSearchParamsV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	var err error
+	ctx := w.scriptHost.mustGetContext(info.Context())
 	args := info.Args()
 	var res url.URLSearchParams
 	if len(args) > 0 {
@@ -79,6 +80,27 @@ func (w urlSearchParamsV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v
 					break
 				}
 			}
+			o, _ := arg.AsObject()
+			if k, err := ctx.v8ctx.RunScript("Object.keys", ""); err == nil {
+				if f, err := k.AsFunction(); err == nil {
+					if keys, err := f.Call(ctx.v8ctx.Global(), arg); err == nil {
+						if goKeys, err := v8ValueToGoValue(keys); err == nil {
+							if arr, ok := goKeys.([]any); ok {
+								res = url.URLSearchParams{}
+								for _, key := range arr {
+									if strKey, isString := key.(string); isString {
+										if val, err := o.Get(strKey); err == nil {
+											res.Append(strKey, val.String())
+										}
+									}
+								}
+								break
+							}
+						}
+					}
+				}
+			}
+
 			fallthrough
 		default:
 			return nil, fmt.Errorf(
@@ -87,7 +109,6 @@ func (w urlSearchParamsV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v
 			)
 		}
 	}
-	ctx := w.mustGetContext(info)
 	w.store(&res, ctx, info.This())
 	return nil, nil
 }
