@@ -1,6 +1,7 @@
 package url
 
 import (
+	"iter"
 	netURL "net/url"
 	"slices"
 	"strings"
@@ -71,4 +72,15 @@ func (p *URLSearchParams) Set(key string, val string) {
 }
 func (p *URLSearchParams) Sort() {
 	panic("URLSearchParams doesn't support Sorting in it's current implementation")
+}
+func (p *URLSearchParams) All() iter.Seq2[string, string] {
+	return func(yield func(string, string) bool) {
+		for k, vs := range p.values {
+			for _, v := range vs {
+				if !yield(k, v) {
+					return
+				}
+			}
+		}
+	}
 }

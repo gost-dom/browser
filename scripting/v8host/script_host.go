@@ -466,6 +466,14 @@ func v8ValueToGoValue(result *v8go.Value) (any, error) {
 	if result.IsUndefined() {
 		return nil, nil
 	}
+	if o, err := result.AsObject(); err == nil {
+		if c := o.InternalFieldCount(); c > 0 {
+			f := o.GetInternalField(0)
+			if f.IsExternal() {
+				return f.ExternalHandle().Value(), nil
+			}
+		}
+	}
 	if result.IsArray() {
 		obj, _ := result.AsObject()
 		length, err := obj.Get("length")

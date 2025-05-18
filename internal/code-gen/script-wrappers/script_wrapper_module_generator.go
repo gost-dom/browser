@@ -83,15 +83,23 @@ func (g PrototypeWrapperGenerator) Generate() *jen.Statement {
 	if !g.Data.Spec.SkipWrapper {
 		list.Append(WrapperStructGenerator(g))
 	}
+
 	list.Append(
 		g.Platform.CreateHostInitializer(g.Data),
 		PrototypeInitializerGenerator(g),
-		g.Platform.CreateConstructorCallback(g.Data),
+		g.Constructor(),
 		g.CreateOperationCallbacks(g.Data),
 		g.CreateAttributeCallbacks(g.Data),
 	)
 
 	return list.Generate()
+}
+
+func (gen PrototypeWrapperGenerator) Constructor() g.Generator {
+	if gen.Data.Spec.SkipConstructor {
+		return g.Noop
+	}
+	return gen.Platform.CreateConstructorCallback(gen.Data)
 }
 
 func (g PrototypeWrapperGenerator) CreateOperationCallbacks(data ESConstructorData) Generator {

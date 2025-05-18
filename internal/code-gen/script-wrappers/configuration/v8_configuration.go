@@ -17,6 +17,11 @@ func CreateV8Specs() WebIdlConfigurations {
 	xhr.Method("onreadystatechange").Ignore()
 
 	urlSpecs := specs.Module("url")
+	urlSearchParams := urlSpecs.Type("URLSearchParams")
+	urlSearchParams.SkipConstructor = true
+	urlSearchParams.RunCustomCode = true
+	urlSearchParams.Method("get").SetCustomImplementation()
+
 	url := urlSpecs.Type("URL")
 	// TODO: Just need to use a different base class for non-nodes
 	url.SkipWrapper = true

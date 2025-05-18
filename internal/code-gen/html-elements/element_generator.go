@@ -112,6 +112,7 @@ func (gen baseGenerator) GenerateInterface() g.Generator {
 	attributes := make([]IdlInterfaceAttribute, 0)
 	operations := make([]IdlInterfaceOperation, 0)
 	includes := make([]IdlInterfaceInclude, len(idlInterface.Includes))
+	iterableTypes := make([]IdlType, len(idlInterface.IterableTypes))
 
 	interfaces := make([]idl.Interface, 1+len(gen.idlType.Includes))
 	interfaces[0] = gen.idlType
@@ -163,8 +164,12 @@ func (gen baseGenerator) GenerateInterface() g.Generator {
 			IdlInterfaceOperation{o, arguments, IdlType(o.ReturnType), operationRule},
 		)
 	}
+	for i, t := range idlInterface.IterableTypes {
+		iterableTypes[i] = IdlType(t)
+	}
 	result.Attributes = attributes
 	result.Operations = operations
+	result.IterableTypes = iterableTypes
 	return result
 }
 

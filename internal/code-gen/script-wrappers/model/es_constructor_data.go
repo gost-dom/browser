@@ -39,6 +39,8 @@ func (d ESConstructorData) GetInternalPackage() string {
 		return packagenames.Events
 	case "MutationObserver", "MutationRecord":
 		return packagenames.DomInterfaces
+	case "URLSearchParams":
+		return packagenames.URLInterfaces
 	default:
 		return packagenames.PackageName(d.Spec.DomSpec.Name)
 	}
