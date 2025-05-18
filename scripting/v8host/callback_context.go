@@ -125,7 +125,7 @@ func As[T any](val any, err error) (rtnVal T, rtnErr error) {
 	}
 	var ok bool
 	if rtnVal, ok = val.(T); !ok {
-		rtnErr = fmt.Errorf("val is not of type %T", rtnVal)
+		rtnErr = fmt.Errorf("value %+v is not assignable to requested type %T", val, rtnVal)
 	}
 	return
 }
