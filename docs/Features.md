@@ -94,7 +94,8 @@ keyboard typing is simulated.
 ### URL API
 
 - Doesn't support object URLs https://github.com/gost-dom/browser/issues/69
-- `URLSearchParams` doesn't guarantee the order or values.
+- Iterating `URLSearchParams` doesn't iteraiting the values in the order they
+  appear in the query string. https://github.com/gost-dom/browser/issues/86
 
 ### XHR API
 
