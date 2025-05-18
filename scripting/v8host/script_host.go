@@ -448,6 +448,14 @@ func (ctx *V8ScriptContext) Eval(script string) (any, error) {
 }
 
 func v8ValueToGoValue(result *v8go.Value) (any, error) {
+	if o, err := result.AsObject(); err == nil {
+		if c := o.InternalFieldCount(); c > 0 {
+			f := o.GetInternalField(0)
+			if f.IsExternal() {
+				return f.ExternalHandle().Value(), nil
+			}
+		}
+	}
 	if result == nil {
 		return nil, nil
 	}
