@@ -110,7 +110,7 @@ func initBrowser(t testing.TB, handler http.Handler) *browser.Browser {
 		browser.WithHandler(handler),
 		browser.WithLogger(gosttest.NewTestLogger(t)),
 	)
-	// t.Cleanup(b.Close)
+	t.Cleanup(b.Close)
 	return b
 }
 
