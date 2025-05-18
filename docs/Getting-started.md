@@ -211,8 +211,38 @@ win, _ := browser.Open(url)
 There isn't a concrete logging strategy, except all error cases should be
 logged.
 
-- Most JavaScript API calls will log a debug statement.
+- Most JavaScript API calls will mostly log a debug statement.
 - Some internal Go calls will log at the debug level.
 - Some high level functions log at info level, e.g., `Window.Navigate`.
 - `console` functions will log with the appropriate level.
 - Errors, including unhandled JavaScript errors will generate error logs
+
+### Piping logs to `testing.T`
+
+This is intended for use in a test scenario, and log output can be helpful to
+redirect back to the `testing.T` instance. Furthermore, logged errors will
+_often_ indicate the system under test isn't behaving as expected, so triggering
+a test error on error level logging could be sensible behaviour.
+
+A simple log handler could look like this.
+
+```go
+type TestingLogHandler struct { testing.TB; allowErrors bool }
+
+func (l TestingLogHandler) Enabled(_ context.Context, lvl slog.Level) bool { return lvl >= slog.LevelInfo }
+
+func (l TestingLogHandler) Handle(_ context.Context, r slog.Record) error {
+	l.TB.Helper()
+	if r.Level < slog.LevelError || l.allowErrors {
+		l.TB.Logf("%v: %s", r.Level, r.Message)
+	} else {
+		l.TB.Errorf("%v: %s", r.Level, r.Message)
+	}
+	return nil
+}
+
+func (l TestingLogHandler) WithAttrs(attrs []slog.Attr) slog.Handler { return l }
+func (l TestingLogHandler) WithGroup(name string) slog.Handler { return l }
+```
+
+3rd party modules also exist to provide similar behaviour.
