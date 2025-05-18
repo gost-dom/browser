@@ -39,13 +39,16 @@ func encodeDataAttrKey(key string) string {
 
 func decodeDataAttrKey(attr dom.Attr) (s string, ok bool) {
 	name := attr.Name()
+	if !strings.HasPrefix(name, "data-") {
+		return
+	}
 	trimmed := strings.TrimPrefix(name, "data-")
 	if ok = trimmed != name && attr.NamespaceURI() == ""; !ok {
 		return
 	}
 	return kebabCaseDetector.ReplaceAllStringFunc(trimmed, func(match string) string {
 		runes := []rune(match)
-		return string([]rune{runes[0], unicode.ToUpper(runes[1])})
+		return string([]rune{runes[0], unicode.ToUpper(runes[2])})
 	}), true
 
 }
