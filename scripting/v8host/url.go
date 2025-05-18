@@ -6,6 +6,7 @@ import (
 	"iter"
 	"runtime/cgo"
 
+	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/constants"
 	urlinterfaces "github.com/gost-dom/browser/internal/interfaces/url-interfaces"
 	log "github.com/gost-dom/browser/internal/log"
@@ -55,20 +56,35 @@ func (w urlV8Wrapper) CreateInstanceBase(
 }
 
 func (w urlSearchParamsV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+	var err error
 	args := info.Args()
 	var res url.URLSearchParams
 	if len(args) > 0 {
 		arg := args[0]
-		if !arg.IsString() {
+
+		switch {
+		case arg.IsString():
+			res, err = url.ParseURLSearchParams(arg.String())
+			if err != nil {
+				return nil, err
+			}
+		case arg.IsObject():
+			if gv, err2 := v8ValueToGoValue(arg); err2 == nil {
+				if fd, ok := gv.(*html.FormData); ok {
+					res = url.URLSearchParams{}
+					for _, pair := range fd.Entries {
+						res.Append(pair.Name, string(pair.Value))
+
+					}
+					break
+				}
+			}
+			fallthrough
+		default:
 			return nil, fmt.Errorf(
-				"URLSearchParams: Constructor only supports no arguments, or a string. If the argument is _valid_: %s",
+				"URLSearchParams: unsupported argument. If the argument is _valid_: %s",
 				constants.BUG_USSUE_URL,
 			)
-		}
-		var err error
-		res, err = url.ParseURLSearchParams(arg.String())
-		if err != nil {
-			return nil, err
 		}
 	}
 	ctx := w.mustGetContext(info)
