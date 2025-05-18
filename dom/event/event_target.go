@@ -195,8 +195,8 @@ func (e *eventTarget) dispatchEvent(event *Event, capture bool) {
 func (e *eventTarget) handleError(event *Event, err error) {
 	log.Error(e.logger(),
 		"eventTarget.dispatchEvent: Error occurred in event handler",
-		"type", event.Type,
-		"error", err.Error(),
+		"eventType", event.Type,
+		log.ErrAttr(err),
 	)
 	e.dispatchError(err)
 }
