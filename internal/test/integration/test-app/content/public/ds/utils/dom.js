@@ -45,7 +45,6 @@ export function attrHash(key, val) {
   return new Hash().with(key).with(val).value;
 }
 export function walkDOM(element, callback) {
-  console.log("WALK THE DOM", element);
   if (
     !element ||
     !(element instanceof HTMLElement || element instanceof SVGElement)
@@ -53,10 +52,8 @@ export function walkDOM(element, callback) {
     return null;
   }
   const dataset = element.dataset;
-  console.log("Get starIgnore", Object.keys(dataset));
   try {
     if ("starIgnore" in dataset) {
-      console.log("starIgnore return", dataset.starIgnore);
       return null;
     }
   } catch (err) {
@@ -67,7 +64,6 @@ export function walkDOM(element, callback) {
   }
   let el = element.firstElementChild;
   while (el) {
-    console.log("firstChild");
     walkDOM(el, callback);
     el = el.nextElementSibling;
   }

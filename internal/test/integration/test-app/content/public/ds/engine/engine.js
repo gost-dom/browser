@@ -77,9 +77,7 @@ function applyToElement(rootElement) {
     const hashes = new Map();
     // Apply the plugins to the element in order of application
     // since DOMStringMap is ordered, we can be deterministic
-    console.log("Iterate dataset");
     for (const datasetKey of Object.keys(el.dataset)) {
-      console.log("Key", datasetKey);
       // Ignore data attributes that don’t start with the alias
       if (!datasetKey.startsWith(alias)) {
         break;
