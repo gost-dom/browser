@@ -3,6 +3,7 @@ package v8host_test
 import (
 	"testing"
 
+	urlinterfaces "github.com/gost-dom/browser/internal/interfaces/url-interfaces"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,6 +13,22 @@ func TestURL(t *testing.T) {
 		const u = new URL("foo/bar", "http://example.com");
 		u.href
 	`))
+}
+
+func TestURLSearchParamsFromIterable(t *testing.T) {
+	win := initWindow(t)
+	usp := win.MustEval(`
+		{
+			const fd = new FormData()
+			fd.append("f", "foo")
+			fd.append("b", "bar")
+			fd.append("b", "baz")
+			new URLSearchParams(fd)
+		}
+	`).(urlinterfaces.URLSearchParams)
+	got, _ := usp.Get("f")
+	assert.Equal(t, "foo", got)
+	assert.Equal(t, []string{"bar", "baz"}, usp.GetAll("b"))
 }
 
 func TestURLSearchParams(t *testing.T) {
