@@ -34,8 +34,8 @@ func (i IdlInterface) Generate() *jen.Statement {
 		fields = append(fields, g.Id(i.Inherits))
 	}
 
-	for _, i := range i.Includes {
-		fields = append(fields, g.Id(i.Name))
+	for _, incl := range i.Includes {
+		fields = append(fields, g.Id(incl.Name))
 	}
 
 	if i.HasStringifier {
