@@ -68,7 +68,6 @@ func TestURLSearchParams(t *testing.T) {
 	assert.ElementsMatch(t, []any{"f,foo", "b,bar"}, win.MustEval(`
 		{
 			const events = []
-			console.log("constructor", p2.__proto__.constructor.name)
 			for (const [k,v] of p2) {
 				events.push(`+"`${k},${v}`"+`);
 			}
@@ -79,7 +78,6 @@ func TestURLSearchParams(t *testing.T) {
 	assert.ElementsMatch(t, []any{"f,foo", "b,bar"}, win.MustEval(`
 		{
 			const events = []
-			console.log("constructor", p2.__proto__.constructor.name)
 			for (const [k,v] of p2.entries()) {
 				events.push(`+"`${k},${v}`"+`);
 			}
@@ -90,7 +88,6 @@ func TestURLSearchParams(t *testing.T) {
 	assert.ElementsMatch(t, []any{"f", "b"}, win.MustEval(`
 		{
 			const events = []
-			console.log("constructor", p2.__proto__.constructor.name)
 			for (const k of p2.keys()) {
 				events.push(k);
 			}
@@ -101,7 +98,6 @@ func TestURLSearchParams(t *testing.T) {
 	assert.ElementsMatch(t, []any{"foo", "bar"}, win.MustEval(`
 		{
 			const events = []
-			console.log("constructor", p2.__proto__.constructor.name)
 			for (const k of p2.values()) {
 				events.push(k);
 			}
