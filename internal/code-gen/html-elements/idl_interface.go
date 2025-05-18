@@ -65,6 +65,8 @@ func (i IdlInterface) Generate() *jen.Statement {
 		fields = append(fields, iterator(i.IterableTypes[0]))
 	case 2:
 		fields = append(fields, iterator2(i.IterableTypes[0], i.IterableTypes[1]))
+	default:
+		panic("codegen: more than two iterable types found. Web idl spec allow up to two")
 	}
 	return jen.Type().Add(jen.Id(i.Name)).Interface(g.ToJenCodes(fields)...)
 }
