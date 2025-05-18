@@ -20,7 +20,7 @@ type entityLookup[T any] func(value T, ctx *V8ScriptContext) (*v8.Value, error)
 
 func newIterator[T any](host *V8ScriptHost, entityLookup entityLookup[T]) iterator[T] {
 	iso := host.iso
-	// TODO, once we have weak handles in v8, we can release the iterator when it
+	// TODO: once we have weak handles in v8, we can release the iterator when it
 	// goes out of scope.
 	iterator := iterator[T]{
 		host,
