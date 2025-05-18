@@ -247,6 +247,7 @@ func (i iterator2[K, V]) createNotDoneIteratorResult(
 	}
 	pair, err := toArray(ctx, key, value)
 	if err != nil {
+		result.Release()
 		return nil, err
 	}
 	result.Set("done", false)
