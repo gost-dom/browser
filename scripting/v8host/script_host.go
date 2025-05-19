@@ -279,15 +279,6 @@ func registerJSClass(
 	}
 	classes[className] = spec
 }
-func createFile(host *V8ScriptHost) *v8.FunctionTemplate {
-	iso := host.iso
-	return v8.NewFunctionTemplateWithError(
-		iso,
-		func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-			return nil, v8.NewTypeError(iso, "Illegal constructor")
-		},
-	)
-}
 
 func init() {
 	registerJSClass("File", "", createCustomEvent)
@@ -401,12 +392,6 @@ func (host *V8ScriptHost) addContext(ctx *V8ScriptContext) {
 	host.mu.Lock()
 	defer host.mu.Unlock()
 	host.contexts[ctx.v8ctx] = ctx
-}
-
-func must(err error) {
-	if err != nil {
-		panic(err)
-	}
 }
 
 func (ctx *V8ScriptContext) Close() {
