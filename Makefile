@@ -26,7 +26,7 @@ codegen-clean:
 
 .PHONY: codegen-watch codegen-run
 codegen-run:
-	nodemon  -w internal/code-gen -e go -x make codegen
+	nodemon  -w internal/code-gen -e go -x "make codegen || exit 1"
 
 codegen-watch: codegen-clean
 	$(GOW) -w ./internal/code-gen -S="Codegen done" -e="" generate ./...
