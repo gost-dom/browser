@@ -3,7 +3,7 @@ package event
 /* -------- customEvent -------- */
 
 type CustomEventInit struct {
-	Details interface{}
+	Detail interface{}
 }
 
 func NewCustomEvent(eventType string, init CustomEventInit) *Event {
