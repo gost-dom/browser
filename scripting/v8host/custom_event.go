@@ -72,6 +72,6 @@ func (w customEventV8Wrapper) detail(info *v8go.FunctionCallbackInfo) (*v8go.Val
 	}
 	return nil, fmt.Errorf(
 		"Data for custom event was not a CustomEventInit. %s",
-		constants.BUG_USSUE_URL,
+		constants.BUG_ISSUE_URL,
 	)
 }

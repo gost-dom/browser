@@ -384,7 +384,7 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 		panic(
 			fmt.Sprintf(
 				"Error installing polyfills. Should not be possible on a passing build of Gost-DOM.\n  Please file an issue if this is a release version of Gost-DOM: %s\n  Error: %v",
-				constants.BUG_USSUE_URL,
+				constants.BUG_ISSUE_URL,
 				err,
 			),
 		)

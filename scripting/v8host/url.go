@@ -105,7 +105,7 @@ func (w urlSearchParamsV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v
 		default:
 			return nil, fmt.Errorf(
 				"URLSearchParams: unsupported argument. If the argument is _valid_: %s",
-				constants.BUG_USSUE_URL,
+				constants.BUG_ISSUE_URL,
 			)
 		}
 	}

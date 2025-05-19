@@ -108,7 +108,7 @@ func (f v8ValueFactory) mustVal(val *v8go.Value, err error) abstraction.Value {
 			fmt.Sprintf(
 				"v8 value conversion. value construction was assumed to succeed but failed: %v. %s",
 				err,
-				constants.BUG_USSUE_URL,
+				constants.BUG_ISSUE_URL,
 			),
 		)
 	}
