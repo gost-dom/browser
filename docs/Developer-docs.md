@@ -126,7 +126,8 @@ the work commits.
     fixes, deprecations, breaking changes (API change or dropped features, or
     changed behaviour)
 
-[^2]: This deviates from the angular convention
+[^2]: This deviates from the angular convention, which defines refactor to mean
+    something different that the commonly accepted meaning.
 
 [^3]: Goja support is ongoing. It's not worth mentioning any incremental updates
     to Goja in the changelog until it is actually ready to use.
