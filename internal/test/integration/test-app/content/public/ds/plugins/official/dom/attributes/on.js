@@ -19,6 +19,7 @@ export const On = {
     let target = el;
     if (mods.has("window")) target = window;
     let callback = (evt) => {
+      console.log("CALLBACK");
       if (evt) {
         // Always prevent default on submit events (because forms)
         if (mods.has("prevent") || key === "submit") evt.preventDefault();

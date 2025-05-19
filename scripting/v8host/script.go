@@ -3,7 +3,10 @@ package v8host
 import (
 	"errors"
 	"fmt"
+	"log/slog"
+	"time"
 
+	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/v8go"
 )
 
@@ -18,11 +21,31 @@ func (s V8Script) Run() error {
 }
 
 func (s V8Script) Eval() (any, error) {
-	result, err := s.ctx.runScript(s.script)
-	if err == nil {
-		return v8ValueToGoValue(result)
+	var (
+		result  *v8go.Value
+		promise *v8go.Promise
+		err     error
+	)
+	result, err = s.ctx.runScript(s.script)
+
+	logResult(s.ctx.host.logger, result, err)
+	if err != nil {
+		return nil, err
 	}
-	return nil, err
+	if promise, err = result.AsPromise(); err == nil {
+		if promise.State() != v8go.Pending {
+			result, err = waitForPromise(s.ctx.v8ctx, promise)
+		}
+	}
+	return v8ValueToGoValue(result)
+}
+
+func logResult(logger *slog.Logger, result *v8go.Value, err error) {
+	if logger != nil {
+		logger.Debug("Script executed",
+			slog.Any("result", result),
+			log.ErrAttr(err))
+	}
 }
 
 func v8ValueToGoValue(result *v8go.Value) (any, error) {
@@ -69,4 +92,45 @@ func v8ValueToGoValue(result *v8go.Value) (any, error) {
 		return result, errors.Join(errs...)
 	}
 	return nil, fmt.Errorf("Value not yet supported: %v", *result)
+}
+
+func waitForPromise(ctx *v8go.Context, p *v8go.Promise) (*v8go.Value, error) {
+	timeout := time.After(time.Second)
+	resolve := make(chan *v8go.Value)
+	reject := make(chan error)
+
+	p.Then(func(info *v8go.FunctionCallbackInfo) *v8go.Value {
+		args := info.Args()
+		if len(args) > 0 {
+			resolve <- args[0]
+			return args[0]
+		} else {
+			resolve <- nil
+			return nil
+		}
+	}, func(info *v8go.FunctionCallbackInfo) *v8go.Value {
+		args := info.Args()
+		if len(args) > 0 && args[0] != nil {
+			val := args[0]
+			if val.IsNativeError() {
+				exc, _ := val.AsException()
+				reject <- exc
+			} else {
+				reject <- fmt.Errorf("Non-Error rejection: %s", val.String())
+			}
+		} else {
+			reject <- errors.New("Suspicious reject call. No argument provided")
+		}
+		return nil
+	})
+	go ctx.PerformMicrotaskCheckpoint()
+
+	select {
+	case <-timeout:
+		return nil, errors.New("Timeout waiting for promise")
+	case val := <-resolve:
+		return val, nil
+	case err := <-reject:
+		return nil, err
+	}
 }
