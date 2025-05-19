@@ -60,6 +60,13 @@ func TestGenerateNoFocusOptions(t *testing.T) {
 		"\tFocus()\n"), "Focus doesn't have options")
 }
 
+func TestGenerateGetterReturnsStruct(t *testing.T) {
+	// Verify that the focusoptions are not generated
+	expect := exp(t)
+	expect(getIdlInterfaceGenerator("html", "HTMLOrSVGElement")).To(HaveRenderedSubstring(
+		"\tDataset() *DOMStringMap\n"), "HTMLOrSVGElement should be a pointer")
+}
+
 func TestGenerateEventHandlerFunction(t *testing.T) {
 	expect := exp(t)
 	expect(getIdlInterfaceGenerator("html", "HTMLOrSVGElement")).To(HaveRenderedSubstring(

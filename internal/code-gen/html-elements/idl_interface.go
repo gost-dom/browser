@@ -15,6 +15,7 @@ import (
 /* -------- IdlInterface -------- */
 
 type IdlInterface struct {
+	SpecName       string
 	Name           string
 	Inherits       string
 	HasStringifier bool // Whether the interface contains a stringifier
@@ -46,7 +47,7 @@ func (i IdlInterface) Generate() *jen.Statement {
 	for _, a := range i.Attributes {
 		getterName := UpperCaseFirstLetter(a.Name)
 		fields = append(fields, g.Raw(
-			jen.Id(getterName).Params().Params(a.Type.Generate()),
+			jen.Id(getterName).Params().Params(a.GetterType(i.SpecName).Generate()),
 		))
 		if !a.ReadOnly {
 			setterName := fmt.Sprintf("Set%s", getterName)
@@ -89,6 +90,16 @@ type IdlInterfaceAttribute struct {
 	Name     string
 	Type     idltransform.IdlType
 	ReadOnly bool
+}
+
+func (a IdlInterfaceAttribute) GetterType(spec string) g.Generator {
+	rules := customrules.GetSpecRules(spec)
+	if rule, found := rules[a.Type.Name]; found {
+		if rule.OutputType == customrules.OutputTypeStruct {
+			return g.Raw(jen.Op("*").Add(a.Type.Generate()))
+		}
+	}
+	return a.Type
 }
 
 /* -------- IdlInterfaceOperation -------- */
