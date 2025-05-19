@@ -11,6 +11,9 @@ var xpath []byte
 //go:embed polyfills/whatwg-fetch/fetch.js
 var fetch []byte
 
+//go:embed polyfills/abortcontroller/polyfill-patch-fetch.js
+var abortController []byte
+
 func installPolyfills(context *V8ScriptContext) error {
 	installer := (*installer)(context)
 	errs := []error{
@@ -18,6 +21,7 @@ func installPolyfills(context *V8ScriptContext) error {
 		installer.polyfillAnchor(),
 		context.Run(string(xpath)),
 		context.Run(string(fetch)),
+		context.Run(string(abortController)),
 		context.Run(`
 				const { XPathExpression, XPathResult } = window;
 				const evaluate = XPathExpression.prototype.evaluate;
