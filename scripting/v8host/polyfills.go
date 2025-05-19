@@ -8,12 +8,16 @@ import (
 //go:embed polyfills/xpath/xpath.js
 var xpath []byte
 
+//go:embed polyfills/whatwg-fetch/fetch.js
+var fetch []byte
+
 func installPolyfills(context *V8ScriptContext) error {
 	installer := (*installer)(context)
 	errs := []error{
 		installer.installFormData(),
 		installer.polyfillAnchor(),
 		context.Run(string(xpath)),
+		context.Run(string(fetch)),
 		context.Run(`
 				const { XPathExpression, XPathResult } = window;
 				const evaluate = XPathExpression.prototype.evaluate;
