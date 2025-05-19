@@ -318,6 +318,8 @@ func New(opts ...HostOption) *V8ScriptHost {
 	host.inspectorClient = v8.NewInspectorClient(consoleAPIMessageFunc(host.consoleAPIMessage))
 	host.inspector = v8.NewInspector(host.iso, host.inspectorClient)
 
+	host.iso.SetPromiseRejectedCallback(host.promiseRejected)
+
 	globalInstalls := createGlobals(host)
 	host.globals = globals{make(map[string]*v8.FunctionTemplate)}
 	for _, globalInstall := range globalInstalls {
@@ -330,6 +332,26 @@ func New(opts ...HostOption) *V8ScriptHost {
 	installGlobals(window, host, globalInstalls)
 	installEventLoopGlobals(host, host.windowTemplate)
 	return host
+}
+
+func (host *V8ScriptHost) promiseRejected(msg v8go.PromiseRejectMessage) {
+	if msg.Event != v8go.PromiseRejectWithNoHandler {
+		return
+	}
+	ctx := host.mustGetContext(msg.Context)
+	var err error
+	if msg.Value == nil {
+		err = errors.New("unhandled promise rejection: no error value")
+	} else {
+		if exc, excErr := msg.Value.AsException(); excErr == nil {
+			err = fmt.Errorf("unhandled promise rejection: %v", msg.Value)
+		} else {
+			err = fmt.Errorf("unhandled promise rejection: %w", exc)
+		}
+	}
+
+	ctx.eventLoop.errorCb(err)
+	log.Error(host.logger, "Rejected promise", "err", err)
 }
 
 func (host *V8ScriptHost) Logger() log.Logger { return host.logger }
@@ -356,7 +378,11 @@ func (host *V8ScriptHost) Close() {
 
 var global *v8.Object
 
+// NewContext creates a new script context using w as the global window object.
+// Calling with a nil value for w is allowed, but not supported; and any attempt
+// to access the DOM will result in a runtime error.
 func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
+	// TODO: The possibility to use nil is primarily for testing support
 	context := &V8ScriptContext{
 		host:    host,
 		clock:   clock.New(),
@@ -365,7 +391,9 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 		v8nodes: make(map[entity.ObjectId]*v8.Value),
 	}
 	errorCallback := func(err error) {
-		w.DispatchEvent(event.NewErrorEvent(err))
+		if w != nil {
+			w.DispatchEvent(event.NewErrorEvent(err))
+		}
 	}
 	context.eventLoop = newEventLoop(context, errorCallback)
 	host.inspector.ContextCreated(context.v8ctx)
@@ -380,7 +408,9 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 			),
 		)
 	}
-	context.cacheNode(context.v8ctx.Global(), w)
+	if w != nil {
+		context.cacheNode(context.v8ctx.Global(), w)
+	}
 	host.addContext(context)
 
 	return context
