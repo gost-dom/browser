@@ -80,3 +80,11 @@ ci: codegen ci-build test codegen-test
 
 release: ci
 	pnpm run release
+
+update-polyfills:
+	$(MAKE) -C docker/update-polyfills build-container
+	docker cp gost-builder:node_modules/fetch-readablestream/dist/fetch-readablestream.js ./scripting/v8host/polyfills/fetch-readablestream
+	docker cp gost-builder:node_modules/fetch-readablestream/LICENSE ./scripting/v8host/polyfills/fetch-readablestream
+	docker cp gost-builder:node_modules/web-streams-polyfill/dist/polyfill.js ./scripting/v8host/polyfills/web-streams-polyfill
+	docker cp gost-builder:node_modules/web-streams-polyfill/LICENSE ./scripting/v8host/polyfills/web-streams-polyfill
+	$(MAKE) -C docker/update-polyfills rm-container
