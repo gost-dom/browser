@@ -71,31 +71,33 @@ func createDocumentPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
 		},
 	)
 
-	proto.SetAccessorPropertyCallback("documentElement",
-		func(arg *v8.FunctionCallbackInfo) (*v8.Value, error) {
-			ctx := host.mustGetContext(arg.Context())
-			this, ok := ctx.getCachedNode(arg.This())
-			if e, e_ok := this.(dom.Document); ok && e_ok {
-				return ctx.getInstanceForNodeByName("HTMLElement", e.DocumentElement())
-			}
-			return nil, v8.NewTypeError(iso, "Object not a Document")
-		},
+	proto.SetAccessorProperty("documentElement",
+		v8.NewFunctionTemplateWithError(iso,
+			func(arg *v8.FunctionCallbackInfo) (*v8.Value, error) {
+				ctx := host.mustGetContext(arg.Context())
+				this, ok := ctx.getCachedNode(arg.This())
+				if e, e_ok := this.(dom.Document); ok && e_ok {
+					return ctx.getInstanceForNodeByName("HTMLElement", e.DocumentElement())
+				}
+				return nil, v8.NewTypeError(iso, "Object not a Document")
+			}),
 		nil,
 		v8.ReadOnly,
 	)
-	proto.SetAccessorPropertyCallback("head",
-		func(arg *v8.FunctionCallbackInfo) (*v8.Value, error) {
-			ctx := host.mustGetContext(arg.Context())
-			this, ok := ctx.getCachedNode(arg.This())
-			if e, e_ok := this.(dom.Document); ok && e_ok {
-				return ctx.getInstanceForNodeByName("HTMLElement", e.Head())
-			}
-			return nil, v8.NewTypeError(iso, "Object not a Document")
-		},
+	proto.SetAccessorProperty("head",
+		v8.NewFunctionTemplateWithError(iso,
+			func(arg *v8.FunctionCallbackInfo) (*v8.Value, error) {
+				ctx := host.mustGetContext(arg.Context())
+				this, ok := ctx.getCachedNode(arg.This())
+				if e, e_ok := this.(dom.Document); ok && e_ok {
+					return ctx.getInstanceForNodeByName("HTMLElement", e.Head())
+				}
+				return nil, v8.NewTypeError(iso, "Object not a Document")
+			}),
 		nil,
 		v8.ReadOnly,
 	)
-	proto.SetAccessorPropertyCallback("body",
+	proto.SetAccessorProperty("body", v8.NewFunctionTemplateWithError(iso,
 		func(arg *v8.FunctionCallbackInfo) (*v8.Value, error) {
 			ctx := host.mustGetContext(arg.Context())
 			this, ok := ctx.getCachedNode(arg.This())
@@ -103,7 +105,7 @@ func createDocumentPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
 				return ctx.getInstanceForNodeByName("HTMLElement", e.Body())
 			}
 			return nil, v8.NewTypeError(iso, "Object not a Document")
-		},
+		}),
 		nil,
 		v8.ReadOnly,
 	)
