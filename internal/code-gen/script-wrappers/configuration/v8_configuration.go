@@ -284,6 +284,7 @@ func configureHTMLSpecs(htmlSpecs *WebIdlConfiguration) {
 	window.Method("location").Ignore()
 	window.Method("parent").Ignore() // On `Node`
 	window.Method("history").SetCustomImplementation()
+	window.Method("self").SetCustomImplementation()
 
 	window.Method("prompt").Ignore()
 	window.Method("close").SetNotImplemented()
@@ -295,7 +296,6 @@ func configureHTMLSpecs(htmlSpecs *WebIdlConfiguration) {
 	window.Method("confirm").SetNotImplemented()
 	window.Method("postMessage").SetNotImplemented()
 	window.Method("print").SetNotImplemented()
-	window.Method("self").SetNotImplemented()
 	window.Method("name").SetNotImplemented()
 	window.Method("personalbar").SetNotImplemented()
 	window.Method("locationbar").SetNotImplemented()

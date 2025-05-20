@@ -3,7 +3,7 @@
 package html
 
 type HTMLOrSVGElement interface {
-	Dataset() DOMStringMap
+	Dataset() *DOMStringMap
 	Nonce() string
 	SetNonce(string)
 	Autofocus() bool
