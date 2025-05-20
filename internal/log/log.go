@@ -91,7 +91,7 @@ func ErrAttr(err error) slog.Attr {
 			addValue("name")
 			addValue("stack")
 
-			slog.Group("err", attrs...)
+			return slog.Group("err", attrs...)
 		}
 	}
 	return slog.Any("err", err)
