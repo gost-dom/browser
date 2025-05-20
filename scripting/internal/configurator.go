@@ -47,6 +47,9 @@ func Bootstrap[T any](reg js.ClassBuilder[T]) {
 //go:embed polyfills/xpath/xpath.js
 var xpath []byte
 
+//go:embed polyfills/FastestSmallestTextEncoderDecoder/EncoderDecoderTogether.min.js
+var textEncoderDecoder []byte
+
 func InstallPolyfills[T any](host js.ScriptEngine[T]) {
 	host.RunScript(`
 		FormData.prototype.forEach = function(cb) {
@@ -75,6 +78,7 @@ func InstallPolyfills[T any](host js.ScriptEngine[T]) {
 	`, "gost-dom/polyfills/node.js")
 
 	host.RunScript(string(xpath), "gost-dom/polyfills/xpath-jsdom.js")
+	host.RunScript(string(textEncoderDecoder), "gost-dom/polyfills/text-encoder-decoder.js")
 	host.RunScript(`
 			const { XPathExpression, XPathResult } = window;
 			const evaluate = XPathExpression.prototype.evaluate;

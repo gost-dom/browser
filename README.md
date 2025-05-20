@@ -254,7 +254,15 @@ in certain scopes, implemented by "classes" in JavaScript.
 
 ## Attribution / 3rd party included code.
 
-This library contains [code derived](./scripting/internal/polyfills/xpath) from the [jsdom project](https://github.com/jsdom/jsdom) distributed under the MIT license.
+Some web APIs are implemented [by embedding
+polyfills](./scripting/internal/polyfills) from other open-source
+JavaScript libraries.
+
+- XPath evaluator uses [code from](./scripting/internal/polyfills/xpath)
+  the [jsdom project](https://github.com/jsdom/jsdom) distributed under the MIT
+  license.
+- [FastestSmallestTextEncoderDecoder](./scripting/internal/polyfills/FastestSmallestTextEncoderDecoder)
+  distributed under the Creative Commons Zero v1.0 Universal license.
 
 ---
 
