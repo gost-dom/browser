@@ -8,8 +8,6 @@ export const GET = {
   name: "get",
   fn: async (ctx, url, args) => {
     console.log("GET!");
-    const res = sse(ctx, "GET", url, { ...args });
-    console.log("GET DONE ", res, new Error().stack);
-    return res;
+    return sse(ctx, "GET", url, { ...args });
   },
 };
