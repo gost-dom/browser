@@ -47,7 +47,7 @@ func CreateConstructor(
 		c.Name = "constructor"
 		// TODO: Fix for constructor overloads
 		result := createOperation(
-			idlInterface,
+			idl.Operation{},
 			intfRule,
 			interfaceConfig,
 			c,
@@ -71,7 +71,7 @@ func CreateInstanceMethods(
 		}
 
 		op := createOperation(
-			idlInterface,
+			idlOperation,
 			intfRule,
 			interfaceConfig,
 			instanceMethod,
@@ -129,7 +129,7 @@ func CreateAttributes(
 }
 
 func createOperation(
-	idlInterface idl.Interface,
+	idlOperation idl.Operation,
 	intfRules customrules.InterfaceRule,
 	typeSpec *configuration.IdlInterfaceConfiguration,
 	member idl.MemberSpec,
@@ -137,7 +137,6 @@ func createOperation(
 ) ESOperation {
 	opRules := intfRules.Operations[member.Name]
 	methodCustomization := typeSpec.GetMethodCustomization(member.Name)
-	idlOperation, _ := idlInterface.GetOperation(member.Name)
 
 	op := ESOperation{
 		Name:                 member.Name,
