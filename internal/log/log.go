@@ -60,9 +60,10 @@ func Error(source Logger, msg string, args ...any) {
 	logger(source).Error(msg, args...)
 }
 
-// ErrAttr creates a log record attribute representing an error. If the error
-// originates from JavaScript, location and stack trace are included in the log
-// record.
+// ErrAttr creates a log record attribute representing an error.
+//
+// If the error originates from V8, the relevant JavaScript location and stack
+// trace are included in the log record.
 func ErrAttr(err error) slog.Attr {
 	var jsError *v8go.JSError
 	if errors.As(err, &jsError) {
@@ -91,7 +92,7 @@ func ErrAttr(err error) slog.Attr {
 			addValue("name")
 			addValue("stack")
 
-			slog.Group("err", attrs...)
+			return slog.Group("err", attrs...)
 		}
 	}
 	return slog.Any("err", err)
