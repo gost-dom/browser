@@ -207,12 +207,24 @@ func (w XMLHttpRequest[T]) statusText(cbCtx js.CallbackContext[T]) (js.Value[T],
 
 func (w XMLHttpRequest[T]) responseType(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.responseType")
-	return codec.EncodeCallbackErrorf(cbCtx, "XMLHttpRequest.responseType: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	result := instance.ResponseType()
+	return w.toXMLHttpRequestResponseType(cbCtx, result)
 }
 
 func (w XMLHttpRequest[T]) setResponseType(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.setResponseType")
-	return codec.EncodeCallbackErrorf(cbCtx, "XMLHttpRequest.setResponseType: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	instance, err0 := js.As[html.XMLHttpRequest](cbCtx.Instance())
+	val, err1 := js.ParseSetterArg(cbCtx, w.decodeXMLHttpRequestResponseType)
+	err := errors.Join(err0, err1)
+	if err != nil {
+		return nil, err
+	}
+	instance.SetResponseType(val)
+	return nil, nil
 }
 
 func (w XMLHttpRequest[T]) response(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
