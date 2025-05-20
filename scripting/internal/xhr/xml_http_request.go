@@ -91,3 +91,13 @@ func (w XMLHttpRequest[T]) toAny(
 ) (js.Value[T], error) {
 	return codec.EncodeString(cbCtx, val)
 }
+
+func (xhr XMLHttpRequest[T]) decodeXMLHttpRequestResponseType(
+	ctx js.CallbackContext[T], val js.Value[T]) (string, error) {
+	return codec.DecodeString(ctx, val)
+}
+
+func (xhr XMLHttpRequest[T]) toXMLHttpRequestResponseType(
+	ctx js.CallbackContext[T], val string) (js.Value[T], error) {
+	return codec.EncodeString(ctx, val)
+}
