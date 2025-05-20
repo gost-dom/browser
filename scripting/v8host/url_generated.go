@@ -240,7 +240,14 @@ func (w urlV8Wrapper) search(cbCtx jsCallbackContext) (jsValue, error) {
 
 func (w urlV8Wrapper) setSearch(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.setSearch")
-	return cbCtx.ReturnWithError(errors.New("URL.setSearch: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
+	instance, err0 := js.As[*url.URL](cbCtx.Instance())
+	val, err1 := parseSetterArg(cbCtx, w.decodeString)
+	err := errors.Join(err0, err1)
+	if err != nil {
+		return cbCtx.ReturnWithError(err)
+	}
+	instance.SetSearch(val)
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w urlV8Wrapper) searchParams(cbCtx jsCallbackContext) (jsValue, error) {

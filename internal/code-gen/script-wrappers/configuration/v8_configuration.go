@@ -46,7 +46,6 @@ func CreateV8Specs() WebIdlConfigurations {
 		"setPathname",
 		"searchParams",
 		"setHash",
-		"setSearch",
 	)
 
 	return specs
