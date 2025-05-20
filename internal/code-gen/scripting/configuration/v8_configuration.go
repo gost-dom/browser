@@ -41,7 +41,6 @@ func configureXHRSpecs(xhrModule *WebAPIConfig) {
 
 	xhr.MarkMembersAsNotImplemented(
 		"readyState",
-		"responseType",
 		"responseXML",
 	)
 	xhr.Method("open").SetCustomImplementation()

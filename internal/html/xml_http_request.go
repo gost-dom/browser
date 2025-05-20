@@ -57,6 +57,8 @@ type XmlHttpRequest interface {
 	ResponseURL() string
 	Response() string
 	SetTimeout(int) error
+	ResponseType() string
+	SetResponseType(string)
 	Timeout() int
 }
 
@@ -65,17 +67,18 @@ type XMLHttpRequest = XmlHttpRequest
 
 type xmlHttpRequest struct {
 	event.EventTarget
-	logSource log.LogSource
-	location  string
-	client    http.Client
-	async     bool
-	status    int
-	method    string
-	url       string
-	response  []byte
-	res       *http.Response
-	headers   http.Header
-	clock     *clock.Clock
+	logSource    log.LogSource
+	location     string
+	client       http.Client
+	async        bool
+	status       int
+	method       string
+	url          string
+	response     []byte
+	res          *http.Response
+	headers      http.Header
+	responseType string
+	clock        *clock.Clock
 }
 
 func NewXmlHttpRequest(ctx html.BrowsingContext, clock *clock.Clock) XmlHttpRequest {
@@ -189,6 +192,9 @@ func (req *xmlHttpRequest) ResponseText() string { return string(req.response) }
 func (req *xmlHttpRequest) SetRequestHeader(name string, value string) {
 	req.headers.Add(name, value)
 }
+
+func (req *xmlHttpRequest) ResponseType() string     { return req.responseType }
+func (req *xmlHttpRequest) SetResponseType(t string) { req.responseType = t }
 
 func (req *xmlHttpRequest) Abort() error {
 	return errors.New("XmlHttpRequest.Abort called - not implemented - ignoring call")
