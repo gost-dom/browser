@@ -141,8 +141,13 @@ func (ctx *V8ScriptContext) addDisposer(disposer js.Disposable) {
 	ctx.disposers = append(ctx.disposers, disposer)
 }
 
-func (ctx *V8ScriptContext) runScript(script string) (res *v8.Value, err error) {
-	res, err = ctx.v8ctx.RunScript(script, "")
+func (ctx *V8ScriptContext) runScript(script string, src string) (res *v8.Value, err error) {
+	res, err = ctx.v8ctx.RunScript(script, src)
+	ctx.clock.Tick()
+	return
+}
+func (ctx *V8ScriptContext) runScriptNoVal(script string, src string) (err error) {
+	_, err = ctx.v8ctx.RunScript(script, src)
 	ctx.clock.Tick()
 	return
 }
