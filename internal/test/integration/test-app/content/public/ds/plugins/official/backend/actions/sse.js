@@ -152,7 +152,7 @@ export const sse = async (ctx, method, url, args) => {
     } else {
       throw runtimeErr("SseInvalidContentType", ctx, { action, contentType });
     }
-    console.log("PING");
+    console.log("PING: " + queryParams.toString());
     try {
       urlInstance.search = queryParams.toString();
     } catch (err) {
