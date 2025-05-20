@@ -1,6 +1,35 @@
 # Changelog - Gost-DOM
 
 
+## [0.6.0](https://github.com/gost-dom/browser/compare/v0.5.8...v0.6.0) (2025-05-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* This renamed `CustomEventInit.Details` to `CustomEventInit.Detail` as
+this is the correct spelling according to the MDN documentation:
+https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/detail
+
+As this value was not exposed to JavaScript previously, it is deemed
+unlikely that this will affect client code.
+
+### Features
+
+* Add element.id IDL attribute ([7140aeb](https://github.com/gost-dom/browser/commit/7140aeb88a429dae9935fa6474c1653e1901eed0))
+* Add element.next/previousElementSibling ([5e18652](https://github.com/gost-dom/browser/commit/5e18652f1bf30fc39b8f0fe90f1060ab7bae9ab8))
+* Log errors on unhandled promise rejection ([45645f0](https://github.com/gost-dom/browser/commit/45645f0b41cba4f6d4bbfc083c69a305b2ac0e7a))
+* Support CustomEvent.detail in JavaScript ([0598e74](https://github.com/gost-dom/browser/commit/0598e74b30b1f966192eb88bf94bda71cb4751b3))
+* Support deferred scripts. ([a02c244](https://github.com/gost-dom/browser/commit/a02c24450ddc692e9cb7f9b86dbec63748c68abe))
+* Support window.queueMicrotask ([7b307c4](https://github.com/gost-dom/browser/commit/7b307c46d5e8292ec46cd7c91d45f7beaee1e7a8))
+* **v8:** Add URLSearchParams ([48031f2](https://github.com/gost-dom/browser/commit/48031f21262fadbcc5032758034654088e5fe7a5))
+* **v8:** Evaluating a "wrapper" object returns the Go object ([769619c](https://github.com/gost-dom/browser/commit/769619c448ebe61aa0dc863401e2875250ac7b15))
+* **v8:** Implement URLSearchParams support in V8 host ([92ec474](https://github.com/gost-dom/browser/commit/92ec474bf4fb9e9f54fe0601017aa53ff369db9b))
+
+
+### Bug Fixes
+
+* Clear node when calling Node.ReplaceChildren with no elements ([e5dd949](https://github.com/gost-dom/browser/commit/e5dd9494de9eb92b1b341b9599635e73b78edb72))
+
 ## [0.5.8](https://github.com/gost-dom/browser/compare/v0.5.7...v0.5.8) (2025-05-11)
 
 
