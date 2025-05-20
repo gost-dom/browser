@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@stardazed/streams-polyfill':
+        specifier: ^2.4.0
+        version: 2.4.0
       fetch-readablestream:
         specifier: ^0.2.0
         version: 0.2.0
@@ -17,6 +20,9 @@ importers:
 
 packages:
 
+  '@stardazed/streams-polyfill@2.4.0':
+    resolution: {integrity: sha512-W6Yg9cA8YT1b9qCQsz/2+kmKt7i/Za2Nj4QOLqdiANzpTiGy5mOyCQNyh0CVpbvXkjCBo2QxrwPvbDlP9u9k+Q==}
+
   fetch-readablestream@0.2.0:
     resolution: {integrity: sha512-qu4mXWf4wus4idBIN/kVH+XSer8IZ9CwHP+Pd7DL7TuKNC1hP7ykon4kkBjwJF3EMX2WsFp4hH7gU7CyL7ucXw==}
 
@@ -25,6 +31,8 @@ packages:
     engines: {node: '>= 8'}
 
 snapshots:
+
+  '@stardazed/streams-polyfill@2.4.0': {}
 
   fetch-readablestream@0.2.0: {}
 
