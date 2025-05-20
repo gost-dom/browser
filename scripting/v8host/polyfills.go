@@ -31,13 +31,13 @@ func installPolyfills(context *V8ScriptContext) error {
 	errs := []error{
 		installer.installFormData(),
 		installer.polyfillAnchor(),
-		context.Run(string(xpath)),
-		context.Run(string(fetch)),
-		context.Run(string(streams)),
+		context.runScriptNoVal(string(xpath), "xpatch.js"),
+		context.runScriptNoVal(string(fetch), "fetch.js"),
+		context.runScriptNoVal(string(streams), "streams.js"),
 		// context.Run(string(fetchReadableStream)),
 		// context.Run(`fetch = fetchStream`),
-		context.Run(string(abortController)),
-		context.Run(string(encoding)),
+		context.runScriptNoVal(string(abortController), "abortcontroller.js"),
+		context.runScriptNoVal(string(encoding), "encoding.js"),
 		context.Run(`
 // <<<<<<< HEAD
 // 				const { XPathExpression, XPathResult } = window;

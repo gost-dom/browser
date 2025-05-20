@@ -16,7 +16,7 @@ type V8Script struct {
 }
 
 func (s V8Script) Run() error {
-	_, err := s.ctx.runScript(s.script)
+	_, err := s.ctx.runScript(s.script, "")
 	return err
 }
 
@@ -26,7 +26,7 @@ func (s V8Script) Eval() (any, error) {
 		promise *v8go.Promise
 		err     error
 	)
-	result, err = s.ctx.runScript(s.script)
+	result, err = s.ctx.runScript(s.script, "")
 
 	logResult(s.ctx.host.logger, result, err)
 	if err != nil {
