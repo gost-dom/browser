@@ -75,9 +75,12 @@ test-scripting:
 test-goja:
 	$(GOW) -c -e=go -e=js -e=html -w ./.. test -vet=off ./scripting/gojahost
  
-.PHONY: ci ci-build
+.PHONY: ci ci-build release
 ci-build:
 	go build -v ./...
 
 ci: codegen ci-build test codegen-test
 	git diff --quiet HEAD
+
+release: ci
+	pnpm run release
