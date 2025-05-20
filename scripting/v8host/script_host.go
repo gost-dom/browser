@@ -344,9 +344,9 @@ func (host *V8ScriptHost) promiseRejected(msg v8go.PromiseRejectMessage) {
 		err = errors.New("unhandled promise rejection: no error value")
 	} else {
 		if exc, excErr := msg.Value.AsException(); excErr == nil {
-			err = fmt.Errorf("unhandled promise rejection: %v", msg.Value)
-		} else {
 			err = fmt.Errorf("unhandled promise rejection: %w", exc)
+		} else {
+			err = fmt.Errorf("unhandled promise rejection: %v", msg.Value)
 		}
 	}
 
