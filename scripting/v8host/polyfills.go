@@ -23,6 +23,9 @@ var fetchReadableStream []byte
 //go:embed polyfills/web-streams-polyfill/polyfill.js
 var webStreams []byte
 
+//go:embed polyfills/streams-polyfill/sd-streams-polyfill.min.js
+var streams []byte
+
 func installPolyfills(context *V8ScriptContext) error {
 	installer := (*installer)(context)
 	errs := []error{
@@ -30,7 +33,7 @@ func installPolyfills(context *V8ScriptContext) error {
 		installer.polyfillAnchor(),
 		context.Run(string(xpath)),
 		context.Run(string(fetch)),
-		context.Run(string(webStreams)),
+		context.Run(string(streams)),
 		// context.Run(string(fetchReadableStream)),
 		// context.Run(`fetch = fetchStream`),
 		context.Run(string(abortController)),

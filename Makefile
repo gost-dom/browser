@@ -87,4 +87,6 @@ update-polyfills:
 	docker cp gost-builder:node_modules/fetch-readablestream/LICENSE ./scripting/v8host/polyfills/fetch-readablestream
 	docker cp gost-builder:node_modules/web-streams-polyfill/dist/polyfill.js ./scripting/v8host/polyfills/web-streams-polyfill
 	docker cp gost-builder:node_modules/web-streams-polyfill/LICENSE ./scripting/v8host/polyfills/web-streams-polyfill
+	mkdir -p scripting/v8host/polyfills/streams-polyfill
+	docker cp gost-builder:node_modules/@stardazed/streams-polyfill/dist/sd-streams-polyfill.min.js ./scripting/v8host/polyfills/streams-polyfill
 	$(MAKE) -C docker/update-polyfills rm-container
