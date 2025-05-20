@@ -17,6 +17,12 @@ var abortController []byte
 //go:embed polyfills/FastestSmallestTextEncoderDecoder/EncoderDecoderTogether.min.js
 var encoding []byte
 
+//go:embed polyfills/fetch-readablestream/fetch-readablestream.js
+var fetchReadableStream []byte
+
+//go:embed polyfills/web-streams-polyfill/polyfill.js
+var webStreams []byte
+
 func installPolyfills(context *V8ScriptContext) error {
 	installer := (*installer)(context)
 	errs := []error{
@@ -24,15 +30,30 @@ func installPolyfills(context *V8ScriptContext) error {
 		installer.polyfillAnchor(),
 		context.Run(string(xpath)),
 		context.Run(string(fetch)),
+		context.Run(string(webStreams)),
+		// context.Run(string(fetchReadableStream)),
+		// context.Run(`fetch = fetchStream`),
 		context.Run(string(abortController)),
 		context.Run(string(encoding)),
 		context.Run(`
-				const { XPathExpression, XPathResult } = window;
-				const evaluate = XPathExpression.prototype.evaluate;
-				XPathExpression.prototype.evaluate = function (context, type, res) {
-					return evaluate.call(this, context, type ?? XPathResult.ANY_TYPE, res);
-				};
-				Element.prototype.scrollIntoView = function() {};
+// <<<<<<< HEAD
+// 				const { XPathExpression, XPathResult } = window;
+// 				const evaluate = XPathExpression.prototype.evaluate;
+// 				XPathExpression.prototype.evaluate = function (context, type, res) {
+// 					return evaluate.call(this, context, type ?? XPathResult.ANY_TYPE, res);
+// 				};
+// 				Element.prototype.scrollIntoView = function() {};
+// =======
+			console.log("*** TRY")
+			const str = new ReadableStream();
+			console.log("*** Tried")
+			const { XPathExpression, XPathResult } = window;
+			const evaluate = XPathExpression.prototype.evaluate;
+			XPathExpression.prototype.evaluate = function (context, type, res) {
+				return evaluate.call(this, context, type ?? XPathResult.ANY_TYPE, res);
+			};
+			Element.prototype.scrollIntoView = function() {};
+// >>>>>>> 863cf116 (Fun with polyfills)
 
 		`),
 		installer.polyfillNode(),

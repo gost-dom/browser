@@ -1,0 +1,9 @@
+{
+  "name": "update-polyfills",
+  "author": "Peter Strøiman",
+  "license": "ISC",
+  "dependencies": {
+    "fetch-readablestream": "^0.2.0",
+    "web-streams-polyfill": "^4.1.0"
+  }
+}
