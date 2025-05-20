@@ -73,7 +73,6 @@ func configureURLSpecs(urlSpecs *WebAPIConfig) {
 		"setPathname",
 		"searchParams",
 		"setHash",
-		"setSearch",
 	)
 
 }
