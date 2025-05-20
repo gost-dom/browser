@@ -15,7 +15,6 @@ func CreateV8Specs() WebIdlConfigurations {
 
 	xhr.MarkMembersAsNotImplemented(
 		"readyState",
-		"responseType",
 		"responseXML",
 	)
 	xhr.Method("open").SetCustomImplementation()

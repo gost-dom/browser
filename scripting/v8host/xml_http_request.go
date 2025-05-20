@@ -15,6 +15,20 @@ type xmlHttpRequestV8Wrapper struct {
 	handleReffedObject[XmlHttpRequest, jsTypeParam]
 }
 
+func (xhr xmlHttpRequestV8Wrapper) decodeXMLHttpRequestResponseType(
+	ctx *V8ScriptContext,
+	val *v8.Value,
+) (string, error) {
+	return xhr.decodeDOMString(ctx, val)
+}
+
+func (xhr xmlHttpRequestV8Wrapper) toXMLHttpRequestResponseType(
+	ctx *V8ScriptContext,
+	val string,
+) (*v8.Value, error) {
+	return xhr.toDOMString(ctx, val)
+}
+
 func (xhr xmlHttpRequestV8Wrapper) decodeDocument(
 	cbCtx jsCallbackContext,
 	val jsValue,

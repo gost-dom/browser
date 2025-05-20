@@ -391,12 +391,24 @@ func (w xmlHttpRequestV8Wrapper) statusText(cbCtx jsCallbackContext) (jsValue, e
 
 func (w xmlHttpRequestV8Wrapper) responseType(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.responseType")
-	return cbCtx.ReturnWithError(errors.New("XMLHttpRequest.responseType: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
+	instance, err := js.As[html1.XMLHttpRequest](cbCtx.Instance())
+	if err != nil {
+		return cbCtx.ReturnWithError(err)
+	}
+	result := instance.ResponseType()
+	return w.toXMLHttpRequestResponseType(cbCtx, result)
 }
 
 func (w xmlHttpRequestV8Wrapper) setResponseType(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.setResponseType")
-	return cbCtx.ReturnWithError(errors.New("XMLHttpRequest.setResponseType: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
+	instance, err0 := js.As[html1.XMLHttpRequest](cbCtx.Instance())
+	val, err1 := parseSetterArg(cbCtx, w.decodeXMLHttpRequestResponseType)
+	err := errors.Join(err0, err1)
+	if err != nil {
+		return cbCtx.ReturnWithError(err)
+	}
+	instance.SetResponseType(val)
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w xmlHttpRequestV8Wrapper) response(cbCtx jsCallbackContext) (jsValue, error) {
