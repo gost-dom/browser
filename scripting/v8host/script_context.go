@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"runtime/debug"
+	"strings"
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
