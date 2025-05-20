@@ -103,11 +103,6 @@ func (w Window[T]) postMessage(cbCtx js.CallbackContext[T]) (js.Value[T], error)
 	return codec.EncodeCallbackErrorf(cbCtx, "Window.postMessage: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Window[T]) self(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Window.self")
-	return codec.EncodeCallbackErrorf(cbCtx, "Window.self: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
-}
-
 func (w Window[T]) document(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Window.document")
 	instance, err := js.As[html.Window](cbCtx.Instance())

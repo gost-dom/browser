@@ -43,7 +43,9 @@ func ConfigureHTMLSpecs(specs *WebIdlConfigurations) {
 
 func configureWindow(htmlSpecs *WebAPIConfig) {
 	window := htmlSpecs.Type("Window")
+	window.Method("self").SetCustomImplementation()
 	window.Method("window").SetCustomImplementation()
+
 	window.Method("location").Ignore()
 	window.Method("parent").Ignore() // On `Node`
 	window.Method("history").SetCustomImplementation()
@@ -57,7 +59,6 @@ func configureWindow(htmlSpecs *WebAPIConfig) {
 	window.Method("confirm").SetNotImplemented()
 	window.Method("postMessage").SetNotImplemented()
 	window.Method("print").SetNotImplemented()
-	window.Method("self").SetNotImplemented()
 	window.Method("name").SetNotImplemented()
 	window.Method("personalbar").SetNotImplemented()
 	window.Method("locationbar").SetNotImplemented()
