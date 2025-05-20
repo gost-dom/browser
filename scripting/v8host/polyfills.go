@@ -14,6 +14,9 @@ var fetch []byte
 //go:embed polyfills/abortcontroller/polyfill-patch-fetch.js
 var abortController []byte
 
+//go:embed polyfills/FastestSmallestTextEncoderDecoder/EncoderDecoderTogether.min.js
+var encoding []byte
+
 func installPolyfills(context *V8ScriptContext) error {
 	installer := (*installer)(context)
 	errs := []error{
@@ -22,6 +25,7 @@ func installPolyfills(context *V8ScriptContext) error {
 		context.Run(string(xpath)),
 		context.Run(string(fetch)),
 		context.Run(string(abortController)),
+		context.Run(string(encoding)),
 		context.Run(`
 				const { XPathExpression, XPathResult } = window;
 				const evaluate = XPathExpression.prototype.evaluate;
