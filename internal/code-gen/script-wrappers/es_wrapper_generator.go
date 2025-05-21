@@ -47,11 +47,13 @@ func CreateConstructor(
 		c.Name = "constructor"
 		// TODO: Fix for constructor overloads
 		result := createOperation(
-			idl.Operation{},
+			idl.Operation{
+				InterfaceMember: idl.InterfaceMember{Name: "constructor"},
+				Arguments:       idlInterface.Constructors[0].Arguments,
+			},
 			intfRule,
 			interfaceConfig,
 			c,
-			idlInterface.Constructors[0].Arguments,
 		)
 		return &result
 	} else {
@@ -69,13 +71,13 @@ func CreateInstanceMethods(
 		if !found {
 			panic("Method not found: " + instanceMethod.Name)
 		}
+		// fmt.Printf("OPERATION: %s\nArgs: %+v\n\n", instanceMethod.Name, idlOperation.Arguments)
 
 		op := createOperation(
 			idlOperation,
 			intfRule,
 			interfaceConfig,
 			instanceMethod,
-			idlOperation.Arguments,
 		)
 		result = append(result, op)
 	}
@@ -113,8 +115,12 @@ func CreateAttributes(
 				methodCustomization.CustomImplementation
 			setter.RetType = IdlTypeUndefined
 			setter.Arguments = []ESOperationArgument{{
-				Name:     "val",
-				Type:     IdlNameToGoName(attribute.Type.Name),
+				Name: "val",
+				Type: IdlNameToGoName(attribute.Type.Name),
+				IdlArg: idl.Argument{
+					Name: "val",
+					Type: attribute.Type,
+				},
 				Optional: false,
 				Variadic: false,
 			}}
@@ -137,13 +143,14 @@ func createOperation(
 	intfRules customrules.InterfaceRule,
 	typeSpec *configuration.IdlInterfaceConfiguration,
 	member idl.MemberSpec,
-	idlArgs []idl.Argument,
 ) ESOperation {
-	opRules := intfRules.Operations[member.Name]
-	methodCustomization := typeSpec.GetMethodCustomization(member.Name)
+	opRules := intfRules.Operations[idlOperation.Name]
+	methodCustomization := typeSpec.GetMethodCustomization(idlOperation.Name)
+	idlArgs := idlOperation.Arguments
+	// fmt.Printf("Name: %s - %s\nIDL ARGS: %+v\n\n", idlOperation.Name, member.Name, idlArgs)
 
 	op := ESOperation{
-		Name:                 member.Name,
+		Name:                 idlOperation.Name,
 		Spec:                 idlOperation,
 		NotImplemented:       methodCustomization.NotImplemented,
 		CustomImplementation: methodCustomization.CustomImplementation,
@@ -178,6 +185,7 @@ func createOperation(
 		if arg.IdlType.IdlType != nil {
 			esArg.Type = arg.IdlType.IdlType.IType.TypeName
 		}
+		// fmt.Printf("Append arg: %+v\n", esArg.IdlArg)
 		op.Arguments = append(op.Arguments, esArg)
 	}
 	return op
