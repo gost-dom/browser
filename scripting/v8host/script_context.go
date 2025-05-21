@@ -9,6 +9,7 @@ import (
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
+	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/internal/uievents"
@@ -122,14 +123,14 @@ func (c *V8ScriptContext) getInstanceForNodeByName(
 	}
 	prototype, ok := c.host.globals.namedGlobals[constructor]
 	if !ok {
-		panic("Bad constructor name")
+		panic(fmt.Sprintf("Unrecognised constructor name: %s. %s", constructor, constants.BUG_ISSUE_URL))
+	}
+	objectId := node.ObjectId()
+	if cached, ok := c.v8nodes[objectId]; ok {
+		return cached, nil
 	}
 	value, err := prototype.InstanceTemplate().NewInstance(c.v8ctx)
 	if err == nil {
-		objectId := node.ObjectId()
-		if cached, ok := c.v8nodes[objectId]; ok {
-			return cached, nil
-		}
 		return c.cacheNode(value, node)
 	}
 	return nil, err
