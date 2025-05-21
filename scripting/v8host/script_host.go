@@ -3,6 +3,8 @@ package v8host
 import (
 	"errors"
 	"fmt"
+	"maps"
+	"slices"
 	"sync"
 
 	"github.com/gost-dom/browser/dom/event"
@@ -202,6 +204,12 @@ func New(opts ...HostOption) *V8ScriptHost {
 	return host
 }
 
+func (host *V8ScriptHost) deleteContext(ctx *V8ScriptContext) {
+	host.mu.Lock()
+	defer host.mu.Unlock()
+	delete(ctx.host.contexts, ctx.v8ctx)
+}
+
 func (host *V8ScriptHost) promiseRejected(msg v8go.PromiseRejectMessage) {
 	if msg.Event != v8go.PromiseRejectWithNoHandler {
 		return
@@ -227,14 +235,11 @@ func (host *V8ScriptHost) Logger() log.Logger { return host.logger }
 func (host *V8ScriptHost) Close() {
 	host.mu.Lock()
 	defer host.mu.Unlock()
-	var undiposedContexts []*V8ScriptContext
-	for _, ctx := range host.contexts {
-		undiposedContexts = append(undiposedContexts, ctx)
-	}
+	undiposedContexts := slices.Collect(maps.Values(host.contexts))
 	undisposedCount := len(undiposedContexts)
 
 	if undisposedCount > 0 {
-		log.Warn(host.logger, "count", len(host.contexts))
+		log.Warn(host.logger, "Closing script host with undisposed contexts", "count", undisposedCount)
 		for _, ctx := range undiposedContexts {
 			ctx.Close()
 		}
