@@ -20,32 +20,20 @@ func createData(
 	if !ok {
 		panic("Missing type")
 	}
-	// if interfaceConfig.IdlInterface.Name != interfaceConfig.TypeName {
-	// 	panic(
-	// 		fmt.Sprintf(
-	// 			"Type mismatch, %s = %s",
-	// 			interfaceConfig.IdlInterface.Name,
-	// 			interfaceConfig.TypeName,
-	// 		),
-	// 	)
-	// }
 	idlInterface := idlName.IdlInterface
-	wrappedTypeName := idlInterface.Name
 	if idlInterface.Name != interfaceConfig.TypeName {
 		panic(fmt.Sprintf("createData error: %s = %s", idlInterface.Name, interfaceConfig.TypeName))
 	}
 	specRules := customrules.GetSpecRules(interfaceConfig.DomSpec.Name)
 	intfRules := specRules[interfaceConfig.TypeName]
 	return ESConstructorData{
-		Spec:             interfaceConfig,
-		CustomRule:       intfRules,
-		IdlInterfaceName: wrappedTypeName,
-		RunCustomCode:    interfaceConfig.RunCustomCode,
-		Inheritance:      idlInterface.Inheritance,
-		IdlInterface:     idlInterface,
-		Constructor:      CreateConstructor(idlInterface, intfRules, interfaceConfig, idlName),
-		Operations:       CreateInstanceMethods(idlInterface, intfRules, interfaceConfig, idlName),
-		Attributes:       CreateAttributes(idlInterface, interfaceConfig, idlName),
+		Spec:          interfaceConfig,
+		CustomRule:    intfRules,
+		RunCustomCode: interfaceConfig.RunCustomCode,
+		IdlInterface:  idlInterface,
+		Constructor:   CreateConstructor(idlInterface, intfRules, interfaceConfig, idlName),
+		Operations:    CreateInstanceMethods(idlInterface, intfRules, interfaceConfig, idlName),
+		Attributes:    CreateAttributes(idlInterface, interfaceConfig, idlName),
 	}
 }
 

@@ -53,7 +53,7 @@ func (gen GojaTargetGenerators) CreateInitFunction(data model.ESConstructorData)
 		Body: g.NewValue("installClass").
 			Call(
 				g.Lit(data.Name()),
-				g.Lit(data.Inheritance),
+				g.Lit(data.IdlInterface.Inheritance),
 				g.Id(naming.PrototypeWrapperConstructorName()),
 			),
 	}

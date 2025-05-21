@@ -15,7 +15,7 @@ func (gen V8TargetGenerators) CreateInitFunction(data ESConstructorData) g.Gener
 		Name: "init",
 		Body: g.NewValue("registerJSClass").Call(
 			g.Lit(data.Spec.TypeName),
-			g.Lit(data.Inheritance),
+			g.Lit(data.IdlInterface.Inheritance),
 			g.Id(prototypeFactoryFunctionName(data))),
 	}
 }
@@ -67,7 +67,7 @@ func (gen V8TargetGenerators) CreatePrototypeInitializerBody(
 func (gen V8TargetGenerators) CreateConstructorCallback(data ESConstructorData) g.Generator {
 	naming := V8NamingStrategy{data}
 	var body g.Generator
-	if model.IsNodeType(data.IdlInterfaceName) {
+	if model.IsNodeType(data.IdlInterface.Name) {
 		body = CreateV8IllegalConstructorBody(data)
 	} else {
 		body = CreateV8ConstructorWrapperBody(data)

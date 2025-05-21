@@ -10,15 +10,13 @@ import (
 )
 
 type ESConstructorData struct {
-	Spec             *configuration.IdlInterfaceConfiguration
-	CustomRule       customrules.InterfaceRule
-	IdlInterface     idl.Interface
-	IdlInterfaceName string
-	Inheritance      string
-	Operations       []ESOperation
-	Attributes       []ESAttribute
-	Constructor      *ESOperation
-	RunCustomCode    bool
+	Spec          *configuration.IdlInterfaceConfiguration
+	CustomRule    customrules.InterfaceRule
+	IdlInterface  idl.Interface
+	Operations    []ESOperation
+	Attributes    []ESAttribute
+	Constructor   *ESOperation
+	RunCustomCode bool
 }
 
 // Return the idl mixin interfaces included in this interface AND that has been
