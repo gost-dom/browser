@@ -18,7 +18,6 @@ func (s V8Script) Run() error {
 }
 
 func (s V8Script) Eval() (any, error) {
-
 	result, err := s.ctx.runScript(s.script)
 	if err == nil {
 		return v8ValueToGoValue(result)
