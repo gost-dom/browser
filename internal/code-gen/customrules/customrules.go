@@ -12,6 +12,8 @@
 package customrules
 
 import (
+	"reflect"
+
 	"github.com/gost-dom/code-gen/customrules/typerule"
 	. "github.com/gost-dom/code-gen/customrules/typerule"
 	"github.com/gost-dom/code-gen/packagenames"
@@ -75,7 +77,7 @@ type ArgumentRule struct {
 	Ignore   bool
 }
 
-func (r ArgumentRule) OverridesType() bool { return r.Type != idl.Type{} }
+func (r ArgumentRule) OverridesType() bool { return !reflect.ValueOf(r.Type).IsZero() }
 
 type AttributeTypeRule struct {
 	Name    string
