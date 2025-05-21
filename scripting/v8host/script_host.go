@@ -244,8 +244,6 @@ func (host *V8ScriptHost) Close() {
 	host.iso.Dispose()
 }
 
-var global *v8go.Object
-
 // NewContext creates a new script context using w as the global window object.
 // Calling with a nil value for w is allowed, but not supported; and any attempt
 // to access the DOM will result in a runtime error.
