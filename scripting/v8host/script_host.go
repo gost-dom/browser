@@ -47,6 +47,7 @@ type V8ScriptHost struct {
 	windowTemplate  *v8go.ObjectTemplate
 	globals         globals
 	contexts        map[*v8go.Context]*V8ScriptContext
+	disposed        bool
 }
 
 type jsConstructorFactory = func(*V8ScriptHost) *v8go.FunctionTemplate
@@ -233,13 +234,17 @@ func (host *V8ScriptHost) promiseRejected(msg v8go.PromiseRejectMessage) {
 func (host *V8ScriptHost) Logger() log.Logger { return host.logger }
 
 func (host *V8ScriptHost) Close() {
-	host.mu.Lock()
-	defer host.mu.Unlock()
-	undiposedContexts := slices.Collect(maps.Values(host.contexts))
+	host.setDisposed()
+	undiposedContexts := host.undisposedContexts()
 	undisposedCount := len(undiposedContexts)
 
 	if undisposedCount > 0 {
-		log.Warn(host.logger, "Closing script host with undisposed contexts", "count", undisposedCount)
+		log.Warn(
+			host.logger,
+			"Closing script host with undisposed contexts",
+			"count",
+			undisposedCount,
+		)
 		for _, ctx := range undiposedContexts {
 			ctx.Close()
 		}
@@ -247,6 +252,18 @@ func (host *V8ScriptHost) Close() {
 	host.inspectorClient.Dispose()
 	host.inspector.Dispose()
 	host.iso.Dispose()
+}
+
+func (host *V8ScriptHost) undisposedContexts() []*V8ScriptContext {
+	host.mu.Lock()
+	defer host.mu.Unlock()
+	return slices.Collect(maps.Values(host.contexts))
+}
+
+func (host *V8ScriptHost) setDisposed() {
+	host.mu.Lock()
+	defer host.mu.Unlock()
+	host.disposed = true
 }
 
 // NewContext creates a new script context using w as the global window object.

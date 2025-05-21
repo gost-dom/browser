@@ -157,12 +157,13 @@ func (ctx *V8ScriptContext) Close() {
 		panic("Context already disposed")
 	}
 	ctx.disposed = true
+
 	ctx.host.inspector.ContextDestroyed(ctx.v8ctx)
 	log.Debug(ctx.host.logger, "ScriptContext: Dispose")
 	for _, dispose := range ctx.disposers {
 		dispose.dispose()
 	}
-	delete(ctx.host.contexts, ctx.v8ctx)
+	ctx.host.deleteContext(ctx)
 	ctx.v8ctx.Close()
 }
 
