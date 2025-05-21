@@ -147,7 +147,7 @@ func (gen GojaTargetGenerators) CreateAttributeSetter(
 	for i, a := range op.Arguments {
 		argNames[i] = g.Id(a.Name)
 		value := g.Raw(callArgument.Generate().Dot("Arguments").Index(jen.Lit(i)))
-		converter := fmt.Sprintf("decode%s", a.Type)
+		converter := fmt.Sprintf("decode%s", a.IdlArg.Type.Name)
 		readArgs.Append(g.Assign(argNames[i], receiver.Field(converter).Call(value)))
 	}
 	return g.StatementList(
@@ -170,7 +170,7 @@ func (gen GojaTargetGenerators) CreateMethodCallbackBody(
 	for i, a := range op.Arguments {
 		argNames[i] = g.Id(a.Name)
 		value := g.Raw(callArgument.Generate().Dot("Arguments").Index(jen.Lit(i)))
-		converter := fmt.Sprintf("decode%s", a.Type)
+		converter := fmt.Sprintf("decode%s", a.IdlArg.Type.Name)
 		readArgs.Append(g.Assign(argNames[i], receiver.Field(converter).Call(value)))
 	}
 	return g.StatementList(

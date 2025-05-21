@@ -2,7 +2,6 @@ package wrappers
 
 import (
 	"fmt"
-	"log/slog"
 
 	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/script-wrappers/configuration"
@@ -53,7 +52,6 @@ func CreateConstructor(
 			},
 			intfRule,
 			interfaceConfig,
-			c,
 		)
 		return &result
 	} else {
@@ -66,20 +64,14 @@ func CreateInstanceMethods(
 	intfRule customrules.InterfaceRule,
 	interfaceConfig *configuration.IdlInterfaceConfiguration,
 	idlName idl.TypeSpec) (result []ESOperation) {
-	for instanceMethod := range idlName.InstanceMethods() {
-		idlOperation, found := idlInterface.GetOperation(instanceMethod.Name)
-		if !found {
-			panic("Method not found: " + instanceMethod.Name)
+	// TODO: Handle overloads, e.g. of XHR.open
+	visited := make(map[string]bool)
+	for _, operation := range idlInterface.Operations {
+		if operation.Name != "" && !visited[operation.Name] && !operation.Static {
+			op := createOperation(operation, intfRule, interfaceConfig)
+			result = append(result, op)
 		}
-		// fmt.Printf("OPERATION: %s\nArgs: %+v\n\n", instanceMethod.Name, idlOperation.Arguments)
-
-		op := createOperation(
-			idlOperation,
-			intfRule,
-			interfaceConfig,
-			instanceMethod,
-		)
-		result = append(result, op)
+		visited[operation.Name] = true
 	}
 	return
 }
@@ -142,12 +134,9 @@ func createOperation(
 	idlOperation idl.Operation,
 	intfRules customrules.InterfaceRule,
 	typeSpec *configuration.IdlInterfaceConfiguration,
-	member idl.MemberSpec,
 ) ESOperation {
 	opRules := intfRules.Operations[idlOperation.Name]
 	methodCustomization := typeSpec.GetMethodCustomization(idlOperation.Name)
-	idlArgs := idlOperation.Arguments
-	// fmt.Printf("Name: %s - %s\nIDL ARGS: %+v\n\n", idlOperation.Name, member.Name, idlArgs)
 
 	op := ESOperation{
 		Name:                 idlOperation.Name,
@@ -159,33 +148,19 @@ func createOperation(
 		HasError:             opRules.HasError,
 		Arguments:            []ESOperationArgument{},
 	}
-	for i, arg := range member.Arguments {
+	for _, idlArg := range idlOperation.Arguments {
 		var esArgumentSpec configuration.ESMethodArgument
-		if arg := methodCustomization.Argument(arg.Name); arg != nil {
+		if arg := methodCustomization.Argument(idlArg.Name); arg != nil {
 			esArgumentSpec = *arg
 		}
 		esArg := ESOperationArgument{
-			Name:         arg.Name,
-			IdlArg:       idlArgs[i],
-			Optional:     arg.Optional && !esArgumentSpec.Required,
-			IdlType:      arg.IdlType,
+			Name:         idlArg.Name,
+			IdlArg:       idlArg,
+			Optional:     idlArg.Optional && !esArgumentSpec.Required,
 			ArgumentSpec: esArgumentSpec,
 			Ignore:       esArgumentSpec.Ignored,
-			CustomRule:   opRules.Argument(arg.Name),
+			CustomRule:   opRules.Argument(idlArg.Name),
 		}
-		if len(arg.IdlType.Types) > 0 {
-			slog.Warn(
-				"Multiple argument types",
-				"Operation",
-				member.Name,
-				"Argument",
-				arg.Name,
-			)
-		}
-		if arg.IdlType.IdlType != nil {
-			esArg.Type = arg.IdlType.IdlType.IType.TypeName
-		}
-		// fmt.Printf("Append arg: %+v\n", esArg.IdlArg)
 		op.Arguments = append(op.Arguments, esArg)
 	}
 	return op
