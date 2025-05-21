@@ -229,7 +229,7 @@ func (w nodeV8Wrapper) nodeName(info *v8.FunctionCallbackInfo) (*v8.Value, error
 		return nil, err
 	}
 	result := instance.NodeName()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w nodeV8Wrapper) isConnected(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

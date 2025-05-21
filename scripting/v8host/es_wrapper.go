@@ -88,7 +88,7 @@ func (w converters) decodeNodeOrText(ctx *V8ScriptContext, val *v8.Value) (dom.N
 	return w.decodeNode(ctx, val)
 }
 
-func (w converters) toNullableString(ctx *V8ScriptContext, str *string) (*v8.Value, error) {
+func (w converters) toNullableString_(ctx *V8ScriptContext, str *string) (*v8.Value, error) {
 	if str == nil {
 		return v8.Null(ctx.host.iso), nil
 	}
@@ -107,7 +107,7 @@ func (w converters) toAny(ctx *V8ScriptContext, val string) (*v8.Value, error) {
 	return v8.NewValue(ctx.host.iso, val)
 }
 
-func (w converters) toString(ctx *V8ScriptContext, str string) (*v8.Value, error) {
+func (w converters) toString_(ctx *V8ScriptContext, str string) (*v8.Value, error) {
 	return v8.NewValue(ctx.host.iso, str)
 }
 

@@ -171,6 +171,9 @@ func createOperation(
 		}
 		op.Arguments = append(op.Arguments, esArg)
 	}
+	if stringifier {
+		fmt.Printf("CREATED TOSTRING: %+v\n", op)
+	}
 	return op
 }
 

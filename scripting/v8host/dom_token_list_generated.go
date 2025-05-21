@@ -62,7 +62,7 @@ func (w domTokenListV8Wrapper) item(info *v8.FunctionCallbackInfo) (*v8.Value, e
 			return nil, err
 		}
 		result := instance.Item(index)
-		return w.toNullableString(ctx, result)
+		return w.toNullableString_(ctx, result)
 	}
 	return nil, errors.New("DOMTokenList.item: Missing arguments")
 }
@@ -158,7 +158,7 @@ func (w domTokenListV8Wrapper) value(info *v8.FunctionCallbackInfo) (*v8.Value, 
 		return nil, err
 	}
 	result := instance.Value()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w domTokenListV8Wrapper) setValue(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

@@ -283,7 +283,7 @@ func (w elementV8Wrapper) tagName(info *v8.FunctionCallbackInfo) (*v8.Value, err
 		return nil, err
 	}
 	result := instance.TagName()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w elementV8Wrapper) id(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -294,7 +294,7 @@ func (w elementV8Wrapper) id(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.ID()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w elementV8Wrapper) setID(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

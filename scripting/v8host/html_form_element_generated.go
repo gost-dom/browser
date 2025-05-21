@@ -150,7 +150,7 @@ func (w htmlFormElementV8Wrapper) action(info *v8.FunctionCallbackInfo) (*v8.Val
 		return nil, err
 	}
 	result := instance.Action()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w htmlFormElementV8Wrapper) setAction(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -204,7 +204,7 @@ func (w htmlFormElementV8Wrapper) method(info *v8.FunctionCallbackInfo) (*v8.Val
 		return nil, err
 	}
 	result := instance.Method()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w htmlFormElementV8Wrapper) setMethod(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

@@ -110,7 +110,7 @@ func (w nodeWrapper) nodeName(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: Node.nodeName")
 	instance := w.getInstance(c)
 	result := instance.NodeName()
-	return w.toString(result)
+	return w.toString_(result)
 }
 
 func (w nodeWrapper) isConnected(c g.FunctionCall) g.Value {

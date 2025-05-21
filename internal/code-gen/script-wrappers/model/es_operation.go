@@ -51,7 +51,7 @@ func idlTypeNameToGoName(t idl.Type) string {
 	switch t.Name {
 	case "DOMString", "USVString", "ByteString":
 		{
-			return "string"
+			return "string_"
 		}
 	default:
 		return t.Name

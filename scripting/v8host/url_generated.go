@@ -112,7 +112,7 @@ func (w urlV8Wrapper) toJSON(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	if callErr != nil {
 		return nil, callErr
 	} else {
-		return w.toString(ctx, result)
+		return w.toString_(ctx, result)
 	}
 }
 
@@ -124,7 +124,7 @@ func (w urlV8Wrapper) href(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Href()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w urlV8Wrapper) setHref(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -140,7 +140,7 @@ func (w urlV8Wrapper) origin(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Origin()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w urlV8Wrapper) protocol(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -151,7 +151,7 @@ func (w urlV8Wrapper) protocol(info *v8.FunctionCallbackInfo) (*v8.Value, error)
 		return nil, err
 	}
 	result := instance.Protocol()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w urlV8Wrapper) setProtocol(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -187,7 +187,7 @@ func (w urlV8Wrapper) host(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Host()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w urlV8Wrapper) setHost(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -203,7 +203,7 @@ func (w urlV8Wrapper) hostname(info *v8.FunctionCallbackInfo) (*v8.Value, error)
 		return nil, err
 	}
 	result := instance.Hostname()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w urlV8Wrapper) setHostname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -219,7 +219,7 @@ func (w urlV8Wrapper) port(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Port()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w urlV8Wrapper) setPort(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -235,7 +235,7 @@ func (w urlV8Wrapper) pathname(info *v8.FunctionCallbackInfo) (*v8.Value, error)
 		return nil, err
 	}
 	result := instance.Pathname()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w urlV8Wrapper) setPathname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -251,7 +251,7 @@ func (w urlV8Wrapper) search(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Search()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w urlV8Wrapper) setSearch(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -272,7 +272,7 @@ func (w urlV8Wrapper) hash(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Hash()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w urlV8Wrapper) setHash(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -376,7 +376,7 @@ func (w urlSearchParamsV8Wrapper) getAll(info *v8.FunctionCallbackInfo) (*v8.Val
 			return nil, err
 		}
 		result := instance.GetAll(name)
-		return w.toSequenceString(ctx, result)
+		return w.toSequenceString_(ctx, result)
 	}
 	return nil, errors.New("URLSearchParams.getAll: Missing arguments")
 }
@@ -442,7 +442,7 @@ func (w urlSearchParamsV8Wrapper) toString(info *v8.FunctionCallbackInfo) (*v8.V
 		return nil, err
 	}
 	result := instance.String()
-	return w.toUSVString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w urlSearchParamsV8Wrapper) size(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

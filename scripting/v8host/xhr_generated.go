@@ -144,7 +144,7 @@ func (w xmlHttpRequestV8Wrapper) getResponseHeader(info *v8.FunctionCallbackInfo
 			return nil, err
 		}
 		result := instance.GetResponseHeader(name)
-		return w.toNullableString(ctx, result)
+		return w.toNullableString_(ctx, result)
 	}
 	return nil, errors.New("XMLHttpRequest.getResponseHeader: Missing arguments")
 }
@@ -160,7 +160,7 @@ func (w xmlHttpRequestV8Wrapper) getAllResponseHeaders(info *v8.FunctionCallback
 	if callErr != nil {
 		return nil, callErr
 	} else {
-		return w.toString(ctx, result)
+		return w.toString_(ctx, result)
 	}
 }
 
@@ -241,7 +241,7 @@ func (w xmlHttpRequestV8Wrapper) responseURL(info *v8.FunctionCallbackInfo) (*v8
 		return nil, err
 	}
 	result := instance.ResponseURL()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w xmlHttpRequestV8Wrapper) status(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -263,7 +263,7 @@ func (w xmlHttpRequestV8Wrapper) statusText(info *v8.FunctionCallbackInfo) (*v8.
 		return nil, err
 	}
 	result := instance.StatusText()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w xmlHttpRequestV8Wrapper) responseType(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -295,7 +295,7 @@ func (w xmlHttpRequestV8Wrapper) responseText(info *v8.FunctionCallbackInfo) (*v
 		return nil, err
 	}
 	result := instance.ResponseText()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w xmlHttpRequestV8Wrapper) responseXML(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

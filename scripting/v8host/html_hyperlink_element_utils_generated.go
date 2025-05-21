@@ -91,7 +91,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) href(info *v8.FunctionCallbackInfo) 
 		return nil, err
 	}
 	result := instance.Href()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setHref(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -115,7 +115,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) origin(info *v8.FunctionCallbackInfo
 		return nil, err
 	}
 	result := instance.Origin()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) protocol(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -126,7 +126,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) protocol(info *v8.FunctionCallbackIn
 		return nil, err
 	}
 	result := instance.Protocol()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setProtocol(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -150,7 +150,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) username(info *v8.FunctionCallbackIn
 		return nil, err
 	}
 	result := instance.Username()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setUsername(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -174,7 +174,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) password(info *v8.FunctionCallbackIn
 		return nil, err
 	}
 	result := instance.Password()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setPassword(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -198,7 +198,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) host(info *v8.FunctionCallbackInfo) 
 		return nil, err
 	}
 	result := instance.Host()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setHost(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -222,7 +222,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) hostname(info *v8.FunctionCallbackIn
 		return nil, err
 	}
 	result := instance.Hostname()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setHostname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -246,7 +246,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) port(info *v8.FunctionCallbackInfo) 
 		return nil, err
 	}
 	result := instance.Port()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setPort(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -270,7 +270,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) pathname(info *v8.FunctionCallbackIn
 		return nil, err
 	}
 	result := instance.Pathname()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setPathname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -294,7 +294,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) search(info *v8.FunctionCallbackInfo
 		return nil, err
 	}
 	result := instance.Search()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setSearch(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -318,7 +318,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) hash(info *v8.FunctionCallbackInfo) 
 		return nil, err
 	}
 	result := instance.Hash()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setHash(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

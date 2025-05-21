@@ -59,7 +59,7 @@ func (w htmlAnchorElementV8Wrapper) target(info *v8.FunctionCallbackInfo) (*v8.V
 		return nil, err
 	}
 	result := instance.Target()
-	return w.toString(ctx, result)
+	return w.toString_(ctx, result)
 }
 
 func (w htmlAnchorElementV8Wrapper) setTarget(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
