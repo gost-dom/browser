@@ -9,7 +9,6 @@ type IdlInterfaceConfiguration struct {
 	DomSpec       *WebIdlConfiguration
 	TypeName      string
 	RunCustomCode bool
-	WrapperType   string
 	// SkipWrapper suppresses the generation of the "wrapper type". This is used
 	// for DomTokenList to include the iterator code as part of the wrapper
 	// type.
