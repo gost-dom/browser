@@ -118,7 +118,7 @@ func (w urlSearchParamsV8Wrapper) get(info *v8.FunctionCallbackInfo) (*v8.Value,
 }
 
 func v8URLSearchParamGet(ctx abstraction.CallbackContext) abstraction.CallbackRVal {
-	instance, err0 := As[urlinterfaces.URLSearchParams](ctx.InternalInstance())
+	instance, err0 := abstraction.As[urlinterfaces.URLSearchParams](ctx.InternalInstance())
 	name, err1 := ctx.ConsumeRequiredArg("name")
 	if err := errors.Join(err0, err1); err != nil {
 		return ctx.ReturnWithError(err)
