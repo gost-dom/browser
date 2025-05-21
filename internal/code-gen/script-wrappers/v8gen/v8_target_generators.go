@@ -159,6 +159,9 @@ func (gen V8TargetGenerators) CreateMethodCallbackBody(
 	}
 	requireContext := false
 	var CreateCall = func(functionName string, argnames []g.Generator, op ESOperation) g.Generator {
+		if op.Name == "toString" {
+			functionName = "String"
+		}
 		requireContext = requireContext || op.HasResult()
 		return V8InstanceInvocation{
 			Name:     functionName,

@@ -52,6 +52,7 @@ func CreateConstructor(
 			},
 			intfRule,
 			interfaceConfig,
+			false,
 		)
 		return &result
 	} else {
@@ -68,8 +69,11 @@ func CreateInstanceMethods(
 	visited := make(map[string]bool)
 	for _, operation := range idlInterface.Operations {
 		if operation.Name != "" && !visited[operation.Name] && !operation.Static {
-			op := createOperation(operation, intfRule, interfaceConfig)
-			result = append(result, op)
+			result = append(result, createOperation(operation, intfRule, interfaceConfig, false))
+		}
+		if operation.Name == "" && operation.Stringifier {
+			operation.ReturnType.Name = "USVString"
+			result = append(result, createOperation(operation, intfRule, interfaceConfig, true))
 		}
 		visited[operation.Name] = true
 	}
@@ -134,6 +138,7 @@ func createOperation(
 	idlOperation idl.Operation,
 	intfRules customrules.InterfaceRule,
 	typeSpec *configuration.IdlInterfaceConfiguration,
+	stringifier bool,
 ) ESOperation {
 	opRules := intfRules.Operations[idlOperation.Name]
 	methodCustomization := typeSpec.GetMethodCustomization(idlOperation.Name)
@@ -147,6 +152,9 @@ func createOperation(
 		MethodCustomization:  methodCustomization,
 		HasError:             opRules.HasError,
 		Arguments:            []ESOperationArgument{},
+	}
+	if stringifier {
+		op.Name = "toString"
 	}
 	for _, idlArg := range idlOperation.Arguments {
 		var esArgumentSpec configuration.ESMethodArgument

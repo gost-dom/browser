@@ -314,6 +314,7 @@ func (w urlSearchParamsV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTempl
 	prototypeTmpl.Set("has", v8.NewFunctionTemplateWithError(iso, w.has))
 	prototypeTmpl.Set("set", v8.NewFunctionTemplateWithError(iso, w.set))
 	prototypeTmpl.Set("sort", v8.NewFunctionTemplateWithError(iso, w.sort))
+	prototypeTmpl.Set("toString", v8.NewFunctionTemplateWithError(iso, w.toString))
 
 	prototypeTmpl.SetAccessorProperty("size",
 		v8.NewFunctionTemplateWithError(iso, w.size),
@@ -431,6 +432,17 @@ func (w urlSearchParamsV8Wrapper) sort(info *v8.FunctionCallbackInfo) (*v8.Value
 	}
 	instance.Sort()
 	return nil, nil
+}
+
+func (w urlSearchParamsV8Wrapper) toString(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+	log.Debug(w.logger(info), "V8 Function call: URLSearchParams.toString")
+	ctx := w.mustGetContext(info)
+	instance, err := w.getInstance(info)
+	if err != nil {
+		return nil, err
+	}
+	result := instance.String()
+	return w.toUSVString(ctx, result)
 }
 
 func (w urlSearchParamsV8Wrapper) size(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
