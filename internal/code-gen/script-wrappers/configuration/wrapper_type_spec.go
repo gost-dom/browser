@@ -1,5 +1,12 @@
 package configuration
 
+type CodeGenStrategy string
+
+const (
+	StrategyDefault     = ""
+	StrategyAbstraction = "abstraction"
+)
+
 // IdlInterfaceConfiguration contains information about how to generate
 // prototype objects for an interface in the IDL.
 //
@@ -17,6 +24,7 @@ type IdlInterfaceConfiguration struct {
 	IncludeIterable bool
 	IncludeIncludes bool
 	Customization   map[string]*ESMethodWrapper
+	Strategy        CodeGenStrategy
 }
 
 func (w *IdlInterfaceConfiguration) ensureMap() {
