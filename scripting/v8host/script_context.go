@@ -93,7 +93,7 @@ func (c *V8ScriptContext) getInstanceForNode(
 		return c.getInstanceForNodeByName("Attr", n)
 	default:
 		fmt.Println("ERROR!", n)
-		panic(fmt.Sprintf("Cannot lookup node: %V", n))
+		panic(fmt.Sprintf("Cannot lookup node: %v", n))
 	}
 }
 func (c *V8ScriptContext) createJSInstanceForObjectOfType(
