@@ -13,8 +13,6 @@ import (
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting"
 	"github.com/gost-dom/v8go"
-
-	v8 "github.com/gost-dom/v8go"
 )
 
 // disposable represents a resource that needs cleanup when a context is closed.
@@ -23,11 +21,11 @@ type disposable interface{ dispose() }
 
 type globalInstall struct {
 	name        string
-	constructor *v8.FunctionTemplate
+	constructor *v8go.FunctionTemplate
 }
 
 type globals struct {
-	namedGlobals map[string]*v8.FunctionTemplate
+	namedGlobals map[string]*v8go.FunctionTemplate
 }
 
 type hostOptions struct {
@@ -41,15 +39,15 @@ func WithLogger(logger log.Logger) HostOption { return func(o *hostOptions) { o.
 type V8ScriptHost struct {
 	logger          log.Logger
 	mu              *sync.Mutex
-	iso             *v8.Isolate
-	inspector       *v8.Inspector
-	inspectorClient *v8.InspectorClient
-	windowTemplate  *v8.ObjectTemplate
+	iso             *v8go.Isolate
+	inspector       *v8go.Inspector
+	inspectorClient *v8go.InspectorClient
+	windowTemplate  *v8go.ObjectTemplate
 	globals         globals
-	contexts        map[*v8.Context]*V8ScriptContext
+	contexts        map[*v8go.Context]*V8ScriptContext
 }
 
-type jsConstructorFactory = func(*V8ScriptHost) *v8.FunctionTemplate
+type jsConstructorFactory = func(*V8ScriptHost) *v8go.FunctionTemplate
 
 type class struct {
 	globalIdentifier string
@@ -62,13 +60,13 @@ type class struct {
 // before subclasses
 func createGlobals(host *V8ScriptHost) []globalInstall {
 	result := make([]globalInstall, 0)
-	var iter func(class classSpec) *v8.FunctionTemplate
-	uniqueNames := make(map[string]*v8.FunctionTemplate)
-	iter = func(class classSpec) *v8.FunctionTemplate {
+	var iter func(class classSpec) *v8go.FunctionTemplate
+	uniqueNames := make(map[string]*v8go.FunctionTemplate)
+	iter = func(class classSpec) *v8go.FunctionTemplate {
 		if constructor, found := uniqueNames[class.name]; found {
 			return constructor
 		}
-		var superClassConstructor *v8.FunctionTemplate
+		var superClassConstructor *v8go.FunctionTemplate
 		if class.superClassName != "" {
 			superClassSpec, found := classes[class.superClassName]
 			if !found {
@@ -93,26 +91,26 @@ func createGlobals(host *V8ScriptHost) []globalInstall {
 }
 
 // consoleAPIMessageFunc represents a function that can receive javascript
-// console messages and implements the [v8.consoleAPIMessageFunc] interface.
+// console messages and implements the [v8go.consoleAPIMessageFunc] interface.
 //
 // This type is a simple solution to avoid exporting the consoleAPIMessage
 // function.
-type consoleAPIMessageFunc func(message v8.ConsoleAPIMessage)
+type consoleAPIMessageFunc func(message v8go.ConsoleAPIMessage)
 
-func (f consoleAPIMessageFunc) ConsoleAPIMessage(message v8.ConsoleAPIMessage) {
+func (f consoleAPIMessageFunc) ConsoleAPIMessage(message v8go.ConsoleAPIMessage) {
 	f(message)
 }
 
-func (host *V8ScriptHost) consoleAPIMessage(message v8.ConsoleAPIMessage) {
+func (host *V8ScriptHost) consoleAPIMessage(message v8go.ConsoleAPIMessage) {
 	switch message.ErrorLevel {
-	case v8.ErrorLevelDebug:
+	case v8go.ErrorLevelDebug:
 		log.Debug(host.logger, message.Message)
-	case v8.ErrorLevelInfo:
-	case v8.ErrorLevelLog:
+	case v8go.ErrorLevelInfo:
+	case v8go.ErrorLevelLog:
 		log.Info(host.logger, message.Message)
-	case v8.ErrorLevelWarning:
+	case v8go.ErrorLevelWarning:
 		log.Warn(host.logger, message.Message)
-	case v8.ErrorLevelError:
+	case v8go.ErrorLevelError:
 		log.Error(host.logger, message.Message)
 	}
 }
@@ -182,23 +180,23 @@ func New(opts ...HostOption) *V8ScriptHost {
 	}
 	host := &V8ScriptHost{
 		mu:     new(sync.Mutex),
-		iso:    v8.NewIsolate(),
+		iso:    v8go.NewIsolate(),
 		logger: config.logger,
 	}
-	host.inspectorClient = v8.NewInspectorClient(consoleAPIMessageFunc(host.consoleAPIMessage))
-	host.inspector = v8.NewInspector(host.iso, host.inspectorClient)
+	host.inspectorClient = v8go.NewInspectorClient(consoleAPIMessageFunc(host.consoleAPIMessage))
+	host.inspector = v8go.NewInspector(host.iso, host.inspectorClient)
 
 	host.iso.SetPromiseRejectedCallback(host.promiseRejected)
 
 	globalInstalls := createGlobals(host)
-	host.globals = globals{make(map[string]*v8.FunctionTemplate)}
+	host.globals = globals{make(map[string]*v8go.FunctionTemplate)}
 	for _, globalInstall := range globalInstalls {
 		host.globals.namedGlobals[globalInstall.name] = globalInstall.constructor
 	}
 	constructors := host.globals.namedGlobals
 	window := constructors["Window"]
 	host.windowTemplate = window.InstanceTemplate()
-	host.contexts = make(map[*v8.Context]*V8ScriptContext)
+	host.contexts = make(map[*v8go.Context]*V8ScriptContext)
 	installGlobals(window, host, globalInstalls)
 	installEventLoopGlobals(host, host.windowTemplate)
 	return host
@@ -246,7 +244,7 @@ func (host *V8ScriptHost) Close() {
 	host.iso.Dispose()
 }
 
-var global *v8.Object
+var global *v8go.Object
 
 // NewContext creates a new script context using w as the global window object.
 // Calling with a nil value for w is allowed, but not supported; and any attempt
@@ -256,9 +254,9 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 	context := &V8ScriptContext{
 		host:    host,
 		clock:   clock.New(),
-		v8ctx:   v8.NewContext(host.iso, host.windowTemplate),
+		v8ctx:   v8go.NewContext(host.iso, host.windowTemplate),
 		window:  w,
-		v8nodes: make(map[entity.ObjectId]*v8.Value),
+		v8nodes: make(map[entity.ObjectId]*v8go.Value),
 	}
 	errorCallback := func(err error) {
 		if w != nil {
