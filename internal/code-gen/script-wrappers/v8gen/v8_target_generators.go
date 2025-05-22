@@ -129,7 +129,7 @@ func (gen V8TargetGenerators) CreateAttributeSetter(
 
 	args := append(
 		[]g.Generator{g.Id("ctx"), g.Id("info")},
-		decodersForArg(receiver, op.Arguments[0])...,
+		wrappers.DecodersForArg(receiver, op.Arguments[0])...,
 	)
 	parsedArg := g.NewValue("parseSetterArg").
 		Call(args...)
@@ -175,7 +175,7 @@ func (gen V8TargetGenerators) CreateMethodCallbackBody(
 		CreateV8WrapperMethodInstanceInvocations(
 			data,
 			op,
-			idlNameToGoName(op.Name),
+			IdlNameToGoName(op.Name),
 			readArgsResult.Args,
 			err,
 			CreateCall,

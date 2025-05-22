@@ -2,7 +2,6 @@ package v8gen
 
 import (
 	"fmt"
-	"strings"
 
 	. "github.com/gost-dom/code-gen/internal"
 	wrappers "github.com/gost-dom/code-gen/script-wrappers"
@@ -14,14 +13,6 @@ import (
 
 	"github.com/dave/jennifer/jen"
 )
-
-func idlNameToGoName(s string) string {
-	words := strings.Split(s, " ")
-	for i, word := range words {
-		words[i] = UpperCaseFirstLetter(word)
-	}
-	return strings.Join(words, "")
-}
 
 var scriptHost = g.NewValue("scriptHost")
 
@@ -124,7 +115,7 @@ func CreateV8WrapperMethodInstanceInvocations(
 		for j, arg := range args {
 			if j < i {
 				if arg.Argument.OptionalInGo() {
-					functionName += idlNameToGoName(arg.Argument.Name)
+					functionName += IdlNameToGoName(arg.Argument.Name)
 				}
 			}
 		}
@@ -256,9 +247,9 @@ func (c V8InstanceInvocation) ConvertReturnValue(retType idl.Type) g.Generator {
 
 func (c V8InstanceInvocation) GetGenerator() g.Generator {
 	if c.Instance == nil {
-		return c.ConvertResult(g.NewValue(idlNameToGoName(c.Name)).Call(c.Args...))
+		return c.ConvertResult(g.NewValue(IdlNameToGoName(c.Name)).Call(c.Args...))
 	} else {
-		return c.ConvertResult(c.Instance.Method(idlNameToGoName(c.Name)).Call(c.Args...))
+		return c.ConvertResult(c.Instance.Method(IdlNameToGoName(c.Name)).Call(c.Args...))
 	}
 }
 
@@ -302,24 +293,6 @@ func AssignArgs(data ESConstructorData, op ESOperation) g.Generator {
 	)
 }
 
-func decodersForArg(receiver g.Generator, arg ESOperationArgument) []g.Generator {
-	var convertNames []string
-	if arg.Type != "" {
-		convertNames = []string{fmt.Sprintf("decode%s", idlNameToGoName(arg.Type))}
-	} else {
-		types := arg.IdlType.IdlType.IType.Types
-		convertNames = make([]string, len(types))
-		for i, t := range types {
-			convertNames[i] = fmt.Sprintf("decode%s", t.IType.TypeName)
-		}
-	}
-	res := make([]g.Generator, len(convertNames))
-	for i, n := range convertNames {
-		res[i] = g.ValueOf(receiver).Field(n)
-	}
-	return res
-}
-
 func ReadArguments(data ESConstructorData, op ESOperation) (res V8ReadArguments) {
 	naming := V8NamingStrategy{data}
 	argCount := len(op.Arguments)
@@ -339,7 +312,7 @@ func ReadArguments(data ESConstructorData, op ESOperation) (res V8ReadArguments)
 			Index:    i,
 		})
 
-		var dec = decodersForArg(receiver, arg)
+		var dec = wrappers.DecodersForArg(receiver, arg)
 
 		gConverters := []g.Generator{g.Id("args"), g.Lit(i)}
 		defaultName, hasDefault := arg.DefaultValueInGo()
