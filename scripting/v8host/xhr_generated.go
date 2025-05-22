@@ -89,8 +89,8 @@ func (w xmlHttpRequestV8Wrapper) setRequestHeader(info *v8.FunctionCallbackInfo)
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.setRequestHeader")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
-	name, err1 := tryParseArg(args, 0, w.decodeByteString)
-	value, err2 := tryParseArg(args, 1, w.decodeByteString)
+	name, err1 := tryParseArg(args, 0, w.decodeString)
+	value, err2 := tryParseArg(args, 1, w.decodeString)
 	if args.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {
@@ -137,14 +137,14 @@ func (w xmlHttpRequestV8Wrapper) getResponseHeader(info *v8.FunctionCallbackInfo
 	ctx := w.mustGetContext(info)
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
-	name, err1 := tryParseArg(args, 0, w.decodeByteString)
+	name, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
 			return nil, err
 		}
 		result := instance.GetResponseHeader(name)
-		return w.toNullableByteString(ctx, result)
+		return w.toNullableString(ctx, result)
 	}
 	return nil, errors.New("XMLHttpRequest.getResponseHeader: Missing arguments")
 }
@@ -160,7 +160,7 @@ func (w xmlHttpRequestV8Wrapper) getAllResponseHeaders(info *v8.FunctionCallback
 	if callErr != nil {
 		return nil, callErr
 	} else {
-		return w.toByteString(ctx, result)
+		return w.toString(ctx, result)
 	}
 }
 
@@ -168,7 +168,7 @@ func (w xmlHttpRequestV8Wrapper) overrideMimeType(info *v8.FunctionCallbackInfo)
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.overrideMimeType")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
-	mime, err1 := tryParseArg(args, 0, w.decodeDOMString)
+	mime, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -241,7 +241,7 @@ func (w xmlHttpRequestV8Wrapper) responseURL(info *v8.FunctionCallbackInfo) (*v8
 		return nil, err
 	}
 	result := instance.ResponseURL()
-	return w.toUSVString(ctx, result)
+	return w.toString(ctx, result)
 }
 
 func (w xmlHttpRequestV8Wrapper) status(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -263,7 +263,7 @@ func (w xmlHttpRequestV8Wrapper) statusText(info *v8.FunctionCallbackInfo) (*v8.
 		return nil, err
 	}
 	result := instance.StatusText()
-	return w.toByteString(ctx, result)
+	return w.toString(ctx, result)
 }
 
 func (w xmlHttpRequestV8Wrapper) responseType(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -295,7 +295,7 @@ func (w xmlHttpRequestV8Wrapper) responseText(info *v8.FunctionCallbackInfo) (*v
 		return nil, err
 	}
 	result := instance.ResponseText()
-	return w.toUSVString(ctx, result)
+	return w.toString(ctx, result)
 }
 
 func (w xmlHttpRequestV8Wrapper) responseXML(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

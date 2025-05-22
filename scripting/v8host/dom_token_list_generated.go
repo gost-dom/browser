@@ -61,7 +61,7 @@ func (w domTokenListV8Wrapper) item(info *v8.FunctionCallbackInfo) (*v8.Value, e
 			return nil, err
 		}
 		result := instance.Item(index)
-		return w.toNullableDOMString(ctx, result)
+		return w.toNullableString(ctx, result)
 	}
 	return nil, errors.New("DOMTokenList.item: Missing arguments")
 }
@@ -71,7 +71,7 @@ func (w domTokenListV8Wrapper) contains(info *v8.FunctionCallbackInfo) (*v8.Valu
 	ctx := w.mustGetContext(info)
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
-	token, err1 := tryParseArg(args, 0, w.decodeDOMString)
+	token, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -87,7 +87,7 @@ func (w domTokenListV8Wrapper) add(info *v8.FunctionCallbackInfo) (*v8.Value, er
 	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.add")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
-	tokens, err1 := tryParseArg(args, 0, w.decodeDOMString)
+	tokens, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -103,7 +103,7 @@ func (w domTokenListV8Wrapper) remove(info *v8.FunctionCallbackInfo) (*v8.Value,
 	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.remove")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
-	tokens, err1 := tryParseArg(args, 0, w.decodeDOMString)
+	tokens, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -120,8 +120,8 @@ func (w domTokenListV8Wrapper) replace(info *v8.FunctionCallbackInfo) (*v8.Value
 	ctx := w.mustGetContext(info)
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
-	token, err1 := tryParseArg(args, 0, w.decodeDOMString)
-	newToken, err2 := tryParseArg(args, 1, w.decodeDOMString)
+	token, err1 := tryParseArg(args, 0, w.decodeString)
+	newToken, err2 := tryParseArg(args, 1, w.decodeString)
 	if args.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {
@@ -157,14 +157,14 @@ func (w domTokenListV8Wrapper) value(info *v8.FunctionCallbackInfo) (*v8.Value, 
 		return nil, err
 	}
 	result := instance.Value()
-	return w.toDOMString(ctx, result)
+	return w.toString(ctx, result)
 }
 
 func (w domTokenListV8Wrapper) setValue(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.setValue")
 	ctx := w.mustGetContext(info)
 	instance, err0 := w.getInstance(info)
-	val, err1 := parseSetterArg(ctx, info, w.decodeDOMString)
+	val, err1 := parseSetterArg(ctx, info, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err

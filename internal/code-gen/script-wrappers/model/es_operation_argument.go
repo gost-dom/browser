@@ -35,3 +35,12 @@ func (a ESOperationArgument) DefaultValueInGo() (name string, ok bool) {
 	}
 	return
 }
+
+func (a ESOperationArgument) GoTypeName() string {
+	switch a.Type {
+	case "DOMString", "USVString", "ByteString":
+		return "string"
+	default:
+		return a.Type
+	}
+}

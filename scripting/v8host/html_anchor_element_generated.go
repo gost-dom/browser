@@ -59,14 +59,14 @@ func (w htmlAnchorElementV8Wrapper) target(info *v8.FunctionCallbackInfo) (*v8.V
 		return nil, err
 	}
 	result := instance.Target()
-	return w.toDOMString(ctx, result)
+	return w.toString(ctx, result)
 }
 
 func (w htmlAnchorElementV8Wrapper) setTarget(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLAnchorElement.setTarget")
 	ctx := w.mustGetContext(info)
 	instance, err0 := w.getInstance(info)
-	val, err1 := parseSetterArg(ctx, info, w.decodeDOMString)
+	val, err1 := parseSetterArg(ctx, info, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err

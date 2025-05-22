@@ -39,15 +39,7 @@ func (w converters) decodeEventInit(
 	return init, nil
 }
 
-func (w converters) decodeUSVString(ctx *V8ScriptContext, val *v8.Value) (string, error) {
-	return val.String(), nil
-}
-
-func (w converters) decodeByteString(ctx *V8ScriptContext, val *v8.Value) (string, error) {
-	return val.String(), nil
-}
-
-func (w converters) decodeDOMString(ctx *V8ScriptContext, val *v8.Value) (string, error) {
+func (w converters) decodeString(ctx *V8ScriptContext, val *v8.Value) (string, error) {
 	return val.String(), nil
 }
 
@@ -96,29 +88,11 @@ func (w converters) decodeNodeOrText(ctx *V8ScriptContext, val *v8.Value) (dom.N
 	return w.decodeNode(ctx, val)
 }
 
-func (w converters) toNullableByteString(ctx *V8ScriptContext, str *string) (*v8.Value, error) {
+func (w converters) toNullableString(ctx *V8ScriptContext, str *string) (*v8.Value, error) {
 	if str == nil {
 		return v8.Null(ctx.host.iso), nil
 	}
 	return v8.NewValue(ctx.host.iso, *str)
-}
-
-func (w converters) toByteString(ctx *V8ScriptContext, str string) (*v8.Value, error) {
-	if str == "" {
-		return v8.Null(ctx.host.iso), nil
-	}
-	return v8.NewValue(ctx.host.iso, str)
-}
-
-func (w converters) toDOMString(ctx *V8ScriptContext, str string) (*v8.Value, error) {
-	return v8.NewValue(ctx.host.iso, str)
-}
-
-func (w converters) toNullableDOMString(ctx *V8ScriptContext, str *string) (*v8.Value, error) {
-	if str == nil {
-		return v8.Null(ctx.host.iso), nil
-	}
-	return v8.NewValue(ctx.host.iso, str)
 }
 
 func (w converters) toUnsignedLong(ctx *V8ScriptContext, val int) (*v8.Value, error) {
@@ -133,7 +107,7 @@ func (w converters) toAny(ctx *V8ScriptContext, val string) (*v8.Value, error) {
 	return v8.NewValue(ctx.host.iso, val)
 }
 
-func (w converters) toUSVString(ctx *V8ScriptContext, str string) (*v8.Value, error) {
+func (w converters) toString(ctx *V8ScriptContext, str string) (*v8.Value, error) {
 	return v8.NewValue(ctx.host.iso, str)
 }
 

@@ -85,7 +85,7 @@ func (w mutationRecordV8Wrapper) type_(info *v8.FunctionCallbackInfo) (*v8.Value
 		return nil, err
 	}
 	result := instance.Type
-	return w.toDOMString(ctx, result)
+	return w.toString(ctx, result)
 }
 
 func (w mutationRecordV8Wrapper) target(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -151,7 +151,7 @@ func (w mutationRecordV8Wrapper) attributeName(info *v8.FunctionCallbackInfo) (*
 		return nil, err
 	}
 	result := instance.AttributeName
-	return w.toNullableDOMString(ctx, result)
+	return w.toNullableString(ctx, result)
 }
 
 func (w mutationRecordV8Wrapper) attributeNamespace(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -162,7 +162,7 @@ func (w mutationRecordV8Wrapper) attributeNamespace(info *v8.FunctionCallbackInf
 		return nil, err
 	}
 	result := instance.AttributeNamespace
-	return w.toNullableDOMString(ctx, result)
+	return w.toNullableString(ctx, result)
 }
 
 func (w mutationRecordV8Wrapper) oldValue(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -173,5 +173,5 @@ func (w mutationRecordV8Wrapper) oldValue(info *v8.FunctionCallbackInfo) (*v8.Va
 		return nil, err
 	}
 	result := instance.OldValue
-	return w.toNullableDOMString(ctx, result)
+	return w.toNullableString(ctx, result)
 }

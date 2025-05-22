@@ -79,8 +79,8 @@ func (xhr xmlHttpRequestV8Wrapper) open(
 	info *v8.FunctionCallbackInfo,
 ) (result *v8.Value, err error) {
 	args := newArgumentHelper(xhr.scriptHost, info)
-	method, err0 := tryParseArg(args, 0, xhr.decodeUSVString)
-	url, err1 := tryParseArg(args, 1, xhr.decodeUSVString)
+	method, err0 := tryParseArg(args, 0, xhr.decodeString)
+	url, err1 := tryParseArg(args, 1, xhr.decodeString)
 	async, err2 := tryParseArg(args, 2, xhr.decodeBoolean)
 	instance, errInstance := xhr.getInstance(info)
 	if args.noOfReadArguments > 2 {

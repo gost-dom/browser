@@ -131,7 +131,7 @@ func v8URLSearchParamGet(ctx abstraction.CallbackContext) abstraction.CallbackRV
 	return ctx.ReturnWithValue(f.String(rtnVal))
 }
 
-func (w urlSearchParamsV8Wrapper) toSequenceUSVString(
+func (w urlSearchParamsV8Wrapper) toSequenceString(
 	ctx *V8ScriptContext,
 	values []string,
 ) (*v8.Value, error) {

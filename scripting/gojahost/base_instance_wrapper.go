@@ -129,11 +129,7 @@ func (w baseInstanceWrapper[T]) toBoolean(b bool) g.Value {
 	return w.ctx.vm.ToValue(b)
 }
 
-func (w baseInstanceWrapper[T]) toDOMString(b string) g.Value {
-	return w.ctx.vm.ToValue(b)
-}
-
-func (w baseInstanceWrapper[T]) toUSVString(b string) g.Value {
+func (w baseInstanceWrapper[T]) toString(b string) g.Value {
 	return w.ctx.vm.ToValue(b)
 }
 

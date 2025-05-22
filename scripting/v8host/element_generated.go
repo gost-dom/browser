@@ -118,8 +118,8 @@ func (w elementV8Wrapper) setAttribute(info *v8.FunctionCallbackInfo) (*v8.Value
 	log.Debug(w.logger(info), "V8 Function call: Element.setAttribute")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
-	qualifiedName, err1 := tryParseArg(args, 0, w.decodeDOMString)
-	value, err2 := tryParseArg(args, 1, w.decodeDOMString)
+	qualifiedName, err1 := tryParseArg(args, 0, w.decodeString)
+	value, err2 := tryParseArg(args, 1, w.decodeString)
 	if args.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {
@@ -140,7 +140,7 @@ func (w elementV8Wrapper) removeAttribute(info *v8.FunctionCallbackInfo) (*v8.Va
 	log.Debug(w.logger(info), "V8 Function call: Element.removeAttribute")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
-	qualifiedName, err1 := tryParseArg(args, 0, w.decodeDOMString)
+	qualifiedName, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -167,7 +167,7 @@ func (w elementV8Wrapper) hasAttribute(info *v8.FunctionCallbackInfo) (*v8.Value
 	ctx := w.mustGetContext(info)
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
-	qualifiedName, err1 := tryParseArg(args, 0, w.decodeDOMString)
+	qualifiedName, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -219,7 +219,7 @@ func (w elementV8Wrapper) matches(info *v8.FunctionCallbackInfo) (*v8.Value, err
 	ctx := w.mustGetContext(info)
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
-	selectors, err1 := tryParseArg(args, 0, w.decodeDOMString)
+	selectors, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -283,7 +283,7 @@ func (w elementV8Wrapper) tagName(info *v8.FunctionCallbackInfo) (*v8.Value, err
 		return nil, err
 	}
 	result := instance.TagName()
-	return w.toDOMString(ctx, result)
+	return w.toString(ctx, result)
 }
 
 func (w elementV8Wrapper) id(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -294,14 +294,14 @@ func (w elementV8Wrapper) id(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.ID()
-	return w.toDOMString(ctx, result)
+	return w.toString(ctx, result)
 }
 
 func (w elementV8Wrapper) setID(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Element.setID")
 	ctx := w.mustGetContext(info)
 	instance, err0 := w.getInstance(info)
-	val, err1 := parseSetterArg(ctx, info, w.decodeDOMString)
+	val, err1 := parseSetterArg(ctx, info, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
