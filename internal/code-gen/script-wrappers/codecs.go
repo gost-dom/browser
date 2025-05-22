@@ -10,7 +10,7 @@ import (
 func DecodersForArg(receiver g.Generator, arg model.ESOperationArgument) []g.Generator {
 	var convertNames []string
 	if arg.Type != "" {
-		convertNames = []string{fmt.Sprintf("decode%s", model.IdlNameToGoName(arg.Type))}
+		convertNames = []string{fmt.Sprintf("decode%s", model.IdlNameToGoName(arg.GoTypeName()))}
 	} else {
 		types := arg.IdlType.IdlType.IType.Types
 		convertNames = make([]string, len(types))

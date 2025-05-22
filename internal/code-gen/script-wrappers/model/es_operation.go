@@ -46,6 +46,17 @@ func IsNodeType(typeName string) bool {
 	return false
 }
 
+func idlTypeNameToGoName(t idl.Type) string {
+	switch t.Name {
+	case "DOMString", "USVString", "ByteString":
+		{
+			return "string"
+		}
+	default:
+		return t.Name
+	}
+}
+
 func encoderForIDLType(t idl.Type) string {
 	converter := "to"
 	if t.Kind == idl.KindSequence {
@@ -55,7 +66,7 @@ func encoderForIDLType(t idl.Type) string {
 	if t.Nullable && !htmlelements.IdlType(t).Nillable() {
 		converter += "Nullable"
 	}
-	converter += IdlNameToGoName(t.Name)
+	converter += IdlNameToGoName(idlTypeNameToGoName(t))
 	return converter
 }
 

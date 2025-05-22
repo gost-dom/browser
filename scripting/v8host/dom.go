@@ -50,7 +50,7 @@ func (l domTokenListV8Wrapper) GetIterator(info *v8.FunctionCallbackInfo) (*v8.V
 
 func (l domTokenListV8Wrapper) toggle(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	args := newArgumentHelper(l.scriptHost, info)
-	token, err0 := tryParseArg(args, 0, l.decodeUSVString)
+	token, err0 := tryParseArg(args, 0, l.decodeString)
 	force, err1 := tryParseArg(args, 1, l.decodeBoolean)
 	instance, errInstance := l.getInstance(info)
 	if args.noOfReadArguments >= 2 {

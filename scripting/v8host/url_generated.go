@@ -81,8 +81,8 @@ func (w urlV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 
 func (w urlV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	args := newArgumentHelper(w.scriptHost, info)
-	url, err1 := tryParseArg(args, 0, w.decodeUSVString)
-	base, err2 := tryParseArg(args, 1, w.decodeUSVString)
+	url, err1 := tryParseArg(args, 0, w.decodeString)
+	base, err2 := tryParseArg(args, 1, w.decodeString)
 	ctx := w.mustGetContext(info)
 	if args.noOfReadArguments >= 2 {
 		err := errors.Join(err1, err2)
@@ -111,7 +111,7 @@ func (w urlV8Wrapper) toJSON(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	if callErr != nil {
 		return nil, callErr
 	} else {
-		return w.toUSVString(ctx, result)
+		return w.toString(ctx, result)
 	}
 }
 
@@ -123,7 +123,7 @@ func (w urlV8Wrapper) href(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Href()
-	return w.toUSVString(ctx, result)
+	return w.toString(ctx, result)
 }
 
 func (w urlV8Wrapper) setHref(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -139,7 +139,7 @@ func (w urlV8Wrapper) origin(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Origin()
-	return w.toUSVString(ctx, result)
+	return w.toString(ctx, result)
 }
 
 func (w urlV8Wrapper) protocol(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -150,7 +150,7 @@ func (w urlV8Wrapper) protocol(info *v8.FunctionCallbackInfo) (*v8.Value, error)
 		return nil, err
 	}
 	result := instance.Protocol()
-	return w.toUSVString(ctx, result)
+	return w.toString(ctx, result)
 }
 
 func (w urlV8Wrapper) setProtocol(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -186,7 +186,7 @@ func (w urlV8Wrapper) host(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Host()
-	return w.toUSVString(ctx, result)
+	return w.toString(ctx, result)
 }
 
 func (w urlV8Wrapper) setHost(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -202,7 +202,7 @@ func (w urlV8Wrapper) hostname(info *v8.FunctionCallbackInfo) (*v8.Value, error)
 		return nil, err
 	}
 	result := instance.Hostname()
-	return w.toUSVString(ctx, result)
+	return w.toString(ctx, result)
 }
 
 func (w urlV8Wrapper) setHostname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -218,7 +218,7 @@ func (w urlV8Wrapper) port(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Port()
-	return w.toUSVString(ctx, result)
+	return w.toString(ctx, result)
 }
 
 func (w urlV8Wrapper) setPort(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -234,7 +234,7 @@ func (w urlV8Wrapper) pathname(info *v8.FunctionCallbackInfo) (*v8.Value, error)
 		return nil, err
 	}
 	result := instance.Pathname()
-	return w.toUSVString(ctx, result)
+	return w.toString(ctx, result)
 }
 
 func (w urlV8Wrapper) setPathname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -250,7 +250,7 @@ func (w urlV8Wrapper) search(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Search()
-	return w.toUSVString(ctx, result)
+	return w.toString(ctx, result)
 }
 
 func (w urlV8Wrapper) setSearch(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -271,7 +271,7 @@ func (w urlV8Wrapper) hash(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Hash()
-	return w.toUSVString(ctx, result)
+	return w.toString(ctx, result)
 }
 
 func (w urlV8Wrapper) setHash(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -324,8 +324,8 @@ func (w urlSearchParamsV8Wrapper) append(info *v8.FunctionCallbackInfo) (*v8.Val
 	log.Debug(w.logger(info), "V8 Function call: URLSearchParams.append")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
-	name, err1 := tryParseArg(args, 0, w.decodeUSVString)
-	value, err2 := tryParseArg(args, 1, w.decodeUSVString)
+	name, err1 := tryParseArg(args, 0, w.decodeString)
+	value, err2 := tryParseArg(args, 1, w.decodeString)
 	if args.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {
@@ -341,8 +341,8 @@ func (w urlSearchParamsV8Wrapper) delete(info *v8.FunctionCallbackInfo) (*v8.Val
 	log.Debug(w.logger(info), "V8 Function call: URLSearchParams.delete")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
-	name, err1 := tryParseArg(args, 0, w.decodeUSVString)
-	value, err2 := tryParseArg(args, 1, w.decodeUSVString)
+	name, err1 := tryParseArg(args, 0, w.decodeString)
+	value, err2 := tryParseArg(args, 1, w.decodeString)
 	if args.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {
@@ -367,14 +367,14 @@ func (w urlSearchParamsV8Wrapper) getAll(info *v8.FunctionCallbackInfo) (*v8.Val
 	ctx := w.mustGetContext(info)
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
-	name, err1 := tryParseArg(args, 0, w.decodeUSVString)
+	name, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
 			return nil, err
 		}
 		result := instance.GetAll(name)
-		return w.toSequenceUSVString(ctx, result)
+		return w.toSequenceString(ctx, result)
 	}
 	return nil, errors.New("URLSearchParams.getAll: Missing arguments")
 }
@@ -384,8 +384,8 @@ func (w urlSearchParamsV8Wrapper) has(info *v8.FunctionCallbackInfo) (*v8.Value,
 	ctx := w.mustGetContext(info)
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
-	name, err1 := tryParseArg(args, 0, w.decodeUSVString)
-	value, err2 := tryParseArg(args, 1, w.decodeUSVString)
+	name, err1 := tryParseArg(args, 0, w.decodeString)
+	value, err2 := tryParseArg(args, 1, w.decodeString)
 	if args.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {
@@ -409,8 +409,8 @@ func (w urlSearchParamsV8Wrapper) set(info *v8.FunctionCallbackInfo) (*v8.Value,
 	log.Debug(w.logger(info), "V8 Function call: URLSearchParams.set")
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
-	name, err1 := tryParseArg(args, 0, w.decodeUSVString)
-	value, err2 := tryParseArg(args, 1, w.decodeUSVString)
+	name, err1 := tryParseArg(args, 0, w.decodeString)
+	value, err2 := tryParseArg(args, 1, w.decodeString)
 	if args.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {

@@ -87,7 +87,7 @@ func (w historyV8Wrapper) pushState(info *v8.FunctionCallbackInfo) (*v8.Value, e
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	data, err1 := tryParseArg(args, 0, w.decodeAny)
-	url, err3 := tryParseArgWithDefault(args, 2, w.defaultUrl, w.decodeUSVString)
+	url, err3 := tryParseArgWithDefault(args, 2, w.defaultUrl, w.decodeString)
 	if args.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err3)
 		if err != nil {
@@ -104,7 +104,7 @@ func (w historyV8Wrapper) replaceState(info *v8.FunctionCallbackInfo) (*v8.Value
 	args := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := w.getInstance(info)
 	data, err1 := tryParseArg(args, 0, w.decodeAny)
-	url, err3 := tryParseArgWithDefault(args, 2, w.defaultUrl, w.decodeUSVString)
+	url, err3 := tryParseArgWithDefault(args, 2, w.defaultUrl, w.decodeString)
 	if args.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err3)
 		if err != nil {

@@ -150,14 +150,14 @@ func (w htmlFormElementV8Wrapper) action(info *v8.FunctionCallbackInfo) (*v8.Val
 		return nil, err
 	}
 	result := instance.Action()
-	return w.toUSVString(ctx, result)
+	return w.toString(ctx, result)
 }
 
 func (w htmlFormElementV8Wrapper) setAction(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.setAction")
 	ctx := w.mustGetContext(info)
 	instance, err0 := w.getInstance(info)
-	val, err1 := parseSetterArg(ctx, info, w.decodeUSVString)
+	val, err1 := parseSetterArg(ctx, info, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
@@ -204,14 +204,14 @@ func (w htmlFormElementV8Wrapper) method(info *v8.FunctionCallbackInfo) (*v8.Val
 		return nil, err
 	}
 	result := instance.Method()
-	return w.toDOMString(ctx, result)
+	return w.toString(ctx, result)
 }
 
 func (w htmlFormElementV8Wrapper) setMethod(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.setMethod")
 	ctx := w.mustGetContext(info)
 	instance, err0 := w.getInstance(info)
-	val, err1 := parseSetterArg(ctx, info, w.decodeDOMString)
+	val, err1 := parseSetterArg(ctx, info, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
