@@ -94,6 +94,7 @@ func (gen V8TargetGenerators) CreateAttributeGetter(
 ) g.Generator {
 	instance := g.NewValue("instance")
 	err := g.NewValue("err")
+	ctx := g.NewValue("ctx")
 	naming := V8NamingStrategy{data}
 	receiver := WrapperInstance{g.NewValue(naming.Receiver())}
 
@@ -108,7 +109,7 @@ func (gen V8TargetGenerators) CreateAttributeGetter(
 		V8RequireContext(receiver),
 		GetInstanceAndError(instance, err, data),
 		wrappers.ReturnIfError(err),
-		x.ConvertResult(eval(instance)),
+		x.ConvertResult(ctx, eval(instance)),
 	)
 }
 
@@ -157,6 +158,7 @@ func (gen V8TargetGenerators) CreateMethodCallbackBody(
 	if len(op.Arguments) == 0 {
 		err = g.Id("err")
 	}
+	ctx := g.NewValue("ctx")
 	requireContext := false
 	var CreateCall = func(functionName string, argnames []g.Generator, op ESOperation) g.Generator {
 		if op.Name == "toString" {
@@ -169,7 +171,7 @@ func (gen V8TargetGenerators) CreateMethodCallbackBody(
 			Op:       op,
 			Instance: &instance,
 			Receiver: receiver,
-		}.GetGenerator()
+		}.GetGenerator(ctx)
 	}
 	statements := g.StatementList(
 		AssignArgs(data, op),

@@ -207,6 +207,7 @@ func (c V8InstanceInvocation) AssignValues(evaluation g.Generator) g.Generator {
 }
 
 func (c V8InstanceInvocation) ConvertResult(
+	ctx g.Value,
 	evaluation g.Generator,
 ) g.Generator {
 	hasError := c.Op.GetHasError()
@@ -222,7 +223,7 @@ func (c V8InstanceInvocation) ConvertResult(
 			list.Append(g.Return(g.Nil, g.Nil))
 		}
 	} else {
-		returnValue := c.ConvertReturnValue(c.Op.RetType)
+		returnValue := c.ConvertReturnValue(ctx, c.Op.RetType)
 		if hasError {
 			list.Append(g.IfStmt{
 				Condition: g.Neq{Lhs: g.Id("callErr"), Rhs: g.Nil},
@@ -236,20 +237,20 @@ func (c V8InstanceInvocation) ConvertResult(
 	return list
 }
 
-func (c V8InstanceInvocation) ConvertReturnValue(retType idl.Type) g.Generator {
+func (c V8InstanceInvocation) ConvertReturnValue(ctx g.Value, retType idl.Type) g.Generator {
 	if model.IsNodeType(retType.Name) {
-		return g.Return(g.Raw(jen.Id("ctx").Dot("getInstanceForNode").Call(jen.Id("result"))))
+		return g.Return(ctx.Field("getInstanceForNode").Call(g.Id("result")))
 	} else {
 		converter := c.Op.Encoder()
-		return g.Return(c.Receiver.Method(converter).Call(g.Id("ctx"), g.Id("result")))
+		return g.Return(c.Receiver.Method(converter).Call(ctx, g.Id("result")))
 	}
 }
 
-func (c V8InstanceInvocation) GetGenerator() g.Generator {
+func (c V8InstanceInvocation) GetGenerator(ctx g.Value) g.Generator {
 	if c.Instance == nil {
-		return c.ConvertResult(g.NewValue(IdlNameToGoName(c.Name)).Call(c.Args...))
+		return c.ConvertResult(ctx, g.NewValue(IdlNameToGoName(c.Name)).Call(c.Args...))
 	} else {
-		return c.ConvertResult(c.Instance.Method(IdlNameToGoName(c.Name)).Call(c.Args...))
+		return c.ConvertResult(ctx, c.Instance.Method(IdlNameToGoName(c.Name)).Call(c.Args...))
 	}
 }
 
