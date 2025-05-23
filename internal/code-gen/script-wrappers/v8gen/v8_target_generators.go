@@ -94,9 +94,11 @@ func (gen V8TargetGenerators) CreateAttributeGetter(
 ) g.Generator {
 	instance := g.NewValue("instance")
 	err := g.NewValue("err")
-	ctx := g.NewValue("ctx")
 	naming := V8NamingStrategy{data}
 	receiver := WrapperInstance{g.NewValue(naming.Receiver())}
+	cbCtx := NewCallbackContext(g.Id("args"))
+	host := g.NewValue("w").Field("scriptHost")
+	cbInfo := g.Id("info")
 
 	x := V8InstanceInvocation{
 		Name:     "",
@@ -106,10 +108,13 @@ func (gen V8TargetGenerators) CreateAttributeGetter(
 		Receiver: receiver,
 	}
 	return g.StatementList(
-		V8RequireContext(receiver),
-		GetInstanceAndError(instance, err, data),
+		cbCtx.AssignFrom(host, cbInfo),
+		g.AssignMany(
+			g.List(instance, err),
+			wrappers.As.TypeParam(data.WrappedType()).Call(cbCtx.GetInstance()),
+		),
 		wrappers.ReturnIfError(err),
-		x.ConvertResult(ctx, eval(instance)),
+		x.ConvertResult(cbCtx.Context(), eval(instance)),
 	)
 }
 
@@ -127,17 +132,23 @@ func (gen V8TargetGenerators) CreateAttributeSetter(
 
 	naming := V8NamingStrategy{data}
 	receiver := WrapperInstance{g.NewValue(naming.Receiver())}
+	cbCtx := NewCallbackContext(g.Id("args"))
 
 	args := append(
-		[]g.Generator{g.Id("ctx"), g.Id("info")},
+		[]g.Generator{cbCtx.Context(), g.Id("info")},
 		wrappers.DecodersForArg(receiver, op.Arguments[0])...,
 	)
 	parsedArg := g.NewValue("parseSetterArg").
 		Call(args...)
+	host := g.NewValue("w").Field("scriptHost")
+	cbInfo := g.Id("info")
 
 	return g.StatementList(
-		V8RequireContext(receiver),
-		GetInstanceAndError(instance, err, data),
+		cbCtx.AssignFrom(host, cbInfo),
+		g.AssignMany(
+			g.List(instance, err),
+			wrappers.As.TypeParam(data.WrappedType()).Call(cbCtx.GetInstance()),
+		),
 		g.AssignMany(g.List(val, err1), parsedArg),
 
 		wrappers.ReturnOnAnyError([]g.Generator{err, err1}),
@@ -158,7 +169,8 @@ func (gen V8TargetGenerators) CreateMethodCallbackBody(
 	if len(op.Arguments) == 0 {
 		err = g.Id("err")
 	}
-	ctx := g.NewValue("ctx")
+	cbCtx := NewCallbackContext(g.Id("args"))
+	ctx := cbCtx.Context()
 	requireContext := false
 	var CreateCall = func(functionName string, argnames []g.Generator, op ESOperation) g.Generator {
 		if op.Name == "toString" {
@@ -173,9 +185,14 @@ func (gen V8TargetGenerators) CreateMethodCallbackBody(
 			Receiver: receiver,
 		}.GetGenerator(ctx)
 	}
+	host := g.NewValue("w").Field("scriptHost")
+	cbInfo := g.Id("info")
 	statements := g.StatementList(
-		AssignArgs(data, op),
-		GetInstanceAndError(instance, err, data),
+		cbCtx.AssignFrom(host, cbInfo),
+		g.AssignMany(
+			g.List(instance, err),
+			wrappers.As.TypeParam(data.WrappedType()).Call(cbCtx.GetInstance()),
+		),
 		readArgsResult,
 		CreateV8WrapperMethodInstanceInvocations(
 			data,
@@ -187,9 +204,6 @@ func (gen V8TargetGenerators) CreateMethodCallbackBody(
 			true,
 		),
 	)
-	if requireContext {
-		statements.Prepend(V8RequireContext(receiver))
-	}
 	return statements
 }
 

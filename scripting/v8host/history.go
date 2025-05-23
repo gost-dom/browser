@@ -2,16 +2,9 @@ package v8host
 
 import (
 	"github.com/gost-dom/browser/html"
+	htmlinterfaces "github.com/gost-dom/browser/internal/interfaces/html-interfaces"
 	v8 "github.com/gost-dom/v8go"
 )
-
-type historyV8Wrapper struct {
-	handleReffedObject[*html.History]
-}
-
-func newHistoryV8Wrapper(host *V8ScriptHost) *historyV8Wrapper {
-	return &historyV8Wrapper{newHandleReffedObject[*html.History](host)}
-}
 
 func (w historyV8Wrapper) defaultDelta() int {
 	return 0
@@ -29,6 +22,9 @@ func (w historyV8Wrapper) decodeAny(
 	return html.HistoryState(r), err
 }
 
-func (w historyV8Wrapper) toJSON(ctx *V8ScriptContext, val html.HistoryState) (*v8.Value, error) {
+func (w historyV8Wrapper) toHistoryState(
+	ctx *V8ScriptContext,
+	val htmlinterfaces.HistoryState,
+) (*v8.Value, error) {
 	return v8.JSONParse(ctx.v8ctx, string(val))
 }

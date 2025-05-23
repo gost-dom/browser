@@ -8,44 +8,15 @@ import (
 	v8 "github.com/gost-dom/v8go"
 )
 
-type domTokenListV8Wrapper struct {
-	handleReffedObject[dom.Element]
-	Iterator iterator[string]
-}
-
-func newDOMTokenListV8Wrapper(host *V8ScriptHost) domTokenListV8Wrapper {
-	return domTokenListV8Wrapper{
-		newHandleReffedObject[dom.Element](host),
-		newIterator(host, func(item string, ctx *V8ScriptContext) (*v8.Value, error) {
-			return v8.NewValue(host.iso, item)
-		}),
-	}
-}
-
-func (l domTokenListV8Wrapper) getInstance(
-	info *v8.FunctionCallbackInfo,
-) (result dom.DOMTokenList, err error) {
-	element, err := l.handleReffedObject.getInstance(info)
-	if err == nil {
-		result = dom.NewClassList(element)
-	}
-	return
-}
-
 func (l domTokenListV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) {
-	constructor.InstanceTemplate().SetSymbol(
-		v8.SymbolIterator(l.scriptHost.iso),
-		v8.NewFunctionTemplateWithError(l.scriptHost.iso, l.GetIterator),
-	)
-}
-
-func (l domTokenListV8Wrapper) GetIterator(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := l.scriptHost.mustGetContext(info.Context())
-	instance, err := l.getInstance(info)
-	if err != nil {
-		return nil, err
-	}
-	return l.Iterator.newIteratorInstanceOfIterable(ctx, instance)
+	// constructor.InstanceTemplate().SetSymbol(
+	// 	v8.SymbolIterator(l.scriptHost.iso),
+	// 	v8.NewFunctionTemplateWithError(l.scriptHost.iso, l.GetIterator),
+	// )
+	it := newIterator(l.scriptHost, func(val string, ctx *V8ScriptContext) (*v8.Value, error) {
+		return v8.NewValue(ctx.host.iso, val)
+	})
+	it.installPrototype(constructor)
 }
 
 func (l domTokenListV8Wrapper) toggle(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

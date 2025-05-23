@@ -14,4 +14,8 @@ func TestHTMLHistoryInterface(t *testing.T) {
 
 	Expect(gen).To(HaveRenderedSubstring("\tLength() int\n"))
 	Expect(gen).ToNot(HaveRenderedSubstring("ScrollRestoration()"))
+
+	Expect(
+		gen,
+	).To(HaveRenderedSubstring("\tState() HistoryState\n"), "History state 'overrides' default type")
 }

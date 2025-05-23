@@ -10,6 +10,12 @@ const (
 	StrategyAbstraction = "abstraction" // Wrapper code uses an abstraction layer on top of the JS engine
 )
 
+type GoType struct {
+	Package string
+	Name    string
+	Pointer bool
+}
+
 // IdlInterfaceConfiguration contains information about how to generate
 // prototype objects for an interface in the IDL.
 //
@@ -22,12 +28,13 @@ type IdlInterfaceConfiguration struct {
 	// SkipWrapper suppresses the generation of the "wrapper type". This is used
 	// for DomTokenList to include the iterator code as part of the wrapper
 	// type.
-	SkipWrapper     bool
-	SkipConstructor bool
-	IncludeIterable bool
-	IncludeIncludes bool
-	Customization   map[string]*ESMethodWrapper
-	Strategy        CodeGenStrategy
+	SkipWrapper         bool
+	SkipConstructor     bool
+	IncludeIterable     bool
+	IncludeIncludes     bool
+	Customization       map[string]*ESMethodWrapper
+	OverrideWrappedType *GoType
+	Strategy            CodeGenStrategy
 }
 
 func (w *IdlInterfaceConfiguration) ensureMap() {

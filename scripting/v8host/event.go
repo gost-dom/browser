@@ -47,7 +47,7 @@ func (w eventV8Wrapper) eventPhase(info *v8.FunctionCallbackInfo) (*v8.Value, er
 	if err != nil {
 		return nil, err
 	}
-	return v8.NewValue(w.iso(), uint32(instance.EventPhase()))
+	return v8.NewValue(w.iso(), uint32(instance.EventPhase))
 }
 
 func (w eventV8Wrapper) type_(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

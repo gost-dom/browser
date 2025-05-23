@@ -6,6 +6,7 @@ import (
 	"errors"
 	html "github.com/gost-dom/browser/html"
 	log "github.com/gost-dom/browser/internal/log"
+	abstraction "github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -64,13 +65,13 @@ func (w htmlTemplateElementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo)
 
 func (w htmlTemplateElementV8Wrapper) content(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLTemplateElement.content")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLTemplateElement](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Content()
-	return ctx.getInstanceForNode(result)
+	return args.Context().getInstanceForNode(result)
 }
 
 func (w htmlTemplateElementV8Wrapper) shadowRootMode(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

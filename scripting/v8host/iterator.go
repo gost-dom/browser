@@ -137,6 +137,50 @@ func (i iterator[T]) createNotDoneIteratorResult(
 	result.Set("value", value)
 	return result.Value, nil
 }
+func (i iterator[T]) installPrototype(ft *v8.FunctionTemplate) {
+	iso := i.host.iso
+	getEntries := v8.NewFunctionTemplateWithError(iso,
+		func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+			ctx := i.host.mustGetContext(info.Context())
+			instance, err := getWrappedInstance[iterable[T]](info.This())
+			if err != nil {
+				return nil, err
+			}
+			return i.newIteratorInstanceOfIterable(ctx, instance)
+		})
+	prototypeTempl := ft.PrototypeTemplate()
+	prototypeTempl.Set("entries", getEntries)
+	prototypeTempl.SetSymbol(v8.SymbolIterator(iso), getEntries)
+	// iterator for keys/values
+	// keys := newIterator(i.host, func(v T, ctx *V8ScriptContext) (*v8.Value, error) {
+	// 	return v8.NewValue(iso, v)
+	// })
+	// values := newIterator(i.host, func(v T, ctx *V8ScriptContext) (*v8.Value, error) {
+	// 	return v8.NewValue(iso, v)
+	// })
+	// prototypeTempl.Set("keys", v8.NewFunctionTemplateWithError(iso,
+	// 	func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+	// 		ctx := i.host.mustGetContext(info.Context())
+	// 		instance, err := getWrappedInstance[iterable[T]](info.This())
+	// 		if err != nil {
+	// 			return nil, err
+	// 		}
+	// 		return keys.newIteratorInstanceOfIterable(ctx, Keys[K, V]{instance})
+	// 	},
+	// ),
+	// )
+	// prototypeTempl.Set("values", v8.NewFunctionTemplateWithError(iso,
+	// 	func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+	// 		ctx := i.host.mustGetContext(info.Context())
+	// 		instance, err := getWrappedInstance[iterable[T]](info.This())
+	// 		if err != nil {
+	// 			return nil, err
+	// 		}
+	// 		return values.newIteratorInstanceOfIterable(ctx, iterValues[K, V]{instance})
+	// 	},
+	// ),
+	// )
+}
 
 /* -------- iterator2 -------- */
 

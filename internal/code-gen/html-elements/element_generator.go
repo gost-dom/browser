@@ -136,9 +136,13 @@ func (gen baseGenerator) GenerateInterface() g.Generator {
 		if a.Stringifier {
 			result.HasStringifier = true
 		}
+		attrType := a.Type
+		if attributeRule.OverrideType != nil {
+			attrType = attributeRule.OverrideType.IdlType()
+		}
 		attributes = append(attributes, IdlInterfaceAttribute{
 			Name:     a.Name,
-			Type:     IdlType(a.Type),
+			Type:     IdlType(attrType),
 			ReadOnly: a.Readonly,
 		})
 	}

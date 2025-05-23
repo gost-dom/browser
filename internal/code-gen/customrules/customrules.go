@@ -70,9 +70,10 @@ func (r OperationRule) Argument(name string) ArgumentRule {
 type ArgumentRules map[string]ArgumentRule
 
 type ArgumentRule struct {
-	Type     idl.Type
-	Variadic bool
-	Ignore   bool
+	Type          idl.Type
+	Variadic      bool
+	Ignore        bool
+	ZeroAsDefault bool // Whether the "zero" value, e.g. empty string, is default
 }
 
 func (r ArgumentRule) OverridesType() bool { return !reflect.ValueOf(r.Type).IsZero() }
@@ -97,4 +98,20 @@ type AttributeRule struct {
 	// NotImplemented indicates that the IDL does not have an implementation in
 	// Go.
 	NotImplemented bool
+	OverrideType   IdlTyper
+}
+
+// IdlTyper is the interface with the IdlType() method that can generate an
+// idl.Type value.
+//
+// The intended use case is when the type is somewhat vague, and a more specific
+// type is helpful. The motivating example is History.state, that has the type
+// "any" in the IDL specification, but valid values are JSON serializable data,
+// so this is internally stored as a string.
+type IdlTyper interface{ IdlType() idl.Type }
+
+type SamePackageType struct{ Name string }
+
+func (t SamePackageType) IdlType() idl.Type {
+	return idl.Type{Kind: idl.KindSimple, Name: t.Name}
 }

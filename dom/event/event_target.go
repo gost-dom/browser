@@ -136,31 +136,31 @@ func (e *eventTarget) SetCatchAllHandler(handler EventHandler) {
 
 func (e *eventTarget) DispatchEvent(event *Event) bool {
 	log.Debug(e.logger(), "Dispatch event", "EventType", event.Type)
-	event.target = e.self
+	event.Target = e.self
 	event.stopped = false
-	event.cancelled = false
+	event.DefaultPrevented = false
 
-	event.phase = EventPhaseCapture
+	event.EventPhase = EventPhaseCapture
 	e.dispatchOnParent(event, true)
 
-	event.phase = EventPhaseAtTarget
+	event.EventPhase = EventPhaseAtTarget
 	e.dispatchEvent(event, true)
 	e.dispatchEvent(event, false)
-	event.phase = EventPhaseBubbling
+	event.EventPhase = EventPhaseBubbling
 
 	e.dispatchOnParent(event, false)
 
-	event.phase = EventPhaseNone
+	event.EventPhase = EventPhaseNone
 
-	return !(event.Cancelable && event.cancelled)
+	return !(event.Cancelable && event.DefaultPrevented)
 }
 
 func (e *eventTarget) dispatchEvent(event *Event, capture bool) {
 	if event.stopped {
 		return
 	}
-	event.currentTarget = e.self
-	defer func() { event.currentTarget = nil }()
+	event.CurrentTarget = e.self
+	defer func() { event.CurrentTarget = nil }()
 	if e.catchAllHandler != nil && !capture {
 		if err := e.catchAllHandler.HandleEvent(event); err != nil {
 			log.Debug(e.logger(), "Error occurred", "error", err.Error())

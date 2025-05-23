@@ -6,6 +6,7 @@ import (
 	"errors"
 	dom "github.com/gost-dom/browser/dom"
 	log "github.com/gost-dom/browser/internal/log"
+	abstraction "github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -57,9 +58,8 @@ func (w parentNodeV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Val
 
 func (w parentNodeV8Wrapper) querySelector(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: ParentNode.querySelector")
-	ctx := w.mustGetContext(info)
 	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := w.getInstance(info)
+	instance, err0 := abstraction.As[dom.ParentNode](args.Instance())
 	selectors, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -70,7 +70,7 @@ func (w parentNodeV8Wrapper) querySelector(info *v8.FunctionCallbackInfo) (*v8.V
 		if callErr != nil {
 			return nil, callErr
 		} else {
-			return ctx.getInstanceForNode(result)
+			return args.Context().getInstanceForNode(result)
 		}
 	}
 	return nil, errors.New("ParentNode.querySelector: Missing arguments")
@@ -78,9 +78,8 @@ func (w parentNodeV8Wrapper) querySelector(info *v8.FunctionCallbackInfo) (*v8.V
 
 func (w parentNodeV8Wrapper) querySelectorAll(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: ParentNode.querySelectorAll")
-	ctx := w.mustGetContext(info)
 	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := w.getInstance(info)
+	instance, err0 := abstraction.As[dom.ParentNode](args.Instance())
 	selectors, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -91,7 +90,7 @@ func (w parentNodeV8Wrapper) querySelectorAll(info *v8.FunctionCallbackInfo) (*v
 		if callErr != nil {
 			return nil, callErr
 		} else {
-			return w.toNodeList(ctx, result)
+			return w.toNodeList(args.Context(), result)
 		}
 	}
 	return nil, errors.New("ParentNode.querySelectorAll: Missing arguments")
@@ -99,33 +98,33 @@ func (w parentNodeV8Wrapper) querySelectorAll(info *v8.FunctionCallbackInfo) (*v
 
 func (w parentNodeV8Wrapper) firstElementChild(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: ParentNode.firstElementChild")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.ParentNode](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.FirstElementChild()
-	return ctx.getInstanceForNode(result)
+	return args.Context().getInstanceForNode(result)
 }
 
 func (w parentNodeV8Wrapper) lastElementChild(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: ParentNode.lastElementChild")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.ParentNode](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.LastElementChild()
-	return ctx.getInstanceForNode(result)
+	return args.Context().getInstanceForNode(result)
 }
 
 func (w parentNodeV8Wrapper) childElementCount(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: ParentNode.childElementCount")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.ParentNode](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.ChildElementCount()
-	return w.toUnsignedLong(ctx, result)
+	return w.toUnsignedLong(args.Context(), result)
 }

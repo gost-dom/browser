@@ -6,6 +6,7 @@ import (
 	"errors"
 	html "github.com/gost-dom/browser/html"
 	log "github.com/gost-dom/browser/internal/log"
+	abstraction "github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -201,13 +202,13 @@ func (w windowV8Wrapper) self(info *v8.FunctionCallbackInfo) (*v8.Value, error) 
 
 func (w windowV8Wrapper) document(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Window.document")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.Window](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Document()
-	return ctx.getInstanceForNode(result)
+	return args.Context().getInstanceForNode(result)
 }
 
 func (w windowV8Wrapper) name(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

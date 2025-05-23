@@ -4,6 +4,7 @@ import (
 	"log/slog"
 
 	"github.com/gost-dom/browser/dom/event"
+	htmlinterfaces "github.com/gost-dom/browser/internal/interfaces/html-interfaces"
 	"github.com/gost-dom/browser/internal/log"
 )
 
@@ -167,6 +168,6 @@ func (e popStateEvent) State() HistoryState {
 	return e.state
 }
 
-type HistoryState string
+type HistoryState = htmlinterfaces.HistoryState
 
 const EMPTY_STATE HistoryState = ""

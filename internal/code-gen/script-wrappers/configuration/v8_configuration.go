@@ -1,5 +1,7 @@
 package configuration
 
+import "github.com/gost-dom/code-gen/packagenames"
+
 func CreateV8Specs() WebIdlConfigurations {
 	specs := CreateSpecs()
 	xhrModule := specs.Module("xhr")
@@ -26,6 +28,7 @@ func CreateV8Specs() WebIdlConfigurations {
 	url := urlSpecs.Type("URL")
 	// TODO: Just need to use a different base class for non-nodes
 	url.SkipWrapper = true
+	url.OverrideWrappedType = &GoType{Package: packagenames.URL, Name: "URL", Pointer: true}
 	url.MarkMembersAsNotImplemented(
 		"setHref",
 		"setProtocol",
@@ -93,7 +96,6 @@ func CreateV8Specs() WebIdlConfigurations {
 	)
 
 	domTokenList := domSpecs.Type("DOMTokenList")
-	domTokenList.SkipWrapper = true
 	domTokenList.RunCustomCode = true
 	domTokenList.Method("toggle").SetCustomImplementation()
 	domTokenList.Method("supports").SetNotImplemented()
@@ -249,15 +251,19 @@ func CreateV8Specs() WebIdlConfigurations {
 	window.Method("length").SetNotImplemented()
 
 	history := htmlSpecs.Type("History")
+	history.OverrideWrappedType = &GoType{
+		Name:    "History",
+		Package: packagenames.HTMLInterfaces,
+	}
 	// We need to customize the inner type. This is a struct pointer
-	history.SkipWrapper = true
+	// history.SkipWrapper = true
 	history.Method("go").Argument("delta").HasDefaultValue("defaultDelta")
 	history.Method("pushState").Argument("url").HasDefaultValue("defaultUrl")
 	history.Method("pushState").Argument("unused").Ignore()
 	history.Method("replaceState").Argument("url").HasDefaultValue("defaultUrl")
 	history.Method("replaceState").Argument("unused").Ignore()
 	history.Method("scrollRestoration").Ignore()
-	history.Method("state").SetEncoder("toJSON")
+	// history.Method("state").SetEncoder("toJSON")
 
 	htmlSpecs.Type("HTMLHyperlinkElementUtils")
 

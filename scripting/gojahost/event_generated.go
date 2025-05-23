@@ -40,20 +40,20 @@ func (w eventWrapper) preventDefault(c g.FunctionCall) g.Value {
 func (w eventWrapper) target(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: Event.target")
 	instance := w.getInstance(c)
-	result := instance.Target()
+	result := instance.Target
 	return w.toEventTarget(result)
 }
 
 func (w eventWrapper) currentTarget(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: Event.currentTarget")
 	instance := w.getInstance(c)
-	result := instance.CurrentTarget()
+	result := instance.CurrentTarget
 	return w.toEventTarget(result)
 }
 
 func (w eventWrapper) defaultPrevented(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: Event.defaultPrevented")
 	instance := w.getInstance(c)
-	result := instance.DefaultPrevented()
+	result := instance.DefaultPrevented
 	return w.toBoolean(result)
 }

@@ -6,6 +6,7 @@ import (
 	"errors"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
 	log "github.com/gost-dom/browser/internal/log"
+	abstraction "github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -43,12 +44,11 @@ func (w mutationObserverV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemp
 func (w mutationObserverV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	args := newArgumentHelper(w.scriptHost, info)
 	callback, err1 := tryParseArg(args, 0, w.decodeMutationCallback)
-	ctx := w.mustGetContext(info)
 	if args.noOfReadArguments >= 1 {
 		if err1 != nil {
 			return nil, err1
 		}
-		return w.CreateInstance(ctx, info.This(), callback)
+		return w.CreateInstance(args.Context(), info.This(), callback)
 	}
 	return nil, errors.New("MutationObserver.constructor: Missing arguments")
 }
@@ -56,7 +56,7 @@ func (w mutationObserverV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*
 func (w mutationObserverV8Wrapper) observe(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: MutationObserver.observe")
 	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := w.getInstance(info)
+	instance, err0 := abstraction.As[dominterfaces.MutationObserver](args.Instance())
 	target, err1 := tryParseArg(args, 0, w.decodeNode)
 	options, err2 := tryParseArg(args, 1, w.decodeMutationObserverInit)
 	if args.noOfReadArguments >= 2 {
@@ -72,7 +72,8 @@ func (w mutationObserverV8Wrapper) observe(info *v8.FunctionCallbackInfo) (*v8.V
 
 func (w mutationObserverV8Wrapper) disconnect(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: MutationObserver.disconnect")
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dominterfaces.MutationObserver](args.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -82,11 +83,11 @@ func (w mutationObserverV8Wrapper) disconnect(info *v8.FunctionCallbackInfo) (*v
 
 func (w mutationObserverV8Wrapper) takeRecords(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: MutationObserver.takeRecords")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dominterfaces.MutationObserver](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.TakeRecords()
-	return w.toSequenceMutationRecord(ctx, result)
+	return w.toSequenceMutationRecord(args.Context(), result)
 }

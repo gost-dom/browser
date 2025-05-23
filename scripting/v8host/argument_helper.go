@@ -18,6 +18,16 @@ func newArgumentHelper(host *V8ScriptHost, info *v8.FunctionCallbackInfo) *argum
 	return &argumentHelper{info, ctx, 0}
 }
 
+func (h *argumentHelper) Context() *V8ScriptContext { return h.ctx }
+
+func (h *argumentHelper) Instance() (any, error) {
+	if h.This().InternalFieldCount() < 1 {
+		// TODO: Create a type error
+		return nil, errors.New("TypeError")
+	}
+	return h.This().GetInternalField(0).ExternalHandle().Value(), nil
+}
+
 // acceptIndex informs argumentHelper that argument at index was accepted. This
 // affects when we query about how many arguments were read, in order to
 // determine which overload to call in the system.

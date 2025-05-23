@@ -50,7 +50,7 @@ func (w eventWrapper) bubbles(c g.FunctionCall) g.Value {
 }
 
 func (w eventWrapper) eventPhase(c g.FunctionCall) g.Value {
-	return w.ctx.vm.ToValue(w.getInstance(c).EventPhase())
+	return w.ctx.vm.ToValue(w.getInstance(c).EventPhase)
 }
 
 type customEventWrapper struct {

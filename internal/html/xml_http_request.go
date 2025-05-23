@@ -60,6 +60,9 @@ type XmlHttpRequest interface {
 	Timeout() int
 }
 
+type XMLHTTPRequest = XmlHttpRequest
+type XMLHttpRequest = XmlHttpRequest
+
 type xmlHttpRequest struct {
 	event.EventTarget
 	logSource log.LogSource

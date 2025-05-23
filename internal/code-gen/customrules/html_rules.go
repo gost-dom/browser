@@ -1,5 +1,7 @@
 package customrules
 
+import "github.com/gost-dom/webref/idl"
+
 var htmlRules = SpecRules{
 	"Location": {Operations: OperationRules{
 		"assign":  {HasError: true},
@@ -8,14 +10,23 @@ var htmlRules = SpecRules{
 	}},
 	"History": {
 		Operations: OperationRules{
-			"go":           {HasError: true},
-			"back":         {HasError: true},
-			"forward":      {HasError: true},
-			"pushState":    {HasError: true},
-			"replaceState": {HasError: true},
+			"go":      {HasError: true},
+			"back":    {HasError: true},
+			"forward": {HasError: true},
+			"pushState": {HasError: true, Arguments: ArgumentRules{
+				"data":   {Type: idl.Type{Name: "HistoryState"}},
+				"unused": {Ignore: true},
+				"url":    {ZeroAsDefault: true},
+			}},
+			"replaceState": {HasError: true, Arguments: ArgumentRules{
+				"data":   {Type: idl.Type{Name: "HistoryState"}},
+				"unused": {Ignore: true},
+				"url":    {ZeroAsDefault: true},
+			}},
 		},
 		Attributes: AttributeRules{
 			"scrollRestoration": {NotImplemented: true},
+			"state":             {OverrideType: SamePackageType{"HistoryState"}},
 		}},
 	"HTMLFormElement": {Operations: OperationRules{
 		"submit":        {HasError: true},

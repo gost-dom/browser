@@ -103,7 +103,7 @@ func (s *EventPropagationTestSuiteBase) SetupTest() {
 func (s *EventPropagationTestSuite) TestRemoveCorrectPhase() {
 	var events []string
 	h := NewTestHandler(func(e *Event) {
-		events = append(events, fmt.Sprintf("Phase: %d", e.EventPhase()))
+		events = append(events, fmt.Sprintf("Phase: %d", e.EventPhase))
 	})
 	event := &event.Event{Type: "gost:remove", Bubbles: true}
 	s.window.AddEventListener("gost:remove", h)
@@ -155,20 +155,20 @@ func (s *EventPropagationTestSuite) TestEventOnce() {
 func (s *EventPropagationTestSuite) TestEventCapture() {
 	var events []string
 	s.window.AddEventListener("custom", NewTestHandler(func(e *Event) {
-		events = append(events, fmt.Sprintf("Window capture. Phase: %d", e.EventPhase()))
+		events = append(events, fmt.Sprintf("Window capture. Phase: %d", e.EventPhase))
 	}), Capture)
 	s.window.AddEventListener("custom", NewTestHandler(func(e *Event) {
-		events = append(events, fmt.Sprintf("Window bubble. Phase: %d", e.EventPhase()))
+		events = append(events, fmt.Sprintf("Window bubble. Phase: %d", e.EventPhase))
 	}))
 	s.target.AddEventListener("custom", NewTestHandler(func(e *Event) {
-		events = append(events, fmt.Sprintf("Target capture. Phase: %d", e.EventPhase()))
+		events = append(events, fmt.Sprintf("Target capture. Phase: %d", e.EventPhase))
 	}), Capture)
 	s.target.AddEventListener("custom", NewTestHandler(func(e *Event) {
-		events = append(events, fmt.Sprintf("Target bubble. Phase: %d", e.EventPhase()))
+		events = append(events, fmt.Sprintf("Target bubble. Phase: %d", e.EventPhase))
 	}))
 
 	event := &Event{Type: "custom", Bubbles: true}
-	s.Assert().Equal(EventPhaseNone, event.EventPhase(), "Phase before dispatch")
+	s.Assert().Equal(EventPhaseNone, event.EventPhase, "Phase before dispatch")
 	s.target.DispatchEvent(event)
 	expected := []string{
 		"Window capture. Phase: 1",
@@ -178,7 +178,7 @@ func (s *EventPropagationTestSuite) TestEventCapture() {
 	}
 
 	s.Assert().Equal(expected, events)
-	s.Assert().Equal(EventPhaseNone, event.EventPhase(), "Phase after dispatch")
+	s.Assert().Equal(EventPhaseNone, event.EventPhase, "Phase after dispatch")
 
 	events = nil
 	s.target.DispatchEvent(&Event{Type: "custom"})
@@ -229,15 +229,15 @@ func (s *EventPropagationTestSuite) TestTargetOrCurrentTarget() {
 
 	var l EventHandler = NewTestHandler(func(e *Event) {
 		actualEvent = e
-		actualTarget = e.Target()
-		actualCurrentTarget = e.CurrentTarget()
+		actualTarget = e.Target
+		actualCurrentTarget = e.CurrentTarget
 	})
 	s.window.AddEventListener("custom", l)
 	s.target.DispatchEvent(&Event{Type: "custom", Bubbles: true})
 	s.Expect(actualTarget).To(Equal(s.target), "Event target")
 	s.Expect(actualCurrentTarget).To(Equal(s.window), "CurrentEvent target")
-	s.Expect(actualEvent.CurrentTarget()).To(BeNil(), "CurrentTarget after event")
-	s.Expect(actualEvent.Target()).To(Equal(s.target), "Target after event")
+	s.Expect(actualEvent.CurrentTarget).To(BeNil(), "CurrentTarget after event")
+	s.Expect(actualEvent.Target).To(Equal(s.target), "Target after event")
 }
 
 func (s *EventPropagationTestSuite) TestPropagateToWindowBubbles() {

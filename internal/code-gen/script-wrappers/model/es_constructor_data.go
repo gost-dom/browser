@@ -38,8 +38,10 @@ func (d ESConstructorData) GetInternalPackage() string {
 		return packagenames.Events
 	case "MutationObserver", "MutationRecord":
 		return packagenames.DomInterfaces
-	case "URLSearchParams":
+	case "URLSearchParams", "URL":
 		return packagenames.URLInterfaces
+	case "XMLHttpRequest":
+		return packagenames.HTMLInternal
 	default:
 		return packagenames.PackageName(d.Spec.DomSpec.Name)
 	}
@@ -78,6 +80,17 @@ func (d ESConstructorData) OperationCallbackInfos() iter.Seq[ESOperation] {
 func (d ESConstructorData) Name() string { return d.Spec.TypeName }
 
 func (d ESConstructorData) WrappedType() g.Generator {
+	if override := d.Spec.OverrideWrappedType; override != nil {
+		res := g.NewTypePackage(override.Name, override.Package)
+		if override.Pointer {
+			res = g.Type{Generator: res.Pointer()}
+		}
+		return res
+	}
 	idlInterfaceName := d.Name()
-	return g.NewTypePackage(idlInterfaceName, d.GetInternalPackage())
+	res := g.NewTypePackage(idlInterfaceName, d.GetInternalPackage())
+	if d.CustomRule.OutputType == customrules.OutputTypeStruct {
+		return res.Pointer()
+	}
+	return res
 }

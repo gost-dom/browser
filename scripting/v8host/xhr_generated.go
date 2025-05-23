@@ -4,7 +4,9 @@ package v8host
 
 import (
 	"errors"
+	html "github.com/gost-dom/browser/internal/html"
 	log "github.com/gost-dom/browser/internal/log"
+	abstraction "github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -81,14 +83,14 @@ func (w xmlHttpRequestV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTempla
 }
 
 func (w xmlHttpRequestV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.mustGetContext(info)
-	return w.CreateInstance(ctx, info.This())
+	args := newArgumentHelper(w.scriptHost, info)
+	return w.CreateInstance(args.Context(), info.This())
 }
 
 func (w xmlHttpRequestV8Wrapper) setRequestHeader(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.setRequestHeader")
 	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := w.getInstance(info)
+	instance, err0 := abstraction.As[html.XMLHttpRequest](args.Instance())
 	name, err1 := tryParseArg(args, 0, w.decodeString)
 	value, err2 := tryParseArg(args, 1, w.decodeString)
 	if args.noOfReadArguments >= 2 {
@@ -105,7 +107,7 @@ func (w xmlHttpRequestV8Wrapper) setRequestHeader(info *v8.FunctionCallbackInfo)
 func (w xmlHttpRequestV8Wrapper) send(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.send")
 	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := w.getInstance(info)
+	instance, err0 := abstraction.As[html.XMLHttpRequest](args.Instance())
 	body, err1 := tryParseArgNullableType(args, 0, w.decodeDocument, w.decodeXMLHttpRequestBodyInit)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -124,7 +126,8 @@ func (w xmlHttpRequestV8Wrapper) send(info *v8.FunctionCallbackInfo) (*v8.Value,
 
 func (w xmlHttpRequestV8Wrapper) abort(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.abort")
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.XMLHttpRequest](args.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -134,9 +137,8 @@ func (w xmlHttpRequestV8Wrapper) abort(info *v8.FunctionCallbackInfo) (*v8.Value
 
 func (w xmlHttpRequestV8Wrapper) getResponseHeader(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.getResponseHeader")
-	ctx := w.mustGetContext(info)
 	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := w.getInstance(info)
+	instance, err0 := abstraction.As[html.XMLHttpRequest](args.Instance())
 	name, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -144,15 +146,15 @@ func (w xmlHttpRequestV8Wrapper) getResponseHeader(info *v8.FunctionCallbackInfo
 			return nil, err
 		}
 		result := instance.GetResponseHeader(name)
-		return w.toNullableString_(ctx, result)
+		return w.toNullableString_(args.Context(), result)
 	}
 	return nil, errors.New("XMLHttpRequest.getResponseHeader: Missing arguments")
 }
 
 func (w xmlHttpRequestV8Wrapper) getAllResponseHeaders(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.getAllResponseHeaders")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.XMLHttpRequest](args.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -160,14 +162,14 @@ func (w xmlHttpRequestV8Wrapper) getAllResponseHeaders(info *v8.FunctionCallback
 	if callErr != nil {
 		return nil, callErr
 	} else {
-		return w.toString_(ctx, result)
+		return w.toString_(args.Context(), result)
 	}
 }
 
 func (w xmlHttpRequestV8Wrapper) overrideMimeType(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.overrideMimeType")
 	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := w.getInstance(info)
+	instance, err0 := abstraction.As[html.XMLHttpRequest](args.Instance())
 	mime, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -187,20 +189,20 @@ func (w xmlHttpRequestV8Wrapper) readyState(info *v8.FunctionCallbackInfo) (*v8.
 
 func (w xmlHttpRequestV8Wrapper) timeout(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.timeout")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.XMLHttpRequest](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Timeout()
-	return w.toUnsignedLong(ctx, result)
+	return w.toUnsignedLong(args.Context(), result)
 }
 
 func (w xmlHttpRequestV8Wrapper) setTimeout(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.setTimeout")
-	ctx := w.mustGetContext(info)
-	instance, err0 := w.getInstance(info)
-	val, err1 := parseSetterArg(ctx, info, w.decodeUnsignedLong)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.XMLHttpRequest](args.Instance())
+	val, err1 := parseSetterArg(args.Context(), info, w.decodeUnsignedLong)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
@@ -211,20 +213,20 @@ func (w xmlHttpRequestV8Wrapper) setTimeout(info *v8.FunctionCallbackInfo) (*v8.
 
 func (w xmlHttpRequestV8Wrapper) withCredentials(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.withCredentials")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.XMLHttpRequest](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.WithCredentials()
-	return w.toBoolean(ctx, result)
+	return w.toBoolean(args.Context(), result)
 }
 
 func (w xmlHttpRequestV8Wrapper) setWithCredentials(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.setWithCredentials")
-	ctx := w.mustGetContext(info)
-	instance, err0 := w.getInstance(info)
-	val, err1 := parseSetterArg(ctx, info, w.decodeBoolean)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.XMLHttpRequest](args.Instance())
+	val, err1 := parseSetterArg(args.Context(), info, w.decodeBoolean)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
@@ -235,35 +237,35 @@ func (w xmlHttpRequestV8Wrapper) setWithCredentials(info *v8.FunctionCallbackInf
 
 func (w xmlHttpRequestV8Wrapper) responseURL(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.responseURL")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.XMLHttpRequest](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.ResponseURL()
-	return w.toString_(ctx, result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w xmlHttpRequestV8Wrapper) status(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.status")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.XMLHttpRequest](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Status()
-	return w.toUnsignedShort(ctx, result)
+	return w.toUnsignedShort(args.Context(), result)
 }
 
 func (w xmlHttpRequestV8Wrapper) statusText(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.statusText")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.XMLHttpRequest](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.StatusText()
-	return w.toString_(ctx, result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w xmlHttpRequestV8Wrapper) responseType(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -278,24 +280,24 @@ func (w xmlHttpRequestV8Wrapper) setResponseType(info *v8.FunctionCallbackInfo) 
 
 func (w xmlHttpRequestV8Wrapper) response(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.response")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.XMLHttpRequest](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Response()
-	return w.toAny(ctx, result)
+	return w.toAny(args.Context(), result)
 }
 
 func (w xmlHttpRequestV8Wrapper) responseText(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.responseText")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.XMLHttpRequest](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.ResponseText()
-	return w.toString_(ctx, result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w xmlHttpRequestV8Wrapper) responseXML(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

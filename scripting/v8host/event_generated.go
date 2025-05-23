@@ -4,7 +4,9 @@ package v8host
 
 import (
 	"errors"
+	event "github.com/gost-dom/browser/dom/event"
 	log "github.com/gost-dom/browser/internal/log"
+	abstraction "github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -63,20 +65,20 @@ func (w eventV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, e
 	args := newArgumentHelper(w.scriptHost, info)
 	type_, err1 := tryParseArg(args, 0, w.decodeString)
 	eventInitDict, err2 := tryParseArgWithDefault(args, 1, w.defaultEventInit, w.decodeEventInit)
-	ctx := w.mustGetContext(info)
 	if args.noOfReadArguments >= 2 {
 		err := errors.Join(err1, err2)
 		if err != nil {
 			return nil, err
 		}
-		return w.CreateInstance(ctx, info.This(), type_, eventInitDict)
+		return w.CreateInstance(args.Context(), info.This(), type_, eventInitDict)
 	}
 	return nil, errors.New("Event.constructor: Missing arguments")
 }
 
 func (w eventV8Wrapper) stopPropagation(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Event.stopPropagation")
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*event.Event](args.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +88,8 @@ func (w eventV8Wrapper) stopPropagation(info *v8.FunctionCallbackInfo) (*v8.Valu
 
 func (w eventV8Wrapper) preventDefault(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Event.preventDefault")
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*event.Event](args.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -96,33 +99,33 @@ func (w eventV8Wrapper) preventDefault(info *v8.FunctionCallbackInfo) (*v8.Value
 
 func (w eventV8Wrapper) target(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Event.target")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*event.Event](args.Instance())
 	if err != nil {
 		return nil, err
 	}
-	result := instance.Target()
-	return w.toEventTarget(ctx, result)
+	result := instance.Target
+	return w.toEventTarget(args.Context(), result)
 }
 
 func (w eventV8Wrapper) currentTarget(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Event.currentTarget")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*event.Event](args.Instance())
 	if err != nil {
 		return nil, err
 	}
-	result := instance.CurrentTarget()
-	return w.toEventTarget(ctx, result)
+	result := instance.CurrentTarget
+	return w.toEventTarget(args.Context(), result)
 }
 
 func (w eventV8Wrapper) defaultPrevented(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Event.defaultPrevented")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*event.Event](args.Instance())
 	if err != nil {
 		return nil, err
 	}
-	result := instance.DefaultPrevented()
-	return w.toBoolean(ctx, result)
+	result := instance.DefaultPrevented
+	return w.toBoolean(args.Context(), result)
 }

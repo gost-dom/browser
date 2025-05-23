@@ -17,11 +17,11 @@ import (
 )
 
 type urlV8Wrapper struct {
-	handleReffedObject[*url.URL]
+	handleReffedObject[urlinterfaces.URL]
 }
 
 func newURLV8Wrapper(host *V8ScriptHost) urlV8Wrapper {
-	return urlV8Wrapper{newHandleReffedObject[*url.URL](host)}
+	return urlV8Wrapper{newHandleReffedObject[urlinterfaces.URL](host)}
 }
 
 type handleDisposable cgo.Handle
@@ -47,6 +47,7 @@ func (w urlV8Wrapper) CreateInstanceBase(
 	u string,
 	base string,
 ) (*v8.Value, error) {
+	log.Info(w.scriptHost.logger, "CREATE URL", "url", u, "base", base)
 	value, err := url.NewUrlBase(u, base)
 	if err != nil {
 		return nil, err

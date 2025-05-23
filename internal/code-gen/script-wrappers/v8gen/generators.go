@@ -60,30 +60,37 @@ func CreateV8ConstructorBody(data ESConstructorData) g.Generator {
 
 func CreateV8ConstructorWrapperBody(data ESConstructorData) g.Generator {
 	naming := V8NamingStrategy{data}
-	receiver := WrapperInstance{g.NewValue(naming.Receiver())}
 	if data.Constructor == nil {
 		return CreateV8IllegalConstructorBody(data)
 	}
 	var readArgsResult V8ReadArguments
 	op := *data.Constructor
 	readArgsResult = ReadArguments(data, op)
+	cbCtx := NewCallbackContext(g.Id("args"))
+	host := g.NewValue("w").Field("scriptHost")
+	cbInfo := g.NewValue("info")
 	statements := g.StatementList(
-		AssignArgs(data, op),
+		cbCtx.AssignFrom(host, cbInfo),
 		readArgsResult)
-	statements.Append(V8RequireContext(receiver))
+	receiver := g.NewValue(naming.Receiver())
 	baseFunctionName := "CreateInstance"
 	var CreateCall = func(functionName string, argnames []g.Generator, op ESOperation) g.Generator {
 		return g.StatementList(
 			g.Return(
-				g.Raw(jen.Id(naming.Receiver()).Dot(functionName).CallFunc(func(grp *jen.Group) {
-					grp.Add(jen.Id("ctx"))
-					grp.Add(jen.Id("info").Dot("This").Call())
-					for _, name := range argnames {
-						grp.Add(name.Generate())
-					}
-				})),
-			),
-		)
+				receiver.Field(functionName).Call(append([]g.Generator{cbCtx.Context(),
+					cbInfo.Field("This").Call()},
+					argnames...)...,
+				),
+				// g.Return(
+				// 	g.Raw(jen.Id(naming.Receiver()).Dot(functionName).CallFunc(func(grp *jen.Group) {
+				// 		grp.Add(cbCtx.Context().Generate())
+				// 		grp.Add(jen.Id("info").Dot("This").Call())
+				// 		for _, name := range argnames {
+				// 			grp.Add(name.Generate())
+				// 		}
+				// 	})),
+				// ),
+			))
 	}
 	statements.Append(
 		CreateV8WrapperMethodInstanceInvocations(
@@ -166,14 +173,6 @@ func CreateV8WrapperMethodInstanceInvocations(
 		}
 	}
 	return statements
-}
-
-func V8RequireContext(wrapper WrapperInstance) g.Generator {
-	info := v8ArgInfo(g.NewValue("info"))
-	return g.Assign(
-		g.Id("ctx"),
-		wrapper.MustGetContext(info),
-	)
 }
 
 type V8InstanceInvocation struct {
@@ -282,9 +281,9 @@ func (r V8ReadArguments) Generate() *jen.Statement {
 }
 
 func AssignArgs(data ESConstructorData, op ESOperation) g.Generator {
-	if len(op.Arguments) == 0 {
-		return g.Noop
-	}
+	// if len(op.Arguments) == 0 {
+	// 	return g.Noop
+	// }
 	naming := V8NamingStrategy{data}
 	return g.Assign(
 		g.Id("args"),

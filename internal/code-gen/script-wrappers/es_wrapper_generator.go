@@ -32,7 +32,7 @@ func createData(
 		IdlInterface:  idlInterface,
 		Constructor:   CreateConstructor(idlInterface, intfRules, interfaceConfig, idlName),
 		Operations:    CreateInstanceMethods(idlInterface, intfRules, interfaceConfig, idlName),
-		Attributes:    CreateAttributes(idlInterface, interfaceConfig, idlName),
+		Attributes:    CreateAttributes(idlInterface, intfRules, interfaceConfig, idlName),
 	}
 }
 
@@ -82,11 +82,13 @@ func CreateInstanceMethods(
 
 func CreateAttributes(
 	idlInterface idl.Interface,
+	intfRules customrules.InterfaceRule,
 	interfaceConfig *configuration.IdlInterfaceConfiguration,
 	idlName idl.TypeSpec,
 ) (res []ESAttribute) {
 	for attribute := range idlName.IdlInterface.AllAttributes(interfaceConfig.IncludeIncludes) {
 		methodCustomization := interfaceConfig.GetMethodCustomization(attribute.Name)
+		customRule := intfRules.Attributes[attribute.Name]
 		if methodCustomization.Ignored || attribute.Type.Name == "EventHandler" {
 			continue
 		}
@@ -94,11 +96,15 @@ func CreateAttributes(
 			getter *ESOperation
 			setter *ESOperation
 		)
+		attrType := attribute.Type
+		if customRule.OverrideType != nil {
+			attrType = customRule.OverrideType.IdlType()
+		}
 		getter = &ESOperation{
 			Name:                 attribute.Name,
 			NotImplemented:       methodCustomization.NotImplemented,
 			CustomImplementation: methodCustomization.CustomImplementation,
-			RetType:              attribute.Type,
+			RetType:              attrType,
 			MethodCustomization:  methodCustomization,
 		}
 		if !attribute.Readonly {
@@ -115,7 +121,7 @@ func CreateAttributes(
 				Type: IdlNameToGoName(attribute.Type.Name),
 				IdlArg: idl.Argument{
 					Name: "val",
-					Type: attribute.Type,
+					Type: attrType,
 				},
 				Optional: false,
 				Variadic: false,

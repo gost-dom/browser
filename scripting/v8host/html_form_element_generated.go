@@ -6,6 +6,7 @@ import (
 	"errors"
 	html "github.com/gost-dom/browser/html"
 	log "github.com/gost-dom/browser/internal/log"
+	abstraction "github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -93,7 +94,8 @@ func (w htmlFormElementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v
 
 func (w htmlFormElementV8Wrapper) submit(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.submit")
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLFormElement](args.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +106,7 @@ func (w htmlFormElementV8Wrapper) submit(info *v8.FunctionCallbackInfo) (*v8.Val
 func (w htmlFormElementV8Wrapper) requestSubmit(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.requestSubmit")
 	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := w.getInstance(info)
+	instance, err0 := abstraction.As[html.HTMLFormElement](args.Instance())
 	submitter, err1 := tryParseArgWithDefault(args, 0, w.defaultHTMLElement, w.decodeHTMLElement)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -144,20 +146,20 @@ func (w htmlFormElementV8Wrapper) setAcceptCharset(info *v8.FunctionCallbackInfo
 
 func (w htmlFormElementV8Wrapper) action(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.action")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLFormElement](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Action()
-	return w.toString_(ctx, result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w htmlFormElementV8Wrapper) setAction(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.setAction")
-	ctx := w.mustGetContext(info)
-	instance, err0 := w.getInstance(info)
-	val, err1 := parseSetterArg(ctx, info, w.decodeString)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.HTMLFormElement](args.Instance())
+	val, err1 := parseSetterArg(args.Context(), info, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
@@ -198,20 +200,20 @@ func (w htmlFormElementV8Wrapper) setEncoding(info *v8.FunctionCallbackInfo) (*v
 
 func (w htmlFormElementV8Wrapper) method(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.method")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLFormElement](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Method()
-	return w.toString_(ctx, result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w htmlFormElementV8Wrapper) setMethod(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.setMethod")
-	ctx := w.mustGetContext(info)
-	instance, err0 := w.getInstance(info)
-	val, err1 := parseSetterArg(ctx, info, w.decodeString)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.HTMLFormElement](args.Instance())
+	val, err1 := parseSetterArg(args.Context(), info, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
@@ -247,13 +249,13 @@ func (w htmlFormElementV8Wrapper) relList(info *v8.FunctionCallbackInfo) (*v8.Va
 
 func (w htmlFormElementV8Wrapper) elements(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.elements")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLFormElement](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Elements()
-	return w.toHTMLFormControlsCollection(ctx, result)
+	return w.toHTMLFormControlsCollection(args.Context(), result)
 }
 
 func (w htmlFormElementV8Wrapper) length(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

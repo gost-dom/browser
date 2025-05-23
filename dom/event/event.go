@@ -43,11 +43,11 @@ type Event struct {
 	Cancelable bool
 	Data       any
 
-	phase         EventPhase
-	cancelled     bool
-	stopped       bool
-	target        EventTarget
-	currentTarget EventTarget
+	EventPhase       EventPhase
+	DefaultPrevented bool
+	stopped          bool
+	Target           EventTarget
+	CurrentTarget    EventTarget
 }
 
 // New creates a new Event object passing a specific event type and event data.
@@ -62,9 +62,5 @@ func New(eventType string, eventInit any) *Event {
 	}
 }
 
-func (e *Event) StopPropagation()           { e.stopped = true }
-func (e *Event) PreventDefault()            { e.cancelled = true }
-func (e *Event) EventPhase() EventPhase     { return e.phase }
-func (e *Event) Target() EventTarget        { return e.target }
-func (e *Event) CurrentTarget() EventTarget { return e.currentTarget }
-func (e *Event) DefaultPrevented() bool     { return e.cancelled }
+func (e *Event) StopPropagation() { e.stopped = true }
+func (e *Event) PreventDefault()  { e.DefaultPrevented = true }

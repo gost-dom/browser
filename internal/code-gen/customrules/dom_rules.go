@@ -3,6 +3,7 @@ package customrules
 import "github.com/gost-dom/webref/idl"
 
 var domRules = SpecRules{
+	"Event": {OutputType: OutputTypeStruct},
 	"DOMTokenList": {Operations: OperationRules{
 		"add": {HasError: true},
 	}},

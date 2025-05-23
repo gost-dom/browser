@@ -5,6 +5,7 @@ package v8host
 import (
 	html "github.com/gost-dom/browser/html"
 	log "github.com/gost-dom/browser/internal/log"
+	abstraction "github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -48,7 +49,8 @@ func (w htmlElementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Va
 
 func (w htmlElementV8Wrapper) click(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLElement.click")
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLElement](args.Instance())
 	if err != nil {
 		return nil, err
 	}

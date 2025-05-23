@@ -20,7 +20,6 @@ func TestMutationObserver(t *testing.T) {
 		MutationRecord.prototype.toJSON = function() { return {type: this.type} }
 		const parent = document.getElementById("parent")
 		const obs = new MutationObserver(recs => {
-			console.log("EVENT!")
 			for (const rec of recs) {
 				events.push(rec.type)
 			}

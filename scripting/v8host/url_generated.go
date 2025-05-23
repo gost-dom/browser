@@ -6,6 +6,8 @@ import (
 	"errors"
 	urlinterfaces "github.com/gost-dom/browser/internal/interfaces/url-interfaces"
 	log "github.com/gost-dom/browser/internal/log"
+	abstraction "github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
+	url "github.com/gost-dom/browser/url"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -84,27 +86,26 @@ func (w urlV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, err
 	args := newArgumentHelper(w.scriptHost, info)
 	url, err1 := tryParseArg(args, 0, w.decodeString)
 	base, err2 := tryParseArg(args, 1, w.decodeString)
-	ctx := w.mustGetContext(info)
 	if args.noOfReadArguments >= 2 {
 		err := errors.Join(err1, err2)
 		if err != nil {
 			return nil, err
 		}
-		return w.CreateInstanceBase(ctx, info.This(), url, base)
+		return w.CreateInstanceBase(args.Context(), info.This(), url, base)
 	}
 	if args.noOfReadArguments >= 1 {
 		if err1 != nil {
 			return nil, err1
 		}
-		return w.CreateInstance(ctx, info.This(), url)
+		return w.CreateInstance(args.Context(), info.This(), url)
 	}
 	return nil, errors.New("URL.constructor: Missing arguments")
 }
 
 func (w urlV8Wrapper) toJSON(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: URL.toJSON")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*url.URL](args.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -112,19 +113,19 @@ func (w urlV8Wrapper) toJSON(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	if callErr != nil {
 		return nil, callErr
 	} else {
-		return w.toString_(ctx, result)
+		return w.toString_(args.Context(), result)
 	}
 }
 
 func (w urlV8Wrapper) href(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: URL.href")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*url.URL](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Href()
-	return w.toString_(ctx, result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w urlV8Wrapper) setHref(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -134,24 +135,24 @@ func (w urlV8Wrapper) setHref(info *v8.FunctionCallbackInfo) (*v8.Value, error) 
 
 func (w urlV8Wrapper) origin(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: URL.origin")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*url.URL](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Origin()
-	return w.toString_(ctx, result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w urlV8Wrapper) protocol(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: URL.protocol")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*url.URL](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Protocol()
-	return w.toString_(ctx, result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w urlV8Wrapper) setProtocol(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -181,13 +182,13 @@ func (w urlV8Wrapper) setPassword(info *v8.FunctionCallbackInfo) (*v8.Value, err
 
 func (w urlV8Wrapper) host(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: URL.host")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*url.URL](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Host()
-	return w.toString_(ctx, result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w urlV8Wrapper) setHost(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -197,13 +198,13 @@ func (w urlV8Wrapper) setHost(info *v8.FunctionCallbackInfo) (*v8.Value, error) 
 
 func (w urlV8Wrapper) hostname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: URL.hostname")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*url.URL](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Hostname()
-	return w.toString_(ctx, result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w urlV8Wrapper) setHostname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -213,13 +214,13 @@ func (w urlV8Wrapper) setHostname(info *v8.FunctionCallbackInfo) (*v8.Value, err
 
 func (w urlV8Wrapper) port(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: URL.port")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*url.URL](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Port()
-	return w.toString_(ctx, result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w urlV8Wrapper) setPort(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -229,13 +230,13 @@ func (w urlV8Wrapper) setPort(info *v8.FunctionCallbackInfo) (*v8.Value, error) 
 
 func (w urlV8Wrapper) pathname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: URL.pathname")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*url.URL](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Pathname()
-	return w.toString_(ctx, result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w urlV8Wrapper) setPathname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -245,13 +246,13 @@ func (w urlV8Wrapper) setPathname(info *v8.FunctionCallbackInfo) (*v8.Value, err
 
 func (w urlV8Wrapper) search(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: URL.search")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*url.URL](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Search()
-	return w.toString_(ctx, result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w urlV8Wrapper) setSearch(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -266,13 +267,13 @@ func (w urlV8Wrapper) searchParams(info *v8.FunctionCallbackInfo) (*v8.Value, er
 
 func (w urlV8Wrapper) hash(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: URL.hash")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*url.URL](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Hash()
-	return w.toString_(ctx, result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w urlV8Wrapper) setHash(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -325,7 +326,7 @@ func (w urlSearchParamsV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTempl
 func (w urlSearchParamsV8Wrapper) append(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: URLSearchParams.append")
 	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := w.getInstance(info)
+	instance, err0 := abstraction.As[urlinterfaces.URLSearchParams](args.Instance())
 	name, err1 := tryParseArg(args, 0, w.decodeString)
 	value, err2 := tryParseArg(args, 1, w.decodeString)
 	if args.noOfReadArguments >= 2 {
@@ -342,7 +343,7 @@ func (w urlSearchParamsV8Wrapper) append(info *v8.FunctionCallbackInfo) (*v8.Val
 func (w urlSearchParamsV8Wrapper) delete(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: URLSearchParams.delete")
 	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := w.getInstance(info)
+	instance, err0 := abstraction.As[urlinterfaces.URLSearchParams](args.Instance())
 	name, err1 := tryParseArg(args, 0, w.decodeString)
 	value, err2 := tryParseArg(args, 1, w.decodeString)
 	if args.noOfReadArguments >= 2 {
@@ -366,9 +367,8 @@ func (w urlSearchParamsV8Wrapper) delete(info *v8.FunctionCallbackInfo) (*v8.Val
 
 func (w urlSearchParamsV8Wrapper) getAll(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: URLSearchParams.getAll")
-	ctx := w.mustGetContext(info)
 	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := w.getInstance(info)
+	instance, err0 := abstraction.As[urlinterfaces.URLSearchParams](args.Instance())
 	name, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -376,16 +376,15 @@ func (w urlSearchParamsV8Wrapper) getAll(info *v8.FunctionCallbackInfo) (*v8.Val
 			return nil, err
 		}
 		result := instance.GetAll(name)
-		return w.toSequenceString_(ctx, result)
+		return w.toSequenceString_(args.Context(), result)
 	}
 	return nil, errors.New("URLSearchParams.getAll: Missing arguments")
 }
 
 func (w urlSearchParamsV8Wrapper) has(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: URLSearchParams.has")
-	ctx := w.mustGetContext(info)
 	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := w.getInstance(info)
+	instance, err0 := abstraction.As[urlinterfaces.URLSearchParams](args.Instance())
 	name, err1 := tryParseArg(args, 0, w.decodeString)
 	value, err2 := tryParseArg(args, 1, w.decodeString)
 	if args.noOfReadArguments >= 2 {
@@ -394,7 +393,7 @@ func (w urlSearchParamsV8Wrapper) has(info *v8.FunctionCallbackInfo) (*v8.Value,
 			return nil, err
 		}
 		result := instance.HasValue(name, value)
-		return w.toBoolean(ctx, result)
+		return w.toBoolean(args.Context(), result)
 	}
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -402,7 +401,7 @@ func (w urlSearchParamsV8Wrapper) has(info *v8.FunctionCallbackInfo) (*v8.Value,
 			return nil, err
 		}
 		result := instance.Has(name)
-		return w.toBoolean(ctx, result)
+		return w.toBoolean(args.Context(), result)
 	}
 	return nil, errors.New("URLSearchParams.has: Missing arguments")
 }
@@ -410,7 +409,7 @@ func (w urlSearchParamsV8Wrapper) has(info *v8.FunctionCallbackInfo) (*v8.Value,
 func (w urlSearchParamsV8Wrapper) set(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: URLSearchParams.set")
 	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := w.getInstance(info)
+	instance, err0 := abstraction.As[urlinterfaces.URLSearchParams](args.Instance())
 	name, err1 := tryParseArg(args, 0, w.decodeString)
 	value, err2 := tryParseArg(args, 1, w.decodeString)
 	if args.noOfReadArguments >= 2 {
@@ -426,7 +425,8 @@ func (w urlSearchParamsV8Wrapper) set(info *v8.FunctionCallbackInfo) (*v8.Value,
 
 func (w urlSearchParamsV8Wrapper) sort(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: URLSearchParams.sort")
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[urlinterfaces.URLSearchParams](args.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -436,22 +436,22 @@ func (w urlSearchParamsV8Wrapper) sort(info *v8.FunctionCallbackInfo) (*v8.Value
 
 func (w urlSearchParamsV8Wrapper) toString(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: URLSearchParams.toString")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[urlinterfaces.URLSearchParams](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.String()
-	return w.toString_(ctx, result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w urlSearchParamsV8Wrapper) size(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: URLSearchParams.size")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[urlinterfaces.URLSearchParams](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Size()
-	return w.toUnsignedLong(ctx, result)
+	return w.toUnsignedLong(args.Context(), result)
 }

@@ -5,6 +5,7 @@ package v8host
 import (
 	dom "github.com/gost-dom/browser/dom"
 	log "github.com/gost-dom/browser/internal/log"
+	abstraction "github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -47,22 +48,22 @@ func (w nonDocumentTypeChildNodeV8Wrapper) Constructor(info *v8.FunctionCallback
 
 func (w nonDocumentTypeChildNodeV8Wrapper) previousElementSibling(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: NonDocumentTypeChildNode.previousElementSibling")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.NonDocumentTypeChildNode](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.PreviousElementSibling()
-	return ctx.getInstanceForNode(result)
+	return args.Context().getInstanceForNode(result)
 }
 
 func (w nonDocumentTypeChildNodeV8Wrapper) nextElementSibling(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: NonDocumentTypeChildNode.nextElementSibling")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.NonDocumentTypeChildNode](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.NextElementSibling()
-	return ctx.getInstanceForNode(result)
+	return args.Context().getInstanceForNode(result)
 }

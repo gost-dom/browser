@@ -16,7 +16,7 @@ import (
 type IdlInterface struct {
 	Name           string
 	Inherits       string
-	HasStringifier bool
+	HasStringifier bool // Whether the interface contains a stringifier
 	Rules          customrules.InterfaceRule
 	Attributes     []IdlInterfaceAttribute
 	Operations     []IdlInterfaceOperation
@@ -28,8 +28,8 @@ func (i IdlInterface) Generate() *jen.Statement {
 	fields := make(
 		[]g.Generator,
 		0,
-		2*len(i.Attributes)+1,
-	) // Make room for getters and setters
+		2*len(i.Attributes)+1, // Make room for getters and setters
+	)
 	if i.Inherits != "" {
 		fields = append(fields, g.Id(i.Inherits))
 	}
@@ -121,48 +121,48 @@ func (o IdlInterfaceOperation) Name() string      { return o.IdlOperation.Name }
 func (o IdlInterfaceOperation) Static() bool      { return o.IdlOperation.Static }
 
 func (o IdlInterfaceOperation) Generate() *jen.Statement {
-	if o.Stringifier() && o.Name() == "" {
+	if o.Stringifier() && o.Name() == "" || o.Static() {
 		return nil
 	}
-	name := o.Name()
 	opRules := o.Rules
+	name := o.Name()
 	result := g.StatementList()
-	if !o.Static() {
-		args := make([]g.Generator, 0, len(o.Arguments))
-		for i, a := range o.Arguments {
-			if a.Ignore() {
-				continue
-			}
-			var arg g.Generator = IdlType(a.Type())
-			if a.Rules.OverridesType() {
-				arg = IdlType(a.Rules.Type)
-			}
-			if a.Variadic() {
-				arg = g.Raw(jen.Op("...").Add(arg.Generate()))
-			}
-			args = append(args, arg)
+	args := make([]g.Generator, 0, len(o.Arguments))
+	for i, a := range o.Arguments {
+		if a.Ignore() {
+			continue
+		}
+		var arg g.Generator = IdlType(a.Type())
+		if a.Rules.OverridesType() {
+			arg = IdlType(a.Rules.Type)
+		}
+		if a.Variadic() {
+			arg = g.Raw(jen.Op("...").Add(arg.Generate()))
+		}
+		args = append(args, arg)
 
-			if i < len(o.Arguments)-1 {
-				nextArg := o.Arguments[i+1]
-				if nextArg.Optional() {
-					result.Append(g.Raw(
-						jen.Id(UpperCaseFirstLetter(name)).
-							Params(g.ToJenCodes(args)...).
-							Add(o.ReturnParams())))
-					name = name + UpperCaseFirstLetter(nextArg.Name())
-				}
+		if i < len(o.Arguments)-1 {
+			nextArg := o.Arguments[i+1]
+			argRule := o.Rules.Arguments[nextArg.Name()]
+			if nextArg.Optional() && !argRule.ZeroAsDefault {
+				result.Append(g.Raw(
+					jen.Id(UpperCaseFirstLetter(name)).
+						Params(g.ToJenCodes(args)...).
+						Add(o.ReturnParams())))
+				name = name + UpperCaseFirstLetter(nextArg.Name())
 			}
 		}
-
-		if opRules.DocComments != "" {
-			result.Append(g.Raw(jen.Comment(opRules.DocComments)))
-		}
-		result.Append(g.Raw(
-			jen.Id(UpperCaseFirstLetter(name)).
-				Params(g.ToJenCodes(args)...).
-				Add(o.ReturnParams()),
-		))
 	}
+
+	if opRules.DocComments != "" {
+		result.Append(g.Raw(jen.Comment(opRules.DocComments)))
+	}
+	result.Append(g.Raw(
+		jen.Id(UpperCaseFirstLetter(name)).
+			Params(g.ToJenCodes(args)...).
+			Add(o.ReturnParams()),
+	))
+
 	return result.Generate()
 }
 

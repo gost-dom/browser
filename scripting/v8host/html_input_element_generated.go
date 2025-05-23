@@ -6,6 +6,7 @@ import (
 	"errors"
 	html "github.com/gost-dom/browser/html"
 	log "github.com/gost-dom/browser/internal/log"
+	abstraction "github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -49,31 +50,31 @@ func (w htmlInputElementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*
 
 func (w htmlInputElementV8Wrapper) checkValidity(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLInputElement.checkValidity")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLInputElement](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.CheckValidity()
-	return w.toBoolean(ctx, result)
+	return w.toBoolean(args.Context(), result)
 }
 
 func (w htmlInputElementV8Wrapper) type_(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLInputElement.type")
-	ctx := w.mustGetContext(info)
-	instance, err := w.getInstance(info)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLInputElement](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Type()
-	return w.toString_(ctx, result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w htmlInputElementV8Wrapper) setType(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLInputElement.setType")
-	ctx := w.mustGetContext(info)
-	instance, err0 := w.getInstance(info)
-	val, err1 := parseSetterArg(ctx, info, w.decodeString)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.HTMLInputElement](args.Instance())
+	val, err1 := parseSetterArg(args.Context(), info, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
