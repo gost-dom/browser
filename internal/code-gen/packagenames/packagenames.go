@@ -19,6 +19,7 @@ const (
 	UIEvents      = BASE_PKG + "/internal/uievents"
 	DomInterfaces = BASE_PKG + "/internal/interfaces/dom-interfaces"
 	URLInterfaces = BASE_PKG + "/internal/interfaces/url-interfaces"
+	JSAbstraction = BASE_PKG + "/scripting/v8host/internal/abstraction"
 	V8go          = "github.com/gost-dom/v8go"
 	Goja          = "github.com/dop251/goja"
 )
