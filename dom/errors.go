@@ -7,6 +7,7 @@
 package dom
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -29,6 +30,25 @@ const (
 	domErrorNotFound
 )
 
+var ErrDOM = DOMError{}
+
+// ErrSyntax is returned when adding an empty string to a [DOMTokenList]. This
+// corresponds to a SyntaxError in JavaScript. This is a special case of a
+// [DOMException]
+//
+// [DOMException]: https://developer.mozilla.org/en-US/docs/Web/API/DOMException
+var ErrSyntax = fmt.Errorf("%w: syntax error", ErrDOM)
+
+// ErrSyntax is returned when adding a token containing whitespace to a
+// [DOMTokenList]. This corresponds to a SyntaxError in JavaScript. This is a
+// special case of a [DOMException]
+//
+// [DOMException]: https://developer.mozilla.org/en-US/docs/Web/API/DOMException
+var ErrInvalidCharacter = fmt.Errorf("%w: invalid character", ErrDOM)
+
+// DOMError corresponds to [DOMException] in JavaScript
+//
+// [DOMException]: https://developer.mozilla.org/en-US/docs/Web/API/DOMException
 type DOMError struct {
 	error
 	code int
@@ -52,10 +72,6 @@ func newDomErrorCode(msg string, code int) error {
 	return DOMError{newBrowserError("DOMError", msg, errorTypeDOMError), code}
 }
 
-func newNotImplementedError(msg string) error {
-	return NotImplementedError(newBrowserError("DOMError", msg, errorTypeNotImplementedError))
-}
-
 func IsDOMError(err error) bool {
 	_, ok := err.(DOMError)
 	return ok
@@ -71,11 +87,17 @@ func IsNotImplementedError(err error) bool {
 }
 
 func IsSyntaxError(err error) bool {
-	e, ok := err.(DOMError)
-	return ok && e.code == domErrorSyntaxError
+	return errors.Is(err, ErrSyntax)
+	// e, ok := err.(DOMError)
+	// return ok && e.code == domErrorSyntaxError
 }
 
 func IsInvalidCharacterError(err error) bool {
 	e, ok := err.(DOMError)
 	return ok && e.code == domErrorInvalidCharacter
+}
+
+func newSyntaxError(msg string) error { return fmt.Errorf("%w: %s", ErrSyntax, msg) }
+func newInvalidCharacterError(msg string) error {
+	return fmt.Errorf("%w: %s", ErrInvalidCharacter, msg)
 }

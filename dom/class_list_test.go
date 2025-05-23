@@ -1,138 +1,140 @@
 package dom_test
 
 import (
-	. "github.com/gost-dom/browser/dom"
-	matchers "github.com/gost-dom/browser/testing/gomega-matchers"
+	"testing"
 
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
+	. "github.com/gost-dom/browser/dom"
+	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
+	. "github.com/gost-dom/browser/testing/gomega-matchers"
+	"github.com/stretchr/testify/assert"
+
+	"github.com/onsi/gomega"
 )
 
-var _ = Describe("ClassList", func() {
-	var (
-		el        Element
-		classList DOMTokenList
-	)
-	BeforeEach(func() {
-		doc := CreateHTMLDocument()
-		el = doc.CreateElement("div")
-		classList = el.ClassList()
-	})
+func initClassListPair(doc Document) (res struct {
+	element   Element
+	classList DOMTokenList
+}) {
+	res.element = doc.CreateElement("div")
+	res.classList = res.element.ClassList()
+	return
+}
 
-	Describe("Add", func() {
-		It("Should add a new class", func() {
-			Expect(classList.Add("c1", "c2")).To(Succeed())
-			Expect(el).To(matchers.HaveAttribute("class", "c1 c2"))
-		})
+func initElement() Element {
+	doc := CreateHTMLDocument()
+	return doc.CreateElement("div")
+}
 
-		It("Should ignore existing classes", func() {
-			el.SetAttribute("class", "c1 c2")
-			Expect(classList.Add("c2", "c3")).To(Succeed())
-			Expect(el).To(matchers.HaveAttribute("class", "c1 c2 c3"))
+func TestClassList(t *testing.T) {
+	t.Parallel()
 
-		})
+	expect := gomega.NewWithT(t).Expect
+	doc := CreateHTMLDocument()
+	{
+		pair := initClassListPair(doc)
+		expect(pair.classList.Add("c1", "c2")).To(Succeed())
+		expect(pair.element).To(
+			HaveAttribute("class", "c1 c2"), "Multiple classes added are separated by space")
+	}
+	{
+		pair := initClassListPair(doc)
+		pair.element.SetAttribute("class", "c1 c2")
+		expect(pair.classList.Add("c1", "c3")).To(Succeed())
+		expect(pair.element).To(
+			HaveAttribute("class", "c1 c2 c3"), "Adding the same class twice is ignored")
+	}
+	{
+		pair := initClassListPair(doc)
+		pair.element.SetAttribute("class", "c1 c2")
+		expect(pair.classList.Add("c1", "c3")).To(Succeed())
+		expect(pair.element).To(
+			HaveAttribute("class", "c1 c2 c3"), "Adding the same class twice is ignored")
+	}
+	{
+		pair := initClassListPair(doc)
+		err := pair.classList.Add("")
+		assert.ErrorIs(t, err, ErrSyntax, "Adding empty string to class list is SyntaxError")
+		assert.NotErrorIs(t, err, ErrInvalidCharacter)
+		assert.ErrorIs(t, err, ErrDOM, "SyntaxError is a DOMException")
 
-		It("Should generate a syntax error on empty string", func() {
-			err := classList.Add("")
-			Expect(IsSyntaxError(err)).To(BeTrue())
-		})
+		err = pair.classList.Add("a b")
+		assert.NotErrorIs(t, err, ErrSyntax)
+		assert.ErrorIs(t, err, ErrInvalidCharacter,
+			"Adding empty string to class list is an InvalidCharacterException",
+		)
+		assert.ErrorIs(t, err, ErrDOM, "SyntaxError is a DOMException")
+	}
+}
 
-		It("Should generate a invalidCharacterError error on string with space", func() {
-			err := classList.Add("a b")
-			Expect(IsInvalidCharacterError(err)).To(BeTrue())
-		})
+func TestClassListAll(t *testing.T) {
+	doc := CreateHTMLDocument()
+	pair := initClassListPair(doc)
+	pair.element.SetAttribute("class", "a b c")
+	expect(t, pair.classList.All()).To(ConsistOf("a", "b", "c"))
+}
 
-		It("Should generate an invalidCharacterError on empty string", func() {
-			err := classList.Add("a b")
-			Expect(IsInvalidCharacterError(err)).To(BeTrue())
-		})
-	})
+func TestClassListContains(t *testing.T) {
+	doc := CreateHTMLDocument()
+	pair := initClassListPair(doc)
+	pair.element.SetAttribute("class", "a b c")
+	assert.True(t, pair.classList.Contains("a"), "Contains an existing class")
+	assert.False(t, pair.classList.Contains("x"), "Contains a non-existing class")
+}
 
-	Describe("All", func() {
-		It("Should return a list of all classes", func() {
-			el.SetAttribute("class", "a b c")
-			classes := make([]string, 0, 3)
-			for class := range classList.All() {
-				classes = append(classes, class)
-			}
-			Expect(classes).To(ConsistOf("a", "b", "c"))
-		})
-	})
+func TestClassListLength(t *testing.T) {
+	doc := CreateHTMLDocument()
+	pair := initClassListPair(doc)
+	pair.element.SetAttribute("class", "a b c")
+	assert.Equal(t, 3, pair.classList.Length())
+}
 
-	Describe("Contains", func() {
-		It("Should return true for an existing class", func() {
-			el.SetAttribute("class", "a b c")
-			Expect(classList.Contains("a")).To(BeTrue())
-		})
+func TestClassListValueReflectClassAttribute(t *testing.T) {
+	doc := CreateHTMLDocument()
+	el := doc.CreateElement("div")
+	el.SetAttribute("class", "a b c")
+	assert.Equal(t, "a b c", el.ClassList().Value(), "Reading class list")
 
-		It("Should return false for an non-existing class", func() {
-			el.SetAttribute("class", "a b c")
-			Expect(classList.Contains("x")).To(BeFalse())
-		})
-	})
+	el.ClassList().SetValue("a b  z")
+	got, _ := el.GetAttribute("class")
+	assert.Equal(t, "a b  z", got)
+}
 
-	Describe("Length", func() {
-		It("Should return the number of classes", func() {
-			el.SetAttribute("class", "a b c")
-			Expect(classList.Length()).To(Equal(3))
-		})
-	})
+func TestClassListItem(t *testing.T) {
+	doc := CreateHTMLDocument()
+	el := doc.CreateElement("div")
+	el.SetAttribute("class", "a b c")
+	expect(t, el.ClassList().Item(1)).To(HaveValue(Equal("b")), "Reading indexed element")
+	assert.EqualValues(t, "b", *el.ClassList().Item(1), "Reading indexed element")
+	assert.Nil(t, el.ClassList().Item(3), "Reading indexed out of range should return nil")
+}
 
-	Describe("Get/Set Value", func() {
-		It("Should read the class attribute", func() {
-			el.SetAttribute("class", "a b c")
-			Expect(classList.Value()).To(Equal("a b c"))
-		})
+func TestClassListRemove(t *testing.T) {
+	el := initElement()
+	el.SetAttribute("class", "a b c")
+	el.ClassList().Remove("b")
+	expect(t, el).To(HaveAttribute("class", "a c"), "Remove existing class")
 
-		It("Should write the class attribute", func() {
-			classList.SetValue("x y  z")
-			Expect(el).To(matchers.HaveAttribute("class", "x y  z"))
-		})
-	})
+	el.SetAttribute("class", "a b c")
+	el.ClassList().Remove("c")
+	expect(t, el).To(HaveAttribute("class", "a b"), "Remove the last class")
 
-	Describe("Item", func() {
-		It("Should return the item with the specified value", func() {
-			el.SetAttribute("class", "a b c")
-			Expect(classList.Item(1)).To(HaveValue(Equal("b")))
-		})
+	el.SetAttribute("class", "a b c")
+	el.ClassList().Remove("x")
+	expect(t, el).To(HaveAttribute("class", "a b c"), "Remove non-existing class")
+}
 
-		It("Should return nil when the index is too large", func() {
-			el.SetAttribute("class", "a b c")
-			Expect(classList.Item(3)).To(BeNil())
-		})
-	})
+func TestClassListReplace(t *testing.T) {
+	el := initElement()
+	el.SetAttribute("class", "a b c")
+	expect(
+		t,
+		el.ClassList().Replace("b", "x"),
+	).To(BeTrue(), "Replace return value for existing class")
+	expect(t, el).To(HaveAttribute("class", "a c x"), "Class attribute it updated")
 
-	Describe("Remove", func() {
-		It("Should remove an existing class", func() {
-			el.SetAttribute("class", "a b c")
-			classList.Remove("b")
-			Expect(el).To(matchers.HaveAttribute("class", "a c"))
-		})
-
-		It("Should remove the last class", func() {
-			el.SetAttribute("class", "a b c")
-			classList.Remove("c")
-			Expect(el).To(matchers.HaveAttribute("class", "a b"))
-		})
-
-		It("Should leave the list intact for a non-existing class", func() {
-			el.SetAttribute("class", "a b c")
-			classList.Remove("x")
-			Expect(el).To(matchers.HaveAttribute("class", "a b c"))
-		})
-	})
-
-	Describe(".Replace", func() {
-		It("Should remove, insert, and remove true on existing item", func() {
-			el.SetAttribute("class", "a b c")
-			Expect(classList.Replace("b", "x")).To(BeTrue())
-			Expect(el).To(matchers.HaveAttribute("class", "a c x"))
-		})
-
-		It("Should leave the list and return false on non-existing item", func() {
-			el.SetAttribute("class", "a b c")
-			Expect(classList.Replace("y", "x")).To(BeFalse())
-			Expect(el).To(matchers.HaveAttribute("class", "a b c"))
-		})
-	})
-})
+	expect(
+		t,
+		el.ClassList().Replace("y", "x"),
+	).To(BeFalse(), "Replace return value for non-existing class")
+	expect(t, el).To(HaveAttribute("class", "a c x"), "Class attribute is preserved")
+}

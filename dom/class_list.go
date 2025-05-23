@@ -23,10 +23,10 @@ func (l DOMTokenList) Add(tokens ...string) error {
 	tokenList := l.getTokens()
 	for _, token := range tokens {
 		if token == "" {
-			return newDomErrorCode("Empty token", domErrorSyntaxError)
+			return newSyntaxError("token is empty")
 		}
 		if strings.Contains(token, " ") {
-			return newDomErrorCode("Empty token", domErrorInvalidCharacter)
+			return newInvalidCharacterError("token contains whitespace")
 		}
 		if !slices.Contains(tokenList, token) {
 			tokenList = append(tokenList, token)
