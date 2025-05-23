@@ -96,8 +96,20 @@ func (c *V8ScriptContext) getInstanceForNode(
 		panic(fmt.Sprintf("Cannot lookup node: %v", n))
 	}
 }
-func (c *V8ScriptContext) createJSInstanceForObjectOfType(
 
+// getConstructor returns the V8 FunctionTemplate with the specified name.
+// Panics if the name is not one registered as a constructor. The name should
+// not originate from client code, only from this library, so it should be
+// guaranteed that this function is only called with valid values.
+func (c *V8ScriptContext) getConstructor(name string) *v8.FunctionTemplate {
+	prototype, ok := c.host.globals.namedGlobals[name]
+	if !ok {
+		panic(fmt.Sprintf("Unrecognised constructor name: %s. %s", name, constants.BUG_ISSUE_URL))
+	}
+	return prototype
+}
+
+func (c *V8ScriptContext) createJSInstanceForObjectOfType(
 	constructor string,
 	instance any,
 
@@ -106,10 +118,7 @@ func (c *V8ScriptContext) createJSInstanceForObjectOfType(
 	if instance == nil {
 		return v8.Null(iso), nil
 	}
-	prototype, ok := c.host.globals.namedGlobals[constructor]
-	if !ok {
-		panic("Bad constructor name")
-	}
+	prototype := c.getConstructor(constructor)
 	jsThis, err := prototype.InstanceTemplate().NewInstance(c.v8ctx)
 	storeObjectHandleInV8Instance(instance, c, jsThis)
 	return jsThis.Value, err
@@ -123,10 +132,7 @@ func (c *V8ScriptContext) getInstanceForNodeByName(
 	if node == nil {
 		return v8.Null(iso), nil
 	}
-	prototype, ok := c.host.globals.namedGlobals[constructor]
-	if !ok {
-		panic(fmt.Sprintf("Unrecognised constructor name: %s. %s", constructor, constants.BUG_ISSUE_URL))
-	}
+	prototype := c.getConstructor(constructor)
 	objectId := node.ObjectId()
 	if cached, ok := c.v8nodes[objectId]; ok {
 		return cached, nil
