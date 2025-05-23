@@ -1,10 +1,13 @@
 package configuration
 
+// CodeGenStrategy is a "temporary" mechanism in a move towards generating code
+// less coupled to the JavaScript engine, but targets an abstraction layer on
+// top of the JS engine.
 type CodeGenStrategy string
 
 const (
-	StrategyDefault     = ""
-	StrategyAbstraction = "abstraction"
+	StrategyDefault     = ""            // Wrapper code targets JS engins
+	StrategyAbstraction = "abstraction" // Wrapper code uses an abstraction layer on top of the JS engine
 )
 
 // IdlInterfaceConfiguration contains information about how to generate
