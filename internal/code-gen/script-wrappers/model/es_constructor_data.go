@@ -6,6 +6,7 @@ import (
 	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/code-gen/script-wrappers/configuration"
+	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )
 
@@ -75,3 +76,8 @@ func (d ESConstructorData) OperationCallbackInfos() iter.Seq[ESOperation] {
 }
 
 func (d ESConstructorData) Name() string { return d.Spec.TypeName }
+
+func (d ESConstructorData) WrappedType() g.Generator {
+	idlInterfaceName := d.Name()
+	return g.NewTypePackage(idlInterfaceName, d.GetInternalPackage())
+}

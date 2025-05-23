@@ -23,19 +23,13 @@ func (g WrapperStructGenerator) Generate() *jen.Statement {
 	).Generate()
 }
 
-func (g WrapperStructGenerator) WrappedType() Generator {
-	idlInterfaceName := g.Data.Name()
-
-	return gen.NewTypePackage(idlInterfaceName, g.Data.GetInternalPackage())
-}
-
 func (g WrapperStructGenerator) TypeGenerator() Generator {
 	structGens := g.Platform.WrapperStructGenerators()
 
 	idlInterfaceName := g.Data.Name()
 	includes := g.Data.Includes()
 	wrapperStruct := gen.NewStruct(structGens.WrapperStructType(idlInterfaceName))
-	wrapperStruct.Embed(structGens.EmbeddedType(g.WrappedType()))
+	wrapperStruct.Embed(structGens.EmbeddedType(g.Data.WrappedType()))
 
 	for _, i := range includes {
 		wrapperStruct.Field(
@@ -78,7 +72,7 @@ func (g WrapperStructGenerator) Body() Generator {
 	structGens := g.Platform.WrapperStructGenerators()
 	idlInterfaceName := g.Data.Name()
 
-	innerType := g.WrappedType()
+	innerType := g.Data.WrappedType()
 	embedConstructorName := structGens.EmbeddedTypeConstructor(innerType)
 	includes := g.Data.Includes()
 	fieldInitializers := make([]Generator, len(includes)+1)
