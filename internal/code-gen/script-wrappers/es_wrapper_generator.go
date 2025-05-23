@@ -177,6 +177,21 @@ func createOperation(
 	return op
 }
 
+func IfAnyError(errNames []g.Generator, block Transformer) g.Generator {
+	switch len(errNames) {
+	case 0:
+		return g.Noop
+	case 1:
+		return IfError(errNames[0], block)
+	default:
+		err := g.Id("err")
+		return g.StatementList(
+			g.Assign(err, stdgen.ErrorsJoin(errNames...)),
+			IfError(err, block),
+		)
+	}
+}
+
 func ReturnOnAnyError(errNames []g.Generator) g.Generator {
 	switch len(errNames) {
 	case 0:
@@ -208,8 +223,15 @@ func SanitizeVarName(name string) string {
 }
 
 func ReturnIfError(err g.Generator) g.Generator {
+	return IfError(
+		err,
+		TransformerFunc(func(err g.Generator) g.Generator { return g.Return(g.Nil, err) }),
+	)
+}
+
+func IfError(err g.Generator, block Transformer) g.Generator {
 	return g.IfStmt{
 		Condition: g.Neq{Lhs: err, Rhs: g.Nil},
-		Block:     g.Return(g.Nil, err),
+		Block:     block.Transform(err),
 	}
 }
