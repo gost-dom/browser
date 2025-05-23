@@ -92,7 +92,6 @@ func (c *V8ScriptContext) getInstanceForNode(
 	case dom.Attr:
 		return c.getInstanceForNodeByName("Attr", n)
 	default:
-		fmt.Println("ERROR!", n)
 		panic(fmt.Sprintf("Cannot lookup node: %v", n))
 	}
 }

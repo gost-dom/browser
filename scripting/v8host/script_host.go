@@ -235,8 +235,8 @@ func (host *V8ScriptHost) Logger() log.Logger { return host.logger }
 
 func (host *V8ScriptHost) Close() {
 	host.setDisposed()
-	undiposedContexts := host.undisposedContexts()
-	undisposedCount := len(undiposedContexts)
+	undisposedContexts := host.undisposedContexts()
+	undisposedCount := len(undisposedContexts)
 
 	if undisposedCount > 0 {
 		log.Warn(
@@ -245,7 +245,7 @@ func (host *V8ScriptHost) Close() {
 			"count",
 			undisposedCount,
 		)
-		for _, ctx := range undiposedContexts {
+		for _, ctx := range undisposedContexts {
 			ctx.Close()
 		}
 	}
