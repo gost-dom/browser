@@ -208,7 +208,7 @@ func New(opts ...HostOption) *V8ScriptHost {
 func (host *V8ScriptHost) deleteContext(ctx *V8ScriptContext) {
 	host.mu.Lock()
 	defer host.mu.Unlock()
-	delete(ctx.host.contexts, ctx.v8ctx)
+	delete(host.contexts, ctx.v8ctx)
 }
 
 func (host *V8ScriptHost) promiseRejected(msg v8go.PromiseRejectMessage) {
