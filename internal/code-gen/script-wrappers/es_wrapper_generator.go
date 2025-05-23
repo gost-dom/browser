@@ -123,7 +123,11 @@ func CreateAttributes(
 		getter.NotImplemented = getterCustomization.NotImplemented || getter.NotImplemented
 		getter.CustomImplementation = getterCustomization.CustomImplementation ||
 			getter.CustomImplementation
-		res = append(res, ESAttribute{Name: attribute.Name, Getter: getter, Setter: setter})
+		res = append(res, ESAttribute{
+			Name:   attribute.Name,
+			Spec:   attribute,
+			Getter: getter,
+			Setter: setter})
 	}
 	return
 }
@@ -140,6 +144,7 @@ func createOperation(
 
 	op := ESOperation{
 		Name:                 member.Name,
+		Spec:                 idlOperation,
 		NotImplemented:       methodCustomization.NotImplemented,
 		CustomImplementation: methodCustomization.CustomImplementation,
 		RetType:              idlOperation.ReturnType,

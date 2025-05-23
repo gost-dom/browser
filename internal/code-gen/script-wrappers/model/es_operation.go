@@ -10,6 +10,7 @@ import (
 
 type ESOperation struct {
 	Name                 string
+	Spec                 idl.Operation
 	NotImplemented       bool
 	RetType              idl.Type
 	HasError             bool
