@@ -36,6 +36,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) installPrototype(prototypeTmpl *v8.O
 		v8.NewFunctionTemplateWithError(iso, w.href),
 		v8.NewFunctionTemplateWithError(iso, w.setHref),
 		v8.None)
+	prototypeTmpl.Set("toString", v8.NewFunctionTemplateWithError(iso, w.href))
 	prototypeTmpl.SetAccessorProperty("origin",
 		v8.NewFunctionTemplateWithError(iso, w.origin),
 		nil,

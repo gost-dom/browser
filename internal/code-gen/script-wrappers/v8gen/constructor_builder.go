@@ -84,10 +84,18 @@ func (builder PrototypeInstaller) InstallAttributeHandler(
 	if setter != nil {
 		setterFt = builder.NewFunctionTemplate(wrapper.Field(setter.CallbackMethodName()))
 	}
-	return builder.Proto.SetAccessorProperty(
+
+	generator := builder.Proto.SetAccessorProperty(
 		op.Name,
 		g.WrapLine(getterFt),
 		g.WrapLine(setterFt),
 		g.WrapLine(v8None),
 	)
+	if op.Spec.Stringifier {
+		return g.StatementList(generator,
+			builder.InstallFunction("toString", getter.CallbackMethodName()),
+		)
+	} else {
+		return generator
+	}
 }

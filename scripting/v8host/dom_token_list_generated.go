@@ -43,6 +43,7 @@ func (w domTokenListV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate
 		v8.NewFunctionTemplateWithError(iso, w.value),
 		v8.NewFunctionTemplateWithError(iso, w.setValue),
 		v8.None)
+	prototypeTmpl.Set("toString", v8.NewFunctionTemplateWithError(iso, w.value))
 }
 
 func (w domTokenListV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
