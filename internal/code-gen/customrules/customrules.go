@@ -47,6 +47,7 @@ type InterfaceRule struct {
 	InterfacePackage Package
 	OutputType       OutputType
 	Operations       OperationRules
+	Attributes       AttributeRules
 }
 
 type OperationRules map[string]OperationRule
@@ -88,4 +89,12 @@ func GetSpecRules(specName string) SpecRules {
 		return res
 	}
 	return make(SpecRules)
+}
+
+type AttributeRules map[string]AttributeRule
+
+type AttributeRule struct {
+	// NotImplemented indicates that the IDL does not have an implementation in
+	// Go.
+	NotImplemented bool
 }

@@ -129,6 +129,10 @@ func (gen baseGenerator) GenerateInterface() g.Generator {
 	}
 
 	for _, a := range gen.idlType.Attributes {
+		attributeRule := gen.rules.Attributes[a.Name]
+		if attributeRule.NotImplemented {
+			continue
+		}
 		if a.Stringifier {
 			result.HasStringifier = true
 		}

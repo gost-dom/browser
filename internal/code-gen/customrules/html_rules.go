@@ -6,13 +6,17 @@ var htmlRules = SpecRules{
 		"replace": {HasError: true},
 		"reload":  {HasError: true},
 	}},
-	"History": {Operations: OperationRules{
-		"go":           {HasError: true},
-		"back":         {HasError: true},
-		"forward":      {HasError: true},
-		"pushState":    {HasError: true},
-		"replaceState": {HasError: true},
-	}},
+	"History": {
+		Operations: OperationRules{
+			"go":           {HasError: true},
+			"back":         {HasError: true},
+			"forward":      {HasError: true},
+			"pushState":    {HasError: true},
+			"replaceState": {HasError: true},
+		},
+		Attributes: AttributeRules{
+			"scrollRestoration": {NotImplemented: true},
+		}},
 	"HTMLFormElement": {Operations: OperationRules{
 		"submit":        {HasError: true},
 		"requestSubmit": {HasError: true},
