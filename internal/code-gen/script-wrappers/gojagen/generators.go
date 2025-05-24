@@ -42,8 +42,8 @@ func (gen GojaTargetGenerators) CreateHostInitializer(model.ESConstructorData) g
 	return g.Noop
 }
 
-func (gen GojaTargetGenerators) CreateConstructorCallback(model.ESConstructorData) g.Generator {
-	return g.Noop
+func (gen GojaTargetGenerators) CreateConstructorCallbackBody(model.ESConstructorData) g.Generator {
+	return g.Raw(jen.Panic(jen.Lit("Goja constructor not yet implemented")))
 }
 
 func (gen GojaTargetGenerators) CreateInitFunction(data model.ESConstructorData) g.Generator {

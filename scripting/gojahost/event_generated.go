@@ -23,6 +23,10 @@ func (w eventWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime) {
 	prototype.DefineAccessorProperty("defaultPrevented", w.ctx.vm.ToValue(w.defaultPrevented), nil, g.FLAG_TRUE, g.FLAG_TRUE)
 }
 
+func (w eventWrapper) Constructor(c g.FunctionCall) g.Value {
+	panic("Goja constructor not yet implemented")
+}
+
 func (w eventWrapper) stopPropagation(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: Event.stopPropagation")
 	instance := w.getInstance(c)

@@ -40,6 +40,10 @@ func (w nodeWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime) {
 	prototype.DefineAccessorProperty("textContent", w.ctx.vm.ToValue(w.textContent), w.ctx.vm.ToValue(w.setTextContent), g.FLAG_TRUE, g.FLAG_TRUE)
 }
 
+func (w nodeWrapper) Constructor(c g.FunctionCall) g.Value {
+	panic("Goja constructor not yet implemented")
+}
+
 func (w nodeWrapper) getRootNode(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: Node.getRootNode")
 	instance := w.getInstance(c)

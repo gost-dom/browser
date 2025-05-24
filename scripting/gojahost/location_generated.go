@@ -36,6 +36,10 @@ func (w locationWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime)
 	prototype.DefineAccessorProperty("ancestorOrigins", w.ctx.vm.ToValue(w.ancestorOrigins), nil, g.FLAG_TRUE, g.FLAG_TRUE)
 }
 
+func (w locationWrapper) Constructor(c g.FunctionCall) g.Value {
+	panic("Goja constructor not yet implemented")
+}
+
 func (w locationWrapper) assign(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: Location.assign")
 	panic("Location.assign: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")

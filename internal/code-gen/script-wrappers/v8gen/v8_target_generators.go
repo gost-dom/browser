@@ -64,27 +64,35 @@ func (gen V8TargetGenerators) CreatePrototypeInitializerBody(
 	)
 }
 
-func (gen V8TargetGenerators) CreateConstructorCallback(data ESConstructorData) g.Generator {
-	naming := V8NamingStrategy{data}
-	var body g.Generator
+// func (gen V8TargetGenerators) CreateConstructorCallback(data ESConstructorData) g.Generator {
+// 	naming := V8NamingStrategy{data}
+// 	var body g.Generator
+// 	if model.IsNodeType(data.IdlInterface.Name) {
+// 		body = CreateV8IllegalConstructorBody(data)
+// 	} else {
+// 		body = CreateV8ConstructorWrapperBody(data)
+// 	}
+// 	return g.StatementList(
+// 		g.Line,
+// 		g.FunctionDefinition{
+// 			Name: "Constructor",
+// 			Receiver: g.FunctionArgument{
+// 				Name: g.Id(naming.Receiver()),
+// 				Type: g.Id(naming.PrototypeWrapperName()),
+// 			},
+// 			Args:     g.Arg(g.Id("info"), v8FunctionCallbackInfoPtr),
+// 			RtnTypes: g.List(v8Value, g.Id("error")),
+// 			Body:     body,
+// 		},
+// 	)
+// }
+
+func (gen V8TargetGenerators) CreateConstructorCallbackBody(data ESConstructorData) g.Generator {
 	if model.IsNodeType(data.IdlInterface.Name) {
-		body = CreateV8IllegalConstructorBody(data)
+		return CreateV8IllegalConstructorBody(data)
 	} else {
-		body = CreateV8ConstructorWrapperBody(data)
+		return CreateV8ConstructorWrapperBody(data)
 	}
-	return g.StatementList(
-		g.Line,
-		g.FunctionDefinition{
-			Name: "Constructor",
-			Receiver: g.FunctionArgument{
-				Name: g.Id(naming.Receiver()),
-				Type: g.Id(naming.PrototypeWrapperName()),
-			},
-			Args:     g.Arg(g.Id("info"), v8FunctionCallbackInfoPtr),
-			RtnTypes: g.List(v8Value, g.Id("error")),
-			Body:     body,
-		},
-	)
 }
 
 func (gen V8TargetGenerators) CreateAttributeGetter(

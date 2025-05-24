@@ -18,6 +18,10 @@ func (w pointerEventWrapper) initializePrototype(prototype *g.Object, vm *g.Runt
 	prototype.DefineAccessorProperty("tangentialPressure", w.ctx.vm.ToValue(w.tangentialPressure), nil, g.FLAG_TRUE, g.FLAG_TRUE)
 }
 
+func (w pointerEventWrapper) Constructor(c g.FunctionCall) g.Value {
+	panic("Goja constructor not yet implemented")
+}
+
 func (w pointerEventWrapper) width(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: PointerEvent.width")
 	panic("PointerEvent.width: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")

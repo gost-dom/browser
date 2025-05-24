@@ -46,7 +46,7 @@ type TargetGenerators interface {
 	CreatePrototypeInitializerBody(ESConstructorData) Generator
 	// CreateConstructorCallback generates the function to be called whan
 	// JavaScript code constructs an instance.
-	CreateConstructorCallback(ESConstructorData) Generator
+	CreateConstructorCallbackBody(ESConstructorData) Generator
 
 	CreateMethodCallbackBody(ESConstructorData, ESOperation) Generator
 	CreateAttributeGetter(ESConstructorData, ESOperation, func(Generator) Generator) Generator
@@ -99,7 +99,14 @@ func (gen PrototypeWrapperGenerator) Constructor() g.Generator {
 	if gen.Data.Spec.SkipConstructor {
 		return g.Noop
 	}
-	return gen.Platform.CreateConstructorCallback(gen.Data)
+	receiver := generators.Id("w")
+	return g.StatementList(
+		g.Line,
+		MethodCallback{
+			"Constructor", receiver, gen.Data, gen.Platform,
+			ConstructorCallbackBody{receiver, gen.Data, gen.Platform},
+		},
+	)
 }
 
 func (g PrototypeWrapperGenerator) CreateOperationCallbacks(data ESConstructorData) Generator {
@@ -109,9 +116,9 @@ func (g PrototypeWrapperGenerator) CreateOperationCallbacks(data ESConstructorDa
 		list.Append(
 			generators.Line,
 			MethodCallback{
+				op.CallbackMethodName(),
 				receiver,
 				data,
-				op,
 				g.Platform,
 				MethodCallbackBody{receiver, data, op, g.Platform},
 			},
@@ -127,7 +134,7 @@ func (gen PrototypeWrapperGenerator) CreateAttributeCallbacks(data ESConstructor
 		if attr.Getter != nil && !attr.Getter.CustomImplementation {
 			list.Append(
 				generators.Line,
-				MethodCallback{receiver, data, *attr.Getter, gen.Platform,
+				MethodCallback{attr.Getter.CallbackMethodName(), receiver, data, gen.Platform,
 					AttributeGetterCallbackBody{
 						receiver, data, *attr.Getter, gen.Platform,
 					},
@@ -137,7 +144,7 @@ func (gen PrototypeWrapperGenerator) CreateAttributeCallbacks(data ESConstructor
 		if attr.Setter != nil && !attr.Setter.CustomImplementation {
 			list.Append(
 				generators.Line,
-				MethodCallback{receiver, data, *attr.Setter, gen.Platform,
+				MethodCallback{attr.Setter.CallbackMethodName(), receiver, data, gen.Platform,
 					AttributeSetterCallbackBody{
 						receiver, data, *attr.Setter, gen.Platform,
 					},
@@ -172,9 +179,9 @@ func (c AttributeGetterCallback) Generate() *jen.Statement {
 }
 
 type MethodCallback struct {
+	name     string
 	receiver Generator
 	data     ESConstructorData
-	op       ESOperation
 	platform TargetGenerators
 	body     Generator
 }
@@ -186,7 +193,7 @@ func (c MethodCallback) Generate() *jen.Statement {
 			Name: c.receiver,
 			Type: typeGenerators.WrapperStructType(c.data.Name()),
 		},
-		Name:     c.op.CallbackMethodName(),
+		Name:     c.name,
 		Args:     typeGenerators.CallbackMethodArgs(),
 		RtnTypes: typeGenerators.CallbackMethodRetTypes(),
 		Body:     c.body,
@@ -292,4 +299,14 @@ func (b AttributeSetterCallbackBody) Generate() (res *jen.Statement) {
 		),
 	)
 	return
+}
+
+type ConstructorCallbackBody struct {
+	receiver g.Generator
+	data     ESConstructorData
+	platform TargetGenerators
+}
+
+func (b ConstructorCallbackBody) Generate() (res *jen.Statement) {
+	return b.platform.CreateConstructorCallbackBody(b.data).Generate()
 }
