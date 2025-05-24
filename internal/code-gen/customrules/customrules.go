@@ -14,8 +14,6 @@ package customrules
 import (
 	"reflect"
 
-	"github.com/gost-dom/code-gen/customrules/typerule"
-	. "github.com/gost-dom/code-gen/customrules/typerule"
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/webref/idl"
 )
@@ -59,7 +57,6 @@ type OperationRule struct {
 	HasError    bool
 	Arguments   ArgumentRules
 	DocComments string
-	ReturnType  *TypeRule
 }
 
 func (r OperationRule) Argument(name string) ArgumentRule {
@@ -79,11 +76,6 @@ type ArgumentRule struct {
 
 func (r ArgumentRule) OverridesType() bool { return !reflect.ValueOf(r.Type).IsZero() }
 
-type AttributeTypeRule struct {
-	Name    string
-	Package string
-}
-
 var parentNodeQueryOperation = OperationRule{HasError: true}
 var parentNodeOperation = OperationRule{
 	HasError: true,
@@ -95,11 +87,6 @@ See also: https://developer.mozilla.org/en-US/docs/Web/API/Element`,
 	Arguments: ArgumentRules{
 		"nodes": {Type: idl.Type{Name: "Node"}},
 	}}
-
-// The Go functions that correspond to a specific event generally return a bool,
-// which corresponds to the return value of DispatchEvent, indicating if the
-// event was cancelled or not.
-var eventOperation = OperationRule{ReturnType: typerule.Bool}
 
 var rules = CustomRules{
 	"url": {

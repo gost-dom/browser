@@ -176,17 +176,13 @@ func (o IdlInterfaceOperation) HasError() bool {
 // true, an error return type will be added as well.
 func (o IdlInterfaceOperation) ReturnParams() *jen.Statement {
 	result := make([]g.Generator, 1, 3)
-	if o.Rules.ReturnType != nil {
-		result[0] = o.Rules.ReturnType
-	} else {
-		s := o.ReturnType
-		result[0] = s
-		if s.Nullable && !s.Nillable() {
-			result = append(result, g.Id("bool"))
-		}
-		if o.HasError() {
-			result = append(result, g.Id("error"))
-		}
+	s := o.ReturnType
+	result[0] = s
+	if s.Nullable && !s.Nillable() {
+		result = append(result, g.Id("bool"))
+	}
+	if o.HasError() {
+		result = append(result, g.Id("error"))
 	}
 	return jen.Params(g.ToJenCodes(result)...)
 }
