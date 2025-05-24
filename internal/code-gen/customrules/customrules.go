@@ -18,6 +18,10 @@ import (
 	"github.com/gost-dom/webref/idl"
 )
 
+const (
+	DomInterfaces = Package(packagenames.DomInterfaces)
+)
+
 // CustomRules define the rules pr. IDL Spec. The key identifies the name of the
 // spec, which corresponds to the file name it was loaded from. E.g., "dom"
 // represent the types described in "dom.idl" in the webref specifications
@@ -47,10 +51,6 @@ type InterfaceRule struct {
 
 type OperationRules map[string]OperationRule
 
-const (
-	DomInterfaces = Package(packagenames.DomInterfaces)
-)
-
 type OperationRule struct {
 	// By default, an operation is assumed to not generate an error. Override
 	// the behaviour by setting this to true.
@@ -76,89 +76,11 @@ type ArgumentRule struct {
 
 func (r ArgumentRule) OverridesType() bool { return !reflect.ValueOf(r.Type).IsZero() }
 
-var parentNodeQueryOperation = OperationRule{HasError: true}
-var parentNodeOperation = OperationRule{
-	HasError: true,
-	DocComments: `Note that the IDL operation accepts either string or node values. This interface
-requires an explicit a [Node]. Use [Document.CreateText] to convert a string to
-a Node.
-
-See also: https://developer.mozilla.org/en-US/docs/Web/API/Element`,
-	Arguments: ArgumentRules{
-		"nodes": {Type: idl.Type{Name: "Node"}},
-	}}
-
 var rules = CustomRules{
-	"url": {
-		"URL": {Operations: OperationRules{
-			"toJSON": {HasError: true},
-		}},
-	},
-	"dom": {
-		"DOMTokenList": {Operations: OperationRules{
-			"add": {HasError: true},
-		}},
-		"Node": {Operations: OperationRules{
-			"insertBefore": {HasError: true},
-			"appendChild":  {HasError: true},
-			"removeChild":  {HasError: true},
-		}},
-		"Element": {Operations: OperationRules{
-			"matches": {HasError: true},
-		}},
-		"ParentNode": {Operations: OperationRules{
-			"append":           parentNodeOperation,
-			"prepend":          parentNodeOperation,
-			"replaceChildren":  parentNodeOperation,
-			"querySelector":    parentNodeQueryOperation,
-			"querySelectorAll": parentNodeQueryOperation,
-		}},
-		"MutationObserver": {
-			InterfacePackage: DomInterfaces,
-			Operations: OperationRules{
-				"observe": {
-					HasError: true,
-					Arguments: ArgumentRules{
-						"options": {
-							Type:     idl.Type{Name: "func(*MutationObserverInit)"},
-							Variadic: true,
-						},
-					}},
-			}},
-		"MutationRecord": {
-			InterfacePackage: DomInterfaces,
-			OutputType:       OutputTypeStruct,
-		},
-	},
-	"html": {
-		"Location": {Operations: OperationRules{
-			"assign":  {HasError: true},
-			"replace": {HasError: true},
-			"reload":  {HasError: true},
-		}},
-		"History": {Operations: OperationRules{
-			"go":           {HasError: true},
-			"back":         {HasError: true},
-			"forward":      {HasError: true},
-			"pushState":    {HasError: true},
-			"replaceState": {HasError: true},
-		}},
-		"HTMLFormElement": {Operations: OperationRules{
-			"submit":        {HasError: true},
-			"requestSubmit": {HasError: true},
-		}},
-		"HTMLOrSVGElement": {Operations: OperationRules{
-			"focus": {Arguments: ArgumentRules{"options": {Ignore: true}}},
-		}},
-	},
-	"xhr": {
-		"XMLHttpRequest": {Operations: OperationRules{
-			"getAllResponseHeaders": {HasError: true},
-			"send":                  {HasError: true},
-			"abort":                 {HasError: true},
-			"overrideMimeType":      {HasError: true},
-		}},
-	},
+	"url":  urlRules,
+	"dom":  domRules,
+	"html": htmlRules,
+	"xhr":  xhrRules,
 }
 
 func GetSpecRules(specName string) SpecRules {
