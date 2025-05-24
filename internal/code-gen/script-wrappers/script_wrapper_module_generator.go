@@ -46,13 +46,20 @@ type TargetGenerators interface {
 	CreatePrototypeInitializerBody(ESConstructorData) Generator
 	// CreateConstructorCallback generates the function to be called whan
 	// JavaScript code constructs an instance.
-	CreateConstructorCallbackBody(ESConstructorData) Generator
+	CreateConstructorCallbackBody(ESConstructorData, CallbackContext) Generator
+	CreateIllegalConstructorCallback(ESConstructorData) Generator
 
-	CreateMethodCallbackBody(ESConstructorData, ESOperation) Generator
-	CreateAttributeGetter(ESConstructorData, ESOperation, func(Generator) Generator) Generator
+	CreateMethodCallbackBody(ESConstructorData, ESOperation, CallbackContext) Generator
+	CreateAttributeGetter(
+		ESConstructorData,
+		ESOperation,
+		CallbackContext,
+		func(Generator) Generator,
+	) Generator
 	CreateAttributeSetter(
 		ESConstructorData,
 		ESOperation,
+		CallbackContext,
 		func(Generator, Generator) Generator,
 	) Generator
 	WrapperStructGenerators() PlatformWrapperStructGenerators
@@ -210,6 +217,7 @@ type MethodCallbackBody struct {
 func (b MethodCallbackBody) Generate() (res *jen.Statement) {
 	statements := g.StatementList()
 	defer func() { res = statements.Generate() }()
+	cbCtx := NewCallbackContext(g.Id("cbCtx"))
 
 	statements.Append(stdgen.LogDebug(
 		g.ValueOf(b.receiver).Field("logger").Call(b.platform.PlatformInfoArg()),
@@ -219,7 +227,9 @@ func (b MethodCallbackBody) Generate() (res *jen.Statement) {
 		statements.Append(b.ReturnNotImplementedError())
 		return
 	}
-	statements.Append(b.platform.CreateMethodCallbackBody(b.data, b.op))
+	statements.Append(
+		b.platform.CreateMethodCallbackBody(b.data, b.op, cbCtx),
+	)
 	return
 }
 
@@ -242,6 +252,7 @@ func (b AttributeGetterCallbackBody) Generate() (res *jen.Statement) {
 	statements := g.StatementList()
 	defer func() { res = statements.Generate() }()
 
+	cbCtx := NewCallbackContext(g.Id("cbCtx"))
 	statements.Append(stdgen.LogDebug(
 		g.ValueOf(b.receiver).Field("logger").Call(b.platform.PlatformInfoArg()),
 		g.Lit(fmt.Sprintf("V8 Function call: %s.%s", b.data.Name(), b.op.Name))))
@@ -251,15 +262,16 @@ func (b AttributeGetterCallbackBody) Generate() (res *jen.Statement) {
 		return
 	}
 	statements.Append(
-		b.platform.CreateAttributeGetter(b.data, b.op, func(instance g.Generator) g.Generator {
-			name := IdlNameToGoName(b.op.Name)
-			field := g.ValueOf(instance).Field(name)
-			if b.data.CustomRule.OutputType == customrules.OutputTypeStruct {
-				return field
-			} else {
-				return field.Call()
-			}
-		}),
+		b.platform.CreateAttributeGetter(b.data, b.op, cbCtx,
+			func(instance g.Generator) g.Generator {
+				name := IdlNameToGoName(b.op.Name)
+				field := g.ValueOf(instance).Field(name)
+				if b.data.CustomRule.OutputType == customrules.OutputTypeStruct {
+					return field
+				} else {
+					return field.Call()
+				}
+			}),
 	)
 	return
 }
@@ -279,14 +291,14 @@ func (b AttributeSetterCallbackBody) Generate() (res *jen.Statement) {
 		g.ValueOf(b.receiver).Field("logger").Call(b.platform.PlatformInfoArg()),
 		g.Lit(fmt.Sprintf("V8 Function call: %s.%s", b.data.Name(), b.op.Name))))
 
+	cbCtx := NewCallbackContext(g.Id("cbCtx"))
 	if b.op.NotImplemented {
 		statements.Append(MethodCallbackBody(b).ReturnNotImplementedError())
 		return
 	}
 	statements.Append(
 		b.platform.CreateAttributeSetter(
-			b.data,
-			b.op,
+			b.data, b.op, cbCtx,
 			func(instance g.Generator, val g.Generator) g.Generator {
 				name := IdlNameToGoName(b.op.Name)
 				field := g.ValueOf(instance).Field(name)
@@ -308,5 +320,10 @@ type ConstructorCallbackBody struct {
 }
 
 func (b ConstructorCallbackBody) Generate() (res *jen.Statement) {
-	return b.platform.CreateConstructorCallbackBody(b.data).Generate()
+	cbCtx := NewCallbackContext(g.Id("cbCtx"))
+	if b.data.AllowConstructor() {
+		return b.platform.CreateConstructorCallbackBody(b.data, cbCtx).Generate()
+	} else {
+		return b.platform.CreateIllegalConstructorCallback(b.data).Generate()
+	}
 }

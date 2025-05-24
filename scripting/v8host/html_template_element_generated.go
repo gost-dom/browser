@@ -65,13 +65,13 @@ func (w htmlTemplateElementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo)
 
 func (w htmlTemplateElementV8Wrapper) content(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLTemplateElement.content")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLTemplateElement](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLTemplateElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Content()
-	return args.Context().getInstanceForNode(result)
+	return cbCtx.Context().getInstanceForNode(result)
 }
 
 func (w htmlTemplateElementV8Wrapper) shadowRootMode(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

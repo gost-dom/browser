@@ -58,8 +58,8 @@ func (w parentNodeV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Val
 
 func (w parentNodeV8Wrapper) querySelector(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: ParentNode.querySelector")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dom.ParentNode](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[dom.ParentNode](cbCtx.Instance())
 	selectors, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -70,7 +70,7 @@ func (w parentNodeV8Wrapper) querySelector(info *v8.FunctionCallbackInfo) (*v8.V
 		if callErr != nil {
 			return nil, callErr
 		} else {
-			return args.Context().getInstanceForNode(result)
+			return cbCtx.Context().getInstanceForNode(result)
 		}
 	}
 	return nil, errors.New("ParentNode.querySelector: Missing arguments")
@@ -78,8 +78,8 @@ func (w parentNodeV8Wrapper) querySelector(info *v8.FunctionCallbackInfo) (*v8.V
 
 func (w parentNodeV8Wrapper) querySelectorAll(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: ParentNode.querySelectorAll")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dom.ParentNode](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[dom.ParentNode](cbCtx.Instance())
 	selectors, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -90,7 +90,7 @@ func (w parentNodeV8Wrapper) querySelectorAll(info *v8.FunctionCallbackInfo) (*v
 		if callErr != nil {
 			return nil, callErr
 		} else {
-			return w.toNodeList(args.Context(), result)
+			return w.toNodeList(cbCtx.Context(), result)
 		}
 	}
 	return nil, errors.New("ParentNode.querySelectorAll: Missing arguments")
@@ -98,33 +98,33 @@ func (w parentNodeV8Wrapper) querySelectorAll(info *v8.FunctionCallbackInfo) (*v
 
 func (w parentNodeV8Wrapper) firstElementChild(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: ParentNode.firstElementChild")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.ParentNode](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.FirstElementChild()
-	return args.Context().getInstanceForNode(result)
+	return cbCtx.Context().getInstanceForNode(result)
 }
 
 func (w parentNodeV8Wrapper) lastElementChild(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: ParentNode.lastElementChild")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.ParentNode](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.LastElementChild()
-	return args.Context().getInstanceForNode(result)
+	return cbCtx.Context().getInstanceForNode(result)
 }
 
 func (w parentNodeV8Wrapper) childElementCount(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: ParentNode.childElementCount")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.ParentNode](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.ChildElementCount()
-	return w.toUnsignedLong(args.Context(), result)
+	return w.toUnsignedLong(cbCtx.Context(), result)
 }

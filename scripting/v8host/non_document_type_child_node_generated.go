@@ -48,22 +48,22 @@ func (w nonDocumentTypeChildNodeV8Wrapper) Constructor(info *v8.FunctionCallback
 
 func (w nonDocumentTypeChildNodeV8Wrapper) previousElementSibling(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: NonDocumentTypeChildNode.previousElementSibling")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.NonDocumentTypeChildNode](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.NonDocumentTypeChildNode](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.PreviousElementSibling()
-	return args.Context().getInstanceForNode(result)
+	return cbCtx.Context().getInstanceForNode(result)
 }
 
 func (w nonDocumentTypeChildNodeV8Wrapper) nextElementSibling(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: NonDocumentTypeChildNode.nextElementSibling")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.NonDocumentTypeChildNode](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.NonDocumentTypeChildNode](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.NextElementSibling()
-	return args.Context().getInstanceForNode(result)
+	return cbCtx.Context().getInstanceForNode(result)
 }

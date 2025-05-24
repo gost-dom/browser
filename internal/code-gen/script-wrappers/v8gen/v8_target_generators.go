@@ -2,7 +2,6 @@ package v8gen
 
 import (
 	wrappers "github.com/gost-dom/code-gen/script-wrappers"
-	"github.com/gost-dom/code-gen/script-wrappers/model"
 	. "github.com/gost-dom/code-gen/script-wrappers/model"
 	"github.com/gost-dom/code-gen/stdgen"
 	g "github.com/gost-dom/generators"
@@ -64,47 +63,26 @@ func (gen V8TargetGenerators) CreatePrototypeInitializerBody(
 	)
 }
 
-// func (gen V8TargetGenerators) CreateConstructorCallback(data ESConstructorData) g.Generator {
-// 	naming := V8NamingStrategy{data}
-// 	var body g.Generator
-// 	if model.IsNodeType(data.IdlInterface.Name) {
-// 		body = CreateV8IllegalConstructorBody(data)
-// 	} else {
-// 		body = CreateV8ConstructorWrapperBody(data)
-// 	}
-// 	return g.StatementList(
-// 		g.Line,
-// 		g.FunctionDefinition{
-// 			Name: "Constructor",
-// 			Receiver: g.FunctionArgument{
-// 				Name: g.Id(naming.Receiver()),
-// 				Type: g.Id(naming.PrototypeWrapperName()),
-// 			},
-// 			Args:     g.Arg(g.Id("info"), v8FunctionCallbackInfoPtr),
-// 			RtnTypes: g.List(v8Value, g.Id("error")),
-// 			Body:     body,
-// 		},
-// 	)
-// }
-
-func (gen V8TargetGenerators) CreateConstructorCallbackBody(data ESConstructorData) g.Generator {
-	if model.IsNodeType(data.IdlInterface.Name) {
-		return CreateV8IllegalConstructorBody(data)
-	} else {
-		return CreateV8ConstructorWrapperBody(data)
-	}
+func (gen V8TargetGenerators) CreateConstructorCallbackBody(
+	data ESConstructorData,
+	cbCtx wrappers.CallbackContext,
+) g.Generator {
+	return CreateV8ConstructorWrapperBody(data, cbCtx)
+}
+func (gen V8TargetGenerators) CreateIllegalConstructorCallback(data ESConstructorData) g.Generator {
+	return CreateV8IllegalConstructorBody(data)
 }
 
 func (gen V8TargetGenerators) CreateAttributeGetter(
 	data ESConstructorData,
 	op ESOperation,
+	cbCtx wrappers.CallbackContext,
 	eval func(g.Generator) g.Generator,
 ) g.Generator {
 	instance := g.NewValue("instance")
 	err := g.NewValue("err")
 	naming := V8NamingStrategy{data}
 	receiver := WrapperInstance{g.NewValue(naming.Receiver())}
-	cbCtx := NewCallbackContext(g.Id("args"))
 	host := g.NewValue("w").Field("scriptHost")
 	cbInfo := g.Id("info")
 
@@ -129,6 +107,7 @@ func (gen V8TargetGenerators) CreateAttributeGetter(
 func (gen V8TargetGenerators) CreateAttributeSetter(
 	data ESConstructorData,
 	op ESOperation,
+	cbCtx wrappers.CallbackContext,
 	set func(g.Generator, g.Generator) g.Generator,
 ) g.Generator {
 	var (
@@ -140,7 +119,6 @@ func (gen V8TargetGenerators) CreateAttributeSetter(
 
 	naming := V8NamingStrategy{data}
 	receiver := WrapperInstance{g.NewValue(naming.Receiver())}
-	cbCtx := NewCallbackContext(g.Id("args"))
 
 	args := append(
 		[]g.Generator{cbCtx.Context(), g.Id("info")},
@@ -168,6 +146,7 @@ func (gen V8TargetGenerators) CreateAttributeSetter(
 func (gen V8TargetGenerators) CreateMethodCallbackBody(
 	data ESConstructorData,
 	op ESOperation,
+	cbCtx wrappers.CallbackContext,
 ) g.Generator {
 	naming := V8NamingStrategy{data}
 	receiver := WrapperInstance{g.NewValue(naming.Receiver())}
@@ -177,7 +156,6 @@ func (gen V8TargetGenerators) CreateMethodCallbackBody(
 	if len(op.Arguments) == 0 {
 		err = g.Id("err")
 	}
-	cbCtx := NewCallbackContext(g.Id("args"))
 	ctx := cbCtx.Context()
 	requireContext := false
 	var CreateCall = func(functionName string, argnames []g.Generator, op ESOperation) g.Generator {

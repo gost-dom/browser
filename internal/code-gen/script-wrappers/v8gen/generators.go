@@ -58,15 +58,14 @@ func CreateV8ConstructorBody(data ESConstructorData) g.Generator {
 	return statements
 }
 
-func CreateV8ConstructorWrapperBody(data ESConstructorData) g.Generator {
+func CreateV8ConstructorWrapperBody(
+	data ESConstructorData,
+	cbCtx wrappers.CallbackContext,
+) g.Generator {
 	naming := V8NamingStrategy{data}
-	if data.Constructor == nil {
-		return CreateV8IllegalConstructorBody(data)
-	}
 	var readArgsResult V8ReadArguments
 	op := *data.Constructor
 	readArgsResult = ReadArguments(data, op)
-	cbCtx := NewCallbackContext(g.Id("args"))
 	host := g.NewValue("w").Field("scriptHost")
 	cbInfo := g.NewValue("info")
 	statements := g.StatementList(
@@ -81,15 +80,6 @@ func CreateV8ConstructorWrapperBody(data ESConstructorData) g.Generator {
 					cbInfo.Field("This").Call()},
 					argnames...)...,
 				),
-				// g.Return(
-				// 	g.Raw(jen.Id(naming.Receiver()).Dot(functionName).CallFunc(func(grp *jen.Group) {
-				// 		grp.Add(cbCtx.Context().Generate())
-				// 		grp.Add(jen.Id("info").Dot("This").Call())
-				// 		for _, name := range argnames {
-				// 			grp.Add(name.Generate())
-				// 		}
-				// 	})),
-				// ),
 			))
 	}
 	statements.Append(

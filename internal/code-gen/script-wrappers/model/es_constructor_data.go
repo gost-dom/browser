@@ -20,6 +20,16 @@ type ESConstructorData struct {
 	RunCustomCode bool
 }
 
+func (d ESConstructorData) AllowConstructor() bool {
+	if IsNodeType(d.IdlInterface.Name) {
+		return false
+	}
+	if d.Constructor == nil {
+		return false
+	}
+	return true
+}
+
 // Return the idl mixin interfaces included in this interface AND that has been
 // included in the configuration
 func (d ESConstructorData) Includes() []idl.Interface {

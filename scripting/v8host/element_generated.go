@@ -118,8 +118,8 @@ func (w elementV8Wrapper) getAttributeNS(info *v8.FunctionCallbackInfo) (*v8.Val
 
 func (w elementV8Wrapper) setAttribute(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Element.setAttribute")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dom.Element](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[dom.Element](cbCtx.Instance())
 	qualifiedName, err1 := tryParseArg(args, 0, w.decodeString)
 	value, err2 := tryParseArg(args, 1, w.decodeString)
 	if args.noOfReadArguments >= 2 {
@@ -140,8 +140,8 @@ func (w elementV8Wrapper) setAttributeNS(info *v8.FunctionCallbackInfo) (*v8.Val
 
 func (w elementV8Wrapper) removeAttribute(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Element.removeAttribute")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dom.Element](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[dom.Element](cbCtx.Instance())
 	qualifiedName, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -166,8 +166,8 @@ func (w elementV8Wrapper) toggleAttribute(info *v8.FunctionCallbackInfo) (*v8.Va
 
 func (w elementV8Wrapper) hasAttribute(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Element.hasAttribute")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dom.Element](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[dom.Element](cbCtx.Instance())
 	qualifiedName, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -175,7 +175,7 @@ func (w elementV8Wrapper) hasAttribute(info *v8.FunctionCallbackInfo) (*v8.Value
 			return nil, err
 		}
 		result := instance.HasAttribute(qualifiedName)
-		return w.toBoolean(args.Context(), result)
+		return w.toBoolean(cbCtx.Context(), result)
 	}
 	return nil, errors.New("Element.hasAttribute: Missing arguments")
 }
@@ -217,8 +217,8 @@ func (w elementV8Wrapper) attachShadow(info *v8.FunctionCallbackInfo) (*v8.Value
 
 func (w elementV8Wrapper) matches(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Element.matches")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dom.Element](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[dom.Element](cbCtx.Instance())
 	selectors, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -229,7 +229,7 @@ func (w elementV8Wrapper) matches(info *v8.FunctionCallbackInfo) (*v8.Value, err
 		if callErr != nil {
 			return nil, callErr
 		} else {
-			return w.toBoolean(args.Context(), result)
+			return w.toBoolean(cbCtx.Context(), result)
 		}
 	}
 	return nil, errors.New("Element.matches: Missing arguments")
@@ -277,31 +277,31 @@ func (w elementV8Wrapper) localName(info *v8.FunctionCallbackInfo) (*v8.Value, e
 
 func (w elementV8Wrapper) tagName(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Element.tagName")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.Element](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.Element](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.TagName()
-	return w.toString_(args.Context(), result)
+	return w.toString_(cbCtx.Context(), result)
 }
 
 func (w elementV8Wrapper) id(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Element.id")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.Element](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.Element](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.ID()
-	return w.toString_(args.Context(), result)
+	return w.toString_(cbCtx.Context(), result)
 }
 
 func (w elementV8Wrapper) setID(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Element.setID")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dom.Element](args.Instance())
-	val, err1 := parseSetterArg(args.Context(), info, w.decodeString)
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[dom.Element](cbCtx.Instance())
+	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
@@ -332,13 +332,13 @@ func (w elementV8Wrapper) setSlot(info *v8.FunctionCallbackInfo) (*v8.Value, err
 
 func (w elementV8Wrapper) attributes(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Element.attributes")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.Element](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.Element](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Attributes()
-	return w.toNamedNodeMap(args.Context(), result)
+	return w.toNamedNodeMap(cbCtx.Context(), result)
 }
 
 func (w elementV8Wrapper) shadowRoot(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

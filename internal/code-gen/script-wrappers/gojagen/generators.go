@@ -42,7 +42,16 @@ func (gen GojaTargetGenerators) CreateHostInitializer(model.ESConstructorData) g
 	return g.Noop
 }
 
-func (gen GojaTargetGenerators) CreateConstructorCallbackBody(model.ESConstructorData) g.Generator {
+func (gen GojaTargetGenerators) CreateConstructorCallbackBody(
+	model.ESConstructorData,
+	wrappers.CallbackContext,
+) g.Generator {
+	return g.Raw(jen.Panic(jen.Lit("Goja constructor not yet implemented")))
+}
+
+func (gen GojaTargetGenerators) CreateIllegalConstructorCallback(
+	model.ESConstructorData,
+) g.Generator {
 	return g.Raw(jen.Panic(jen.Lit("Goja constructor not yet implemented")))
 }
 
@@ -120,6 +129,7 @@ func (gen GojaTargetGenerators) ReturnErrMsg(errGen g.Generator) g.Generator {
 func (gen GojaTargetGenerators) CreateAttributeGetter(
 	data model.ESConstructorData,
 	op model.ESOperation,
+	cbCtx wrappers.CallbackContext,
 	eval func(g.Generator) g.Generator,
 ) g.Generator {
 	// return gen.CreateMethodCallbackBody(data, op)
@@ -136,6 +146,7 @@ func (gen GojaTargetGenerators) CreateAttributeGetter(
 func (gen GojaTargetGenerators) CreateAttributeSetter(
 	data model.ESConstructorData,
 	op model.ESOperation,
+	cbCtx wrappers.CallbackContext,
 	updateValue func(g.Generator, g.Generator) g.Generator,
 ) g.Generator {
 	callArgument := g.Id("c")
@@ -160,6 +171,7 @@ func (gen GojaTargetGenerators) CreateAttributeSetter(
 func (gen GojaTargetGenerators) CreateMethodCallbackBody(
 	data model.ESConstructorData,
 	op model.ESOperation,
+	cbCtx wrappers.CallbackContext,
 ) g.Generator {
 	callArgument := g.Id("c")
 	naming := GojaNamingStrategy{data}

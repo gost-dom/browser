@@ -59,8 +59,8 @@ func (w htmlOrSVGElementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*
 
 func (w htmlOrSVGElementV8Wrapper) blur(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.blur")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLOrSVGElement](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -75,20 +75,20 @@ func (w htmlOrSVGElementV8Wrapper) dataset(info *v8.FunctionCallbackInfo) (*v8.V
 
 func (w htmlOrSVGElementV8Wrapper) nonce(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.nonce")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLOrSVGElement](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Nonce()
-	return w.toString_(args.Context(), result)
+	return w.toString_(cbCtx.Context(), result)
 }
 
 func (w htmlOrSVGElementV8Wrapper) setNonce(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.setNonce")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.HTMLOrSVGElement](args.Instance())
-	val, err1 := parseSetterArg(args.Context(), info, w.decodeString)
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.HTMLOrSVGElement](cbCtx.Instance())
+	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
@@ -99,20 +99,20 @@ func (w htmlOrSVGElementV8Wrapper) setNonce(info *v8.FunctionCallbackInfo) (*v8.
 
 func (w htmlOrSVGElementV8Wrapper) autofocus(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.autofocus")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLOrSVGElement](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Autofocus()
-	return w.toBoolean(args.Context(), result)
+	return w.toBoolean(cbCtx.Context(), result)
 }
 
 func (w htmlOrSVGElementV8Wrapper) setAutofocus(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.setAutofocus")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.HTMLOrSVGElement](args.Instance())
-	val, err1 := parseSetterArg(args.Context(), info, w.decodeBoolean)
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.HTMLOrSVGElement](cbCtx.Instance())
+	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeBoolean)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
@@ -123,20 +123,20 @@ func (w htmlOrSVGElementV8Wrapper) setAutofocus(info *v8.FunctionCallbackInfo) (
 
 func (w htmlOrSVGElementV8Wrapper) tabIndex(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.tabIndex")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLOrSVGElement](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.TabIndex()
-	return w.toLong(args.Context(), result)
+	return w.toLong(cbCtx.Context(), result)
 }
 
 func (w htmlOrSVGElementV8Wrapper) setTabIndex(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.setTabIndex")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.HTMLOrSVGElement](args.Instance())
-	val, err1 := parseSetterArg(args.Context(), info, w.decodeLong)
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.HTMLOrSVGElement](cbCtx.Instance())
+	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeLong)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
