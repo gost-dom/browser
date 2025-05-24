@@ -2,7 +2,10 @@ package log
 
 import (
 	"context"
+	"errors"
 	"log/slog"
+
+	"github.com/gost-dom/v8go"
 )
 
 type LogSource interface{ Logger() *slog.Logger }
@@ -51,4 +54,41 @@ func Debug(source Logger, msg string, args ...any) {
 
 func Error(source Logger, msg string, args ...any) {
 	logger(source).Error(msg, args...)
+}
+
+// ErrAttr creates a log record attribute representing an error. If the error
+// originates from JavaScript, location and stack trace are included in the log
+// record.
+func ErrAttr(err error) slog.Attr {
+	var jsError *v8go.JSError
+	if errors.As(err, &jsError) {
+		return slog.Group("err",
+			"message", jsError.Message,
+			"location", jsError.Location,
+			"stackTrace", jsError.StackTrace,
+		)
+	}
+	var exception *v8go.Exception
+	if errors.As(err, &exception) {
+		obj, isObj := exception.Value.AsObject()
+		if isObj == nil {
+			attrs := make([]any, 1, 8)
+			attrs[0] = slog.Any("error", exception.Error())
+			addValue := func(key string) {
+				if val, err := obj.Get(key); err == nil {
+					attrs = append(attrs, slog.Any(key, val))
+				}
+			}
+			addValue("message")
+			addValue("cause")
+			addValue("fileName")
+			addValue("lineNumber")
+			addValue("columnNumber")
+			addValue("name")
+			addValue("stack")
+
+			slog.Group("err", attrs...)
+		}
+	}
+	return slog.Any("err", err)
 }

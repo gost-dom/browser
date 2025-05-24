@@ -228,7 +228,7 @@ func (host *V8ScriptHost) promiseRejected(msg v8go.PromiseRejectMessage) {
 	}
 
 	ctx.eventLoop.errorCb(err)
-	log.Error(host.logger, "Rejected promise", "err", err)
+	log.Error(host.logger, "Rejected promise", log.ErrAttr(err))
 }
 
 func (host *V8ScriptHost) Logger() log.Logger { return host.logger }

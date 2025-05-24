@@ -219,7 +219,7 @@ func (w *window) Navigate(href string) (err error) {
 	log.Info(w.Logger(), "Window.navigate:", "href", href)
 	defer func() {
 		if err != nil {
-			log.Warn(w.logger, "Window.navigate: Error response", "err", err.Error())
+			log.Warn(w.logger, "Window.navigate: Error response", log.ErrAttr(err))
 		}
 	}()
 	w.History().pushLoad(href)
