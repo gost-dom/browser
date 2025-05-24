@@ -33,6 +33,10 @@ func (s GojaNamingStrategy) ReceiverName() string {
 
 type GojaTargetGenerators struct{}
 
+func (gen GojaTargetGenerators) Host(receiver g.Generator) g.Generator {
+	return g.ValueOf(receiver).Field("ctx")
+}
+
 func (gen GojaTargetGenerators) PlatformInfoArg() g.Generator { return g.Id("c") }
 
 // CreateConstructor has no effect for Goja. It's currently based on a system
@@ -43,10 +47,10 @@ func (gen GojaTargetGenerators) CreateHostInitializer(model.ESConstructorData) g
 }
 
 func (gen GojaTargetGenerators) CreateConstructorCallbackBody(
-	model.ESConstructorData,
-	wrappers.CallbackContext,
+	data model.ESConstructorData,
+	cbCtx wrappers.CallbackContext,
 ) g.Generator {
-	return g.Raw(jen.Panic(jen.Lit("Goja constructor not yet implemented")))
+	return g.Return(cbCtx.ReturnWithTypeError("Goja constructor not yet implemented"))
 }
 
 func (gen GojaTargetGenerators) CreateIllegalConstructorCallback(
@@ -139,7 +143,7 @@ func (gen GojaTargetGenerators) CreateAttributeGetter(
 	instance := g.NewValue("instance")
 	return g.StatementList(
 		g.Assign(instance, receiver.Field("getInstance").Call(callArgument)),
-		gen.ConvertResult(op, receiver, eval(instance)),
+		gen.ConvertResult(op, receiver, cbCtx, eval(instance)),
 	)
 }
 
@@ -164,7 +168,7 @@ func (gen GojaTargetGenerators) CreateAttributeSetter(
 	return g.StatementList(
 		g.Assign(instance, receiver.Field("getInstance").Call(callArgument)),
 		readArgs,
-		gen.ConvertResult(op, receiver, updateValue(instance, argNames[0])),
+		gen.ConvertResult(op, receiver, cbCtx, updateValue(instance, argNames[0])),
 	)
 }
 
@@ -188,7 +192,7 @@ func (gen GojaTargetGenerators) CreateMethodCallbackBody(
 	return g.StatementList(
 		g.Assign(instance, receiver.Field("getInstance").Call(callArgument)),
 		readArgs,
-		gen.ConvertResult(op, receiver,
+		gen.ConvertResult(op, receiver, cbCtx,
 			instance.Field(UpperCaseFirstLetter(op.Name)).Call(argNames...),
 		),
 	)
@@ -197,6 +201,7 @@ func (gen GojaTargetGenerators) CreateMethodCallbackBody(
 func (gen GojaTargetGenerators) ConvertResult(
 	op model.ESOperation,
 	receiver g.Value,
+	cbCtx wrappers.CallbackContext,
 	evaluate g.Generator,
 ) g.Generator {
 	list := g.StatementList()
@@ -215,7 +220,7 @@ func (gen GojaTargetGenerators) ConvertResult(
 				g.Assign(g.Id("result"), evaluate),
 			)
 		}
-		list.Append(g.Return(receiver.Field(converter).Call(g.Id("result"))))
+		list.Append(g.Return(cbCtx.ReturnWithValue(receiver.Field(converter).Call(g.Id("result")))))
 	} else {
 		if op.GetHasError() {
 			list.Append(
@@ -225,7 +230,7 @@ func (gen GojaTargetGenerators) ConvertResult(
 
 		} else {
 			list.Append(evaluate)
-			list.Append(g.Return(g.Nil))
+			list.Append(g.Return(cbCtx.ReturnWithValue(g.Nil)))
 		}
 	}
 	return list

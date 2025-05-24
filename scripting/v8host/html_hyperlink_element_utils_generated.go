@@ -82,25 +82,26 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) installPrototype(prototypeTmpl *v8.O
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.Constructor")
-	return nil, v8.NewTypeError(w.scriptHost.iso, "Illegal Constructor")
+	args := newArgumentHelper(w.scriptHost, info)
+	return args.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) href(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.href")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLHyperlinkElementUtils](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Href()
-	return w.toString_(cbCtx.Context(), result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setHref(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setHref")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeString)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.HTMLHyperlinkElementUtils](args.Instance())
+	val, err1 := parseSetterArg(args.Context(), info, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
@@ -111,31 +112,31 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setHref(info *v8.FunctionCallbackInf
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) origin(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.origin")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLHyperlinkElementUtils](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Origin()
-	return w.toString_(cbCtx.Context(), result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) protocol(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.protocol")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLHyperlinkElementUtils](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Protocol()
-	return w.toString_(cbCtx.Context(), result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setProtocol(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setProtocol")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeString)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.HTMLHyperlinkElementUtils](args.Instance())
+	val, err1 := parseSetterArg(args.Context(), info, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
@@ -146,20 +147,20 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setProtocol(info *v8.FunctionCallbac
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) username(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.username")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLHyperlinkElementUtils](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Username()
-	return w.toString_(cbCtx.Context(), result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setUsername(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setUsername")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeString)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.HTMLHyperlinkElementUtils](args.Instance())
+	val, err1 := parseSetterArg(args.Context(), info, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
@@ -170,20 +171,20 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setUsername(info *v8.FunctionCallbac
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) password(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.password")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLHyperlinkElementUtils](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Password()
-	return w.toString_(cbCtx.Context(), result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setPassword(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setPassword")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeString)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.HTMLHyperlinkElementUtils](args.Instance())
+	val, err1 := parseSetterArg(args.Context(), info, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
@@ -194,20 +195,20 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setPassword(info *v8.FunctionCallbac
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) host(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.host")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLHyperlinkElementUtils](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Host()
-	return w.toString_(cbCtx.Context(), result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setHost(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setHost")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeString)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.HTMLHyperlinkElementUtils](args.Instance())
+	val, err1 := parseSetterArg(args.Context(), info, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
@@ -218,20 +219,20 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setHost(info *v8.FunctionCallbackInf
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) hostname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.hostname")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLHyperlinkElementUtils](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Hostname()
-	return w.toString_(cbCtx.Context(), result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setHostname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setHostname")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeString)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.HTMLHyperlinkElementUtils](args.Instance())
+	val, err1 := parseSetterArg(args.Context(), info, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
@@ -242,20 +243,20 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setHostname(info *v8.FunctionCallbac
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) port(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.port")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLHyperlinkElementUtils](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Port()
-	return w.toString_(cbCtx.Context(), result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setPort(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setPort")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeString)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.HTMLHyperlinkElementUtils](args.Instance())
+	val, err1 := parseSetterArg(args.Context(), info, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
@@ -266,20 +267,20 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setPort(info *v8.FunctionCallbackInf
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) pathname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.pathname")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLHyperlinkElementUtils](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Pathname()
-	return w.toString_(cbCtx.Context(), result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setPathname(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setPathname")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeString)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.HTMLHyperlinkElementUtils](args.Instance())
+	val, err1 := parseSetterArg(args.Context(), info, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
@@ -290,20 +291,20 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setPathname(info *v8.FunctionCallbac
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) search(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.search")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLHyperlinkElementUtils](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Search()
-	return w.toString_(cbCtx.Context(), result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setSearch(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setSearch")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeString)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.HTMLHyperlinkElementUtils](args.Instance())
+	val, err1 := parseSetterArg(args.Context(), info, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
@@ -314,20 +315,20 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setSearch(info *v8.FunctionCallbackI
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) hash(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.hash")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLHyperlinkElementUtils](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Hash()
-	return w.toString_(cbCtx.Context(), result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setHash(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLHyperlinkElementUtils.setHash")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeString)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.HTMLHyperlinkElementUtils](args.Instance())
+	val, err1 := parseSetterArg(args.Context(), info, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err

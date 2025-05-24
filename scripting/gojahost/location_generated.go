@@ -38,7 +38,8 @@ func (w locationWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime)
 
 func (w locationWrapper) Constructor(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: Location.Constructor")
-	panic("Goja constructor not yet implemented")
+	args := newArgumentHelper(w.ctx, c)
+	return args.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w locationWrapper) assign(c g.FunctionCall) g.Value {
@@ -58,9 +59,10 @@ func (w locationWrapper) reload(c g.FunctionCall) g.Value {
 
 func (w locationWrapper) href(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: Location.href")
+	args := newArgumentHelper(w.ctx, c)
 	instance := w.getInstance(c)
 	result := instance.Href()
-	return w.toString_(result)
+	return args.ReturnWithValue(w.toString_(result))
 }
 
 func (w locationWrapper) setHref(c g.FunctionCall) g.Value {
@@ -70,16 +72,18 @@ func (w locationWrapper) setHref(c g.FunctionCall) g.Value {
 
 func (w locationWrapper) origin(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: Location.origin")
+	args := newArgumentHelper(w.ctx, c)
 	instance := w.getInstance(c)
 	result := instance.Origin()
-	return w.toString_(result)
+	return args.ReturnWithValue(w.toString_(result))
 }
 
 func (w locationWrapper) protocol(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: Location.protocol")
+	args := newArgumentHelper(w.ctx, c)
 	instance := w.getInstance(c)
 	result := instance.Protocol()
-	return w.toString_(result)
+	return args.ReturnWithValue(w.toString_(result))
 }
 
 func (w locationWrapper) setProtocol(c g.FunctionCall) g.Value {
@@ -89,9 +93,10 @@ func (w locationWrapper) setProtocol(c g.FunctionCall) g.Value {
 
 func (w locationWrapper) host(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: Location.host")
+	args := newArgumentHelper(w.ctx, c)
 	instance := w.getInstance(c)
 	result := instance.Host()
-	return w.toString_(result)
+	return args.ReturnWithValue(w.toString_(result))
 }
 
 func (w locationWrapper) setHost(c g.FunctionCall) g.Value {
@@ -101,9 +106,10 @@ func (w locationWrapper) setHost(c g.FunctionCall) g.Value {
 
 func (w locationWrapper) hostname(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: Location.hostname")
+	args := newArgumentHelper(w.ctx, c)
 	instance := w.getInstance(c)
 	result := instance.Hostname()
-	return w.toString_(result)
+	return args.ReturnWithValue(w.toString_(result))
 }
 
 func (w locationWrapper) setHostname(c g.FunctionCall) g.Value {
@@ -113,9 +119,10 @@ func (w locationWrapper) setHostname(c g.FunctionCall) g.Value {
 
 func (w locationWrapper) port(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: Location.port")
+	args := newArgumentHelper(w.ctx, c)
 	instance := w.getInstance(c)
 	result := instance.Port()
-	return w.toString_(result)
+	return args.ReturnWithValue(w.toString_(result))
 }
 
 func (w locationWrapper) setPort(c g.FunctionCall) g.Value {
@@ -125,9 +132,10 @@ func (w locationWrapper) setPort(c g.FunctionCall) g.Value {
 
 func (w locationWrapper) pathname(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: Location.pathname")
+	args := newArgumentHelper(w.ctx, c)
 	instance := w.getInstance(c)
 	result := instance.Pathname()
-	return w.toString_(result)
+	return args.ReturnWithValue(w.toString_(result))
 }
 
 func (w locationWrapper) setPathname(c g.FunctionCall) g.Value {
@@ -137,9 +145,10 @@ func (w locationWrapper) setPathname(c g.FunctionCall) g.Value {
 
 func (w locationWrapper) search(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: Location.search")
+	args := newArgumentHelper(w.ctx, c)
 	instance := w.getInstance(c)
 	result := instance.Search()
-	return w.toString_(result)
+	return args.ReturnWithValue(w.toString_(result))
 }
 
 func (w locationWrapper) setSearch(c g.FunctionCall) g.Value {
@@ -149,9 +158,10 @@ func (w locationWrapper) setSearch(c g.FunctionCall) g.Value {
 
 func (w locationWrapper) hash(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: Location.hash")
+	args := newArgumentHelper(w.ctx, c)
 	instance := w.getInstance(c)
 	result := instance.Hash()
-	return w.toString_(result)
+	return args.ReturnWithValue(w.toString_(result))
 }
 
 func (w locationWrapper) setHash(c g.FunctionCall) g.Value {

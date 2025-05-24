@@ -218,7 +218,7 @@ func CreateV8Specs() WebIdlConfigurations {
 	window.Method("parent").Ignore() // On `Node`
 	window.Method("history").SetCustomImplementation()
 
-	window.Method("prompt").SetNotImplemented()
+	window.Method("prompt").Ignore()
 	window.Method("close").SetNotImplemented()
 	window.Method("stop").SetNotImplemented()
 	window.Method("focus").SetNotImplemented()

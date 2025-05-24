@@ -58,13 +58,14 @@ func (w domTokenListV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate
 
 func (w domTokenListV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.Constructor")
-	return nil, v8.NewTypeError(w.scriptHost.iso, "Illegal Constructor")
+	args := newArgumentHelper(w.scriptHost, info)
+	return args.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w domTokenListV8Wrapper) item(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.item")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dom.DOMTokenList](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[dom.DOMTokenList](args.Instance())
 	index, err1 := tryParseArg(args, 0, w.decodeUnsignedLong)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -72,15 +73,15 @@ func (w domTokenListV8Wrapper) item(info *v8.FunctionCallbackInfo) (*v8.Value, e
 			return nil, err
 		}
 		result := instance.Item(index)
-		return w.toNullableString_(cbCtx.Context(), result)
+		return w.toNullableString_(args.Context(), result)
 	}
 	return nil, errors.New("DOMTokenList.item: Missing arguments")
 }
 
 func (w domTokenListV8Wrapper) contains(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.contains")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dom.DOMTokenList](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[dom.DOMTokenList](args.Instance())
 	token, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -88,15 +89,15 @@ func (w domTokenListV8Wrapper) contains(info *v8.FunctionCallbackInfo) (*v8.Valu
 			return nil, err
 		}
 		result := instance.Contains(token)
-		return w.toBoolean(cbCtx.Context(), result)
+		return w.toBoolean(args.Context(), result)
 	}
 	return nil, errors.New("DOMTokenList.contains: Missing arguments")
 }
 
 func (w domTokenListV8Wrapper) add(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.add")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dom.DOMTokenList](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[dom.DOMTokenList](args.Instance())
 	tokens, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -111,8 +112,8 @@ func (w domTokenListV8Wrapper) add(info *v8.FunctionCallbackInfo) (*v8.Value, er
 
 func (w domTokenListV8Wrapper) remove(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.remove")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dom.DOMTokenList](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[dom.DOMTokenList](args.Instance())
 	tokens, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -127,8 +128,8 @@ func (w domTokenListV8Wrapper) remove(info *v8.FunctionCallbackInfo) (*v8.Value,
 
 func (w domTokenListV8Wrapper) replace(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.replace")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dom.DOMTokenList](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[dom.DOMTokenList](args.Instance())
 	token, err1 := tryParseArg(args, 0, w.decodeString)
 	newToken, err2 := tryParseArg(args, 1, w.decodeString)
 	if args.noOfReadArguments >= 2 {
@@ -137,7 +138,7 @@ func (w domTokenListV8Wrapper) replace(info *v8.FunctionCallbackInfo) (*v8.Value
 			return nil, err
 		}
 		result := instance.Replace(token, newToken)
-		return w.toBoolean(cbCtx.Context(), result)
+		return w.toBoolean(args.Context(), result)
 	}
 	return nil, errors.New("DOMTokenList.replace: Missing arguments")
 }
@@ -149,31 +150,31 @@ func (w domTokenListV8Wrapper) supports(info *v8.FunctionCallbackInfo) (*v8.Valu
 
 func (w domTokenListV8Wrapper) length(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.length")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.DOMTokenList](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.DOMTokenList](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Length()
-	return w.toUnsignedLong(cbCtx.Context(), result)
+	return w.toUnsignedLong(args.Context(), result)
 }
 
 func (w domTokenListV8Wrapper) value(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.value")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.DOMTokenList](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.DOMTokenList](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Value()
-	return w.toString_(cbCtx.Context(), result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w domTokenListV8Wrapper) setValue(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.setValue")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dom.DOMTokenList](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeString)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[dom.DOMTokenList](args.Instance())
+	val, err1 := parseSetterArg(args.Context(), info, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err

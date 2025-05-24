@@ -54,13 +54,14 @@ func (w historyV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 
 func (w historyV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: History.Constructor")
-	return nil, v8.NewTypeError(w.scriptHost.iso, "Illegal Constructor")
+	args := newArgumentHelper(w.scriptHost, info)
+	return args.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w historyV8Wrapper) go_(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: History.go_")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[htmlinterfaces.History](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[htmlinterfaces.History](args.Instance())
 	delta, err1 := tryParseArgWithDefault(args, 0, w.defaultDelta, w.decodeLong)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -75,8 +76,8 @@ func (w historyV8Wrapper) go_(info *v8.FunctionCallbackInfo) (*v8.Value, error) 
 
 func (w historyV8Wrapper) back(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: History.back")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[htmlinterfaces.History](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[htmlinterfaces.History](args.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -86,8 +87,8 @@ func (w historyV8Wrapper) back(info *v8.FunctionCallbackInfo) (*v8.Value, error)
 
 func (w historyV8Wrapper) forward(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: History.forward")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[htmlinterfaces.History](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[htmlinterfaces.History](args.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -97,8 +98,8 @@ func (w historyV8Wrapper) forward(info *v8.FunctionCallbackInfo) (*v8.Value, err
 
 func (w historyV8Wrapper) pushState(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: History.pushState")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[htmlinterfaces.History](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[htmlinterfaces.History](args.Instance())
 	data, err1 := tryParseArg(args, 0, w.decodeAny)
 	url, err3 := tryParseArgWithDefault(args, 2, w.defaultUrl, w.decodeString)
 	if args.noOfReadArguments >= 2 {
@@ -114,8 +115,8 @@ func (w historyV8Wrapper) pushState(info *v8.FunctionCallbackInfo) (*v8.Value, e
 
 func (w historyV8Wrapper) replaceState(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: History.replaceState")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[htmlinterfaces.History](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[htmlinterfaces.History](args.Instance())
 	data, err1 := tryParseArg(args, 0, w.decodeAny)
 	url, err3 := tryParseArgWithDefault(args, 2, w.defaultUrl, w.decodeString)
 	if args.noOfReadArguments >= 2 {
@@ -131,22 +132,22 @@ func (w historyV8Wrapper) replaceState(info *v8.FunctionCallbackInfo) (*v8.Value
 
 func (w historyV8Wrapper) length(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: History.length")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[htmlinterfaces.History](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[htmlinterfaces.History](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Length()
-	return w.toUnsignedLong(cbCtx.Context(), result)
+	return w.toUnsignedLong(args.Context(), result)
 }
 
 func (w historyV8Wrapper) state(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: History.state")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[htmlinterfaces.History](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[htmlinterfaces.History](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.State()
-	return w.toHistoryState(cbCtx.Context(), result)
+	return w.toHistoryState(args.Context(), result)
 }

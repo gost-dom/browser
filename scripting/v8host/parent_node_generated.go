@@ -54,13 +54,14 @@ func (w parentNodeV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) 
 
 func (w parentNodeV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: ParentNode.Constructor")
-	return nil, v8.NewTypeError(w.scriptHost.iso, "Illegal Constructor")
+	args := newArgumentHelper(w.scriptHost, info)
+	return args.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w parentNodeV8Wrapper) querySelector(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: ParentNode.querySelector")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dom.ParentNode](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[dom.ParentNode](args.Instance())
 	selectors, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -71,7 +72,7 @@ func (w parentNodeV8Wrapper) querySelector(info *v8.FunctionCallbackInfo) (*v8.V
 		if callErr != nil {
 			return nil, callErr
 		} else {
-			return cbCtx.Context().getInstanceForNode(result)
+			return args.Context().getInstanceForNode(result)
 		}
 	}
 	return nil, errors.New("ParentNode.querySelector: Missing arguments")
@@ -79,8 +80,8 @@ func (w parentNodeV8Wrapper) querySelector(info *v8.FunctionCallbackInfo) (*v8.V
 
 func (w parentNodeV8Wrapper) querySelectorAll(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: ParentNode.querySelectorAll")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dom.ParentNode](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[dom.ParentNode](args.Instance())
 	selectors, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -91,7 +92,7 @@ func (w parentNodeV8Wrapper) querySelectorAll(info *v8.FunctionCallbackInfo) (*v
 		if callErr != nil {
 			return nil, callErr
 		} else {
-			return w.toNodeList(cbCtx.Context(), result)
+			return w.toNodeList(args.Context(), result)
 		}
 	}
 	return nil, errors.New("ParentNode.querySelectorAll: Missing arguments")
@@ -99,33 +100,33 @@ func (w parentNodeV8Wrapper) querySelectorAll(info *v8.FunctionCallbackInfo) (*v
 
 func (w parentNodeV8Wrapper) firstElementChild(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: ParentNode.firstElementChild")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.ParentNode](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.ParentNode](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.FirstElementChild()
-	return cbCtx.Context().getInstanceForNode(result)
+	return args.Context().getInstanceForNode(result)
 }
 
 func (w parentNodeV8Wrapper) lastElementChild(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: ParentNode.lastElementChild")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.ParentNode](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.ParentNode](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.LastElementChild()
-	return cbCtx.Context().getInstanceForNode(result)
+	return args.Context().getInstanceForNode(result)
 }
 
 func (w parentNodeV8Wrapper) childElementCount(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: ParentNode.childElementCount")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.ParentNode](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.ParentNode](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.ChildElementCount()
-	return w.toUnsignedLong(cbCtx.Context(), result)
+	return w.toUnsignedLong(args.Context(), result)
 }

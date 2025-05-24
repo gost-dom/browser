@@ -90,13 +90,14 @@ func (w htmlFormElementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTempl
 
 func (w htmlFormElementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.Constructor")
-	return nil, v8.NewTypeError(w.scriptHost.iso, "Illegal Constructor")
+	args := newArgumentHelper(w.scriptHost, info)
+	return args.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w htmlFormElementV8Wrapper) submit(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.submit")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLFormElement](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLFormElement](args.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -106,8 +107,8 @@ func (w htmlFormElementV8Wrapper) submit(info *v8.FunctionCallbackInfo) (*v8.Val
 
 func (w htmlFormElementV8Wrapper) requestSubmit(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.requestSubmit")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.HTMLFormElement](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.HTMLFormElement](args.Instance())
 	submitter, err1 := tryParseArgWithDefault(args, 0, w.defaultHTMLElement, w.decodeHTMLElement)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -147,20 +148,20 @@ func (w htmlFormElementV8Wrapper) setAcceptCharset(info *v8.FunctionCallbackInfo
 
 func (w htmlFormElementV8Wrapper) action(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.action")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLFormElement](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLFormElement](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Action()
-	return w.toString_(cbCtx.Context(), result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w htmlFormElementV8Wrapper) setAction(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.setAction")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.HTMLFormElement](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeString)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.HTMLFormElement](args.Instance())
+	val, err1 := parseSetterArg(args.Context(), info, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
@@ -201,20 +202,20 @@ func (w htmlFormElementV8Wrapper) setEncoding(info *v8.FunctionCallbackInfo) (*v
 
 func (w htmlFormElementV8Wrapper) method(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.method")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLFormElement](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLFormElement](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Method()
-	return w.toString_(cbCtx.Context(), result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w htmlFormElementV8Wrapper) setMethod(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.setMethod")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.HTMLFormElement](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeString)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.HTMLFormElement](args.Instance())
+	val, err1 := parseSetterArg(args.Context(), info, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
@@ -250,13 +251,13 @@ func (w htmlFormElementV8Wrapper) relList(info *v8.FunctionCallbackInfo) (*v8.Va
 
 func (w htmlFormElementV8Wrapper) elements(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.elements")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLFormElement](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLFormElement](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Elements()
-	return w.toHTMLFormControlsCollection(cbCtx.Context(), result)
+	return w.toHTMLFormControlsCollection(args.Context(), result)
 }
 
 func (w htmlFormElementV8Wrapper) length(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

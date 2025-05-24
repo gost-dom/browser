@@ -9,6 +9,10 @@ import (
 
 type V8TargetGenerators struct{}
 
+func (gen V8TargetGenerators) Host(receiver g.Generator) g.Generator {
+	return g.ValueOf(receiver).Field("scriptHost")
+}
+
 func (gen V8TargetGenerators) CreateInitFunction(data ESConstructorData) g.Generator {
 	return g.FunctionDefinition{
 		Name: "init",
@@ -83,8 +87,6 @@ func (gen V8TargetGenerators) CreateAttributeGetter(
 	err := g.NewValue("err")
 	naming := V8NamingStrategy{data}
 	receiver := WrapperInstance{g.NewValue(naming.Receiver())}
-	host := g.NewValue("w").Field("scriptHost")
-	cbInfo := g.Id("info")
 
 	x := V8InstanceInvocation{
 		Name:     "",
@@ -94,7 +96,6 @@ func (gen V8TargetGenerators) CreateAttributeGetter(
 		Receiver: receiver,
 	}
 	return g.StatementList(
-		cbCtx.AssignFrom(host, cbInfo),
 		g.AssignMany(
 			g.List(instance, err),
 			wrappers.As.TypeParam(data.WrappedType()).Call(cbCtx.GetInstance()),
@@ -124,13 +125,9 @@ func (gen V8TargetGenerators) CreateAttributeSetter(
 		[]g.Generator{cbCtx.Context(), g.Id("info")},
 		wrappers.DecodersForArg(receiver, op.Arguments[0])...,
 	)
-	parsedArg := g.NewValue("parseSetterArg").
-		Call(args...)
-	host := g.NewValue("w").Field("scriptHost")
-	cbInfo := g.Id("info")
+	parsedArg := g.NewValue("parseSetterArg").Call(args...)
 
 	return g.StatementList(
-		cbCtx.AssignFrom(host, cbInfo),
 		g.AssignMany(
 			g.List(instance, err),
 			wrappers.As.TypeParam(data.WrappedType()).Call(cbCtx.GetInstance()),
@@ -151,7 +148,7 @@ func (gen V8TargetGenerators) CreateMethodCallbackBody(
 	naming := V8NamingStrategy{data}
 	receiver := WrapperInstance{g.NewValue(naming.Receiver())}
 	instance := g.NewValue("instance")
-	readArgsResult := ReadArguments(data, op)
+	readArgsResult := ReadArguments(data, op, cbCtx)
 	err := g.Id("err0")
 	if len(op.Arguments) == 0 {
 		err = g.Id("err")
@@ -171,10 +168,7 @@ func (gen V8TargetGenerators) CreateMethodCallbackBody(
 			Receiver: receiver,
 		}.GetGenerator(ctx)
 	}
-	host := g.NewValue("w").Field("scriptHost")
-	cbInfo := g.Id("info")
 	statements := g.StatementList(
-		cbCtx.AssignFrom(host, cbInfo),
 		g.AssignMany(
 			g.List(instance, err),
 			wrappers.As.TypeParam(data.WrappedType()).Call(cbCtx.GetInstance()),
@@ -183,6 +177,7 @@ func (gen V8TargetGenerators) CreateMethodCallbackBody(
 		CreateV8WrapperMethodInstanceInvocations(
 			data,
 			op,
+			cbCtx,
 			IdlNameToGoName(op.Name),
 			readArgsResult.Args,
 			err,

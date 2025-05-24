@@ -46,36 +46,37 @@ func (w htmlInputElementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemp
 
 func (w htmlInputElementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLInputElement.Constructor")
-	return nil, v8.NewTypeError(w.scriptHost.iso, "Illegal Constructor")
+	args := newArgumentHelper(w.scriptHost, info)
+	return args.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w htmlInputElementV8Wrapper) checkValidity(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLInputElement.checkValidity")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLInputElement](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLInputElement](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.CheckValidity()
-	return w.toBoolean(cbCtx.Context(), result)
+	return w.toBoolean(args.Context(), result)
 }
 
 func (w htmlInputElementV8Wrapper) type_(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLInputElement.type_")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLInputElement](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLInputElement](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Type()
-	return w.toString_(cbCtx.Context(), result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w htmlInputElementV8Wrapper) setType(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLInputElement.setType")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.HTMLInputElement](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeString)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.HTMLInputElement](args.Instance())
+	val, err1 := parseSetterArg(args.Context(), info, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err

@@ -65,11 +65,9 @@ func CreateV8ConstructorWrapperBody(
 	naming := V8NamingStrategy{data}
 	var readArgsResult V8ReadArguments
 	op := *data.Constructor
-	readArgsResult = ReadArguments(data, op)
-	host := g.NewValue("w").Field("scriptHost")
+	readArgsResult = ReadArguments(data, op, cbCtx)
 	cbInfo := g.NewValue("info")
 	statements := g.StatementList(
-		cbCtx.AssignFrom(host, cbInfo),
 		readArgsResult)
 	receiver := g.NewValue(naming.Receiver())
 	baseFunctionName := "CreateInstance"
@@ -86,6 +84,7 @@ func CreateV8ConstructorWrapperBody(
 		CreateV8WrapperMethodInstanceInvocations(
 			data,
 			op,
+			cbCtx,
 			baseFunctionName,
 			readArgsResult.Args,
 			nil,
@@ -99,6 +98,7 @@ func CreateV8ConstructorWrapperBody(
 func CreateV8WrapperMethodInstanceInvocations(
 	prototype ESConstructorData,
 	op ESOperation,
+	cbCtx wrappers.CallbackContext,
 	baseFunctionName string,
 	args []V8ReadArg,
 	instanceErr g.Generator,
@@ -142,7 +142,7 @@ func CreateV8WrapperMethodInstanceInvocations(
 			arg := args[i-1].Argument
 			statements.Append(g.StatementList(
 				g.IfStmt{
-					Condition: g.Raw(jen.Id("args").Dot("noOfReadArguments").Op(">=").Lit(i)),
+					Condition: g.Raw(cbCtx.Generate().Dot("noOfReadArguments").Op(">=").Lit(i)),
 					Block: g.StatementList(
 						wrappers.ReturnOnAnyError(errNames),
 						callInstance,
@@ -283,7 +283,11 @@ func AssignArgs(data ESConstructorData, op ESOperation) g.Generator {
 	)
 }
 
-func ReadArguments(data ESConstructorData, op ESOperation) (res V8ReadArguments) {
+func ReadArguments(
+	data ESConstructorData,
+	op ESOperation,
+	cbCtx wrappers.CallbackContext,
+) (res V8ReadArguments) {
 	naming := V8NamingStrategy{data}
 	argCount := len(op.Arguments)
 	res.Args = make([]V8ReadArg, 0, argCount)
@@ -304,7 +308,7 @@ func ReadArguments(data ESConstructorData, op ESOperation) (res V8ReadArguments)
 
 		var dec = wrappers.DecodersForArg(receiver, arg)
 
-		gConverters := []g.Generator{g.Id("args"), g.Lit(i)}
+		gConverters := []g.Generator{cbCtx, g.Lit(i)}
 		defaultName, hasDefault := arg.DefaultValueInGo()
 		if hasDefault {
 			gConverters = append(gConverters, g.NewValue(naming.Receiver()).Field(defaultName))

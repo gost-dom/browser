@@ -30,6 +30,7 @@ type PlatformWrapperStructGenerators interface {
 }
 
 type TargetGenerators interface {
+	Host(g.Generator) g.Generator
 	// CreateInitFunction generates an init function intended to register that a
 	// class should be created. This doesn't _create_ the class, as that
 	// requires a host created at runtime. So this is a registration that _when_
@@ -110,7 +111,7 @@ func (gen PrototypeWrapperGenerator) Constructor() g.Generator {
 	return g.StatementList(
 		g.Line,
 		MethodCallback{
-			"Constructor", receiver, gen.Data, gen.Platform,
+			"Constructor", receiver, gen.Data, nil, gen.Platform,
 			ConstructorCallbackBody{receiver, gen.Data, gen.Platform},
 		},
 	)
@@ -126,6 +127,7 @@ func (g PrototypeWrapperGenerator) CreateOperationCallbacks(data ESConstructorDa
 				op.CallbackMethodName(),
 				receiver,
 				data,
+				&op,
 				g.Platform,
 				MethodCallbackBody{receiver, data, op, g.Platform},
 			},
@@ -141,7 +143,12 @@ func (gen PrototypeWrapperGenerator) CreateAttributeCallbacks(data ESConstructor
 		if attr.Getter != nil && !attr.Getter.CustomImplementation {
 			list.Append(
 				generators.Line,
-				MethodCallback{attr.Getter.CallbackMethodName(), receiver, data, gen.Platform,
+				MethodCallback{
+					attr.Getter.CallbackMethodName(),
+					receiver,
+					data,
+					attr.Getter,
+					gen.Platform,
 					AttributeGetterCallbackBody{
 						receiver, data, *attr.Getter, gen.Platform,
 					},
@@ -151,7 +158,12 @@ func (gen PrototypeWrapperGenerator) CreateAttributeCallbacks(data ESConstructor
 		if attr.Setter != nil && !attr.Setter.CustomImplementation {
 			list.Append(
 				generators.Line,
-				MethodCallback{attr.Setter.CallbackMethodName(), receiver, data, gen.Platform,
+				MethodCallback{
+					attr.Setter.CallbackMethodName(),
+					receiver,
+					data,
+					attr.Setter,
+					gen.Platform,
 					AttributeSetterCallbackBody{
 						receiver, data, *attr.Setter, gen.Platform,
 					},
@@ -193,26 +205,60 @@ type MethodCallback struct {
 	name     string
 	receiver Generator
 	data     ESConstructorData
+	op       *ESOperation
 	platform TargetGenerators
 	body     CtxTransformer
 }
 
+func renderIf(condition bool, gen g.Generator) g.Generator {
+	if condition {
+		return gen
+	}
+	return g.Noop
+}
+
 func (c MethodCallback) Generate() *jen.Statement {
 	typeGenerators := c.platform.WrapperStructGenerators()
-	cbCtx := NewCallbackContext(g.Id("cbCtx"))
+	cbCtx := NewCallbackContext(g.Id("args"))
+	args := typeGenerators.CallbackMethodArgs()
+	argIds := make([]Generator, len(args))
+	if len(args) != 1 {
+		panic("Arguments passed to ctx must be more flexible")
+	}
+	for i, arg := range args {
+		argIds[i] = arg.Name
+	}
+	notImplemented := c.op != nil && c.op.NotImplemented
+
 	return generators.FunctionDefinition{
 		Receiver: generators.FunctionArgument{
 			Name: c.receiver,
 			Type: typeGenerators.WrapperStructType(c.data.Name()),
 		},
 		Name:     c.name,
-		Args:     typeGenerators.CallbackMethodArgs(),
+		Args:     args,
 		RtnTypes: typeGenerators.CallbackMethodRetTypes(),
 		Body: g.StatementList(
 			c.LogCall(),
-			c.body.TransformCtx(cbCtx),
+			renderIf(!notImplemented, g.StatementList(
+				cbCtx.AssignFrom(c.platform.Host(c.receiver), argIds[0]),
+				c.body.TransformCtx(cbCtx),
+			)),
+			renderIf(notImplemented, c.ReturnNotImplementedError()),
 		),
 	}.Generate()
+}
+
+func (c MethodCallback) ReturnNotImplementedError() g.Generator {
+	var name string
+	if c.op != nil {
+		name = c.op.Name
+	}
+	errMsg := fmt.Sprintf(
+		"%s.%s: Not implemented. Create an issue: %s",
+		c.data.Name(), name, packagenames.ISSUE_URL,
+	)
+	return c.platform.ReturnErrMsg(g.Lit(errMsg))
 }
 
 func (c MethodCallback) LogCall() g.Generator {
@@ -231,22 +277,10 @@ type MethodCallbackBody struct {
 func (b MethodCallbackBody) TransformCtx(cbCtx CallbackContext) Generator {
 	statements := g.StatementList()
 
-	if b.op.NotImplemented {
-		statements.Append(b.ReturnNotImplementedError())
-		return statements
-	}
 	statements.Append(
 		b.platform.CreateMethodCallbackBody(b.data, b.op, cbCtx),
 	)
 	return statements
-}
-
-func (b MethodCallbackBody) ReturnNotImplementedError() g.Generator {
-	errMsg := fmt.Sprintf(
-		"%s.%s: Not implemented. Create an issue: %s",
-		b.data.Name(), b.op.Name, packagenames.ISSUE_URL,
-	)
-	return b.platform.ReturnErrMsg(g.Lit(errMsg))
 }
 
 type AttributeGetterCallbackBody struct {
@@ -259,10 +293,6 @@ type AttributeGetterCallbackBody struct {
 func (b AttributeGetterCallbackBody) TransformCtx(cbCtx CallbackContext) Generator {
 	statements := g.StatementList()
 
-	if b.op.NotImplemented {
-		statements.Append(MethodCallbackBody(b).ReturnNotImplementedError())
-		return statements
-	}
 	statements.Append(
 		b.platform.CreateAttributeGetter(b.data, b.op, cbCtx,
 			func(instance g.Generator) g.Generator {
@@ -288,10 +318,6 @@ type AttributeSetterCallbackBody struct {
 func (b AttributeSetterCallbackBody) TransformCtx(cbCtx CallbackContext) Generator {
 	statements := g.StatementList()
 
-	if b.op.NotImplemented {
-		statements.Append(MethodCallbackBody(b).ReturnNotImplementedError())
-		return statements
-	}
 	statements.Append(
 		b.platform.CreateAttributeSetter(
 			b.data, b.op, cbCtx,
@@ -319,6 +345,6 @@ func (b ConstructorCallbackBody) TransformCtx(ctx CallbackContext) Generator {
 	if b.data.AllowConstructor() {
 		return b.platform.CreateConstructorCallbackBody(b.data, ctx)
 	} else {
-		return b.platform.CreateIllegalConstructorCallback(b.data)
+		return g.Return(ctx.IllegalConstructor())
 	}
 }

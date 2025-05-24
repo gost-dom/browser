@@ -22,3 +22,14 @@ func (c CallbackContext) GetInstance() g.Generator {
 func (c CallbackContext) Context() g.Value {
 	return c.Field("Context").Call()
 }
+
+func (c CallbackContext) IllegalConstructor() g.Generator {
+	return c.ReturnWithTypeError("Illegal constructor")
+}
+
+func (c CallbackContext) ReturnWithTypeError(msg string) g.Generator {
+	return c.Field("ReturnWithTypeError").Call(g.Lit(msg))
+}
+func (c CallbackContext) ReturnWithValue(val g.Generator) g.Generator {
+	return c.Field("ReturnWithValue").Call(val)
+}

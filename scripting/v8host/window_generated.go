@@ -43,7 +43,6 @@ func (w windowV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 	prototypeTmpl.Set("open", v8.NewFunctionTemplateWithError(iso, w.open))
 	prototypeTmpl.Set("alert", v8.NewFunctionTemplateWithError(iso, w.alert))
 	prototypeTmpl.Set("confirm", v8.NewFunctionTemplateWithError(iso, w.confirm))
-	prototypeTmpl.Set("prompt", v8.NewFunctionTemplateWithError(iso, w.prompt))
 	prototypeTmpl.Set("print", v8.NewFunctionTemplateWithError(iso, w.print))
 	prototypeTmpl.Set("postMessage", v8.NewFunctionTemplateWithError(iso, w.postMessage))
 
@@ -143,7 +142,8 @@ func (w windowV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 
 func (w windowV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Window.Constructor")
-	return nil, v8.NewTypeError(w.scriptHost.iso, "Illegal Constructor")
+	args := newArgumentHelper(w.scriptHost, info)
+	return args.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w windowV8Wrapper) close(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -181,11 +181,6 @@ func (w windowV8Wrapper) confirm(info *v8.FunctionCallbackInfo) (*v8.Value, erro
 	return nil, errors.New("Window.confirm: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w windowV8Wrapper) prompt(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: Window.prompt")
-	return nil, errors.New("Window.prompt: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
-}
-
 func (w windowV8Wrapper) print(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Window.print")
 	return nil, errors.New("Window.print: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
@@ -203,13 +198,13 @@ func (w windowV8Wrapper) self(info *v8.FunctionCallbackInfo) (*v8.Value, error) 
 
 func (w windowV8Wrapper) document(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Window.document")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.Window](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.Window](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Document()
-	return cbCtx.Context().getInstanceForNode(result)
+	return args.Context().getInstanceForNode(result)
 }
 
 func (w windowV8Wrapper) name(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

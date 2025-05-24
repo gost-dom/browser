@@ -84,14 +84,14 @@ func (w xmlHttpRequestV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTempla
 
 func (w xmlHttpRequestV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.Constructor")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	return w.CreateInstance(cbCtx.Context(), info.This())
+	args := newArgumentHelper(w.scriptHost, info)
+	return w.CreateInstance(args.Context(), info.This())
 }
 
 func (w xmlHttpRequestV8Wrapper) setRequestHeader(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.setRequestHeader")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.XMLHttpRequest](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.XMLHttpRequest](args.Instance())
 	name, err1 := tryParseArg(args, 0, w.decodeString)
 	value, err2 := tryParseArg(args, 1, w.decodeString)
 	if args.noOfReadArguments >= 2 {
@@ -107,8 +107,8 @@ func (w xmlHttpRequestV8Wrapper) setRequestHeader(info *v8.FunctionCallbackInfo)
 
 func (w xmlHttpRequestV8Wrapper) send(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.send")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.XMLHttpRequest](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.XMLHttpRequest](args.Instance())
 	body, err1 := tryParseArgNullableType(args, 0, w.decodeDocument, w.decodeXMLHttpRequestBodyInit)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -127,8 +127,8 @@ func (w xmlHttpRequestV8Wrapper) send(info *v8.FunctionCallbackInfo) (*v8.Value,
 
 func (w xmlHttpRequestV8Wrapper) abort(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.abort")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.XMLHttpRequest](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.XMLHttpRequest](args.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -138,8 +138,8 @@ func (w xmlHttpRequestV8Wrapper) abort(info *v8.FunctionCallbackInfo) (*v8.Value
 
 func (w xmlHttpRequestV8Wrapper) getResponseHeader(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.getResponseHeader")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.XMLHttpRequest](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.XMLHttpRequest](args.Instance())
 	name, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -147,15 +147,15 @@ func (w xmlHttpRequestV8Wrapper) getResponseHeader(info *v8.FunctionCallbackInfo
 			return nil, err
 		}
 		result := instance.GetResponseHeader(name)
-		return w.toNullableString_(cbCtx.Context(), result)
+		return w.toNullableString_(args.Context(), result)
 	}
 	return nil, errors.New("XMLHttpRequest.getResponseHeader: Missing arguments")
 }
 
 func (w xmlHttpRequestV8Wrapper) getAllResponseHeaders(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.getAllResponseHeaders")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.XMLHttpRequest](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.XMLHttpRequest](args.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -163,14 +163,14 @@ func (w xmlHttpRequestV8Wrapper) getAllResponseHeaders(info *v8.FunctionCallback
 	if callErr != nil {
 		return nil, callErr
 	} else {
-		return w.toString_(cbCtx.Context(), result)
+		return w.toString_(args.Context(), result)
 	}
 }
 
 func (w xmlHttpRequestV8Wrapper) overrideMimeType(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.overrideMimeType")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.XMLHttpRequest](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.XMLHttpRequest](args.Instance())
 	mime, err1 := tryParseArg(args, 0, w.decodeString)
 	if args.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -190,20 +190,20 @@ func (w xmlHttpRequestV8Wrapper) readyState(info *v8.FunctionCallbackInfo) (*v8.
 
 func (w xmlHttpRequestV8Wrapper) timeout(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.timeout")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.XMLHttpRequest](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.XMLHttpRequest](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Timeout()
-	return w.toUnsignedLong(cbCtx.Context(), result)
+	return w.toUnsignedLong(args.Context(), result)
 }
 
 func (w xmlHttpRequestV8Wrapper) setTimeout(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.setTimeout")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.XMLHttpRequest](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeUnsignedLong)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.XMLHttpRequest](args.Instance())
+	val, err1 := parseSetterArg(args.Context(), info, w.decodeUnsignedLong)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
@@ -214,20 +214,20 @@ func (w xmlHttpRequestV8Wrapper) setTimeout(info *v8.FunctionCallbackInfo) (*v8.
 
 func (w xmlHttpRequestV8Wrapper) withCredentials(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.withCredentials")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.XMLHttpRequest](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.XMLHttpRequest](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.WithCredentials()
-	return w.toBoolean(cbCtx.Context(), result)
+	return w.toBoolean(args.Context(), result)
 }
 
 func (w xmlHttpRequestV8Wrapper) setWithCredentials(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.setWithCredentials")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.XMLHttpRequest](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeBoolean)
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[html.XMLHttpRequest](args.Instance())
+	val, err1 := parseSetterArg(args.Context(), info, w.decodeBoolean)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
@@ -238,35 +238,35 @@ func (w xmlHttpRequestV8Wrapper) setWithCredentials(info *v8.FunctionCallbackInf
 
 func (w xmlHttpRequestV8Wrapper) responseURL(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.responseURL")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.XMLHttpRequest](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.XMLHttpRequest](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.ResponseURL()
-	return w.toString_(cbCtx.Context(), result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w xmlHttpRequestV8Wrapper) status(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.status")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.XMLHttpRequest](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.XMLHttpRequest](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Status()
-	return w.toUnsignedShort(cbCtx.Context(), result)
+	return w.toUnsignedShort(args.Context(), result)
 }
 
 func (w xmlHttpRequestV8Wrapper) statusText(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.statusText")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.XMLHttpRequest](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.XMLHttpRequest](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.StatusText()
-	return w.toString_(cbCtx.Context(), result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w xmlHttpRequestV8Wrapper) responseType(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -281,24 +281,24 @@ func (w xmlHttpRequestV8Wrapper) setResponseType(info *v8.FunctionCallbackInfo) 
 
 func (w xmlHttpRequestV8Wrapper) response(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.response")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.XMLHttpRequest](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.XMLHttpRequest](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Response()
-	return w.toAny(cbCtx.Context(), result)
+	return w.toAny(args.Context(), result)
 }
 
 func (w xmlHttpRequestV8Wrapper) responseText(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.responseText")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.XMLHttpRequest](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.XMLHttpRequest](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.ResponseText()
-	return w.toString_(cbCtx.Context(), result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w xmlHttpRequestV8Wrapper) responseXML(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

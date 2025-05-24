@@ -18,7 +18,12 @@ func newArgumentHelper(host *V8ScriptHost, info *v8.FunctionCallbackInfo) *argum
 	return &argumentHelper{info, ctx, 0}
 }
 
+func (h argumentHelper) iso() *v8.Isolate           { return h.ctx.host.iso }
 func (h *argumentHelper) Context() *V8ScriptContext { return h.ctx }
+
+func (h *argumentHelper) ReturnWithTypeError(msg string) (*v8.Value, error) {
+	return nil, v8.NewTypeError(h.iso(), msg)
+}
 
 func (h *argumentHelper) Instance() (any, error) {
 	if h.This().InternalFieldCount() < 1 {

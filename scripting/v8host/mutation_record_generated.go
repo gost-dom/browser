@@ -76,104 +76,105 @@ func (w mutationRecordV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTempla
 
 func (w mutationRecordV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: MutationRecord.Constructor")
-	return nil, v8.NewTypeError(w.scriptHost.iso, "Illegal Constructor")
+	args := newArgumentHelper(w.scriptHost, info)
+	return args.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w mutationRecordV8Wrapper) type_(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: MutationRecord.type_")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[*dominterfaces.MutationRecord](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*dominterfaces.MutationRecord](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Type
-	return w.toString_(cbCtx.Context(), result)
+	return w.toString_(args.Context(), result)
 }
 
 func (w mutationRecordV8Wrapper) target(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: MutationRecord.target")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[*dominterfaces.MutationRecord](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*dominterfaces.MutationRecord](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Target
-	return cbCtx.Context().getInstanceForNode(result)
+	return args.Context().getInstanceForNode(result)
 }
 
 func (w mutationRecordV8Wrapper) addedNodes(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: MutationRecord.addedNodes")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[*dominterfaces.MutationRecord](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*dominterfaces.MutationRecord](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.AddedNodes
-	return w.toNodeList(cbCtx.Context(), result)
+	return w.toNodeList(args.Context(), result)
 }
 
 func (w mutationRecordV8Wrapper) removedNodes(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: MutationRecord.removedNodes")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[*dominterfaces.MutationRecord](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*dominterfaces.MutationRecord](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.RemovedNodes
-	return w.toNodeList(cbCtx.Context(), result)
+	return w.toNodeList(args.Context(), result)
 }
 
 func (w mutationRecordV8Wrapper) previousSibling(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: MutationRecord.previousSibling")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[*dominterfaces.MutationRecord](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*dominterfaces.MutationRecord](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.PreviousSibling
-	return cbCtx.Context().getInstanceForNode(result)
+	return args.Context().getInstanceForNode(result)
 }
 
 func (w mutationRecordV8Wrapper) nextSibling(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: MutationRecord.nextSibling")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[*dominterfaces.MutationRecord](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*dominterfaces.MutationRecord](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.NextSibling
-	return cbCtx.Context().getInstanceForNode(result)
+	return args.Context().getInstanceForNode(result)
 }
 
 func (w mutationRecordV8Wrapper) attributeName(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: MutationRecord.attributeName")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[*dominterfaces.MutationRecord](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*dominterfaces.MutationRecord](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.AttributeName
-	return w.toNullableString_(cbCtx.Context(), result)
+	return w.toNullableString_(args.Context(), result)
 }
 
 func (w mutationRecordV8Wrapper) attributeNamespace(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: MutationRecord.attributeNamespace")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[*dominterfaces.MutationRecord](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*dominterfaces.MutationRecord](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.AttributeNamespace
-	return w.toNullableString_(cbCtx.Context(), result)
+	return w.toNullableString_(args.Context(), result)
 }
 
 func (w mutationRecordV8Wrapper) oldValue(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: MutationRecord.oldValue")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[*dominterfaces.MutationRecord](cbCtx.Instance())
+	args := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*dominterfaces.MutationRecord](args.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.OldValue
-	return w.toNullableString_(cbCtx.Context(), result)
+	return w.toNullableString_(args.Context(), result)
 }

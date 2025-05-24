@@ -25,40 +25,46 @@ func (w eventWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime) {
 
 func (w eventWrapper) Constructor(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: Event.Constructor")
-	panic("Goja constructor not yet implemented")
+	args := newArgumentHelper(w.ctx, c)
+	return args.ReturnWithTypeError("Goja constructor not yet implemented")
 }
 
 func (w eventWrapper) stopPropagation(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: Event.stopPropagation")
+	args := newArgumentHelper(w.ctx, c)
 	instance := w.getInstance(c)
 	instance.StopPropagation()
-	return nil
+	return args.ReturnWithValue(nil)
 }
 
 func (w eventWrapper) preventDefault(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: Event.preventDefault")
+	args := newArgumentHelper(w.ctx, c)
 	instance := w.getInstance(c)
 	instance.PreventDefault()
-	return nil
+	return args.ReturnWithValue(nil)
 }
 
 func (w eventWrapper) target(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: Event.target")
+	args := newArgumentHelper(w.ctx, c)
 	instance := w.getInstance(c)
 	result := instance.Target
-	return w.toEventTarget(result)
+	return args.ReturnWithValue(w.toEventTarget(result))
 }
 
 func (w eventWrapper) currentTarget(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: Event.currentTarget")
+	args := newArgumentHelper(w.ctx, c)
 	instance := w.getInstance(c)
 	result := instance.CurrentTarget
-	return w.toEventTarget(result)
+	return args.ReturnWithValue(w.toEventTarget(result))
 }
 
 func (w eventWrapper) defaultPrevented(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: Event.defaultPrevented")
+	args := newArgumentHelper(w.ctx, c)
 	instance := w.getInstance(c)
 	result := instance.DefaultPrevented
-	return w.toBoolean(result)
+	return args.ReturnWithValue(w.toBoolean(result))
 }
