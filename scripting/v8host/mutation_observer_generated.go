@@ -42,6 +42,7 @@ func (w mutationObserverV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemp
 }
 
 func (w mutationObserverV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+	log.Debug(w.logger(info), "V8 Function call: MutationObserver.Constructor")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	callback, err1 := tryParseArg(args, 0, w.decodeMutationCallback)
 	if args.noOfReadArguments >= 1 {

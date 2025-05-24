@@ -37,6 +37,7 @@ func (w locationWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime)
 }
 
 func (w locationWrapper) Constructor(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Location.Constructor")
 	panic("Goja constructor not yet implemented")
 }
 

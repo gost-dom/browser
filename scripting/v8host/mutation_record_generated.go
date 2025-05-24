@@ -75,11 +75,12 @@ func (w mutationRecordV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTempla
 }
 
 func (w mutationRecordV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+	log.Debug(w.logger(info), "V8 Function call: MutationRecord.Constructor")
 	return nil, v8.NewTypeError(w.scriptHost.iso, "Illegal Constructor")
 }
 
 func (w mutationRecordV8Wrapper) type_(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: MutationRecord.type")
+	log.Debug(w.logger(info), "V8 Function call: MutationRecord.type_")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err := abstraction.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {

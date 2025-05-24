@@ -45,6 +45,7 @@ func (w htmlInputElementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemp
 }
 
 func (w htmlInputElementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+	log.Debug(w.logger(info), "V8 Function call: HTMLInputElement.Constructor")
 	return nil, v8.NewTypeError(w.scriptHost.iso, "Illegal Constructor")
 }
 
@@ -60,7 +61,7 @@ func (w htmlInputElementV8Wrapper) checkValidity(info *v8.FunctionCallbackInfo) 
 }
 
 func (w htmlInputElementV8Wrapper) type_(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLInputElement.type")
+	log.Debug(w.logger(info), "V8 Function call: HTMLInputElement.type_")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err := abstraction.As[html.HTMLInputElement](cbCtx.Instance())
 	if err != nil {

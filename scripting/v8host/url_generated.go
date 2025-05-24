@@ -83,6 +83,7 @@ func (w urlV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 }
 
 func (w urlV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+	log.Debug(w.logger(info), "V8 Function call: URL.Constructor")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	url, err1 := tryParseArg(args, 0, w.decodeString)
 	base, err2 := tryParseArg(args, 1, w.decodeString)

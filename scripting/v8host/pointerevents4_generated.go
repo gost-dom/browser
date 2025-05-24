@@ -46,6 +46,7 @@ func (w pointerEventV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate
 }
 
 func (w pointerEventV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+	log.Debug(w.logger(info), "V8 Function call: PointerEvent.Constructor")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	type_, err1 := tryParseArg(args, 0, w.decodeString)
 	eventInitDict, err2 := tryParseArg(args, 1, w.decodePointerEventInit)

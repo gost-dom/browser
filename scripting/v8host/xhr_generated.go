@@ -83,6 +83,7 @@ func (w xmlHttpRequestV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTempla
 }
 
 func (w xmlHttpRequestV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.Constructor")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	return w.CreateInstance(cbCtx.Context(), info.This())
 }

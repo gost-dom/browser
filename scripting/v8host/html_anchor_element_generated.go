@@ -49,6 +49,7 @@ func (w htmlAnchorElementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTem
 }
 
 func (w htmlAnchorElementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+	log.Debug(w.logger(info), "V8 Function call: HTMLAnchorElement.Constructor")
 	return nil, v8.NewTypeError(w.scriptHost.iso, "Illegal Constructor")
 }
 

@@ -185,16 +185,21 @@ func (c AttributeGetterCallback) Generate() *jen.Statement {
 
 }
 
+type CtxTransformer interface {
+	TransformCtx(CallbackContext) Generator
+}
+
 type MethodCallback struct {
 	name     string
 	receiver Generator
 	data     ESConstructorData
 	platform TargetGenerators
-	body     Generator
+	body     CtxTransformer
 }
 
 func (c MethodCallback) Generate() *jen.Statement {
 	typeGenerators := c.platform.WrapperStructGenerators()
+	cbCtx := NewCallbackContext(g.Id("cbCtx"))
 	return generators.FunctionDefinition{
 		Receiver: generators.FunctionArgument{
 			Name: c.receiver,
@@ -203,8 +208,17 @@ func (c MethodCallback) Generate() *jen.Statement {
 		Name:     c.name,
 		Args:     typeGenerators.CallbackMethodArgs(),
 		RtnTypes: typeGenerators.CallbackMethodRetTypes(),
-		Body:     c.body,
+		Body: g.StatementList(
+			c.LogCall(),
+			c.body.TransformCtx(cbCtx),
+		),
 	}.Generate()
+}
+
+func (c MethodCallback) LogCall() g.Generator {
+	return stdgen.LogDebug(
+		g.ValueOf(c.receiver).Field("logger").Call(c.platform.PlatformInfoArg()),
+		g.Lit(fmt.Sprintf("V8 Function call: %s.%s", c.data.Name(), c.name)))
 }
 
 type MethodCallbackBody struct {
@@ -214,23 +228,17 @@ type MethodCallbackBody struct {
 	platform TargetGenerators
 }
 
-func (b MethodCallbackBody) Generate() (res *jen.Statement) {
+func (b MethodCallbackBody) TransformCtx(cbCtx CallbackContext) Generator {
 	statements := g.StatementList()
-	defer func() { res = statements.Generate() }()
-	cbCtx := NewCallbackContext(g.Id("cbCtx"))
-
-	statements.Append(stdgen.LogDebug(
-		g.ValueOf(b.receiver).Field("logger").Call(b.platform.PlatformInfoArg()),
-		g.Lit(fmt.Sprintf("V8 Function call: %s.%s", b.data.Name(), b.op.Name))))
 
 	if b.op.NotImplemented {
 		statements.Append(b.ReturnNotImplementedError())
-		return
+		return statements
 	}
 	statements.Append(
 		b.platform.CreateMethodCallbackBody(b.data, b.op, cbCtx),
 	)
-	return
+	return statements
 }
 
 func (b MethodCallbackBody) ReturnNotImplementedError() g.Generator {
@@ -248,18 +256,12 @@ type AttributeGetterCallbackBody struct {
 	platform TargetGenerators
 }
 
-func (b AttributeGetterCallbackBody) Generate() (res *jen.Statement) {
+func (b AttributeGetterCallbackBody) TransformCtx(cbCtx CallbackContext) Generator {
 	statements := g.StatementList()
-	defer func() { res = statements.Generate() }()
-
-	cbCtx := NewCallbackContext(g.Id("cbCtx"))
-	statements.Append(stdgen.LogDebug(
-		g.ValueOf(b.receiver).Field("logger").Call(b.platform.PlatformInfoArg()),
-		g.Lit(fmt.Sprintf("V8 Function call: %s.%s", b.data.Name(), b.op.Name))))
 
 	if b.op.NotImplemented {
 		statements.Append(MethodCallbackBody(b).ReturnNotImplementedError())
-		return
+		return statements
 	}
 	statements.Append(
 		b.platform.CreateAttributeGetter(b.data, b.op, cbCtx,
@@ -273,7 +275,7 @@ func (b AttributeGetterCallbackBody) Generate() (res *jen.Statement) {
 				}
 			}),
 	)
-	return
+	return statements
 }
 
 type AttributeSetterCallbackBody struct {
@@ -283,18 +285,12 @@ type AttributeSetterCallbackBody struct {
 	platform TargetGenerators
 }
 
-func (b AttributeSetterCallbackBody) Generate() (res *jen.Statement) {
+func (b AttributeSetterCallbackBody) TransformCtx(cbCtx CallbackContext) Generator {
 	statements := g.StatementList()
-	defer func() { res = statements.Generate() }()
 
-	statements.Append(stdgen.LogDebug(
-		g.ValueOf(b.receiver).Field("logger").Call(b.platform.PlatformInfoArg()),
-		g.Lit(fmt.Sprintf("V8 Function call: %s.%s", b.data.Name(), b.op.Name))))
-
-	cbCtx := NewCallbackContext(g.Id("cbCtx"))
 	if b.op.NotImplemented {
 		statements.Append(MethodCallbackBody(b).ReturnNotImplementedError())
-		return
+		return statements
 	}
 	statements.Append(
 		b.platform.CreateAttributeSetter(
@@ -310,7 +306,7 @@ func (b AttributeSetterCallbackBody) Generate() (res *jen.Statement) {
 			},
 		),
 	)
-	return
+	return statements
 }
 
 type ConstructorCallbackBody struct {
@@ -319,11 +315,10 @@ type ConstructorCallbackBody struct {
 	platform TargetGenerators
 }
 
-func (b ConstructorCallbackBody) Generate() (res *jen.Statement) {
-	cbCtx := NewCallbackContext(g.Id("cbCtx"))
+func (b ConstructorCallbackBody) TransformCtx(ctx CallbackContext) Generator {
 	if b.data.AllowConstructor() {
-		return b.platform.CreateConstructorCallbackBody(b.data, cbCtx).Generate()
+		return b.platform.CreateConstructorCallbackBody(b.data, ctx)
 	} else {
-		return b.platform.CreateIllegalConstructorCallback(b.data).Generate()
+		return b.platform.CreateIllegalConstructorCallback(b.data)
 	}
 }

@@ -53,11 +53,12 @@ func (w historyV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 }
 
 func (w historyV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+	log.Debug(w.logger(info), "V8 Function call: History.Constructor")
 	return nil, v8.NewTypeError(w.scriptHost.iso, "Illegal Constructor")
 }
 
 func (w historyV8Wrapper) go_(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: History.go")
+	log.Debug(w.logger(info), "V8 Function call: History.go_")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[htmlinterfaces.History](cbCtx.Instance())
 	delta, err1 := tryParseArgWithDefault(args, 0, w.defaultDelta, w.decodeLong)

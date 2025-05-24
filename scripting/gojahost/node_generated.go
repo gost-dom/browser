@@ -41,6 +41,7 @@ func (w nodeWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime) {
 }
 
 func (w nodeWrapper) Constructor(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: Node.Constructor")
 	panic("Goja constructor not yet implemented")
 }
 

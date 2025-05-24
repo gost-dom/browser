@@ -54,6 +54,7 @@ func (w htmlOrSVGElementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemp
 }
 
 func (w htmlOrSVGElementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.Constructor")
 	return nil, v8.NewTypeError(w.scriptHost.iso, "Illegal Constructor")
 }
 

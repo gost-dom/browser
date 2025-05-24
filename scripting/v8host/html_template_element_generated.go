@@ -60,6 +60,7 @@ func (w htmlTemplateElementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectT
 }
 
 func (w htmlTemplateElementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+	log.Debug(w.logger(info), "V8 Function call: HTMLTemplateElement.Constructor")
 	return nil, v8.NewTypeError(w.scriptHost.iso, "Illegal Constructor")
 }
 

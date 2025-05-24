@@ -19,6 +19,7 @@ func (w pointerEventWrapper) initializePrototype(prototype *g.Object, vm *g.Runt
 }
 
 func (w pointerEventWrapper) Constructor(c g.FunctionCall) g.Value {
+	log.Debug(w.logger(c), "V8 Function call: PointerEvent.Constructor")
 	panic("Goja constructor not yet implemented")
 }
 
