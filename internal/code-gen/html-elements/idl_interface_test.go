@@ -5,11 +5,16 @@ import (
 	. "github.com/onsi/gomega"
 
 	. "github.com/gost-dom/code-gen/html-elements"
+	"github.com/gost-dom/code-gen/idltransform"
 	. "github.com/gost-dom/generators/testing/matchers"
+	"github.com/gost-dom/webref/idl"
 )
 
 func NewStringAttribute(name string) IdlInterfaceAttribute {
-	return IdlInterfaceAttribute{Name: name, Type: IdlType(DOMStringType)}
+	return IdlInterfaceAttribute{
+		Name: name,
+		Type: idltransform.IdlType(idl.Type{Name: "DOMString"}),
+	}
 }
 
 var _ = Describe("IdlInterface", func() {

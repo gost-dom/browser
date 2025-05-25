@@ -3,7 +3,7 @@ package model
 import (
 	"strings"
 
-	htmlelements "github.com/gost-dom/code-gen/html-elements"
+	"github.com/gost-dom/code-gen/idltransform"
 	"github.com/gost-dom/code-gen/script-wrappers/configuration"
 	"github.com/gost-dom/webref/idl"
 )
@@ -64,7 +64,7 @@ func encoderForIDLType(t idl.Type) string {
 		converter += "Sequence"
 		t = *t.TypeParam
 	}
-	if t.Nullable && !htmlelements.IdlType(t).Nillable() {
+	if t.Nullable && !idltransform.IdlType(t).Nillable() {
 		converter += "Nullable"
 	}
 	converter += IdlNameToGoName(idlTypeNameToGoName(t))

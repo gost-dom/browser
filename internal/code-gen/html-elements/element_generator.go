@@ -7,6 +7,7 @@ import (
 
 	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/customrules"
+	"github.com/gost-dom/code-gen/idltransform"
 	"github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/generators"
 	g "github.com/gost-dom/generators"
@@ -102,7 +103,7 @@ func (gen baseGenerator) GenerateReadonlyStruct() g.Generator {
 			)
 		}
 		field := internal.UpperCaseFirstLetter(string(a.Name))
-		result.Field(g.Id(field), IdlTypeForStruct(a.Type))
+		result.Field(g.Id(field), idltransform.IdlTypeForStruct(a.Type))
 	}
 	return result
 }
@@ -112,7 +113,7 @@ func (gen baseGenerator) GenerateInterface() g.Generator {
 	attributes := make([]IdlInterfaceAttribute, 0)
 	operations := make([]IdlInterfaceOperation, 0)
 	includes := make([]IdlInterfaceInclude, len(idlInterface.Includes))
-	iterableTypes := make([]IdlType, len(idlInterface.IterableTypes))
+	iterableTypes := make([]idltransform.IdlType, len(idlInterface.IterableTypes))
 
 	interfaces := make([]idl.Interface, 1+len(gen.idlType.Includes))
 	interfaces[0] = gen.idlType
@@ -142,7 +143,7 @@ func (gen baseGenerator) GenerateInterface() g.Generator {
 		}
 		attributes = append(attributes, IdlInterfaceAttribute{
 			Name:     a.Name,
-			Type:     IdlType(attrType),
+			Type:     idltransform.IdlType(attrType),
 			ReadOnly: a.Readonly,
 		})
 	}
@@ -169,11 +170,11 @@ func (gen baseGenerator) GenerateInterface() g.Generator {
 		}
 		operations = append(
 			operations,
-			IdlInterfaceOperation{o, arguments, IdlType(o.ReturnType), operationRule},
+			IdlInterfaceOperation{o, arguments, idltransform.IdlType(o.ReturnType), operationRule},
 		)
 	}
 	for i, t := range idlInterface.IterableTypes {
-		iterableTypes[i] = IdlType(t)
+		iterableTypes[i] = idltransform.IdlType(t)
 	}
 	result.Attributes = attributes
 	result.Operations = operations

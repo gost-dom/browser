@@ -182,6 +182,7 @@ func (c V8InstanceInvocation) AssignValues(evaluation g.Generator) g.Generator {
 	if !HasError && !HasValue {
 		return evaluation
 	}
+
 	if HasError && !HasValue {
 		return g.Assign(g.Id("callErr"), evaluation)
 	}

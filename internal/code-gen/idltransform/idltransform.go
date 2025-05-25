@@ -1,4 +1,4 @@
-package htmlelements
+package idltransform
 
 import (
 	"github.com/dave/jennifer/jen"

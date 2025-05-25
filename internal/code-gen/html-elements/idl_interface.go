@@ -6,6 +6,7 @@ import (
 	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/customrules/typerule"
+	"github.com/gost-dom/code-gen/idltransform"
 	. "github.com/gost-dom/code-gen/internal"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
@@ -21,7 +22,7 @@ type IdlInterface struct {
 	Attributes     []IdlInterfaceAttribute
 	Operations     []IdlInterfaceOperation
 	Includes       []IdlInterfaceInclude
-	IterableTypes  []IdlType
+	IterableTypes  []idltransform.IdlType
 }
 
 func (i IdlInterface) Generate() *jen.Statement {
@@ -71,12 +72,12 @@ func (i IdlInterface) Generate() *jen.Statement {
 	return jen.Type().Add(jen.Id(i.Name)).Interface(g.ToJenCodes(fields)...)
 }
 
-func iterator(t IdlType) g.Generator {
+func iterator(t idltransform.IdlType) g.Generator {
 	return g.Raw(
 		jen.Id("All").Params().Qual("iter", "Seq2").Index(t.Generate()),
 	)
 }
-func iterator2(k, v IdlType) g.Generator {
+func iterator2(k, v idltransform.IdlType) g.Generator {
 	return g.Raw(
 		jen.Id("All").Params().Qual("iter", "Seq2").Types(k.Generate(), v.Generate()),
 	)
@@ -86,7 +87,7 @@ func iterator2(k, v IdlType) g.Generator {
 
 type IdlInterfaceAttribute struct {
 	Name     string
-	Type     IdlType
+	Type     idltransform.IdlType
 	ReadOnly bool
 }
 
@@ -95,7 +96,7 @@ type IdlInterfaceAttribute struct {
 // OutputType describes a type to generate. The Default value is from Web IDL
 // specifications, and the Override is custom configuration.
 type OutputType struct {
-	Default  IdlType
+	Default  idltransform.IdlType
 	Override *typerule.TypeRule
 }
 
@@ -112,7 +113,7 @@ func (t OutputType) Generate() *jen.Statement {
 type IdlInterfaceOperation struct {
 	IdlOperation idl.Operation
 	Arguments    []IdlInterfaceOperationArgument
-	ReturnType   IdlType
+	ReturnType   idltransform.IdlType
 	Rules        customrules.OperationRule
 }
 
@@ -132,9 +133,9 @@ func (o IdlInterfaceOperation) Generate() *jen.Statement {
 		if a.Ignore() {
 			continue
 		}
-		var arg g.Generator = IdlType(a.Type())
+		var arg g.Generator = idltransform.IdlType(a.Type())
 		if a.Rules.OverridesType() {
-			arg = IdlType(a.Rules.Type)
+			arg = idltransform.IdlType(a.Rules.Type)
 		}
 		if a.Variadic() {
 			arg = g.Raw(jen.Op("...").Add(arg.Generate()))

@@ -1,9 +1,9 @@
-package htmlelements_test
+package idltransform_test
 
 import (
 	"testing"
 
-	. "github.com/gost-dom/code-gen/html-elements"
+	"github.com/gost-dom/code-gen/idltransform"
 	. "github.com/gost-dom/generators/testing/matchers"
 	"github.com/gost-dom/webref/idl"
 	"github.com/onsi/gomega"
@@ -14,8 +14,8 @@ var DOMBooleanType = idl.Type{Name: "boolean"}
 
 func TestIdlTypeGeneratesCorrespondingGoType(t *testing.T) {
 	g := gomega.NewWithT(t)
-	g.Expect(IdlType(DOMStringType)).To(HaveRendered("string"))
-	g.Expect(IdlType(DOMBooleanType)).To(HaveRendered("bool"))
+	g.Expect(idltransform.IdlType(DOMStringType)).To(HaveRendered("string"))
+	g.Expect(idltransform.IdlType(DOMBooleanType)).To(HaveRendered("bool"))
 }
 
 func TestIdlTypeGeneratesSequenceTypes(t *testing.T) {
@@ -24,5 +24,5 @@ func TestIdlTypeGeneratesSequenceTypes(t *testing.T) {
 		Kind:      idl.KindSequence,
 		TypeParam: &DOMStringType,
 	}
-	g.Expect(IdlType(stringSequence)).To(HaveRendered("[]string"))
+	g.Expect(idltransform.IdlType(stringSequence)).To(HaveRendered("[]string"))
 }
