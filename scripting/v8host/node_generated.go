@@ -98,7 +98,7 @@ func (w nodeV8Wrapper) getRootNode(cbCtx *argumentHelper) (*v8.Value, error) {
 			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.GetRootNode(options)
-		return cbCtx.ScriptCtx().getInstanceForNode(result)
+		return cbCtx.getInstanceForNode(result)
 	}
 	return cbCtx.ReturnWithError(errors.New("Node.getRootNode: Missing arguments"))
 }
@@ -113,7 +113,7 @@ func (w nodeV8Wrapper) cloneNode(cbCtx *argumentHelper) (*v8.Value, error) {
 			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.CloneNode(subtree)
-		return cbCtx.ScriptCtx().getInstanceForNode(result)
+		return cbCtx.getInstanceForNode(result)
 	}
 	return cbCtx.ReturnWithError(errors.New("Node.cloneNode: Missing arguments"))
 }
@@ -128,7 +128,7 @@ func (w nodeV8Wrapper) isSameNode(cbCtx *argumentHelper) (*v8.Value, error) {
 			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.IsSameNode(otherNode)
-		return w.toBoolean(cbCtx.ScriptCtx(), result)
+		return w.toBoolean(cbCtx, result)
 	}
 	return cbCtx.ReturnWithError(errors.New("Node.isSameNode: Missing arguments"))
 }
@@ -143,7 +143,7 @@ func (w nodeV8Wrapper) contains(cbCtx *argumentHelper) (*v8.Value, error) {
 			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.Contains(other)
-		return w.toBoolean(cbCtx.ScriptCtx(), result)
+		return w.toBoolean(cbCtx, result)
 	}
 	return cbCtx.ReturnWithError(errors.New("Node.contains: Missing arguments"))
 }
@@ -162,7 +162,7 @@ func (w nodeV8Wrapper) insertBefore(cbCtx *argumentHelper) (*v8.Value, error) {
 		if callErr != nil {
 			return cbCtx.ReturnWithError(callErr)
 		} else {
-			return cbCtx.ScriptCtx().getInstanceForNode(result)
+			return cbCtx.getInstanceForNode(result)
 		}
 	}
 	return cbCtx.ReturnWithError(errors.New("Node.insertBefore: Missing arguments"))
@@ -181,7 +181,7 @@ func (w nodeV8Wrapper) appendChild(cbCtx *argumentHelper) (*v8.Value, error) {
 		if callErr != nil {
 			return cbCtx.ReturnWithError(callErr)
 		} else {
-			return cbCtx.ScriptCtx().getInstanceForNode(result)
+			return cbCtx.getInstanceForNode(result)
 		}
 	}
 	return cbCtx.ReturnWithError(errors.New("Node.appendChild: Missing arguments"))
@@ -200,7 +200,7 @@ func (w nodeV8Wrapper) removeChild(cbCtx *argumentHelper) (*v8.Value, error) {
 		if callErr != nil {
 			return cbCtx.ReturnWithError(callErr)
 		} else {
-			return cbCtx.ScriptCtx().getInstanceForNode(result)
+			return cbCtx.getInstanceForNode(result)
 		}
 	}
 	return cbCtx.ReturnWithError(errors.New("Node.removeChild: Missing arguments"))
@@ -213,7 +213,7 @@ func (w nodeV8Wrapper) nodeName(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.NodeName()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w nodeV8Wrapper) isConnected(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -223,7 +223,7 @@ func (w nodeV8Wrapper) isConnected(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.IsConnected()
-	return w.toBoolean(cbCtx.ScriptCtx(), result)
+	return w.toBoolean(cbCtx, result)
 }
 
 func (w nodeV8Wrapper) ownerDocument(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -233,7 +233,7 @@ func (w nodeV8Wrapper) ownerDocument(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.OwnerDocument()
-	return cbCtx.ScriptCtx().getInstanceForNode(result)
+	return cbCtx.getInstanceForNode(result)
 }
 
 func (w nodeV8Wrapper) parentElement(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -243,7 +243,7 @@ func (w nodeV8Wrapper) parentElement(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.ParentElement()
-	return cbCtx.ScriptCtx().getInstanceForNode(result)
+	return cbCtx.getInstanceForNode(result)
 }
 
 func (w nodeV8Wrapper) childNodes(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -253,7 +253,7 @@ func (w nodeV8Wrapper) childNodes(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.ChildNodes()
-	return w.toNodeList(cbCtx.ScriptCtx(), result)
+	return w.toNodeList(cbCtx, result)
 }
 
 func (w nodeV8Wrapper) firstChild(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -263,7 +263,7 @@ func (w nodeV8Wrapper) firstChild(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.FirstChild()
-	return cbCtx.ScriptCtx().getInstanceForNode(result)
+	return cbCtx.getInstanceForNode(result)
 }
 
 func (w nodeV8Wrapper) previousSibling(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -273,7 +273,7 @@ func (w nodeV8Wrapper) previousSibling(cbCtx *argumentHelper) (*v8.Value, error)
 		return nil, err
 	}
 	result := instance.PreviousSibling()
-	return cbCtx.ScriptCtx().getInstanceForNode(result)
+	return cbCtx.getInstanceForNode(result)
 }
 
 func (w nodeV8Wrapper) nextSibling(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -283,5 +283,5 @@ func (w nodeV8Wrapper) nextSibling(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.NextSibling()
-	return cbCtx.ScriptCtx().getInstanceForNode(result)
+	return cbCtx.getInstanceForNode(result)
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 
+	"github.com/gost-dom/browser/dom"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -27,6 +28,15 @@ func (h *argumentHelper) ScriptCtx() *V8ScriptContext {
 
 func (h *argumentHelper) ReturnWithValue(val *v8.Value) (*v8.Value, error) { return val, nil }
 func (h *argumentHelper) ReturnWithError(err error) (*v8.Value, error)     { return nil, err }
+
+func (h *argumentHelper) getInstanceForNode(node dom.Node) (*v8.Value, error) {
+	val, err := h.ScriptCtx().getInstanceForNode(node)
+	if err != nil {
+		return h.ReturnWithError(err)
+	} else {
+		return h.ReturnWithValue(val)
+	}
+}
 
 func (h *argumentHelper) ReturnWithTypeError(msg string) (*v8.Value, error) {
 	return nil, v8.NewTypeError(h.iso(), msg)

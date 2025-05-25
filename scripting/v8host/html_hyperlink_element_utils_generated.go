@@ -89,7 +89,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) href(cbCtx *argumentHelper) (*v8.Val
 		return nil, err
 	}
 	result := instance.Href()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setHref(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -111,7 +111,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) origin(cbCtx *argumentHelper) (*v8.V
 		return nil, err
 	}
 	result := instance.Origin()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) protocol(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -121,7 +121,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) protocol(cbCtx *argumentHelper) (*v8
 		return nil, err
 	}
 	result := instance.Protocol()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setProtocol(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -143,7 +143,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) username(cbCtx *argumentHelper) (*v8
 		return nil, err
 	}
 	result := instance.Username()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setUsername(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -165,7 +165,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) password(cbCtx *argumentHelper) (*v8
 		return nil, err
 	}
 	result := instance.Password()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setPassword(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -187,7 +187,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) host(cbCtx *argumentHelper) (*v8.Val
 		return nil, err
 	}
 	result := instance.Host()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setHost(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -209,7 +209,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) hostname(cbCtx *argumentHelper) (*v8
 		return nil, err
 	}
 	result := instance.Hostname()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setHostname(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -231,7 +231,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) port(cbCtx *argumentHelper) (*v8.Val
 		return nil, err
 	}
 	result := instance.Port()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setPort(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -253,7 +253,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) pathname(cbCtx *argumentHelper) (*v8
 		return nil, err
 	}
 	result := instance.Pathname()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setPathname(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -275,7 +275,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) search(cbCtx *argumentHelper) (*v8.V
 		return nil, err
 	}
 	result := instance.Search()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setSearch(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -297,7 +297,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) hash(cbCtx *argumentHelper) (*v8.Val
 		return nil, err
 	}
 	result := instance.Hash()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) setHash(cbCtx *argumentHelper) (*v8.Value, error) {

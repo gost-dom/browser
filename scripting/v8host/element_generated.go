@@ -119,7 +119,7 @@ func (w elementV8Wrapper) getAttribute(cbCtx *argumentHelper) (*v8.Value, error)
 			return cbCtx.ReturnWithError(err)
 		}
 		result, hasValue := instance.GetAttribute(qualifiedName)
-		return w.toNillableString_(cbCtx.ScriptCtx(), result, hasValue)
+		return w.toNillableString_(cbCtx, result, hasValue)
 	}
 	return cbCtx.ReturnWithError(errors.New("Element.getAttribute: Missing arguments"))
 }
@@ -185,7 +185,7 @@ func (w elementV8Wrapper) hasAttribute(cbCtx *argumentHelper) (*v8.Value, error)
 			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.HasAttribute(qualifiedName)
-		return w.toBoolean(cbCtx.ScriptCtx(), result)
+		return w.toBoolean(cbCtx, result)
 	}
 	return cbCtx.ReturnWithError(errors.New("Element.hasAttribute: Missing arguments"))
 }
@@ -238,7 +238,7 @@ func (w elementV8Wrapper) matches(cbCtx *argumentHelper) (*v8.Value, error) {
 		if callErr != nil {
 			return cbCtx.ReturnWithError(callErr)
 		} else {
-			return w.toBoolean(cbCtx.ScriptCtx(), result)
+			return w.toBoolean(cbCtx, result)
 		}
 	}
 	return cbCtx.ReturnWithError(errors.New("Element.matches: Missing arguments"))
@@ -291,7 +291,7 @@ func (w elementV8Wrapper) tagName(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.TagName()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w elementV8Wrapper) id(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -301,7 +301,7 @@ func (w elementV8Wrapper) id(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.ID()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w elementV8Wrapper) setID(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -343,7 +343,7 @@ func (w elementV8Wrapper) attributes(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Attributes()
-	return w.toNamedNodeMap(cbCtx.ScriptCtx(), result)
+	return w.toNamedNodeMap(cbCtx, result)
 }
 
 func (w elementV8Wrapper) shadowRoot(cbCtx *argumentHelper) (*v8.Value, error) {

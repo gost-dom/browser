@@ -226,7 +226,7 @@ func (c V8InstanceInvocation) ConvertResult(
 		}
 		list.Append(g.Return(cbCtx.ReturnWithValue(g.Nil)))
 	} else {
-		returnValue := c.ConvertReturnValue(data, ctx, c.Op.RetType)
+		returnValue := c.ConvertReturnValue(data, cbCtx, c.Op.RetType)
 		callErr := g.Id("callErr")
 		if hasError {
 			list.Append(g.IfStmt{
@@ -243,15 +243,15 @@ func (c V8InstanceInvocation) ConvertResult(
 
 func (c V8InstanceInvocation) ConvertReturnValue(
 	data ESConstructorData,
-	ctx g.Value,
+	cbCtx wrappers.CallbackContext,
 	retType idl.Type,
 ) g.Generator {
 	if model.IsNodeType(retType.Name) {
-		return g.Return(ctx.Field("getInstanceForNode").Call(g.Id("result")))
+		return g.Return(cbCtx.Field("getInstanceForNode").Call(g.Id("result")))
 	} else {
 		converter := c.Op.Encoder(data)
 		return g.Return(c.Receiver.Method(converter).Call(
-			append([]g.Generator{ctx}, c.Op.RetValues(data)...)...))
+			append([]g.Generator{cbCtx}, c.Op.RetValues(data)...)...))
 	}
 }
 

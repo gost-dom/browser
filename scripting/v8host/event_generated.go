@@ -99,7 +99,7 @@ func (w eventV8Wrapper) type_(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Type
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w eventV8Wrapper) target(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -109,7 +109,7 @@ func (w eventV8Wrapper) target(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Target
-	return w.toEventTarget(cbCtx.ScriptCtx(), result)
+	return w.toEventTarget(cbCtx, result)
 }
 
 func (w eventV8Wrapper) currentTarget(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -119,7 +119,7 @@ func (w eventV8Wrapper) currentTarget(cbCtx *argumentHelper) (*v8.Value, error) 
 		return nil, err
 	}
 	result := instance.CurrentTarget
-	return w.toEventTarget(cbCtx.ScriptCtx(), result)
+	return w.toEventTarget(cbCtx, result)
 }
 
 func (w eventV8Wrapper) bubbles(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -129,7 +129,7 @@ func (w eventV8Wrapper) bubbles(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Bubbles
-	return w.toBoolean(cbCtx.ScriptCtx(), result)
+	return w.toBoolean(cbCtx, result)
 }
 
 func (w eventV8Wrapper) cancelable(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -139,7 +139,7 @@ func (w eventV8Wrapper) cancelable(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Cancelable
-	return w.toBoolean(cbCtx.ScriptCtx(), result)
+	return w.toBoolean(cbCtx, result)
 }
 
 func (w eventV8Wrapper) defaultPrevented(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -149,5 +149,5 @@ func (w eventV8Wrapper) defaultPrevented(cbCtx *argumentHelper) (*v8.Value, erro
 		return nil, err
 	}
 	result := instance.DefaultPrevented
-	return w.toBoolean(cbCtx.ScriptCtx(), result)
+	return w.toBoolean(cbCtx, result)
 }

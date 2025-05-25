@@ -77,7 +77,7 @@ func (w htmlOrSVGElementV8Wrapper) nonce(cbCtx *argumentHelper) (*v8.Value, erro
 		return nil, err
 	}
 	result := instance.Nonce()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w htmlOrSVGElementV8Wrapper) setNonce(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -99,7 +99,7 @@ func (w htmlOrSVGElementV8Wrapper) autofocus(cbCtx *argumentHelper) (*v8.Value, 
 		return nil, err
 	}
 	result := instance.Autofocus()
-	return w.toBoolean(cbCtx.ScriptCtx(), result)
+	return w.toBoolean(cbCtx, result)
 }
 
 func (w htmlOrSVGElementV8Wrapper) setAutofocus(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -121,7 +121,7 @@ func (w htmlOrSVGElementV8Wrapper) tabIndex(cbCtx *argumentHelper) (*v8.Value, e
 		return nil, err
 	}
 	result := instance.TabIndex()
-	return w.toLong(cbCtx.ScriptCtx(), result)
+	return w.toLong(cbCtx, result)
 }
 
 func (w htmlOrSVGElementV8Wrapper) setTabIndex(cbCtx *argumentHelper) (*v8.Value, error) {

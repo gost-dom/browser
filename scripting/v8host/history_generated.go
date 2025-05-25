@@ -145,7 +145,7 @@ func (w historyV8Wrapper) length(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Length()
-	return w.toUnsignedLong(cbCtx.ScriptCtx(), result)
+	return w.toUnsignedLong(cbCtx, result)
 }
 
 func (w historyV8Wrapper) state(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -155,5 +155,5 @@ func (w historyV8Wrapper) state(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.State()
-	return w.toHistoryState(cbCtx.ScriptCtx(), result)
+	return w.toHistoryState(cbCtx, result)
 }

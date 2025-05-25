@@ -72,10 +72,10 @@ func (w mutationObserverV8Wrapper) decodeMutationObserverInit(
 }
 
 func (w mutationObserverV8Wrapper) toSequenceMutationRecord(
-	ctx *V8ScriptContext,
+	cbCtx *argumentHelper,
 	records []mutation.Record,
 ) (*v8go.Value, error) {
-	return toSequenceMutationRecord(ctx, records)
+	return toSequenceMutationRecord(cbCtx.ScriptCtx(), records)
 }
 
 func toSequenceMutationRecord(

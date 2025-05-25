@@ -109,7 +109,7 @@ func (w urlV8Wrapper) toJSON(cbCtx *argumentHelper) (*v8.Value, error) {
 	if callErr != nil {
 		return cbCtx.ReturnWithError(callErr)
 	} else {
-		return w.toString_(cbCtx.ScriptCtx(), result)
+		return w.toString_(cbCtx, result)
 	}
 }
 
@@ -120,7 +120,7 @@ func (w urlV8Wrapper) href(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Href()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w urlV8Wrapper) setHref(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -135,7 +135,7 @@ func (w urlV8Wrapper) origin(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Origin()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w urlV8Wrapper) protocol(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -145,7 +145,7 @@ func (w urlV8Wrapper) protocol(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Protocol()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w urlV8Wrapper) setProtocol(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -180,7 +180,7 @@ func (w urlV8Wrapper) host(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Host()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w urlV8Wrapper) setHost(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -195,7 +195,7 @@ func (w urlV8Wrapper) hostname(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Hostname()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w urlV8Wrapper) setHostname(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -210,7 +210,7 @@ func (w urlV8Wrapper) port(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Port()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w urlV8Wrapper) setPort(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -225,7 +225,7 @@ func (w urlV8Wrapper) pathname(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Pathname()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w urlV8Wrapper) setPathname(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -240,7 +240,7 @@ func (w urlV8Wrapper) search(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Search()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w urlV8Wrapper) setSearch(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -260,7 +260,7 @@ func (w urlV8Wrapper) hash(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Hash()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w urlV8Wrapper) setHash(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -358,7 +358,7 @@ func (w urlSearchParamsV8Wrapper) get(cbCtx *argumentHelper) (*v8.Value, error) 
 			return cbCtx.ReturnWithError(err)
 		}
 		result, hasValue := instance.Get(name)
-		return w.toNillableString_(cbCtx.ScriptCtx(), result, hasValue)
+		return w.toNillableString_(cbCtx, result, hasValue)
 	}
 	return cbCtx.ReturnWithError(errors.New("URLSearchParams.get: Missing arguments"))
 }
@@ -373,7 +373,7 @@ func (w urlSearchParamsV8Wrapper) getAll(cbCtx *argumentHelper) (*v8.Value, erro
 			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.GetAll(name)
-		return w.toSequenceString_(cbCtx.ScriptCtx(), result)
+		return w.toSequenceString_(cbCtx, result)
 	}
 	return cbCtx.ReturnWithError(errors.New("URLSearchParams.getAll: Missing arguments"))
 }
@@ -389,7 +389,7 @@ func (w urlSearchParamsV8Wrapper) has(cbCtx *argumentHelper) (*v8.Value, error) 
 			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.HasValue(name, value)
-		return w.toBoolean(cbCtx.ScriptCtx(), result)
+		return w.toBoolean(cbCtx, result)
 	}
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -397,7 +397,7 @@ func (w urlSearchParamsV8Wrapper) has(cbCtx *argumentHelper) (*v8.Value, error) 
 			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.Has(name)
-		return w.toBoolean(cbCtx.ScriptCtx(), result)
+		return w.toBoolean(cbCtx, result)
 	}
 	return cbCtx.ReturnWithError(errors.New("URLSearchParams.has: Missing arguments"))
 }
@@ -435,7 +435,7 @@ func (w urlSearchParamsV8Wrapper) toString(cbCtx *argumentHelper) (*v8.Value, er
 		return nil, err
 	}
 	result := instance.String()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w urlSearchParamsV8Wrapper) size(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -445,5 +445,5 @@ func (w urlSearchParamsV8Wrapper) size(cbCtx *argumentHelper) (*v8.Value, error)
 		return nil, err
 	}
 	result := instance.Size()
-	return w.toUnsignedLong(cbCtx.ScriptCtx(), result)
+	return w.toUnsignedLong(cbCtx, result)
 }

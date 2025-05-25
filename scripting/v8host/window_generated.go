@@ -199,7 +199,7 @@ func (w windowV8Wrapper) document(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Document()
-	return cbCtx.ScriptCtx().getInstanceForNode(result)
+	return cbCtx.getInstanceForNode(result)
 }
 
 func (w windowV8Wrapper) name(cbCtx *argumentHelper) (*v8.Value, error) {

@@ -57,7 +57,7 @@ func (w htmlAnchorElementV8Wrapper) target(cbCtx *argumentHelper) (*v8.Value, er
 		return nil, err
 	}
 	result := instance.Target()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w htmlAnchorElementV8Wrapper) setTarget(cbCtx *argumentHelper) (*v8.Value, error) {

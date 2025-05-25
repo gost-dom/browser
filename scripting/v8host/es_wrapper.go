@@ -89,59 +89,59 @@ func (w converters) decodeNodeOrText(ctx *V8ScriptContext, val *v8.Value) (dom.N
 }
 
 func (w converters) toNullableString_(
-	ctx *V8ScriptContext,
+	cbCtx *argumentHelper,
 	str *string,
 ) (*v8.Value, error) {
 	if str == nil {
-		return v8.Null(ctx.host.iso), nil
+		return v8.Null(cbCtx.iso()), nil
 	}
-	return v8.NewValue(ctx.host.iso, str)
+	return v8.NewValue(cbCtx.iso(), str)
 }
 
 func (w converters) toNillableString_(
-	ctx *V8ScriptContext,
+	cbCtx *argumentHelper,
 	str string,
 	hasVal bool,
 ) (*v8.Value, error) {
 	if !hasVal {
-		return v8.Null(ctx.host.iso), nil
+		return v8.Null(cbCtx.iso()), nil
 	}
-	return v8.NewValue(ctx.host.iso, str)
+	return v8.NewValue(cbCtx.iso(), str)
 }
 
-func (w converters) toUnsignedLong(ctx *V8ScriptContext, val int) (*v8.Value, error) {
-	return v8.NewValue(ctx.host.iso, uint32(val))
+func (w converters) toUnsignedLong(cbCtx *argumentHelper, val int) (*v8.Value, error) {
+	return v8.NewValue(cbCtx.iso(), uint32(val))
 }
 
-func (w converters) toLong(ctx *V8ScriptContext, val int) (*v8.Value, error) {
-	return v8.NewValue(ctx.host.iso, int64(val))
+func (w converters) toLong(cbCtx *argumentHelper, val int) (*v8.Value, error) {
+	return v8.NewValue(cbCtx.iso(), int64(val))
 }
 
-func (w converters) toAny(ctx *V8ScriptContext, val string) (*v8.Value, error) {
-	return v8.NewValue(ctx.host.iso, val)
+func (w converters) toAny(cbCtx *argumentHelper, val string) (*v8.Value, error) {
+	return v8.NewValue(cbCtx.iso(), val)
 }
 
-func (w converters) toString_(ctx *V8ScriptContext, str string) (*v8.Value, error) {
-	return v8.NewValue(ctx.host.iso, str)
+func (w converters) toString_(cbCtx *argumentHelper, str string) (*v8.Value, error) {
+	return v8.NewValue(cbCtx.iso(), str)
 }
 
-func (w converters) toUnsignedShort(ctx *V8ScriptContext, val int) (*v8.Value, error) {
-	return v8.NewValue(ctx.host.iso, uint32(val))
+func (w converters) toUnsignedShort(cbCtx *argumentHelper, val int) (*v8.Value, error) {
+	return v8.NewValue(cbCtx.iso(), uint32(val))
 }
 
-func (w converters) toBoolean(ctx *V8ScriptContext, val bool) (*v8.Value, error) {
-	return v8.NewValue(ctx.host.iso, val)
+func (w converters) toBoolean(cbCtx *argumentHelper, val bool) (*v8.Value, error) {
+	return v8.NewValue(cbCtx.iso(), val)
 }
 
-func (w converters) toNodeList(ctx *V8ScriptContext, val dom.NodeList) (*v8.Value, error) {
-	return ctx.getInstanceForNodeByName("NodeList", val)
+func (w converters) toNodeList(cbCtx *argumentHelper, val dom.NodeList) (*v8.Value, error) {
+	return cbCtx.ScriptCtx().getInstanceForNodeByName("NodeList", val)
 }
 
 func (w converters) toHTMLFormControlsCollection(
-	ctx *V8ScriptContext,
+	cbCtx *argumentHelper,
 	val dom.NodeList,
 ) (*v8.Value, error) {
-	return w.toNodeList(ctx, val)
+	return w.toNodeList(cbCtx, val)
 }
 
 // handleReffedObject serves as a helper for building v8 wrapping code around go objects.

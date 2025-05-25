@@ -83,7 +83,7 @@ func (w mutationRecordV8Wrapper) type_(cbCtx *argumentHelper) (*v8.Value, error)
 		return nil, err
 	}
 	result := instance.Type
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w mutationRecordV8Wrapper) target(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -93,7 +93,7 @@ func (w mutationRecordV8Wrapper) target(cbCtx *argumentHelper) (*v8.Value, error
 		return nil, err
 	}
 	result := instance.Target
-	return cbCtx.ScriptCtx().getInstanceForNode(result)
+	return cbCtx.getInstanceForNode(result)
 }
 
 func (w mutationRecordV8Wrapper) addedNodes(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -103,7 +103,7 @@ func (w mutationRecordV8Wrapper) addedNodes(cbCtx *argumentHelper) (*v8.Value, e
 		return nil, err
 	}
 	result := instance.AddedNodes
-	return w.toNodeList(cbCtx.ScriptCtx(), result)
+	return w.toNodeList(cbCtx, result)
 }
 
 func (w mutationRecordV8Wrapper) removedNodes(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -113,7 +113,7 @@ func (w mutationRecordV8Wrapper) removedNodes(cbCtx *argumentHelper) (*v8.Value,
 		return nil, err
 	}
 	result := instance.RemovedNodes
-	return w.toNodeList(cbCtx.ScriptCtx(), result)
+	return w.toNodeList(cbCtx, result)
 }
 
 func (w mutationRecordV8Wrapper) previousSibling(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -123,7 +123,7 @@ func (w mutationRecordV8Wrapper) previousSibling(cbCtx *argumentHelper) (*v8.Val
 		return nil, err
 	}
 	result := instance.PreviousSibling
-	return cbCtx.ScriptCtx().getInstanceForNode(result)
+	return cbCtx.getInstanceForNode(result)
 }
 
 func (w mutationRecordV8Wrapper) nextSibling(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -133,7 +133,7 @@ func (w mutationRecordV8Wrapper) nextSibling(cbCtx *argumentHelper) (*v8.Value, 
 		return nil, err
 	}
 	result := instance.NextSibling
-	return cbCtx.ScriptCtx().getInstanceForNode(result)
+	return cbCtx.getInstanceForNode(result)
 }
 
 func (w mutationRecordV8Wrapper) attributeName(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -143,7 +143,7 @@ func (w mutationRecordV8Wrapper) attributeName(cbCtx *argumentHelper) (*v8.Value
 		return nil, err
 	}
 	result := instance.AttributeName
-	return w.toNullableString_(cbCtx.ScriptCtx(), result)
+	return w.toNullableString_(cbCtx, result)
 }
 
 func (w mutationRecordV8Wrapper) attributeNamespace(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -153,7 +153,7 @@ func (w mutationRecordV8Wrapper) attributeNamespace(cbCtx *argumentHelper) (*v8.
 		return nil, err
 	}
 	result := instance.AttributeNamespace
-	return w.toNullableString_(cbCtx.ScriptCtx(), result)
+	return w.toNullableString_(cbCtx, result)
 }
 
 func (w mutationRecordV8Wrapper) oldValue(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -163,5 +163,5 @@ func (w mutationRecordV8Wrapper) oldValue(cbCtx *argumentHelper) (*v8.Value, err
 		return nil, err
 	}
 	result := instance.OldValue
-	return w.toNullableString_(cbCtx.ScriptCtx(), result)
+	return w.toNullableString_(cbCtx, result)
 }

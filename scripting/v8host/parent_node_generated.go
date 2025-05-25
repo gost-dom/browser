@@ -67,7 +67,7 @@ func (w parentNodeV8Wrapper) querySelector(cbCtx *argumentHelper) (*v8.Value, er
 		if callErr != nil {
 			return cbCtx.ReturnWithError(callErr)
 		} else {
-			return cbCtx.ScriptCtx().getInstanceForNode(result)
+			return cbCtx.getInstanceForNode(result)
 		}
 	}
 	return cbCtx.ReturnWithError(errors.New("ParentNode.querySelector: Missing arguments"))
@@ -86,7 +86,7 @@ func (w parentNodeV8Wrapper) querySelectorAll(cbCtx *argumentHelper) (*v8.Value,
 		if callErr != nil {
 			return cbCtx.ReturnWithError(callErr)
 		} else {
-			return w.toNodeList(cbCtx.ScriptCtx(), result)
+			return w.toNodeList(cbCtx, result)
 		}
 	}
 	return cbCtx.ReturnWithError(errors.New("ParentNode.querySelectorAll: Missing arguments"))
@@ -99,7 +99,7 @@ func (w parentNodeV8Wrapper) firstElementChild(cbCtx *argumentHelper) (*v8.Value
 		return nil, err
 	}
 	result := instance.FirstElementChild()
-	return cbCtx.ScriptCtx().getInstanceForNode(result)
+	return cbCtx.getInstanceForNode(result)
 }
 
 func (w parentNodeV8Wrapper) lastElementChild(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -109,7 +109,7 @@ func (w parentNodeV8Wrapper) lastElementChild(cbCtx *argumentHelper) (*v8.Value,
 		return nil, err
 	}
 	result := instance.LastElementChild()
-	return cbCtx.ScriptCtx().getInstanceForNode(result)
+	return cbCtx.getInstanceForNode(result)
 }
 
 func (w parentNodeV8Wrapper) childElementCount(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -119,5 +119,5 @@ func (w parentNodeV8Wrapper) childElementCount(cbCtx *argumentHelper) (*v8.Value
 		return nil, err
 	}
 	result := instance.ChildElementCount()
-	return w.toUnsignedLong(cbCtx.ScriptCtx(), result)
+	return w.toUnsignedLong(cbCtx, result)
 }

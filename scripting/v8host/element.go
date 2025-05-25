@@ -93,8 +93,8 @@ func (e elementV8Wrapper) classList(cbCtx *argumentHelper) (*v8.Value, error) {
 }
 
 func (e *elementV8Wrapper) toNamedNodeMap(
-	ctx *V8ScriptContext,
+	cbCtx *argumentHelper,
 	n dom.NamedNodeMap,
 ) (*v8.Value, error) {
-	return ctx.getInstanceForNodeByName("NamedNodeMap", n)
+	return cbCtx.ScriptCtx().getInstanceForNodeByName("NamedNodeMap", n)
 }

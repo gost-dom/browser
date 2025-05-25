@@ -4,6 +4,7 @@ package v8host
 
 import (
 	"errors"
+
 	dom "github.com/gost-dom/browser/dom"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
@@ -68,7 +69,7 @@ func (w domTokenListV8Wrapper) item(cbCtx *argumentHelper) (*v8.Value, error) {
 			return cbCtx.ReturnWithError(err)
 		}
 		result, hasValue := instance.Item(index)
-		return w.toNillableString_(cbCtx.ScriptCtx(), result, hasValue)
+		return w.toNillableString_(cbCtx, result, hasValue)
 	}
 	return cbCtx.ReturnWithError(errors.New("DOMTokenList.item: Missing arguments"))
 }
@@ -83,7 +84,7 @@ func (w domTokenListV8Wrapper) contains(cbCtx *argumentHelper) (*v8.Value, error
 			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.Contains(token)
-		return w.toBoolean(cbCtx.ScriptCtx(), result)
+		return w.toBoolean(cbCtx, result)
 	}
 	return cbCtx.ReturnWithError(errors.New("DOMTokenList.contains: Missing arguments"))
 }
@@ -132,7 +133,7 @@ func (w domTokenListV8Wrapper) replace(cbCtx *argumentHelper) (*v8.Value, error)
 			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.Replace(token, newToken)
-		return w.toBoolean(cbCtx.ScriptCtx(), result)
+		return w.toBoolean(cbCtx, result)
 	}
 	return cbCtx.ReturnWithError(errors.New("DOMTokenList.replace: Missing arguments"))
 }
@@ -149,7 +150,7 @@ func (w domTokenListV8Wrapper) length(cbCtx *argumentHelper) (*v8.Value, error) 
 		return nil, err
 	}
 	result := instance.Length()
-	return w.toUnsignedLong(cbCtx.ScriptCtx(), result)
+	return w.toUnsignedLong(cbCtx, result)
 }
 
 func (w domTokenListV8Wrapper) value(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -159,7 +160,7 @@ func (w domTokenListV8Wrapper) value(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	result := instance.Value()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w domTokenListV8Wrapper) setValue(cbCtx *argumentHelper) (*v8.Value, error) {

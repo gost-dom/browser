@@ -29,14 +29,14 @@ func (w eventV8Wrapper) CreateInstance(
 }
 
 func (w eventV8Wrapper) toEventTarget(
-	ctx *V8ScriptContext,
+	cbCtx *argumentHelper,
 	e event.EventTarget,
 ) (*v8.Value, error) {
 	if e == nil {
 		return v8.Null(w.scriptHost.iso), nil
 	}
 	if entity, ok := e.(entity.ObjectIder); ok {
-		return ctx.getInstanceForNode(entity)
+		return cbCtx.ScriptCtx().getInstanceForNode(entity)
 	}
 	return nil, v8.NewError(w.iso(), "TODO, Not yet supported")
 }

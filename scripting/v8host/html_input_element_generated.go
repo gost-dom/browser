@@ -53,7 +53,7 @@ func (w htmlInputElementV8Wrapper) checkValidity(cbCtx *argumentHelper) (*v8.Val
 		return nil, err
 	}
 	result := instance.CheckValidity()
-	return w.toBoolean(cbCtx.ScriptCtx(), result)
+	return w.toBoolean(cbCtx, result)
 }
 
 func (w htmlInputElementV8Wrapper) type_(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -63,7 +63,7 @@ func (w htmlInputElementV8Wrapper) type_(cbCtx *argumentHelper) (*v8.Value, erro
 		return nil, err
 	}
 	result := instance.Type()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w htmlInputElementV8Wrapper) setType(cbCtx *argumentHelper) (*v8.Value, error) {

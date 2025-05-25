@@ -148,7 +148,7 @@ func (w xmlHttpRequestV8Wrapper) getResponseHeader(cbCtx *argumentHelper) (*v8.V
 			return cbCtx.ReturnWithError(err)
 		}
 		result, hasValue := instance.GetResponseHeader(name)
-		return w.toNillableString_(cbCtx.ScriptCtx(), result, hasValue)
+		return w.toNillableString_(cbCtx, result, hasValue)
 	}
 	return cbCtx.ReturnWithError(errors.New("XMLHttpRequest.getResponseHeader: Missing arguments"))
 }
@@ -163,7 +163,7 @@ func (w xmlHttpRequestV8Wrapper) getAllResponseHeaders(cbCtx *argumentHelper) (*
 	if callErr != nil {
 		return cbCtx.ReturnWithError(callErr)
 	} else {
-		return w.toString_(cbCtx.ScriptCtx(), result)
+		return w.toString_(cbCtx, result)
 	}
 }
 
@@ -197,7 +197,7 @@ func (w xmlHttpRequestV8Wrapper) timeout(cbCtx *argumentHelper) (*v8.Value, erro
 		return nil, err
 	}
 	result := instance.Timeout()
-	return w.toUnsignedLong(cbCtx.ScriptCtx(), result)
+	return w.toUnsignedLong(cbCtx, result)
 }
 
 func (w xmlHttpRequestV8Wrapper) setTimeout(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -219,7 +219,7 @@ func (w xmlHttpRequestV8Wrapper) withCredentials(cbCtx *argumentHelper) (*v8.Val
 		return nil, err
 	}
 	result := instance.WithCredentials()
-	return w.toBoolean(cbCtx.ScriptCtx(), result)
+	return w.toBoolean(cbCtx, result)
 }
 
 func (w xmlHttpRequestV8Wrapper) setWithCredentials(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -241,7 +241,7 @@ func (w xmlHttpRequestV8Wrapper) responseURL(cbCtx *argumentHelper) (*v8.Value, 
 		return nil, err
 	}
 	result := instance.ResponseURL()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w xmlHttpRequestV8Wrapper) status(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -251,7 +251,7 @@ func (w xmlHttpRequestV8Wrapper) status(cbCtx *argumentHelper) (*v8.Value, error
 		return nil, err
 	}
 	result := instance.Status()
-	return w.toUnsignedShort(cbCtx.ScriptCtx(), result)
+	return w.toUnsignedShort(cbCtx, result)
 }
 
 func (w xmlHttpRequestV8Wrapper) statusText(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -261,7 +261,7 @@ func (w xmlHttpRequestV8Wrapper) statusText(cbCtx *argumentHelper) (*v8.Value, e
 		return nil, err
 	}
 	result := instance.StatusText()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w xmlHttpRequestV8Wrapper) responseType(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -281,7 +281,7 @@ func (w xmlHttpRequestV8Wrapper) response(cbCtx *argumentHelper) (*v8.Value, err
 		return nil, err
 	}
 	result := instance.Response()
-	return w.toAny(cbCtx.ScriptCtx(), result)
+	return w.toAny(cbCtx, result)
 }
 
 func (w xmlHttpRequestV8Wrapper) responseText(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -291,7 +291,7 @@ func (w xmlHttpRequestV8Wrapper) responseText(cbCtx *argumentHelper) (*v8.Value,
 		return nil, err
 	}
 	result := instance.ResponseText()
-	return w.toString_(cbCtx.ScriptCtx(), result)
+	return w.toString_(cbCtx, result)
 }
 
 func (w xmlHttpRequestV8Wrapper) responseXML(cbCtx *argumentHelper) (*v8.Value, error) {

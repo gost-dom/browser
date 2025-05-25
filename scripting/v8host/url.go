@@ -112,14 +112,15 @@ func (w urlSearchParamsV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value,
 }
 
 func (w urlSearchParamsV8Wrapper) toSequenceString_(
-	ctx *V8ScriptContext,
+	cbCtx *argumentHelper,
+	// ctx *V8ScriptContext,
 	values []string,
 ) (*v8.Value, error) {
 	vs := make([]*v8.Value, len(values))
 	for i, v := range values {
-		vs[i], _ = v8.NewValue(ctx.host.iso, v)
+		vs[i], _ = v8.NewValue(cbCtx.iso(), v)
 	}
-	return toArray(ctx.v8ctx, vs...)
+	return toArray(cbCtx.ScriptCtx().v8ctx, vs...)
 }
 
 func (w urlSearchParamsV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) {

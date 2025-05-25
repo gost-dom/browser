@@ -86,5 +86,5 @@ func (w mutationObserverV8Wrapper) takeRecords(cbCtx *argumentHelper) (*v8.Value
 		return nil, err
 	}
 	result := instance.TakeRecords()
-	return w.toSequenceMutationRecord(cbCtx.ScriptCtx(), result)
+	return w.toSequenceMutationRecord(cbCtx, result)
 }

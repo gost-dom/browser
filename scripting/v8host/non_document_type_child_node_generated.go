@@ -51,7 +51,7 @@ func (w nonDocumentTypeChildNodeV8Wrapper) previousElementSibling(cbCtx *argumen
 		return nil, err
 	}
 	result := instance.PreviousElementSibling()
-	return cbCtx.ScriptCtx().getInstanceForNode(result)
+	return cbCtx.getInstanceForNode(result)
 }
 
 func (w nonDocumentTypeChildNodeV8Wrapper) nextElementSibling(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -61,5 +61,5 @@ func (w nonDocumentTypeChildNodeV8Wrapper) nextElementSibling(cbCtx *argumentHel
 		return nil, err
 	}
 	result := instance.NextElementSibling()
-	return cbCtx.ScriptCtx().getInstanceForNode(result)
+	return cbCtx.getInstanceForNode(result)
 }

@@ -68,7 +68,7 @@ func (w htmlTemplateElementV8Wrapper) content(cbCtx *argumentHelper) (*v8.Value,
 		return nil, err
 	}
 	result := instance.Content()
-	return cbCtx.ScriptCtx().getInstanceForNode(result)
+	return cbCtx.getInstanceForNode(result)
 }
 
 func (w htmlTemplateElementV8Wrapper) shadowRootMode(cbCtx *argumentHelper) (*v8.Value, error) {
