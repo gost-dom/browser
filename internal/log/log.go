@@ -1,7 +1,6 @@
 package log
 
 import (
-	"context"
 	"errors"
 	"io"
 	"log/slog"
@@ -16,35 +15,32 @@ type LoggerLogSource struct{ L *slog.Logger }
 
 func (s LoggerLogSource) Logger() Logger { return s.L }
 
-var defaultLogger Logger
+var nullLogger = slog.New(slog.NewTextHandler(io.Discard, nil))
+var defaultLogger = nullLogger
 
+// Set a default [slog/Logger] instance to use in contexts where a specific
+// logger has not been set. If no default logger is set, the default will
+// discard all log messages.
 func SetDefault(logger *slog.Logger) {
+	if logger == nil {
+		logger = nullLogger
+	}
 	defaultLogger = logger
 }
 
+// Default returns the default logger. This method is guaranteed to always
+// return a value, even if the default has explicitly beed set to nil. If no
+// default has been configured, or overriden by a nil value, the logger will
+// discard all logged messages.
 func Default() *slog.Logger {
-	if defaultLogger == nil {
-		defaultLogger = slog.New(slog.NewTextHandler(io.Discard, nil))
-	}
 	return defaultLogger
-}
-
-type nullHandler struct{}
-
-func (_ nullHandler) Enabled(context.Context, slog.Level) bool  { return false }
-func (_ nullHandler) Handle(context.Context, slog.Record) error { return nil }
-func (_ nullHandler) WithAttrs([]slog.Attr) slog.Handler        { return nullHandler{} }
-func (_ nullHandler) WithGroup(name string) slog.Handler        { return nullHandler{} }
-
-func init() {
-	defaultLogger = slog.New(nullHandler{})
 }
 
 func logger(source Logger) *slog.Logger {
 	if source != nil {
 		return source
 	} else {
-		return defaultLogger
+		return Default()
 	}
 }
 
