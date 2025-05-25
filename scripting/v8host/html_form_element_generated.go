@@ -94,7 +94,7 @@ func (w htmlFormElementV8Wrapper) submit(cbCtx *argumentHelper) (*v8.Value, erro
 	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.submit")
 	instance, err := js.As[html.HTMLFormElement](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	callErr := instance.Submit()
 	if callErr != nil {
@@ -150,7 +150,7 @@ func (w htmlFormElementV8Wrapper) action(cbCtx *argumentHelper) (*v8.Value, erro
 	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.action")
 	instance, err := js.As[html.HTMLFormElement](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Action()
 	return w.toString_(cbCtx, result)
@@ -162,7 +162,7 @@ func (w htmlFormElementV8Wrapper) setAction(cbCtx *argumentHelper) (*v8.Value, e
 	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	instance.SetAction(val)
 	return cbCtx.ReturnWithValue(nil)
@@ -202,7 +202,7 @@ func (w htmlFormElementV8Wrapper) method(cbCtx *argumentHelper) (*v8.Value, erro
 	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.method")
 	instance, err := js.As[html.HTMLFormElement](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Method()
 	return w.toString_(cbCtx, result)
@@ -214,7 +214,7 @@ func (w htmlFormElementV8Wrapper) setMethod(cbCtx *argumentHelper) (*v8.Value, e
 	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	instance.SetMethod(val)
 	return cbCtx.ReturnWithValue(nil)
@@ -249,7 +249,7 @@ func (w htmlFormElementV8Wrapper) elements(cbCtx *argumentHelper) (*v8.Value, er
 	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.elements")
 	instance, err := js.As[html.HTMLFormElement](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Elements()
 	return w.toHTMLFormControlsCollection(cbCtx, result)

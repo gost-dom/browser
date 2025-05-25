@@ -76,7 +76,7 @@ func (w historyV8Wrapper) back(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: History.back")
 	instance, err := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	callErr := instance.Back()
 	if callErr != nil {
@@ -89,7 +89,7 @@ func (w historyV8Wrapper) forward(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: History.forward")
 	instance, err := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	callErr := instance.Forward()
 	if callErr != nil {
@@ -142,7 +142,7 @@ func (w historyV8Wrapper) length(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: History.length")
 	instance, err := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Length()
 	return w.toUnsignedLong(cbCtx, result)
@@ -152,7 +152,7 @@ func (w historyV8Wrapper) state(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: History.state")
 	instance, err := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.State()
 	return w.toHistoryState(cbCtx, result)

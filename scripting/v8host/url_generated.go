@@ -103,7 +103,7 @@ func (w urlV8Wrapper) toJSON(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: URL.toJSON")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result, callErr := instance.ToJSON()
 	if callErr != nil {
@@ -117,7 +117,7 @@ func (w urlV8Wrapper) href(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: URL.href")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Href()
 	return w.toString_(cbCtx, result)
@@ -132,7 +132,7 @@ func (w urlV8Wrapper) origin(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: URL.origin")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Origin()
 	return w.toString_(cbCtx, result)
@@ -142,7 +142,7 @@ func (w urlV8Wrapper) protocol(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: URL.protocol")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Protocol()
 	return w.toString_(cbCtx, result)
@@ -177,7 +177,7 @@ func (w urlV8Wrapper) host(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: URL.host")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Host()
 	return w.toString_(cbCtx, result)
@@ -192,7 +192,7 @@ func (w urlV8Wrapper) hostname(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: URL.hostname")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Hostname()
 	return w.toString_(cbCtx, result)
@@ -207,7 +207,7 @@ func (w urlV8Wrapper) port(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: URL.port")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Port()
 	return w.toString_(cbCtx, result)
@@ -222,7 +222,7 @@ func (w urlV8Wrapper) pathname(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: URL.pathname")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Pathname()
 	return w.toString_(cbCtx, result)
@@ -237,7 +237,7 @@ func (w urlV8Wrapper) search(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: URL.search")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Search()
 	return w.toString_(cbCtx, result)
@@ -257,7 +257,7 @@ func (w urlV8Wrapper) hash(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: URL.hash")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Hash()
 	return w.toString_(cbCtx, result)
@@ -422,7 +422,7 @@ func (w urlSearchParamsV8Wrapper) sort(cbCtx *argumentHelper) (*v8.Value, error)
 	cbCtx.logger().Debug("V8 Function call: URLSearchParams.sort")
 	instance, err := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	instance.Sort()
 	return cbCtx.ReturnWithValue(nil)
@@ -432,7 +432,7 @@ func (w urlSearchParamsV8Wrapper) toString(cbCtx *argumentHelper) (*v8.Value, er
 	cbCtx.logger().Debug("V8 Function call: URLSearchParams.toString")
 	instance, err := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.String()
 	return w.toString_(cbCtx, result)
@@ -442,7 +442,7 @@ func (w urlSearchParamsV8Wrapper) size(cbCtx *argumentHelper) (*v8.Value, error)
 	cbCtx.logger().Debug("V8 Function call: URLSearchParams.size")
 	instance, err := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Size()
 	return w.toUnsignedLong(cbCtx, result)

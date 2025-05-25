@@ -80,7 +80,7 @@ func (w mutationRecordV8Wrapper) type_(cbCtx *argumentHelper) (*v8.Value, error)
 	cbCtx.logger().Debug("V8 Function call: MutationRecord.type_")
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Type
 	return w.toString_(cbCtx, result)
@@ -90,7 +90,7 @@ func (w mutationRecordV8Wrapper) target(cbCtx *argumentHelper) (*v8.Value, error
 	cbCtx.logger().Debug("V8 Function call: MutationRecord.target")
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Target
 	return cbCtx.getInstanceForNode(result)
@@ -100,7 +100,7 @@ func (w mutationRecordV8Wrapper) addedNodes(cbCtx *argumentHelper) (*v8.Value, e
 	cbCtx.logger().Debug("V8 Function call: MutationRecord.addedNodes")
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.AddedNodes
 	return w.toNodeList(cbCtx, result)
@@ -110,7 +110,7 @@ func (w mutationRecordV8Wrapper) removedNodes(cbCtx *argumentHelper) (*v8.Value,
 	cbCtx.logger().Debug("V8 Function call: MutationRecord.removedNodes")
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.RemovedNodes
 	return w.toNodeList(cbCtx, result)
@@ -120,7 +120,7 @@ func (w mutationRecordV8Wrapper) previousSibling(cbCtx *argumentHelper) (*v8.Val
 	cbCtx.logger().Debug("V8 Function call: MutationRecord.previousSibling")
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.PreviousSibling
 	return cbCtx.getInstanceForNode(result)
@@ -130,7 +130,7 @@ func (w mutationRecordV8Wrapper) nextSibling(cbCtx *argumentHelper) (*v8.Value, 
 	cbCtx.logger().Debug("V8 Function call: MutationRecord.nextSibling")
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.NextSibling
 	return cbCtx.getInstanceForNode(result)
@@ -140,7 +140,7 @@ func (w mutationRecordV8Wrapper) attributeName(cbCtx *argumentHelper) (*v8.Value
 	cbCtx.logger().Debug("V8 Function call: MutationRecord.attributeName")
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.AttributeName
 	return w.toNullableString_(cbCtx, result)
@@ -150,7 +150,7 @@ func (w mutationRecordV8Wrapper) attributeNamespace(cbCtx *argumentHelper) (*v8.
 	cbCtx.logger().Debug("V8 Function call: MutationRecord.attributeNamespace")
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.AttributeNamespace
 	return w.toNullableString_(cbCtx, result)
@@ -160,7 +160,7 @@ func (w mutationRecordV8Wrapper) oldValue(cbCtx *argumentHelper) (*v8.Value, err
 	cbCtx.logger().Debug("V8 Function call: MutationRecord.oldValue")
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.OldValue
 	return w.toNullableString_(cbCtx, result)

@@ -48,7 +48,7 @@ func (w nonDocumentTypeChildNodeV8Wrapper) previousElementSibling(cbCtx *argumen
 	cbCtx.logger().Debug("V8 Function call: NonDocumentTypeChildNode.previousElementSibling")
 	instance, err := js.As[dom.NonDocumentTypeChildNode](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.PreviousElementSibling()
 	return cbCtx.getInstanceForNode(result)
@@ -58,7 +58,7 @@ func (w nonDocumentTypeChildNodeV8Wrapper) nextElementSibling(cbCtx *argumentHel
 	cbCtx.logger().Debug("V8 Function call: NonDocumentTypeChildNode.nextElementSibling")
 	instance, err := js.As[dom.NonDocumentTypeChildNode](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.NextElementSibling()
 	return cbCtx.getInstanceForNode(result)

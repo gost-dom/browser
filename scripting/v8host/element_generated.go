@@ -288,7 +288,7 @@ func (w elementV8Wrapper) tagName(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.tagName")
 	instance, err := js.As[dom.Element](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.TagName()
 	return w.toString_(cbCtx, result)
@@ -298,7 +298,7 @@ func (w elementV8Wrapper) id(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.id")
 	instance, err := js.As[dom.Element](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.ID()
 	return w.toString_(cbCtx, result)
@@ -310,7 +310,7 @@ func (w elementV8Wrapper) setID(cbCtx *argumentHelper) (*v8.Value, error) {
 	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	instance.SetID(val)
 	return cbCtx.ReturnWithValue(nil)
@@ -340,7 +340,7 @@ func (w elementV8Wrapper) attributes(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.attributes")
 	instance, err := js.As[dom.Element](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Attributes()
 	return w.toNamedNodeMap(cbCtx, result)

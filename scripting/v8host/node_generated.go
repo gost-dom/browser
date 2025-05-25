@@ -210,7 +210,7 @@ func (w nodeV8Wrapper) nodeName(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Node.nodeName")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.NodeName()
 	return w.toString_(cbCtx, result)
@@ -220,7 +220,7 @@ func (w nodeV8Wrapper) isConnected(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Node.isConnected")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.IsConnected()
 	return w.toBoolean(cbCtx, result)
@@ -230,7 +230,7 @@ func (w nodeV8Wrapper) ownerDocument(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Node.ownerDocument")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.OwnerDocument()
 	return cbCtx.getInstanceForNode(result)
@@ -240,7 +240,7 @@ func (w nodeV8Wrapper) parentElement(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Node.parentElement")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.ParentElement()
 	return cbCtx.getInstanceForNode(result)
@@ -250,7 +250,7 @@ func (w nodeV8Wrapper) childNodes(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Node.childNodes")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.ChildNodes()
 	return w.toNodeList(cbCtx, result)
@@ -260,7 +260,7 @@ func (w nodeV8Wrapper) firstChild(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Node.firstChild")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.FirstChild()
 	return cbCtx.getInstanceForNode(result)
@@ -270,7 +270,7 @@ func (w nodeV8Wrapper) previousSibling(cbCtx *argumentHelper) (*v8.Value, error)
 	cbCtx.logger().Debug("V8 Function call: Node.previousSibling")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.PreviousSibling()
 	return cbCtx.getInstanceForNode(result)
@@ -280,7 +280,7 @@ func (w nodeV8Wrapper) nextSibling(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Node.nextSibling")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.NextSibling()
 	return cbCtx.getInstanceForNode(result)

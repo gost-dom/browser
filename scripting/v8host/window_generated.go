@@ -196,7 +196,7 @@ func (w windowV8Wrapper) document(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.document")
 	instance, err := js.As[html.Window](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Document()
 	return cbCtx.getInstanceForNode(result)

@@ -54,7 +54,7 @@ func (w htmlAnchorElementV8Wrapper) target(cbCtx *argumentHelper) (*v8.Value, er
 	cbCtx.logger().Debug("V8 Function call: HTMLAnchorElement.target")
 	instance, err := js.As[html.HTMLAnchorElement](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Target()
 	return w.toString_(cbCtx, result)
@@ -66,7 +66,7 @@ func (w htmlAnchorElementV8Wrapper) setTarget(cbCtx *argumentHelper) (*v8.Value,
 	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	instance.SetTarget(val)
 	return cbCtx.ReturnWithValue(nil)

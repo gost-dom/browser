@@ -116,7 +116,7 @@ func (w xmlHttpRequestV8Wrapper) send(cbCtx *argumentHelper) (*v8.Value, error) 
 		return cbCtx.ReturnWithValue(nil)
 	}
 	if err0 != nil {
-		return nil, err0
+		return cbCtx.ReturnWithError(err0)
 	}
 	callErr := instance.Send()
 	if callErr != nil {
@@ -129,7 +129,7 @@ func (w xmlHttpRequestV8Wrapper) abort(cbCtx *argumentHelper) (*v8.Value, error)
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.abort")
 	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	callErr := instance.Abort()
 	if callErr != nil {
@@ -157,7 +157,7 @@ func (w xmlHttpRequestV8Wrapper) getAllResponseHeaders(cbCtx *argumentHelper) (*
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.getAllResponseHeaders")
 	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result, callErr := instance.GetAllResponseHeaders()
 	if callErr != nil {
@@ -194,7 +194,7 @@ func (w xmlHttpRequestV8Wrapper) timeout(cbCtx *argumentHelper) (*v8.Value, erro
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.timeout")
 	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Timeout()
 	return w.toUnsignedLong(cbCtx, result)
@@ -206,7 +206,7 @@ func (w xmlHttpRequestV8Wrapper) setTimeout(cbCtx *argumentHelper) (*v8.Value, e
 	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeUnsignedLong)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	instance.SetTimeout(val)
 	return cbCtx.ReturnWithValue(nil)
@@ -216,7 +216,7 @@ func (w xmlHttpRequestV8Wrapper) withCredentials(cbCtx *argumentHelper) (*v8.Val
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.withCredentials")
 	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.WithCredentials()
 	return w.toBoolean(cbCtx, result)
@@ -228,7 +228,7 @@ func (w xmlHttpRequestV8Wrapper) setWithCredentials(cbCtx *argumentHelper) (*v8.
 	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeBoolean)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	instance.SetWithCredentials(val)
 	return cbCtx.ReturnWithValue(nil)
@@ -238,7 +238,7 @@ func (w xmlHttpRequestV8Wrapper) responseURL(cbCtx *argumentHelper) (*v8.Value, 
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.responseURL")
 	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.ResponseURL()
 	return w.toString_(cbCtx, result)
@@ -248,7 +248,7 @@ func (w xmlHttpRequestV8Wrapper) status(cbCtx *argumentHelper) (*v8.Value, error
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.status")
 	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Status()
 	return w.toUnsignedShort(cbCtx, result)
@@ -258,7 +258,7 @@ func (w xmlHttpRequestV8Wrapper) statusText(cbCtx *argumentHelper) (*v8.Value, e
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.statusText")
 	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.StatusText()
 	return w.toString_(cbCtx, result)
@@ -278,7 +278,7 @@ func (w xmlHttpRequestV8Wrapper) response(cbCtx *argumentHelper) (*v8.Value, err
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.response")
 	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Response()
 	return w.toAny(cbCtx, result)
@@ -288,7 +288,7 @@ func (w xmlHttpRequestV8Wrapper) responseText(cbCtx *argumentHelper) (*v8.Value,
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.responseText")
 	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.ResponseText()
 	return w.toString_(cbCtx, result)

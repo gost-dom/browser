@@ -59,7 +59,7 @@ func (w htmlOrSVGElementV8Wrapper) blur(cbCtx *argumentHelper) (*v8.Value, error
 	cbCtx.logger().Debug("V8 Function call: HTMLOrSVGElement.blur")
 	instance, err := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	instance.Blur()
 	return cbCtx.ReturnWithValue(nil)
@@ -74,7 +74,7 @@ func (w htmlOrSVGElementV8Wrapper) nonce(cbCtx *argumentHelper) (*v8.Value, erro
 	cbCtx.logger().Debug("V8 Function call: HTMLOrSVGElement.nonce")
 	instance, err := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Nonce()
 	return w.toString_(cbCtx, result)
@@ -86,7 +86,7 @@ func (w htmlOrSVGElementV8Wrapper) setNonce(cbCtx *argumentHelper) (*v8.Value, e
 	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	instance.SetNonce(val)
 	return cbCtx.ReturnWithValue(nil)
@@ -96,7 +96,7 @@ func (w htmlOrSVGElementV8Wrapper) autofocus(cbCtx *argumentHelper) (*v8.Value, 
 	cbCtx.logger().Debug("V8 Function call: HTMLOrSVGElement.autofocus")
 	instance, err := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Autofocus()
 	return w.toBoolean(cbCtx, result)
@@ -108,7 +108,7 @@ func (w htmlOrSVGElementV8Wrapper) setAutofocus(cbCtx *argumentHelper) (*v8.Valu
 	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeBoolean)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	instance.SetAutofocus(val)
 	return cbCtx.ReturnWithValue(nil)
@@ -118,7 +118,7 @@ func (w htmlOrSVGElementV8Wrapper) tabIndex(cbCtx *argumentHelper) (*v8.Value, e
 	cbCtx.logger().Debug("V8 Function call: HTMLOrSVGElement.tabIndex")
 	instance, err := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.TabIndex()
 	return w.toLong(cbCtx, result)
@@ -130,7 +130,7 @@ func (w htmlOrSVGElementV8Wrapper) setTabIndex(cbCtx *argumentHelper) (*v8.Value
 	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeLong)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	instance.SetTabIndex(val)
 	return cbCtx.ReturnWithValue(nil)

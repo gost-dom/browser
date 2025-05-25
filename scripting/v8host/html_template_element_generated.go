@@ -65,7 +65,7 @@ func (w htmlTemplateElementV8Wrapper) content(cbCtx *argumentHelper) (*v8.Value,
 	cbCtx.logger().Debug("V8 Function call: HTMLTemplateElement.content")
 	instance, err := js.As[html.HTMLTemplateElement](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Content()
 	return cbCtx.getInstanceForNode(result)

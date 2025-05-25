@@ -104,7 +104,10 @@ func (gen V8TargetGenerators) CreateAttributeGetter(
 			g.List(instance, err),
 			wrappers.As.TypeParam(data.WrappedType()).Call(cbCtx.GetInstance()),
 		),
-		wrappers.ReturnIfError(err),
+		wrappers.IfError(
+			err,
+			wrappers.ReturnTransform(wrappers.TransformerFunc(cbCtx.ReturnWithError)),
+		),
 		x.ConvertResult(cbCtx.Context(), cbCtx, data, eval(instance)),
 	)
 }
@@ -138,7 +141,10 @@ func (gen V8TargetGenerators) CreateAttributeSetter(
 		),
 		g.AssignMany(g.List(val, err1), parsedArg),
 
-		wrappers.ReturnOnAnyError([]g.Generator{err, err1}),
+		wrappers.IfAnyError(
+			[]g.Generator{err, err1},
+			wrappers.ReturnTransform(wrappers.TransformerFunc(cbCtx.ReturnWithError)),
+		),
 		set(instance, val),
 		g.Return(cbCtx.ReturnWithValue(g.Nil)),
 	)

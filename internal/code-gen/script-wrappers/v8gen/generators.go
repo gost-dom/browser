@@ -161,7 +161,8 @@ func CreateV8WrapperMethodInstanceInvocations(
 				break
 			}
 		} else {
-			statements.Append(wrappers.ReturnOnAnyError(errNames))
+			statements.Append(wrappers.IfAnyError(errNames, wrappers.ReturnTransform(
+				wrappers.TransformerFunc(cbCtx.ReturnWithError))))
 			statements.Append(callInstance)
 		}
 	}

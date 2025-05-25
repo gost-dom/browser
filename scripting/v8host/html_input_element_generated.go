@@ -50,7 +50,7 @@ func (w htmlInputElementV8Wrapper) checkValidity(cbCtx *argumentHelper) (*v8.Val
 	cbCtx.logger().Debug("V8 Function call: HTMLInputElement.checkValidity")
 	instance, err := js.As[html.HTMLInputElement](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.CheckValidity()
 	return w.toBoolean(cbCtx, result)
@@ -60,7 +60,7 @@ func (w htmlInputElementV8Wrapper) type_(cbCtx *argumentHelper) (*v8.Value, erro
 	cbCtx.logger().Debug("V8 Function call: HTMLInputElement.type_")
 	instance, err := js.As[html.HTMLInputElement](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Type()
 	return w.toString_(cbCtx, result)
@@ -72,7 +72,7 @@ func (w htmlInputElementV8Wrapper) setType(cbCtx *argumentHelper) (*v8.Value, er
 	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	instance.SetType(val)
 	return cbCtx.ReturnWithValue(nil)

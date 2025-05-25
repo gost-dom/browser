@@ -86,7 +86,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) href(cbCtx *argumentHelper) (*v8.Val
 	cbCtx.logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.href")
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Href()
 	return w.toString_(cbCtx, result)
@@ -98,7 +98,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setHref(cbCtx *argumentHelper) (*v8.
 	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	instance.SetHref(val)
 	return cbCtx.ReturnWithValue(nil)
@@ -108,7 +108,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) origin(cbCtx *argumentHelper) (*v8.V
 	cbCtx.logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.origin")
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Origin()
 	return w.toString_(cbCtx, result)
@@ -118,7 +118,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) protocol(cbCtx *argumentHelper) (*v8
 	cbCtx.logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.protocol")
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Protocol()
 	return w.toString_(cbCtx, result)
@@ -130,7 +130,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setProtocol(cbCtx *argumentHelper) (
 	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	instance.SetProtocol(val)
 	return cbCtx.ReturnWithValue(nil)
@@ -140,7 +140,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) username(cbCtx *argumentHelper) (*v8
 	cbCtx.logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.username")
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Username()
 	return w.toString_(cbCtx, result)
@@ -152,7 +152,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setUsername(cbCtx *argumentHelper) (
 	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	instance.SetUsername(val)
 	return cbCtx.ReturnWithValue(nil)
@@ -162,7 +162,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) password(cbCtx *argumentHelper) (*v8
 	cbCtx.logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.password")
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Password()
 	return w.toString_(cbCtx, result)
@@ -174,7 +174,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setPassword(cbCtx *argumentHelper) (
 	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	instance.SetPassword(val)
 	return cbCtx.ReturnWithValue(nil)
@@ -184,7 +184,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) host(cbCtx *argumentHelper) (*v8.Val
 	cbCtx.logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.host")
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Host()
 	return w.toString_(cbCtx, result)
@@ -196,7 +196,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setHost(cbCtx *argumentHelper) (*v8.
 	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	instance.SetHost(val)
 	return cbCtx.ReturnWithValue(nil)
@@ -206,7 +206,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) hostname(cbCtx *argumentHelper) (*v8
 	cbCtx.logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.hostname")
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Hostname()
 	return w.toString_(cbCtx, result)
@@ -218,7 +218,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setHostname(cbCtx *argumentHelper) (
 	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	instance.SetHostname(val)
 	return cbCtx.ReturnWithValue(nil)
@@ -228,7 +228,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) port(cbCtx *argumentHelper) (*v8.Val
 	cbCtx.logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.port")
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Port()
 	return w.toString_(cbCtx, result)
@@ -240,7 +240,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setPort(cbCtx *argumentHelper) (*v8.
 	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	instance.SetPort(val)
 	return cbCtx.ReturnWithValue(nil)
@@ -250,7 +250,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) pathname(cbCtx *argumentHelper) (*v8
 	cbCtx.logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.pathname")
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Pathname()
 	return w.toString_(cbCtx, result)
@@ -262,7 +262,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setPathname(cbCtx *argumentHelper) (
 	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	instance.SetPathname(val)
 	return cbCtx.ReturnWithValue(nil)
@@ -272,7 +272,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) search(cbCtx *argumentHelper) (*v8.V
 	cbCtx.logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.search")
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Search()
 	return w.toString_(cbCtx, result)
@@ -284,7 +284,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setSearch(cbCtx *argumentHelper) (*v
 	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	instance.SetSearch(val)
 	return cbCtx.ReturnWithValue(nil)
@@ -294,7 +294,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) hash(cbCtx *argumentHelper) (*v8.Val
 	cbCtx.logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.hash")
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Hash()
 	return w.toString_(cbCtx, result)
@@ -306,7 +306,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setHash(cbCtx *argumentHelper) (*v8.
 	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	instance.SetHash(val)
 	return cbCtx.ReturnWithValue(nil)

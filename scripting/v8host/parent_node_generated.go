@@ -96,7 +96,7 @@ func (w parentNodeV8Wrapper) firstElementChild(cbCtx *argumentHelper) (*v8.Value
 	cbCtx.logger().Debug("V8 Function call: ParentNode.firstElementChild")
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.FirstElementChild()
 	return cbCtx.getInstanceForNode(result)
@@ -106,7 +106,7 @@ func (w parentNodeV8Wrapper) lastElementChild(cbCtx *argumentHelper) (*v8.Value,
 	cbCtx.logger().Debug("V8 Function call: ParentNode.lastElementChild")
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.LastElementChild()
 	return cbCtx.getInstanceForNode(result)
@@ -116,7 +116,7 @@ func (w parentNodeV8Wrapper) childElementCount(cbCtx *argumentHelper) (*v8.Value
 	cbCtx.logger().Debug("V8 Function call: ParentNode.childElementCount")
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.ChildElementCount()
 	return w.toUnsignedLong(cbCtx, result)

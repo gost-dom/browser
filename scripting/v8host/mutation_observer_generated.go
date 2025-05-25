@@ -73,7 +73,7 @@ func (w mutationObserverV8Wrapper) disconnect(cbCtx *argumentHelper) (*v8.Value,
 	cbCtx.logger().Debug("V8 Function call: MutationObserver.disconnect")
 	instance, err := js.As[dominterfaces.MutationObserver](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	instance.Disconnect()
 	return cbCtx.ReturnWithValue(nil)
@@ -83,7 +83,7 @@ func (w mutationObserverV8Wrapper) takeRecords(cbCtx *argumentHelper) (*v8.Value
 	cbCtx.logger().Debug("V8 Function call: MutationObserver.takeRecords")
 	instance, err := js.As[dominterfaces.MutationObserver](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.TakeRecords()
 	return w.toSequenceMutationRecord(cbCtx, result)

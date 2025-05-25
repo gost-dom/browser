@@ -4,7 +4,6 @@ package v8host
 
 import (
 	"errors"
-
 	dom "github.com/gost-dom/browser/dom"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
@@ -147,7 +146,7 @@ func (w domTokenListV8Wrapper) length(cbCtx *argumentHelper) (*v8.Value, error) 
 	cbCtx.logger().Debug("V8 Function call: DOMTokenList.length")
 	instance, err := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Length()
 	return w.toUnsignedLong(cbCtx, result)
@@ -157,7 +156,7 @@ func (w domTokenListV8Wrapper) value(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: DOMTokenList.value")
 	instance, err := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Value()
 	return w.toString_(cbCtx, result)
@@ -169,7 +168,7 @@ func (w domTokenListV8Wrapper) setValue(cbCtx *argumentHelper) (*v8.Value, error
 	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	instance.SetValue(val)
 	return cbCtx.ReturnWithValue(nil)
