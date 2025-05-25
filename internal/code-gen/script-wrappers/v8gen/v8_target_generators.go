@@ -101,7 +101,7 @@ func (gen V8TargetGenerators) CreateAttributeGetter(
 			wrappers.As.TypeParam(data.WrappedType()).Call(cbCtx.GetInstance()),
 		),
 		wrappers.ReturnIfError(err),
-		x.ConvertResult(cbCtx.Context(), eval(instance)),
+		x.ConvertResult(cbCtx.Context(), data, eval(instance)),
 	)
 }
 
@@ -166,7 +166,7 @@ func (gen V8TargetGenerators) CreateMethodCallbackBody(
 			Op:       op,
 			Instance: &instance,
 			Receiver: receiver,
-		}.GetGenerator(ctx)
+		}.GetGenerator(ctx, data)
 	}
 	statements := g.StatementList(
 		g.AssignMany(

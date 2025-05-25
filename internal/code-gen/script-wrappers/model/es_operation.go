@@ -3,8 +3,10 @@ package model
 import (
 	"strings"
 
+	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/idltransform"
 	"github.com/gost-dom/code-gen/script-wrappers/configuration"
+	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )
 
@@ -58,24 +60,42 @@ func idlTypeNameToGoName(t idl.Type) string {
 	}
 }
 
-func encoderForIDLType(t idl.Type) string {
+func (o ESOperation) Encoder(data ESConstructorData) string {
+	if e := o.MethodCustomization.Encoder; e != "" {
+		return e
+	}
+	t := o.RetType
 	converter := "to"
 	if t.Kind == idl.KindSequence {
 		converter += "Sequence"
 		t = *t.TypeParam
 	}
 	if t.Nullable && !idltransform.IdlType(t).Nillable() {
-		converter += "Nullable"
+		if data.CustomRule.OutputType == customrules.OutputTypeStruct {
+			converter += "Nullable"
+		} else {
+			converter += "Nillable"
+		}
 	}
 	converter += IdlNameToGoName(idlTypeNameToGoName(t))
 	return converter
 }
 
-func (o ESOperation) Encoder() string {
-	if e := o.MethodCustomization.Encoder; e != "" {
-		return e
+func (o ESOperation) RetValues(data ESConstructorData) []g.Generator {
+	if !o.HasResult() {
+		return nil
 	}
-	return encoderForIDLType(o.RetType)
+	t := o.RetType
+	res := g.Id("result")
+	hasValue := g.Id("hasValue")
+	if t.Nullable && !idltransform.IdlType(t).Nillable() {
+		if data.CustomRule.OutputType == customrules.OutputTypeStruct {
+			return g.List(res)
+		} else {
+			return g.List(res, hasValue)
+		}
+	}
+	return g.List(res)
 }
 
 func (o ESOperation) RetTypeName() string {

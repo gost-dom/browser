@@ -57,7 +57,7 @@ func CreateV8Specs() WebIdlConfigurations {
 	domElement := domSpecs.Type("Element")
 	domElement.SkipWrapper = true
 	domElement.RunCustomCode = true
-	domElement.Method("getAttribute").SetCustomImplementation()
+	// domElement.Method("getAttribute").SetCustomImplementation()
 	domElement.Method("classList").SetCustomImplementation()
 
 	domElement.MarkMembersAsNotImplemented(

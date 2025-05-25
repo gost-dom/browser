@@ -51,7 +51,7 @@ type XmlHttpRequest interface {
 	SetRequestHeader(name string, value string)
 	GetAllResponseHeaders() (res string, err error)
 	OverrideMimeType(mimeType string) error
-	GetResponseHeader(headerName string) *string
+	GetResponseHeader(headerName string) (string, bool)
 	SetWithCredentials(val bool) error
 	WithCredentials() bool
 	ResponseURL() string
@@ -207,18 +207,16 @@ func (req *xmlHttpRequest) OverrideMimeType(mimeType string) error {
 	return nil
 }
 
-func (req *xmlHttpRequest) GetResponseHeader(headerName string) *string {
+func (req *xmlHttpRequest) GetResponseHeader(headerName string) (string, bool) {
 	if req.res == nil {
-		return nil
+		return "", false
 	}
 	key := http.CanonicalHeaderKey(headerName)
 	if val, ok := req.res.Header[key]; ok && len(val) > 0 {
-		res := new(string)
-		*res = strings.Join(val, ", ")
-		return res
+		return strings.Join(val, ", "), true
 
 	}
-	return nil
+	return "", false
 }
 
 func (req *xmlHttpRequest) SetWithCredentials(val bool) error {

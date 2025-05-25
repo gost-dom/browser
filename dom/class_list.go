@@ -64,12 +64,12 @@ func (l DOMTokenList) SetValue(val string) {
 	l.element.SetAttribute(l.attribute, val)
 }
 
-func (l DOMTokenList) Item(index int) *string {
+func (l DOMTokenList) Item(index int) (string, bool) {
 	tokens := l.getTokens()
 	if index >= len(tokens) {
-		return nil
+		return "", false
 	}
-	return &tokens[index]
+	return tokens[index], true
 }
 
 func (l DOMTokenList) Remove(token string) {

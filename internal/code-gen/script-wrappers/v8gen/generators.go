@@ -3,6 +3,7 @@ package v8gen
 import (
 	"fmt"
 
+	"github.com/gost-dom/code-gen/idltransform"
 	. "github.com/gost-dom/code-gen/internal"
 	wrappers "github.com/gost-dom/code-gen/script-wrappers"
 	"github.com/gost-dom/code-gen/script-wrappers/model"
@@ -183,19 +184,23 @@ func (c V8InstanceInvocation) AssignValues(evaluation g.Generator) g.Generator {
 		return evaluation
 	}
 
-	if HasError && !HasValue {
-		return g.Assign(g.Id("callErr"), evaluation)
+	vals := make([]g.Generator, 0, 3)
+	if HasValue {
+		vals = append(vals, g.Id("result"))
+		t := idltransform.IdlType(c.Op.Spec.ReturnType)
+		if t.Nullable && !t.Nillable() {
+			vals = append(vals, g.Id("hasValue"))
+		}
 	}
-	if !HasError && HasValue {
-		return g.Assign(g.Id("result"), evaluation)
+	if HasError {
+		vals = append(vals, g.Id("callErr"))
 	}
-	return g.AssignMany([]g.Generator{
-		g.Id("result"),
-		g.Id("callErr")}, evaluation)
+	return g.AssignMany(vals, evaluation)
 }
 
 func (c V8InstanceInvocation) ConvertResult(
 	ctx g.Value,
+	data ESConstructorData,
 	evaluation g.Generator,
 ) g.Generator {
 	hasError := c.Op.GetHasError()
@@ -211,7 +216,7 @@ func (c V8InstanceInvocation) ConvertResult(
 			list.Append(g.Return(g.Nil, g.Nil))
 		}
 	} else {
-		returnValue := c.ConvertReturnValue(ctx, c.Op.RetType)
+		returnValue := c.ConvertReturnValue(data, ctx, c.Op.RetType)
 		if hasError {
 			list.Append(g.IfStmt{
 				Condition: g.Neq{Lhs: g.Id("callErr"), Rhs: g.Nil},
@@ -225,20 +230,25 @@ func (c V8InstanceInvocation) ConvertResult(
 	return list
 }
 
-func (c V8InstanceInvocation) ConvertReturnValue(ctx g.Value, retType idl.Type) g.Generator {
+func (c V8InstanceInvocation) ConvertReturnValue(
+	data ESConstructorData,
+	ctx g.Value,
+	retType idl.Type,
+) g.Generator {
 	if model.IsNodeType(retType.Name) {
 		return g.Return(ctx.Field("getInstanceForNode").Call(g.Id("result")))
 	} else {
-		converter := c.Op.Encoder()
-		return g.Return(c.Receiver.Method(converter).Call(ctx, g.Id("result")))
+		converter := c.Op.Encoder(data)
+		return g.Return(c.Receiver.Method(converter).Call(
+			append([]g.Generator{ctx}, c.Op.RetValues(data)...)...))
 	}
 }
 
-func (c V8InstanceInvocation) GetGenerator(ctx g.Value) g.Generator {
+func (c V8InstanceInvocation) GetGenerator(ctx g.Value, data ESConstructorData) g.Generator {
 	if c.Instance == nil {
-		return c.ConvertResult(ctx, g.NewValue(IdlNameToGoName(c.Name)).Call(c.Args...))
+		return c.ConvertResult(ctx, data, g.NewValue(IdlNameToGoName(c.Name)).Call(c.Args...))
 	} else {
-		return c.ConvertResult(ctx, c.Instance.Method(IdlNameToGoName(c.Name)).Call(c.Args...))
+		return c.ConvertResult(ctx, data, c.Instance.Method(IdlNameToGoName(c.Name)).Call(c.Args...))
 	}
 }
 

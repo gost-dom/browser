@@ -179,8 +179,8 @@ func (s *XMLHTTPRequestTestSuite) TestResponseHeaders() {
 		s.xhr.GetAllResponseHeaders(),
 	).To(HaveLines("x-test-1: value1", "x-test-2: value2", "content-type: text/plain"))
 
-	s.Expect(s.xhr.GetResponseHeader("missing")).
-		To(BeNil(), "Value of non-existing response header")
+	_, found := s.xhr.GetResponseHeader("missing")
+	s.Expect(found).To(BeFalse(), "Value of non-existing response header")
 }
 
 func (s *XMLHTTPRequestTestSuite) TestSameResponseHeaderAddedTwice() {
@@ -197,10 +197,13 @@ func (s *XMLHTTPRequestTestSuite) TestSameResponseHeaderAddedTwice() {
 		s.xhr.GetAllResponseHeaders(),
 	).To(HaveLines("x-test-1: value1", "x-test-1: value3", "x-test-2: value2", "content-type: text/plain"))
 
-	s.Expect(s.xhr.GetResponseHeader("x-test-2")).
-		To(HaveValue(Equal("value2")), "Value of header specified once")
-	s.Expect(s.xhr.GetResponseHeader("x-test-1")).
-		To(HaveValue(Equal("value1, value3")), "Value of header specified twice")
+	header1, found1 := s.xhr.GetResponseHeader("x-test-1")
+	header2, found2 := s.xhr.GetResponseHeader("x-test-2")
+
+	s.Expect(header2).To(Equal("value2"), "Value of header specified once")
+	s.Expect(header1).To(Equal("value1, value3"), "Value of header specified twice")
+	assert.True(s.T(), found1)
+	assert.True(s.T(), found2)
 }
 
 func (s *XMLHTTPRequestTestSuite) TestCookieVisibility() {

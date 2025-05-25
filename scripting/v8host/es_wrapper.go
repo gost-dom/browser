@@ -88,11 +88,25 @@ func (w converters) decodeNodeOrText(ctx *V8ScriptContext, val *v8.Value) (dom.N
 	return w.decodeNode(ctx, val)
 }
 
-func (w converters) toNullableString_(ctx *V8ScriptContext, str *string) (*v8.Value, error) {
+func (w converters) toNullableString_(
+	ctx *V8ScriptContext,
+	str *string,
+) (*v8.Value, error) {
 	if str == nil {
 		return v8.Null(ctx.host.iso), nil
 	}
-	return v8.NewValue(ctx.host.iso, *str)
+	return v8.NewValue(ctx.host.iso, str)
+}
+
+func (w converters) toNillableString_(
+	ctx *V8ScriptContext,
+	str string,
+	hasVal bool,
+) (*v8.Value, error) {
+	if !hasVal {
+		return v8.Null(ctx.host.iso), nil
+	}
+	return v8.NewValue(ctx.host.iso, str)
 }
 
 func (w converters) toUnsignedLong(ctx *V8ScriptContext, val int) (*v8.Value, error) {

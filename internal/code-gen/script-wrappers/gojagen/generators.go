@@ -147,7 +147,7 @@ func (gen GojaTargetGenerators) CreateAttributeGetter(
 	instance := g.NewValue("instance")
 	return g.StatementList(
 		gen.getInstance(cbCtx, data, instance),
-		gen.ConvertResult(op, receiver, cbCtx, eval(instance)),
+		gen.ConvertResult(op, data, receiver, cbCtx, eval(instance)),
 	)
 }
 
@@ -188,7 +188,7 @@ func (gen GojaTargetGenerators) CreateAttributeSetter(
 	return g.StatementList(
 		gen.getInstance(cbCtx, data, instance),
 		readArgs,
-		gen.ConvertResult(op, receiver, cbCtx, updateValue(instance, argNames[0])),
+		gen.ConvertResult(op, data, receiver, cbCtx, updateValue(instance, argNames[0])),
 	)
 }
 
@@ -212,7 +212,7 @@ func (gen GojaTargetGenerators) CreateMethodCallbackBody(
 		// g.Assign(instance, receiver.Field("getInstance").Call(callArgument)),
 		gen.getInstance(cbCtx, data, instance),
 		readArgs,
-		gen.ConvertResult(op, receiver, cbCtx,
+		gen.ConvertResult(op, data, receiver, cbCtx,
 			instance.Field(UpperCaseFirstLetter(op.Name)).Call(argNames...),
 		),
 	)
@@ -220,13 +220,14 @@ func (gen GojaTargetGenerators) CreateMethodCallbackBody(
 
 func (gen GojaTargetGenerators) ConvertResult(
 	op model.ESOperation,
+	data model.ESConstructorData,
 	receiver g.Value,
 	cbCtx wrappers.CallbackContext,
 	evaluate g.Generator,
 ) g.Generator {
 	list := g.StatementList()
 	if op.HasResult() {
-		converter := op.Encoder()
+		converter := op.Encoder(data)
 		if op.GetHasError() {
 			list.Append(
 				g.AssignMany(g.List(
@@ -240,7 +241,9 @@ func (gen GojaTargetGenerators) ConvertResult(
 				g.Assign(g.Id("result"), evaluate),
 			)
 		}
-		list.Append(g.Return(cbCtx.ReturnWithValue(receiver.Field(converter).Call(g.Id("result")))))
+		list.Append(
+			g.Return(cbCtx.ReturnWithValue(receiver.Field(converter).Call(op.RetValues(data)...))),
+		)
 	} else {
 		if op.GetHasError() {
 			list.Append(

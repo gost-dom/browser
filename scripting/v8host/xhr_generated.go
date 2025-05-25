@@ -138,8 +138,8 @@ func (w xmlHttpRequestV8Wrapper) getResponseHeader(cbCtx *argumentHelper) (*v8.V
 		if err != nil {
 			return nil, err
 		}
-		result := instance.GetResponseHeader(name)
-		return w.toNullableString_(cbCtx.ScriptCtx(), result)
+		result, hasValue := instance.GetResponseHeader(name)
+		return w.toNillableString_(cbCtx.ScriptCtx(), result, hasValue)
 	}
 	return nil, errors.New("XMLHttpRequest.getResponseHeader: Missing arguments")
 }

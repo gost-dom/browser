@@ -67,8 +67,8 @@ func (w domTokenListV8Wrapper) item(cbCtx *argumentHelper) (*v8.Value, error) {
 		if err != nil {
 			return nil, err
 		}
-		result := instance.Item(index)
-		return w.toNullableString_(cbCtx.ScriptCtx(), result)
+		result, hasValue := instance.Item(index)
+		return w.toNillableString_(cbCtx.ScriptCtx(), result, hasValue)
 	}
 	return nil, errors.New("DOMTokenList.item: Missing arguments")
 }

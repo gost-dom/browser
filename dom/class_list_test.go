@@ -103,9 +103,11 @@ func TestClassListItem(t *testing.T) {
 	doc := CreateHTMLDocument()
 	el := doc.CreateElement("div")
 	el.SetAttribute("class", "a b c")
-	expect(t, el.ClassList().Item(1)).To(HaveValue(Equal("b")), "Reading indexed element")
-	assert.EqualValues(t, "b", *el.ClassList().Item(1), "Reading indexed element")
-	assert.Nil(t, el.ClassList().Item(3), "Reading indexed out of range should return nil")
+	item1, foundItem1 := el.ClassList().Item(1)
+	assert.True(t, foundItem1)
+	expect(t, item1).To(Equal("b"), "Reading indexed element")
+	_, foundItem3 := el.ClassList().Item(3)
+	assert.False(t, foundItem3, "Reading indexed out of range should return nil")
 }
 
 func TestClassListRemove(t *testing.T) {

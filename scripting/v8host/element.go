@@ -98,17 +98,3 @@ func (e *elementV8Wrapper) toNamedNodeMap(
 ) (*v8.Value, error) {
 	return ctx.getInstanceForNodeByName("NamedNodeMap", n)
 }
-
-func (w elementV8Wrapper) getAttribute(helper *argumentHelper) (*v8.Value, error) {
-	element, e0 := js.As[dom.Element](helper.Instance())
-	name, e1 := helper.consumeString()
-	err := errors.Join(e0, e1)
-	if err != nil {
-		return nil, err
-	}
-	if r, ok := element.GetAttribute(name); ok {
-		return v8.NewValue(w.scriptHost.iso, r)
-	} else {
-		return v8.Null(w.scriptHost.iso), nil
-	}
-}

@@ -109,6 +109,21 @@ func (w elementV8Wrapper) getAttributeNames(cbCtx *argumentHelper) (*v8.Value, e
 	return cbCtx.ReturnWithError(errors.New("Element.getAttributeNames: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
+func (w elementV8Wrapper) getAttribute(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: Element.getAttribute")
+	instance, err0 := js.As[dom.Element](cbCtx.Instance())
+	qualifiedName, err1 := consumeArgument(cbCtx, "qualifiedName", nil, w.decodeString)
+	if cbCtx.noOfReadArguments >= 1 {
+		err := errors.Join(err0, err1)
+		if err != nil {
+			return nil, err
+		}
+		result, hasValue := instance.GetAttribute(qualifiedName)
+		return w.toNillableString_(cbCtx.ScriptCtx(), result, hasValue)
+	}
+	return nil, errors.New("Element.getAttribute: Missing arguments")
+}
+
 func (w elementV8Wrapper) getAttributeNS(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.getAttributeNS")
 	return cbCtx.ReturnWithError(errors.New("Element.getAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
