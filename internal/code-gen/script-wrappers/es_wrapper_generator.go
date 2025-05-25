@@ -241,3 +241,9 @@ func IfError(err g.Generator, block Transformer) g.Generator {
 		Block:     block.Transform(err),
 	}
 }
+
+func ReturnTransform(t Transformer) Transformer {
+	return TransformerFunc(func(gen g.Generator) g.Generator {
+		return g.Return(t.Transform(gen))
+	})
+}

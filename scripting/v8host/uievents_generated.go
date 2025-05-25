@@ -63,17 +63,17 @@ func (w mouseEventV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value, erro
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err1, err2)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		return w.CreateInstanceEventInitDict(cbCtx, type_, eventInitDict)
 	}
 	if cbCtx.noOfReadArguments >= 1 {
 		if err1 != nil {
-			return nil, err1
+			return cbCtx.ReturnWithError(err1)
 		}
 		return w.CreateInstance(cbCtx, type_)
 	}
-	return nil, errors.New("MouseEvent.constructor: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("MouseEvent.constructor: Missing arguments"))
 }
 
 func (w mouseEventV8Wrapper) getModifierState(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -158,17 +158,17 @@ func (w uIEventV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value, error) 
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err1, err2)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		return w.CreateInstanceEventInitDict(cbCtx, type_, eventInitDict)
 	}
 	if cbCtx.noOfReadArguments >= 1 {
 		if err1 != nil {
-			return nil, err1
+			return cbCtx.ReturnWithError(err1)
 		}
 		return w.CreateInstance(cbCtx, type_)
 	}
-	return nil, errors.New("UIEvent.constructor: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("UIEvent.constructor: Missing arguments"))
 }
 
 func (w uIEventV8Wrapper) view(cbCtx *argumentHelper) (*v8.Value, error) {

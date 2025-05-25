@@ -61,16 +61,16 @@ func (w parentNodeV8Wrapper) querySelector(cbCtx *argumentHelper) (*v8.Value, er
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		result, callErr := instance.QuerySelector(selectors)
 		if callErr != nil {
-			return nil, callErr
+			return cbCtx.ReturnWithError(callErr)
 		} else {
 			return cbCtx.ScriptCtx().getInstanceForNode(result)
 		}
 	}
-	return nil, errors.New("ParentNode.querySelector: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("ParentNode.querySelector: Missing arguments"))
 }
 
 func (w parentNodeV8Wrapper) querySelectorAll(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -80,16 +80,16 @@ func (w parentNodeV8Wrapper) querySelectorAll(cbCtx *argumentHelper) (*v8.Value,
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		result, callErr := instance.QuerySelectorAll(selectors)
 		if callErr != nil {
-			return nil, callErr
+			return cbCtx.ReturnWithError(callErr)
 		} else {
 			return w.toNodeList(cbCtx.ScriptCtx(), result)
 		}
 	}
-	return nil, errors.New("ParentNode.querySelectorAll: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("ParentNode.querySelectorAll: Missing arguments"))
 }
 
 func (w parentNodeV8Wrapper) firstElementChild(cbCtx *argumentHelper) (*v8.Value, error) {

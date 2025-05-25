@@ -61,12 +61,15 @@ func (w historyV8Wrapper) go_(cbCtx *argumentHelper) (*v8.Value, error) {
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		callErr := instance.Go(delta)
-		return nil, callErr
+		if callErr != nil {
+			return cbCtx.ReturnWithError(callErr)
+		}
+		return cbCtx.ReturnWithValue(nil)
 	}
-	return nil, errors.New("History.go: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("History.go: Missing arguments"))
 }
 
 func (w historyV8Wrapper) back(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -76,7 +79,10 @@ func (w historyV8Wrapper) back(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	callErr := instance.Back()
-	return nil, callErr
+	if callErr != nil {
+		return cbCtx.ReturnWithError(callErr)
+	}
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w historyV8Wrapper) forward(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -86,7 +92,10 @@ func (w historyV8Wrapper) forward(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	callErr := instance.Forward()
-	return nil, callErr
+	if callErr != nil {
+		return cbCtx.ReturnWithError(callErr)
+	}
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w historyV8Wrapper) pushState(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -98,12 +107,15 @@ func (w historyV8Wrapper) pushState(cbCtx *argumentHelper) (*v8.Value, error) {
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err3)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		callErr := instance.PushState(data, url)
-		return nil, callErr
+		if callErr != nil {
+			return cbCtx.ReturnWithError(callErr)
+		}
+		return cbCtx.ReturnWithValue(nil)
 	}
-	return nil, errors.New("History.pushState: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("History.pushState: Missing arguments"))
 }
 
 func (w historyV8Wrapper) replaceState(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -115,12 +127,15 @@ func (w historyV8Wrapper) replaceState(cbCtx *argumentHelper) (*v8.Value, error)
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err3)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		callErr := instance.ReplaceState(data, url)
-		return nil, callErr
+		if callErr != nil {
+			return cbCtx.ReturnWithError(callErr)
+		}
+		return cbCtx.ReturnWithValue(nil)
 	}
-	return nil, errors.New("History.replaceState: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("History.replaceState: Missing arguments"))
 }
 
 func (w historyV8Wrapper) length(cbCtx *argumentHelper) (*v8.Value, error) {

@@ -143,15 +143,19 @@ func CreateV8WrapperMethodInstanceInvocations(
 				g.IfStmt{
 					Condition: g.Raw(cbCtx.Generate().Dot("noOfReadArguments").Op(">=").Lit(i)),
 					Block: g.StatementList(
-						wrappers.ReturnOnAnyError(errNames),
+						wrappers.IfAnyError(errNames,
+							wrappers.ReturnTransform(
+								wrappers.TransformerFunc(cbCtx.ReturnWithError),
+							),
+						),
 						callInstance,
 					),
 				}))
 			if !arg.OptionalInGo() {
 				statements.Append(
 					g.Return(
-						g.Nil,
-						stdgen.ErrorsNew(g.Lit(missingArgsConts)),
+						cbCtx.ReturnWithError(
+							stdgen.ErrorsNew(g.Lit(missingArgsConts))),
 					),
 				)
 				break
@@ -200,6 +204,7 @@ func (c V8InstanceInvocation) AssignValues(evaluation g.Generator) g.Generator {
 
 func (c V8InstanceInvocation) ConvertResult(
 	ctx g.Value,
+	cbCtx wrappers.CallbackContext,
 	data ESConstructorData,
 	evaluation g.Generator,
 ) g.Generator {
@@ -208,19 +213,25 @@ func (c V8InstanceInvocation) ConvertResult(
 
 	list := g.StatementListStmt{}
 	list.Append(c.AssignValues(evaluation))
+	callErr := g.Id("callErr")
 
 	if !hasValue {
 		if hasError {
-			list.Append(g.Return(g.Nil, g.Id("callErr")))
-		} else {
-			list.Append(g.Return(g.Nil, g.Nil))
+			list.Append(
+				wrappers.IfError(
+					callErr,
+					wrappers.ReturnTransform(wrappers.TransformerFunc(cbCtx.ReturnWithError)),
+				),
+			)
 		}
+		list.Append(g.Return(cbCtx.ReturnWithValue(g.Nil)))
 	} else {
 		returnValue := c.ConvertReturnValue(data, ctx, c.Op.RetType)
+		callErr := g.Id("callErr")
 		if hasError {
 			list.Append(g.IfStmt{
-				Condition: g.Neq{Lhs: g.Id("callErr"), Rhs: g.Nil},
-				Block:     g.Return(g.Nil, g.Id("callErr")),
+				Condition: g.Neq{Lhs: callErr, Rhs: g.Nil},
+				Block:     g.Return(cbCtx.ReturnWithError(callErr)),
 				Else:      returnValue,
 			})
 		} else {
@@ -244,19 +255,28 @@ func (c V8InstanceInvocation) ConvertReturnValue(
 	}
 }
 
-func (c V8InstanceInvocation) GetGenerator(ctx g.Value, data ESConstructorData) g.Generator {
+func (c V8InstanceInvocation) GetGenerator(
+	ctx g.Value,
+	cbCtx wrappers.CallbackContext,
+	data ESConstructorData,
+) g.Generator {
 	if c.Instance == nil {
-		return c.ConvertResult(ctx, data, g.NewValue(IdlNameToGoName(c.Name)).Call(c.Args...))
+		return c.ConvertResult(
+			ctx,
+			cbCtx,
+			data,
+			g.NewValue(IdlNameToGoName(c.Name)).Call(c.Args...),
+		)
 	} else {
-		return c.ConvertResult(ctx, data, c.Instance.Method(IdlNameToGoName(c.Name)).Call(c.Args...))
+		return c.ConvertResult(ctx, cbCtx, data, c.Instance.Method(IdlNameToGoName(c.Name)).Call(c.Args...))
 	}
 }
 
-func CreateV8IllegalConstructorBody(data ESConstructorData) g.Generator {
-	naming := V8NamingStrategy{data}
-	return g.Return(g.Nil, g.NewValuePackage("NewTypeError", v8).
-		Call(g.NewValue(naming.Receiver()).Field("scriptHost").Field("iso"),
-			g.Lit("Illegal Constructor")))
+func CreateV8IllegalConstructorBody(
+	data ESConstructorData,
+	cbCtx wrappers.CallbackContext,
+) g.Generator {
+	return g.Return(cbCtx.ReturnWithTypeError("Illegal Constructor"))
 }
 
 type V8ReadArg struct {

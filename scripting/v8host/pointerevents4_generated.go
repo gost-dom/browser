@@ -49,17 +49,17 @@ func (w pointerEventV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value, er
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err1, err2)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		return w.CreateInstanceEventInitDict(cbCtx, type_, eventInitDict)
 	}
 	if cbCtx.noOfReadArguments >= 1 {
 		if err1 != nil {
-			return nil, err1
+			return cbCtx.ReturnWithError(err1)
 		}
 		return w.CreateInstance(cbCtx, type_)
 	}
-	return nil, errors.New("PointerEvent.constructor: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("PointerEvent.constructor: Missing arguments"))
 }
 
 func (w pointerEventV8Wrapper) width(cbCtx *argumentHelper) (*v8.Value, error) {

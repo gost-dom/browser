@@ -101,7 +101,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setHref(cbCtx *argumentHelper) (*v8.
 		return nil, err
 	}
 	instance.SetHref(val)
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) origin(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -133,7 +133,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setProtocol(cbCtx *argumentHelper) (
 		return nil, err
 	}
 	instance.SetProtocol(val)
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) username(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -155,7 +155,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setUsername(cbCtx *argumentHelper) (
 		return nil, err
 	}
 	instance.SetUsername(val)
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) password(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -177,7 +177,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setPassword(cbCtx *argumentHelper) (
 		return nil, err
 	}
 	instance.SetPassword(val)
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) host(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -199,7 +199,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setHost(cbCtx *argumentHelper) (*v8.
 		return nil, err
 	}
 	instance.SetHost(val)
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) hostname(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -221,7 +221,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setHostname(cbCtx *argumentHelper) (
 		return nil, err
 	}
 	instance.SetHostname(val)
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) port(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -243,7 +243,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setPort(cbCtx *argumentHelper) (*v8.
 		return nil, err
 	}
 	instance.SetPort(val)
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) pathname(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -265,7 +265,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setPathname(cbCtx *argumentHelper) (
 		return nil, err
 	}
 	instance.SetPathname(val)
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) search(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -287,7 +287,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setSearch(cbCtx *argumentHelper) (*v
 		return nil, err
 	}
 	instance.SetSearch(val)
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) hash(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -309,5 +309,5 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) setHash(cbCtx *argumentHelper) (*v8.
 		return nil, err
 	}
 	instance.SetHash(val)
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }

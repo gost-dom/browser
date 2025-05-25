@@ -52,5 +52,5 @@ func (w htmlElementV8Wrapper) click(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	instance.Click()
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }

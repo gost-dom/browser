@@ -43,11 +43,11 @@ func (w mutationObserverV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value
 	callback, err1 := consumeArgument(cbCtx, "callback", nil, w.decodeMutationCallback)
 	if cbCtx.noOfReadArguments >= 1 {
 		if err1 != nil {
-			return nil, err1
+			return cbCtx.ReturnWithError(err1)
 		}
 		return w.CreateInstance(cbCtx, callback)
 	}
-	return nil, errors.New("MutationObserver.constructor: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("MutationObserver.constructor: Missing arguments"))
 }
 
 func (w mutationObserverV8Wrapper) observe(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -58,12 +58,15 @@ func (w mutationObserverV8Wrapper) observe(cbCtx *argumentHelper) (*v8.Value, er
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		callErr := instance.Observe(target, options...)
-		return nil, callErr
+		if callErr != nil {
+			return cbCtx.ReturnWithError(callErr)
+		}
+		return cbCtx.ReturnWithValue(nil)
 	}
-	return nil, errors.New("MutationObserver.observe: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("MutationObserver.observe: Missing arguments"))
 }
 
 func (w mutationObserverV8Wrapper) disconnect(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -73,7 +76,7 @@ func (w mutationObserverV8Wrapper) disconnect(cbCtx *argumentHelper) (*v8.Value,
 		return nil, err
 	}
 	instance.Disconnect()
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w mutationObserverV8Wrapper) takeRecords(cbCtx *argumentHelper) (*v8.Value, error) {

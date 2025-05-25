@@ -65,12 +65,12 @@ func (w domTokenListV8Wrapper) item(cbCtx *argumentHelper) (*v8.Value, error) {
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		result, hasValue := instance.Item(index)
 		return w.toNillableString_(cbCtx.ScriptCtx(), result, hasValue)
 	}
-	return nil, errors.New("DOMTokenList.item: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("DOMTokenList.item: Missing arguments"))
 }
 
 func (w domTokenListV8Wrapper) contains(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -80,12 +80,12 @@ func (w domTokenListV8Wrapper) contains(cbCtx *argumentHelper) (*v8.Value, error
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.Contains(token)
 		return w.toBoolean(cbCtx.ScriptCtx(), result)
 	}
-	return nil, errors.New("DOMTokenList.contains: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("DOMTokenList.contains: Missing arguments"))
 }
 
 func (w domTokenListV8Wrapper) add(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -95,12 +95,15 @@ func (w domTokenListV8Wrapper) add(cbCtx *argumentHelper) (*v8.Value, error) {
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		callErr := instance.Add(tokens)
-		return nil, callErr
+		if callErr != nil {
+			return cbCtx.ReturnWithError(callErr)
+		}
+		return cbCtx.ReturnWithValue(nil)
 	}
-	return nil, errors.New("DOMTokenList.add: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("DOMTokenList.add: Missing arguments"))
 }
 
 func (w domTokenListV8Wrapper) remove(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -110,12 +113,12 @@ func (w domTokenListV8Wrapper) remove(cbCtx *argumentHelper) (*v8.Value, error) 
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		instance.Remove(tokens)
-		return nil, nil
+		return cbCtx.ReturnWithValue(nil)
 	}
-	return nil, errors.New("DOMTokenList.remove: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("DOMTokenList.remove: Missing arguments"))
 }
 
 func (w domTokenListV8Wrapper) replace(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -126,12 +129,12 @@ func (w domTokenListV8Wrapper) replace(cbCtx *argumentHelper) (*v8.Value, error)
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.Replace(token, newToken)
 		return w.toBoolean(cbCtx.ScriptCtx(), result)
 	}
-	return nil, errors.New("DOMTokenList.replace: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("DOMTokenList.replace: Missing arguments"))
 }
 
 func (w domTokenListV8Wrapper) supports(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -168,5 +171,5 @@ func (w domTokenListV8Wrapper) setValue(cbCtx *argumentHelper) (*v8.Value, error
 		return nil, err
 	}
 	instance.SetValue(val)
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }

@@ -62,7 +62,7 @@ func (w htmlOrSVGElementV8Wrapper) blur(cbCtx *argumentHelper) (*v8.Value, error
 		return nil, err
 	}
 	instance.Blur()
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w htmlOrSVGElementV8Wrapper) dataset(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -89,7 +89,7 @@ func (w htmlOrSVGElementV8Wrapper) setNonce(cbCtx *argumentHelper) (*v8.Value, e
 		return nil, err
 	}
 	instance.SetNonce(val)
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w htmlOrSVGElementV8Wrapper) autofocus(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -111,7 +111,7 @@ func (w htmlOrSVGElementV8Wrapper) setAutofocus(cbCtx *argumentHelper) (*v8.Valu
 		return nil, err
 	}
 	instance.SetAutofocus(val)
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w htmlOrSVGElementV8Wrapper) tabIndex(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -133,5 +133,5 @@ func (w htmlOrSVGElementV8Wrapper) setTabIndex(cbCtx *argumentHelper) (*v8.Value
 		return nil, err
 	}
 	instance.SetTabIndex(val)
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }

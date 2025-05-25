@@ -116,12 +116,12 @@ func (w elementV8Wrapper) getAttribute(cbCtx *argumentHelper) (*v8.Value, error)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		result, hasValue := instance.GetAttribute(qualifiedName)
 		return w.toNillableString_(cbCtx.ScriptCtx(), result, hasValue)
 	}
-	return nil, errors.New("Element.getAttribute: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("Element.getAttribute: Missing arguments"))
 }
 
 func (w elementV8Wrapper) getAttributeNS(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -137,12 +137,12 @@ func (w elementV8Wrapper) setAttribute(cbCtx *argumentHelper) (*v8.Value, error)
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		instance.SetAttribute(qualifiedName, value)
-		return nil, nil
+		return cbCtx.ReturnWithValue(nil)
 	}
-	return nil, errors.New("Element.setAttribute: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("Element.setAttribute: Missing arguments"))
 }
 
 func (w elementV8Wrapper) setAttributeNS(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -157,12 +157,12 @@ func (w elementV8Wrapper) removeAttribute(cbCtx *argumentHelper) (*v8.Value, err
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		instance.RemoveAttribute(qualifiedName)
-		return nil, nil
+		return cbCtx.ReturnWithValue(nil)
 	}
-	return nil, errors.New("Element.removeAttribute: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("Element.removeAttribute: Missing arguments"))
 }
 
 func (w elementV8Wrapper) removeAttributeNS(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -182,12 +182,12 @@ func (w elementV8Wrapper) hasAttribute(cbCtx *argumentHelper) (*v8.Value, error)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.HasAttribute(qualifiedName)
 		return w.toBoolean(cbCtx.ScriptCtx(), result)
 	}
-	return nil, errors.New("Element.hasAttribute: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("Element.hasAttribute: Missing arguments"))
 }
 
 func (w elementV8Wrapper) hasAttributeNS(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -232,16 +232,16 @@ func (w elementV8Wrapper) matches(cbCtx *argumentHelper) (*v8.Value, error) {
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		result, callErr := instance.Matches(selectors)
 		if callErr != nil {
-			return nil, callErr
+			return cbCtx.ReturnWithError(callErr)
 		} else {
 			return w.toBoolean(cbCtx.ScriptCtx(), result)
 		}
 	}
-	return nil, errors.New("Element.matches: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("Element.matches: Missing arguments"))
 }
 
 func (w elementV8Wrapper) getElementsByTagName(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -313,7 +313,7 @@ func (w elementV8Wrapper) setID(cbCtx *argumentHelper) (*v8.Value, error) {
 		return nil, err
 	}
 	instance.SetID(val)
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w elementV8Wrapper) className(cbCtx *argumentHelper) (*v8.Value, error) {

@@ -69,5 +69,5 @@ func (w htmlAnchorElementV8Wrapper) setTarget(cbCtx *argumentHelper) (*v8.Value,
 		return nil, err
 	}
 	instance.SetTarget(val)
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }

@@ -47,7 +47,7 @@ type TargetGenerators interface {
 	// CreateConstructorCallback generates the function to be called whan
 	// JavaScript code constructs an instance.
 	CreateConstructorCallbackBody(ESConstructorData, CallbackContext) Generator
-	CreateIllegalConstructorCallback(ESConstructorData) Generator
+	CreateIllegalConstructorCallback(ESConstructorData, CallbackContext) Generator
 
 	CreateMethodCallbackBody(ESConstructorData, ESOperation, CallbackContext) Generator
 	CreateAttributeGetter(

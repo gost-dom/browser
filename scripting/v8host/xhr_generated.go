@@ -92,12 +92,12 @@ func (w xmlHttpRequestV8Wrapper) setRequestHeader(cbCtx *argumentHelper) (*v8.Va
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		instance.SetRequestHeader(name, value)
-		return nil, nil
+		return cbCtx.ReturnWithValue(nil)
 	}
-	return nil, errors.New("XMLHttpRequest.setRequestHeader: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("XMLHttpRequest.setRequestHeader: Missing arguments"))
 }
 
 func (w xmlHttpRequestV8Wrapper) send(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -107,16 +107,22 @@ func (w xmlHttpRequestV8Wrapper) send(cbCtx *argumentHelper) (*v8.Value, error) 
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		callErr := instance.SendBody(body)
-		return nil, callErr
+		if callErr != nil {
+			return cbCtx.ReturnWithError(callErr)
+		}
+		return cbCtx.ReturnWithValue(nil)
 	}
 	if err0 != nil {
 		return nil, err0
 	}
 	callErr := instance.Send()
-	return nil, callErr
+	if callErr != nil {
+		return cbCtx.ReturnWithError(callErr)
+	}
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w xmlHttpRequestV8Wrapper) abort(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -126,7 +132,10 @@ func (w xmlHttpRequestV8Wrapper) abort(cbCtx *argumentHelper) (*v8.Value, error)
 		return nil, err
 	}
 	callErr := instance.Abort()
-	return nil, callErr
+	if callErr != nil {
+		return cbCtx.ReturnWithError(callErr)
+	}
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w xmlHttpRequestV8Wrapper) getResponseHeader(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -136,12 +145,12 @@ func (w xmlHttpRequestV8Wrapper) getResponseHeader(cbCtx *argumentHelper) (*v8.V
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		result, hasValue := instance.GetResponseHeader(name)
 		return w.toNillableString_(cbCtx.ScriptCtx(), result, hasValue)
 	}
-	return nil, errors.New("XMLHttpRequest.getResponseHeader: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("XMLHttpRequest.getResponseHeader: Missing arguments"))
 }
 
 func (w xmlHttpRequestV8Wrapper) getAllResponseHeaders(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -152,7 +161,7 @@ func (w xmlHttpRequestV8Wrapper) getAllResponseHeaders(cbCtx *argumentHelper) (*
 	}
 	result, callErr := instance.GetAllResponseHeaders()
 	if callErr != nil {
-		return nil, callErr
+		return cbCtx.ReturnWithError(callErr)
 	} else {
 		return w.toString_(cbCtx.ScriptCtx(), result)
 	}
@@ -165,12 +174,15 @@ func (w xmlHttpRequestV8Wrapper) overrideMimeType(cbCtx *argumentHelper) (*v8.Va
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		callErr := instance.OverrideMimeType(mime)
-		return nil, callErr
+		if callErr != nil {
+			return cbCtx.ReturnWithError(callErr)
+		}
+		return cbCtx.ReturnWithValue(nil)
 	}
-	return nil, errors.New("XMLHttpRequest.overrideMimeType: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("XMLHttpRequest.overrideMimeType: Missing arguments"))
 }
 
 func (w xmlHttpRequestV8Wrapper) readyState(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -197,7 +209,7 @@ func (w xmlHttpRequestV8Wrapper) setTimeout(cbCtx *argumentHelper) (*v8.Value, e
 		return nil, err
 	}
 	instance.SetTimeout(val)
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w xmlHttpRequestV8Wrapper) withCredentials(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -219,7 +231,7 @@ func (w xmlHttpRequestV8Wrapper) setWithCredentials(cbCtx *argumentHelper) (*v8.
 		return nil, err
 	}
 	instance.SetWithCredentials(val)
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w xmlHttpRequestV8Wrapper) responseURL(cbCtx *argumentHelper) (*v8.Value, error) {

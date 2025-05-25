@@ -54,7 +54,7 @@ func (gen GojaTargetGenerators) CreateConstructorCallbackBody(
 }
 
 func (gen GojaTargetGenerators) CreateIllegalConstructorCallback(
-	model.ESConstructorData,
+	model.ESConstructorData, wrappers.CallbackContext,
 ) g.Generator {
 	return g.Raw(jen.Panic(jen.Lit("Goja constructor not yet implemented")))
 }

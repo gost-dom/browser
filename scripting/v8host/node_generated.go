@@ -95,12 +95,12 @@ func (w nodeV8Wrapper) getRootNode(cbCtx *argumentHelper) (*v8.Value, error) {
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.GetRootNode(options)
 		return cbCtx.ScriptCtx().getInstanceForNode(result)
 	}
-	return nil, errors.New("Node.getRootNode: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("Node.getRootNode: Missing arguments"))
 }
 
 func (w nodeV8Wrapper) cloneNode(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -110,12 +110,12 @@ func (w nodeV8Wrapper) cloneNode(cbCtx *argumentHelper) (*v8.Value, error) {
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.CloneNode(subtree)
 		return cbCtx.ScriptCtx().getInstanceForNode(result)
 	}
-	return nil, errors.New("Node.cloneNode: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("Node.cloneNode: Missing arguments"))
 }
 
 func (w nodeV8Wrapper) isSameNode(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -125,12 +125,12 @@ func (w nodeV8Wrapper) isSameNode(cbCtx *argumentHelper) (*v8.Value, error) {
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.IsSameNode(otherNode)
 		return w.toBoolean(cbCtx.ScriptCtx(), result)
 	}
-	return nil, errors.New("Node.isSameNode: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("Node.isSameNode: Missing arguments"))
 }
 
 func (w nodeV8Wrapper) contains(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -140,12 +140,12 @@ func (w nodeV8Wrapper) contains(cbCtx *argumentHelper) (*v8.Value, error) {
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.Contains(other)
 		return w.toBoolean(cbCtx.ScriptCtx(), result)
 	}
-	return nil, errors.New("Node.contains: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("Node.contains: Missing arguments"))
 }
 
 func (w nodeV8Wrapper) insertBefore(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -156,16 +156,16 @@ func (w nodeV8Wrapper) insertBefore(cbCtx *argumentHelper) (*v8.Value, error) {
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		result, callErr := instance.InsertBefore(node, child)
 		if callErr != nil {
-			return nil, callErr
+			return cbCtx.ReturnWithError(callErr)
 		} else {
 			return cbCtx.ScriptCtx().getInstanceForNode(result)
 		}
 	}
-	return nil, errors.New("Node.insertBefore: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("Node.insertBefore: Missing arguments"))
 }
 
 func (w nodeV8Wrapper) appendChild(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -175,16 +175,16 @@ func (w nodeV8Wrapper) appendChild(cbCtx *argumentHelper) (*v8.Value, error) {
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		result, callErr := instance.AppendChild(node)
 		if callErr != nil {
-			return nil, callErr
+			return cbCtx.ReturnWithError(callErr)
 		} else {
 			return cbCtx.ScriptCtx().getInstanceForNode(result)
 		}
 	}
-	return nil, errors.New("Node.appendChild: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("Node.appendChild: Missing arguments"))
 }
 
 func (w nodeV8Wrapper) removeChild(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -194,16 +194,16 @@ func (w nodeV8Wrapper) removeChild(cbCtx *argumentHelper) (*v8.Value, error) {
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		result, callErr := instance.RemoveChild(child)
 		if callErr != nil {
-			return nil, callErr
+			return cbCtx.ReturnWithError(callErr)
 		} else {
 			return cbCtx.ScriptCtx().getInstanceForNode(result)
 		}
 	}
-	return nil, errors.New("Node.removeChild: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("Node.removeChild: Missing arguments"))
 }
 
 func (w nodeV8Wrapper) nodeName(cbCtx *argumentHelper) (*v8.Value, error) {

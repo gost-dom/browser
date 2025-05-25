@@ -65,11 +65,11 @@ func (w eventV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value, error) {
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err1, err2)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		return w.CreateInstance(cbCtx, type_, eventInitDict)
 	}
-	return nil, errors.New("Event.constructor: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("Event.constructor: Missing arguments"))
 }
 
 func (w eventV8Wrapper) stopPropagation(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -79,7 +79,7 @@ func (w eventV8Wrapper) stopPropagation(cbCtx *argumentHelper) (*v8.Value, error
 		return nil, err
 	}
 	instance.StopPropagation()
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w eventV8Wrapper) preventDefault(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -89,7 +89,7 @@ func (w eventV8Wrapper) preventDefault(cbCtx *argumentHelper) (*v8.Value, error)
 		return nil, err
 	}
 	instance.PreventDefault()
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w eventV8Wrapper) type_(cbCtx *argumentHelper) (*v8.Value, error) {

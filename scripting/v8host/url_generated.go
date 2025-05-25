@@ -86,17 +86,17 @@ func (w urlV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value, error) {
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err1, err2)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		return w.CreateInstanceBase(cbCtx, url, base)
 	}
 	if cbCtx.noOfReadArguments >= 1 {
 		if err1 != nil {
-			return nil, err1
+			return cbCtx.ReturnWithError(err1)
 		}
 		return w.CreateInstance(cbCtx, url)
 	}
-	return nil, errors.New("URL.constructor: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("URL.constructor: Missing arguments"))
 }
 
 func (w urlV8Wrapper) toJSON(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -107,7 +107,7 @@ func (w urlV8Wrapper) toJSON(cbCtx *argumentHelper) (*v8.Value, error) {
 	}
 	result, callErr := instance.ToJSON()
 	if callErr != nil {
-		return nil, callErr
+		return cbCtx.ReturnWithError(callErr)
 	} else {
 		return w.toString_(cbCtx.ScriptCtx(), result)
 	}
@@ -316,12 +316,12 @@ func (w urlSearchParamsV8Wrapper) append(cbCtx *argumentHelper) (*v8.Value, erro
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		instance.Append(name, value)
-		return nil, nil
+		return cbCtx.ReturnWithValue(nil)
 	}
-	return nil, errors.New("URLSearchParams.append: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("URLSearchParams.append: Missing arguments"))
 }
 
 func (w urlSearchParamsV8Wrapper) delete(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -332,20 +332,20 @@ func (w urlSearchParamsV8Wrapper) delete(cbCtx *argumentHelper) (*v8.Value, erro
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		instance.DeleteValue(name, value)
-		return nil, nil
+		return cbCtx.ReturnWithValue(nil)
 	}
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		instance.Delete(name)
-		return nil, nil
+		return cbCtx.ReturnWithValue(nil)
 	}
-	return nil, errors.New("URLSearchParams.delete: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("URLSearchParams.delete: Missing arguments"))
 }
 
 func (w urlSearchParamsV8Wrapper) getAll(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -355,12 +355,12 @@ func (w urlSearchParamsV8Wrapper) getAll(cbCtx *argumentHelper) (*v8.Value, erro
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.GetAll(name)
 		return w.toSequenceString_(cbCtx.ScriptCtx(), result)
 	}
-	return nil, errors.New("URLSearchParams.getAll: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("URLSearchParams.getAll: Missing arguments"))
 }
 
 func (w urlSearchParamsV8Wrapper) has(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -371,7 +371,7 @@ func (w urlSearchParamsV8Wrapper) has(cbCtx *argumentHelper) (*v8.Value, error) 
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.HasValue(name, value)
 		return w.toBoolean(cbCtx.ScriptCtx(), result)
@@ -379,12 +379,12 @@ func (w urlSearchParamsV8Wrapper) has(cbCtx *argumentHelper) (*v8.Value, error) 
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.Has(name)
 		return w.toBoolean(cbCtx.ScriptCtx(), result)
 	}
-	return nil, errors.New("URLSearchParams.has: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("URLSearchParams.has: Missing arguments"))
 }
 
 func (w urlSearchParamsV8Wrapper) set(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -395,12 +395,12 @@ func (w urlSearchParamsV8Wrapper) set(cbCtx *argumentHelper) (*v8.Value, error) 
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		instance.Set(name, value)
-		return nil, nil
+		return cbCtx.ReturnWithValue(nil)
 	}
-	return nil, errors.New("URLSearchParams.set: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("URLSearchParams.set: Missing arguments"))
 }
 
 func (w urlSearchParamsV8Wrapper) sort(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -410,7 +410,7 @@ func (w urlSearchParamsV8Wrapper) sort(cbCtx *argumentHelper) (*v8.Value, error)
 		return nil, err
 	}
 	instance.Sort()
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w urlSearchParamsV8Wrapper) toString(cbCtx *argumentHelper) (*v8.Value, error) {

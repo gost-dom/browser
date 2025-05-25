@@ -97,7 +97,10 @@ func (w htmlFormElementV8Wrapper) submit(cbCtx *argumentHelper) (*v8.Value, erro
 		return nil, err
 	}
 	callErr := instance.Submit()
-	return nil, callErr
+	if callErr != nil {
+		return cbCtx.ReturnWithError(callErr)
+	}
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w htmlFormElementV8Wrapper) requestSubmit(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -107,12 +110,15 @@ func (w htmlFormElementV8Wrapper) requestSubmit(cbCtx *argumentHelper) (*v8.Valu
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
-			return nil, err
+			return cbCtx.ReturnWithError(err)
 		}
 		callErr := instance.RequestSubmit(submitter)
-		return nil, callErr
+		if callErr != nil {
+			return cbCtx.ReturnWithError(callErr)
+		}
+		return cbCtx.ReturnWithValue(nil)
 	}
-	return nil, errors.New("HTMLFormElement.requestSubmit: Missing arguments")
+	return cbCtx.ReturnWithError(errors.New("HTMLFormElement.requestSubmit: Missing arguments"))
 }
 
 func (w htmlFormElementV8Wrapper) reset(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -159,7 +165,7 @@ func (w htmlFormElementV8Wrapper) setAction(cbCtx *argumentHelper) (*v8.Value, e
 		return nil, err
 	}
 	instance.SetAction(val)
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w htmlFormElementV8Wrapper) autocomplete(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -211,7 +217,7 @@ func (w htmlFormElementV8Wrapper) setMethod(cbCtx *argumentHelper) (*v8.Value, e
 		return nil, err
 	}
 	instance.SetMethod(val)
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w htmlFormElementV8Wrapper) target(cbCtx *argumentHelper) (*v8.Value, error) {

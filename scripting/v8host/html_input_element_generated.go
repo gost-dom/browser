@@ -75,5 +75,5 @@ func (w htmlInputElementV8Wrapper) setType(cbCtx *argumentHelper) (*v8.Value, er
 		return nil, err
 	}
 	instance.SetType(val)
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }

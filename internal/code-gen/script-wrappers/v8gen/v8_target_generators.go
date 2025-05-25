@@ -73,8 +73,12 @@ func (gen V8TargetGenerators) CreateConstructorCallbackBody(
 ) g.Generator {
 	return CreateV8ConstructorWrapperBody(data, cbCtx)
 }
-func (gen V8TargetGenerators) CreateIllegalConstructorCallback(data ESConstructorData) g.Generator {
-	return CreateV8IllegalConstructorBody(data)
+
+func (gen V8TargetGenerators) CreateIllegalConstructorCallback(
+	data ESConstructorData,
+	cbCtx wrappers.CallbackContext,
+) g.Generator {
+	return CreateV8IllegalConstructorBody(data, cbCtx)
 }
 
 func (gen V8TargetGenerators) CreateAttributeGetter(
@@ -101,7 +105,7 @@ func (gen V8TargetGenerators) CreateAttributeGetter(
 			wrappers.As.TypeParam(data.WrappedType()).Call(cbCtx.GetInstance()),
 		),
 		wrappers.ReturnIfError(err),
-		x.ConvertResult(cbCtx.Context(), data, eval(instance)),
+		x.ConvertResult(cbCtx.Context(), cbCtx, data, eval(instance)),
 	)
 }
 
@@ -136,7 +140,7 @@ func (gen V8TargetGenerators) CreateAttributeSetter(
 
 		wrappers.ReturnOnAnyError([]g.Generator{err, err1}),
 		set(instance, val),
-		g.Return(g.Nil, g.Nil),
+		g.Return(cbCtx.ReturnWithValue(g.Nil)),
 	)
 }
 
@@ -166,7 +170,7 @@ func (gen V8TargetGenerators) CreateMethodCallbackBody(
 			Op:       op,
 			Instance: &instance,
 			Receiver: receiver,
-		}.GetGenerator(ctx, data)
+		}.GetGenerator(ctx, cbCtx, data)
 	}
 	statements := g.StatementList(
 		g.AssignMany(
