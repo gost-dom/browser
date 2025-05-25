@@ -4,6 +4,7 @@ package v8host
 
 import (
 	"errors"
+
 	dom "github.com/gost-dom/browser/dom"
 	log "github.com/gost-dom/browser/internal/log"
 	abstraction "github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
@@ -31,23 +32,22 @@ func createParentNodePrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	return constructor
 }
 func (w parentNodeV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
-	iso := w.scriptHost.iso
-	prototypeTmpl.Set("prepend", v8.NewFunctionTemplateWithError(iso, w.prepend))
-	prototypeTmpl.Set("append", v8.NewFunctionTemplateWithError(iso, w.append))
-	prototypeTmpl.Set("replaceChildren", v8.NewFunctionTemplateWithError(iso, w.replaceChildren))
-	prototypeTmpl.Set("querySelector", v8.NewFunctionTemplateWithError(iso, w.querySelector))
-	prototypeTmpl.Set("querySelectorAll", v8.NewFunctionTemplateWithError(iso, w.querySelectorAll))
+	prototypeTmpl.Set("prepend", wrapV8Callback(w.scriptHost, w.prepend))
+	prototypeTmpl.Set("append", wrapV8Callback(w.scriptHost, w.append))
+	prototypeTmpl.Set("replaceChildren", wrapV8Callback(w.scriptHost, w.replaceChildren))
+	prototypeTmpl.Set("querySelector", wrapV8Callback(w.scriptHost, w.querySelector))
+	prototypeTmpl.Set("querySelectorAll", wrapV8Callback(w.scriptHost, w.querySelectorAll))
 
 	prototypeTmpl.SetAccessorProperty("firstElementChild",
-		v8.NewFunctionTemplateWithError(iso, w.firstElementChild),
+		wrapV8Callback(w.scriptHost, w.firstElementChild),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("lastElementChild",
-		v8.NewFunctionTemplateWithError(iso, w.lastElementChild),
+		wrapV8Callback(w.scriptHost, w.lastElementChild),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("childElementCount",
-		v8.NewFunctionTemplateWithError(iso, w.childElementCount),
+		wrapV8Callback(w.scriptHost, w.childElementCount),
 		nil,
 		v8.None)
 }

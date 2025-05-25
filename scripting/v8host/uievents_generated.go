@@ -26,35 +26,34 @@ func createMouseEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	return constructor
 }
 func (w mouseEventV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
-	iso := w.scriptHost.iso
-	prototypeTmpl.Set("getModifierState", v8.NewFunctionTemplateWithError(iso, w.getModifierState))
+	prototypeTmpl.Set("getModifierState", wrapV8Callback(w.scriptHost, w.getModifierState))
 
 	prototypeTmpl.SetAccessorProperty("screenX",
-		v8.NewFunctionTemplateWithError(iso, w.screenX),
+		wrapV8Callback(w.scriptHost, w.screenX),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("screenY",
-		v8.NewFunctionTemplateWithError(iso, w.screenY),
+		wrapV8Callback(w.scriptHost, w.screenY),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("clientX",
-		v8.NewFunctionTemplateWithError(iso, w.clientX),
+		wrapV8Callback(w.scriptHost, w.clientX),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("clientY",
-		v8.NewFunctionTemplateWithError(iso, w.clientY),
+		wrapV8Callback(w.scriptHost, w.clientY),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("layerX",
-		v8.NewFunctionTemplateWithError(iso, w.layerX),
+		wrapV8Callback(w.scriptHost, w.layerX),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("layerY",
-		v8.NewFunctionTemplateWithError(iso, w.layerY),
+		wrapV8Callback(w.scriptHost, w.layerY),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("relatedTarget",
-		v8.NewFunctionTemplateWithError(iso, w.relatedTarget),
+		wrapV8Callback(w.scriptHost, w.relatedTarget),
 		nil,
 		v8.None)
 }
@@ -145,14 +144,13 @@ func createUIEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	return constructor
 }
 func (w uIEventV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
-	iso := w.scriptHost.iso
 
 	prototypeTmpl.SetAccessorProperty("view",
-		v8.NewFunctionTemplateWithError(iso, w.view),
+		wrapV8Callback(w.scriptHost, w.view),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("detail",
-		v8.NewFunctionTemplateWithError(iso, w.detail),
+		wrapV8Callback(w.scriptHost, w.detail),
 		nil,
 		v8.None)
 }

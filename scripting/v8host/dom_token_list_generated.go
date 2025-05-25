@@ -36,24 +36,23 @@ func createDOMTokenListPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate 
 	return constructor
 }
 func (w domTokenListV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
-	iso := w.scriptHost.iso
-	prototypeTmpl.Set("item", v8.NewFunctionTemplateWithError(iso, w.item))
-	prototypeTmpl.Set("contains", v8.NewFunctionTemplateWithError(iso, w.contains))
-	prototypeTmpl.Set("add", v8.NewFunctionTemplateWithError(iso, w.add))
-	prototypeTmpl.Set("remove", v8.NewFunctionTemplateWithError(iso, w.remove))
-	prototypeTmpl.Set("toggle", v8.NewFunctionTemplateWithError(iso, w.toggle))
-	prototypeTmpl.Set("replace", v8.NewFunctionTemplateWithError(iso, w.replace))
-	prototypeTmpl.Set("supports", v8.NewFunctionTemplateWithError(iso, w.supports))
+	prototypeTmpl.Set("item", wrapV8Callback(w.scriptHost, w.item))
+	prototypeTmpl.Set("contains", wrapV8Callback(w.scriptHost, w.contains))
+	prototypeTmpl.Set("add", wrapV8Callback(w.scriptHost, w.add))
+	prototypeTmpl.Set("remove", wrapV8Callback(w.scriptHost, w.remove))
+	prototypeTmpl.Set("toggle", wrapV8Callback(w.scriptHost, w.toggle))
+	prototypeTmpl.Set("replace", wrapV8Callback(w.scriptHost, w.replace))
+	prototypeTmpl.Set("supports", wrapV8Callback(w.scriptHost, w.supports))
 
 	prototypeTmpl.SetAccessorProperty("length",
-		v8.NewFunctionTemplateWithError(iso, w.length),
+		wrapV8Callback(w.scriptHost, w.length),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("value",
-		v8.NewFunctionTemplateWithError(iso, w.value),
-		v8.NewFunctionTemplateWithError(iso, w.setValue),
+		wrapV8Callback(w.scriptHost, w.value),
+		wrapV8Callback(w.scriptHost, w.setValue),
 		v8.None)
-	prototypeTmpl.Set("toString", v8.NewFunctionTemplateWithError(iso, w.value))
+	prototypeTmpl.Set("toString", wrapV8Callback(w.scriptHost, w.value))
 }
 
 func (w domTokenListV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

@@ -30,14 +30,13 @@ func createNonDocumentTypeChildNodePrototype(scriptHost *V8ScriptHost) *v8.Funct
 	return constructor
 }
 func (w nonDocumentTypeChildNodeV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
-	iso := w.scriptHost.iso
 
 	prototypeTmpl.SetAccessorProperty("previousElementSibling",
-		v8.NewFunctionTemplateWithError(iso, w.previousElementSibling),
+		wrapV8Callback(w.scriptHost, w.previousElementSibling),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("nextElementSibling",
-		v8.NewFunctionTemplateWithError(iso, w.nextElementSibling),
+		wrapV8Callback(w.scriptHost, w.nextElementSibling),
 		nil,
 		v8.None)
 }

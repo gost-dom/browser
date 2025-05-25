@@ -98,22 +98,24 @@ func (gen GojaTargetGenerators) CreatePrototypeInitializerBody(
 ) g.Generator {
 	naming := GojaNamingStrategy{data}
 	receiver := g.NewValue(naming.ReceiverName())
-	vm := receiver.Field("ctx").Field("vm")
+	ctx := receiver.Field("ctx")
 	prototype := g.NewValue("prototype")
 	body := g.StatementList()
 	for op := range data.WrapperFunctionsToInstall() {
-		body.Append(prototype.Field("Set").Call(g.Lit(op.Name), receiver.Field(op.Name)))
+		body.Append(
+			prototype.Field("Set").Call(g.Lit(op.Name), wrapCallback(ctx, receiver.Field(op.Name))),
+		)
 	}
 
 	for a := range data.AttributesToInstall() {
 		var getter, setter g.Generator
 		if a.Getter != nil {
-			getter = vm.Field("ToValue").Call(receiver.Field(a.Getter.CallbackMethodName()))
+			getter = wrapCallback(ctx, receiver.Field(a.Getter.CallbackMethodName()))
 		} else {
 			getter = g.Nil
 		}
 		if a.Setter != nil {
-			setter = vm.Field("ToValue").Call(receiver.Field(a.Setter.Name))
+			setter = wrapCallback(ctx, receiver.Field(a.Setter.Name))
 		} else {
 			setter = g.Nil
 		}
@@ -124,6 +126,10 @@ func (gen GojaTargetGenerators) CreatePrototypeInitializerBody(
 	}
 
 	return body
+}
+
+func wrapCallback(ctx, callback g.Generator) g.Generator {
+	return g.NewValue("wrapCallback").Call(ctx, callback)
 }
 
 func (gen GojaTargetGenerators) ReturnErrMsg(errGen g.Generator) g.Generator {

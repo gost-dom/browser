@@ -35,10 +35,9 @@ func createMutationObserverPrototype(scriptHost *V8ScriptHost) *v8.FunctionTempl
 	return constructor
 }
 func (w mutationObserverV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
-	iso := w.scriptHost.iso
-	prototypeTmpl.Set("observe", v8.NewFunctionTemplateWithError(iso, w.observe))
-	prototypeTmpl.Set("disconnect", v8.NewFunctionTemplateWithError(iso, w.disconnect))
-	prototypeTmpl.Set("takeRecords", v8.NewFunctionTemplateWithError(iso, w.takeRecords))
+	prototypeTmpl.Set("observe", wrapV8Callback(w.scriptHost, w.observe))
+	prototypeTmpl.Set("disconnect", wrapV8Callback(w.scriptHost, w.disconnect))
+	prototypeTmpl.Set("takeRecords", wrapV8Callback(w.scriptHost, w.takeRecords))
 }
 
 func (w mutationObserverV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

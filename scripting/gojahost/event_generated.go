@@ -12,15 +12,15 @@ func init() {
 }
 
 func (w eventWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime) {
-	prototype.Set("stopPropagation", w.stopPropagation)
-	prototype.Set("preventDefault", w.preventDefault)
-	prototype.DefineAccessorProperty("type", w.ctx.vm.ToValue(w.type_), nil, g.FLAG_TRUE, g.FLAG_TRUE)
-	prototype.DefineAccessorProperty("target", w.ctx.vm.ToValue(w.target), nil, g.FLAG_TRUE, g.FLAG_TRUE)
-	prototype.DefineAccessorProperty("currentTarget", w.ctx.vm.ToValue(w.currentTarget), nil, g.FLAG_TRUE, g.FLAG_TRUE)
-	prototype.DefineAccessorProperty("eventPhase", w.ctx.vm.ToValue(w.eventPhase), nil, g.FLAG_TRUE, g.FLAG_TRUE)
-	prototype.DefineAccessorProperty("bubbles", w.ctx.vm.ToValue(w.bubbles), nil, g.FLAG_TRUE, g.FLAG_TRUE)
-	prototype.DefineAccessorProperty("cancelable", w.ctx.vm.ToValue(w.cancelable), nil, g.FLAG_TRUE, g.FLAG_TRUE)
-	prototype.DefineAccessorProperty("defaultPrevented", w.ctx.vm.ToValue(w.defaultPrevented), nil, g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.Set("stopPropagation", wrapCallback(w.ctx, w.stopPropagation))
+	prototype.Set("preventDefault", wrapCallback(w.ctx, w.preventDefault))
+	prototype.DefineAccessorProperty("type", wrapCallback(w.ctx, w.type_), nil, g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("target", wrapCallback(w.ctx, w.target), nil, g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("currentTarget", wrapCallback(w.ctx, w.currentTarget), nil, g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("eventPhase", wrapCallback(w.ctx, w.eventPhase), nil, g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("bubbles", wrapCallback(w.ctx, w.bubbles), nil, g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("cancelable", wrapCallback(w.ctx, w.cancelable), nil, g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("defaultPrevented", wrapCallback(w.ctx, w.defaultPrevented), nil, g.FLAG_TRUE, g.FLAG_TRUE)
 }
 
 func (w eventWrapper) Constructor(c g.FunctionCall) g.Value {

@@ -27,36 +27,35 @@ func createEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	return constructor
 }
 func (w eventV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
-	iso := w.scriptHost.iso
-	prototypeTmpl.Set("stopPropagation", v8.NewFunctionTemplateWithError(iso, w.stopPropagation))
-	prototypeTmpl.Set("preventDefault", v8.NewFunctionTemplateWithError(iso, w.preventDefault))
+	prototypeTmpl.Set("stopPropagation", wrapV8Callback(w.scriptHost, w.stopPropagation))
+	prototypeTmpl.Set("preventDefault", wrapV8Callback(w.scriptHost, w.preventDefault))
 
 	prototypeTmpl.SetAccessorProperty("type",
-		v8.NewFunctionTemplateWithError(iso, w.type_),
+		wrapV8Callback(w.scriptHost, w.type_),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("target",
-		v8.NewFunctionTemplateWithError(iso, w.target),
+		wrapV8Callback(w.scriptHost, w.target),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("currentTarget",
-		v8.NewFunctionTemplateWithError(iso, w.currentTarget),
+		wrapV8Callback(w.scriptHost, w.currentTarget),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("eventPhase",
-		v8.NewFunctionTemplateWithError(iso, w.eventPhase),
+		wrapV8Callback(w.scriptHost, w.eventPhase),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("bubbles",
-		v8.NewFunctionTemplateWithError(iso, w.bubbles),
+		wrapV8Callback(w.scriptHost, w.bubbles),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("cancelable",
-		v8.NewFunctionTemplateWithError(iso, w.cancelable),
+		wrapV8Callback(w.scriptHost, w.cancelable),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("defaultPrevented",
-		v8.NewFunctionTemplateWithError(iso, w.defaultPrevented),
+		wrapV8Callback(w.scriptHost, w.defaultPrevented),
 		nil,
 		v8.None)
 }

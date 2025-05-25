@@ -35,19 +35,18 @@ func createHistoryPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	return constructor
 }
 func (w historyV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
-	iso := w.scriptHost.iso
-	prototypeTmpl.Set("go", v8.NewFunctionTemplateWithError(iso, w.go_))
-	prototypeTmpl.Set("back", v8.NewFunctionTemplateWithError(iso, w.back))
-	prototypeTmpl.Set("forward", v8.NewFunctionTemplateWithError(iso, w.forward))
-	prototypeTmpl.Set("pushState", v8.NewFunctionTemplateWithError(iso, w.pushState))
-	prototypeTmpl.Set("replaceState", v8.NewFunctionTemplateWithError(iso, w.replaceState))
+	prototypeTmpl.Set("go", wrapV8Callback(w.scriptHost, w.go_))
+	prototypeTmpl.Set("back", wrapV8Callback(w.scriptHost, w.back))
+	prototypeTmpl.Set("forward", wrapV8Callback(w.scriptHost, w.forward))
+	prototypeTmpl.Set("pushState", wrapV8Callback(w.scriptHost, w.pushState))
+	prototypeTmpl.Set("replaceState", wrapV8Callback(w.scriptHost, w.replaceState))
 
 	prototypeTmpl.SetAccessorProperty("length",
-		v8.NewFunctionTemplateWithError(iso, w.length),
+		wrapV8Callback(w.scriptHost, w.length),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("state",
-		v8.NewFunctionTemplateWithError(iso, w.state),
+		wrapV8Callback(w.scriptHost, w.state),
 		nil,
 		v8.None)
 }

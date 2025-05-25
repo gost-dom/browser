@@ -31,25 +31,24 @@ func createHTMLOrSVGElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTempl
 	return constructor
 }
 func (w htmlOrSVGElementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
-	iso := w.scriptHost.iso
-	prototypeTmpl.Set("focus", v8.NewFunctionTemplateWithError(iso, w.focus))
-	prototypeTmpl.Set("blur", v8.NewFunctionTemplateWithError(iso, w.blur))
+	prototypeTmpl.Set("focus", wrapV8Callback(w.scriptHost, w.focus))
+	prototypeTmpl.Set("blur", wrapV8Callback(w.scriptHost, w.blur))
 
 	prototypeTmpl.SetAccessorProperty("dataset",
-		v8.NewFunctionTemplateWithError(iso, w.dataset),
+		wrapV8Callback(w.scriptHost, w.dataset),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("nonce",
-		v8.NewFunctionTemplateWithError(iso, w.nonce),
-		v8.NewFunctionTemplateWithError(iso, w.setNonce),
+		wrapV8Callback(w.scriptHost, w.nonce),
+		wrapV8Callback(w.scriptHost, w.setNonce),
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("autofocus",
-		v8.NewFunctionTemplateWithError(iso, w.autofocus),
-		v8.NewFunctionTemplateWithError(iso, w.setAutofocus),
+		wrapV8Callback(w.scriptHost, w.autofocus),
+		wrapV8Callback(w.scriptHost, w.setAutofocus),
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("tabIndex",
-		v8.NewFunctionTemplateWithError(iso, w.tabIndex),
-		v8.NewFunctionTemplateWithError(iso, w.setTabIndex),
+		wrapV8Callback(w.scriptHost, w.tabIndex),
+		wrapV8Callback(w.scriptHost, w.setTabIndex),
 		v8.None)
 }
 

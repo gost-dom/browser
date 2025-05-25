@@ -14,3 +14,9 @@ func (ctx *callbackContext) ReturnWithValue(val goja.Value) goja.Value { return 
 func (ctx *callbackContext) ReturnWithTypeError(msg string) goja.Value {
 	panic(ctx.ctx.vm.NewTypeError(msg))
 }
+
+type callbackFunction = func(goja.FunctionCall) goja.Value
+
+func wrapCallback(ctx *GojaContext, cb callbackFunction) goja.Value {
+	return ctx.vm.ToValue(cb)
+}

@@ -35,27 +35,33 @@ type PrototypeInstaller struct {
 }
 
 func (builder PrototypeInstaller) InstallFunctionHandlers(
+	host g.Generator,
 	data ESConstructorData,
 ) g.Generator {
 	generators := make([]g.Generator, 0, len(data.Operations))
 	for _, op := range data.Operations {
 		if !op.MethodCustomization.Ignored {
 			generators = append(generators,
-				builder.InstallFunction(op.Name, op.CallbackMethodName()),
+				builder.InstallFunction(host, op.Name, op.CallbackMethodName()),
 			)
 		}
 	}
 	return g.StatementList(generators...)
 }
 
-func (builder PrototypeInstaller) InstallFunction(name, cbMethod string) g.Generator {
-	return builder.Proto.Set(
-		name,
-		builder.NewFunctionTemplate(builder.Wrapper.Field(cbMethod)),
-	)
+func (builder PrototypeInstaller) InstallFunction(
+	host g.Generator,
+	name, cbMethod string,
+) g.Generator {
+	return builder.Proto.Set(name, wrapCallback(host, builder.Wrapper.Field(cbMethod)))
+}
+
+func wrapCallback(host, callback g.Generator) g.Generator {
+	return g.NewValue("wrapV8Callback").Call(host, callback)
 }
 
 func (builder PrototypeInstaller) InstallAttributeHandlers(
+	host g.Generator,
 	data ESConstructorData,
 ) g.Generator {
 	length := len(data.Attributes)
@@ -65,12 +71,13 @@ func (builder PrototypeInstaller) InstallAttributeHandlers(
 	generators := make([]g.Generator, 1, length+1)
 	generators[0] = g.Line
 	for op := range data.AttributesToInstall() {
-		generators = append(generators, builder.InstallAttributeHandler(op))
+		generators = append(generators, builder.InstallAttributeHandler(host, op))
 	}
 	return g.StatementList(generators...)
 }
 
 func (builder PrototypeInstaller) InstallAttributeHandler(
+	host g.Generator,
 	op ESAttribute,
 ) g.Generator {
 	wrapper := builder.Wrapper
@@ -79,10 +86,10 @@ func (builder PrototypeInstaller) InstallAttributeHandler(
 	if getter == nil {
 		return g.Noop
 	}
-	getterFt := builder.NewFunctionTemplate(wrapper.Field(getter.CallbackMethodName()))
+	getterFt := wrapCallback(host, wrapper.Field(getter.CallbackMethodName()))
 	setterFt := g.Nil
 	if setter != nil {
-		setterFt = builder.NewFunctionTemplate(wrapper.Field(setter.CallbackMethodName()))
+		setterFt = wrapCallback(host, wrapper.Field(setter.CallbackMethodName()))
 	}
 
 	generator := builder.Proto.SetAccessorProperty(
@@ -93,7 +100,7 @@ func (builder PrototypeInstaller) InstallAttributeHandler(
 	)
 	if op.Spec.Stringifier {
 		return g.StatementList(generator,
-			builder.InstallFunction("toString", getter.CallbackMethodName()),
+			builder.InstallFunction(host, "toString", getter.CallbackMethodName()),
 		)
 	} else {
 		return generator

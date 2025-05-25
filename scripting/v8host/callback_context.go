@@ -117,3 +117,10 @@ func (f v8ValueFactory) mustVal(val *v8go.Value, err error) abstraction.Value {
 func (f v8ValueFactory) toVal(val *v8go.Value) abstraction.Value {
 	return v8Value{val}
 }
+
+func wrapV8Callback(
+	host *V8ScriptHost,
+	callback v8go.FunctionCallbackWithError,
+) *v8go.FunctionTemplate {
+	return v8go.NewFunctionTemplateWithError(host.iso, callback)
+}

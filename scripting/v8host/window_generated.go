@@ -35,107 +35,106 @@ func createWindowPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	return constructor
 }
 func (w windowV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
-	iso := w.scriptHost.iso
-	prototypeTmpl.Set("close", v8.NewFunctionTemplateWithError(iso, w.close))
-	prototypeTmpl.Set("stop", v8.NewFunctionTemplateWithError(iso, w.stop))
-	prototypeTmpl.Set("focus", v8.NewFunctionTemplateWithError(iso, w.focus))
-	prototypeTmpl.Set("blur", v8.NewFunctionTemplateWithError(iso, w.blur))
-	prototypeTmpl.Set("open", v8.NewFunctionTemplateWithError(iso, w.open))
-	prototypeTmpl.Set("alert", v8.NewFunctionTemplateWithError(iso, w.alert))
-	prototypeTmpl.Set("confirm", v8.NewFunctionTemplateWithError(iso, w.confirm))
-	prototypeTmpl.Set("print", v8.NewFunctionTemplateWithError(iso, w.print))
-	prototypeTmpl.Set("postMessage", v8.NewFunctionTemplateWithError(iso, w.postMessage))
+	prototypeTmpl.Set("close", wrapV8Callback(w.scriptHost, w.close))
+	prototypeTmpl.Set("stop", wrapV8Callback(w.scriptHost, w.stop))
+	prototypeTmpl.Set("focus", wrapV8Callback(w.scriptHost, w.focus))
+	prototypeTmpl.Set("blur", wrapV8Callback(w.scriptHost, w.blur))
+	prototypeTmpl.Set("open", wrapV8Callback(w.scriptHost, w.open))
+	prototypeTmpl.Set("alert", wrapV8Callback(w.scriptHost, w.alert))
+	prototypeTmpl.Set("confirm", wrapV8Callback(w.scriptHost, w.confirm))
+	prototypeTmpl.Set("print", wrapV8Callback(w.scriptHost, w.print))
+	prototypeTmpl.Set("postMessage", wrapV8Callback(w.scriptHost, w.postMessage))
 
 	prototypeTmpl.SetAccessorProperty("window",
-		v8.NewFunctionTemplateWithError(iso, w.window),
+		wrapV8Callback(w.scriptHost, w.window),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("self",
-		v8.NewFunctionTemplateWithError(iso, w.self),
+		wrapV8Callback(w.scriptHost, w.self),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("document",
-		v8.NewFunctionTemplateWithError(iso, w.document),
+		wrapV8Callback(w.scriptHost, w.document),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("name",
-		v8.NewFunctionTemplateWithError(iso, w.name),
-		v8.NewFunctionTemplateWithError(iso, w.setName),
+		wrapV8Callback(w.scriptHost, w.name),
+		wrapV8Callback(w.scriptHost, w.setName),
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("history",
-		v8.NewFunctionTemplateWithError(iso, w.history),
+		wrapV8Callback(w.scriptHost, w.history),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("navigation",
-		v8.NewFunctionTemplateWithError(iso, w.navigation),
+		wrapV8Callback(w.scriptHost, w.navigation),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("customElements",
-		v8.NewFunctionTemplateWithError(iso, w.customElements),
+		wrapV8Callback(w.scriptHost, w.customElements),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("locationbar",
-		v8.NewFunctionTemplateWithError(iso, w.locationbar),
+		wrapV8Callback(w.scriptHost, w.locationbar),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("menubar",
-		v8.NewFunctionTemplateWithError(iso, w.menubar),
+		wrapV8Callback(w.scriptHost, w.menubar),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("personalbar",
-		v8.NewFunctionTemplateWithError(iso, w.personalbar),
+		wrapV8Callback(w.scriptHost, w.personalbar),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("scrollbars",
-		v8.NewFunctionTemplateWithError(iso, w.scrollbars),
+		wrapV8Callback(w.scriptHost, w.scrollbars),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("statusbar",
-		v8.NewFunctionTemplateWithError(iso, w.statusbar),
+		wrapV8Callback(w.scriptHost, w.statusbar),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("toolbar",
-		v8.NewFunctionTemplateWithError(iso, w.toolbar),
+		wrapV8Callback(w.scriptHost, w.toolbar),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("status",
-		v8.NewFunctionTemplateWithError(iso, w.status),
-		v8.NewFunctionTemplateWithError(iso, w.setStatus),
+		wrapV8Callback(w.scriptHost, w.status),
+		wrapV8Callback(w.scriptHost, w.setStatus),
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("closed",
-		v8.NewFunctionTemplateWithError(iso, w.closed),
+		wrapV8Callback(w.scriptHost, w.closed),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("frames",
-		v8.NewFunctionTemplateWithError(iso, w.frames),
+		wrapV8Callback(w.scriptHost, w.frames),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("length",
-		v8.NewFunctionTemplateWithError(iso, w.length),
+		wrapV8Callback(w.scriptHost, w.length),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("top",
-		v8.NewFunctionTemplateWithError(iso, w.top),
+		wrapV8Callback(w.scriptHost, w.top),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("opener",
-		v8.NewFunctionTemplateWithError(iso, w.opener),
-		v8.NewFunctionTemplateWithError(iso, w.setOpener),
+		wrapV8Callback(w.scriptHost, w.opener),
+		wrapV8Callback(w.scriptHost, w.setOpener),
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("frameElement",
-		v8.NewFunctionTemplateWithError(iso, w.frameElement),
+		wrapV8Callback(w.scriptHost, w.frameElement),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("navigator",
-		v8.NewFunctionTemplateWithError(iso, w.navigator),
+		wrapV8Callback(w.scriptHost, w.navigator),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("clientInformation",
-		v8.NewFunctionTemplateWithError(iso, w.clientInformation),
+		wrapV8Callback(w.scriptHost, w.clientInformation),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("originAgentCluster",
-		v8.NewFunctionTemplateWithError(iso, w.originAgentCluster),
+		wrapV8Callback(w.scriptHost, w.originAgentCluster),
 		nil,
 		v8.None)
 }

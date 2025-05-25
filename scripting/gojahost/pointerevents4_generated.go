@@ -12,10 +12,10 @@ func init() {
 }
 
 func (w pointerEventWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime) {
-	prototype.DefineAccessorProperty("width", w.ctx.vm.ToValue(w.width), nil, g.FLAG_TRUE, g.FLAG_TRUE)
-	prototype.DefineAccessorProperty("height", w.ctx.vm.ToValue(w.height), nil, g.FLAG_TRUE, g.FLAG_TRUE)
-	prototype.DefineAccessorProperty("pressure", w.ctx.vm.ToValue(w.pressure), nil, g.FLAG_TRUE, g.FLAG_TRUE)
-	prototype.DefineAccessorProperty("tangentialPressure", w.ctx.vm.ToValue(w.tangentialPressure), nil, g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("width", wrapCallback(w.ctx, w.width), nil, g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("height", wrapCallback(w.ctx, w.height), nil, g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("pressure", wrapCallback(w.ctx, w.pressure), nil, g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("tangentialPressure", wrapCallback(w.ctx, w.tangentialPressure), nil, g.FLAG_TRUE, g.FLAG_TRUE)
 }
 
 func (w pointerEventWrapper) Constructor(c g.FunctionCall) g.Value {

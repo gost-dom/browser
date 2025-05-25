@@ -27,57 +27,56 @@ func createXMLHttpRequestPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplat
 	return constructor
 }
 func (w xmlHttpRequestV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
-	iso := w.scriptHost.iso
-	prototypeTmpl.Set("open", v8.NewFunctionTemplateWithError(iso, w.open))
-	prototypeTmpl.Set("setRequestHeader", v8.NewFunctionTemplateWithError(iso, w.setRequestHeader))
-	prototypeTmpl.Set("send", v8.NewFunctionTemplateWithError(iso, w.send))
-	prototypeTmpl.Set("abort", v8.NewFunctionTemplateWithError(iso, w.abort))
-	prototypeTmpl.Set("getResponseHeader", v8.NewFunctionTemplateWithError(iso, w.getResponseHeader))
-	prototypeTmpl.Set("getAllResponseHeaders", v8.NewFunctionTemplateWithError(iso, w.getAllResponseHeaders))
-	prototypeTmpl.Set("overrideMimeType", v8.NewFunctionTemplateWithError(iso, w.overrideMimeType))
+	prototypeTmpl.Set("open", wrapV8Callback(w.scriptHost, w.open))
+	prototypeTmpl.Set("setRequestHeader", wrapV8Callback(w.scriptHost, w.setRequestHeader))
+	prototypeTmpl.Set("send", wrapV8Callback(w.scriptHost, w.send))
+	prototypeTmpl.Set("abort", wrapV8Callback(w.scriptHost, w.abort))
+	prototypeTmpl.Set("getResponseHeader", wrapV8Callback(w.scriptHost, w.getResponseHeader))
+	prototypeTmpl.Set("getAllResponseHeaders", wrapV8Callback(w.scriptHost, w.getAllResponseHeaders))
+	prototypeTmpl.Set("overrideMimeType", wrapV8Callback(w.scriptHost, w.overrideMimeType))
 
 	prototypeTmpl.SetAccessorProperty("readyState",
-		v8.NewFunctionTemplateWithError(iso, w.readyState),
+		wrapV8Callback(w.scriptHost, w.readyState),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("timeout",
-		v8.NewFunctionTemplateWithError(iso, w.timeout),
-		v8.NewFunctionTemplateWithError(iso, w.setTimeout),
+		wrapV8Callback(w.scriptHost, w.timeout),
+		wrapV8Callback(w.scriptHost, w.setTimeout),
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("withCredentials",
-		v8.NewFunctionTemplateWithError(iso, w.withCredentials),
-		v8.NewFunctionTemplateWithError(iso, w.setWithCredentials),
+		wrapV8Callback(w.scriptHost, w.withCredentials),
+		wrapV8Callback(w.scriptHost, w.setWithCredentials),
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("upload",
-		v8.NewFunctionTemplateWithError(iso, w.upload),
+		wrapV8Callback(w.scriptHost, w.upload),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("responseURL",
-		v8.NewFunctionTemplateWithError(iso, w.responseURL),
+		wrapV8Callback(w.scriptHost, w.responseURL),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("status",
-		v8.NewFunctionTemplateWithError(iso, w.status),
+		wrapV8Callback(w.scriptHost, w.status),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("statusText",
-		v8.NewFunctionTemplateWithError(iso, w.statusText),
+		wrapV8Callback(w.scriptHost, w.statusText),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("responseType",
-		v8.NewFunctionTemplateWithError(iso, w.responseType),
-		v8.NewFunctionTemplateWithError(iso, w.setResponseType),
+		wrapV8Callback(w.scriptHost, w.responseType),
+		wrapV8Callback(w.scriptHost, w.setResponseType),
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("response",
-		v8.NewFunctionTemplateWithError(iso, w.response),
+		wrapV8Callback(w.scriptHost, w.response),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("responseText",
-		v8.NewFunctionTemplateWithError(iso, w.responseText),
+		wrapV8Callback(w.scriptHost, w.responseText),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("responseXML",
-		v8.NewFunctionTemplateWithError(iso, w.responseXML),
+		wrapV8Callback(w.scriptHost, w.responseXML),
 		nil,
 		v8.None)
 }

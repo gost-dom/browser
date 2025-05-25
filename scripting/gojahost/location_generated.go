@@ -21,19 +21,19 @@ func newLocationWrapper(instance *GojaContext) wrapper {
 }
 
 func (w locationWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime) {
-	prototype.Set("assign", w.assign)
-	prototype.Set("replace", w.replace)
-	prototype.Set("reload", w.reload)
-	prototype.DefineAccessorProperty("href", w.ctx.vm.ToValue(w.href), w.ctx.vm.ToValue(w.setHref), g.FLAG_TRUE, g.FLAG_TRUE)
-	prototype.DefineAccessorProperty("origin", w.ctx.vm.ToValue(w.origin), nil, g.FLAG_TRUE, g.FLAG_TRUE)
-	prototype.DefineAccessorProperty("protocol", w.ctx.vm.ToValue(w.protocol), w.ctx.vm.ToValue(w.setProtocol), g.FLAG_TRUE, g.FLAG_TRUE)
-	prototype.DefineAccessorProperty("host", w.ctx.vm.ToValue(w.host), w.ctx.vm.ToValue(w.setHost), g.FLAG_TRUE, g.FLAG_TRUE)
-	prototype.DefineAccessorProperty("hostname", w.ctx.vm.ToValue(w.hostname), w.ctx.vm.ToValue(w.setHostname), g.FLAG_TRUE, g.FLAG_TRUE)
-	prototype.DefineAccessorProperty("port", w.ctx.vm.ToValue(w.port), w.ctx.vm.ToValue(w.setPort), g.FLAG_TRUE, g.FLAG_TRUE)
-	prototype.DefineAccessorProperty("pathname", w.ctx.vm.ToValue(w.pathname), w.ctx.vm.ToValue(w.setPathname), g.FLAG_TRUE, g.FLAG_TRUE)
-	prototype.DefineAccessorProperty("search", w.ctx.vm.ToValue(w.search), w.ctx.vm.ToValue(w.setSearch), g.FLAG_TRUE, g.FLAG_TRUE)
-	prototype.DefineAccessorProperty("hash", w.ctx.vm.ToValue(w.hash), w.ctx.vm.ToValue(w.setHash), g.FLAG_TRUE, g.FLAG_TRUE)
-	prototype.DefineAccessorProperty("ancestorOrigins", w.ctx.vm.ToValue(w.ancestorOrigins), nil, g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.Set("assign", wrapCallback(w.ctx, w.assign))
+	prototype.Set("replace", wrapCallback(w.ctx, w.replace))
+	prototype.Set("reload", wrapCallback(w.ctx, w.reload))
+	prototype.DefineAccessorProperty("href", wrapCallback(w.ctx, w.href), wrapCallback(w.ctx, w.setHref), g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("origin", wrapCallback(w.ctx, w.origin), nil, g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("protocol", wrapCallback(w.ctx, w.protocol), wrapCallback(w.ctx, w.setProtocol), g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("host", wrapCallback(w.ctx, w.host), wrapCallback(w.ctx, w.setHost), g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("hostname", wrapCallback(w.ctx, w.hostname), wrapCallback(w.ctx, w.setHostname), g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("port", wrapCallback(w.ctx, w.port), wrapCallback(w.ctx, w.setPort), g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("pathname", wrapCallback(w.ctx, w.pathname), wrapCallback(w.ctx, w.setPathname), g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("search", wrapCallback(w.ctx, w.search), wrapCallback(w.ctx, w.setSearch), g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("hash", wrapCallback(w.ctx, w.hash), wrapCallback(w.ctx, w.setHash), g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("ancestorOrigins", wrapCallback(w.ctx, w.ancestorOrigins), nil, g.FLAG_TRUE, g.FLAG_TRUE)
 }
 
 func (w locationWrapper) Constructor(c g.FunctionCall) g.Value {

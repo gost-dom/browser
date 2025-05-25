@@ -34,42 +34,41 @@ func createMutationRecordPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplat
 	return constructor
 }
 func (w mutationRecordV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
-	iso := w.scriptHost.iso
 
 	prototypeTmpl.SetAccessorProperty("type",
-		v8.NewFunctionTemplateWithError(iso, w.type_),
+		wrapV8Callback(w.scriptHost, w.type_),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("target",
-		v8.NewFunctionTemplateWithError(iso, w.target),
+		wrapV8Callback(w.scriptHost, w.target),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("addedNodes",
-		v8.NewFunctionTemplateWithError(iso, w.addedNodes),
+		wrapV8Callback(w.scriptHost, w.addedNodes),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("removedNodes",
-		v8.NewFunctionTemplateWithError(iso, w.removedNodes),
+		wrapV8Callback(w.scriptHost, w.removedNodes),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("previousSibling",
-		v8.NewFunctionTemplateWithError(iso, w.previousSibling),
+		wrapV8Callback(w.scriptHost, w.previousSibling),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("nextSibling",
-		v8.NewFunctionTemplateWithError(iso, w.nextSibling),
+		wrapV8Callback(w.scriptHost, w.nextSibling),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("attributeName",
-		v8.NewFunctionTemplateWithError(iso, w.attributeName),
+		wrapV8Callback(w.scriptHost, w.attributeName),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("attributeNamespace",
-		v8.NewFunctionTemplateWithError(iso, w.attributeNamespace),
+		wrapV8Callback(w.scriptHost, w.attributeNamespace),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("oldValue",
-		v8.NewFunctionTemplateWithError(iso, w.oldValue),
+		wrapV8Callback(w.scriptHost, w.oldValue),
 		nil,
 		v8.None)
 }

@@ -54,6 +54,7 @@ func (gen V8TargetGenerators) CreatePrototypeInitializerBody(
 ) g.Generator {
 	naming := V8NamingStrategy{data}
 	receiver := g.NewValue(naming.Receiver())
+	host := receiver.Field("scriptHost")
 	builder := NewConstructorBuilder()
 	installer := PrototypeInstaller{
 		builder.v8Iso,
@@ -61,9 +62,8 @@ func (gen V8TargetGenerators) CreatePrototypeInitializerBody(
 		WrapperInstance{g.Value{Generator: receiver}},
 	}
 	return g.StatementList(
-		g.Assign(g.NewValue("iso"), receiver.Field("scriptHost").Field("iso")),
-		installer.InstallFunctionHandlers(data),
-		installer.InstallAttributeHandlers(data),
+		installer.InstallFunctionHandlers(host, data),
+		installer.InstallAttributeHandlers(host, data),
 	)
 }
 

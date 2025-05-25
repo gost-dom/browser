@@ -35,12 +35,11 @@ func createHTMLInputElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTempl
 	return constructor
 }
 func (w htmlInputElementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
-	iso := w.scriptHost.iso
-	prototypeTmpl.Set("checkValidity", v8.NewFunctionTemplateWithError(iso, w.checkValidity))
+	prototypeTmpl.Set("checkValidity", wrapV8Callback(w.scriptHost, w.checkValidity))
 
 	prototypeTmpl.SetAccessorProperty("type",
-		v8.NewFunctionTemplateWithError(iso, w.type_),
-		v8.NewFunctionTemplateWithError(iso, w.setType),
+		wrapV8Callback(w.scriptHost, w.type_),
+		wrapV8Callback(w.scriptHost, w.setType),
 		v8.None)
 }
 

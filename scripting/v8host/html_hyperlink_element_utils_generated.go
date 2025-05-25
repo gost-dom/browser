@@ -31,52 +31,51 @@ func createHTMLHyperlinkElementUtilsPrototype(scriptHost *V8ScriptHost) *v8.Func
 	return constructor
 }
 func (w htmlHyperlinkElementUtilsV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
-	iso := w.scriptHost.iso
 
 	prototypeTmpl.SetAccessorProperty("href",
-		v8.NewFunctionTemplateWithError(iso, w.href),
-		v8.NewFunctionTemplateWithError(iso, w.setHref),
+		wrapV8Callback(w.scriptHost, w.href),
+		wrapV8Callback(w.scriptHost, w.setHref),
 		v8.None)
-	prototypeTmpl.Set("toString", v8.NewFunctionTemplateWithError(iso, w.href))
+	prototypeTmpl.Set("toString", wrapV8Callback(w.scriptHost, w.href))
 	prototypeTmpl.SetAccessorProperty("origin",
-		v8.NewFunctionTemplateWithError(iso, w.origin),
+		wrapV8Callback(w.scriptHost, w.origin),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("protocol",
-		v8.NewFunctionTemplateWithError(iso, w.protocol),
-		v8.NewFunctionTemplateWithError(iso, w.setProtocol),
+		wrapV8Callback(w.scriptHost, w.protocol),
+		wrapV8Callback(w.scriptHost, w.setProtocol),
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("username",
-		v8.NewFunctionTemplateWithError(iso, w.username),
-		v8.NewFunctionTemplateWithError(iso, w.setUsername),
+		wrapV8Callback(w.scriptHost, w.username),
+		wrapV8Callback(w.scriptHost, w.setUsername),
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("password",
-		v8.NewFunctionTemplateWithError(iso, w.password),
-		v8.NewFunctionTemplateWithError(iso, w.setPassword),
+		wrapV8Callback(w.scriptHost, w.password),
+		wrapV8Callback(w.scriptHost, w.setPassword),
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("host",
-		v8.NewFunctionTemplateWithError(iso, w.host),
-		v8.NewFunctionTemplateWithError(iso, w.setHost),
+		wrapV8Callback(w.scriptHost, w.host),
+		wrapV8Callback(w.scriptHost, w.setHost),
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("hostname",
-		v8.NewFunctionTemplateWithError(iso, w.hostname),
-		v8.NewFunctionTemplateWithError(iso, w.setHostname),
+		wrapV8Callback(w.scriptHost, w.hostname),
+		wrapV8Callback(w.scriptHost, w.setHostname),
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("port",
-		v8.NewFunctionTemplateWithError(iso, w.port),
-		v8.NewFunctionTemplateWithError(iso, w.setPort),
+		wrapV8Callback(w.scriptHost, w.port),
+		wrapV8Callback(w.scriptHost, w.setPort),
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("pathname",
-		v8.NewFunctionTemplateWithError(iso, w.pathname),
-		v8.NewFunctionTemplateWithError(iso, w.setPathname),
+		wrapV8Callback(w.scriptHost, w.pathname),
+		wrapV8Callback(w.scriptHost, w.setPathname),
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("search",
-		v8.NewFunctionTemplateWithError(iso, w.search),
-		v8.NewFunctionTemplateWithError(iso, w.setSearch),
+		wrapV8Callback(w.scriptHost, w.search),
+		wrapV8Callback(w.scriptHost, w.setSearch),
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("hash",
-		v8.NewFunctionTemplateWithError(iso, w.hash),
-		v8.NewFunctionTemplateWithError(iso, w.setHash),
+		wrapV8Callback(w.scriptHost, w.hash),
+		wrapV8Callback(w.scriptHost, w.setHash),
 		v8.None)
 }
 

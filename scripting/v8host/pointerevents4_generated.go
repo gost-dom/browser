@@ -25,22 +25,21 @@ func createPointerEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate 
 	return constructor
 }
 func (w pointerEventV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
-	iso := w.scriptHost.iso
 
 	prototypeTmpl.SetAccessorProperty("width",
-		v8.NewFunctionTemplateWithError(iso, w.width),
+		wrapV8Callback(w.scriptHost, w.width),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("height",
-		v8.NewFunctionTemplateWithError(iso, w.height),
+		wrapV8Callback(w.scriptHost, w.height),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("pressure",
-		v8.NewFunctionTemplateWithError(iso, w.pressure),
+		wrapV8Callback(w.scriptHost, w.pressure),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("tangentialPressure",
-		v8.NewFunctionTemplateWithError(iso, w.tangentialPressure),
+		wrapV8Callback(w.scriptHost, w.tangentialPressure),
 		nil,
 		v8.None)
 }

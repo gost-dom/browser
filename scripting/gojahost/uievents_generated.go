@@ -13,14 +13,14 @@ func init() {
 }
 
 func (w mouseEventWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime) {
-	prototype.Set("getModifierState", w.getModifierState)
-	prototype.DefineAccessorProperty("screenX", w.ctx.vm.ToValue(w.screenX), nil, g.FLAG_TRUE, g.FLAG_TRUE)
-	prototype.DefineAccessorProperty("screenY", w.ctx.vm.ToValue(w.screenY), nil, g.FLAG_TRUE, g.FLAG_TRUE)
-	prototype.DefineAccessorProperty("clientX", w.ctx.vm.ToValue(w.clientX), nil, g.FLAG_TRUE, g.FLAG_TRUE)
-	prototype.DefineAccessorProperty("clientY", w.ctx.vm.ToValue(w.clientY), nil, g.FLAG_TRUE, g.FLAG_TRUE)
-	prototype.DefineAccessorProperty("layerX", w.ctx.vm.ToValue(w.layerX), nil, g.FLAG_TRUE, g.FLAG_TRUE)
-	prototype.DefineAccessorProperty("layerY", w.ctx.vm.ToValue(w.layerY), nil, g.FLAG_TRUE, g.FLAG_TRUE)
-	prototype.DefineAccessorProperty("relatedTarget", w.ctx.vm.ToValue(w.relatedTarget), nil, g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.Set("getModifierState", wrapCallback(w.ctx, w.getModifierState))
+	prototype.DefineAccessorProperty("screenX", wrapCallback(w.ctx, w.screenX), nil, g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("screenY", wrapCallback(w.ctx, w.screenY), nil, g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("clientX", wrapCallback(w.ctx, w.clientX), nil, g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("clientY", wrapCallback(w.ctx, w.clientY), nil, g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("layerX", wrapCallback(w.ctx, w.layerX), nil, g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("layerY", wrapCallback(w.ctx, w.layerY), nil, g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("relatedTarget", wrapCallback(w.ctx, w.relatedTarget), nil, g.FLAG_TRUE, g.FLAG_TRUE)
 }
 
 func (w mouseEventWrapper) Constructor(c g.FunctionCall) g.Value {
@@ -82,8 +82,8 @@ func newUIEventWrapper(instance *GojaContext) wrapper {
 }
 
 func (w uIEventWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime) {
-	prototype.DefineAccessorProperty("view", w.ctx.vm.ToValue(w.view), nil, g.FLAG_TRUE, g.FLAG_TRUE)
-	prototype.DefineAccessorProperty("detail", w.ctx.vm.ToValue(w.detail), nil, g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("view", wrapCallback(w.ctx, w.view), nil, g.FLAG_TRUE, g.FLAG_TRUE)
+	prototype.DefineAccessorProperty("detail", wrapCallback(w.ctx, w.detail), nil, g.FLAG_TRUE, g.FLAG_TRUE)
 }
 
 func (w uIEventWrapper) Constructor(c g.FunctionCall) g.Value {

@@ -35,55 +35,54 @@ func createHTMLFormElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTempla
 	return constructor
 }
 func (w htmlFormElementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
-	iso := w.scriptHost.iso
-	prototypeTmpl.Set("submit", v8.NewFunctionTemplateWithError(iso, w.submit))
-	prototypeTmpl.Set("requestSubmit", v8.NewFunctionTemplateWithError(iso, w.requestSubmit))
-	prototypeTmpl.Set("reset", v8.NewFunctionTemplateWithError(iso, w.reset))
-	prototypeTmpl.Set("checkValidity", v8.NewFunctionTemplateWithError(iso, w.checkValidity))
-	prototypeTmpl.Set("reportValidity", v8.NewFunctionTemplateWithError(iso, w.reportValidity))
+	prototypeTmpl.Set("submit", wrapV8Callback(w.scriptHost, w.submit))
+	prototypeTmpl.Set("requestSubmit", wrapV8Callback(w.scriptHost, w.requestSubmit))
+	prototypeTmpl.Set("reset", wrapV8Callback(w.scriptHost, w.reset))
+	prototypeTmpl.Set("checkValidity", wrapV8Callback(w.scriptHost, w.checkValidity))
+	prototypeTmpl.Set("reportValidity", wrapV8Callback(w.scriptHost, w.reportValidity))
 
 	prototypeTmpl.SetAccessorProperty("acceptCharset",
-		v8.NewFunctionTemplateWithError(iso, w.acceptCharset),
-		v8.NewFunctionTemplateWithError(iso, w.setAcceptCharset),
+		wrapV8Callback(w.scriptHost, w.acceptCharset),
+		wrapV8Callback(w.scriptHost, w.setAcceptCharset),
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("action",
-		v8.NewFunctionTemplateWithError(iso, w.action),
-		v8.NewFunctionTemplateWithError(iso, w.setAction),
+		wrapV8Callback(w.scriptHost, w.action),
+		wrapV8Callback(w.scriptHost, w.setAction),
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("autocomplete",
-		v8.NewFunctionTemplateWithError(iso, w.autocomplete),
-		v8.NewFunctionTemplateWithError(iso, w.setAutocomplete),
+		wrapV8Callback(w.scriptHost, w.autocomplete),
+		wrapV8Callback(w.scriptHost, w.setAutocomplete),
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("enctype",
-		v8.NewFunctionTemplateWithError(iso, w.enctype),
-		v8.NewFunctionTemplateWithError(iso, w.setEnctype),
+		wrapV8Callback(w.scriptHost, w.enctype),
+		wrapV8Callback(w.scriptHost, w.setEnctype),
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("encoding",
-		v8.NewFunctionTemplateWithError(iso, w.encoding),
-		v8.NewFunctionTemplateWithError(iso, w.setEncoding),
+		wrapV8Callback(w.scriptHost, w.encoding),
+		wrapV8Callback(w.scriptHost, w.setEncoding),
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("method",
-		v8.NewFunctionTemplateWithError(iso, w.method),
-		v8.NewFunctionTemplateWithError(iso, w.setMethod),
+		wrapV8Callback(w.scriptHost, w.method),
+		wrapV8Callback(w.scriptHost, w.setMethod),
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("target",
-		v8.NewFunctionTemplateWithError(iso, w.target),
-		v8.NewFunctionTemplateWithError(iso, w.setTarget),
+		wrapV8Callback(w.scriptHost, w.target),
+		wrapV8Callback(w.scriptHost, w.setTarget),
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("rel",
-		v8.NewFunctionTemplateWithError(iso, w.rel),
-		v8.NewFunctionTemplateWithError(iso, w.setRel),
+		wrapV8Callback(w.scriptHost, w.rel),
+		wrapV8Callback(w.scriptHost, w.setRel),
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("relList",
-		v8.NewFunctionTemplateWithError(iso, w.relList),
+		wrapV8Callback(w.scriptHost, w.relList),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("elements",
-		v8.NewFunctionTemplateWithError(iso, w.elements),
+		wrapV8Callback(w.scriptHost, w.elements),
 		nil,
 		v8.None)
 	prototypeTmpl.SetAccessorProperty("length",
-		v8.NewFunctionTemplateWithError(iso, w.length),
+		wrapV8Callback(w.scriptHost, w.length),
 		nil,
 		v8.None)
 }
