@@ -28,14 +28,6 @@ type CallbackContext interface {
 	// The function is intended for parsing required arguments in the specs.
 	ConsumeRequiredArg(name string) (Value, error)
 
-	// ConsumeOptionalArg pulls an argument from the list or passed arguments.
-	// Return value found indicates whether an argument was available.
-	//
-	// It is not an error to continue calling ConsumeOptionalArg after it
-	// returns false, permitting client code to read all optional arguments
-	// before deciding what to do.
-	ConsumeOptionalArg() (arg Value, found bool)
-
 	// ConsumeRestArgs returns all remaining arguments as a slice of values.
 	//
 	// This is intended for implementing functions with variadic arguments,

@@ -9,78 +9,12 @@ import (
 	"github.com/gost-dom/v8go"
 )
 
-func runV8FunctionCallback(
-	host *V8ScriptHost,
-	info *v8go.FunctionCallbackInfo,
-	cb js.FunctionCallback,
-) (*v8go.Value, error) {
-	ctx := newCallbackContext(host, info)
-	rtn := cb(ctx).(v8CallbackRVal)
-	return rtn.rtnVal, rtn.err
-}
-
 type v8CallbackContext struct {
 	host         *V8ScriptHost
 	ctx          *V8ScriptContext
 	info         *v8go.FunctionCallbackInfo
 	args         []*v8go.Value
 	argsConsumed int
-}
-
-func newCallbackContext(
-	host *V8ScriptHost,
-	info *v8go.FunctionCallbackInfo,
-) js.CallbackContext {
-	ctx := host.mustGetContext(info.Context())
-	return &v8CallbackContext{
-		host: host,
-		ctx:  ctx,
-		info: info,
-		args: info.Args(),
-	}
-}
-
-func (c *v8CallbackContext) iso() *v8go.Isolate { return c.host.iso }
-
-func (c *v8CallbackContext) ConsumeRequiredArg(name string) (js.Value, error) {
-	if c.argsConsumed >= len(c.args) {
-		return nil, fmt.Errorf("%w: %w",
-			js.ErrMissingArgument, v8go.NewTypeError(c.iso(), "missing argument: "+name))
-	}
-	arg := c.args[c.argsConsumed]
-	c.argsConsumed++
-	return v8Value{arg}, nil
-}
-
-func (c *v8CallbackContext) ConsumeOptionalArg() (js.Value, bool) {
-	// TODO: Implement
-	panic("NOT IMPLEMENTED")
-}
-
-func (c *v8CallbackContext) ConsumeRestArgs() []js.Value {
-	// TODO: Implement
-	panic("NOT IMPLEMENTED")
-}
-
-func (c *v8CallbackContext) InternalInstance() (any, error) {
-	if c.info.This().InternalFieldCount() == 0 {
-		return nil, js.ErrNoInternalValue
-	}
-	field := c.info.This().GetInternalField(0)
-	handle := field.ExternalHandle()
-	return handle.Value(), nil
-}
-
-func (v *v8CallbackContext) ReturnWithValue(val js.Value) js.CallbackRVal {
-	return v8CallbackRVal{rtnVal: val.(v8Value).Value}
-}
-
-func (v *v8CallbackContext) ReturnWithError(err error) js.CallbackRVal {
-	return v8CallbackRVal{err: err}
-}
-
-func (c *v8CallbackContext) ValueFactory() js.ValueFactory {
-	return v8ValueFactory{c.host}
 }
 
 type v8CallbackRVal struct {
