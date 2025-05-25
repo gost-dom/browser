@@ -62,7 +62,7 @@ func (w historyV8Wrapper) go_(info *v8.FunctionCallbackInfo) (*v8.Value, error) 
 	log.Debug(w.logger(info), "V8 Function call: History.go_")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[htmlinterfaces.History](cbCtx.Instance())
-	delta, err1 := consumeArgument(cbCtx, w.defaultDelta, w.decodeLong)
+	delta, err1 := consumeArgument(cbCtx, "delta", w.defaultDelta, w.decodeLong)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -100,9 +100,9 @@ func (w historyV8Wrapper) pushState(info *v8.FunctionCallbackInfo) (*v8.Value, e
 	log.Debug(w.logger(info), "V8 Function call: History.pushState")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[htmlinterfaces.History](cbCtx.Instance())
-	data, err1 := consumeArgument(cbCtx, nil, w.decodeAny)
+	data, err1 := consumeArgument(cbCtx, "data", nil, w.decodeAny)
 	ignoreArgument(cbCtx)
-	url, err3 := consumeArgument(cbCtx, w.defaultUrl, w.decodeString)
+	url, err3 := consumeArgument(cbCtx, "url", w.defaultUrl, w.decodeString)
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err3)
 		if err != nil {
@@ -118,9 +118,9 @@ func (w historyV8Wrapper) replaceState(info *v8.FunctionCallbackInfo) (*v8.Value
 	log.Debug(w.logger(info), "V8 Function call: History.replaceState")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[htmlinterfaces.History](cbCtx.Instance())
-	data, err1 := consumeArgument(cbCtx, nil, w.decodeAny)
+	data, err1 := consumeArgument(cbCtx, "data", nil, w.decodeAny)
 	ignoreArgument(cbCtx)
-	url, err3 := consumeArgument(cbCtx, w.defaultUrl, w.decodeString)
+	url, err3 := consumeArgument(cbCtx, "url", w.defaultUrl, w.decodeString)
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err3)
 		if err != nil {

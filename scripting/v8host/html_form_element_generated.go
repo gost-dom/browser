@@ -109,7 +109,7 @@ func (w htmlFormElementV8Wrapper) requestSubmit(info *v8.FunctionCallbackInfo) (
 	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.requestSubmit")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[html.HTMLFormElement](cbCtx.Instance())
-	submitter, err1 := consumeArgument(cbCtx, w.defaultHTMLElement, w.decodeHTMLElement)
+	submitter, err1 := consumeArgument(cbCtx, "submitter", w.defaultHTMLElement, w.decodeHTMLElement)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {

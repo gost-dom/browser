@@ -21,8 +21,8 @@ func (l domTokenListV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplat
 
 func (l domTokenListV8Wrapper) toggle(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	args := newArgumentHelper(l.scriptHost, info)
-	token, err0 := consumeArgument(args, nil, l.decodeString)
-	force, err1 := consumeArgument(args, nil, l.decodeBoolean)
+	token, err0 := consumeArgument(args, "toggle", nil, l.decodeString)
+	force, err1 := consumeArgument(args, "force", nil, l.decodeBoolean)
 	instance, errInstance := l.getInstance(info)
 	if args.noOfReadArguments >= 2 {
 		if err := errors.Join(err0, err1, errInstance); err != nil {

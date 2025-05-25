@@ -242,8 +242,12 @@ func ignoreArgument(args *argumentHelper) {
 // If no more arguments are present, or the next argument is undefined, the
 // defaultValue function will be used if not nil; otherwise an error is
 // returned.
+//
+// If the function returns with an error, the name will be used in the error
+// message. Otherwise, name has ho effect on the function.
 func consumeArgument[T any](
 	args *argumentHelper,
+	name string,
 	defaultValue func() T,
 	decoders ...func(*V8ScriptContext, *v8.Value) (T, error),
 ) (result T, err error) {
@@ -262,7 +266,8 @@ func consumeArgument[T any](
 				}
 			}
 		}
-		err = fmt.Errorf("tryParseArg: argument at index %d: %w", index, errors.Join(errs...))
+		// TODO: This should eventually become a TypeError in JS
+		err = fmt.Errorf("tryParseArg: %s: %w", name, errors.Join(errs...))
 		return
 	}
 }

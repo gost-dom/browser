@@ -64,8 +64,8 @@ func (w eventV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 func (w eventV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Event.Constructor")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
-	type_, err1 := consumeArgument(cbCtx, nil, w.decodeString)
-	eventInitDict, err2 := consumeArgument(cbCtx, w.defaultEventInit, w.decodeEventInit)
+	type_, err1 := consumeArgument(cbCtx, "type", nil, w.decodeString)
+	eventInitDict, err2 := consumeArgument(cbCtx, "eventInitDict", w.defaultEventInit, w.decodeEventInit)
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err1, err2)
 		if err != nil {

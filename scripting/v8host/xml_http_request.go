@@ -79,9 +79,9 @@ func (xhr xmlHttpRequestV8Wrapper) open(
 	info *v8.FunctionCallbackInfo,
 ) (result *v8.Value, err error) {
 	args := newArgumentHelper(xhr.scriptHost, info)
-	method, err0 := consumeArgument(args, nil, xhr.decodeString)
-	url, err1 := consumeArgument(args, nil, xhr.decodeString)
-	async, err2 := consumeArgument(args, nil, xhr.decodeBoolean)
+	method, err0 := consumeArgument(args, "method", nil, xhr.decodeString)
+	url, err1 := consumeArgument(args, "url", nil, xhr.decodeString)
+	async, err2 := consumeArgument(args, "async", nil, xhr.decodeBoolean)
 	instance, errInstance := xhr.getInstance(info)
 	if args.noOfReadArguments > 2 {
 		if err = errors.Join(err0, err1, err2, errInstance); err != nil {

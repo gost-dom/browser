@@ -283,7 +283,6 @@ func ReadArguments(
 	for i, arg := range op.Arguments {
 		argName := g.Id(wrappers.SanitizeVarName(arg.Name))
 		errName := g.Id(fmt.Sprintf("err%d", i+1))
-		parseArgs := []g.Generator{cbCtx}
 		if arg.Ignore {
 			statements.Append(g.NewValue("ignoreArgument").Call(cbCtx))
 			continue
@@ -300,6 +299,7 @@ func ReadArguments(
 		defaultName, hasDefault := arg.DefaultValueInGo()
 		zeroValueResolver := g.Id("zeroValue")
 		nullable := arg.IdlArg.Type.Nullable
+		parseArgs := []g.Generator{cbCtx, g.Lit(arg.Name)}
 		if hasDefault {
 			parseArgs = append(parseArgs, g.NewValue(naming.Receiver()).Field(defaultName))
 		} else if nullable {
