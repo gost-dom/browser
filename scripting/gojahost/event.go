@@ -4,6 +4,7 @@ import (
 	g "github.com/dop251/goja"
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/internal/entity"
+	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
 type gojaEvent[T event.Event] struct {
@@ -37,20 +38,36 @@ func (w eventWrapper) constructor(call g.ConstructorCall, r *g.Runtime) *g.Objec
 	return nil
 }
 
-func (w eventWrapper) type_(c g.FunctionCall) g.Value {
-	return w.ctx.vm.ToValue(w.getInstance(c).Type)
+func (w eventWrapper) type_(cbCtx *callbackContext) g.Value {
+	instance, err := js.As[*event.Event](cbCtx.Instance())
+	if err != nil {
+		panic(err)
+	}
+	return w.ctx.vm.ToValue(instance.Type)
 }
 
-func (w eventWrapper) cancelable(c g.FunctionCall) g.Value {
-	return w.ctx.vm.ToValue(w.getInstance(c).Cancelable)
+func (w eventWrapper) cancelable(cbCtx *callbackContext) g.Value {
+	instance, err := js.As[*event.Event](cbCtx.Instance())
+	if err != nil {
+		panic(err)
+	}
+	return w.ctx.vm.ToValue(instance.Cancelable)
 }
 
-func (w eventWrapper) bubbles(c g.FunctionCall) g.Value {
-	return w.ctx.vm.ToValue(w.getInstance(c).Bubbles)
+func (w eventWrapper) bubbles(cbCtx *callbackContext) g.Value {
+	instance, err := js.As[*event.Event](cbCtx.Instance())
+	if err != nil {
+		panic(err)
+	}
+	return w.ctx.vm.ToValue(instance.Bubbles)
 }
 
-func (w eventWrapper) eventPhase(c g.FunctionCall) g.Value {
-	return w.ctx.vm.ToValue(w.getInstance(c).EventPhase)
+func (w eventWrapper) eventPhase(cbCtx *callbackContext) g.Value {
+	instance, err := js.As[*event.Event](cbCtx.Instance())
+	if err != nil {
+		panic(err)
+	}
+	return w.ctx.vm.ToValue(instance.EventPhase)
 }
 
 type customEventWrapper struct {

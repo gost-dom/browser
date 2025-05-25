@@ -5,8 +5,7 @@ package v8host
 import (
 	"errors"
 	html "github.com/gost-dom/browser/html"
-	log "github.com/gost-dom/browser/internal/log"
-	abstraction "github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
+	js "github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -27,9 +26,8 @@ func newHTMLAnchorElementV8Wrapper(scriptHost *V8ScriptHost) *htmlAnchorElementV
 }
 
 func createHTMLAnchorElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
-	iso := scriptHost.iso
 	wrapper := newHTMLAnchorElementV8Wrapper(scriptHost)
-	constructor := v8.NewFunctionTemplateWithError(iso, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -47,28 +45,25 @@ func (w htmlAnchorElementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTem
 	w.htmlHyperlinkElementUtils.installPrototype(prototypeTmpl)
 }
 
-func (w htmlAnchorElementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLAnchorElement.Constructor")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
+func (w htmlAnchorElementV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLAnchorElement.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w htmlAnchorElementV8Wrapper) target(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLAnchorElement.target")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLAnchorElement](cbCtx.Instance())
+func (w htmlAnchorElementV8Wrapper) target(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLAnchorElement.target")
+	instance, err := js.As[html.HTMLAnchorElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Target()
-	return w.toString_(cbCtx.Context(), result)
+	return w.toString_(cbCtx.ScriptCtx(), result)
 }
 
-func (w htmlAnchorElementV8Wrapper) setTarget(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLAnchorElement.setTarget")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.HTMLAnchorElement](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeString)
+func (w htmlAnchorElementV8Wrapper) setTarget(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLAnchorElement.setTarget")
+	instance, err0 := js.As[html.HTMLAnchorElement](cbCtx.Instance())
+	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err

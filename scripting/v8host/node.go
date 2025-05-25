@@ -2,11 +2,12 @@ package v8host
 
 import (
 	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
 	v8 "github.com/gost-dom/v8go"
 )
 
-func (n nodeV8Wrapper) textContent(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	i, err := n.getInstance(info)
+func (n nodeV8Wrapper) textContent(cbCtx *argumentHelper) (*v8.Value, error) {
+	i, err := abstraction.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -15,18 +16,18 @@ func (n nodeV8Wrapper) textContent(info *v8.FunctionCallbackInfo) (*v8.Value, er
 	return v8.NewValue(n.iso(), r)
 }
 
-func (n nodeV8Wrapper) setTextContent(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	i, err := n.getInstance(info)
+func (n nodeV8Wrapper) setTextContent(cbCtx *argumentHelper) (*v8.Value, error) {
+	i, err := abstraction.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
-
-	i.SetTextContent(info.Args()[0].String())
+	arg := cbCtx.consumeValue()
+	i.SetTextContent(arg.String())
 	return nil, nil
 }
 
-func (n nodeV8Wrapper) nodeType(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	instance, err := n.getInstance(info)
+func (n nodeV8Wrapper) nodeType(cbCtx *argumentHelper) (*v8.Value, error) {
+	instance, err := abstraction.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}

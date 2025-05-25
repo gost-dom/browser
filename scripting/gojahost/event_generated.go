@@ -4,7 +4,8 @@ package gojahost
 
 import (
 	g "github.com/dop251/goja"
-	log "github.com/gost-dom/browser/internal/log"
+	event "github.com/gost-dom/browser/dom/event"
+	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
 func init() {
@@ -23,48 +24,57 @@ func (w eventWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime) {
 	prototype.DefineAccessorProperty("defaultPrevented", wrapCallback(w.ctx, w.defaultPrevented), nil, g.FLAG_TRUE, g.FLAG_TRUE)
 }
 
-func (w eventWrapper) Constructor(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Event.Constructor")
-	cbCtx := newArgumentHelper(w.ctx, c)
+func (w eventWrapper) Constructor(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Event.Constructor")
 	return cbCtx.ReturnWithTypeError("Goja constructor not yet implemented")
 }
 
-func (w eventWrapper) stopPropagation(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Event.stopPropagation")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
+func (w eventWrapper) stopPropagation(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Event.stopPropagation")
+	instance, instErr := js.As[*event.Event](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
 	instance.StopPropagation()
 	return cbCtx.ReturnWithValue(nil)
 }
 
-func (w eventWrapper) preventDefault(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Event.preventDefault")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
+func (w eventWrapper) preventDefault(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Event.preventDefault")
+	instance, instErr := js.As[*event.Event](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
 	instance.PreventDefault()
 	return cbCtx.ReturnWithValue(nil)
 }
 
-func (w eventWrapper) target(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Event.target")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
+func (w eventWrapper) target(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Event.target")
+	instance, instErr := js.As[*event.Event](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
 	result := instance.Target
 	return cbCtx.ReturnWithValue(w.toEventTarget(result))
 }
 
-func (w eventWrapper) currentTarget(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Event.currentTarget")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
+func (w eventWrapper) currentTarget(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Event.currentTarget")
+	instance, instErr := js.As[*event.Event](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
 	result := instance.CurrentTarget
 	return cbCtx.ReturnWithValue(w.toEventTarget(result))
 }
 
-func (w eventWrapper) defaultPrevented(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Event.defaultPrevented")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
+func (w eventWrapper) defaultPrevented(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Event.defaultPrevented")
+	instance, instErr := js.As[*event.Event](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
 	result := instance.DefaultPrevented
 	return cbCtx.ReturnWithValue(w.toBoolean(result))
 }

@@ -4,7 +4,6 @@ package v8host
 
 import (
 	"errors"
-	log "github.com/gost-dom/browser/internal/log"
 	uievents "github.com/gost-dom/browser/internal/uievents"
 	v8 "github.com/gost-dom/v8go"
 )
@@ -14,9 +13,8 @@ func init() {
 }
 
 func createMouseEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
-	iso := scriptHost.iso
 	wrapper := newMouseEventV8Wrapper(scriptHost)
-	constructor := v8.NewFunctionTemplateWithError(iso, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -58,9 +56,8 @@ func (w mouseEventV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) 
 		v8.None)
 }
 
-func (w mouseEventV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: MouseEvent.Constructor")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
+func (w mouseEventV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: MouseEvent.Constructor")
 	type_, err1 := consumeArgument(cbCtx, "type", nil, w.decodeString)
 	eventInitDict, err2 := consumeArgument(cbCtx, "eventInitDict", nil, w.decodeMouseEventInit)
 	if cbCtx.noOfReadArguments >= 2 {
@@ -68,54 +65,54 @@ func (w mouseEventV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Val
 		if err != nil {
 			return nil, err
 		}
-		return w.CreateInstanceEventInitDict(cbCtx.Context(), info.This(), type_, eventInitDict)
+		return w.CreateInstanceEventInitDict(cbCtx, type_, eventInitDict)
 	}
 	if cbCtx.noOfReadArguments >= 1 {
 		if err1 != nil {
 			return nil, err1
 		}
-		return w.CreateInstance(cbCtx.Context(), info.This(), type_)
+		return w.CreateInstance(cbCtx, type_)
 	}
 	return nil, errors.New("MouseEvent.constructor: Missing arguments")
 }
 
-func (w mouseEventV8Wrapper) getModifierState(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: MouseEvent.getModifierState")
+func (w mouseEventV8Wrapper) getModifierState(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: MouseEvent.getModifierState")
 	return nil, errors.New("MouseEvent.getModifierState: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w mouseEventV8Wrapper) screenX(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: MouseEvent.screenX")
+func (w mouseEventV8Wrapper) screenX(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: MouseEvent.screenX")
 	return nil, errors.New("MouseEvent.screenX: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w mouseEventV8Wrapper) screenY(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: MouseEvent.screenY")
+func (w mouseEventV8Wrapper) screenY(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: MouseEvent.screenY")
 	return nil, errors.New("MouseEvent.screenY: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w mouseEventV8Wrapper) clientX(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: MouseEvent.clientX")
+func (w mouseEventV8Wrapper) clientX(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: MouseEvent.clientX")
 	return nil, errors.New("MouseEvent.clientX: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w mouseEventV8Wrapper) clientY(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: MouseEvent.clientY")
+func (w mouseEventV8Wrapper) clientY(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: MouseEvent.clientY")
 	return nil, errors.New("MouseEvent.clientY: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w mouseEventV8Wrapper) layerX(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: MouseEvent.layerX")
+func (w mouseEventV8Wrapper) layerX(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: MouseEvent.layerX")
 	return nil, errors.New("MouseEvent.layerX: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w mouseEventV8Wrapper) layerY(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: MouseEvent.layerY")
+func (w mouseEventV8Wrapper) layerY(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: MouseEvent.layerY")
 	return nil, errors.New("MouseEvent.layerY: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w mouseEventV8Wrapper) relatedTarget(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: MouseEvent.relatedTarget")
+func (w mouseEventV8Wrapper) relatedTarget(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: MouseEvent.relatedTarget")
 	return nil, errors.New("MouseEvent.relatedTarget: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
@@ -132,9 +129,8 @@ func newUIEventV8Wrapper(scriptHost *V8ScriptHost) *uIEventV8Wrapper {
 }
 
 func createUIEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
-	iso := scriptHost.iso
 	wrapper := newUIEventV8Wrapper(scriptHost)
-	constructor := v8.NewFunctionTemplateWithError(iso, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -155,9 +151,8 @@ func (w uIEventV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 		v8.None)
 }
 
-func (w uIEventV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: UIEvent.Constructor")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
+func (w uIEventV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: UIEvent.Constructor")
 	type_, err1 := consumeArgument(cbCtx, "type", nil, w.decodeString)
 	eventInitDict, err2 := consumeArgument(cbCtx, "eventInitDict", nil, w.decodeUIEventInit)
 	if cbCtx.noOfReadArguments >= 2 {
@@ -165,23 +160,23 @@ func (w uIEventV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value,
 		if err != nil {
 			return nil, err
 		}
-		return w.CreateInstanceEventInitDict(cbCtx.Context(), info.This(), type_, eventInitDict)
+		return w.CreateInstanceEventInitDict(cbCtx, type_, eventInitDict)
 	}
 	if cbCtx.noOfReadArguments >= 1 {
 		if err1 != nil {
 			return nil, err1
 		}
-		return w.CreateInstance(cbCtx.Context(), info.This(), type_)
+		return w.CreateInstance(cbCtx, type_)
 	}
 	return nil, errors.New("UIEvent.constructor: Missing arguments")
 }
 
-func (w uIEventV8Wrapper) view(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: UIEvent.view")
+func (w uIEventV8Wrapper) view(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: UIEvent.view")
 	return nil, errors.New("UIEvent.view: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w uIEventV8Wrapper) detail(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: UIEvent.detail")
+func (w uIEventV8Wrapper) detail(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: UIEvent.detail")
 	return nil, errors.New("UIEvent.detail: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

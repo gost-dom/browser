@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
 
 	v8 "github.com/gost-dom/v8go"
 )
@@ -75,20 +76,19 @@ func (w *elementV8Wrapper) setTextContent(info *v8.FunctionCallbackInfo) (*v8.Va
 	return nil, err
 }
 
-func (e elementV8Wrapper) classList(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+func (e elementV8Wrapper) classList(cbCtx *argumentHelper) (*v8.Value, error) {
 	tokenList := e.scriptHost.globals.namedGlobals["DOMTokenList"]
-	ctx := e.scriptHost.mustGetContext(info.Context())
-	instance, err := e.getInstance(info)
+	instance, err := abstraction.As[dom.Element](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
-	res, err := tokenList.InstanceTemplate().NewInstance(ctx.v8ctx)
+	res, err := tokenList.InstanceTemplate().NewInstance(cbCtx.ScriptCtx().v8ctx)
 	if err != nil {
 		return nil, err
 	}
 	cl := instance.ClassList()
 
-	storeObjectHandleInV8Instance(cl, ctx, res)
+	storeObjectHandleInV8Instance(cl, cbCtx.ScriptCtx(), res)
 	return res.Value, nil
 }
 
@@ -99,9 +99,8 @@ func (e *elementV8Wrapper) toNamedNodeMap(
 	return ctx.getInstanceForNodeByName("NamedNodeMap", n)
 }
 
-func (w elementV8Wrapper) getAttribute(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	helper := newArgumentHelper(w.scriptHost, info)
-	element, e0 := w.getInstance(info)
+func (w elementV8Wrapper) getAttribute(helper *argumentHelper) (*v8.Value, error) {
+	element, e0 := abstraction.As[dom.Element](helper.Instance())
 	name, e1 := helper.consumeString()
 	err := errors.Join(e0, e1)
 	if err != nil {

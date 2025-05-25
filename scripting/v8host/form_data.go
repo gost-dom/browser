@@ -147,7 +147,7 @@ func createFormData(host *V8ScriptHost) *v8.FunctionTemplate {
 				if err0 != nil {
 					return nil, err0
 				}
-				return stringIterator.newIteratorInstance(args.ctx, instance.Keys())
+				return stringIterator.newIteratorInstance(args.ScriptCtx(), instance.Keys())
 			}),
 	)
 

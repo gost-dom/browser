@@ -7,7 +7,6 @@ import (
 	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/packagenames"
 	. "github.com/gost-dom/code-gen/script-wrappers/model"
-	"github.com/gost-dom/code-gen/stdgen"
 	"github.com/gost-dom/generators"
 	g "github.com/gost-dom/generators"
 )
@@ -239,9 +238,8 @@ func (c MethodCallback) Generate() *jen.Statement {
 		Args:     args,
 		RtnTypes: typeGenerators.CallbackMethodRetTypes(),
 		Body: g.StatementList(
-			c.LogCall(),
+			c.LogCall(cbCtx),
 			renderIf(!notImplemented, g.StatementList(
-				cbCtx.AssignFrom(c.platform.Host(c.receiver), argIds[0]),
 				c.body.TransformCtx(cbCtx),
 			)),
 			renderIf(notImplemented, c.ReturnNotImplementedError()),
@@ -261,10 +259,12 @@ func (c MethodCallback) ReturnNotImplementedError() g.Generator {
 	return c.platform.ReturnErrMsg(g.Lit(errMsg))
 }
 
-func (c MethodCallback) LogCall() g.Generator {
-	return stdgen.LogDebug(
-		g.ValueOf(c.receiver).Field("logger").Call(c.platform.PlatformInfoArg()),
+func (c MethodCallback) LogCall(cbCtx g.Generator) g.Generator {
+	return g.ValueOf(cbCtx).Field("logger").Call().Field("Debug").Call(
 		g.Lit(fmt.Sprintf("V8 Function call: %s.%s", c.data.Name(), c.name)))
+	// return stdgen.LogDebug(
+	// 	g.ValueOf(c.receiver).Field("logger").Call(c.platform.PlatformInfoArg()),
+	// 	g.Lit(fmt.Sprintf("V8 Function call: %s.%s", c.data.Name(), c.name)))
 }
 
 type MethodCallbackBody struct {

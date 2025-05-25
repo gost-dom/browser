@@ -232,7 +232,7 @@ func (host *V8ScriptHost) promiseRejected(msg v8go.PromiseRejectMessage) {
 }
 
 func (host *V8ScriptHost) Logger() log.Logger {
-	if host.logger != nil {
+	if host.logger == nil {
 		return log.Default()
 	}
 	return host.logger
@@ -283,6 +283,7 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 		window:  w,
 		v8nodes: make(map[entity.ObjectId]*v8go.Value),
 	}
+	host.addContext(context)
 	errorCallback := func(err error) {
 		if w != nil {
 			w.DispatchEvent(event.NewErrorEvent(err))
@@ -290,6 +291,9 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 	}
 	context.eventLoop = newEventLoop(context, errorCallback)
 	host.inspector.ContextCreated(context.v8ctx)
+	if w != nil {
+		context.cacheNode(context.v8ctx.Global(), w)
+	}
 	err := installPolyfills(context)
 	if err != nil {
 		// TODO: Handle
@@ -301,10 +305,6 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 			),
 		)
 	}
-	if w != nil {
-		context.cacheNode(context.v8ctx.Global(), w)
-	}
-	host.addContext(context)
 
 	return context
 }

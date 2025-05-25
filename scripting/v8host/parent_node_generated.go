@@ -4,10 +4,8 @@ package v8host
 
 import (
 	"errors"
-
 	dom "github.com/gost-dom/browser/dom"
-	log "github.com/gost-dom/browser/internal/log"
-	abstraction "github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
+	js "github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -20,9 +18,8 @@ func newParentNodeV8Wrapper(scriptHost *V8ScriptHost) *parentNodeV8Wrapper {
 }
 
 func createParentNodePrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
-	iso := scriptHost.iso
 	wrapper := newParentNodeV8Wrapper(scriptHost)
-	constructor := v8.NewFunctionTemplateWithError(iso, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -52,16 +49,14 @@ func (w parentNodeV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) 
 		v8.None)
 }
 
-func (w parentNodeV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: ParentNode.Constructor")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
+func (w parentNodeV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: ParentNode.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w parentNodeV8Wrapper) querySelector(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: ParentNode.querySelector")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dom.ParentNode](cbCtx.Instance())
+func (w parentNodeV8Wrapper) querySelector(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: ParentNode.querySelector")
+	instance, err0 := js.As[dom.ParentNode](cbCtx.Instance())
 	selectors, err1 := consumeArgument(cbCtx, "selectors", nil, w.decodeString)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -72,16 +67,15 @@ func (w parentNodeV8Wrapper) querySelector(info *v8.FunctionCallbackInfo) (*v8.V
 		if callErr != nil {
 			return nil, callErr
 		} else {
-			return cbCtx.Context().getInstanceForNode(result)
+			return cbCtx.ScriptCtx().getInstanceForNode(result)
 		}
 	}
 	return nil, errors.New("ParentNode.querySelector: Missing arguments")
 }
 
-func (w parentNodeV8Wrapper) querySelectorAll(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: ParentNode.querySelectorAll")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dom.ParentNode](cbCtx.Instance())
+func (w parentNodeV8Wrapper) querySelectorAll(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: ParentNode.querySelectorAll")
+	instance, err0 := js.As[dom.ParentNode](cbCtx.Instance())
 	selectors, err1 := consumeArgument(cbCtx, "selectors", nil, w.decodeString)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -92,41 +86,38 @@ func (w parentNodeV8Wrapper) querySelectorAll(info *v8.FunctionCallbackInfo) (*v
 		if callErr != nil {
 			return nil, callErr
 		} else {
-			return w.toNodeList(cbCtx.Context(), result)
+			return w.toNodeList(cbCtx.ScriptCtx(), result)
 		}
 	}
 	return nil, errors.New("ParentNode.querySelectorAll: Missing arguments")
 }
 
-func (w parentNodeV8Wrapper) firstElementChild(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: ParentNode.firstElementChild")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.ParentNode](cbCtx.Instance())
+func (w parentNodeV8Wrapper) firstElementChild(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: ParentNode.firstElementChild")
+	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.FirstElementChild()
-	return cbCtx.Context().getInstanceForNode(result)
+	return cbCtx.ScriptCtx().getInstanceForNode(result)
 }
 
-func (w parentNodeV8Wrapper) lastElementChild(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: ParentNode.lastElementChild")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.ParentNode](cbCtx.Instance())
+func (w parentNodeV8Wrapper) lastElementChild(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: ParentNode.lastElementChild")
+	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.LastElementChild()
-	return cbCtx.Context().getInstanceForNode(result)
+	return cbCtx.ScriptCtx().getInstanceForNode(result)
 }
 
-func (w parentNodeV8Wrapper) childElementCount(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: ParentNode.childElementCount")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.ParentNode](cbCtx.Instance())
+func (w parentNodeV8Wrapper) childElementCount(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: ParentNode.childElementCount")
+	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.ChildElementCount()
-	return w.toUnsignedLong(cbCtx.Context(), result)
+	return w.toUnsignedLong(cbCtx.ScriptCtx(), result)
 }

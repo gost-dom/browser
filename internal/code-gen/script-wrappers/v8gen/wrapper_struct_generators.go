@@ -43,7 +43,7 @@ func (g V8WrapperStructGenerators) HostType() g.Generator {
 }
 
 func (g V8WrapperStructGenerators) CallbackMethodArgs() generators.FunctionArgumentList {
-	return generators.Arg(generators.Id("info"), v8FunctionCallbackInfoPtr)
+	return generators.Arg(generators.Id("cbCtx"), v8CbCtx)
 }
 
 func (g V8WrapperStructGenerators) CallbackMethodRetTypes() []generators.Generator {

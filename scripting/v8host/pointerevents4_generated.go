@@ -4,7 +4,6 @@ package v8host
 
 import (
 	"errors"
-	log "github.com/gost-dom/browser/internal/log"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -13,9 +12,8 @@ func init() {
 }
 
 func createPointerEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
-	iso := scriptHost.iso
 	wrapper := newPointerEventV8Wrapper(scriptHost)
-	constructor := v8.NewFunctionTemplateWithError(iso, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -44,9 +42,8 @@ func (w pointerEventV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate
 		v8.None)
 }
 
-func (w pointerEventV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: PointerEvent.Constructor")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
+func (w pointerEventV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: PointerEvent.Constructor")
 	type_, err1 := consumeArgument(cbCtx, "type", nil, w.decodeString)
 	eventInitDict, err2 := consumeArgument(cbCtx, "eventInitDict", nil, w.decodePointerEventInit)
 	if cbCtx.noOfReadArguments >= 2 {
@@ -54,33 +51,33 @@ func (w pointerEventV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.V
 		if err != nil {
 			return nil, err
 		}
-		return w.CreateInstanceEventInitDict(cbCtx.Context(), info.This(), type_, eventInitDict)
+		return w.CreateInstanceEventInitDict(cbCtx, type_, eventInitDict)
 	}
 	if cbCtx.noOfReadArguments >= 1 {
 		if err1 != nil {
 			return nil, err1
 		}
-		return w.CreateInstance(cbCtx.Context(), info.This(), type_)
+		return w.CreateInstance(cbCtx, type_)
 	}
 	return nil, errors.New("PointerEvent.constructor: Missing arguments")
 }
 
-func (w pointerEventV8Wrapper) width(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: PointerEvent.width")
+func (w pointerEventV8Wrapper) width(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: PointerEvent.width")
 	return nil, errors.New("PointerEvent.width: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w pointerEventV8Wrapper) height(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: PointerEvent.height")
+func (w pointerEventV8Wrapper) height(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: PointerEvent.height")
 	return nil, errors.New("PointerEvent.height: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w pointerEventV8Wrapper) pressure(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: PointerEvent.pressure")
+func (w pointerEventV8Wrapper) pressure(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: PointerEvent.pressure")
 	return nil, errors.New("PointerEvent.pressure: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w pointerEventV8Wrapper) tangentialPressure(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: PointerEvent.tangentialPressure")
+func (w pointerEventV8Wrapper) tangentialPressure(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: PointerEvent.tangentialPressure")
 	return nil, errors.New("PointerEvent.tangentialPressure: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

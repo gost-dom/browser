@@ -3,6 +3,7 @@ package v8host
 import (
 	"fmt"
 	"runtime/cgo"
+	"runtime/debug"
 	"strings"
 
 	"github.com/gost-dom/browser/dom"
@@ -41,7 +42,7 @@ func (h *V8ScriptHost) mustGetContext(v8ctx *v8.Context) *V8ScriptContext {
 	if ctx, ok := h.getContext(v8ctx); ok {
 		return ctx
 	}
-	panic("Unknown v8 context")
+	panic("Unknown v8 context!!\n" + string(debug.Stack()))
 }
 
 func (c *V8ScriptContext) cacheNode(obj *v8.Object, node entity.ObjectIder) (*v8.Value, error) {

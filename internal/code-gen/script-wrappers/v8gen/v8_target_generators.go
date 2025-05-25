@@ -122,7 +122,7 @@ func (gen V8TargetGenerators) CreateAttributeSetter(
 	receiver := WrapperInstance{g.NewValue(naming.Receiver())}
 
 	args := append(
-		[]g.Generator{cbCtx.Context(), g.Id("info")},
+		[]g.Generator{cbCtx.Context(), g.Id("cbCtx")},
 		wrappers.DecodersForArg(receiver, op.Arguments[0])...,
 	)
 	parsedArg := g.NewValue("parseSetterArg").Call(args...)

@@ -20,7 +20,7 @@ func (c CallbackContext) GetInstance() g.Generator {
 }
 
 func (c CallbackContext) Context() g.Value {
-	return c.Field("Context").Call()
+	return c.Field("ScriptCtx").Call()
 }
 
 func (c CallbackContext) IllegalConstructor() g.Generator {
@@ -32,4 +32,7 @@ func (c CallbackContext) ReturnWithTypeError(msg string) g.Generator {
 }
 func (c CallbackContext) ReturnWithValue(val g.Generator) g.Generator {
 	return c.Field("ReturnWithValue").Call(val)
+}
+func (c CallbackContext) ReturnWithError(val g.Generator) g.Generator {
+	return c.Field("ReturnWithError").Call(val)
 }

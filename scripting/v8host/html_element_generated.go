@@ -4,8 +4,7 @@ package v8host
 
 import (
 	html "github.com/gost-dom/browser/html"
-	log "github.com/gost-dom/browser/internal/log"
-	abstraction "github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
+	js "github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -26,9 +25,8 @@ func newHTMLElementV8Wrapper(scriptHost *V8ScriptHost) *htmlElementV8Wrapper {
 }
 
 func createHTMLElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
-	iso := scriptHost.iso
 	wrapper := newHTMLElementV8Wrapper(scriptHost)
-	constructor := v8.NewFunctionTemplateWithError(iso, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -42,16 +40,14 @@ func (w htmlElementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate)
 	w.htmlOrSVGElement.installPrototype(prototypeTmpl)
 }
 
-func (w htmlElementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLElement.Constructor")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
+func (w htmlElementV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLElement.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w htmlElementV8Wrapper) click(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLElement.click")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLElement](cbCtx.Instance())
+func (w htmlElementV8Wrapper) click(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLElement.click")
+	instance, err := js.As[html.HTMLElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}

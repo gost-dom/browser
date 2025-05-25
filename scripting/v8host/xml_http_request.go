@@ -8,6 +8,7 @@ import (
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/internal/html"
+	"github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
 
 	v8 "github.com/gost-dom/v8go"
 )
@@ -55,9 +56,10 @@ func newXMLHttpRequestV8Wrapper(host *V8ScriptHost) xmlHttpRequestV8Wrapper {
 }
 
 func (xhr xmlHttpRequestV8Wrapper) CreateInstance(
-	ctx *V8ScriptContext,
-	this *v8.Object,
+	cbCtx *argumentHelper,
 ) (*v8.Value, error) {
+	ctx := cbCtx.ScriptCtx()
+	this := cbCtx.This()
 	result := NewXmlHttpRequest(ctx.window, ctx.clock)
 	result.SetCatchAllHandler(event.NewEventHandlerFunc(func(event *event.Event) error {
 		prop := "on" + event.Type
@@ -75,22 +77,19 @@ func (xhr xmlHttpRequestV8Wrapper) CreateInstance(
 	return nil, nil
 }
 
-func (xhr xmlHttpRequestV8Wrapper) open(
-	info *v8.FunctionCallbackInfo,
-) (result *v8.Value, err error) {
-	args := newArgumentHelper(xhr.scriptHost, info)
-	method, err0 := consumeArgument(args, "method", nil, xhr.decodeString)
-	url, err1 := consumeArgument(args, "url", nil, xhr.decodeString)
-	async, err2 := consumeArgument(args, "async", nil, xhr.decodeBoolean)
-	instance, errInstance := xhr.getInstance(info)
-	if args.noOfReadArguments > 2 {
+func (xhr xmlHttpRequestV8Wrapper) open(cbCtx *argumentHelper) (result *v8.Value, err error) {
+	method, err0 := consumeArgument(cbCtx, "method", nil, xhr.decodeString)
+	url, err1 := consumeArgument(cbCtx, "url", nil, xhr.decodeString)
+	async, err2 := consumeArgument(cbCtx, "async", nil, xhr.decodeBoolean)
+	instance, errInstance := abstraction.As[XmlHttpRequest](cbCtx.Instance())
+	if cbCtx.noOfReadArguments > 2 {
 		if err = errors.Join(err0, err1, err2, errInstance); err != nil {
 			return
 		}
 		instance.Open(method, url, RequestOptionAsync(async))
 		return
 	}
-	if args.noOfReadArguments < 2 {
+	if cbCtx.noOfReadArguments < 2 {
 		return nil, errors.New("Not enough arguments")
 	}
 	if err = errors.Join(err0, err1, errInstance); err == nil {
@@ -99,6 +98,6 @@ func (xhr xmlHttpRequestV8Wrapper) open(
 	return
 }
 
-func (xhr xmlHttpRequestV8Wrapper) upload(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	return info.This().Value, nil
+func (xhr xmlHttpRequestV8Wrapper) upload(cbCtx *argumentHelper) (*v8.Value, error) {
+	return cbCtx.This().Value, nil
 }

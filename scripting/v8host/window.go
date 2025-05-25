@@ -3,6 +3,8 @@ package v8host
 import (
 	"runtime/cgo"
 
+	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -19,16 +21,16 @@ func installGlobals(
 	windowTemplate.Set("location", location.InstanceTemplate())
 }
 
-func (w *windowV8Wrapper) window(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	return info.This().Value, nil
+func (w *windowV8Wrapper) window(cbCtx *argumentHelper) (*v8.Value, error) {
+	return cbCtx.This().Value, nil
 }
 
-func (w *windowV8Wrapper) history(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	win, err := w.getInstance(info)
+func (w *windowV8Wrapper) history(cbCtx *argumentHelper) (*v8.Value, error) {
+	win, err := abstraction.As[html.Window](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
-	ctx := w.mustGetContext(info)
+	ctx := cbCtx.ScriptCtx()
 	history, err := w.scriptHost.globals.namedGlobals["History"].InstanceTemplate().
 		NewInstance(ctx.v8ctx)
 	if err != nil {

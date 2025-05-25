@@ -3,24 +3,30 @@ package v8host
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 
 	v8 "github.com/gost-dom/v8go"
 )
 
 type argumentHelper struct {
 	*v8.FunctionCallbackInfo
-	ctx               *V8ScriptContext
+	host              *V8ScriptHost
 	noOfReadArguments int
 	currentIndex      int
 }
 
 func newArgumentHelper(host *V8ScriptHost, info *v8.FunctionCallbackInfo) *argumentHelper {
-	ctx := host.mustGetContext(info.Context())
-	return &argumentHelper{info, ctx, 0, 0}
+	return &argumentHelper{info, host, 0, 0}
 }
 
-func (h argumentHelper) iso() *v8.Isolate           { return h.ctx.host.iso }
-func (h *argumentHelper) Context() *V8ScriptContext { return h.ctx }
+func (h argumentHelper) iso() *v8.Isolate     { return h.FunctionCallbackInfo.Context().Isolate() }
+func (h argumentHelper) logger() *slog.Logger { return h.ScriptCtx().host.Logger() }
+func (h *argumentHelper) ScriptCtx() *V8ScriptContext {
+	return h.host.mustGetContext(h.FunctionCallbackInfo.Context())
+}
+
+func (h *argumentHelper) ReturnWithValue(val *v8.Value) (*v8.Value, error) { return val, nil }
+func (h *argumentHelper) ReturnWithError(err error) (*v8.Value, error)     { return nil, err }
 
 func (h *argumentHelper) ReturnWithTypeError(msg string) (*v8.Value, error) {
 	return nil, v8.NewTypeError(h.iso(), msg)
@@ -49,7 +55,7 @@ func (h *argumentHelper) consumeValue() *v8.Value {
 	if arg := h.consumeArg(); arg != nil {
 		return arg
 	}
-	return v8.Undefined(h.ctx.host.iso)
+	return v8.Undefined(h.FunctionCallbackInfo.Context().Isolate())
 }
 
 func (h *argumentHelper) consumeFunction() (*v8.Function, error) {
@@ -106,10 +112,21 @@ func (h *argumentHelper) consumeArg() *v8.Value {
 	return arg
 }
 
+func (h *argumentHelper) consumeRest() []*v8.Value {
+	index := h.currentIndex
+	// h.assertIndex(index)
+	args := h.FunctionCallbackInfo.Args()
+	if len(args) <= index {
+		return nil
+	}
+	h.currentIndex = len(args)
+	return args[index:]
+}
+
 func (h *argumentHelper) newTypeError(msg string, v *v8.Value) error {
-	json, _ := v8.JSONStringify(h.ctx.v8ctx, v)
+	json, _ := v8.JSONStringify(h.FunctionCallbackInfo.Context(), v)
 	return v8.NewTypeError(
-		h.ctx.host.iso,
+		h.iso(),
 		fmt.Sprintf("TypeError: %s\n%s", msg, json),
 	)
 }

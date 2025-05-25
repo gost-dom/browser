@@ -5,8 +5,7 @@ package v8host
 import (
 	"errors"
 	html "github.com/gost-dom/browser/html"
-	log "github.com/gost-dom/browser/internal/log"
-	abstraction "github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
+	js "github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -23,9 +22,8 @@ func newHTMLFormElementV8Wrapper(scriptHost *V8ScriptHost) *htmlFormElementV8Wra
 }
 
 func createHTMLFormElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
-	iso := scriptHost.iso
 	wrapper := newHTMLFormElementV8Wrapper(scriptHost)
-	constructor := v8.NewFunctionTemplateWithError(iso, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -87,16 +85,14 @@ func (w htmlFormElementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTempl
 		v8.None)
 }
 
-func (w htmlFormElementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.Constructor")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
+func (w htmlFormElementV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w htmlFormElementV8Wrapper) submit(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.submit")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLFormElement](cbCtx.Instance())
+func (w htmlFormElementV8Wrapper) submit(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.submit")
+	instance, err := js.As[html.HTMLFormElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -104,10 +100,9 @@ func (w htmlFormElementV8Wrapper) submit(info *v8.FunctionCallbackInfo) (*v8.Val
 	return nil, callErr
 }
 
-func (w htmlFormElementV8Wrapper) requestSubmit(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.requestSubmit")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.HTMLFormElement](cbCtx.Instance())
+func (w htmlFormElementV8Wrapper) requestSubmit(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.requestSubmit")
+	instance, err0 := js.As[html.HTMLFormElement](cbCtx.Instance())
 	submitter, err1 := consumeArgument(cbCtx, "submitter", w.defaultHTMLElement, w.decodeHTMLElement)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -120,47 +115,45 @@ func (w htmlFormElementV8Wrapper) requestSubmit(info *v8.FunctionCallbackInfo) (
 	return nil, errors.New("HTMLFormElement.requestSubmit: Missing arguments")
 }
 
-func (w htmlFormElementV8Wrapper) reset(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.reset")
+func (w htmlFormElementV8Wrapper) reset(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.reset")
 	return nil, errors.New("HTMLFormElement.reset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w htmlFormElementV8Wrapper) checkValidity(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.checkValidity")
+func (w htmlFormElementV8Wrapper) checkValidity(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.checkValidity")
 	return nil, errors.New("HTMLFormElement.checkValidity: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w htmlFormElementV8Wrapper) reportValidity(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.reportValidity")
+func (w htmlFormElementV8Wrapper) reportValidity(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.reportValidity")
 	return nil, errors.New("HTMLFormElement.reportValidity: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w htmlFormElementV8Wrapper) acceptCharset(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.acceptCharset")
+func (w htmlFormElementV8Wrapper) acceptCharset(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.acceptCharset")
 	return nil, errors.New("HTMLFormElement.acceptCharset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w htmlFormElementV8Wrapper) setAcceptCharset(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.setAcceptCharset")
+func (w htmlFormElementV8Wrapper) setAcceptCharset(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.setAcceptCharset")
 	return nil, errors.New("HTMLFormElement.setAcceptCharset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w htmlFormElementV8Wrapper) action(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.action")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLFormElement](cbCtx.Instance())
+func (w htmlFormElementV8Wrapper) action(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.action")
+	instance, err := js.As[html.HTMLFormElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Action()
-	return w.toString_(cbCtx.Context(), result)
+	return w.toString_(cbCtx.ScriptCtx(), result)
 }
 
-func (w htmlFormElementV8Wrapper) setAction(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.setAction")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.HTMLFormElement](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeString)
+func (w htmlFormElementV8Wrapper) setAction(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.setAction")
+	instance, err0 := js.As[html.HTMLFormElement](cbCtx.Instance())
+	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
@@ -169,52 +162,50 @@ func (w htmlFormElementV8Wrapper) setAction(info *v8.FunctionCallbackInfo) (*v8.
 	return nil, nil
 }
 
-func (w htmlFormElementV8Wrapper) autocomplete(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.autocomplete")
+func (w htmlFormElementV8Wrapper) autocomplete(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.autocomplete")
 	return nil, errors.New("HTMLFormElement.autocomplete: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w htmlFormElementV8Wrapper) setAutocomplete(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.setAutocomplete")
+func (w htmlFormElementV8Wrapper) setAutocomplete(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.setAutocomplete")
 	return nil, errors.New("HTMLFormElement.setAutocomplete: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w htmlFormElementV8Wrapper) enctype(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.enctype")
+func (w htmlFormElementV8Wrapper) enctype(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.enctype")
 	return nil, errors.New("HTMLFormElement.enctype: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w htmlFormElementV8Wrapper) setEnctype(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.setEnctype")
+func (w htmlFormElementV8Wrapper) setEnctype(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.setEnctype")
 	return nil, errors.New("HTMLFormElement.setEnctype: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w htmlFormElementV8Wrapper) encoding(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.encoding")
+func (w htmlFormElementV8Wrapper) encoding(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.encoding")
 	return nil, errors.New("HTMLFormElement.encoding: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w htmlFormElementV8Wrapper) setEncoding(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.setEncoding")
+func (w htmlFormElementV8Wrapper) setEncoding(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.setEncoding")
 	return nil, errors.New("HTMLFormElement.setEncoding: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w htmlFormElementV8Wrapper) method(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.method")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLFormElement](cbCtx.Instance())
+func (w htmlFormElementV8Wrapper) method(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.method")
+	instance, err := js.As[html.HTMLFormElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Method()
-	return w.toString_(cbCtx.Context(), result)
+	return w.toString_(cbCtx.ScriptCtx(), result)
 }
 
-func (w htmlFormElementV8Wrapper) setMethod(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.setMethod")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.HTMLFormElement](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeString)
+func (w htmlFormElementV8Wrapper) setMethod(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.setMethod")
+	instance, err0 := js.As[html.HTMLFormElement](cbCtx.Instance())
+	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
@@ -223,43 +214,42 @@ func (w htmlFormElementV8Wrapper) setMethod(info *v8.FunctionCallbackInfo) (*v8.
 	return nil, nil
 }
 
-func (w htmlFormElementV8Wrapper) target(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.target")
+func (w htmlFormElementV8Wrapper) target(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.target")
 	return nil, errors.New("HTMLFormElement.target: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w htmlFormElementV8Wrapper) setTarget(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.setTarget")
+func (w htmlFormElementV8Wrapper) setTarget(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.setTarget")
 	return nil, errors.New("HTMLFormElement.setTarget: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w htmlFormElementV8Wrapper) rel(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.rel")
+func (w htmlFormElementV8Wrapper) rel(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.rel")
 	return nil, errors.New("HTMLFormElement.rel: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w htmlFormElementV8Wrapper) setRel(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.setRel")
+func (w htmlFormElementV8Wrapper) setRel(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.setRel")
 	return nil, errors.New("HTMLFormElement.setRel: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w htmlFormElementV8Wrapper) relList(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.relList")
+func (w htmlFormElementV8Wrapper) relList(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.relList")
 	return nil, errors.New("HTMLFormElement.relList: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w htmlFormElementV8Wrapper) elements(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.elements")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLFormElement](cbCtx.Instance())
+func (w htmlFormElementV8Wrapper) elements(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.elements")
+	instance, err := js.As[html.HTMLFormElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Elements()
-	return w.toHTMLFormControlsCollection(cbCtx.Context(), result)
+	return w.toHTMLFormControlsCollection(cbCtx.ScriptCtx(), result)
 }
 
-func (w htmlFormElementV8Wrapper) length(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLFormElement.length")
+func (w htmlFormElementV8Wrapper) length(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.length")
 	return nil, errors.New("HTMLFormElement.length: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

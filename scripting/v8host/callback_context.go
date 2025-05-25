@@ -2,6 +2,7 @@ package v8host
 
 import (
 	"fmt"
+	"runtime/debug"
 
 	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
@@ -118,9 +119,22 @@ func (f v8ValueFactory) toVal(val *v8go.Value) abstraction.Value {
 	return v8Value{val}
 }
 
+type internalCallback func(*argumentHelper) (*v8go.Value, error)
+
 func wrapV8Callback(
 	host *V8ScriptHost,
-	callback v8go.FunctionCallbackWithError,
+	callback internalCallback,
 ) *v8go.FunctionTemplate {
-	return v8go.NewFunctionTemplateWithError(host.iso, callback)
+	return v8go.NewFunctionTemplateWithError(
+		host.iso,
+		func(info *v8go.FunctionCallbackInfo) (res *v8go.Value, err error) {
+			defer func() {
+				if r := recover(); r != nil {
+					err = fmt.Errorf("PANIC in callback: %v\n%s", r, debug.Stack())
+				}
+			}()
+			cbCtx := newArgumentHelper(host, info)
+			return callback(cbCtx)
+		},
+	)
 }

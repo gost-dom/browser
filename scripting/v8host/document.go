@@ -58,7 +58,7 @@ func createDocumentPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
 			name, err = args.consumeString()
 			if err == nil {
 				e := instance.CreateElement(name)
-				val, err = args.ctx.getInstanceForNode(e)
+				val, err = args.ScriptCtx().getInstanceForNode(e)
 			}
 			return
 		},
@@ -67,7 +67,7 @@ func createDocumentPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
 		"createDocumentFragment",
 		func(instance dom.Document, args *argumentHelper) (val *v8.Value, err error) {
 			e := instance.CreateDocumentFragment()
-			return args.ctx.getInstanceForNode(e)
+			return args.ScriptCtx().getInstanceForNode(e)
 		},
 	)
 

@@ -5,7 +5,7 @@ package gojahost
 import (
 	g "github.com/dop251/goja"
 	html "github.com/gost-dom/browser/html"
-	log "github.com/gost-dom/browser/internal/log"
+	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
 func init() {
@@ -36,140 +36,157 @@ func (w locationWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime)
 	prototype.DefineAccessorProperty("ancestorOrigins", wrapCallback(w.ctx, w.ancestorOrigins), nil, g.FLAG_TRUE, g.FLAG_TRUE)
 }
 
-func (w locationWrapper) Constructor(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Location.Constructor")
-	cbCtx := newArgumentHelper(w.ctx, c)
+func (w locationWrapper) Constructor(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Location.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w locationWrapper) assign(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Location.assign")
+func (w locationWrapper) assign(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Location.assign")
 	panic("Location.assign: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w locationWrapper) replace(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Location.replace")
+func (w locationWrapper) replace(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Location.replace")
 	panic("Location.replace: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w locationWrapper) reload(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Location.reload")
+func (w locationWrapper) reload(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Location.reload")
 	panic("Location.reload: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w locationWrapper) href(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Location.href")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
+func (w locationWrapper) href(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Location.href")
+	instance, instErr := js.As[html.Location](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
 	result := instance.Href()
 	return cbCtx.ReturnWithValue(w.toString_(result))
 }
 
-func (w locationWrapper) setHref(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Location.setHref")
+func (w locationWrapper) setHref(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Location.setHref")
 	panic("Location.setHref: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w locationWrapper) origin(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Location.origin")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
+func (w locationWrapper) origin(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Location.origin")
+	instance, instErr := js.As[html.Location](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
 	result := instance.Origin()
 	return cbCtx.ReturnWithValue(w.toString_(result))
 }
 
-func (w locationWrapper) protocol(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Location.protocol")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
+func (w locationWrapper) protocol(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Location.protocol")
+	instance, instErr := js.As[html.Location](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
 	result := instance.Protocol()
 	return cbCtx.ReturnWithValue(w.toString_(result))
 }
 
-func (w locationWrapper) setProtocol(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Location.setProtocol")
+func (w locationWrapper) setProtocol(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Location.setProtocol")
 	panic("Location.setProtocol: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w locationWrapper) host(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Location.host")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
+func (w locationWrapper) host(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Location.host")
+	instance, instErr := js.As[html.Location](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
 	result := instance.Host()
 	return cbCtx.ReturnWithValue(w.toString_(result))
 }
 
-func (w locationWrapper) setHost(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Location.setHost")
+func (w locationWrapper) setHost(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Location.setHost")
 	panic("Location.setHost: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w locationWrapper) hostname(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Location.hostname")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
+func (w locationWrapper) hostname(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Location.hostname")
+	instance, instErr := js.As[html.Location](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
 	result := instance.Hostname()
 	return cbCtx.ReturnWithValue(w.toString_(result))
 }
 
-func (w locationWrapper) setHostname(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Location.setHostname")
+func (w locationWrapper) setHostname(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Location.setHostname")
 	panic("Location.setHostname: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w locationWrapper) port(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Location.port")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
+func (w locationWrapper) port(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Location.port")
+	instance, instErr := js.As[html.Location](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
 	result := instance.Port()
 	return cbCtx.ReturnWithValue(w.toString_(result))
 }
 
-func (w locationWrapper) setPort(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Location.setPort")
+func (w locationWrapper) setPort(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Location.setPort")
 	panic("Location.setPort: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w locationWrapper) pathname(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Location.pathname")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
+func (w locationWrapper) pathname(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Location.pathname")
+	instance, instErr := js.As[html.Location](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
 	result := instance.Pathname()
 	return cbCtx.ReturnWithValue(w.toString_(result))
 }
 
-func (w locationWrapper) setPathname(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Location.setPathname")
+func (w locationWrapper) setPathname(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Location.setPathname")
 	panic("Location.setPathname: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w locationWrapper) search(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Location.search")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
+func (w locationWrapper) search(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Location.search")
+	instance, instErr := js.As[html.Location](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
 	result := instance.Search()
 	return cbCtx.ReturnWithValue(w.toString_(result))
 }
 
-func (w locationWrapper) setSearch(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Location.setSearch")
+func (w locationWrapper) setSearch(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Location.setSearch")
 	panic("Location.setSearch: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w locationWrapper) hash(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Location.hash")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
+func (w locationWrapper) hash(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Location.hash")
+	instance, instErr := js.As[html.Location](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
 	result := instance.Hash()
 	return cbCtx.ReturnWithValue(w.toString_(result))
 }
 
-func (w locationWrapper) setHash(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Location.setHash")
+func (w locationWrapper) setHash(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Location.setHash")
 	panic("Location.setHash: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w locationWrapper) ancestorOrigins(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Location.ancestorOrigins")
+func (w locationWrapper) ancestorOrigins(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Location.ancestorOrigins")
 	panic("Location.ancestorOrigins: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

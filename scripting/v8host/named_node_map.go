@@ -47,7 +47,7 @@ func createNamedNodeMap(host *V8ScriptHost) *v8.FunctionTemplate {
 			idx, err := info.consumeInt32()
 			item := instance.Item(int(idx))
 			if item != nil && err == nil {
-				val, err := info.ctx.getInstanceForNodeByName("Attr", item)
+				val, err := info.ScriptCtx().getInstanceForNodeByName("Attr", item)
 				return val, err
 			}
 			return v8.Null(iso), err

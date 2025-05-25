@@ -15,5 +15,6 @@ var (
 	gojaValue   = g.Raw(jen.Qual(gojaSrc, "Value"))
 	gojaObj     = g.Raw(jen.Op("*").Qual(gojaSrc, "Object"))
 	gojaRuntime = g.Raw(jen.Op("*").Qual(gojaSrc, "Runtime"))
+	gojaCbCtx   = g.NewType("callbackContext").Pointer()
 	flagTrue    = g.Raw(jen.Qual(gojaSrc, "FLAG_TRUE"))
 )

@@ -77,7 +77,7 @@ func createNodeList(host *V8ScriptHost) *v8.FunctionTemplate {
 			if result == nil {
 				return v8.Null(iso), nil
 			}
-			return info.ctx.getInstanceForNode(result)
+			return info.ScriptCtx().getInstanceForNode(result)
 		},
 	)
 	instanceTemplate := builder.NewInstanceBuilder().proto

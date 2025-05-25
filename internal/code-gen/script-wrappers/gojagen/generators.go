@@ -142,14 +142,29 @@ func (gen GojaTargetGenerators) CreateAttributeGetter(
 	cbCtx wrappers.CallbackContext,
 	eval func(g.Generator) g.Generator,
 ) g.Generator {
-	// return gen.CreateMethodCallbackBody(data, op)
-	callArgument := g.Id("c")
 	naming := GojaNamingStrategy{data}
 	receiver := g.NewValue(naming.ReceiverName())
 	instance := g.NewValue("instance")
 	return g.StatementList(
-		g.Assign(instance, receiver.Field("getInstance").Call(callArgument)),
+		gen.getInstance(cbCtx, data, instance),
 		gen.ConvertResult(op, receiver, cbCtx, eval(instance)),
+	)
+}
+
+func (gen GojaTargetGenerators) getInstance(
+	cbCtx wrappers.CallbackContext,
+	data model.ESConstructorData,
+	instance g.Generator,
+) g.Generator {
+	err := g.Id("instErr")
+	return g.StatementList(
+		g.AssignMany(
+			g.List(instance, err),
+			wrappers.As.TypeParam(data.WrappedType()).Call(cbCtx.GetInstance()),
+		),
+		wrappers.IfError(err, wrappers.TransformerFunc(func(err g.Generator) g.Generator {
+			return g.Return(cbCtx.ReturnWithError(err))
+		})),
 	)
 }
 
@@ -159,7 +174,6 @@ func (gen GojaTargetGenerators) CreateAttributeSetter(
 	cbCtx wrappers.CallbackContext,
 	updateValue func(g.Generator, g.Generator) g.Generator,
 ) g.Generator {
-	callArgument := g.Id("c")
 	naming := GojaNamingStrategy{data}
 	receiver := g.NewValue(naming.ReceiverName())
 	instance := g.NewValue("instance")
@@ -167,12 +181,12 @@ func (gen GojaTargetGenerators) CreateAttributeSetter(
 	argNames := make([]g.Generator, len(op.Arguments))
 	for i, a := range op.Arguments {
 		argNames[i] = g.Id(a.Name)
-		value := g.Raw(callArgument.Generate().Dot("Arguments").Index(jen.Lit(i)))
+		value := g.Raw(cbCtx.Generate().Dot("Argument").Call(jen.Lit(i)))
 		converter := fmt.Sprintf("decode%s", a.IdlArg.Type.Name)
 		readArgs.Append(g.Assign(argNames[i], receiver.Field(converter).Call(value)))
 	}
 	return g.StatementList(
-		g.Assign(instance, receiver.Field("getInstance").Call(callArgument)),
+		gen.getInstance(cbCtx, data, instance),
 		readArgs,
 		gen.ConvertResult(op, receiver, cbCtx, updateValue(instance, argNames[0])),
 	)
@@ -183,7 +197,6 @@ func (gen GojaTargetGenerators) CreateMethodCallbackBody(
 	op model.ESOperation,
 	cbCtx wrappers.CallbackContext,
 ) g.Generator {
-	callArgument := g.Id("c")
 	naming := GojaNamingStrategy{data}
 	receiver := g.NewValue(naming.ReceiverName())
 	instance := g.NewValue("instance")
@@ -191,12 +204,13 @@ func (gen GojaTargetGenerators) CreateMethodCallbackBody(
 	argNames := make([]g.Generator, len(op.Arguments))
 	for i, a := range op.Arguments {
 		argNames[i] = g.Id(a.Name)
-		value := g.Raw(callArgument.Generate().Dot("Arguments").Index(jen.Lit(i)))
+		value := g.Raw(cbCtx.Generate().Dot("Argument").Call(jen.Lit(i)))
 		converter := fmt.Sprintf("decode%s", a.IdlArg.Type.Name)
 		readArgs.Append(g.Assign(argNames[i], receiver.Field(converter).Call(value)))
 	}
 	return g.StatementList(
-		g.Assign(instance, receiver.Field("getInstance").Call(callArgument)),
+		// g.Assign(instance, receiver.Field("getInstance").Call(callArgument)),
+		gen.getInstance(cbCtx, data, instance),
 		readArgs,
 		gen.ConvertResult(op, receiver, cbCtx,
 			instance.Field(UpperCaseFirstLetter(op.Name)).Call(argNames...),
@@ -275,8 +289,8 @@ func (g GojaTargetGenerators) HostType() g.Generator {
 }
 
 func (g GojaTargetGenerators) CallbackMethodArgs() g.FunctionArgumentList {
-	callArgument := generators.Id("c")
-	return generators.Arg(callArgument, gojaFc)
+	callArgument := generators.Id("cbCtx")
+	return generators.Arg(callArgument, gojaCbCtx)
 }
 
 func (g GojaTargetGenerators) CallbackMethodRetTypes() []g.Generator {

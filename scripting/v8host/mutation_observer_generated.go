@@ -5,8 +5,7 @@ package v8host
 import (
 	"errors"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
-	log "github.com/gost-dom/browser/internal/log"
-	abstraction "github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
+	js "github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -23,9 +22,8 @@ func newMutationObserverV8Wrapper(scriptHost *V8ScriptHost) *mutationObserverV8W
 }
 
 func createMutationObserverPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
-	iso := scriptHost.iso
 	wrapper := newMutationObserverV8Wrapper(scriptHost)
-	constructor := v8.NewFunctionTemplateWithError(iso, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -40,23 +38,21 @@ func (w mutationObserverV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemp
 	prototypeTmpl.Set("takeRecords", wrapV8Callback(w.scriptHost, w.takeRecords))
 }
 
-func (w mutationObserverV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: MutationObserver.Constructor")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
+func (w mutationObserverV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: MutationObserver.Constructor")
 	callback, err1 := consumeArgument(cbCtx, "callback", nil, w.decodeMutationCallback)
 	if cbCtx.noOfReadArguments >= 1 {
 		if err1 != nil {
 			return nil, err1
 		}
-		return w.CreateInstance(cbCtx.Context(), info.This(), callback)
+		return w.CreateInstance(cbCtx, callback)
 	}
 	return nil, errors.New("MutationObserver.constructor: Missing arguments")
 }
 
-func (w mutationObserverV8Wrapper) observe(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: MutationObserver.observe")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dominterfaces.MutationObserver](cbCtx.Instance())
+func (w mutationObserverV8Wrapper) observe(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: MutationObserver.observe")
+	instance, err0 := js.As[dominterfaces.MutationObserver](cbCtx.Instance())
 	target, err1 := consumeArgument(cbCtx, "target", nil, w.decodeNode)
 	options, err2 := consumeArgument(cbCtx, "options", nil, w.decodeMutationObserverInit)
 	if cbCtx.noOfReadArguments >= 2 {
@@ -70,10 +66,9 @@ func (w mutationObserverV8Wrapper) observe(info *v8.FunctionCallbackInfo) (*v8.V
 	return nil, errors.New("MutationObserver.observe: Missing arguments")
 }
 
-func (w mutationObserverV8Wrapper) disconnect(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: MutationObserver.disconnect")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dominterfaces.MutationObserver](cbCtx.Instance())
+func (w mutationObserverV8Wrapper) disconnect(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: MutationObserver.disconnect")
+	instance, err := js.As[dominterfaces.MutationObserver](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -81,13 +76,12 @@ func (w mutationObserverV8Wrapper) disconnect(info *v8.FunctionCallbackInfo) (*v
 	return nil, nil
 }
 
-func (w mutationObserverV8Wrapper) takeRecords(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: MutationObserver.takeRecords")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dominterfaces.MutationObserver](cbCtx.Instance())
+func (w mutationObserverV8Wrapper) takeRecords(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: MutationObserver.takeRecords")
+	instance, err := js.As[dominterfaces.MutationObserver](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.TakeRecords()
-	return w.toSequenceMutationRecord(cbCtx.Context(), result)
+	return w.toSequenceMutationRecord(cbCtx.ScriptCtx(), result)
 }

@@ -5,7 +5,7 @@ package gojahost
 import (
 	g "github.com/dop251/goja"
 	dom "github.com/gost-dom/browser/dom"
-	log "github.com/gost-dom/browser/internal/log"
+	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
 func init() {
@@ -40,54 +40,63 @@ func (w nodeWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime) {
 	prototype.DefineAccessorProperty("textContent", wrapCallback(w.ctx, w.textContent), wrapCallback(w.ctx, w.setTextContent), g.FLAG_TRUE, g.FLAG_TRUE)
 }
 
-func (w nodeWrapper) Constructor(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Node.Constructor")
-	cbCtx := newArgumentHelper(w.ctx, c)
+func (w nodeWrapper) Constructor(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Node.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w nodeWrapper) getRootNode(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Node.getRootNode")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
-	options := w.decodeGetRootNodeOptions(c.Arguments[0])
+func (w nodeWrapper) getRootNode(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Node.getRootNode")
+	instance, instErr := js.As[dom.Node](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
+	options := w.decodeGetRootNodeOptions(cbCtx.Argument(0))
 	result := instance.GetRootNode(options)
 	return cbCtx.ReturnWithValue(w.toNode(result))
 }
 
-func (w nodeWrapper) cloneNode(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Node.cloneNode")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
-	subtree := w.decodeboolean(c.Arguments[0])
+func (w nodeWrapper) cloneNode(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Node.cloneNode")
+	instance, instErr := js.As[dom.Node](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
+	subtree := w.decodeboolean(cbCtx.Argument(0))
 	result := instance.CloneNode(subtree)
 	return cbCtx.ReturnWithValue(w.toNode(result))
 }
 
-func (w nodeWrapper) isSameNode(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Node.isSameNode")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
-	otherNode := w.decodeNode(c.Arguments[0])
+func (w nodeWrapper) isSameNode(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Node.isSameNode")
+	instance, instErr := js.As[dom.Node](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
+	otherNode := w.decodeNode(cbCtx.Argument(0))
 	result := instance.IsSameNode(otherNode)
 	return cbCtx.ReturnWithValue(w.toBoolean(result))
 }
 
-func (w nodeWrapper) contains(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Node.contains")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
-	other := w.decodeNode(c.Arguments[0])
+func (w nodeWrapper) contains(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Node.contains")
+	instance, instErr := js.As[dom.Node](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
+	other := w.decodeNode(cbCtx.Argument(0))
 	result := instance.Contains(other)
 	return cbCtx.ReturnWithValue(w.toBoolean(result))
 }
 
-func (w nodeWrapper) insertBefore(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Node.insertBefore")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
-	node := w.decodeNode(c.Arguments[0])
-	child := w.decodeNode(c.Arguments[1])
+func (w nodeWrapper) insertBefore(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Node.insertBefore")
+	instance, instErr := js.As[dom.Node](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
+	node := w.decodeNode(cbCtx.Argument(0))
+	child := w.decodeNode(cbCtx.Argument(1))
 	result, err := instance.InsertBefore(node, child)
 	if err != nil {
 		panic(err)
@@ -95,11 +104,13 @@ func (w nodeWrapper) insertBefore(c g.FunctionCall) g.Value {
 	return cbCtx.ReturnWithValue(w.toNode(result))
 }
 
-func (w nodeWrapper) appendChild(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Node.appendChild")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
-	node := w.decodeNode(c.Arguments[0])
+func (w nodeWrapper) appendChild(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Node.appendChild")
+	instance, instErr := js.As[dom.Node](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
+	node := w.decodeNode(cbCtx.Argument(0))
 	result, err := instance.AppendChild(node)
 	if err != nil {
 		panic(err)
@@ -107,11 +118,13 @@ func (w nodeWrapper) appendChild(c g.FunctionCall) g.Value {
 	return cbCtx.ReturnWithValue(w.toNode(result))
 }
 
-func (w nodeWrapper) removeChild(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Node.removeChild")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
-	child := w.decodeNode(c.Arguments[0])
+func (w nodeWrapper) removeChild(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Node.removeChild")
+	instance, instErr := js.As[dom.Node](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
+	child := w.decodeNode(cbCtx.Argument(0))
 	result, err := instance.RemoveChild(child)
 	if err != nil {
 		panic(err)
@@ -119,63 +132,77 @@ func (w nodeWrapper) removeChild(c g.FunctionCall) g.Value {
 	return cbCtx.ReturnWithValue(w.toNode(result))
 }
 
-func (w nodeWrapper) nodeName(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Node.nodeName")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
+func (w nodeWrapper) nodeName(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Node.nodeName")
+	instance, instErr := js.As[dom.Node](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
 	result := instance.NodeName()
 	return cbCtx.ReturnWithValue(w.toString_(result))
 }
 
-func (w nodeWrapper) isConnected(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Node.isConnected")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
+func (w nodeWrapper) isConnected(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Node.isConnected")
+	instance, instErr := js.As[dom.Node](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
 	result := instance.IsConnected()
 	return cbCtx.ReturnWithValue(w.toBoolean(result))
 }
 
-func (w nodeWrapper) ownerDocument(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Node.ownerDocument")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
+func (w nodeWrapper) ownerDocument(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Node.ownerDocument")
+	instance, instErr := js.As[dom.Node](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
 	result := instance.OwnerDocument()
 	return cbCtx.ReturnWithValue(w.toDocument(result))
 }
 
-func (w nodeWrapper) parentElement(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Node.parentElement")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
+func (w nodeWrapper) parentElement(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Node.parentElement")
+	instance, instErr := js.As[dom.Node](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
 	result := instance.ParentElement()
 	return cbCtx.ReturnWithValue(w.toElement(result))
 }
 
-func (w nodeWrapper) childNodes(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Node.childNodes")
+func (w nodeWrapper) childNodes(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Node.childNodes")
 	panic("Node.childNodes: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w nodeWrapper) firstChild(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Node.firstChild")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
+func (w nodeWrapper) firstChild(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Node.firstChild")
+	instance, instErr := js.As[dom.Node](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
 	result := instance.FirstChild()
 	return cbCtx.ReturnWithValue(w.toNode(result))
 }
 
-func (w nodeWrapper) previousSibling(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Node.previousSibling")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
+func (w nodeWrapper) previousSibling(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Node.previousSibling")
+	instance, instErr := js.As[dom.Node](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
 	result := instance.PreviousSibling()
 	return cbCtx.ReturnWithValue(w.toNode(result))
 }
 
-func (w nodeWrapper) nextSibling(c g.FunctionCall) g.Value {
-	log.Debug(w.logger(c), "V8 Function call: Node.nextSibling")
-	cbCtx := newArgumentHelper(w.ctx, c)
-	instance := w.getInstance(c)
+func (w nodeWrapper) nextSibling(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Node.nextSibling")
+	instance, instErr := js.As[dom.Node](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
 	result := instance.NextSibling()
 	return cbCtx.ReturnWithValue(w.toNode(result))
 }

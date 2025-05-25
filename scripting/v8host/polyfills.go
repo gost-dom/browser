@@ -15,14 +15,14 @@ func installPolyfills(context *V8ScriptContext) error {
 		installer.polyfillAnchor(),
 		context.Run(string(xpath)),
 		context.Run(`
-			const { XPathExpression, XPathResult } = window;
-			const evaluate = XPathExpression.prototype.evaluate;
-			XPathExpression.prototype.evaluate = function (context, type, res) {
-				return evaluate.call(this, context, type ?? XPathResult.ANY_TYPE, res);
-			};
-			Element.prototype.scrollIntoView = function() {};
+				const { XPathExpression, XPathResult } = window;
+				const evaluate = XPathExpression.prototype.evaluate;
+				XPathExpression.prototype.evaluate = function (context, type, res) {
+					return evaluate.call(this, context, type ?? XPathResult.ANY_TYPE, res);
+				};
+				Element.prototype.scrollIntoView = function() {};
 
-	`),
+		`),
 		installer.polyfillNode(),
 	}
 	return errors.Join(errs...)

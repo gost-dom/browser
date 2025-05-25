@@ -15,6 +15,7 @@ var (
 	v8Value                   = g.NewTypePackage("Value", v8).Pointer()
 	v8ReadOnly                = g.Raw(jen.Qual(v8, "ReadOnly"))
 	v8None                    = g.Raw(jen.Qual(v8, "None"))
+	v8CbCtx                   = g.NewType("argumentHelper").Pointer()
 	scriptHostPtr             = g.NewType("V8ScriptHost").Pointer()
 )
 

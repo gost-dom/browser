@@ -39,9 +39,9 @@ func CreateV8ConstructorBody(data ESConstructorData) g.Generator {
 	createWrapperFunction := g.NewValue(fmt.Sprintf("new%s", naming.PrototypeWrapperBaseName()))
 
 	statements := g.StatementList(
-		builder.v8Iso.Assign(scriptHost.Field("iso")),
+		// builder.v8Iso.Assign(scriptHost.Field("iso")),
 		g.Assign(builder.Wrapper, createWrapperFunction.Call(scriptHost)),
-		g.Assign(constructor, builder.NewFunctionTemplateOfWrappedMethod("Constructor")),
+		g.Assign(constructor, wrapCallback(scriptHost, builder.Wrapper.Field("Constructor"))),
 		g.Line,
 		g.Assign(builder.InstanceTmpl, constructor.GetInstanceTemplate()),
 		builder.InstanceTmpl.SetInternalFieldCount(1),
@@ -66,7 +66,6 @@ func CreateV8ConstructorWrapperBody(
 	var readArgsResult V8ReadArguments
 	op := *data.Constructor
 	readArgsResult = ReadArguments(data, op, cbCtx)
-	cbInfo := g.NewValue("info")
 	statements := g.StatementList(
 		readArgsResult)
 	receiver := g.NewValue(naming.Receiver())
@@ -74,8 +73,7 @@ func CreateV8ConstructorWrapperBody(
 	var CreateCall = func(functionName string, argnames []g.Generator, op ESOperation) g.Generator {
 		return g.StatementList(
 			g.Return(
-				receiver.Field(functionName).Call(append([]g.Generator{cbCtx.Context(),
-					cbInfo.Field("This").Call()},
+				receiver.Field(functionName).Call(append([]g.Generator{cbCtx},
 					argnames...)...,
 				),
 			))

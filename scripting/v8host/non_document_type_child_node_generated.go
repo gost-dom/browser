@@ -4,8 +4,7 @@ package v8host
 
 import (
 	dom "github.com/gost-dom/browser/dom"
-	log "github.com/gost-dom/browser/internal/log"
-	abstraction "github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
+	js "github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -18,9 +17,8 @@ func newNonDocumentTypeChildNodeV8Wrapper(scriptHost *V8ScriptHost) *nonDocument
 }
 
 func createNonDocumentTypeChildNodePrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
-	iso := scriptHost.iso
 	wrapper := newNonDocumentTypeChildNodeV8Wrapper(scriptHost)
-	constructor := v8.NewFunctionTemplateWithError(iso, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -41,30 +39,27 @@ func (w nonDocumentTypeChildNodeV8Wrapper) installPrototype(prototypeTmpl *v8.Ob
 		v8.None)
 }
 
-func (w nonDocumentTypeChildNodeV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: NonDocumentTypeChildNode.Constructor")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
+func (w nonDocumentTypeChildNodeV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: NonDocumentTypeChildNode.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w nonDocumentTypeChildNodeV8Wrapper) previousElementSibling(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: NonDocumentTypeChildNode.previousElementSibling")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.NonDocumentTypeChildNode](cbCtx.Instance())
+func (w nonDocumentTypeChildNodeV8Wrapper) previousElementSibling(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: NonDocumentTypeChildNode.previousElementSibling")
+	instance, err := js.As[dom.NonDocumentTypeChildNode](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.PreviousElementSibling()
-	return cbCtx.Context().getInstanceForNode(result)
+	return cbCtx.ScriptCtx().getInstanceForNode(result)
 }
 
-func (w nonDocumentTypeChildNodeV8Wrapper) nextElementSibling(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: NonDocumentTypeChildNode.nextElementSibling")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.NonDocumentTypeChildNode](cbCtx.Instance())
+func (w nonDocumentTypeChildNodeV8Wrapper) nextElementSibling(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: NonDocumentTypeChildNode.nextElementSibling")
+	instance, err := js.As[dom.NonDocumentTypeChildNode](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.NextElementSibling()
-	return cbCtx.Context().getInstanceForNode(result)
+	return cbCtx.ScriptCtx().getInstanceForNode(result)
 }

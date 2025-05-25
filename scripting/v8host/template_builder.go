@@ -207,7 +207,7 @@ func (h prototypeBuilder[T]) CreateFunctionStringToString(name string, fn func(T
 // setters, where exactly one argument must be passed by v8.
 func parseSetterArg[T any](
 	ctx *V8ScriptContext,
-	info *v8.FunctionCallbackInfo,
+	info *argumentHelper,
 	parsers ...func(*V8ScriptContext, *v8.Value) (T, error),
 ) (result T, err error) {
 	args := info.Args()
@@ -260,7 +260,7 @@ func consumeArgument[T any](
 		errs := make([]error, len(decoders))
 		if value != nil {
 			for i, parser := range decoders {
-				result, errs[i] = parser(args.ctx, value)
+				result, errs[i] = parser(args.ScriptCtx(), value)
 				if errs[i] == nil {
 					return
 				}

@@ -3,7 +3,7 @@ package v8host
 import (
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/internal/entity"
-	"github.com/gost-dom/browser/internal/log"
+	"github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -20,13 +20,12 @@ func (w eventV8Wrapper) defaultEventInit() eventInitWrapper {
 }
 
 func (w eventV8Wrapper) CreateInstance(
-	ctx *V8ScriptContext,
-	this *v8.Object,
+	cbCtx *argumentHelper,
 	type_ string,
 	o eventInitWrapper,
 ) (*v8.Value, error) {
 	e := &event.Event{Type: type_, Bubbles: o.bubbles, Cancelable: o.cancelable, Data: o.init}
-	return w.store(e, ctx, this)
+	return w.store(e, cbCtx.ScriptCtx(), cbCtx.This())
 }
 
 func (w eventV8Wrapper) toEventTarget(
@@ -42,35 +41,35 @@ func (w eventV8Wrapper) toEventTarget(
 	return nil, v8.NewError(w.iso(), "TODO, Not yet supported")
 }
 
-func (w eventV8Wrapper) eventPhase(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	instance, err := w.getInstance(info)
+func (w eventV8Wrapper) eventPhase(cbCtx *argumentHelper) (*v8.Value, error) {
+	instance, err := abstraction.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	return v8.NewValue(w.iso(), uint32(instance.EventPhase))
 }
 
-func (w eventV8Wrapper) type_(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: Event.type")
-	instance, err := w.getInstance(info)
+func (w eventV8Wrapper) type_(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: Event.type")
+	instance, err := abstraction.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	return v8.NewValue(w.iso(), instance.Type)
 }
 
-func (w eventV8Wrapper) cancelable(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: Event.cancelable")
-	instance, err := w.getInstance(info)
+func (w eventV8Wrapper) cancelable(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: Event.cancelable")
+	instance, err := abstraction.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	return v8.NewValue(w.iso(), instance.Cancelable)
 }
 
-func (w eventV8Wrapper) bubbles(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: Event.bubbles")
-	instance, err := w.getInstance(info)
+func (w eventV8Wrapper) bubbles(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: Event.bubbles")
+	instance, err := abstraction.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}

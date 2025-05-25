@@ -22,11 +22,11 @@ func (cb MutationCallback) HandleMutation(recs []mutation.Record, obs *mutation.
 }
 
 func (w mutationObserverV8Wrapper) CreateInstance(
-	ctx *V8ScriptContext,
-	this *v8go.Object,
+	cbCtx *argumentHelper,
 	cb mutation.Callback,
 ) (*v8go.Value, error) {
-	return w.store(mutation.NewObserver(ctx.clock, cb), ctx, this)
+	ctx := cbCtx.ScriptCtx()
+	return w.store(mutation.NewObserver(ctx.clock, cb), ctx, cbCtx.This())
 }
 
 func (w mutationObserverV8Wrapper) decodeMutationCallback(

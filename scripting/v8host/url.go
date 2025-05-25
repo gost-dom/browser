@@ -12,6 +12,7 @@ import (
 	log "github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
 	"github.com/gost-dom/browser/url"
+	"github.com/gost-dom/v8go"
 
 	v8 "github.com/gost-dom/v8go"
 )
@@ -29,21 +30,19 @@ type handleDisposable cgo.Handle
 func (h handleDisposable) dispose() { cgo.Handle(h).Delete() }
 
 func (w urlV8Wrapper) CreateInstance(
-	ctx *V8ScriptContext,
-	this *v8.Object,
+	cbCtx *argumentHelper,
 	u string,
 ) (*v8.Value, error) {
 	value, err := url.NewUrl(u)
 	if err != nil {
 		return nil, err
 	}
-	w.store(value, ctx, this)
+	w.store(value, cbCtx.ScriptCtx(), cbCtx.This())
 	return nil, nil
 }
 
 func (w urlV8Wrapper) CreateInstanceBase(
-	ctx *V8ScriptContext,
-	this *v8.Object,
+	cbCtx *argumentHelper,
 	u string,
 	base string,
 ) (*v8.Value, error) {
@@ -52,14 +51,14 @@ func (w urlV8Wrapper) CreateInstanceBase(
 	if err != nil {
 		return nil, err
 	}
-	w.store(value, ctx, this)
+	w.store(value, cbCtx.ScriptCtx(), cbCtx.This())
 	return nil, nil
 }
 
-func (w urlSearchParamsV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+func (w urlSearchParamsV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value, error) {
 	var err error
-	ctx := w.scriptHost.mustGetContext(info.Context())
-	args := info.Args()
+	ctx := cbCtx.ScriptCtx()
+	args := cbCtx.consumeRest()
 	var res url.URLSearchParams
 	if len(args) > 0 {
 		arg := args[0]
@@ -110,26 +109,21 @@ func (w urlSearchParamsV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v
 			)
 		}
 	}
-	w.store(&res, ctx, info.This())
+	w.store(&res, ctx, cbCtx.This())
 	return nil, nil
 }
 
-func (w urlSearchParamsV8Wrapper) get(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	return runV8FunctionCallback(w.scriptHost, info, v8URLSearchParamGet)
-}
-
-func v8URLSearchParamGet(ctx abstraction.CallbackContext) abstraction.CallbackRVal {
-	instance, err0 := abstraction.As[urlinterfaces.URLSearchParams](ctx.InternalInstance())
-	name, err1 := ctx.ConsumeRequiredArg("name")
+func (w urlSearchParamsV8Wrapper) get(ctx *argumentHelper) (*v8.Value, error) {
+	instance, err0 := abstraction.As[urlinterfaces.URLSearchParams](ctx.Instance())
+	name, err1 := ctx.consumeString()
 	if err := errors.Join(err0, err1); err != nil {
 		return ctx.ReturnWithError(err)
 	}
-	rtnVal, hasValue := instance.Get(name.AsString())
-	f := ctx.ValueFactory()
+	rtnVal, hasValue := instance.Get(name)
 	if !hasValue {
-		return ctx.ReturnWithValue(f.Null())
+		return ctx.ReturnWithValue(v8go.Null(w.scriptHost.iso))
 	}
-	return ctx.ReturnWithValue(f.String(rtnVal))
+	return v8go.NewValue(w.scriptHost.iso, rtnVal)
 }
 
 func (w urlSearchParamsV8Wrapper) toSequenceString_(

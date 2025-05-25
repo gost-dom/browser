@@ -5,8 +5,7 @@ package v8host
 import (
 	"errors"
 	html "github.com/gost-dom/browser/html"
-	log "github.com/gost-dom/browser/internal/log"
-	abstraction "github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
+	js "github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -19,9 +18,8 @@ func newHTMLOrSVGElementV8Wrapper(scriptHost *V8ScriptHost) *htmlOrSVGElementV8W
 }
 
 func createHTMLOrSVGElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
-	iso := scriptHost.iso
 	wrapper := newHTMLOrSVGElementV8Wrapper(scriptHost)
-	constructor := v8.NewFunctionTemplateWithError(iso, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -52,16 +50,14 @@ func (w htmlOrSVGElementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemp
 		v8.None)
 }
 
-func (w htmlOrSVGElementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.Constructor")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
+func (w htmlOrSVGElementV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLOrSVGElement.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w htmlOrSVGElementV8Wrapper) blur(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.blur")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLOrSVGElement](cbCtx.Instance())
+func (w htmlOrSVGElementV8Wrapper) blur(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLOrSVGElement.blur")
+	instance, err := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -69,27 +65,25 @@ func (w htmlOrSVGElementV8Wrapper) blur(info *v8.FunctionCallbackInfo) (*v8.Valu
 	return nil, nil
 }
 
-func (w htmlOrSVGElementV8Wrapper) dataset(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.dataset")
+func (w htmlOrSVGElementV8Wrapper) dataset(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLOrSVGElement.dataset")
 	return nil, errors.New("HTMLOrSVGElement.dataset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w htmlOrSVGElementV8Wrapper) nonce(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.nonce")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLOrSVGElement](cbCtx.Instance())
+func (w htmlOrSVGElementV8Wrapper) nonce(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLOrSVGElement.nonce")
+	instance, err := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Nonce()
-	return w.toString_(cbCtx.Context(), result)
+	return w.toString_(cbCtx.ScriptCtx(), result)
 }
 
-func (w htmlOrSVGElementV8Wrapper) setNonce(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.setNonce")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.HTMLOrSVGElement](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeString)
+func (w htmlOrSVGElementV8Wrapper) setNonce(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLOrSVGElement.setNonce")
+	instance, err0 := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
+	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
@@ -98,22 +92,20 @@ func (w htmlOrSVGElementV8Wrapper) setNonce(info *v8.FunctionCallbackInfo) (*v8.
 	return nil, nil
 }
 
-func (w htmlOrSVGElementV8Wrapper) autofocus(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.autofocus")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLOrSVGElement](cbCtx.Instance())
+func (w htmlOrSVGElementV8Wrapper) autofocus(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLOrSVGElement.autofocus")
+	instance, err := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Autofocus()
-	return w.toBoolean(cbCtx.Context(), result)
+	return w.toBoolean(cbCtx.ScriptCtx(), result)
 }
 
-func (w htmlOrSVGElementV8Wrapper) setAutofocus(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.setAutofocus")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.HTMLOrSVGElement](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeBoolean)
+func (w htmlOrSVGElementV8Wrapper) setAutofocus(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLOrSVGElement.setAutofocus")
+	instance, err0 := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
+	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeBoolean)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
@@ -122,22 +114,20 @@ func (w htmlOrSVGElementV8Wrapper) setAutofocus(info *v8.FunctionCallbackInfo) (
 	return nil, nil
 }
 
-func (w htmlOrSVGElementV8Wrapper) tabIndex(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.tabIndex")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLOrSVGElement](cbCtx.Instance())
+func (w htmlOrSVGElementV8Wrapper) tabIndex(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLOrSVGElement.tabIndex")
+	instance, err := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.TabIndex()
-	return w.toLong(cbCtx.Context(), result)
+	return w.toLong(cbCtx.ScriptCtx(), result)
 }
 
-func (w htmlOrSVGElementV8Wrapper) setTabIndex(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	log.Debug(w.logger(info), "V8 Function call: HTMLOrSVGElement.setTabIndex")
-	cbCtx := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[html.HTMLOrSVGElement](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.Context(), info, w.decodeLong)
+func (w htmlOrSVGElementV8Wrapper) setTabIndex(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: HTMLOrSVGElement.setTabIndex")
+	instance, err0 := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
+	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeLong)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return nil, err

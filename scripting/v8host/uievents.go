@@ -20,20 +20,18 @@ func (w uIEventV8Wrapper) decodePointerEventInit(
 }
 
 func (w uIEventV8Wrapper) CreateInstance(
-	ctx *V8ScriptContext,
-	this *v8go.Object,
+	cbCtx *argumentHelper,
 	type_ string,
 ) (*v8go.Value, error) {
-	return w.CreateInstanceEventInitDict(ctx, this, type_)
+	return w.CreateInstanceEventInitDict(cbCtx, type_)
 }
 
 func (w uIEventV8Wrapper) CreateInstanceEventInitDict(
-	ctx *V8ScriptContext,
-	this *v8go.Object,
+	cbCtx *argumentHelper,
 	type_ string,
 	options ...interface{}) (*v8go.Value, error) {
 	e := uievents.NewUIEvent(type_)
-	return w.store(e, ctx, this)
+	return w.store(e, cbCtx.ScriptCtx(), cbCtx.This())
 }
 
 func (w uIEventV8Wrapper) decodeUIEventInit(
