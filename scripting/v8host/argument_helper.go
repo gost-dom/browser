@@ -11,11 +11,12 @@ type argumentHelper struct {
 	*v8.FunctionCallbackInfo
 	ctx               *V8ScriptContext
 	noOfReadArguments int
+	currentIndex      int
 }
 
 func newArgumentHelper(host *V8ScriptHost, info *v8.FunctionCallbackInfo) *argumentHelper {
 	ctx := host.mustGetContext(info.Context())
-	return &argumentHelper{info, ctx, 0}
+	return &argumentHelper{info, ctx, 0, 0}
 }
 
 func (h argumentHelper) iso() *v8.Isolate           { return h.ctx.host.iso }
@@ -42,61 +43,55 @@ func (args *argumentHelper) acceptIndex(index int) {
 	}
 }
 
-// getValueArg returns the argument with the specified index, or undefined if
-// the argument doesn't exist.
-func (h argumentHelper) getValueArg(index int) *v8.Value {
-	args := h.Args()
-	if index >= len(args) {
-		return v8.Undefined(h.ctx.host.iso)
+// consumeValue works like [argumentHelper.consumeArg], but returns undefined
+// instead of nil if the value doesn't exist.
+func (h *argumentHelper) consumeValue() *v8.Value {
+	if arg := h.consumeArg(); arg != nil {
+		return arg
 	}
-	return args[index]
+	return v8.Undefined(h.ctx.host.iso)
 }
 
-func (h argumentHelper) getFunctionArg(index int) (*v8.Function, error) {
-	args := h.Args()
-	if index >= len(args) {
+func (h *argumentHelper) consumeFunction() (*v8.Function, error) {
+	arg := h.consumeArg()
+	if arg == nil {
 		return nil, ErrWrongNoOfArguments
 	}
-	arg := args[index]
 	if arg.IsFunction() {
 		return arg.AsFunction()
 	}
 	return nil, h.newTypeError("Expected function", arg)
 }
 
-func (h argumentHelper) getInt32Arg(index int) (int32, error) {
-	args := h.Args()
-	if index >= len(args) {
+func (h *argumentHelper) consumeInt32() (int32, error) {
+	arg := h.consumeArg()
+	if arg == nil {
 		return 0, ErrWrongNoOfArguments
 	}
-	arg := args[index]
 	if arg.IsNumber() {
 		return arg.Int32(), nil
 	}
 	return 0, h.newTypeError("Expected int32", arg)
 }
-func (h argumentHelper) getUint32Arg(index int) (uint32, error) {
-	args := h.Args()
-	if index >= len(args) {
-		return 0, ErrWrongNoOfArguments
-	}
-	arg := args[index]
-	if arg.IsNumber() {
-		return arg.Uint32(), nil
-	}
-	return 0, h.newTypeError("Expected int32", arg)
-}
 
-func (h argumentHelper) getStringArg(index int) (string, error) {
-	args := h.Args()
-	if index >= len(args) {
+func (h *argumentHelper) consumeString() (string, error) {
+	arg := h.consumeArg()
+	if arg == nil {
 		return "", ErrWrongNoOfArguments
 	}
-	arg := args[index]
 	return arg.String(), nil
 }
 
-func (h *argumentHelper) getArg(index int) *v8.Value {
+func (h *argumentHelper) assertIndex(index int) {
+	if index != h.currentIndex {
+		panic(fmt.Sprintf("Bad index: %v (expected %v)", index, h.currentIndex))
+	}
+	h.currentIndex++
+}
+
+func (h *argumentHelper) consumeArg() *v8.Value {
+	index := h.currentIndex
+	h.assertIndex(index)
 	args := h.FunctionCallbackInfo.Args()
 	if len(args) <= index {
 		return nil

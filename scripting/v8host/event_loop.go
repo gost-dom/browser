@@ -35,7 +35,7 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 				ctx := host.mustGetContext(info.Context())
 				helper := newArgumentHelper(host, info)
-				f, err := helper.getFunctionArg(0)
+				f, err := helper.consumeFunction()
 				if err == nil {
 					ctx.clock.AddSafeMicrotask(func() {
 						if _, err := f.Call(info.Context().Global()); err != nil {
@@ -54,8 +54,8 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 				ctx := host.mustGetContext(info.Context())
 				helper := newArgumentHelper(host, info)
-				f, err1 := helper.getFunctionArg(0)
-				delay, err2 := helper.getInt32Arg(1)
+				f, err1 := helper.consumeFunction()
+				delay, err2 := helper.consumeInt32()
 				err := errors.Join(err1, err2)
 				if err != nil {
 					return v8.Undefined(iso), err
@@ -79,7 +79,7 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 				ctx := host.mustGetContext(info.Context())
 				helper := newArgumentHelper(host, info)
-				handle := helper.getValueArg(0)
+				handle := helper.consumeValue()
 				ctx.clock.Cancel(clock.TaskHandle(handle.Uint32()))
 				return nil, nil
 			},
@@ -92,8 +92,8 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 				ctx := host.mustGetContext(info.Context())
 				helper := newArgumentHelper(host, info)
-				f, err1 := helper.getFunctionArg(0)
-				delay, err2 := helper.getInt32Arg(1)
+				f, err1 := helper.consumeFunction()
+				delay, err2 := helper.consumeInt32()
 				err := errors.Join(err1, err2)
 				if err != nil {
 					return v8.Undefined(iso), err
@@ -117,7 +117,7 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 				ctx := host.mustGetContext(info.Context())
 				helper := newArgumentHelper(host, info)
-				handle := helper.getValueArg(0)
+				handle := helper.consumeValue()
 				ctx.clock.Cancel(clock.TaskHandle(handle.Uint32()))
 				return nil, nil
 			},

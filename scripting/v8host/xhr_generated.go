@@ -92,8 +92,8 @@ func (w xmlHttpRequestV8Wrapper) setRequestHeader(info *v8.FunctionCallbackInfo)
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.setRequestHeader")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[html.XMLHttpRequest](cbCtx.Instance())
-	name, err1 := parseArgument(cbCtx, 0, nil, w.decodeString)
-	value, err2 := parseArgument(cbCtx, 1, nil, w.decodeString)
+	name, err1 := consumeArgument(cbCtx, nil, w.decodeString)
+	value, err2 := consumeArgument(cbCtx, nil, w.decodeString)
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {
@@ -109,7 +109,7 @@ func (w xmlHttpRequestV8Wrapper) send(info *v8.FunctionCallbackInfo) (*v8.Value,
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.send")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[html.XMLHttpRequest](cbCtx.Instance())
-	body, err1 := parseArgument(cbCtx, 0, zeroValue, w.decodeDocument, w.decodeXMLHttpRequestBodyInit)
+	body, err1 := consumeArgument(cbCtx, zeroValue, w.decodeDocument, w.decodeXMLHttpRequestBodyInit)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -140,7 +140,7 @@ func (w xmlHttpRequestV8Wrapper) getResponseHeader(info *v8.FunctionCallbackInfo
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.getResponseHeader")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[html.XMLHttpRequest](cbCtx.Instance())
-	name, err1 := parseArgument(cbCtx, 0, nil, w.decodeString)
+	name, err1 := consumeArgument(cbCtx, nil, w.decodeString)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -171,7 +171,7 @@ func (w xmlHttpRequestV8Wrapper) overrideMimeType(info *v8.FunctionCallbackInfo)
 	log.Debug(w.logger(info), "V8 Function call: XMLHttpRequest.overrideMimeType")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[html.XMLHttpRequest](cbCtx.Instance())
-	mime, err1 := parseArgument(cbCtx, 0, nil, w.decodeString)
+	mime, err1 := consumeArgument(cbCtx, nil, w.decodeString)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {

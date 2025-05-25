@@ -3,6 +3,7 @@ package log
 import (
 	"context"
 	"errors"
+	"io"
 	"log/slog"
 
 	"github.com/gost-dom/v8go"
@@ -19,6 +20,13 @@ var defaultLogger Logger
 
 func SetDefault(logger *slog.Logger) {
 	defaultLogger = logger
+}
+
+func Default() *slog.Logger {
+	if defaultLogger == nil {
+		defaultLogger = slog.New(slog.NewTextHandler(io.Discard, nil))
+	}
+	return defaultLogger
 }
 
 type nullHandler struct{}

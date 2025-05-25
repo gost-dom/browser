@@ -44,7 +44,7 @@ func (w mutationObserverV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemp
 func (w mutationObserverV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: MutationObserver.Constructor")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
-	callback, err1 := parseArgument(cbCtx, 0, nil, w.decodeMutationCallback)
+	callback, err1 := consumeArgument(cbCtx, nil, w.decodeMutationCallback)
 	if cbCtx.noOfReadArguments >= 1 {
 		if err1 != nil {
 			return nil, err1
@@ -58,8 +58,8 @@ func (w mutationObserverV8Wrapper) observe(info *v8.FunctionCallbackInfo) (*v8.V
 	log.Debug(w.logger(info), "V8 Function call: MutationObserver.observe")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[dominterfaces.MutationObserver](cbCtx.Instance())
-	target, err1 := parseArgument(cbCtx, 0, nil, w.decodeNode)
-	options, err2 := parseArgument(cbCtx, 1, nil, w.decodeMutationObserverInit)
+	target, err1 := consumeArgument(cbCtx, nil, w.decodeNode)
+	options, err2 := consumeArgument(cbCtx, nil, w.decodeMutationObserverInit)
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {

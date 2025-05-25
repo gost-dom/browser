@@ -283,7 +283,9 @@ func ReadArguments(
 	for i, arg := range op.Arguments {
 		argName := g.Id(wrappers.SanitizeVarName(arg.Name))
 		errName := g.Id(fmt.Sprintf("err%d", i+1))
+		parseArgs := []g.Generator{cbCtx}
 		if arg.Ignore {
+			statements.Append(g.NewValue("ignoreArgument").Call(cbCtx))
 			continue
 		}
 		res.Args = append(res.Args, V8ReadArg{
@@ -295,7 +297,6 @@ func ReadArguments(
 
 		var dec = wrappers.DecodersForArg(receiver, arg)
 
-		parseArgs := []g.Generator{cbCtx, g.Lit(i)}
 		defaultName, hasDefault := arg.DefaultValueInGo()
 		zeroValueResolver := g.Id("zeroValue")
 		nullable := arg.IdlArg.Type.Nullable
@@ -307,16 +308,8 @@ func ReadArguments(
 			parseArgs = append(parseArgs, g.Nil)
 		}
 		parseArgs = append(parseArgs, dec...)
-		if hasDefault || nullable {
-			statements.Append(g.AssignMany(g.List(argName, errName),
-				g.NewValue("parseArgument").Call(parseArgs...)))
-		} else {
-			statements.Append(g.AssignMany(g.List(argName, errName),
-				g.NewValue("parseArgument").Call(parseArgs...)))
-			// statements.Append(g.AssignMany(
-			// 	g.List(argName, errName),
-			// 	g.NewValue("tryParseArg").Call(parseArgs...)))
-		}
+		statements.Append(g.AssignMany(g.List(argName, errName),
+			g.NewValue("consumeArgument").Call(parseArgs...)))
 	}
 	res.Generator = statements
 	return

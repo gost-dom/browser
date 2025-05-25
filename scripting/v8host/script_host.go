@@ -231,7 +231,12 @@ func (host *V8ScriptHost) promiseRejected(msg v8go.PromiseRejectMessage) {
 	log.Error(host.logger, "Rejected promise", log.ErrAttr(err))
 }
 
-func (host *V8ScriptHost) Logger() log.Logger { return host.logger }
+func (host *V8ScriptHost) Logger() log.Logger {
+	if host.logger != nil {
+		return log.Default()
+	}
+	return host.logger
+}
 
 func (host *V8ScriptHost) Close() {
 	host.setDisposed()

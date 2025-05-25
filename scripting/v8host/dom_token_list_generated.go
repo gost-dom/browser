@@ -66,7 +66,7 @@ func (w domTokenListV8Wrapper) item(info *v8.FunctionCallbackInfo) (*v8.Value, e
 	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.item")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[dom.DOMTokenList](cbCtx.Instance())
-	index, err1 := parseArgument(cbCtx, 0, nil, w.decodeUnsignedLong)
+	index, err1 := consumeArgument(cbCtx, nil, w.decodeUnsignedLong)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -82,7 +82,7 @@ func (w domTokenListV8Wrapper) contains(info *v8.FunctionCallbackInfo) (*v8.Valu
 	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.contains")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[dom.DOMTokenList](cbCtx.Instance())
-	token, err1 := parseArgument(cbCtx, 0, nil, w.decodeString)
+	token, err1 := consumeArgument(cbCtx, nil, w.decodeString)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -98,7 +98,7 @@ func (w domTokenListV8Wrapper) add(info *v8.FunctionCallbackInfo) (*v8.Value, er
 	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.add")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[dom.DOMTokenList](cbCtx.Instance())
-	tokens, err1 := parseArgument(cbCtx, 0, nil, w.decodeString)
+	tokens, err1 := consumeArgument(cbCtx, nil, w.decodeString)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -114,7 +114,7 @@ func (w domTokenListV8Wrapper) remove(info *v8.FunctionCallbackInfo) (*v8.Value,
 	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.remove")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[dom.DOMTokenList](cbCtx.Instance())
-	tokens, err1 := parseArgument(cbCtx, 0, nil, w.decodeString)
+	tokens, err1 := consumeArgument(cbCtx, nil, w.decodeString)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -130,8 +130,8 @@ func (w domTokenListV8Wrapper) replace(info *v8.FunctionCallbackInfo) (*v8.Value
 	log.Debug(w.logger(info), "V8 Function call: DOMTokenList.replace")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[dom.DOMTokenList](cbCtx.Instance())
-	token, err1 := parseArgument(cbCtx, 0, nil, w.decodeString)
-	newToken, err2 := parseArgument(cbCtx, 1, nil, w.decodeString)
+	token, err1 := consumeArgument(cbCtx, nil, w.decodeString)
+	newToken, err2 := consumeArgument(cbCtx, nil, w.decodeString)
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {

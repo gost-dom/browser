@@ -43,8 +43,8 @@ func createNamedNodeMap(host *V8ScriptHost) *v8.FunctionTemplate {
 	)
 	proto.CreateFunction(
 		"item",
-		func(instance dom.NamedNodeMap, info argumentHelper) (*v8.Value, error) {
-			idx, err := info.getInt32Arg(0)
+		func(instance dom.NamedNodeMap, info *argumentHelper) (*v8.Value, error) {
+			idx, err := info.consumeInt32()
 			item := instance.Item(int(idx))
 			if item != nil && err == nil {
 				val, err := info.ctx.getInstanceForNodeByName("Attr", item)

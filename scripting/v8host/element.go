@@ -49,8 +49,8 @@ func (e *elementV8Wrapper) insertAdjacentHTML(
 	iso := e.scriptHost.iso
 	arg := newArgumentHelper(e.scriptHost, info)
 	element, e0 := e.getInstance(info)
-	position, e1 := arg.getStringArg(0)
-	html, e2 := arg.getStringArg(1)
+	position, e1 := arg.consumeString()
+	html, e2 := arg.consumeString()
 	err = errors.Join(e0, e1, e2)
 	if err == nil {
 		element.InsertAdjacentHTML(position, html)
@@ -102,7 +102,7 @@ func (e *elementV8Wrapper) toNamedNodeMap(
 func (w elementV8Wrapper) getAttribute(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	helper := newArgumentHelper(w.scriptHost, info)
 	element, e0 := w.getInstance(info)
-	name, e1 := helper.getStringArg(0)
+	name, e1 := helper.consumeString()
 	err := errors.Join(e0, e1)
 	if err != nil {
 		return nil, err

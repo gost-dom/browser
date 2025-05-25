@@ -178,19 +178,18 @@ func (h prototypeBuilder[T]) CreateReadWriteProp(
 
 func (h prototypeBuilder[T]) CreateFunction(
 	name string,
-	fn func(T, argumentHelper) (*v8.Value, error),
+	fn func(T, *argumentHelper) (*v8.Value, error),
 ) {
 	h.proto.Set(
 		name,
 		v8.NewFunctionTemplateWithError(
 			h.host.iso,
 			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-				ctx := h.host.mustGetContext(info.Context())
 				instance, err := h.GetInstance(info)
 				if err != nil {
 					return nil, err
 				}
-				return fn(instance, argumentHelper{info, ctx, 0})
+				return fn(instance, newArgumentHelper(h.host, info))
 			},
 		),
 		v8.ReadOnly,
@@ -198,7 +197,7 @@ func (h prototypeBuilder[T]) CreateFunction(
 }
 
 func (h prototypeBuilder[T]) CreateFunctionStringToString(name string, fn func(T, string) string) {
-	h.CreateFunction(name, func(instance T, info argumentHelper) (*v8.Value, error) {
+	h.CreateFunction(name, func(instance T, info *argumentHelper) (*v8.Value, error) {
 		value := fn(instance, info.Args()[0].String())
 		return v8.NewValue(h.host.iso, value)
 	})
@@ -231,26 +230,36 @@ func parseSetterArg[T any](
 
 func zeroValue[T any]() (res T) { return }
 
-func parseArgument[T any](
+func ignoreArgument(args *argumentHelper) {
+	args.consumeArg()
+}
+
+// consumeArgument pulls one of the passed arguments and tries to convert it to
+// target type T using one of the passed decoders. The return value will be
+// taken from the first decode that does not return an error. If no decoder is
+// succeeds, an error is returned.
+//
+// If no more arguments are present, or the next argument is undefined, the
+// defaultValue function will be used if not nil; otherwise an error is
+// returned.
+func consumeArgument[T any](
 	args *argumentHelper,
-	index int,
 	defaultValue func() T,
-	parsers ...func(*V8ScriptContext, *v8.Value) (T, error),
+	decoders ...func(*V8ScriptContext, *v8.Value) (T, error),
 ) (result T, err error) {
-	value := args.getArg(index)
+	index := args.currentIndex
+	value := args.consumeArg()
 	if value == nil && defaultValue != nil {
 		args.acceptIndex(index)
 		return defaultValue(), nil
 	} else {
-		value := args.getArg(index)
-		if value == nil {
-			return
-		}
-		errs := make([]error, len(parsers))
-		for i, parser := range parsers {
-			result, errs[i] = parser(args.ctx, value)
-			if errs[i] == nil {
-				return
+		errs := make([]error, len(decoders))
+		if value != nil {
+			for i, parser := range decoders {
+				result, errs[i] = parser(args.ctx, value)
+				if errs[i] == nil {
+					return
+				}
 			}
 		}
 		err = fmt.Errorf("tryParseArg: argument at index %d: %w", index, errors.Join(errs...))

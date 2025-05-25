@@ -53,9 +53,9 @@ func createDocumentPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
 	proto := builder.constructor.PrototypeTemplate()
 	protoBuilder.CreateFunction(
 		"createElement",
-		func(instance dom.Document, args argumentHelper) (val *v8.Value, err error) {
+		func(instance dom.Document, args *argumentHelper) (val *v8.Value, err error) {
 			var name string
-			name, err = args.getStringArg(0)
+			name, err = args.consumeString()
 			if err == nil {
 				e := instance.CreateElement(name)
 				val, err = args.ctx.getInstanceForNode(e)
@@ -65,7 +65,7 @@ func createDocumentPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
 	)
 	protoBuilder.CreateFunction(
 		"createDocumentFragment",
-		func(instance dom.Document, args argumentHelper) (val *v8.Value, err error) {
+		func(instance dom.Document, args *argumentHelper) (val *v8.Value, err error) {
 			e := instance.CreateDocumentFragment()
 			return args.ctx.getInstanceForNode(e)
 		},

@@ -96,7 +96,7 @@ func (w nodeV8Wrapper) getRootNode(info *v8.FunctionCallbackInfo) (*v8.Value, er
 	log.Debug(w.logger(info), "V8 Function call: Node.getRootNode")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[dom.Node](cbCtx.Instance())
-	options, err1 := parseArgument(cbCtx, 0, w.defaultGetRootNodeOptions, w.decodeGetRootNodeOptions)
+	options, err1 := consumeArgument(cbCtx, w.defaultGetRootNodeOptions, w.decodeGetRootNodeOptions)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -112,7 +112,7 @@ func (w nodeV8Wrapper) cloneNode(info *v8.FunctionCallbackInfo) (*v8.Value, erro
 	log.Debug(w.logger(info), "V8 Function call: Node.cloneNode")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[dom.Node](cbCtx.Instance())
-	subtree, err1 := parseArgument(cbCtx, 0, w.defaultboolean, w.decodeBoolean)
+	subtree, err1 := consumeArgument(cbCtx, w.defaultboolean, w.decodeBoolean)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -128,7 +128,7 @@ func (w nodeV8Wrapper) isSameNode(info *v8.FunctionCallbackInfo) (*v8.Value, err
 	log.Debug(w.logger(info), "V8 Function call: Node.isSameNode")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[dom.Node](cbCtx.Instance())
-	otherNode, err1 := parseArgument(cbCtx, 0, zeroValue, w.decodeNode)
+	otherNode, err1 := consumeArgument(cbCtx, zeroValue, w.decodeNode)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -144,7 +144,7 @@ func (w nodeV8Wrapper) contains(info *v8.FunctionCallbackInfo) (*v8.Value, error
 	log.Debug(w.logger(info), "V8 Function call: Node.contains")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[dom.Node](cbCtx.Instance())
-	other, err1 := parseArgument(cbCtx, 0, zeroValue, w.decodeNode)
+	other, err1 := consumeArgument(cbCtx, zeroValue, w.decodeNode)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -160,8 +160,8 @@ func (w nodeV8Wrapper) insertBefore(info *v8.FunctionCallbackInfo) (*v8.Value, e
 	log.Debug(w.logger(info), "V8 Function call: Node.insertBefore")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[dom.Node](cbCtx.Instance())
-	node, err1 := parseArgument(cbCtx, 0, nil, w.decodeNode)
-	child, err2 := parseArgument(cbCtx, 1, zeroValue, w.decodeNode)
+	node, err1 := consumeArgument(cbCtx, nil, w.decodeNode)
+	child, err2 := consumeArgument(cbCtx, zeroValue, w.decodeNode)
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {
@@ -181,7 +181,7 @@ func (w nodeV8Wrapper) appendChild(info *v8.FunctionCallbackInfo) (*v8.Value, er
 	log.Debug(w.logger(info), "V8 Function call: Node.appendChild")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[dom.Node](cbCtx.Instance())
-	node, err1 := parseArgument(cbCtx, 0, nil, w.decodeNode)
+	node, err1 := consumeArgument(cbCtx, nil, w.decodeNode)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -201,7 +201,7 @@ func (w nodeV8Wrapper) removeChild(info *v8.FunctionCallbackInfo) (*v8.Value, er
 	log.Debug(w.logger(info), "V8 Function call: Node.removeChild")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[dom.Node](cbCtx.Instance())
-	child, err1 := parseArgument(cbCtx, 0, nil, w.decodeNode)
+	child, err1 := consumeArgument(cbCtx, nil, w.decodeNode)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {

@@ -65,10 +65,10 @@ func createEventTarget(host *V8ScriptHost) *v8.FunctionTemplate {
 					return nil, err
 				}
 				args := newArgumentHelper(host, info)
-				eventType, e1 := args.getStringArg(0)
-				fn, e2 := args.getFunctionArg(1)
+				eventType, e1 := args.consumeString()
+				fn, e2 := args.consumeFunction()
 				var options []func(*event.EventListener)
-				optionArg := args.getArg(2)
+				optionArg := args.consumeArg()
 				if optionArg != nil {
 					if optionArg.IsBoolean() && optionArg.Boolean() {
 						options = append(options, event.Capture)
@@ -99,8 +99,8 @@ func createEventTarget(host *V8ScriptHost) *v8.FunctionTemplate {
 					return nil, err
 				}
 				args := newArgumentHelper(host, info)
-				eventType, e1 := args.getStringArg(0)
-				fn, e2 := args.getFunctionArg(1)
+				eventType, e1 := args.consumeString()
+				fn, e2 := args.consumeFunction()
 				err = errors.Join(e1, e2)
 				if err == nil {
 					listener := newV8EventListener(ctx, fn.Value)

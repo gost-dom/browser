@@ -68,8 +68,8 @@ func createNodeList(host *V8ScriptHost) *v8.FunctionTemplate {
 	)
 	proto.CreateFunction(
 		"item",
-		func(instance dom.NodeList, info argumentHelper) (*v8.Value, error) {
-			index, err := info.getInt32Arg(0)
+		func(instance dom.NodeList, info *argumentHelper) (*v8.Value, error) {
+			index, err := info.consumeInt32()
 			if err != nil {
 				return nil, v8.NewTypeError(iso, "Index must be an integer")
 			}

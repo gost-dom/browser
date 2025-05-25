@@ -93,8 +93,8 @@ func createFormData(host *V8ScriptHost) *v8.FunctionTemplate {
 			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 				args := newArgumentHelper(host, info)
 				instance, err0 := wrapper.getInstance(info)
-				key, err1 := args.getStringArg(0)
-				value, err2 := args.getStringArg(1)
+				key, err1 := args.consumeString()
+				value, err2 := args.consumeString()
 				err := errors.Join(err0, err1, err2)
 				if err != nil {
 					return nil, err
@@ -115,7 +115,7 @@ func createFormData(host *V8ScriptHost) *v8.FunctionTemplate {
 				if err0 != nil {
 					return nil, err0
 				}
-				key, err := args.getStringArg(0)
+				key, err := args.consumeString()
 				if err != nil {
 					return nil, err
 				}
@@ -130,7 +130,7 @@ func createFormData(host *V8ScriptHost) *v8.FunctionTemplate {
 			func(info *v8.FunctionCallbackInfo) (result *v8.Value, err error) {
 				args := newArgumentHelper(host, info)
 				instance, err0 := wrapper.getInstance(info)
-				key, err1 := args.getStringArg(0)
+				key, err1 := args.consumeString()
 				if err := errors.Join(err0, err1); err != nil {
 					return nil, err
 				}
