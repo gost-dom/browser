@@ -12,11 +12,11 @@ var ErrNoInternalValue = errors.New("object does not have an internal instance")
 // - Getting or setting an accessor property backed by a native function
 // - Named or indexed handler callbacks / interceptors.
 type CallbackContext interface {
-	// ConsumeRequiredArg pulls argument from the list of required arguments. If
-	// there are no more arguments to consume, an error wrapping ErrMissingArgument error will be
-	// returned. (e.g., if you call the method 3
-	// times, but only two arguments were passed). The actual error will contain
-	// the name of the argument in the error message.
+	// ConsumeArg pulls argument from the list of required arguments. If
+	// there are no more arguments to consume, an error wrapping
+	// ErrMissingArgument error will be returned. (e.g., if you call the method
+	// 3 times, but only two arguments were passed). The actual error will
+	// contain the name of the argument in the error message.
 	//
 	// Client code does not need to deal with the actual error, and should
 	// normally just return it as is.
@@ -26,7 +26,7 @@ type CallbackContext interface {
 	//  should be returned.
 	//
 	// The function is intended for parsing required arguments in the specs.
-	ConsumeRequiredArg(name string) (Value, error)
+	ConsumeArg() (Value, error)
 
 	// ConsumeRestArgs returns all remaining arguments as a slice of values.
 	//

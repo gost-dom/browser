@@ -68,7 +68,7 @@ func createEventTarget(host *V8ScriptHost) *v8.FunctionTemplate {
 				eventType, e1 := args.consumeString()
 				fn, e2 := args.consumeFunction()
 				var options []func(*event.EventListener)
-				optionArg := args.consumeArg()
+				optionArg := args.ConsumeArg()
 				if optionArg != nil {
 					if optionArg.IsBoolean() && optionArg.Boolean() {
 						options = append(options, event.Capture)

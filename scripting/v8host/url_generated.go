@@ -4,7 +4,6 @@ package v8host
 
 import (
 	"errors"
-
 	urlinterfaces "github.com/gost-dom/browser/internal/interfaces/url-interfaces"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 	url "github.com/gost-dom/browser/url"
@@ -374,7 +373,7 @@ func (w urlSearchParamsV8Wrapper) getAll(cbCtx *argumentHelper) js.CallbackRVal 
 			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.GetAll(name)
-		return cbCtx.ReturnWithValueErr(w.toSequenceString_(cbCtx, result))
+		return w.toSequenceString_(cbCtx, result)
 	}
 	return cbCtx.ReturnWithError(errors.New("URLSearchParams.getAll: Missing arguments"))
 }

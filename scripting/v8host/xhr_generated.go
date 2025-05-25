@@ -4,7 +4,6 @@ package v8host
 
 import (
 	"errors"
-
 	html "github.com/gost-dom/browser/internal/html"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
@@ -82,7 +81,7 @@ func (w xmlHttpRequestV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTempla
 
 func (w xmlHttpRequestV8Wrapper) Constructor(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.Constructor")
-	return cbCtx.ReturnWithValueErr(w.CreateInstance(cbCtx))
+	return w.CreateInstance(cbCtx)
 }
 
 func (w xmlHttpRequestV8Wrapper) setRequestHeader(cbCtx *argumentHelper) js.CallbackRVal {

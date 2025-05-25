@@ -231,7 +231,7 @@ func parseSetterArg[T any](
 func zeroValue[T any]() (res T) { return }
 
 func ignoreArgument(args *argumentHelper) {
-	args.consumeArg()
+	args.ConsumeArg()
 }
 
 // consumeArgument pulls one of the passed arguments and tries to convert it to
@@ -252,7 +252,7 @@ func consumeArgument[T any](
 	decoders ...func(*V8ScriptContext, *v8.Value) (T, error),
 ) (result T, err error) {
 	index := args.currentIndex
-	value := args.consumeArg()
+	value := args.ConsumeArg()
 	if value == nil && defaultValue != nil {
 		args.acceptIndex(index)
 		return defaultValue(), nil

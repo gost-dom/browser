@@ -73,14 +73,14 @@ func (args *argumentHelper) acceptIndex(index int) {
 // consumeValue works like [argumentHelper.consumeArg], but returns undefined
 // instead of nil if the value doesn't exist.
 func (h *argumentHelper) consumeValue() *v8.Value {
-	if arg := h.consumeArg(); arg != nil {
+	if arg := h.ConsumeArg(); arg != nil {
 		return arg
 	}
 	return v8.Undefined(h.FunctionCallbackInfo.Context().Isolate())
 }
 
 func (h *argumentHelper) consumeFunction() (*v8.Function, error) {
-	arg := h.consumeArg()
+	arg := h.ConsumeArg()
 	if arg == nil {
 		return nil, ErrWrongNoOfArguments
 	}
@@ -91,7 +91,7 @@ func (h *argumentHelper) consumeFunction() (*v8.Function, error) {
 }
 
 func (h *argumentHelper) consumeInt32() (int32, error) {
-	arg := h.consumeArg()
+	arg := h.ConsumeArg()
 	if arg == nil {
 		return 0, ErrWrongNoOfArguments
 	}
@@ -102,7 +102,7 @@ func (h *argumentHelper) consumeInt32() (int32, error) {
 }
 
 func (h *argumentHelper) consumeString() (string, error) {
-	arg := h.consumeArg()
+	arg := h.ConsumeArg()
 	if arg == nil {
 		return "", ErrWrongNoOfArguments
 	}
@@ -116,7 +116,7 @@ func (h *argumentHelper) assertIndex(index int) {
 	h.currentIndex++
 }
 
-func (h *argumentHelper) consumeArg() *v8.Value {
+func (h *argumentHelper) ConsumeArg() *v8.Value {
 	index := h.currentIndex
 	h.assertIndex(index)
 	args := h.FunctionCallbackInfo.Args()
