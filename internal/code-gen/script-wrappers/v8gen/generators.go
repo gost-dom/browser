@@ -295,23 +295,23 @@ func ReadArguments(
 
 		var dec = wrappers.DecodersForArg(receiver, arg)
 
-		gConverters := []g.Generator{cbCtx, g.Lit(i)}
+		parseArgs := []g.Generator{cbCtx, g.Lit(i)}
 		defaultName, hasDefault := arg.DefaultValueInGo()
 		if hasDefault {
-			gConverters = append(gConverters, g.NewValue(naming.Receiver()).Field(defaultName))
+			parseArgs = append(parseArgs, g.NewValue(naming.Receiver()).Field(defaultName))
 		}
-		gConverters = append(gConverters, dec...)
+		parseArgs = append(parseArgs, dec...)
 		if hasDefault {
 			statements.Append(g.AssignMany(g.List(argName, errName),
-				g.NewValue("tryParseArgWithDefault").Call(gConverters...)))
+				g.NewValue("tryParseArgWithDefault").Call(parseArgs...)))
 		} else if arg.IdlArg.Type.Nullable {
 			statements.Append(g.AssignMany(
 				g.List(argName, errName),
-				g.NewValue("tryParseArgNullableType").Call(gConverters...)))
+				g.NewValue("tryParseArgNullableType").Call(parseArgs...)))
 		} else {
 			statements.Append(g.AssignMany(
 				g.List(argName, errName),
-				g.NewValue("tryParseArg").Call(gConverters...)))
+				g.NewValue("tryParseArg").Call(parseArgs...)))
 		}
 	}
 	res.Generator = statements
