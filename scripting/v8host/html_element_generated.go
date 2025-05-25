@@ -45,14 +45,14 @@ func (w htmlElementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate)
 
 func (w htmlElementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLElement.Constructor")
-	args := newArgumentHelper(w.scriptHost, info)
-	return args.ReturnWithTypeError("Illegal constructor")
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w htmlElementV8Wrapper) click(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLElement.click")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLElement](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}

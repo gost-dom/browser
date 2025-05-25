@@ -270,19 +270,6 @@ func (r V8ReadArguments) Generate() *jen.Statement {
 	}
 }
 
-func AssignArgs(data ESConstructorData, op ESOperation) g.Generator {
-	// if len(op.Arguments) == 0 {
-	// 	return g.Noop
-	// }
-	naming := V8NamingStrategy{data}
-	return g.Assign(
-		g.Id("args"),
-		g.NewValue("newArgumentHelper").Call(
-			g.NewValue(naming.Receiver()).Field("scriptHost"),
-			g.Id("info")),
-	)
-}
-
 func ReadArguments(
 	data ESConstructorData,
 	op ESOperation,

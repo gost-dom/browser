@@ -61,19 +61,19 @@ func (w htmlTemplateElementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectT
 
 func (w htmlTemplateElementV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLTemplateElement.Constructor")
-	args := newArgumentHelper(w.scriptHost, info)
-	return args.ReturnWithTypeError("Illegal constructor")
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w htmlTemplateElementV8Wrapper) content(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: HTMLTemplateElement.content")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.HTMLTemplateElement](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.HTMLTemplateElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Content()
-	return args.Context().getInstanceForNode(result)
+	return cbCtx.Context().getInstanceForNode(result)
 }
 
 func (w htmlTemplateElementV8Wrapper) shadowRootMode(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

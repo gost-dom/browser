@@ -88,81 +88,81 @@ func (w nodeV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 
 func (w nodeV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Node.Constructor")
-	args := newArgumentHelper(w.scriptHost, info)
-	return args.ReturnWithTypeError("Illegal constructor")
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w nodeV8Wrapper) getRootNode(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Node.getRootNode")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dom.Node](args.Instance())
-	options, err1 := tryParseArgWithDefault(args, 0, w.defaultGetRootNodeOptions, w.decodeGetRootNodeOptions)
-	if args.noOfReadArguments >= 1 {
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[dom.Node](cbCtx.Instance())
+	options, err1 := tryParseArgWithDefault(cbCtx, 0, w.defaultGetRootNodeOptions, w.decodeGetRootNodeOptions)
+	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
 			return nil, err
 		}
 		result := instance.GetRootNode(options)
-		return args.Context().getInstanceForNode(result)
+		return cbCtx.Context().getInstanceForNode(result)
 	}
 	return nil, errors.New("Node.getRootNode: Missing arguments")
 }
 
 func (w nodeV8Wrapper) cloneNode(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Node.cloneNode")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dom.Node](args.Instance())
-	subtree, err1 := tryParseArgWithDefault(args, 0, w.defaultboolean, w.decodeBoolean)
-	if args.noOfReadArguments >= 1 {
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[dom.Node](cbCtx.Instance())
+	subtree, err1 := tryParseArgWithDefault(cbCtx, 0, w.defaultboolean, w.decodeBoolean)
+	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
 			return nil, err
 		}
 		result := instance.CloneNode(subtree)
-		return args.Context().getInstanceForNode(result)
+		return cbCtx.Context().getInstanceForNode(result)
 	}
 	return nil, errors.New("Node.cloneNode: Missing arguments")
 }
 
 func (w nodeV8Wrapper) isSameNode(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Node.isSameNode")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dom.Node](args.Instance())
-	otherNode, err1 := tryParseArgNullableType(args, 0, w.decodeNode)
-	if args.noOfReadArguments >= 1 {
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[dom.Node](cbCtx.Instance())
+	otherNode, err1 := tryParseArgNullableType(cbCtx, 0, w.decodeNode)
+	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
 			return nil, err
 		}
 		result := instance.IsSameNode(otherNode)
-		return w.toBoolean(args.Context(), result)
+		return w.toBoolean(cbCtx.Context(), result)
 	}
 	return nil, errors.New("Node.isSameNode: Missing arguments")
 }
 
 func (w nodeV8Wrapper) contains(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Node.contains")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dom.Node](args.Instance())
-	other, err1 := tryParseArgNullableType(args, 0, w.decodeNode)
-	if args.noOfReadArguments >= 1 {
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[dom.Node](cbCtx.Instance())
+	other, err1 := tryParseArgNullableType(cbCtx, 0, w.decodeNode)
+	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
 			return nil, err
 		}
 		result := instance.Contains(other)
-		return w.toBoolean(args.Context(), result)
+		return w.toBoolean(cbCtx.Context(), result)
 	}
 	return nil, errors.New("Node.contains: Missing arguments")
 }
 
 func (w nodeV8Wrapper) insertBefore(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Node.insertBefore")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dom.Node](args.Instance())
-	node, err1 := tryParseArg(args, 0, w.decodeNode)
-	child, err2 := tryParseArgNullableType(args, 1, w.decodeNode)
-	if args.noOfReadArguments >= 2 {
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[dom.Node](cbCtx.Instance())
+	node, err1 := tryParseArg(cbCtx, 0, w.decodeNode)
+	child, err2 := tryParseArgNullableType(cbCtx, 1, w.decodeNode)
+	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {
 			return nil, err
@@ -171,7 +171,7 @@ func (w nodeV8Wrapper) insertBefore(info *v8.FunctionCallbackInfo) (*v8.Value, e
 		if callErr != nil {
 			return nil, callErr
 		} else {
-			return args.Context().getInstanceForNode(result)
+			return cbCtx.Context().getInstanceForNode(result)
 		}
 	}
 	return nil, errors.New("Node.insertBefore: Missing arguments")
@@ -179,10 +179,10 @@ func (w nodeV8Wrapper) insertBefore(info *v8.FunctionCallbackInfo) (*v8.Value, e
 
 func (w nodeV8Wrapper) appendChild(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Node.appendChild")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dom.Node](args.Instance())
-	node, err1 := tryParseArg(args, 0, w.decodeNode)
-	if args.noOfReadArguments >= 1 {
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[dom.Node](cbCtx.Instance())
+	node, err1 := tryParseArg(cbCtx, 0, w.decodeNode)
+	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
 			return nil, err
@@ -191,7 +191,7 @@ func (w nodeV8Wrapper) appendChild(info *v8.FunctionCallbackInfo) (*v8.Value, er
 		if callErr != nil {
 			return nil, callErr
 		} else {
-			return args.Context().getInstanceForNode(result)
+			return cbCtx.Context().getInstanceForNode(result)
 		}
 	}
 	return nil, errors.New("Node.appendChild: Missing arguments")
@@ -199,10 +199,10 @@ func (w nodeV8Wrapper) appendChild(info *v8.FunctionCallbackInfo) (*v8.Value, er
 
 func (w nodeV8Wrapper) removeChild(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Node.removeChild")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dom.Node](args.Instance())
-	child, err1 := tryParseArg(args, 0, w.decodeNode)
-	if args.noOfReadArguments >= 1 {
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[dom.Node](cbCtx.Instance())
+	child, err1 := tryParseArg(cbCtx, 0, w.decodeNode)
+	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
 			return nil, err
@@ -211,7 +211,7 @@ func (w nodeV8Wrapper) removeChild(info *v8.FunctionCallbackInfo) (*v8.Value, er
 		if callErr != nil {
 			return nil, callErr
 		} else {
-			return args.Context().getInstanceForNode(result)
+			return cbCtx.Context().getInstanceForNode(result)
 		}
 	}
 	return nil, errors.New("Node.removeChild: Missing arguments")
@@ -219,88 +219,88 @@ func (w nodeV8Wrapper) removeChild(info *v8.FunctionCallbackInfo) (*v8.Value, er
 
 func (w nodeV8Wrapper) nodeName(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Node.nodeName")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.Node](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.NodeName()
-	return w.toString_(args.Context(), result)
+	return w.toString_(cbCtx.Context(), result)
 }
 
 func (w nodeV8Wrapper) isConnected(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Node.isConnected")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.Node](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.IsConnected()
-	return w.toBoolean(args.Context(), result)
+	return w.toBoolean(cbCtx.Context(), result)
 }
 
 func (w nodeV8Wrapper) ownerDocument(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Node.ownerDocument")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.Node](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.OwnerDocument()
-	return args.Context().getInstanceForNode(result)
+	return cbCtx.Context().getInstanceForNode(result)
 }
 
 func (w nodeV8Wrapper) parentElement(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Node.parentElement")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.Node](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.ParentElement()
-	return args.Context().getInstanceForNode(result)
+	return cbCtx.Context().getInstanceForNode(result)
 }
 
 func (w nodeV8Wrapper) childNodes(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Node.childNodes")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.Node](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.ChildNodes()
-	return w.toNodeList(args.Context(), result)
+	return w.toNodeList(cbCtx.Context(), result)
 }
 
 func (w nodeV8Wrapper) firstChild(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Node.firstChild")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.Node](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.FirstChild()
-	return args.Context().getInstanceForNode(result)
+	return cbCtx.Context().getInstanceForNode(result)
 }
 
 func (w nodeV8Wrapper) previousSibling(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Node.previousSibling")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.Node](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.PreviousSibling()
-	return args.Context().getInstanceForNode(result)
+	return cbCtx.Context().getInstanceForNode(result)
 }
 
 func (w nodeV8Wrapper) nextSibling(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Node.nextSibling")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dom.Node](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.NextSibling()
-	return args.Context().getInstanceForNode(result)
+	return cbCtx.Context().getInstanceForNode(result)
 }

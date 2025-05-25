@@ -61,21 +61,21 @@ func (w mouseEventV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) 
 
 func (w mouseEventV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: MouseEvent.Constructor")
-	args := newArgumentHelper(w.scriptHost, info)
-	type_, err1 := tryParseArg(args, 0, w.decodeString)
-	eventInitDict, err2 := tryParseArg(args, 1, w.decodeMouseEventInit)
-	if args.noOfReadArguments >= 2 {
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	type_, err1 := tryParseArg(cbCtx, 0, w.decodeString)
+	eventInitDict, err2 := tryParseArg(cbCtx, 1, w.decodeMouseEventInit)
+	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err1, err2)
 		if err != nil {
 			return nil, err
 		}
-		return w.CreateInstanceEventInitDict(args.Context(), info.This(), type_, eventInitDict)
+		return w.CreateInstanceEventInitDict(cbCtx.Context(), info.This(), type_, eventInitDict)
 	}
-	if args.noOfReadArguments >= 1 {
+	if cbCtx.noOfReadArguments >= 1 {
 		if err1 != nil {
 			return nil, err1
 		}
-		return w.CreateInstance(args.Context(), info.This(), type_)
+		return w.CreateInstance(cbCtx.Context(), info.This(), type_)
 	}
 	return nil, errors.New("MouseEvent.constructor: Missing arguments")
 }
@@ -159,21 +159,21 @@ func (w uIEventV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 
 func (w uIEventV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: UIEvent.Constructor")
-	args := newArgumentHelper(w.scriptHost, info)
-	type_, err1 := tryParseArg(args, 0, w.decodeString)
-	eventInitDict, err2 := tryParseArg(args, 1, w.decodeUIEventInit)
-	if args.noOfReadArguments >= 2 {
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	type_, err1 := tryParseArg(cbCtx, 0, w.decodeString)
+	eventInitDict, err2 := tryParseArg(cbCtx, 1, w.decodeUIEventInit)
+	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err1, err2)
 		if err != nil {
 			return nil, err
 		}
-		return w.CreateInstanceEventInitDict(args.Context(), info.This(), type_, eventInitDict)
+		return w.CreateInstanceEventInitDict(cbCtx.Context(), info.This(), type_, eventInitDict)
 	}
-	if args.noOfReadArguments >= 1 {
+	if cbCtx.noOfReadArguments >= 1 {
 		if err1 != nil {
 			return nil, err1
 		}
-		return w.CreateInstance(args.Context(), info.This(), type_)
+		return w.CreateInstance(cbCtx.Context(), info.This(), type_)
 	}
 	return nil, errors.New("UIEvent.constructor: Missing arguments")
 }

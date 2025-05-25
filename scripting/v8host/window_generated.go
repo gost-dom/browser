@@ -142,8 +142,8 @@ func (w windowV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 
 func (w windowV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Window.Constructor")
-	args := newArgumentHelper(w.scriptHost, info)
-	return args.ReturnWithTypeError("Illegal constructor")
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w windowV8Wrapper) close(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
@@ -198,13 +198,13 @@ func (w windowV8Wrapper) self(info *v8.FunctionCallbackInfo) (*v8.Value, error) 
 
 func (w windowV8Wrapper) document(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Window.document")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[html.Window](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[html.Window](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Document()
-	return args.Context().getInstanceForNode(result)
+	return cbCtx.Context().getInstanceForNode(result)
 }
 
 func (w windowV8Wrapper) name(info *v8.FunctionCallbackInfo) (*v8.Value, error) {

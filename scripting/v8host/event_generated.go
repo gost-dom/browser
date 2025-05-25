@@ -63,23 +63,23 @@ func (w eventV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 
 func (w eventV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Event.Constructor")
-	args := newArgumentHelper(w.scriptHost, info)
-	type_, err1 := tryParseArg(args, 0, w.decodeString)
-	eventInitDict, err2 := tryParseArgWithDefault(args, 1, w.defaultEventInit, w.decodeEventInit)
-	if args.noOfReadArguments >= 2 {
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	type_, err1 := tryParseArg(cbCtx, 0, w.decodeString)
+	eventInitDict, err2 := tryParseArgWithDefault(cbCtx, 1, w.defaultEventInit, w.decodeEventInit)
+	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err1, err2)
 		if err != nil {
 			return nil, err
 		}
-		return w.CreateInstance(args.Context(), info.This(), type_, eventInitDict)
+		return w.CreateInstance(cbCtx.Context(), info.This(), type_, eventInitDict)
 	}
 	return nil, errors.New("Event.constructor: Missing arguments")
 }
 
 func (w eventV8Wrapper) stopPropagation(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Event.stopPropagation")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[*event.Event](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -89,8 +89,8 @@ func (w eventV8Wrapper) stopPropagation(info *v8.FunctionCallbackInfo) (*v8.Valu
 
 func (w eventV8Wrapper) preventDefault(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Event.preventDefault")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[*event.Event](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -100,33 +100,33 @@ func (w eventV8Wrapper) preventDefault(info *v8.FunctionCallbackInfo) (*v8.Value
 
 func (w eventV8Wrapper) target(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Event.target")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[*event.Event](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.Target
-	return w.toEventTarget(args.Context(), result)
+	return w.toEventTarget(cbCtx.Context(), result)
 }
 
 func (w eventV8Wrapper) currentTarget(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Event.currentTarget")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[*event.Event](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.CurrentTarget
-	return w.toEventTarget(args.Context(), result)
+	return w.toEventTarget(cbCtx.Context(), result)
 }
 
 func (w eventV8Wrapper) defaultPrevented(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: Event.defaultPrevented")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[*event.Event](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.DefaultPrevented
-	return w.toBoolean(args.Context(), result)
+	return w.toBoolean(cbCtx.Context(), result)
 }

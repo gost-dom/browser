@@ -43,24 +43,24 @@ func (w mutationObserverV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemp
 
 func (w mutationObserverV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: MutationObserver.Constructor")
-	args := newArgumentHelper(w.scriptHost, info)
-	callback, err1 := tryParseArg(args, 0, w.decodeMutationCallback)
-	if args.noOfReadArguments >= 1 {
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	callback, err1 := tryParseArg(cbCtx, 0, w.decodeMutationCallback)
+	if cbCtx.noOfReadArguments >= 1 {
 		if err1 != nil {
 			return nil, err1
 		}
-		return w.CreateInstance(args.Context(), info.This(), callback)
+		return w.CreateInstance(cbCtx.Context(), info.This(), callback)
 	}
 	return nil, errors.New("MutationObserver.constructor: Missing arguments")
 }
 
 func (w mutationObserverV8Wrapper) observe(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: MutationObserver.observe")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err0 := abstraction.As[dominterfaces.MutationObserver](args.Instance())
-	target, err1 := tryParseArg(args, 0, w.decodeNode)
-	options, err2 := tryParseArg(args, 1, w.decodeMutationObserverInit)
-	if args.noOfReadArguments >= 2 {
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err0 := abstraction.As[dominterfaces.MutationObserver](cbCtx.Instance())
+	target, err1 := tryParseArg(cbCtx, 0, w.decodeNode)
+	options, err2 := tryParseArg(cbCtx, 1, w.decodeMutationObserverInit)
+	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {
 			return nil, err
@@ -73,8 +73,8 @@ func (w mutationObserverV8Wrapper) observe(info *v8.FunctionCallbackInfo) (*v8.V
 
 func (w mutationObserverV8Wrapper) disconnect(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: MutationObserver.disconnect")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dominterfaces.MutationObserver](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dominterfaces.MutationObserver](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -84,11 +84,11 @@ func (w mutationObserverV8Wrapper) disconnect(info *v8.FunctionCallbackInfo) (*v
 
 func (w mutationObserverV8Wrapper) takeRecords(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: MutationObserver.takeRecords")
-	args := newArgumentHelper(w.scriptHost, info)
-	instance, err := abstraction.As[dominterfaces.MutationObserver](args.Instance())
+	cbCtx := newArgumentHelper(w.scriptHost, info)
+	instance, err := abstraction.As[dominterfaces.MutationObserver](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.TakeRecords()
-	return w.toSequenceMutationRecord(args.Context(), result)
+	return w.toSequenceMutationRecord(cbCtx.Context(), result)
 }

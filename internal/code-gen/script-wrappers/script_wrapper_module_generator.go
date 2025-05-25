@@ -219,7 +219,7 @@ func renderIf(condition bool, gen g.Generator) g.Generator {
 
 func (c MethodCallback) Generate() *jen.Statement {
 	typeGenerators := c.platform.WrapperStructGenerators()
-	cbCtx := NewCallbackContext(g.Id("args"))
+	cbCtx := NewCallbackContext(g.Id("cbCtx"))
 	args := typeGenerators.CallbackMethodArgs()
 	argIds := make([]Generator, len(args))
 	if len(args) != 1 {

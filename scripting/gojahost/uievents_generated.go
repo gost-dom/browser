@@ -25,8 +25,8 @@ func (w mouseEventWrapper) initializePrototype(prototype *g.Object, vm *g.Runtim
 
 func (w mouseEventWrapper) Constructor(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: MouseEvent.Constructor")
-	args := newArgumentHelper(w.ctx, c)
-	return args.ReturnWithTypeError("Goja constructor not yet implemented")
+	cbCtx := newArgumentHelper(w.ctx, c)
+	return cbCtx.ReturnWithTypeError("Goja constructor not yet implemented")
 }
 
 func (w mouseEventWrapper) getModifierState(c g.FunctionCall) g.Value {
@@ -88,8 +88,8 @@ func (w uIEventWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime) 
 
 func (w uIEventWrapper) Constructor(c g.FunctionCall) g.Value {
 	log.Debug(w.logger(c), "V8 Function call: UIEvent.Constructor")
-	args := newArgumentHelper(w.ctx, c)
-	return args.ReturnWithTypeError("Goja constructor not yet implemented")
+	cbCtx := newArgumentHelper(w.ctx, c)
+	return cbCtx.ReturnWithTypeError("Goja constructor not yet implemented")
 }
 
 func (w uIEventWrapper) view(c g.FunctionCall) g.Value {
