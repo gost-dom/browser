@@ -38,30 +38,6 @@ func (w eventWrapper) constructor(call g.ConstructorCall, r *g.Runtime) *g.Objec
 	return nil
 }
 
-func (w eventWrapper) type_(cbCtx *callbackContext) g.Value {
-	instance, err := js.As[*event.Event](cbCtx.Instance())
-	if err != nil {
-		panic(err)
-	}
-	return w.ctx.vm.ToValue(instance.Type)
-}
-
-func (w eventWrapper) cancelable(cbCtx *callbackContext) g.Value {
-	instance, err := js.As[*event.Event](cbCtx.Instance())
-	if err != nil {
-		panic(err)
-	}
-	return w.ctx.vm.ToValue(instance.Cancelable)
-}
-
-func (w eventWrapper) bubbles(cbCtx *callbackContext) g.Value {
-	instance, err := js.As[*event.Event](cbCtx.Instance())
-	if err != nil {
-		panic(err)
-	}
-	return w.ctx.vm.ToValue(instance.Bubbles)
-}
-
 func (w eventWrapper) eventPhase(cbCtx *callbackContext) g.Value {
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {

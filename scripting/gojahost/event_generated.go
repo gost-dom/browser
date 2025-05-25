@@ -49,6 +49,16 @@ func (w eventWrapper) preventDefault(cbCtx *callbackContext) g.Value {
 	return cbCtx.ReturnWithValue(nil)
 }
 
+func (w eventWrapper) type_(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Event.type_")
+	instance, instErr := js.As[*event.Event](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
+	result := instance.Type
+	return cbCtx.ReturnWithValue(w.toString_(result))
+}
+
 func (w eventWrapper) target(cbCtx *callbackContext) g.Value {
 	cbCtx.logger().Debug("V8 Function call: Event.target")
 	instance, instErr := js.As[*event.Event](cbCtx.Instance())
@@ -67,6 +77,26 @@ func (w eventWrapper) currentTarget(cbCtx *callbackContext) g.Value {
 	}
 	result := instance.CurrentTarget
 	return cbCtx.ReturnWithValue(w.toEventTarget(result))
+}
+
+func (w eventWrapper) bubbles(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Event.bubbles")
+	instance, instErr := js.As[*event.Event](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
+	result := instance.Bubbles
+	return cbCtx.ReturnWithValue(w.toBoolean(result))
+}
+
+func (w eventWrapper) cancelable(cbCtx *callbackContext) g.Value {
+	cbCtx.logger().Debug("V8 Function call: Event.cancelable")
+	instance, instErr := js.As[*event.Event](cbCtx.Instance())
+	if instErr != nil {
+		return cbCtx.ReturnWithError(instErr)
+	}
+	result := instance.Cancelable
+	return cbCtx.ReturnWithValue(w.toBoolean(result))
 }
 
 func (w eventWrapper) defaultPrevented(cbCtx *callbackContext) g.Value {

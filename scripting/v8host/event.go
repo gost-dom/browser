@@ -48,30 +48,3 @@ func (w eventV8Wrapper) eventPhase(cbCtx *argumentHelper) (*v8.Value, error) {
 	}
 	return v8.NewValue(w.iso(), uint32(instance.EventPhase))
 }
-
-func (w eventV8Wrapper) type_(cbCtx *argumentHelper) (*v8.Value, error) {
-	cbCtx.logger().Debug("V8 Function call: Event.type")
-	instance, err := js.As[*event.Event](cbCtx.Instance())
-	if err != nil {
-		return nil, err
-	}
-	return v8.NewValue(w.iso(), instance.Type)
-}
-
-func (w eventV8Wrapper) cancelable(cbCtx *argumentHelper) (*v8.Value, error) {
-	cbCtx.logger().Debug("V8 Function call: Event.cancelable")
-	instance, err := js.As[*event.Event](cbCtx.Instance())
-	if err != nil {
-		return nil, err
-	}
-	return v8.NewValue(w.iso(), instance.Cancelable)
-}
-
-func (w eventV8Wrapper) bubbles(cbCtx *argumentHelper) (*v8.Value, error) {
-	cbCtx.logger().Debug("V8 Function call: Event.bubbles")
-	instance, err := js.As[*event.Event](cbCtx.Instance())
-	if err != nil {
-		return nil, err
-	}
-	return v8.NewValue(w.iso(), instance.Bubbles)
-}
