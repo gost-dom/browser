@@ -2,6 +2,7 @@ package v8host
 
 import (
 	"github.com/gost-dom/browser/internal/uievents"
+	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
 )
 
@@ -22,16 +23,16 @@ func (w uIEventV8Wrapper) decodePointerEventInit(
 func (w uIEventV8Wrapper) CreateInstance(
 	cbCtx *argumentHelper,
 	type_ string,
-) (*v8go.Value, error) {
+) js.CallbackRVal {
 	return w.CreateInstanceEventInitDict(cbCtx, type_)
 }
 
 func (w uIEventV8Wrapper) CreateInstanceEventInitDict(
 	cbCtx *argumentHelper,
 	type_ string,
-	options ...interface{}) (*v8go.Value, error) {
+	options ...interface{}) js.CallbackRVal {
 	e := uievents.NewUIEvent(type_)
-	return w.store(e, cbCtx.ScriptCtx(), cbCtx.This())
+	return cbCtx.ReturnWithValueErr(w.store(e, cbCtx.ScriptCtx(), cbCtx.This()))
 }
 
 func (w uIEventV8Wrapper) decodeUIEventInit(

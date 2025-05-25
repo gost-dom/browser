@@ -38,7 +38,7 @@ func (w mutationObserverV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemp
 	prototypeTmpl.Set("takeRecords", wrapV8Callback(w.scriptHost, w.takeRecords))
 }
 
-func (w mutationObserverV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w mutationObserverV8Wrapper) Constructor(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: MutationObserver.Constructor")
 	callback, err1 := consumeArgument(cbCtx, "callback", nil, w.decodeMutationCallback)
 	if cbCtx.noOfReadArguments >= 1 {
@@ -50,7 +50,7 @@ func (w mutationObserverV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value
 	return cbCtx.ReturnWithError(errors.New("MutationObserver.constructor: Missing arguments"))
 }
 
-func (w mutationObserverV8Wrapper) observe(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w mutationObserverV8Wrapper) observe(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: MutationObserver.observe")
 	instance, err0 := js.As[dominterfaces.MutationObserver](cbCtx.Instance())
 	target, err1 := consumeArgument(cbCtx, "target", nil, w.decodeNode)
@@ -69,7 +69,7 @@ func (w mutationObserverV8Wrapper) observe(cbCtx *argumentHelper) (*v8.Value, er
 	return cbCtx.ReturnWithError(errors.New("MutationObserver.observe: Missing arguments"))
 }
 
-func (w mutationObserverV8Wrapper) disconnect(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w mutationObserverV8Wrapper) disconnect(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: MutationObserver.disconnect")
 	instance, err := js.As[dominterfaces.MutationObserver](cbCtx.Instance())
 	if err != nil {
@@ -79,7 +79,7 @@ func (w mutationObserverV8Wrapper) disconnect(cbCtx *argumentHelper) (*v8.Value,
 	return cbCtx.ReturnWithValue(nil)
 }
 
-func (w mutationObserverV8Wrapper) takeRecords(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w mutationObserverV8Wrapper) takeRecords(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: MutationObserver.takeRecords")
 	instance, err := js.As[dominterfaces.MutationObserver](cbCtx.Instance())
 	if err != nil {

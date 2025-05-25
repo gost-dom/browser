@@ -53,12 +53,12 @@ func (w domTokenListV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate
 	prototypeTmpl.Set("toString", wrapV8Callback(w.scriptHost, w.value))
 }
 
-func (w domTokenListV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w domTokenListV8Wrapper) Constructor(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: DOMTokenList.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w domTokenListV8Wrapper) item(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w domTokenListV8Wrapper) item(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: DOMTokenList.item")
 	instance, err0 := js.As[dom.DOMTokenList](cbCtx.Instance())
 	index, err1 := consumeArgument(cbCtx, "index", nil, w.decodeUnsignedLong)
@@ -73,7 +73,7 @@ func (w domTokenListV8Wrapper) item(cbCtx *argumentHelper) (*v8.Value, error) {
 	return cbCtx.ReturnWithError(errors.New("DOMTokenList.item: Missing arguments"))
 }
 
-func (w domTokenListV8Wrapper) contains(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w domTokenListV8Wrapper) contains(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: DOMTokenList.contains")
 	instance, err0 := js.As[dom.DOMTokenList](cbCtx.Instance())
 	token, err1 := consumeArgument(cbCtx, "token", nil, w.decodeString)
@@ -88,7 +88,7 @@ func (w domTokenListV8Wrapper) contains(cbCtx *argumentHelper) (*v8.Value, error
 	return cbCtx.ReturnWithError(errors.New("DOMTokenList.contains: Missing arguments"))
 }
 
-func (w domTokenListV8Wrapper) add(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w domTokenListV8Wrapper) add(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: DOMTokenList.add")
 	instance, err0 := js.As[dom.DOMTokenList](cbCtx.Instance())
 	tokens, err1 := consumeArgument(cbCtx, "tokens", nil, w.decodeString)
@@ -106,7 +106,7 @@ func (w domTokenListV8Wrapper) add(cbCtx *argumentHelper) (*v8.Value, error) {
 	return cbCtx.ReturnWithError(errors.New("DOMTokenList.add: Missing arguments"))
 }
 
-func (w domTokenListV8Wrapper) remove(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w domTokenListV8Wrapper) remove(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: DOMTokenList.remove")
 	instance, err0 := js.As[dom.DOMTokenList](cbCtx.Instance())
 	tokens, err1 := consumeArgument(cbCtx, "tokens", nil, w.decodeString)
@@ -121,7 +121,7 @@ func (w domTokenListV8Wrapper) remove(cbCtx *argumentHelper) (*v8.Value, error) 
 	return cbCtx.ReturnWithError(errors.New("DOMTokenList.remove: Missing arguments"))
 }
 
-func (w domTokenListV8Wrapper) replace(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w domTokenListV8Wrapper) replace(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: DOMTokenList.replace")
 	instance, err0 := js.As[dom.DOMTokenList](cbCtx.Instance())
 	token, err1 := consumeArgument(cbCtx, "token", nil, w.decodeString)
@@ -137,12 +137,12 @@ func (w domTokenListV8Wrapper) replace(cbCtx *argumentHelper) (*v8.Value, error)
 	return cbCtx.ReturnWithError(errors.New("DOMTokenList.replace: Missing arguments"))
 }
 
-func (w domTokenListV8Wrapper) supports(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w domTokenListV8Wrapper) supports(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: DOMTokenList.supports")
 	return cbCtx.ReturnWithError(errors.New("DOMTokenList.supports: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w domTokenListV8Wrapper) length(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w domTokenListV8Wrapper) length(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: DOMTokenList.length")
 	instance, err := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if err != nil {
@@ -152,7 +152,7 @@ func (w domTokenListV8Wrapper) length(cbCtx *argumentHelper) (*v8.Value, error) 
 	return w.toUnsignedLong(cbCtx, result)
 }
 
-func (w domTokenListV8Wrapper) value(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w domTokenListV8Wrapper) value(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: DOMTokenList.value")
 	instance, err := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if err != nil {
@@ -162,7 +162,7 @@ func (w domTokenListV8Wrapper) value(cbCtx *argumentHelper) (*v8.Value, error) {
 	return w.toString_(cbCtx, result)
 }
 
-func (w domTokenListV8Wrapper) setValue(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w domTokenListV8Wrapper) setValue(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: DOMTokenList.setValue")
 	instance, err0 := js.As[dom.DOMTokenList](cbCtx.Instance())
 	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)

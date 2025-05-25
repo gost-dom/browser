@@ -6,6 +6,7 @@ import (
 
 	mutation "github.com/gost-dom/browser/internal/dom/mutation"
 	log "github.com/gost-dom/browser/internal/log"
+	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
 	v8 "github.com/gost-dom/v8go"
 )
@@ -24,9 +25,9 @@ func (cb MutationCallback) HandleMutation(recs []mutation.Record, obs *mutation.
 func (w mutationObserverV8Wrapper) CreateInstance(
 	cbCtx *argumentHelper,
 	cb mutation.Callback,
-) (*v8go.Value, error) {
+) js.CallbackRVal {
 	ctx := cbCtx.ScriptCtx()
-	return w.store(mutation.NewObserver(ctx.clock, cb), ctx, cbCtx.This())
+	return cbCtx.ReturnWithValueErr(w.store(mutation.NewObserver(ctx.clock, cb), ctx, cbCtx.This()))
 }
 
 func (w mutationObserverV8Wrapper) decodeMutationCallback(
@@ -74,8 +75,8 @@ func (w mutationObserverV8Wrapper) decodeMutationObserverInit(
 func (w mutationObserverV8Wrapper) toSequenceMutationRecord(
 	cbCtx *argumentHelper,
 	records []mutation.Record,
-) (*v8go.Value, error) {
-	return toSequenceMutationRecord(cbCtx.ScriptCtx(), records)
+) js.CallbackRVal {
+	return cbCtx.ReturnWithValueErr(toSequenceMutationRecord(cbCtx.ScriptCtx(), records))
 }
 
 func toSequenceMutationRecord(

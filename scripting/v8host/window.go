@@ -21,24 +21,24 @@ func installGlobals(
 	windowTemplate.Set("location", location.InstanceTemplate())
 }
 
-func (w *windowV8Wrapper) window(cbCtx *argumentHelper) (*v8.Value, error) {
-	return cbCtx.This().Value, nil
+func (w *windowV8Wrapper) window(cbCtx *argumentHelper) js.CallbackRVal {
+	return cbCtx.ReturnWithValue(cbCtx.This().Value)
 }
 
-func (w *windowV8Wrapper) history(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w *windowV8Wrapper) history(cbCtx *argumentHelper) js.CallbackRVal {
 	win, err := js.As[html.Window](cbCtx.Instance())
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	ctx := cbCtx.ScriptCtx()
 	history, err := w.scriptHost.globals.namedGlobals["History"].InstanceTemplate().
 		NewInstance(ctx.v8ctx)
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	handle := cgo.NewHandle(win.History())
 	ctx.addDisposer(handleDisposable(handle))
 	internal := v8.NewValueExternalHandle(w.iso(), handle)
 	history.SetInternalField(0, internal)
-	return history.Value, nil
+	return cbCtx.ReturnWithValue(history.Value)
 }

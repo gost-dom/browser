@@ -119,7 +119,7 @@ func (f v8ValueFactory) toVal(val *v8go.Value) js.Value {
 	return v8Value{val}
 }
 
-type internalCallback func(*argumentHelper) (*v8go.Value, error)
+type internalCallback func(*argumentHelper) js.CallbackRVal
 
 func wrapV8Callback(
 	host *V8ScriptHost,
@@ -134,7 +134,8 @@ func wrapV8Callback(
 				}
 			}()
 			cbCtx := newArgumentHelper(host, info)
-			return callback(cbCtx)
+			result := callback(cbCtx).(v8CallbackRVal)
+			return result.rtnVal, result.err
 		},
 	)
 }

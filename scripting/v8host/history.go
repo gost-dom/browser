@@ -3,6 +3,7 @@ package v8host
 import (
 	"github.com/gost-dom/browser/html"
 	htmlinterfaces "github.com/gost-dom/browser/internal/interfaces/html-interfaces"
+	"github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -25,6 +26,6 @@ func (w historyV8Wrapper) decodeAny(
 func (w historyV8Wrapper) toHistoryState(
 	cbCtx *argumentHelper,
 	val htmlinterfaces.HistoryState,
-) (*v8.Value, error) {
-	return v8.JSONParse(cbCtx.ScriptCtx().v8ctx, string(val))
+) js.CallbackRVal {
+	return cbCtx.ReturnWithValueErr(v8.JSONParse(cbCtx.ScriptCtx().v8ctx, string(val)))
 }

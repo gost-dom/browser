@@ -3,7 +3,6 @@ package v8host
 import (
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/scripting/internal/js"
-	v8 "github.com/gost-dom/v8go"
 )
 
 func (w *parentNodeV8Wrapper) getNodesAndInstance(
@@ -20,23 +19,29 @@ func (w *parentNodeV8Wrapper) getNodesAndInstance(
 	return
 }
 
-func (w *parentNodeV8Wrapper) append(cbCtx *argumentHelper) (v *v8.Value, err error) {
-	if i, n, err := w.getNodesAndInstance(cbCtx); err == nil {
-		err = i.Append(n...)
+func (w *parentNodeV8Wrapper) append(cbCtx *argumentHelper) js.CallbackRVal {
+	if instance, nodes, err := w.getNodesAndInstance(cbCtx); err == nil {
+		if err = instance.Append(nodes...); err != nil {
+			return cbCtx.ReturnWithError(err)
+		}
 	}
-	return
+	return cbCtx.ReturnWithValue(nil)
 }
 
-func (w *parentNodeV8Wrapper) prepend(cbCtx *argumentHelper) (res *v8.Value, err error) {
-	if i, n, err := w.getNodesAndInstance(cbCtx); err == nil {
-		err = i.Prepend(n...)
+func (w *parentNodeV8Wrapper) prepend(cbCtx *argumentHelper) js.CallbackRVal {
+	if instance, nodes, err := w.getNodesAndInstance(cbCtx); err == nil {
+		if err = instance.Prepend(nodes...); err != nil {
+			return cbCtx.ReturnWithError(err)
+		}
 	}
-	return
+	return cbCtx.ReturnWithValue(nil)
 }
 
-func (w *parentNodeV8Wrapper) replaceChildren(cbCtx *argumentHelper) (res *v8.Value, err error) {
-	if i, n, err := w.getNodesAndInstance(cbCtx); err == nil {
-		err = i.ReplaceChildren(n...)
+func (w *parentNodeV8Wrapper) replaceChildren(cbCtx *argumentHelper) js.CallbackRVal {
+	if instance, nodes, err := w.getNodesAndInstance(cbCtx); err == nil {
+		if err = instance.ReplaceChildren(nodes...); err != nil {
+			return cbCtx.ReturnWithError(err)
+		}
 	}
-	return
+	return cbCtx.ReturnWithValue(nil)
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
+	"github.com/gost-dom/browser/scripting/internal/js"
 
 	v8 "github.com/gost-dom/v8go"
 )
@@ -91,56 +92,56 @@ func (w converters) decodeNodeOrText(ctx *V8ScriptContext, val *v8.Value) (dom.N
 func (w converters) toNullableString_(
 	cbCtx *argumentHelper,
 	str *string,
-) (*v8.Value, error) {
+) js.CallbackRVal {
 	if str == nil {
-		return v8.Null(cbCtx.iso()), nil
+		return cbCtx.ReturnWithValue(v8.Null(cbCtx.iso()))
 	}
-	return v8.NewValue(cbCtx.iso(), str)
+	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), str))
 }
 
 func (w converters) toNillableString_(
 	cbCtx *argumentHelper,
 	str string,
 	hasVal bool,
-) (*v8.Value, error) {
+) js.CallbackRVal {
 	if !hasVal {
-		return v8.Null(cbCtx.iso()), nil
+		return cbCtx.ReturnWithValue(v8.Null(cbCtx.iso()))
 	}
-	return v8.NewValue(cbCtx.iso(), str)
+	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), str))
 }
 
-func (w converters) toUnsignedLong(cbCtx *argumentHelper, val int) (*v8.Value, error) {
-	return v8.NewValue(cbCtx.iso(), uint32(val))
+func (w converters) toUnsignedLong(cbCtx *argumentHelper, val int) js.CallbackRVal {
+	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), uint32(val)))
 }
 
-func (w converters) toLong(cbCtx *argumentHelper, val int) (*v8.Value, error) {
-	return v8.NewValue(cbCtx.iso(), int64(val))
+func (w converters) toLong(cbCtx *argumentHelper, val int) js.CallbackRVal {
+	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), int64(val)))
 }
 
-func (w converters) toAny(cbCtx *argumentHelper, val string) (*v8.Value, error) {
-	return v8.NewValue(cbCtx.iso(), val)
+func (w converters) toAny(cbCtx *argumentHelper, val string) js.CallbackRVal {
+	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), val))
 }
 
-func (w converters) toString_(cbCtx *argumentHelper, str string) (*v8.Value, error) {
-	return v8.NewValue(cbCtx.iso(), str)
+func (w converters) toString_(cbCtx *argumentHelper, str string) js.CallbackRVal {
+	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), str))
 }
 
-func (w converters) toUnsignedShort(cbCtx *argumentHelper, val int) (*v8.Value, error) {
-	return v8.NewValue(cbCtx.iso(), uint32(val))
+func (w converters) toUnsignedShort(cbCtx *argumentHelper, val int) js.CallbackRVal {
+	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), uint32(val)))
 }
 
-func (w converters) toBoolean(cbCtx *argumentHelper, val bool) (*v8.Value, error) {
-	return v8.NewValue(cbCtx.iso(), val)
+func (w converters) toBoolean(cbCtx *argumentHelper, val bool) js.CallbackRVal {
+	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), val))
 }
 
-func (w converters) toNodeList(cbCtx *argumentHelper, val dom.NodeList) (*v8.Value, error) {
-	return cbCtx.ScriptCtx().getInstanceForNodeByName("NodeList", val)
+func (w converters) toNodeList(cbCtx *argumentHelper, val dom.NodeList) js.CallbackRVal {
+	return cbCtx.ReturnWithValueErr(cbCtx.ScriptCtx().getInstanceForNodeByName("NodeList", val))
 }
 
 func (w converters) toHTMLFormControlsCollection(
 	cbCtx *argumentHelper,
 	val dom.NodeList,
-) (*v8.Value, error) {
+) js.CallbackRVal {
 	return w.toNodeList(cbCtx, val)
 }
 
@@ -188,6 +189,7 @@ func storeObjectHandleInV8Instance(
 	return this.Value, nil
 }
 
+// TODO: Return js.CallbackRVal
 func (o handleReffedObject[T]) store(
 	value any,
 	ctx *V8ScriptContext,

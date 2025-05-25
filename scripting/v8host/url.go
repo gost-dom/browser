@@ -10,6 +10,7 @@ import (
 	"github.com/gost-dom/browser/internal/constants"
 	urlinterfaces "github.com/gost-dom/browser/internal/interfaces/url-interfaces"
 	log "github.com/gost-dom/browser/internal/log"
+	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/browser/url"
 
 	v8 "github.com/gost-dom/v8go"
@@ -30,30 +31,30 @@ func (h handleDisposable) dispose() { cgo.Handle(h).Delete() }
 func (w urlV8Wrapper) CreateInstance(
 	cbCtx *argumentHelper,
 	u string,
-) (*v8.Value, error) {
+) js.CallbackRVal {
 	value, err := url.NewUrl(u)
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	w.store(value, cbCtx.ScriptCtx(), cbCtx.This())
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w urlV8Wrapper) CreateInstanceBase(
 	cbCtx *argumentHelper,
 	u string,
 	base string,
-) (*v8.Value, error) {
+) js.CallbackRVal {
 	log.Info(w.scriptHost.logger, "CREATE URL", "url", u, "base", base)
 	value, err := url.NewUrlBase(u, base)
 	if err != nil {
-		return nil, err
+		return cbCtx.ReturnWithError(err)
 	}
 	w.store(value, cbCtx.ScriptCtx(), cbCtx.This())
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }
 
-func (w urlSearchParamsV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w urlSearchParamsV8Wrapper) Constructor(cbCtx *argumentHelper) js.CallbackRVal {
 	var err error
 	ctx := cbCtx.ScriptCtx()
 	args := cbCtx.consumeRest()
@@ -65,7 +66,7 @@ func (w urlSearchParamsV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value,
 		case arg.IsString():
 			res, err = url.ParseURLSearchParams(arg.String())
 			if err != nil {
-				return nil, err
+				return cbCtx.ReturnWithError(err)
 			}
 		case arg.IsObject():
 			if gv, err2 := v8ValueToGoValue(arg); err2 == nil {
@@ -101,26 +102,27 @@ func (w urlSearchParamsV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value,
 
 			fallthrough
 		default:
-			return nil, fmt.Errorf(
-				"URLSearchParams: unsupported argument. If the argument is _valid_: %s",
-				constants.BUG_ISSUE_URL,
-			)
+			return cbCtx.ReturnWithError(
+				fmt.Errorf(
+					"URLSearchParams: unsupported argument. If the argument is _valid_: %s",
+					constants.BUG_ISSUE_URL,
+				))
 		}
 	}
 	w.store(&res, ctx, cbCtx.This())
-	return nil, nil
+	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w urlSearchParamsV8Wrapper) toSequenceString_(
 	cbCtx *argumentHelper,
 	// ctx *V8ScriptContext,
 	values []string,
-) (*v8.Value, error) {
+) js.CallbackRVal {
 	vs := make([]*v8.Value, len(values))
 	for i, v := range values {
 		vs[i], _ = v8.NewValue(cbCtx.iso(), v)
 	}
-	return toArray(cbCtx.ScriptCtx().v8ctx, vs...)
+	return cbCtx.ReturnWithValueErr(toArray(cbCtx.ScriptCtx().v8ctx, vs...))
 }
 
 func (w urlSearchParamsV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) {

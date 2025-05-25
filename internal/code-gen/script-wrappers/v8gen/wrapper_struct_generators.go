@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	. "github.com/gost-dom/code-gen/internal"
+	wrappers "github.com/gost-dom/code-gen/script-wrappers"
 	"github.com/gost-dom/generators"
 	g "github.com/gost-dom/generators"
 )
@@ -47,5 +48,5 @@ func (g V8WrapperStructGenerators) CallbackMethodArgs() generators.FunctionArgum
 }
 
 func (g V8WrapperStructGenerators) CallbackMethodRetTypes() []generators.Generator {
-	return generators.List(v8Value, generators.Id("error"))
+	return generators.List(wrappers.CallbackRVal)
 }

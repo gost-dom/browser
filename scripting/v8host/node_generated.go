@@ -83,12 +83,12 @@ func (w nodeV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 		v8.None)
 }
 
-func (w nodeV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w nodeV8Wrapper) Constructor(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: Node.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w nodeV8Wrapper) getRootNode(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w nodeV8Wrapper) getRootNode(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: Node.getRootNode")
 	instance, err0 := js.As[dom.Node](cbCtx.Instance())
 	options, err1 := consumeArgument(cbCtx, "options", w.defaultGetRootNodeOptions, w.decodeGetRootNodeOptions)
@@ -103,7 +103,7 @@ func (w nodeV8Wrapper) getRootNode(cbCtx *argumentHelper) (*v8.Value, error) {
 	return cbCtx.ReturnWithError(errors.New("Node.getRootNode: Missing arguments"))
 }
 
-func (w nodeV8Wrapper) cloneNode(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w nodeV8Wrapper) cloneNode(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: Node.cloneNode")
 	instance, err0 := js.As[dom.Node](cbCtx.Instance())
 	subtree, err1 := consumeArgument(cbCtx, "subtree", w.defaultboolean, w.decodeBoolean)
@@ -118,7 +118,7 @@ func (w nodeV8Wrapper) cloneNode(cbCtx *argumentHelper) (*v8.Value, error) {
 	return cbCtx.ReturnWithError(errors.New("Node.cloneNode: Missing arguments"))
 }
 
-func (w nodeV8Wrapper) isSameNode(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w nodeV8Wrapper) isSameNode(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: Node.isSameNode")
 	instance, err0 := js.As[dom.Node](cbCtx.Instance())
 	otherNode, err1 := consumeArgument(cbCtx, "otherNode", zeroValue, w.decodeNode)
@@ -133,7 +133,7 @@ func (w nodeV8Wrapper) isSameNode(cbCtx *argumentHelper) (*v8.Value, error) {
 	return cbCtx.ReturnWithError(errors.New("Node.isSameNode: Missing arguments"))
 }
 
-func (w nodeV8Wrapper) contains(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w nodeV8Wrapper) contains(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: Node.contains")
 	instance, err0 := js.As[dom.Node](cbCtx.Instance())
 	other, err1 := consumeArgument(cbCtx, "other", zeroValue, w.decodeNode)
@@ -148,7 +148,7 @@ func (w nodeV8Wrapper) contains(cbCtx *argumentHelper) (*v8.Value, error) {
 	return cbCtx.ReturnWithError(errors.New("Node.contains: Missing arguments"))
 }
 
-func (w nodeV8Wrapper) insertBefore(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w nodeV8Wrapper) insertBefore(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: Node.insertBefore")
 	instance, err0 := js.As[dom.Node](cbCtx.Instance())
 	node, err1 := consumeArgument(cbCtx, "node", nil, w.decodeNode)
@@ -168,7 +168,7 @@ func (w nodeV8Wrapper) insertBefore(cbCtx *argumentHelper) (*v8.Value, error) {
 	return cbCtx.ReturnWithError(errors.New("Node.insertBefore: Missing arguments"))
 }
 
-func (w nodeV8Wrapper) appendChild(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w nodeV8Wrapper) appendChild(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: Node.appendChild")
 	instance, err0 := js.As[dom.Node](cbCtx.Instance())
 	node, err1 := consumeArgument(cbCtx, "node", nil, w.decodeNode)
@@ -187,7 +187,7 @@ func (w nodeV8Wrapper) appendChild(cbCtx *argumentHelper) (*v8.Value, error) {
 	return cbCtx.ReturnWithError(errors.New("Node.appendChild: Missing arguments"))
 }
 
-func (w nodeV8Wrapper) removeChild(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w nodeV8Wrapper) removeChild(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: Node.removeChild")
 	instance, err0 := js.As[dom.Node](cbCtx.Instance())
 	child, err1 := consumeArgument(cbCtx, "child", nil, w.decodeNode)
@@ -206,7 +206,7 @@ func (w nodeV8Wrapper) removeChild(cbCtx *argumentHelper) (*v8.Value, error) {
 	return cbCtx.ReturnWithError(errors.New("Node.removeChild: Missing arguments"))
 }
 
-func (w nodeV8Wrapper) nodeName(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w nodeV8Wrapper) nodeName(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: Node.nodeName")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
@@ -216,7 +216,7 @@ func (w nodeV8Wrapper) nodeName(cbCtx *argumentHelper) (*v8.Value, error) {
 	return w.toString_(cbCtx, result)
 }
 
-func (w nodeV8Wrapper) isConnected(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w nodeV8Wrapper) isConnected(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: Node.isConnected")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
@@ -226,7 +226,7 @@ func (w nodeV8Wrapper) isConnected(cbCtx *argumentHelper) (*v8.Value, error) {
 	return w.toBoolean(cbCtx, result)
 }
 
-func (w nodeV8Wrapper) ownerDocument(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w nodeV8Wrapper) ownerDocument(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: Node.ownerDocument")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
@@ -236,7 +236,7 @@ func (w nodeV8Wrapper) ownerDocument(cbCtx *argumentHelper) (*v8.Value, error) {
 	return cbCtx.getInstanceForNode(result)
 }
 
-func (w nodeV8Wrapper) parentElement(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w nodeV8Wrapper) parentElement(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: Node.parentElement")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
@@ -246,7 +246,7 @@ func (w nodeV8Wrapper) parentElement(cbCtx *argumentHelper) (*v8.Value, error) {
 	return cbCtx.getInstanceForNode(result)
 }
 
-func (w nodeV8Wrapper) childNodes(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w nodeV8Wrapper) childNodes(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: Node.childNodes")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
@@ -256,7 +256,7 @@ func (w nodeV8Wrapper) childNodes(cbCtx *argumentHelper) (*v8.Value, error) {
 	return w.toNodeList(cbCtx, result)
 }
 
-func (w nodeV8Wrapper) firstChild(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w nodeV8Wrapper) firstChild(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: Node.firstChild")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
@@ -266,7 +266,7 @@ func (w nodeV8Wrapper) firstChild(cbCtx *argumentHelper) (*v8.Value, error) {
 	return cbCtx.getInstanceForNode(result)
 }
 
-func (w nodeV8Wrapper) previousSibling(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w nodeV8Wrapper) previousSibling(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: Node.previousSibling")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
@@ -276,7 +276,7 @@ func (w nodeV8Wrapper) previousSibling(cbCtx *argumentHelper) (*v8.Value, error)
 	return cbCtx.getInstanceForNode(result)
 }
 
-func (w nodeV8Wrapper) nextSibling(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w nodeV8Wrapper) nextSibling(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: Node.nextSibling")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {

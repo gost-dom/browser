@@ -45,12 +45,12 @@ func (w htmlAnchorElementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTem
 	w.htmlHyperlinkElementUtils.installPrototype(prototypeTmpl)
 }
 
-func (w htmlAnchorElementV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w htmlAnchorElementV8Wrapper) Constructor(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: HTMLAnchorElement.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w htmlAnchorElementV8Wrapper) target(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w htmlAnchorElementV8Wrapper) target(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: HTMLAnchorElement.target")
 	instance, err := js.As[html.HTMLAnchorElement](cbCtx.Instance())
 	if err != nil {
@@ -60,7 +60,7 @@ func (w htmlAnchorElementV8Wrapper) target(cbCtx *argumentHelper) (*v8.Value, er
 	return w.toString_(cbCtx, result)
 }
 
-func (w htmlAnchorElementV8Wrapper) setTarget(cbCtx *argumentHelper) (*v8.Value, error) {
+func (w htmlAnchorElementV8Wrapper) setTarget(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: HTMLAnchorElement.setTarget")
 	instance, err0 := js.As[html.HTMLAnchorElement](cbCtx.Instance())
 	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
