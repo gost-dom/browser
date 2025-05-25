@@ -117,27 +117,27 @@ func (w htmlFormElementV8Wrapper) requestSubmit(cbCtx *argumentHelper) (*v8.Valu
 
 func (w htmlFormElementV8Wrapper) reset(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.reset")
-	return nil, errors.New("HTMLFormElement.reset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("HTMLFormElement.reset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w htmlFormElementV8Wrapper) checkValidity(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.checkValidity")
-	return nil, errors.New("HTMLFormElement.checkValidity: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("HTMLFormElement.checkValidity: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w htmlFormElementV8Wrapper) reportValidity(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.reportValidity")
-	return nil, errors.New("HTMLFormElement.reportValidity: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("HTMLFormElement.reportValidity: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w htmlFormElementV8Wrapper) acceptCharset(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.acceptCharset")
-	return nil, errors.New("HTMLFormElement.acceptCharset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("HTMLFormElement.acceptCharset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w htmlFormElementV8Wrapper) setAcceptCharset(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.setAcceptCharset")
-	return nil, errors.New("HTMLFormElement.setAcceptCharset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("HTMLFormElement.setAcceptCharset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w htmlFormElementV8Wrapper) action(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -164,32 +164,32 @@ func (w htmlFormElementV8Wrapper) setAction(cbCtx *argumentHelper) (*v8.Value, e
 
 func (w htmlFormElementV8Wrapper) autocomplete(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.autocomplete")
-	return nil, errors.New("HTMLFormElement.autocomplete: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("HTMLFormElement.autocomplete: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w htmlFormElementV8Wrapper) setAutocomplete(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.setAutocomplete")
-	return nil, errors.New("HTMLFormElement.setAutocomplete: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("HTMLFormElement.setAutocomplete: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w htmlFormElementV8Wrapper) enctype(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.enctype")
-	return nil, errors.New("HTMLFormElement.enctype: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("HTMLFormElement.enctype: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w htmlFormElementV8Wrapper) setEnctype(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.setEnctype")
-	return nil, errors.New("HTMLFormElement.setEnctype: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("HTMLFormElement.setEnctype: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w htmlFormElementV8Wrapper) encoding(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.encoding")
-	return nil, errors.New("HTMLFormElement.encoding: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("HTMLFormElement.encoding: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w htmlFormElementV8Wrapper) setEncoding(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.setEncoding")
-	return nil, errors.New("HTMLFormElement.setEncoding: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("HTMLFormElement.setEncoding: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w htmlFormElementV8Wrapper) method(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -216,27 +216,27 @@ func (w htmlFormElementV8Wrapper) setMethod(cbCtx *argumentHelper) (*v8.Value, e
 
 func (w htmlFormElementV8Wrapper) target(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.target")
-	return nil, errors.New("HTMLFormElement.target: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("HTMLFormElement.target: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w htmlFormElementV8Wrapper) setTarget(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.setTarget")
-	return nil, errors.New("HTMLFormElement.setTarget: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("HTMLFormElement.setTarget: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w htmlFormElementV8Wrapper) rel(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.rel")
-	return nil, errors.New("HTMLFormElement.rel: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("HTMLFormElement.rel: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w htmlFormElementV8Wrapper) setRel(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.setRel")
-	return nil, errors.New("HTMLFormElement.setRel: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("HTMLFormElement.setRel: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w htmlFormElementV8Wrapper) relList(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.relList")
-	return nil, errors.New("HTMLFormElement.relList: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("HTMLFormElement.relList: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w htmlFormElementV8Wrapper) elements(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -251,5 +251,5 @@ func (w htmlFormElementV8Wrapper) elements(cbCtx *argumentHelper) (*v8.Value, er
 
 func (w htmlFormElementV8Wrapper) length(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.length")
-	return nil, errors.New("HTMLFormElement.length: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("HTMLFormElement.length: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }

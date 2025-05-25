@@ -101,17 +101,17 @@ func (w elementV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value, error) 
 
 func (w elementV8Wrapper) hasAttributes(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.hasAttributes")
-	return nil, errors.New("Element.hasAttributes: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.hasAttributes: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w elementV8Wrapper) getAttributeNames(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.getAttributeNames")
-	return nil, errors.New("Element.getAttributeNames: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.getAttributeNames: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w elementV8Wrapper) getAttributeNS(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.getAttributeNS")
-	return nil, errors.New("Element.getAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.getAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w elementV8Wrapper) setAttribute(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -132,7 +132,7 @@ func (w elementV8Wrapper) setAttribute(cbCtx *argumentHelper) (*v8.Value, error)
 
 func (w elementV8Wrapper) setAttributeNS(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.setAttributeNS")
-	return nil, errors.New("Element.setAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.setAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w elementV8Wrapper) removeAttribute(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -152,12 +152,12 @@ func (w elementV8Wrapper) removeAttribute(cbCtx *argumentHelper) (*v8.Value, err
 
 func (w elementV8Wrapper) removeAttributeNS(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.removeAttributeNS")
-	return nil, errors.New("Element.removeAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.removeAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w elementV8Wrapper) toggleAttribute(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.toggleAttribute")
-	return nil, errors.New("Element.toggleAttribute: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.toggleAttribute: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w elementV8Wrapper) hasAttribute(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -177,37 +177,37 @@ func (w elementV8Wrapper) hasAttribute(cbCtx *argumentHelper) (*v8.Value, error)
 
 func (w elementV8Wrapper) hasAttributeNS(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.hasAttributeNS")
-	return nil, errors.New("Element.hasAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.hasAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w elementV8Wrapper) getAttributeNode(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.getAttributeNode")
-	return nil, errors.New("Element.getAttributeNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.getAttributeNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w elementV8Wrapper) getAttributeNodeNS(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.getAttributeNodeNS")
-	return nil, errors.New("Element.getAttributeNodeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.getAttributeNodeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w elementV8Wrapper) setAttributeNode(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.setAttributeNode")
-	return nil, errors.New("Element.setAttributeNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.setAttributeNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w elementV8Wrapper) setAttributeNodeNS(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.setAttributeNodeNS")
-	return nil, errors.New("Element.setAttributeNodeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.setAttributeNodeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w elementV8Wrapper) removeAttributeNode(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.removeAttributeNode")
-	return nil, errors.New("Element.removeAttributeNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.removeAttributeNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w elementV8Wrapper) attachShadow(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.attachShadow")
-	return nil, errors.New("Element.attachShadow: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.attachShadow: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w elementV8Wrapper) matches(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -231,42 +231,42 @@ func (w elementV8Wrapper) matches(cbCtx *argumentHelper) (*v8.Value, error) {
 
 func (w elementV8Wrapper) getElementsByTagName(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.getElementsByTagName")
-	return nil, errors.New("Element.getElementsByTagName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.getElementsByTagName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w elementV8Wrapper) getElementsByTagNameNS(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.getElementsByTagNameNS")
-	return nil, errors.New("Element.getElementsByTagNameNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.getElementsByTagNameNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w elementV8Wrapper) getElementsByClassName(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.getElementsByClassName")
-	return nil, errors.New("Element.getElementsByClassName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.getElementsByClassName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w elementV8Wrapper) insertAdjacentElement(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.insertAdjacentElement")
-	return nil, errors.New("Element.insertAdjacentElement: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.insertAdjacentElement: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w elementV8Wrapper) insertAdjacentText(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.insertAdjacentText")
-	return nil, errors.New("Element.insertAdjacentText: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.insertAdjacentText: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w elementV8Wrapper) namespaceURI(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.namespaceURI")
-	return nil, errors.New("Element.namespaceURI: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.namespaceURI: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w elementV8Wrapper) prefix(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.prefix")
-	return nil, errors.New("Element.prefix: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.prefix: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w elementV8Wrapper) localName(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.localName")
-	return nil, errors.New("Element.localName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.localName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w elementV8Wrapper) tagName(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -303,22 +303,22 @@ func (w elementV8Wrapper) setID(cbCtx *argumentHelper) (*v8.Value, error) {
 
 func (w elementV8Wrapper) className(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.className")
-	return nil, errors.New("Element.className: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.className: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w elementV8Wrapper) setClassName(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.setClassName")
-	return nil, errors.New("Element.setClassName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.setClassName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w elementV8Wrapper) slot(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.slot")
-	return nil, errors.New("Element.slot: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.slot: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w elementV8Wrapper) setSlot(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.setSlot")
-	return nil, errors.New("Element.setSlot: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.setSlot: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w elementV8Wrapper) attributes(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -333,5 +333,5 @@ func (w elementV8Wrapper) attributes(cbCtx *argumentHelper) (*v8.Value, error) {
 
 func (w elementV8Wrapper) shadowRoot(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.shadowRoot")
-	return nil, errors.New("Element.shadowRoot: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Element.shadowRoot: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }

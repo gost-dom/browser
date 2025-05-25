@@ -3,6 +3,7 @@
 package gojahost
 
 import (
+	"errors"
 	g "github.com/dop251/goja"
 	uievents "github.com/gost-dom/browser/internal/uievents"
 )
@@ -29,42 +30,42 @@ func (w mouseEventWrapper) Constructor(cbCtx *callbackContext) g.Value {
 
 func (w mouseEventWrapper) getModifierState(cbCtx *callbackContext) g.Value {
 	cbCtx.logger().Debug("V8 Function call: MouseEvent.getModifierState")
-	panic("MouseEvent.getModifierState: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("MouseEvent.getModifierState: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w mouseEventWrapper) screenX(cbCtx *callbackContext) g.Value {
 	cbCtx.logger().Debug("V8 Function call: MouseEvent.screenX")
-	panic("MouseEvent.screenX: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("MouseEvent.screenX: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w mouseEventWrapper) screenY(cbCtx *callbackContext) g.Value {
 	cbCtx.logger().Debug("V8 Function call: MouseEvent.screenY")
-	panic("MouseEvent.screenY: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("MouseEvent.screenY: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w mouseEventWrapper) clientX(cbCtx *callbackContext) g.Value {
 	cbCtx.logger().Debug("V8 Function call: MouseEvent.clientX")
-	panic("MouseEvent.clientX: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("MouseEvent.clientX: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w mouseEventWrapper) clientY(cbCtx *callbackContext) g.Value {
 	cbCtx.logger().Debug("V8 Function call: MouseEvent.clientY")
-	panic("MouseEvent.clientY: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("MouseEvent.clientY: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w mouseEventWrapper) layerX(cbCtx *callbackContext) g.Value {
 	cbCtx.logger().Debug("V8 Function call: MouseEvent.layerX")
-	panic("MouseEvent.layerX: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("MouseEvent.layerX: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w mouseEventWrapper) layerY(cbCtx *callbackContext) g.Value {
 	cbCtx.logger().Debug("V8 Function call: MouseEvent.layerY")
-	panic("MouseEvent.layerY: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("MouseEvent.layerY: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w mouseEventWrapper) relatedTarget(cbCtx *callbackContext) g.Value {
 	cbCtx.logger().Debug("V8 Function call: MouseEvent.relatedTarget")
-	panic("MouseEvent.relatedTarget: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("MouseEvent.relatedTarget: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func init() {
@@ -91,10 +92,10 @@ func (w uIEventWrapper) Constructor(cbCtx *callbackContext) g.Value {
 
 func (w uIEventWrapper) view(cbCtx *callbackContext) g.Value {
 	cbCtx.logger().Debug("V8 Function call: UIEvent.view")
-	panic("UIEvent.view: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("UIEvent.view: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w uIEventWrapper) detail(cbCtx *callbackContext) g.Value {
 	cbCtx.logger().Debug("V8 Function call: UIEvent.detail")
-	panic("UIEvent.detail: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("UIEvent.detail: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }

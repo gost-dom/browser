@@ -175,7 +175,7 @@ func (w xmlHttpRequestV8Wrapper) overrideMimeType(cbCtx *argumentHelper) (*v8.Va
 
 func (w xmlHttpRequestV8Wrapper) readyState(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.readyState")
-	return nil, errors.New("XMLHttpRequest.readyState: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("XMLHttpRequest.readyState: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w xmlHttpRequestV8Wrapper) timeout(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -254,12 +254,12 @@ func (w xmlHttpRequestV8Wrapper) statusText(cbCtx *argumentHelper) (*v8.Value, e
 
 func (w xmlHttpRequestV8Wrapper) responseType(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.responseType")
-	return nil, errors.New("XMLHttpRequest.responseType: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("XMLHttpRequest.responseType: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w xmlHttpRequestV8Wrapper) setResponseType(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.setResponseType")
-	return nil, errors.New("XMLHttpRequest.setResponseType: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("XMLHttpRequest.setResponseType: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w xmlHttpRequestV8Wrapper) response(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -284,5 +284,5 @@ func (w xmlHttpRequestV8Wrapper) responseText(cbCtx *argumentHelper) (*v8.Value,
 
 func (w xmlHttpRequestV8Wrapper) responseXML(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.responseXML")
-	return nil, errors.New("XMLHttpRequest.responseXML: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("XMLHttpRequest.responseXML: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }

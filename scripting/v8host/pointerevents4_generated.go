@@ -64,20 +64,20 @@ func (w pointerEventV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value, er
 
 func (w pointerEventV8Wrapper) width(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: PointerEvent.width")
-	return nil, errors.New("PointerEvent.width: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("PointerEvent.width: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w pointerEventV8Wrapper) height(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: PointerEvent.height")
-	return nil, errors.New("PointerEvent.height: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("PointerEvent.height: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w pointerEventV8Wrapper) pressure(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: PointerEvent.pressure")
-	return nil, errors.New("PointerEvent.pressure: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("PointerEvent.pressure: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w pointerEventV8Wrapper) tangentialPressure(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: PointerEvent.tangentialPressure")
-	return nil, errors.New("PointerEvent.tangentialPressure: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("PointerEvent.tangentialPressure: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }

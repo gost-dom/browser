@@ -136,7 +136,7 @@ func (w domTokenListV8Wrapper) replace(cbCtx *argumentHelper) (*v8.Value, error)
 
 func (w domTokenListV8Wrapper) supports(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: DOMTokenList.supports")
-	return nil, errors.New("DOMTokenList.supports: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("DOMTokenList.supports: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w domTokenListV8Wrapper) length(cbCtx *argumentHelper) (*v8.Value, error) {

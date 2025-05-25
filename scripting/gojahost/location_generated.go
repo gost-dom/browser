@@ -3,6 +3,7 @@
 package gojahost
 
 import (
+	"errors"
 	g "github.com/dop251/goja"
 	html "github.com/gost-dom/browser/html"
 	js "github.com/gost-dom/browser/scripting/internal/js"
@@ -43,17 +44,17 @@ func (w locationWrapper) Constructor(cbCtx *callbackContext) g.Value {
 
 func (w locationWrapper) assign(cbCtx *callbackContext) g.Value {
 	cbCtx.logger().Debug("V8 Function call: Location.assign")
-	panic("Location.assign: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Location.assign: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w locationWrapper) replace(cbCtx *callbackContext) g.Value {
 	cbCtx.logger().Debug("V8 Function call: Location.replace")
-	panic("Location.replace: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Location.replace: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w locationWrapper) reload(cbCtx *callbackContext) g.Value {
 	cbCtx.logger().Debug("V8 Function call: Location.reload")
-	panic("Location.reload: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Location.reload: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w locationWrapper) href(cbCtx *callbackContext) g.Value {
@@ -68,7 +69,7 @@ func (w locationWrapper) href(cbCtx *callbackContext) g.Value {
 
 func (w locationWrapper) setHref(cbCtx *callbackContext) g.Value {
 	cbCtx.logger().Debug("V8 Function call: Location.setHref")
-	panic("Location.setHref: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Location.setHref: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w locationWrapper) origin(cbCtx *callbackContext) g.Value {
@@ -93,7 +94,7 @@ func (w locationWrapper) protocol(cbCtx *callbackContext) g.Value {
 
 func (w locationWrapper) setProtocol(cbCtx *callbackContext) g.Value {
 	cbCtx.logger().Debug("V8 Function call: Location.setProtocol")
-	panic("Location.setProtocol: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Location.setProtocol: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w locationWrapper) host(cbCtx *callbackContext) g.Value {
@@ -108,7 +109,7 @@ func (w locationWrapper) host(cbCtx *callbackContext) g.Value {
 
 func (w locationWrapper) setHost(cbCtx *callbackContext) g.Value {
 	cbCtx.logger().Debug("V8 Function call: Location.setHost")
-	panic("Location.setHost: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Location.setHost: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w locationWrapper) hostname(cbCtx *callbackContext) g.Value {
@@ -123,7 +124,7 @@ func (w locationWrapper) hostname(cbCtx *callbackContext) g.Value {
 
 func (w locationWrapper) setHostname(cbCtx *callbackContext) g.Value {
 	cbCtx.logger().Debug("V8 Function call: Location.setHostname")
-	panic("Location.setHostname: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Location.setHostname: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w locationWrapper) port(cbCtx *callbackContext) g.Value {
@@ -138,7 +139,7 @@ func (w locationWrapper) port(cbCtx *callbackContext) g.Value {
 
 func (w locationWrapper) setPort(cbCtx *callbackContext) g.Value {
 	cbCtx.logger().Debug("V8 Function call: Location.setPort")
-	panic("Location.setPort: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Location.setPort: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w locationWrapper) pathname(cbCtx *callbackContext) g.Value {
@@ -153,7 +154,7 @@ func (w locationWrapper) pathname(cbCtx *callbackContext) g.Value {
 
 func (w locationWrapper) setPathname(cbCtx *callbackContext) g.Value {
 	cbCtx.logger().Debug("V8 Function call: Location.setPathname")
-	panic("Location.setPathname: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Location.setPathname: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w locationWrapper) search(cbCtx *callbackContext) g.Value {
@@ -168,7 +169,7 @@ func (w locationWrapper) search(cbCtx *callbackContext) g.Value {
 
 func (w locationWrapper) setSearch(cbCtx *callbackContext) g.Value {
 	cbCtx.logger().Debug("V8 Function call: Location.setSearch")
-	panic("Location.setSearch: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Location.setSearch: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w locationWrapper) hash(cbCtx *callbackContext) g.Value {
@@ -183,10 +184,10 @@ func (w locationWrapper) hash(cbCtx *callbackContext) g.Value {
 
 func (w locationWrapper) setHash(cbCtx *callbackContext) g.Value {
 	cbCtx.logger().Debug("V8 Function call: Location.setHash")
-	panic("Location.setHash: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Location.setHash: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w locationWrapper) ancestorOrigins(cbCtx *callbackContext) g.Value {
 	cbCtx.logger().Debug("V8 Function call: Location.ancestorOrigins")
-	panic("Location.ancestorOrigins: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Location.ancestorOrigins: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }

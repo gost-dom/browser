@@ -125,7 +125,7 @@ func (w urlV8Wrapper) href(cbCtx *argumentHelper) (*v8.Value, error) {
 
 func (w urlV8Wrapper) setHref(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: URL.setHref")
-	return nil, errors.New("URL.setHref: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("URL.setHref: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w urlV8Wrapper) origin(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -150,27 +150,27 @@ func (w urlV8Wrapper) protocol(cbCtx *argumentHelper) (*v8.Value, error) {
 
 func (w urlV8Wrapper) setProtocol(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: URL.setProtocol")
-	return nil, errors.New("URL.setProtocol: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("URL.setProtocol: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w urlV8Wrapper) username(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: URL.username")
-	return nil, errors.New("URL.username: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("URL.username: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w urlV8Wrapper) setUsername(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: URL.setUsername")
-	return nil, errors.New("URL.setUsername: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("URL.setUsername: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w urlV8Wrapper) password(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: URL.password")
-	return nil, errors.New("URL.password: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("URL.password: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w urlV8Wrapper) setPassword(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: URL.setPassword")
-	return nil, errors.New("URL.setPassword: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("URL.setPassword: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w urlV8Wrapper) host(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -185,7 +185,7 @@ func (w urlV8Wrapper) host(cbCtx *argumentHelper) (*v8.Value, error) {
 
 func (w urlV8Wrapper) setHost(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: URL.setHost")
-	return nil, errors.New("URL.setHost: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("URL.setHost: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w urlV8Wrapper) hostname(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -200,7 +200,7 @@ func (w urlV8Wrapper) hostname(cbCtx *argumentHelper) (*v8.Value, error) {
 
 func (w urlV8Wrapper) setHostname(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: URL.setHostname")
-	return nil, errors.New("URL.setHostname: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("URL.setHostname: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w urlV8Wrapper) port(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -215,7 +215,7 @@ func (w urlV8Wrapper) port(cbCtx *argumentHelper) (*v8.Value, error) {
 
 func (w urlV8Wrapper) setPort(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: URL.setPort")
-	return nil, errors.New("URL.setPort: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("URL.setPort: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w urlV8Wrapper) pathname(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -230,7 +230,7 @@ func (w urlV8Wrapper) pathname(cbCtx *argumentHelper) (*v8.Value, error) {
 
 func (w urlV8Wrapper) setPathname(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: URL.setPathname")
-	return nil, errors.New("URL.setPathname: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("URL.setPathname: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w urlV8Wrapper) search(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -245,12 +245,12 @@ func (w urlV8Wrapper) search(cbCtx *argumentHelper) (*v8.Value, error) {
 
 func (w urlV8Wrapper) setSearch(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: URL.setSearch")
-	return nil, errors.New("URL.setSearch: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("URL.setSearch: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w urlV8Wrapper) searchParams(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: URL.searchParams")
-	return nil, errors.New("URL.searchParams: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("URL.searchParams: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w urlV8Wrapper) hash(cbCtx *argumentHelper) (*v8.Value, error) {
@@ -265,7 +265,7 @@ func (w urlV8Wrapper) hash(cbCtx *argumentHelper) (*v8.Value, error) {
 
 func (w urlV8Wrapper) setHash(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: URL.setHash")
-	return nil, errors.New("URL.setHash: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("URL.setHash: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func init() {

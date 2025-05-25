@@ -67,7 +67,7 @@ func (w htmlOrSVGElementV8Wrapper) blur(cbCtx *argumentHelper) (*v8.Value, error
 
 func (w htmlOrSVGElementV8Wrapper) dataset(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLOrSVGElement.dataset")
-	return nil, errors.New("HTMLOrSVGElement.dataset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("HTMLOrSVGElement.dataset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w htmlOrSVGElementV8Wrapper) nonce(cbCtx *argumentHelper) (*v8.Value, error) {

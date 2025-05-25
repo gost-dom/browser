@@ -3,6 +3,7 @@
 package gojahost
 
 import (
+	"errors"
 	g "github.com/dop251/goja"
 	dom "github.com/gost-dom/browser/dom"
 	js "github.com/gost-dom/browser/scripting/internal/js"
@@ -174,7 +175,7 @@ func (w nodeWrapper) parentElement(cbCtx *callbackContext) g.Value {
 
 func (w nodeWrapper) childNodes(cbCtx *callbackContext) g.Value {
 	cbCtx.logger().Debug("V8 Function call: Node.childNodes")
-	panic("Node.childNodes: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return cbCtx.ReturnWithError(errors.New("Node.childNodes: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w nodeWrapper) firstChild(cbCtx *callbackContext) g.Value {

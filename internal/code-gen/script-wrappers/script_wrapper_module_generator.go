@@ -242,12 +242,12 @@ func (c MethodCallback) Generate() *jen.Statement {
 			renderIf(!notImplemented, g.StatementList(
 				c.body.TransformCtx(cbCtx),
 			)),
-			renderIf(notImplemented, c.ReturnNotImplementedError()),
+			renderIf(notImplemented, c.ReturnNotImplementedError(cbCtx)),
 		),
 	}.Generate()
 }
 
-func (c MethodCallback) ReturnNotImplementedError() g.Generator {
+func (c MethodCallback) ReturnNotImplementedError(cbCtx CallbackContext) g.Generator {
 	var name string
 	if c.op != nil {
 		name = c.op.Name
@@ -256,7 +256,10 @@ func (c MethodCallback) ReturnNotImplementedError() g.Generator {
 		"%s.%s: Not implemented. Create an issue: %s",
 		c.data.Name(), name, packagenames.ISSUE_URL,
 	)
-	return c.platform.ReturnErrMsg(g.Lit(errMsg))
+	// return c.platform.ReturnErrMsg(g.Lit(errMsg))
+	return g.Return(
+		cbCtx.ReturnWithError(
+			g.NewValuePackage("New", "errors").Call(g.Lit(errMsg))))
 }
 
 func (c MethodCallback) LogCall(cbCtx g.Generator) g.Generator {
