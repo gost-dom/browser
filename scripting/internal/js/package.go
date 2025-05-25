@@ -1,4 +1,4 @@
-// Package abstraction provides an abstraction on top of V8.
+// Package js provides an abstraction on top of V8.
 //
 // The purpose is to allow a modular approach to implementing client-side APIs,
 // where the modules don't need to address a specific script engine; and client
@@ -14,4 +14,4 @@
 // JavaScriptCore (Safari), you could verify your code using the script engines
 // of the different browsers. (Do note, that it is outside the scope of this
 // project to simulate the differences of different browsers).
-package abstraction
+package js

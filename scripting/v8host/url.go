@@ -10,7 +10,7 @@ import (
 	"github.com/gost-dom/browser/internal/constants"
 	urlinterfaces "github.com/gost-dom/browser/internal/interfaces/url-interfaces"
 	log "github.com/gost-dom/browser/internal/log"
-	"github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
+	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/browser/url"
 	"github.com/gost-dom/v8go"
 
@@ -114,7 +114,7 @@ func (w urlSearchParamsV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value,
 }
 
 func (w urlSearchParamsV8Wrapper) get(ctx *argumentHelper) (*v8.Value, error) {
-	instance, err0 := abstraction.As[urlinterfaces.URLSearchParams](ctx.Instance())
+	instance, err0 := js.As[urlinterfaces.URLSearchParams](ctx.Instance())
 	name, err1 := ctx.consumeString()
 	if err := errors.Join(err0, err1); err != nil {
 		return ctx.ReturnWithError(err)

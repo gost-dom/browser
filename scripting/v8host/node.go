@@ -2,12 +2,12 @@ package v8host
 
 import (
 	"github.com/gost-dom/browser/dom"
-	"github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
+	"github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
 )
 
 func (n nodeV8Wrapper) textContent(cbCtx *argumentHelper) (*v8.Value, error) {
-	i, err := abstraction.As[dom.Node](cbCtx.Instance())
+	i, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -17,7 +17,7 @@ func (n nodeV8Wrapper) textContent(cbCtx *argumentHelper) (*v8.Value, error) {
 }
 
 func (n nodeV8Wrapper) setTextContent(cbCtx *argumentHelper) (*v8.Value, error) {
-	i, err := abstraction.As[dom.Node](cbCtx.Instance())
+	i, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +27,7 @@ func (n nodeV8Wrapper) setTextContent(cbCtx *argumentHelper) (*v8.Value, error) 
 }
 
 func (n nodeV8Wrapper) nodeType(cbCtx *argumentHelper) (*v8.Value, error) {
-	instance, err := abstraction.As[dom.Node](cbCtx.Instance())
+	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}

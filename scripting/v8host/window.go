@@ -4,7 +4,7 @@ import (
 	"runtime/cgo"
 
 	"github.com/gost-dom/browser/html"
-	"github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
+	"github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -26,7 +26,7 @@ func (w *windowV8Wrapper) window(cbCtx *argumentHelper) (*v8.Value, error) {
 }
 
 func (w *windowV8Wrapper) history(cbCtx *argumentHelper) (*v8.Value, error) {
-	win, err := abstraction.As[html.Window](cbCtx.Instance())
+	win, err := js.As[html.Window](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}

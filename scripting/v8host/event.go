@@ -3,7 +3,7 @@ package v8host
 import (
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/internal/entity"
-	"github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
+	"github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -42,7 +42,7 @@ func (w eventV8Wrapper) toEventTarget(
 }
 
 func (w eventV8Wrapper) eventPhase(cbCtx *argumentHelper) (*v8.Value, error) {
-	instance, err := abstraction.As[*event.Event](cbCtx.Instance())
+	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (w eventV8Wrapper) eventPhase(cbCtx *argumentHelper) (*v8.Value, error) {
 
 func (w eventV8Wrapper) type_(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Event.type")
-	instance, err := abstraction.As[*event.Event](cbCtx.Instance())
+	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +60,7 @@ func (w eventV8Wrapper) type_(cbCtx *argumentHelper) (*v8.Value, error) {
 
 func (w eventV8Wrapper) cancelable(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Event.cancelable")
-	instance, err := abstraction.As[*event.Event](cbCtx.Instance())
+	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +69,7 @@ func (w eventV8Wrapper) cancelable(cbCtx *argumentHelper) (*v8.Value, error) {
 
 func (w eventV8Wrapper) bubbles(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Event.bubbles")
-	instance, err := abstraction.As[*event.Event](cbCtx.Instance())
+	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}

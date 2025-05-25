@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/gost-dom/browser/dom"
-	"github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
+	"github.com/gost-dom/browser/scripting/internal/js"
 
 	v8 "github.com/gost-dom/v8go"
 )
@@ -23,7 +23,7 @@ func (l domTokenListV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplat
 func (l domTokenListV8Wrapper) toggle(args *argumentHelper) (*v8.Value, error) {
 	token, err0 := consumeArgument(args, "toggle", nil, l.decodeString)
 	force, err1 := consumeArgument(args, "force", nil, l.decodeBoolean)
-	instance, errInstance := abstraction.As[dom.DOMTokenList](args.Instance())
+	instance, errInstance := js.As[dom.DOMTokenList](args.Instance())
 	if args.noOfReadArguments >= 2 {
 		if err := errors.Join(err0, err1, errInstance); err != nil {
 			return nil, err

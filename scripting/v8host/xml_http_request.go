@@ -8,7 +8,7 @@ import (
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/internal/html"
-	"github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
+	"github.com/gost-dom/browser/scripting/internal/js"
 
 	v8 "github.com/gost-dom/v8go"
 )
@@ -81,7 +81,7 @@ func (xhr xmlHttpRequestV8Wrapper) open(cbCtx *argumentHelper) (result *v8.Value
 	method, err0 := consumeArgument(cbCtx, "method", nil, xhr.decodeString)
 	url, err1 := consumeArgument(cbCtx, "url", nil, xhr.decodeString)
 	async, err2 := consumeArgument(cbCtx, "async", nil, xhr.decodeBoolean)
-	instance, errInstance := abstraction.As[XmlHttpRequest](cbCtx.Instance())
+	instance, errInstance := js.As[XmlHttpRequest](cbCtx.Instance())
 	if cbCtx.noOfReadArguments > 2 {
 		if err = errors.Join(err0, err1, err2, errInstance); err != nil {
 			return

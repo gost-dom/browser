@@ -1,4 +1,4 @@
-package abstraction
+package js
 
 import "errors"
 
@@ -62,7 +62,7 @@ type Value interface {
 	AsString() string
 }
 
-type CallbackRVal interface{}
+type CallbackRVal any
 
 type FunctionCallback func(CallbackContext) CallbackRVal
 

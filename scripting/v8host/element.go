@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/gost-dom/browser/dom"
-	"github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
+	"github.com/gost-dom/browser/scripting/internal/js"
 
 	v8 "github.com/gost-dom/v8go"
 )
@@ -78,7 +78,7 @@ func (w *elementV8Wrapper) setTextContent(info *v8.FunctionCallbackInfo) (*v8.Va
 
 func (e elementV8Wrapper) classList(cbCtx *argumentHelper) (*v8.Value, error) {
 	tokenList := e.scriptHost.globals.namedGlobals["DOMTokenList"]
-	instance, err := abstraction.As[dom.Element](cbCtx.Instance())
+	instance, err := js.As[dom.Element](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +100,7 @@ func (e *elementV8Wrapper) toNamedNodeMap(
 }
 
 func (w elementV8Wrapper) getAttribute(helper *argumentHelper) (*v8.Value, error) {
-	element, e0 := abstraction.As[dom.Element](helper.Instance())
+	element, e0 := js.As[dom.Element](helper.Instance())
 	name, e1 := helper.consumeString()
 	err := errors.Join(e0, e1)
 	if err != nil {

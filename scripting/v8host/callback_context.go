@@ -5,14 +5,14 @@ import (
 	"runtime/debug"
 
 	"github.com/gost-dom/browser/internal/constants"
-	"github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
+	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
 )
 
 func runV8FunctionCallback(
 	host *V8ScriptHost,
 	info *v8go.FunctionCallbackInfo,
-	cb abstraction.FunctionCallback,
+	cb js.FunctionCallback,
 ) (*v8go.Value, error) {
 	ctx := newCallbackContext(host, info)
 	rtn := cb(ctx).(v8CallbackRVal)
@@ -30,7 +30,7 @@ type v8CallbackContext struct {
 func newCallbackContext(
 	host *V8ScriptHost,
 	info *v8go.FunctionCallbackInfo,
-) abstraction.CallbackContext {
+) js.CallbackContext {
 	ctx := host.mustGetContext(info.Context())
 	return &v8CallbackContext{
 		host: host,
@@ -42,44 +42,44 @@ func newCallbackContext(
 
 func (c *v8CallbackContext) iso() *v8go.Isolate { return c.host.iso }
 
-func (c *v8CallbackContext) ConsumeRequiredArg(name string) (abstraction.Value, error) {
+func (c *v8CallbackContext) ConsumeRequiredArg(name string) (js.Value, error) {
 	if c.argsConsumed >= len(c.args) {
 		return nil, fmt.Errorf("%w: %w",
-			abstraction.ErrMissingArgument, v8go.NewTypeError(c.iso(), "missing argument: "+name))
+			js.ErrMissingArgument, v8go.NewTypeError(c.iso(), "missing argument: "+name))
 	}
 	arg := c.args[c.argsConsumed]
 	c.argsConsumed++
 	return v8Value{arg}, nil
 }
 
-func (c *v8CallbackContext) ConsumeOptionalArg() (abstraction.Value, bool) {
+func (c *v8CallbackContext) ConsumeOptionalArg() (js.Value, bool) {
 	// TODO: Implement
 	panic("NOT IMPLEMENTED")
 }
 
-func (c *v8CallbackContext) ConsumeRestArgs() []abstraction.Value {
+func (c *v8CallbackContext) ConsumeRestArgs() []js.Value {
 	// TODO: Implement
 	panic("NOT IMPLEMENTED")
 }
 
 func (c *v8CallbackContext) InternalInstance() (any, error) {
 	if c.info.This().InternalFieldCount() == 0 {
-		return nil, abstraction.ErrNoInternalValue
+		return nil, js.ErrNoInternalValue
 	}
 	field := c.info.This().GetInternalField(0)
 	handle := field.ExternalHandle()
 	return handle.Value(), nil
 }
 
-func (v *v8CallbackContext) ReturnWithValue(val abstraction.Value) abstraction.CallbackRVal {
+func (v *v8CallbackContext) ReturnWithValue(val js.Value) js.CallbackRVal {
 	return v8CallbackRVal{rtnVal: val.(v8Value).Value}
 }
 
-func (v *v8CallbackContext) ReturnWithError(err error) abstraction.CallbackRVal {
+func (v *v8CallbackContext) ReturnWithError(err error) js.CallbackRVal {
 	return v8CallbackRVal{err: err}
 }
 
-func (c *v8CallbackContext) ValueFactory() abstraction.ValueFactory {
+func (c *v8CallbackContext) ValueFactory() js.ValueFactory {
 	return v8ValueFactory{c.host}
 }
 
@@ -94,16 +94,16 @@ func (v v8Value) AsString() string { return v.Value.String() }
 
 type v8ValueFactory struct{ host *V8ScriptHost }
 
-func (f v8ValueFactory) iso() *v8go.Isolate      { return f.host.iso }
-func (f v8ValueFactory) Null() abstraction.Value { return f.toVal(v8go.Null(f.iso())) }
+func (f v8ValueFactory) iso() *v8go.Isolate { return f.host.iso }
+func (f v8ValueFactory) Null() js.Value     { return f.toVal(v8go.Null(f.iso())) }
 
-func (f v8ValueFactory) String(s string) abstraction.Value {
+func (f v8ValueFactory) String(s string) js.Value {
 	return f.mustVal(v8go.NewValue(f.iso(), s))
 }
 
 // mustVal is just a simple helper to crete Value wrappers on top of v8go values
 // where construction is assumed to succeed
-func (f v8ValueFactory) mustVal(val *v8go.Value, err error) abstraction.Value {
+func (f v8ValueFactory) mustVal(val *v8go.Value, err error) js.Value {
 	if err != nil {
 		panic(
 			fmt.Sprintf(
@@ -115,7 +115,7 @@ func (f v8ValueFactory) mustVal(val *v8go.Value, err error) abstraction.Value {
 	}
 	return v8Value{val}
 }
-func (f v8ValueFactory) toVal(val *v8go.Value) abstraction.Value {
+func (f v8ValueFactory) toVal(val *v8go.Value) js.Value {
 	return v8Value{val}
 }
 

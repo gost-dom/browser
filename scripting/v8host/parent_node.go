@@ -2,7 +2,7 @@ package v8host
 
 import (
 	"github.com/gost-dom/browser/dom"
-	"github.com/gost-dom/browser/scripting/v8host/internal/abstraction"
+	"github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -16,7 +16,7 @@ func (w *parentNodeV8Wrapper) getNodesAndInstance(
 			return
 		}
 	}
-	i, err = abstraction.As[dom.ParentNode](cbCtx.Instance())
+	i, err = js.As[dom.ParentNode](cbCtx.Instance())
 	return
 }
 
