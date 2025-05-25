@@ -10,9 +10,7 @@ import (
 	"github.com/gost-dom/browser/internal/constants"
 	urlinterfaces "github.com/gost-dom/browser/internal/interfaces/url-interfaces"
 	log "github.com/gost-dom/browser/internal/log"
-	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/browser/url"
-	"github.com/gost-dom/v8go"
 
 	v8 "github.com/gost-dom/v8go"
 )
@@ -111,19 +109,6 @@ func (w urlSearchParamsV8Wrapper) Constructor(cbCtx *argumentHelper) (*v8.Value,
 	}
 	w.store(&res, ctx, cbCtx.This())
 	return nil, nil
-}
-
-func (w urlSearchParamsV8Wrapper) get(ctx *argumentHelper) (*v8.Value, error) {
-	instance, err0 := js.As[urlinterfaces.URLSearchParams](ctx.Instance())
-	name, err1 := ctx.consumeString()
-	if err := errors.Join(err0, err1); err != nil {
-		return ctx.ReturnWithError(err)
-	}
-	rtnVal, hasValue := instance.Get(name)
-	if !hasValue {
-		return ctx.ReturnWithValue(v8go.Null(w.scriptHost.iso))
-	}
-	return v8go.NewValue(w.scriptHost.iso, rtnVal)
 }
 
 func (w urlSearchParamsV8Wrapper) toSequenceString_(

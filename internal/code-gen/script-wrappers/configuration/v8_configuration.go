@@ -23,7 +23,7 @@ func CreateV8Specs() WebIdlConfigurations {
 	urlSearchParams.Strategy = StrategyAbstraction
 	urlSearchParams.SkipConstructor = true
 	urlSearchParams.RunCustomCode = true
-	urlSearchParams.Method("get").SetCustomImplementation()
+	// urlSearchParams.Method("get").SetCustomImplementation()
 
 	url := urlSpecs.Type("URL")
 	// TODO: Just need to use a different base class for non-nodes
@@ -57,7 +57,6 @@ func CreateV8Specs() WebIdlConfigurations {
 	domElement := domSpecs.Type("Element")
 	domElement.SkipWrapper = true
 	domElement.RunCustomCode = true
-	// domElement.Method("getAttribute").SetCustomImplementation()
 	domElement.Method("classList").SetCustomImplementation()
 
 	domElement.MarkMembersAsNotImplemented(

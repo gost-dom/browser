@@ -348,6 +348,21 @@ func (w urlSearchParamsV8Wrapper) delete(cbCtx *argumentHelper) (*v8.Value, erro
 	return cbCtx.ReturnWithError(errors.New("URLSearchParams.delete: Missing arguments"))
 }
 
+func (w urlSearchParamsV8Wrapper) get(cbCtx *argumentHelper) (*v8.Value, error) {
+	cbCtx.logger().Debug("V8 Function call: URLSearchParams.get")
+	instance, err0 := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
+	name, err1 := consumeArgument(cbCtx, "name", nil, w.decodeString)
+	if cbCtx.noOfReadArguments >= 1 {
+		err := errors.Join(err0, err1)
+		if err != nil {
+			return cbCtx.ReturnWithError(err)
+		}
+		result, hasValue := instance.Get(name)
+		return w.toNillableString_(cbCtx.ScriptCtx(), result, hasValue)
+	}
+	return cbCtx.ReturnWithError(errors.New("URLSearchParams.get: Missing arguments"))
+}
+
 func (w urlSearchParamsV8Wrapper) getAll(cbCtx *argumentHelper) (*v8.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: URLSearchParams.getAll")
 	instance, err0 := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
