@@ -117,15 +117,22 @@ func (h prototypeBuilder[T]) CreateReadonlyProp2(
 	name string,
 	fn func(T, *V8ScriptContext) (*v8.Value, error),
 ) {
-	h.proto.SetAccessorProperty(name,
-		v8.NewFunctionTemplateWithError(h.host.iso, func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-			ctx := h.host.mustGetContext(info.Context())
-			instance, err := h.GetInstance(info)
-			if err != nil {
-				return nil, err
-			}
-			return fn(instance, ctx)
-		}), nil, v8.ReadOnly)
+	h.proto.SetAccessorProperty(
+		name,
+		v8.NewFunctionTemplateWithError(
+			h.host.iso,
+			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+				ctx := h.host.mustGetContext(info.Context())
+				instance, err := h.GetInstance(info)
+				if err != nil {
+					return nil, err
+				}
+				return fn(instance, ctx)
+			},
+		),
+		nil,
+		v8.ReadOnly,
+	)
 }
 
 func (h prototypeBuilder[T]) CreateReadonlyProp(name string, fn func(T) string) {
@@ -222,57 +229,31 @@ func parseSetterArg[T any](
 	return
 }
 
-func tryParseArg[T any](
-	args *argumentHelper,
-	index int,
-	parsers ...func(*V8ScriptContext, *v8.Value) (T, error),
-) (result T, err error) {
-	value := args.getArg(index)
-	if value == nil {
-		return
-	}
-	errs := make([]error, len(parsers))
-	for i, parser := range parsers {
-		result, errs[i] = parser(args.ctx, value)
-		if errs[i] == nil {
-			return
-		}
-	}
-	err = fmt.Errorf("tryParseArg: argument at index %d: %w", index, errors.Join(errs...))
-	return
-}
+func zeroValue[T any]() (res T) { return }
 
-func tryParseArgNullableType[T any](
-	args *argumentHelper,
-	index int,
-	parsers ...func(*V8ScriptContext, *v8.Value) (res T, err error),
-) (result T, err error) {
-	value := args.getArg(index)
-	if value == nil {
-		args.acceptIndex(index)
-		return
-	}
-	for _, parser := range parsers {
-		result, err = parser(args.ctx, value)
-		if err == nil {
-			args.acceptIndex(index)
-			return
-		}
-	}
-	err = errors.New("TODO")
-	return
-}
-
-func tryParseArgWithDefault[T any](
+func parseArgument[T any](
 	args *argumentHelper,
 	index int,
 	defaultValue func() T,
 	parsers ...func(*V8ScriptContext, *v8.Value) (T, error),
 ) (result T, err error) {
-	if index >= len(args.Args()) {
+	value := args.getArg(index)
+	if value == nil && defaultValue != nil {
 		args.acceptIndex(index)
 		return defaultValue(), nil
 	} else {
-		return tryParseArg(args, index, parsers...)
+		value := args.getArg(index)
+		if value == nil {
+			return
+		}
+		errs := make([]error, len(parsers))
+		for i, parser := range parsers {
+			result, errs[i] = parser(args.ctx, value)
+			if errs[i] == nil {
+				return
+			}
+		}
+		err = fmt.Errorf("tryParseArg: argument at index %d: %w", index, errors.Join(errs...))
+		return
 	}
 }

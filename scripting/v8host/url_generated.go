@@ -85,8 +85,8 @@ func (w urlV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 func (w urlV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: URL.Constructor")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
-	url, err1 := tryParseArg(cbCtx, 0, w.decodeString)
-	base, err2 := tryParseArg(cbCtx, 1, w.decodeString)
+	url, err1 := parseArgument(cbCtx, 0, nil, w.decodeString)
+	base, err2 := parseArgument(cbCtx, 1, nil, w.decodeString)
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err1, err2)
 		if err != nil {
@@ -328,8 +328,8 @@ func (w urlSearchParamsV8Wrapper) append(info *v8.FunctionCallbackInfo) (*v8.Val
 	log.Debug(w.logger(info), "V8 Function call: URLSearchParams.append")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
-	name, err1 := tryParseArg(cbCtx, 0, w.decodeString)
-	value, err2 := tryParseArg(cbCtx, 1, w.decodeString)
+	name, err1 := parseArgument(cbCtx, 0, nil, w.decodeString)
+	value, err2 := parseArgument(cbCtx, 1, nil, w.decodeString)
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {
@@ -345,8 +345,8 @@ func (w urlSearchParamsV8Wrapper) delete(info *v8.FunctionCallbackInfo) (*v8.Val
 	log.Debug(w.logger(info), "V8 Function call: URLSearchParams.delete")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
-	name, err1 := tryParseArg(cbCtx, 0, w.decodeString)
-	value, err2 := tryParseArg(cbCtx, 1, w.decodeString)
+	name, err1 := parseArgument(cbCtx, 0, nil, w.decodeString)
+	value, err2 := parseArgument(cbCtx, 1, nil, w.decodeString)
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {
@@ -370,7 +370,7 @@ func (w urlSearchParamsV8Wrapper) getAll(info *v8.FunctionCallbackInfo) (*v8.Val
 	log.Debug(w.logger(info), "V8 Function call: URLSearchParams.getAll")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
-	name, err1 := tryParseArg(cbCtx, 0, w.decodeString)
+	name, err1 := parseArgument(cbCtx, 0, nil, w.decodeString)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -386,8 +386,8 @@ func (w urlSearchParamsV8Wrapper) has(info *v8.FunctionCallbackInfo) (*v8.Value,
 	log.Debug(w.logger(info), "V8 Function call: URLSearchParams.has")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
-	name, err1 := tryParseArg(cbCtx, 0, w.decodeString)
-	value, err2 := tryParseArg(cbCtx, 1, w.decodeString)
+	name, err1 := parseArgument(cbCtx, 0, nil, w.decodeString)
+	value, err2 := parseArgument(cbCtx, 1, nil, w.decodeString)
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {
@@ -411,8 +411,8 @@ func (w urlSearchParamsV8Wrapper) set(info *v8.FunctionCallbackInfo) (*v8.Value,
 	log.Debug(w.logger(info), "V8 Function call: URLSearchParams.set")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
-	name, err1 := tryParseArg(cbCtx, 0, w.decodeString)
-	value, err2 := tryParseArg(cbCtx, 1, w.decodeString)
+	name, err1 := parseArgument(cbCtx, 0, nil, w.decodeString)
+	value, err2 := parseArgument(cbCtx, 1, nil, w.decodeString)
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {

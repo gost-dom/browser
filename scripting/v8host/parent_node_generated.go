@@ -62,7 +62,7 @@ func (w parentNodeV8Wrapper) querySelector(info *v8.FunctionCallbackInfo) (*v8.V
 	log.Debug(w.logger(info), "V8 Function call: ParentNode.querySelector")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[dom.ParentNode](cbCtx.Instance())
-	selectors, err1 := tryParseArg(cbCtx, 0, w.decodeString)
+	selectors, err1 := parseArgument(cbCtx, 0, nil, w.decodeString)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -82,7 +82,7 @@ func (w parentNodeV8Wrapper) querySelectorAll(info *v8.FunctionCallbackInfo) (*v
 	log.Debug(w.logger(info), "V8 Function call: ParentNode.querySelectorAll")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[dom.ParentNode](cbCtx.Instance())
-	selectors, err1 := tryParseArg(cbCtx, 0, w.decodeString)
+	selectors, err1 := parseArgument(cbCtx, 0, nil, w.decodeString)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {

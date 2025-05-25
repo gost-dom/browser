@@ -297,21 +297,25 @@ func ReadArguments(
 
 		parseArgs := []g.Generator{cbCtx, g.Lit(i)}
 		defaultName, hasDefault := arg.DefaultValueInGo()
+		zeroValueResolver := g.Id("zeroValue")
+		nullable := arg.IdlArg.Type.Nullable
 		if hasDefault {
 			parseArgs = append(parseArgs, g.NewValue(naming.Receiver()).Field(defaultName))
+		} else if nullable {
+			parseArgs = append(parseArgs, zeroValueResolver)
+		} else {
+			parseArgs = append(parseArgs, g.Nil)
 		}
 		parseArgs = append(parseArgs, dec...)
-		if hasDefault {
+		if hasDefault || nullable {
 			statements.Append(g.AssignMany(g.List(argName, errName),
-				g.NewValue("tryParseArgWithDefault").Call(parseArgs...)))
-		} else if arg.IdlArg.Type.Nullable {
-			statements.Append(g.AssignMany(
-				g.List(argName, errName),
-				g.NewValue("tryParseArgNullableType").Call(parseArgs...)))
+				g.NewValue("parseArgument").Call(parseArgs...)))
 		} else {
-			statements.Append(g.AssignMany(
-				g.List(argName, errName),
-				g.NewValue("tryParseArg").Call(parseArgs...)))
+			statements.Append(g.AssignMany(g.List(argName, errName),
+				g.NewValue("parseArgument").Call(parseArgs...)))
+			// statements.Append(g.AssignMany(
+			// 	g.List(argName, errName),
+			// 	g.NewValue("tryParseArg").Call(parseArgs...)))
 		}
 	}
 	res.Generator = statements

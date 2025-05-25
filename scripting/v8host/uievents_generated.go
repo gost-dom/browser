@@ -62,8 +62,8 @@ func (w mouseEventV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) 
 func (w mouseEventV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: MouseEvent.Constructor")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
-	type_, err1 := tryParseArg(cbCtx, 0, w.decodeString)
-	eventInitDict, err2 := tryParseArg(cbCtx, 1, w.decodeMouseEventInit)
+	type_, err1 := parseArgument(cbCtx, 0, nil, w.decodeString)
+	eventInitDict, err2 := parseArgument(cbCtx, 1, nil, w.decodeMouseEventInit)
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err1, err2)
 		if err != nil {
@@ -160,8 +160,8 @@ func (w uIEventV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 func (w uIEventV8Wrapper) Constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	log.Debug(w.logger(info), "V8 Function call: UIEvent.Constructor")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
-	type_, err1 := tryParseArg(cbCtx, 0, w.decodeString)
-	eventInitDict, err2 := tryParseArg(cbCtx, 1, w.decodeUIEventInit)
+	type_, err1 := parseArgument(cbCtx, 0, nil, w.decodeString)
+	eventInitDict, err2 := parseArgument(cbCtx, 1, nil, w.decodeUIEventInit)
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err1, err2)
 		if err != nil {

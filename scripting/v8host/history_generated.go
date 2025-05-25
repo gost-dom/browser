@@ -62,7 +62,7 @@ func (w historyV8Wrapper) go_(info *v8.FunctionCallbackInfo) (*v8.Value, error) 
 	log.Debug(w.logger(info), "V8 Function call: History.go_")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[htmlinterfaces.History](cbCtx.Instance())
-	delta, err1 := tryParseArgWithDefault(cbCtx, 0, w.defaultDelta, w.decodeLong)
+	delta, err1 := parseArgument(cbCtx, 0, w.defaultDelta, w.decodeLong)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -100,8 +100,8 @@ func (w historyV8Wrapper) pushState(info *v8.FunctionCallbackInfo) (*v8.Value, e
 	log.Debug(w.logger(info), "V8 Function call: History.pushState")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[htmlinterfaces.History](cbCtx.Instance())
-	data, err1 := tryParseArg(cbCtx, 0, w.decodeAny)
-	url, err3 := tryParseArgWithDefault(cbCtx, 2, w.defaultUrl, w.decodeString)
+	data, err1 := parseArgument(cbCtx, 0, nil, w.decodeAny)
+	url, err3 := parseArgument(cbCtx, 2, w.defaultUrl, w.decodeString)
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err3)
 		if err != nil {
@@ -117,8 +117,8 @@ func (w historyV8Wrapper) replaceState(info *v8.FunctionCallbackInfo) (*v8.Value
 	log.Debug(w.logger(info), "V8 Function call: History.replaceState")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[htmlinterfaces.History](cbCtx.Instance())
-	data, err1 := tryParseArg(cbCtx, 0, w.decodeAny)
-	url, err3 := tryParseArgWithDefault(cbCtx, 2, w.defaultUrl, w.decodeString)
+	data, err1 := parseArgument(cbCtx, 0, nil, w.decodeAny)
+	url, err3 := parseArgument(cbCtx, 2, w.defaultUrl, w.decodeString)
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err3)
 		if err != nil {

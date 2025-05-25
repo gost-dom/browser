@@ -122,8 +122,8 @@ func (w elementV8Wrapper) setAttribute(info *v8.FunctionCallbackInfo) (*v8.Value
 	log.Debug(w.logger(info), "V8 Function call: Element.setAttribute")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[dom.Element](cbCtx.Instance())
-	qualifiedName, err1 := tryParseArg(cbCtx, 0, w.decodeString)
-	value, err2 := tryParseArg(cbCtx, 1, w.decodeString)
+	qualifiedName, err1 := parseArgument(cbCtx, 0, nil, w.decodeString)
+	value, err2 := parseArgument(cbCtx, 1, nil, w.decodeString)
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {
@@ -144,7 +144,7 @@ func (w elementV8Wrapper) removeAttribute(info *v8.FunctionCallbackInfo) (*v8.Va
 	log.Debug(w.logger(info), "V8 Function call: Element.removeAttribute")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[dom.Element](cbCtx.Instance())
-	qualifiedName, err1 := tryParseArg(cbCtx, 0, w.decodeString)
+	qualifiedName, err1 := parseArgument(cbCtx, 0, nil, w.decodeString)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -170,7 +170,7 @@ func (w elementV8Wrapper) hasAttribute(info *v8.FunctionCallbackInfo) (*v8.Value
 	log.Debug(w.logger(info), "V8 Function call: Element.hasAttribute")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[dom.Element](cbCtx.Instance())
-	qualifiedName, err1 := tryParseArg(cbCtx, 0, w.decodeString)
+	qualifiedName, err1 := parseArgument(cbCtx, 0, nil, w.decodeString)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
@@ -221,7 +221,7 @@ func (w elementV8Wrapper) matches(info *v8.FunctionCallbackInfo) (*v8.Value, err
 	log.Debug(w.logger(info), "V8 Function call: Element.matches")
 	cbCtx := newArgumentHelper(w.scriptHost, info)
 	instance, err0 := abstraction.As[dom.Element](cbCtx.Instance())
-	selectors, err1 := tryParseArg(cbCtx, 0, w.decodeString)
+	selectors, err1 := parseArgument(cbCtx, 0, nil, w.decodeString)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
 		if err != nil {
