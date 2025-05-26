@@ -123,10 +123,23 @@ identify risks and architectural flaws.
 
 ### Current focus
 
-Lately, little progress has been made, as I have been focusing on using this for
-an application; to help discover issues; and help prioritise.
+Currently, the script binding layer is undergoing a lot of refactorings.
 
-But I want to see this support [Datastar](https://data-star.dev/), another
+A lot of work needed to happen in the JavaScript to add
+[Datastar](https://data-star.dev/) support, but there were some unsolved
+problems here.
+
+- Supporting different script engines without rebuilding the entire script layer
+  from scratch.
+- Push the implementation of non-core web APIs to 3rd party modules without
+  being coupled to one specific JS engine.
+- Provide better code structure in the JS wrapping layer.
+
+This task shows more details: https://github.com/gost-dom/browser/issues/92
+
+#### DataStar support
+
+I am working towards supporting [Datastar](https://data-star.dev/), another
 hypermedia framework. This brings some larger changes that have been underway
 for some time; but this also requires significant additions to v8go:
 
