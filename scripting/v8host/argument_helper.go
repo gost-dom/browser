@@ -78,7 +78,7 @@ func (h *argumentHelper) consumeValue() jsValue {
 	if arg := h.ConsumeArg(); arg != nil {
 		return arg
 	}
-	return &v8Value{v8.Undefined(h.FunctionCallbackInfo.Context().Isolate())}
+	return &v8Value{v8.Undefined(h.iso())}
 }
 
 func (h *argumentHelper) consumeFunction() (*v8.Function, error) {
