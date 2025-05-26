@@ -31,9 +31,10 @@ func (s IdlType) Generate() *jen.Statement {
 	}
 }
 
-type IdlTypeForStruct idl.Type
+// StructFieldType represents the type of a struct field
+type StructFieldType idl.Type
 
-func (s IdlTypeForStruct) Generate() *jen.Statement {
+func (s StructFieldType) Generate() *jen.Statement {
 	if IdlType(s).IsString() && s.Nullable {
 		return jen.Op("*").Id("string")
 	}
