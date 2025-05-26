@@ -111,7 +111,17 @@ func (w formDataV8Wrapper) get(cbCtx *argumentHelper) js.CallbackRVal {
 
 func (w formDataV8Wrapper) getAll(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: FormData.getAll")
-	return cbCtx.ReturnWithError(errors.New("FormData.getAll: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
+	instance, err0 := js.As[*html.FormData](cbCtx.Instance())
+	name, err1 := consumeArgument(cbCtx, "name", nil, w.decodeString)
+	if cbCtx.noOfReadArguments >= 1 {
+		err := errors.Join(err0, err1)
+		if err != nil {
+			return cbCtx.ReturnWithError(err)
+		}
+		result := instance.GetAll(name)
+		return w.toSequenceFormDataEntryValue(cbCtx, result)
+	}
+	return cbCtx.ReturnWithError(errors.New("FormData.getAll: Missing arguments"))
 }
 
 func (w formDataV8Wrapper) has(cbCtx *argumentHelper) js.CallbackRVal {

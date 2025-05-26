@@ -68,3 +68,18 @@ func (w formDataV8Wrapper) toFormDataEntryValue(
 ) js.CallbackRVal {
 	return w.toString_(cbCtx, string(val))
 }
+
+func (w formDataV8Wrapper) toSequenceFormDataEntryValue(
+	cbCtx *argumentHelper,
+	data []html.FormDataValue,
+) js.CallbackRVal {
+	vals := make([]*v8.Value, len(data))
+	for i, d := range data {
+		var err error
+		vals[i], err = v8go.NewValue(cbCtx.iso(), string(d))
+		if err != nil {
+			return cbCtx.ReturnWithError(err)
+		}
+	}
+	return cbCtx.ReturnWithValueErr(toArray(cbCtx.Context(), vals...))
+}

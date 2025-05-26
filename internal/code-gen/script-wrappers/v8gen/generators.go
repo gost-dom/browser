@@ -250,9 +250,10 @@ func (c V8InstanceInvocation) ConvertReturnValue(
 	if model.IsNodeType(retType.Name) {
 		return g.Return(cbCtx.Field("getInstanceForNode").Call(g.Id("result")))
 	} else {
+		args := []g.Generator{cbCtx}
+		args = append(args, c.Op.RetValues(data)...)
 		converter := c.Op.Encoder(data)
-		return g.Return(c.Receiver.Method(converter).Call(
-			append([]g.Generator{cbCtx}, c.Op.RetValues(data)...)...))
+		return g.Return(c.Receiver.Method(converter).Call(args...))
 	}
 }
 
