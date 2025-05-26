@@ -9,8 +9,6 @@ import (
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/internal/html"
 	"github.com/gost-dom/browser/scripting/internal/js"
-
-	v8 "github.com/gost-dom/v8go"
 )
 
 type xmlHttpRequestV8Wrapper struct {
@@ -19,7 +17,7 @@ type xmlHttpRequestV8Wrapper struct {
 
 func (xhr xmlHttpRequestV8Wrapper) decodeDocument(
 	cbCtx jsCallbackContext,
-	val *v8.Value,
+	val jsValue,
 ) (io.Reader, error) {
 	if val.IsNull() {
 		return nil, nil
@@ -29,7 +27,7 @@ func (xhr xmlHttpRequestV8Wrapper) decodeDocument(
 
 func (xhr xmlHttpRequestV8Wrapper) decodeXMLHttpRequestBodyInit(
 	cbCtx jsCallbackContext,
-	val *v8.Value,
+	val jsValue,
 ) (io.Reader, error) {
 	if val == nil {
 		return nil, nil

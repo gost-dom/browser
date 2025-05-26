@@ -74,11 +74,11 @@ func (args *argumentHelper) acceptIndex(index int) {
 
 // consumeValue works like [argumentHelper.consumeArg], but returns undefined
 // instead of nil if the value doesn't exist.
-func (h *argumentHelper) consumeValue() *v8.Value {
+func (h *argumentHelper) consumeValue() jsValue {
 	if arg := h.ConsumeArg(); arg != nil {
 		return arg
 	}
-	return v8.Undefined(h.FunctionCallbackInfo.Context().Isolate())
+	return &v8Value{v8.Undefined(h.FunctionCallbackInfo.Context().Isolate())}
 }
 
 func (h *argumentHelper) consumeFunction() (*v8.Function, error) {
@@ -118,7 +118,7 @@ func (h *argumentHelper) assertIndex(index int) {
 	h.currentIndex++
 }
 
-func (h *argumentHelper) ConsumeArg() *v8.Value {
+func (h *argumentHelper) ConsumeArg() jsValue {
 	index := h.currentIndex
 	h.assertIndex(index)
 	args := h.FunctionCallbackInfo.Args()
@@ -130,7 +130,7 @@ func (h *argumentHelper) ConsumeArg() *v8.Value {
 		return nil
 	}
 	h.acceptIndex(index)
-	return arg
+	return &v8Value{arg}
 }
 
 func (h *argumentHelper) consumeRest() []*v8.Value {
@@ -144,7 +144,7 @@ func (h *argumentHelper) consumeRest() []*v8.Value {
 	return args[index:]
 }
 
-func (h *argumentHelper) newTypeError(msg string, v *v8.Value) error {
+func (h *argumentHelper) newTypeError(msg string, v jsValue) error {
 	json, _ := v8.JSONStringify(h.FunctionCallbackInfo.Context(), v)
 	return v8.NewTypeError(
 		h.iso(),

@@ -50,10 +50,6 @@ type CallbackContext interface {
 	ValueFactory() ValueFactory
 }
 
-type Value interface {
-	AsString() string
-}
-
 type CallbackRVal any
 
 type FunctionCallback func(CallbackContext) CallbackRVal

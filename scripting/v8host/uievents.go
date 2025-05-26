@@ -3,19 +3,18 @@ package v8host
 import (
 	"github.com/gost-dom/browser/internal/uievents"
 	"github.com/gost-dom/browser/scripting/internal/js"
-	"github.com/gost-dom/v8go"
 )
 
 func (w uIEventV8Wrapper) decodeMouseEventInit(
 	cbCtx jsCallbackContext,
-	v *v8go.Value,
+	v jsValue,
 ) (eventInitWrapper, error) {
 	return w.decodeUIEventInit(cbCtx, v)
 }
 
 func (w uIEventV8Wrapper) decodePointerEventInit(
 	cbCtx jsCallbackContext,
-	v *v8go.Value,
+	v jsValue,
 ) (eventInitWrapper, error) {
 	return w.decodeMouseEventInit(cbCtx, v)
 }
@@ -37,7 +36,7 @@ func (w uIEventV8Wrapper) CreateInstanceEventInitDict(
 
 func (w uIEventV8Wrapper) decodeUIEventInit(
 	cbCtx jsCallbackContext,
-	v *v8go.Value,
+	v jsValue,
 ) (eventInitWrapper, error) {
 	return w.decodeEventInit(cbCtx, v)
 }

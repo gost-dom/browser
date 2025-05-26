@@ -207,7 +207,7 @@ func (h prototypeBuilder[T]) CreateFunctionStringToString(name string, fn func(T
 // setters, where exactly one argument must be passed by v8.
 func parseSetterArg[T any](
 	ctx jsCallbackContext,
-	parsers ...func(jsCallbackContext, *v8.Value) (T, error),
+	parsers ...func(jsCallbackContext, jsValue) (T, error),
 ) (result T, err error) {
 	arg := ctx.ConsumeArg()
 	if arg == nil {
@@ -247,7 +247,7 @@ func consumeArgument[T any](
 	args *argumentHelper,
 	name string,
 	defaultValue func() T,
-	decoders ...func(*argumentHelper, *v8.Value) (T, error),
+	decoders ...func(*argumentHelper, jsValue) (T, error),
 ) (result T, err error) {
 	index := args.currentIndex
 	value := args.ConsumeArg()

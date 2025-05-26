@@ -93,7 +93,7 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 				ctx := host.mustGetContext(info.Context())
 				helper := newArgumentHelper(host, info)
 				f, err1 := helper.consumeFunction()
-				delay, err2 := helper.consumeInt32()
+				delay, err2 := consumeArgument(helper, "delay", nil, decodeInt32)
 				err := errors.Join(err1, err2)
 				if err != nil {
 					return v8.Undefined(iso), err

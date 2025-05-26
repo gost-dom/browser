@@ -22,22 +22,18 @@ type v8CallbackRVal struct {
 	err    error
 }
 
-type v8Value struct{ *v8go.Value }
-
-func (v v8Value) AsString() string { return v.Value.String() }
-
 type v8ValueFactory struct{ host *V8ScriptHost }
 
 func (f v8ValueFactory) iso() *v8go.Isolate { return f.host.iso }
-func (f v8ValueFactory) Null() js.Value     { return f.toVal(v8go.Null(f.iso())) }
+func (f v8ValueFactory) Null() jsValue      { return f.toVal(v8go.Null(f.iso())) }
 
-func (f v8ValueFactory) String(s string) js.Value {
+func (f v8ValueFactory) String(s string) jsValue {
 	return f.mustVal(v8go.NewValue(f.iso(), s))
 }
 
 // mustVal is just a simple helper to crete Value wrappers on top of v8go values
 // where construction is assumed to succeed
-func (f v8ValueFactory) mustVal(val *v8go.Value, err error) js.Value {
+func (f v8ValueFactory) mustVal(val *v8go.Value, err error) jsValue {
 	if err != nil {
 		panic(
 			fmt.Sprintf(
@@ -47,10 +43,10 @@ func (f v8ValueFactory) mustVal(val *v8go.Value, err error) js.Value {
 			),
 		)
 	}
-	return v8Value{val}
+	return &v8Value{val}
 }
-func (f v8ValueFactory) toVal(val *v8go.Value) js.Value {
-	return v8Value{val}
+func (f v8ValueFactory) toVal(val *v8go.Value) jsValue {
+	return &v8Value{val}
 }
 
 type internalCallback func(*argumentHelper) js.CallbackRVal
@@ -72,4 +68,10 @@ func wrapV8Callback(
 			return result.rtnVal, result.err
 		},
 	)
+}
+
+/* -------- Decoders -------- */
+
+func decodeInt32(cbCtx jsCallbackContext, val jsValue) (int32, error) {
+	return val.Int32(), nil
 }

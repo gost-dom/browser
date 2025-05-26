@@ -21,7 +21,7 @@ type eventInitWrapper struct {
 	init       any
 }
 
-func (w converters) decodeEventInit(ctx jsCallbackContext, v *v8.Value) (eventInitWrapper, error) {
+func (w converters) decodeEventInit(ctx jsCallbackContext, v jsValue) (eventInitWrapper, error) {
 	options, err0 := v.AsObject()
 
 	bubbles, err1 := options.Get("bubbles")
@@ -37,23 +37,23 @@ func (w converters) decodeEventInit(ctx jsCallbackContext, v *v8.Value) (eventIn
 	return init, nil
 }
 
-func (w converters) decodeString(ctx jsCallbackContext, val *v8.Value) (string, error) {
+func (w converters) decodeString(ctx jsCallbackContext, val jsValue) (string, error) {
 	return val.String(), nil
 }
 
-func (w converters) decodeBoolean(ctx jsCallbackContext, val *v8.Value) (bool, error) {
+func (w converters) decodeBoolean(ctx jsCallbackContext, val jsValue) (bool, error) {
 	return val.Boolean(), nil
 }
 
-func (w converters) decodeLong(ctx jsCallbackContext, val *v8.Value) (int, error) {
+func (w converters) decodeLong(ctx jsCallbackContext, val jsValue) (int, error) {
 	return int(val.Int32()), nil
 }
 
-func (w converters) decodeUnsignedLong(ctx jsCallbackContext, val *v8.Value) (int, error) {
+func (w converters) decodeUnsignedLong(ctx jsCallbackContext, val jsValue) (int, error) {
 	return int(val.Uint32()), nil
 }
 
-func (w converters) decodeNode(ctx jsCallbackContext, val *v8.Value) (dom.Node, error) {
+func (w converters) decodeNode(ctx jsCallbackContext, val jsValue) (dom.Node, error) {
 	if val.IsObject() {
 		o := val.Object()
 		cached, ok_1 := ctx.ScriptCtx().getCachedNode(o)
@@ -66,7 +66,7 @@ func (w converters) decodeNode(ctx jsCallbackContext, val *v8.Value) (dom.Node, 
 
 func (w converters) decodeHTMLElement(
 	cbCtx jsCallbackContext,
-	val *v8.Value,
+	val jsValue,
 ) (html.HTMLElement, error) {
 	if val.IsObject() {
 		o := val.Object()
@@ -79,7 +79,7 @@ func (w converters) decodeHTMLElement(
 }
 func (w converters) decodeHTMLFormElement(
 	ctx jsCallbackContext,
-	val *v8.Value,
+	val jsValue,
 ) (html.HTMLFormElement, error) {
 	var (
 		res html.HTMLFormElement
@@ -97,7 +97,7 @@ func (w converters) decodeHTMLFormElement(
 
 func (c converters) defaultHTMLElement() html.HTMLElement { return nil }
 
-func (w converters) decodeNodeOrText(cbCtx jsCallbackContext, val *v8.Value) (dom.Node, error) {
+func (w converters) decodeNodeOrText(cbCtx jsCallbackContext, val jsValue) (dom.Node, error) {
 	if val.IsString() {
 		return cbCtx.ScriptCtx().window.Document().CreateText(val.String()), nil
 	}

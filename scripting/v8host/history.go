@@ -17,7 +17,7 @@ func (w historyV8Wrapper) defaultUrl() string {
 
 func (w historyV8Wrapper) decodeHistoryState(
 	ctx jsCallbackContext,
-	val *v8.Value,
+	val jsValue,
 ) (html.HistoryState, error) {
 	r, err := v8.JSONStringify(ctx.ScriptCtx().v8ctx, val)
 	return html.HistoryState(r), err

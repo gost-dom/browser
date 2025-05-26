@@ -55,7 +55,7 @@ func (w formDataV8Wrapper) CreateInstanceFormSubmitter(
 
 func (w formDataV8Wrapper) decodeFormDataValue(
 	cbCtx jsCallbackContext,
-	val *v8go.Value,
+	val jsValue,
 ) (html.FormDataValue, error) {
 	return html.FormDataValue(val.String()), nil
 }
