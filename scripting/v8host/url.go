@@ -45,7 +45,6 @@ func (w urlV8Wrapper) CreateInstanceBase(
 	u string,
 	base string,
 ) js.CallbackRVal {
-	log.Info(w.scriptHost.logger, "CREATE URL", "url", u, "base", base)
 	value, err := url.NewUrlBase(u, base)
 	if err != nil {
 		return cbCtx.ReturnWithError(err)

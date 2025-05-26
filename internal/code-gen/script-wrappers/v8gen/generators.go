@@ -228,7 +228,6 @@ func (c V8InstanceInvocation) ConvertResult(
 		list.Append(g.Return(cbCtx.ReturnWithValue(g.Nil)))
 	} else {
 		returnValue := c.ConvertReturnValue(data, cbCtx, c.Op.RetType)
-		callErr := g.Id("callErr")
 		if hasError {
 			list.Append(g.IfStmt{
 				Condition: g.Neq{Lhs: callErr, Rhs: g.Nil},
