@@ -65,7 +65,7 @@ func (h *argumentHelper) Instance() (any, error) {
 // affects when we query about how many arguments were read, in order to
 // determine which overload to call in the system.
 func (args *argumentHelper) acceptIndex(index int) {
-	if args.noOfReadArguments <= index {
+	if args.noOfReadArguments == index {
 		args.noOfReadArguments = index + 1
 	}
 }
@@ -127,9 +127,7 @@ func (h *argumentHelper) ConsumeArg() *v8.Value {
 	if arg.IsUndefined() {
 		return nil
 	}
-	if h.noOfReadArguments <= index {
-		h.noOfReadArguments = index + 1
-	}
+	h.acceptIndex(index)
 	return arg
 }
 

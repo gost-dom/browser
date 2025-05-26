@@ -13,7 +13,7 @@ type TestingLogHandler struct {
 }
 
 func (l TestingLogHandler) Enabled(_ context.Context, lvl slog.Level) bool {
-	return lvl >= slog.LevelDebug
+	return lvl >= slog.LevelInfo
 }
 
 func (l TestingLogHandler) Handle(_ context.Context, r slog.Record) error {

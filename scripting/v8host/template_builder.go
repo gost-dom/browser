@@ -232,6 +232,7 @@ func zeroValue[T any]() (res T) { return }
 
 func ignoreArgument(args *argumentHelper) {
 	args.ConsumeArg()
+	args.acceptIndex(args.noOfReadArguments)
 }
 
 // consumeArgument pulls one of the passed arguments and tries to convert it to
