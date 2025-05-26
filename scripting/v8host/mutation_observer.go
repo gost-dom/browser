@@ -43,17 +43,14 @@ func (w mutationObserverV8Wrapper) decodeObserveOption(
 	cbCtx jsCallbackContext,
 	val jsValue,
 ) ([]mutation.ObserveOption, error) {
-	obj, err := val.AsObject()
-	if err != nil {
-		return nil, err
+	obj, ok := val.AsObject()
+	if !ok {
+		return nil, v8go.NewTypeError(cbCtx.iso(), "Obtions not an object")
 	}
 	var res []mutation.ObserveOption
 	ap := func(key string, o mutation.ObserveOption) {
-		if err == nil {
-			var v *v8go.Value
-			if v, err = obj.Get(key); err == nil && v.Boolean() {
-				res = append(res, o)
-			}
+		if v, err := obj.Get(key); err == nil && v.Boolean() {
+			res = append(res, o)
 		}
 	}
 	ap("subtree", mutation.Subtree)

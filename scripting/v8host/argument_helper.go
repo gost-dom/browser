@@ -23,6 +23,11 @@ func newArgumentHelper(host *V8ScriptHost, info *v8.FunctionCallbackInfo) *argum
 	return &argumentHelper{info, host, 0, 0}
 }
 
+func (h argumentHelper) Global() jsObject {
+	global := h.Context().Global()
+	return &v8Object{v8Value{global.Value}, global}
+}
+
 func (h argumentHelper) iso() *v8.Isolate     { return h.FunctionCallbackInfo.Context().Isolate() }
 func (h argumentHelper) logger() *slog.Logger { return h.ScriptCtx().host.Logger() }
 func (h *argumentHelper) ScriptCtx() *V8ScriptContext {
@@ -86,10 +91,8 @@ func (h *argumentHelper) consumeFunction() (jsFunction, error) {
 	if arg == nil {
 		return nil, ErrWrongNoOfArguments
 	}
-	if arg.IsFunction() {
-		if f, ok := arg.AsFunction(); ok {
-			return f, nil
-		}
+	if f, ok := arg.AsFunction(); ok {
+		return f, nil
 	}
 	return nil, h.newTypeError("Expected function", arg)
 }
@@ -99,10 +102,7 @@ func (h *argumentHelper) consumeInt32() (int32, error) {
 	if arg == nil {
 		return 0, ErrWrongNoOfArguments
 	}
-	if arg.IsNumber() {
-		return arg.Int32(), nil
-	}
-	return 0, h.newTypeError("Expected int32", arg)
+	return arg.Int32(), nil
 }
 
 func (h *argumentHelper) consumeString() (string, error) {

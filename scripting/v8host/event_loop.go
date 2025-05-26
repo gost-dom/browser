@@ -33,12 +33,13 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 		v8.NewFunctionTemplateWithError(
 			iso,
 			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+				cbCtx := newArgumentHelper(host, info)
 				ctx := host.mustGetContext(info.Context())
 				helper := newArgumentHelper(host, info)
 				f, err := helper.consumeFunction()
 				if err == nil {
 					ctx.clock.AddSafeMicrotask(func() {
-						if _, err := f.Call(info.Context().Global()); err != nil {
+						if _, err := f.Call(cbCtx.Global()); err != nil {
 							ctx.eventLoop.errorCb(err)
 						}
 					})
@@ -52,7 +53,8 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 		v8.NewFunctionTemplateWithError(
 			iso,
 			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-				ctx := host.mustGetContext(info.Context())
+				cbCtx := newArgumentHelper(host, info)
+				ctx := cbCtx.ScriptCtx()
 				helper := newArgumentHelper(host, info)
 				f, err1 := helper.consumeFunction()
 				delay, err2 := helper.consumeInt32()
@@ -62,7 +64,7 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 				}
 				handle := ctx.clock.AddSafeTask(
 					func() {
-						if _, err := f.Call(info.Context().Global()); err != nil {
+						if _, err := f.Call(cbCtx.Global()); err != nil {
 							ctx.eventLoop.errorCb(err)
 						}
 					},
@@ -90,7 +92,8 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 		v8.NewFunctionTemplateWithError(
 			iso,
 			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-				ctx := host.mustGetContext(info.Context())
+				cbCtx := newArgumentHelper(host, info)
+				ctx := cbCtx.ScriptCtx()
 				helper := newArgumentHelper(host, info)
 				f, err1 := helper.consumeFunction()
 				delay, err2 := consumeArgument(helper, "delay", nil, decodeInt32)
@@ -100,7 +103,7 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 				}
 				handle := ctx.clock.SetInterval(
 					func() {
-						if _, err := f.Call(info.Context().Global()); err != nil {
+						if _, err := f.Call(cbCtx.Global()); err != nil {
 							ctx.eventLoop.errorCb(err)
 						}
 					},

@@ -22,11 +22,14 @@ type eventInitWrapper struct {
 }
 
 func (w converters) decodeEventInit(ctx jsCallbackContext, v jsValue) (eventInitWrapper, error) {
-	options, err0 := v.AsObject()
+	options, ok := v.AsObject()
+	if !ok {
+		return eventInitWrapper{}, errors.New("Not an event init object")
+	}
 
 	bubbles, err1 := options.Get("bubbles")
 	cancelable, err2 := options.Get("cancelable")
-	err := errors.Join(err0, err1, err2)
+	err := errors.Join(err1, err2)
 	if err != nil {
 		return eventInitWrapper{}, err
 	}
@@ -68,10 +71,8 @@ func (w converters) decodeHTMLElement(
 	cbCtx jsCallbackContext,
 	val jsValue,
 ) (html.HTMLElement, error) {
-	if val.IsObject() {
-		o := val.Object()
-		cached, ok_1 := cbCtx.ScriptCtx().getCachedNode(o)
-		if node, ok_2 := cached.(html.HTMLElement); ok_1 && ok_2 {
+	if o, ok := val.AsObject(); ok {
+		if node, ok := o.NativeValue().(html.HTMLElement); ok {
 			return node, nil
 		}
 	}
