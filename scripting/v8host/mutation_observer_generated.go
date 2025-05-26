@@ -54,7 +54,7 @@ func (w mutationObserverV8Wrapper) observe(cbCtx *argumentHelper) js.CallbackRVa
 	cbCtx.logger().Debug("V8 Function call: MutationObserver.observe")
 	instance, err0 := js.As[dominterfaces.MutationObserver](cbCtx.Instance())
 	target, err1 := consumeArgument(cbCtx, "target", nil, w.decodeNode)
-	options, err2 := consumeArgument(cbCtx, "options", nil, w.decodeMutationObserverInit)
+	options, err2 := consumeArgument(cbCtx, "options", nil, w.decodeObserveOption)
 	if cbCtx.noOfReadArguments >= 2 {
 		err := errors.Join(err0, err1, err2)
 		if err != nil {

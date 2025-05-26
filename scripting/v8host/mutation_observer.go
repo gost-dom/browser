@@ -41,7 +41,7 @@ func (w mutationObserverV8Wrapper) decodeMutationCallback(
 	return
 }
 
-func (w mutationObserverV8Wrapper) decodeMutationObserverInit(
+func (w mutationObserverV8Wrapper) decodeObserveOption(
 	ctx *V8ScriptContext,
 	val *v8go.Value,
 ) ([]mutation.ObserveOption, error) {

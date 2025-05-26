@@ -101,7 +101,7 @@ func (w historyV8Wrapper) forward(cbCtx *argumentHelper) js.CallbackRVal {
 func (w historyV8Wrapper) pushState(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: History.pushState")
 	instance, err0 := js.As[htmlinterfaces.History](cbCtx.Instance())
-	data, err1 := consumeArgument(cbCtx, "data", nil, w.decodeAny)
+	data, err1 := consumeArgument(cbCtx, "data", nil, w.decodeHistoryState)
 	ignoreArgument(cbCtx)
 	url, err3 := consumeArgument(cbCtx, "url", w.defaultUrl, w.decodeString)
 	if cbCtx.noOfReadArguments >= 2 {
@@ -121,7 +121,7 @@ func (w historyV8Wrapper) pushState(cbCtx *argumentHelper) js.CallbackRVal {
 func (w historyV8Wrapper) replaceState(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: History.replaceState")
 	instance, err0 := js.As[htmlinterfaces.History](cbCtx.Instance())
-	data, err1 := consumeArgument(cbCtx, "data", nil, w.decodeAny)
+	data, err1 := consumeArgument(cbCtx, "data", nil, w.decodeHistoryState)
 	ignoreArgument(cbCtx)
 	url, err3 := consumeArgument(cbCtx, "url", w.defaultUrl, w.decodeString)
 	if cbCtx.noOfReadArguments >= 2 {

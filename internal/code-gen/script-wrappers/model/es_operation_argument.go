@@ -35,6 +35,9 @@ func (a ESOperationArgument) DefaultValueInGo() (name string, ok bool) {
 }
 
 func (a ESOperationArgument) GoTypeName() string {
+	if a.CustomRule.OverridesType() {
+		return a.CustomRule.Type.Name
+	}
 	switch a.IdlArg.Type.Name {
 	case "DOMString", "USVString", "ByteString":
 		return "string"

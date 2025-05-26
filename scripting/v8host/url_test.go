@@ -17,7 +17,7 @@ func TestURL(t *testing.T) {
 
 func TestURLSearchParamsFromIterable(t *testing.T) {
 	win := initWindow(t)
-	usp := win.MustEval(`
+	usp, ok := win.MustEval(`
 		{
 			const fd = new FormData()
 			fd.append("f", "foo")
@@ -26,6 +26,7 @@ func TestURLSearchParamsFromIterable(t *testing.T) {
 			new URLSearchParams(fd)
 		}
 	`).(urlinterfaces.URLSearchParams)
+	assert.True(t, ok, "Interface was of the expected type")
 	got, _ := usp.Get("f")
 	assert.Equal(t, "foo", got)
 	assert.Equal(t, []string{"bar", "baz"}, usp.GetAll("b"))

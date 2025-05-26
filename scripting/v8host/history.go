@@ -15,7 +15,7 @@ func (w historyV8Wrapper) defaultUrl() string {
 	return ""
 }
 
-func (w historyV8Wrapper) decodeAny(
+func (w historyV8Wrapper) decodeHistoryState(
 	ctx *V8ScriptContext,
 	val *v8.Value,
 ) (html.HistoryState, error) {
