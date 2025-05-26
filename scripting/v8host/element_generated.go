@@ -307,7 +307,7 @@ func (w elementV8Wrapper) id(cbCtx *argumentHelper) js.CallbackRVal {
 func (w elementV8Wrapper) setID(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: Element.setID")
 	instance, err0 := js.As[dom.Element](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
+	val, err1 := parseSetterArg(cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return cbCtx.ReturnWithError(err)

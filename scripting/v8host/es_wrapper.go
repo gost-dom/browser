@@ -21,10 +21,7 @@ type eventInitWrapper struct {
 	init       any
 }
 
-func (w converters) decodeEventInit(
-	ctx *V8ScriptContext,
-	v *v8.Value,
-) (eventInitWrapper, error) {
+func (w converters) decodeEventInit(ctx jsCallbackContext, v *v8.Value) (eventInitWrapper, error) {
 	options, err0 := v.AsObject()
 
 	bubbles, err1 := options.Get("bubbles")
@@ -40,26 +37,26 @@ func (w converters) decodeEventInit(
 	return init, nil
 }
 
-func (w converters) decodeString(ctx *V8ScriptContext, val *v8.Value) (string, error) {
+func (w converters) decodeString(ctx jsCallbackContext, val *v8.Value) (string, error) {
 	return val.String(), nil
 }
 
-func (w converters) decodeBoolean(ctx *V8ScriptContext, val *v8.Value) (bool, error) {
+func (w converters) decodeBoolean(ctx jsCallbackContext, val *v8.Value) (bool, error) {
 	return val.Boolean(), nil
 }
 
-func (w converters) decodeLong(ctx *V8ScriptContext, val *v8.Value) (int, error) {
+func (w converters) decodeLong(ctx jsCallbackContext, val *v8.Value) (int, error) {
 	return int(val.Int32()), nil
 }
 
-func (w converters) decodeUnsignedLong(ctx *V8ScriptContext, val *v8.Value) (int, error) {
+func (w converters) decodeUnsignedLong(ctx jsCallbackContext, val *v8.Value) (int, error) {
 	return int(val.Uint32()), nil
 }
 
-func (w converters) decodeNode(ctx *V8ScriptContext, val *v8.Value) (dom.Node, error) {
+func (w converters) decodeNode(ctx jsCallbackContext, val *v8.Value) (dom.Node, error) {
 	if val.IsObject() {
 		o := val.Object()
-		cached, ok_1 := ctx.getCachedNode(o)
+		cached, ok_1 := ctx.ScriptCtx().getCachedNode(o)
 		if node, ok_2 := cached.(dom.Node); ok_1 && ok_2 {
 			return node, nil
 		}
@@ -68,20 +65,20 @@ func (w converters) decodeNode(ctx *V8ScriptContext, val *v8.Value) (dom.Node, e
 }
 
 func (w converters) decodeHTMLElement(
-	ctx *V8ScriptContext,
+	cbCtx jsCallbackContext,
 	val *v8.Value,
 ) (html.HTMLElement, error) {
 	if val.IsObject() {
 		o := val.Object()
-		cached, ok_1 := ctx.getCachedNode(o)
+		cached, ok_1 := cbCtx.ScriptCtx().getCachedNode(o)
 		if node, ok_2 := cached.(html.HTMLElement); ok_1 && ok_2 {
 			return node, nil
 		}
 	}
-	return nil, v8.NewTypeError(ctx.host.iso, "Must be a node")
+	return nil, v8.NewTypeError(cbCtx.iso(), "Must be a node")
 }
 func (w converters) decodeHTMLFormElement(
-	ctx *V8ScriptContext,
+	ctx jsCallbackContext,
 	val *v8.Value,
 ) (html.HTMLFormElement, error) {
 	var (
@@ -100,11 +97,11 @@ func (w converters) decodeHTMLFormElement(
 
 func (c converters) defaultHTMLElement() html.HTMLElement { return nil }
 
-func (w converters) decodeNodeOrText(ctx *V8ScriptContext, val *v8.Value) (dom.Node, error) {
+func (w converters) decodeNodeOrText(cbCtx jsCallbackContext, val *v8.Value) (dom.Node, error) {
 	if val.IsString() {
-		return ctx.window.Document().CreateText(val.String()), nil
+		return cbCtx.ScriptCtx().window.Document().CreateText(val.String()), nil
 	}
-	return w.decodeNode(ctx, val)
+	return w.decodeNode(cbCtx, val)
 }
 
 func (w converters) toNullableString_(

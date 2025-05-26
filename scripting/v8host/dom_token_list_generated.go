@@ -165,7 +165,7 @@ func (w domTokenListV8Wrapper) value(cbCtx *argumentHelper) js.CallbackRVal {
 func (w domTokenListV8Wrapper) setValue(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: DOMTokenList.setValue")
 	instance, err0 := js.As[dom.DOMTokenList](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
+	val, err1 := parseSetterArg(cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return cbCtx.ReturnWithError(err)

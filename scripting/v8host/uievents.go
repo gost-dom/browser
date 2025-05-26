@@ -7,17 +7,17 @@ import (
 )
 
 func (w uIEventV8Wrapper) decodeMouseEventInit(
-	ctx *V8ScriptContext,
+	cbCtx jsCallbackContext,
 	v *v8go.Value,
 ) (eventInitWrapper, error) {
-	return w.decodeUIEventInit(ctx, v)
+	return w.decodeUIEventInit(cbCtx, v)
 }
 
 func (w uIEventV8Wrapper) decodePointerEventInit(
-	ctx *V8ScriptContext,
+	cbCtx jsCallbackContext,
 	v *v8go.Value,
 ) (eventInitWrapper, error) {
-	return w.decodeMouseEventInit(ctx, v)
+	return w.decodeMouseEventInit(cbCtx, v)
 }
 
 func (w uIEventV8Wrapper) CreateInstance(
@@ -36,10 +36,10 @@ func (w uIEventV8Wrapper) CreateInstanceEventInitDict(
 }
 
 func (w uIEventV8Wrapper) decodeUIEventInit(
-	ctx *V8ScriptContext,
+	cbCtx jsCallbackContext,
 	v *v8go.Value,
 ) (eventInitWrapper, error) {
-	return w.decodeEventInit(ctx, v)
+	return w.decodeEventInit(cbCtx, v)
 }
 
 type mouseEventV8Wrapper struct {

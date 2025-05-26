@@ -11,7 +11,7 @@ func (w *parentNodeV8Wrapper) getNodesAndInstance(
 	args := cbCtx.consumeRest()
 	nodes = make([]dom.Node, len(args))
 	for idx, a := range args {
-		if nodes[idx], err = w.decodeNodeOrText(cbCtx.ScriptCtx(), a); err != nil {
+		if nodes[idx], err = w.decodeNodeOrText(cbCtx, a); err != nil {
 			return
 		}
 	}

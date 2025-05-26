@@ -17,6 +17,8 @@ type argumentHelper struct {
 	currentIndex      int
 }
 
+type jsCallbackContext = *argumentHelper
+
 func newArgumentHelper(host *V8ScriptHost, info *v8.FunctionCallbackInfo) *argumentHelper {
 	return &argumentHelper{info, host, 0, 0}
 }

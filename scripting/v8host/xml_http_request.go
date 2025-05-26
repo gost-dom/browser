@@ -18,7 +18,7 @@ type xmlHttpRequestV8Wrapper struct {
 }
 
 func (xhr xmlHttpRequestV8Wrapper) decodeDocument(
-	ctx *V8ScriptContext,
+	cbCtx jsCallbackContext,
 	val *v8.Value,
 ) (io.Reader, error) {
 	if val.IsNull() {
@@ -28,7 +28,7 @@ func (xhr xmlHttpRequestV8Wrapper) decodeDocument(
 }
 
 func (xhr xmlHttpRequestV8Wrapper) decodeXMLHttpRequestBodyInit(
-	ctx *V8ScriptContext,
+	cbCtx jsCallbackContext,
 	val *v8.Value,
 ) (io.Reader, error) {
 	if val == nil {

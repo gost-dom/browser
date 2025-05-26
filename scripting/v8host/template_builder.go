@@ -206,20 +206,17 @@ func (h prototypeBuilder[T]) CreateFunctionStringToString(name string, fn func(T
 // parseSetterArg parses a single argument and is intended for attribute
 // setters, where exactly one argument must be passed by v8.
 func parseSetterArg[T any](
-	ctx *V8ScriptContext,
-	info *argumentHelper,
-	parsers ...func(*V8ScriptContext, *v8.Value) (T, error),
+	ctx jsCallbackContext,
+	parsers ...func(jsCallbackContext, *v8.Value) (T, error),
 ) (result T, err error) {
-	args := info.Args()
-	if len(args) != 1 {
-		err = fmt.Errorf("parseSetterArg: expected one argument. got: %d", len(args))
-		return
+	arg := ctx.ConsumeArg()
+	if arg == nil {
+		err = fmt.Errorf("parseSetterArg: expected one argument. got: %d", len(ctx.Args()))
 	}
 
-	value := args[0]
 	errs := make([]error, len(parsers))
 	for i, parser := range parsers {
-		result, errs[i] = parser(ctx, value)
+		result, errs[i] = parser(ctx, arg)
 		if errs[i] == nil {
 			return
 		}
@@ -250,7 +247,7 @@ func consumeArgument[T any](
 	args *argumentHelper,
 	name string,
 	defaultValue func() T,
-	decoders ...func(*V8ScriptContext, *v8.Value) (T, error),
+	decoders ...func(*argumentHelper, *v8.Value) (T, error),
 ) (result T, err error) {
 	index := args.currentIndex
 	value := args.ConsumeArg()
@@ -261,7 +258,7 @@ func consumeArgument[T any](
 		errs := make([]error, len(decoders))
 		if value != nil {
 			for i, parser := range decoders {
-				result, errs[i] = parser(args.ScriptCtx(), value)
+				result, errs[i] = parser(args, value)
 				if errs[i] == nil {
 					return
 				}

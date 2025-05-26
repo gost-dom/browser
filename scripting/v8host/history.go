@@ -16,10 +16,10 @@ func (w historyV8Wrapper) defaultUrl() string {
 }
 
 func (w historyV8Wrapper) decodeHistoryState(
-	ctx *V8ScriptContext,
+	ctx jsCallbackContext,
 	val *v8.Value,
 ) (html.HistoryState, error) {
-	r, err := v8.JSONStringify(ctx.v8ctx, val)
+	r, err := v8.JSONStringify(ctx.ScriptCtx().v8ctx, val)
 	return html.HistoryState(r), err
 }
 

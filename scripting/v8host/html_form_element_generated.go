@@ -159,7 +159,7 @@ func (w htmlFormElementV8Wrapper) action(cbCtx *argumentHelper) js.CallbackRVal 
 func (w htmlFormElementV8Wrapper) setAction(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.setAction")
 	instance, err0 := js.As[html.HTMLFormElement](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
+	val, err1 := parseSetterArg(cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -211,7 +211,7 @@ func (w htmlFormElementV8Wrapper) method(cbCtx *argumentHelper) js.CallbackRVal 
 func (w htmlFormElementV8Wrapper) setMethod(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.setMethod")
 	instance, err0 := js.As[html.HTMLFormElement](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeString)
+	val, err1 := parseSetterArg(cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return cbCtx.ReturnWithError(err)

@@ -35,7 +35,7 @@ func (n nodeV8Wrapper) nodeType(cbCtx *argumentHelper) js.CallbackRVal {
 }
 
 func (n nodeV8Wrapper) decodeGetRootNodeOptions(
-	ctx *V8ScriptContext,
+	cbCtx jsCallbackContext,
 	value *v8.Value,
 ) (dom.GetRootNodeOptions, error) {
 	return dom.GetRootNodeOptions(value.Boolean()), nil

@@ -30,18 +30,18 @@ func (w mutationObserverV8Wrapper) CreateInstance(
 }
 
 func (w mutationObserverV8Wrapper) decodeMutationCallback(
-	ctx *V8ScriptContext,
+	cbCtx jsCallbackContext,
 	val *v8go.Value,
 ) (res mutation.Callback, err error) {
 	var f *v8go.Function
 	if f, err = val.AsFunction(); err == nil {
-		res = MutationCallback{ctx, f}
+		res = MutationCallback{cbCtx.ScriptCtx(), f}
 	}
 	return
 }
 
 func (w mutationObserverV8Wrapper) decodeObserveOption(
-	ctx *V8ScriptContext,
+	cbCtx jsCallbackContext,
 	val *v8go.Value,
 ) ([]mutation.ObserveOption, error) {
 	obj, err := val.AsObject()
