@@ -52,6 +52,8 @@ func (d ESConstructorData) GetInternalPackage() string {
 		return packagenames.URLInterfaces
 	case "XMLHttpRequest":
 		return packagenames.HTMLInternal
+	case "FormData":
+		return packagenames.Html
 	default:
 		return packagenames.PackageName(d.Spec.DomSpec.Name)
 	}

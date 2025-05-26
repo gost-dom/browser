@@ -18,6 +18,10 @@ func CreateV8Specs() WebIdlConfigurations {
 	xhr.Method("upload").SetCustomImplementation()
 	xhr.Method("onreadystatechange").Ignore()
 
+	formData := xhrModule.Type("FormData")
+	formData.Method("getAll").SetNotImplemented()
+	formData.RunCustomCode = true
+
 	urlSpecs := specs.Module("url")
 	urlSearchParams := urlSpecs.Type("URLSearchParams")
 	urlSearchParams.Strategy = StrategyAbstraction

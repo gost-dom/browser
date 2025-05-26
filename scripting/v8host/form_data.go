@@ -2,167 +2,69 @@ package v8host
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/scripting/internal/js"
+	"github.com/gost-dom/v8go"
 
 	v8 "github.com/gost-dom/v8go"
 )
 
-type formDataV8Wrapper struct {
-	handleReffedObject[*html.FormData]
+func (w formDataV8Wrapper) CustomInitialiser(constructor *v8go.FunctionTemplate) {
+	iso := w.scriptHost.iso
+	iterator := newIterator2(
+		w.scriptHost,
+		func(k string, v html.FormDataValue, ctx *V8ScriptContext) (v1 *v8.Value, v2 *v8.Value, err error) {
+			fmt.Println("ITERATING!!!", k, v)
+			var err1, err2 error
+			v1, err1 = v8go.NewValue(iso, k)
+			v2, err2 = v8go.NewValue(iso, string(v))
+			err = errors.Join(err1, err2)
+			return
+		},
+	)
+	iterator.installPrototype(constructor)
 }
 
-func newFormDataV8Wrapper(host *V8ScriptHost) formDataV8Wrapper {
-	return formDataV8Wrapper{newHandleReffedObject[*html.FormData](host)}
+func (w formDataV8Wrapper) CreateInstance(cbCtx *argumentHelper) js.CallbackRVal {
+	value := html.NewFormData()
+	w.store(value, cbCtx.ScriptCtx(), cbCtx.This())
+	return cbCtx.ReturnWithValue(nil)
 }
 
-func (w formDataV8Wrapper) CreateInstance(
-	ctx *V8ScriptContext,
-	info *v8.FunctionCallbackInfo,
-) (*v8.Value, error) {
-	this := info.This()
-	var form html.HTMLFormElement
-	if len(info.Args()) > 0 {
-		arg := info.Args()[0]
-		n, err := w.decodeNode(ctx, arg)
-		if err != nil {
-			return nil, err
-		}
-		var ok bool
-		form, ok = n.(html.HTMLFormElement)
-		if !ok {
-			return nil, v8.NewTypeError(w.scriptHost.iso, "form must be an HTMLFormElement")
-		}
+func (w formDataV8Wrapper) CreateInstanceForm(
+	cbCtx *argumentHelper,
+	form html.HTMLFormElement,
+) js.CallbackRVal {
+	value := html.NewFormDataForm(form)
+	w.store(value, cbCtx.ScriptCtx(), cbCtx.This())
+	return cbCtx.ReturnWithValue(nil)
+}
+
+func (w formDataV8Wrapper) CreateInstanceFormSubmitter(
+	cbCtx *argumentHelper,
+	form html.HTMLFormElement,
+	submitter html.HTMLElement,
+) js.CallbackRVal {
+	value := html.NewFormDataForm(form)
+	if submitter != nil {
+		value.AddElement(submitter)
 	}
-	var value *html.FormData
-	if form != nil {
-		value = html.NewFormDataForm(form)
-	} else {
-		value = html.NewFormData()
-	}
-	w.store(value, ctx, this)
-	return nil, nil
+	w.store(value, cbCtx.ScriptCtx(), cbCtx.This())
+	return cbCtx.ReturnWithValue(nil)
 }
 
-func createFormData(host *V8ScriptHost) *v8.FunctionTemplate {
-	iso := host.iso
-	wrapper := newFormDataV8Wrapper(host)
-	builder := newConstructorBuilder[*html.FormData](
-		host,
-		func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-			ctx := host.mustGetContext(info.Context())
-			return wrapper.CreateInstance(ctx, info)
-		},
-	)
-	stringIterator := newIterator(
-		host,
-		func(instance string, ctx *V8ScriptContext) (*v8.Value, error) {
-			return v8.NewValue(ctx.host.iso, instance)
-		},
-	)
+func (w formDataV8Wrapper) decodeFormDataValue(
+	cbCtx *V8ScriptContext,
+	val *v8go.Value,
+) (html.FormDataValue, error) {
+	return html.FormDataValue(val.String()), nil
+}
 
-	entryIterator := newIterator(
-		host,
-		func(instance html.FormDataEntry, ctx *V8ScriptContext) (*v8.Value, error) {
-			k, e1 := v8.NewValue(iso, instance.Name)
-			v, e2 := v8.NewValue(iso, string(instance.Value))
-			err := errors.Join(e1, e2)
-			if err != nil {
-				return nil, err
-			}
-			return toArray(ctx.v8ctx, k, v)
-		})
-	builder.SetDefaultInstanceLookup()
-	protoBuilder := builder.NewPrototypeBuilder()
-	prototype := protoBuilder.proto
-	builder.constructor.InstanceTemplate().SetSymbol(
-		v8.SymbolIterator(iso),
-		func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-			ctx := host.mustGetContext(info.Context())
-			data, err := wrapper.getInstance(info)
-			if err != nil {
-				return nil, err
-			}
-			return stringIterator.newIteratorInstance(ctx, data.Keys())
-		},
-	)
-	prototype.Set(
-		"append",
-		v8.NewFunctionTemplateWithError(
-			iso,
-			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-				args := newArgumentHelper(host, info)
-				instance, err0 := wrapper.getInstance(info)
-				key, err1 := args.consumeString()
-				value, err2 := args.consumeString()
-				err := errors.Join(err0, err1, err2)
-				if err != nil {
-					return nil, err
-				}
-				instance.Append(key, html.FormDataValue(value))
-				return nil, nil
-			},
-		),
-	)
-
-	prototype.Set(
-		"get",
-		v8.NewFunctionTemplateWithError(
-			iso,
-			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-				args := newArgumentHelper(host, info)
-				instance, err0 := wrapper.getInstance(info)
-				if err0 != nil {
-					return nil, err0
-				}
-				key, err := args.consumeString()
-				if err != nil {
-					return nil, err
-				}
-				val := string(instance.Get(key))
-				return v8.NewValue(iso, val)
-			},
-		),
-	)
-	prototype.Set(
-		"delete",
-		v8.NewFunctionTemplateWithError(host.iso,
-			func(info *v8.FunctionCallbackInfo) (result *v8.Value, err error) {
-				args := newArgumentHelper(host, info)
-				instance, err0 := wrapper.getInstance(info)
-				key, err1 := args.consumeString()
-				if err := errors.Join(err0, err1); err != nil {
-					return nil, err
-				}
-				instance.Delete(key)
-				return nil, nil
-			}),
-	)
-	prototype.Set(
-		"keys",
-		v8.NewFunctionTemplateWithError(host.iso,
-			func(info *v8.FunctionCallbackInfo) (result *v8.Value, err error) {
-				args := newArgumentHelper(host, info)
-				instance, err0 := wrapper.getInstance(info)
-				if err0 != nil {
-					return nil, err0
-				}
-				return stringIterator.newIteratorInstance(args.ScriptCtx(), instance.Keys())
-			}),
-	)
-
-	getEntries := v8.NewFunctionTemplateWithError(
-		iso,
-		func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-			ctx := host.mustGetContext(info.Context())
-			instance, err := wrapper.getInstance(info)
-			if err != nil {
-				return nil, err
-			}
-			return entryIterator.newIteratorInstance(ctx, instance.Entries)
-		},
-	)
-	protoBuilder.proto.Set("entries", getEntries)
-	protoBuilder.proto.SetSymbol(v8.SymbolIterator(iso), getEntries)
-	return builder.constructor
+func (w formDataV8Wrapper) toFormDataEntryValue(
+	cbCtx *argumentHelper,
+	val html.FormDataValue,
+) js.CallbackRVal {
+	return w.toString_(cbCtx, string(val))
 }

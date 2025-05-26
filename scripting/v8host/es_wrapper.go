@@ -80,6 +80,24 @@ func (w converters) decodeHTMLElement(
 	}
 	return nil, v8.NewTypeError(ctx.host.iso, "Must be a node")
 }
+func (w converters) decodeHTMLFormElement(
+	ctx *V8ScriptContext,
+	val *v8.Value,
+) (html.HTMLFormElement, error) {
+	var (
+		res html.HTMLFormElement
+		ok  bool
+	)
+	node, err := w.decodeNode(ctx, val)
+	if err == nil {
+		res, ok = node.(html.HTMLFormElement)
+		if !ok {
+			err = v8.NewTypeError(ctx.host.iso, "Not a form")
+		}
+	}
+	return res, err
+}
+
 func (c converters) defaultHTMLElement() html.HTMLElement { return nil }
 
 func (w converters) decodeNodeOrText(ctx *V8ScriptContext, val *v8.Value) (dom.Node, error) {

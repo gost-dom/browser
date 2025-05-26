@@ -2,6 +2,7 @@ package html
 
 import (
 	"io"
+	"iter"
 	"slices"
 	"strings"
 
@@ -60,12 +61,6 @@ func (d *FormData) AddElement(e dom.Element) {
 
 func (d *FormData) Append(name string, value FormDataValue) {
 	d.Entries = append(d.Entries, FormDataEntry{name, value})
-}
-
-type Predicate[T any] func(T) bool
-
-func elementByName(name string) Predicate[FormDataEntry] {
-	return func(e FormDataEntry) bool { return e.Name == name }
 }
 
 func (d *FormData) Set(name string, value FormDataValue) {
@@ -146,4 +141,20 @@ func (d *FormData) QueryString() string {
 		sb.WriteString(netURL.QueryEscape(string(e.Value)))
 	}
 	return sb.String()
+}
+
+func (d *FormData) All() iter.Seq2[string, FormDataValue] {
+	return func(yield func(string, FormDataValue) bool) {
+		for _, e := range d.Entries {
+			if !yield(e.Name, e.Value) {
+				return
+			}
+		}
+	}
+}
+
+type Predicate[T any] func(T) bool
+
+func elementByName(name string) Predicate[FormDataEntry] {
+	return func(e FormDataEntry) bool { return e.Name == name }
 }

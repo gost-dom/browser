@@ -166,7 +166,6 @@ func init() {
 	registerJSClass("ShadowRoot", "DocumentFragment", createShadowRootPrototype)
 	registerJSClass("Attr", "Node", createAttr)
 
-	registerJSClass("FormData", "", createFormData)
 	registerJSClass("DOMParser", "", createDOMParserPrototype)
 
 	for _, cls := range scripting.HtmlElements {

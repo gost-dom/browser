@@ -4,10 +4,146 @@ package v8host
 
 import (
 	"errors"
-	html "github.com/gost-dom/browser/internal/html"
+	html "github.com/gost-dom/browser/html"
+	html1 "github.com/gost-dom/browser/internal/html"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
 )
+
+func init() {
+	registerJSClass("FormData", "", createFormDataPrototype)
+}
+
+type formDataV8Wrapper struct {
+	handleReffedObject[*html.FormData]
+}
+
+func newFormDataV8Wrapper(scriptHost *V8ScriptHost) *formDataV8Wrapper {
+	return &formDataV8Wrapper{newHandleReffedObject[*html.FormData](scriptHost)}
+}
+
+func createFormDataPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
+	wrapper := newFormDataV8Wrapper(scriptHost)
+	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
+
+	instanceTmpl := constructor.InstanceTemplate()
+	instanceTmpl.SetInternalFieldCount(1)
+
+	wrapper.installPrototype(constructor.PrototypeTemplate())
+
+	wrapper.CustomInitialiser(constructor)
+	return constructor
+}
+func (w formDataV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
+	prototypeTmpl.Set("append", wrapV8Callback(w.scriptHost, w.append))
+	prototypeTmpl.Set("delete", wrapV8Callback(w.scriptHost, w.delete))
+	prototypeTmpl.Set("get", wrapV8Callback(w.scriptHost, w.get))
+	prototypeTmpl.Set("getAll", wrapV8Callback(w.scriptHost, w.getAll))
+	prototypeTmpl.Set("has", wrapV8Callback(w.scriptHost, w.has))
+	prototypeTmpl.Set("set", wrapV8Callback(w.scriptHost, w.set))
+}
+
+func (w formDataV8Wrapper) Constructor(cbCtx *argumentHelper) js.CallbackRVal {
+	cbCtx.logger().Debug("V8 Function call: FormData.Constructor")
+	form, err1 := consumeArgument(cbCtx, "form", nil, w.decodeHTMLFormElement)
+	submitter, err2 := consumeArgument(cbCtx, "submitter", zeroValue, w.decodeHTMLElement)
+	if cbCtx.noOfReadArguments >= 2 {
+		err := errors.Join(err1, err2)
+		if err != nil {
+			return cbCtx.ReturnWithError(err)
+		}
+		return w.CreateInstanceFormSubmitter(cbCtx, form, submitter)
+	}
+	if cbCtx.noOfReadArguments >= 1 {
+		if err1 != nil {
+			return cbCtx.ReturnWithError(err1)
+		}
+		return w.CreateInstanceForm(cbCtx, form)
+	}
+	return w.CreateInstance(cbCtx)
+}
+
+func (w formDataV8Wrapper) append(cbCtx *argumentHelper) js.CallbackRVal {
+	cbCtx.logger().Debug("V8 Function call: FormData.append")
+	instance, err0 := js.As[*html.FormData](cbCtx.Instance())
+	name, err1 := consumeArgument(cbCtx, "name", nil, w.decodeString)
+	value, err2 := consumeArgument(cbCtx, "value", nil, w.decodeFormDataValue)
+	if cbCtx.noOfReadArguments >= 2 {
+		err := errors.Join(err0, err1, err2)
+		if err != nil {
+			return cbCtx.ReturnWithError(err)
+		}
+		instance.Append(name, value)
+		return cbCtx.ReturnWithValue(nil)
+	}
+	return cbCtx.ReturnWithError(errors.New("FormData.append: Missing arguments"))
+}
+
+func (w formDataV8Wrapper) delete(cbCtx *argumentHelper) js.CallbackRVal {
+	cbCtx.logger().Debug("V8 Function call: FormData.delete")
+	instance, err0 := js.As[*html.FormData](cbCtx.Instance())
+	name, err1 := consumeArgument(cbCtx, "name", nil, w.decodeString)
+	if cbCtx.noOfReadArguments >= 1 {
+		err := errors.Join(err0, err1)
+		if err != nil {
+			return cbCtx.ReturnWithError(err)
+		}
+		instance.Delete(name)
+		return cbCtx.ReturnWithValue(nil)
+	}
+	return cbCtx.ReturnWithError(errors.New("FormData.delete: Missing arguments"))
+}
+
+func (w formDataV8Wrapper) get(cbCtx *argumentHelper) js.CallbackRVal {
+	cbCtx.logger().Debug("V8 Function call: FormData.get")
+	instance, err0 := js.As[*html.FormData](cbCtx.Instance())
+	name, err1 := consumeArgument(cbCtx, "name", nil, w.decodeString)
+	if cbCtx.noOfReadArguments >= 1 {
+		err := errors.Join(err0, err1)
+		if err != nil {
+			return cbCtx.ReturnWithError(err)
+		}
+		result := instance.Get(name)
+		return w.toFormDataEntryValue(cbCtx, result)
+	}
+	return cbCtx.ReturnWithError(errors.New("FormData.get: Missing arguments"))
+}
+
+func (w formDataV8Wrapper) getAll(cbCtx *argumentHelper) js.CallbackRVal {
+	cbCtx.logger().Debug("V8 Function call: FormData.getAll")
+	return cbCtx.ReturnWithError(errors.New("FormData.getAll: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
+}
+
+func (w formDataV8Wrapper) has(cbCtx *argumentHelper) js.CallbackRVal {
+	cbCtx.logger().Debug("V8 Function call: FormData.has")
+	instance, err0 := js.As[*html.FormData](cbCtx.Instance())
+	name, err1 := consumeArgument(cbCtx, "name", nil, w.decodeString)
+	if cbCtx.noOfReadArguments >= 1 {
+		err := errors.Join(err0, err1)
+		if err != nil {
+			return cbCtx.ReturnWithError(err)
+		}
+		result := instance.Has(name)
+		return w.toBoolean(cbCtx, result)
+	}
+	return cbCtx.ReturnWithError(errors.New("FormData.has: Missing arguments"))
+}
+
+func (w formDataV8Wrapper) set(cbCtx *argumentHelper) js.CallbackRVal {
+	cbCtx.logger().Debug("V8 Function call: FormData.set")
+	instance, err0 := js.As[*html.FormData](cbCtx.Instance())
+	name, err1 := consumeArgument(cbCtx, "name", nil, w.decodeString)
+	value, err2 := consumeArgument(cbCtx, "value", nil, w.decodeFormDataValue)
+	if cbCtx.noOfReadArguments >= 2 {
+		err := errors.Join(err0, err1, err2)
+		if err != nil {
+			return cbCtx.ReturnWithError(err)
+		}
+		instance.Set(name, value)
+		return cbCtx.ReturnWithValue(nil)
+	}
+	return cbCtx.ReturnWithError(errors.New("FormData.set: Missing arguments"))
+}
 
 func init() {
 	registerJSClass("XMLHttpRequest", "XMLHttpRequestEventTarget", createXMLHttpRequestPrototype)
@@ -86,7 +222,7 @@ func (w xmlHttpRequestV8Wrapper) Constructor(cbCtx *argumentHelper) js.CallbackR
 
 func (w xmlHttpRequestV8Wrapper) setRequestHeader(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.setRequestHeader")
-	instance, err0 := js.As[html.XMLHttpRequest](cbCtx.Instance())
+	instance, err0 := js.As[html1.XMLHttpRequest](cbCtx.Instance())
 	name, err1 := consumeArgument(cbCtx, "name", nil, w.decodeString)
 	value, err2 := consumeArgument(cbCtx, "value", nil, w.decodeString)
 	if cbCtx.noOfReadArguments >= 2 {
@@ -102,7 +238,7 @@ func (w xmlHttpRequestV8Wrapper) setRequestHeader(cbCtx *argumentHelper) js.Call
 
 func (w xmlHttpRequestV8Wrapper) send(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.send")
-	instance, err0 := js.As[html.XMLHttpRequest](cbCtx.Instance())
+	instance, err0 := js.As[html1.XMLHttpRequest](cbCtx.Instance())
 	body, err1 := consumeArgument(cbCtx, "body", zeroValue, w.decodeDocument, w.decodeXMLHttpRequestBodyInit)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -127,7 +263,7 @@ func (w xmlHttpRequestV8Wrapper) send(cbCtx *argumentHelper) js.CallbackRVal {
 
 func (w xmlHttpRequestV8Wrapper) abort(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.abort")
-	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
+	instance, err := js.As[html1.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
 	}
@@ -140,7 +276,7 @@ func (w xmlHttpRequestV8Wrapper) abort(cbCtx *argumentHelper) js.CallbackRVal {
 
 func (w xmlHttpRequestV8Wrapper) getResponseHeader(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.getResponseHeader")
-	instance, err0 := js.As[html.XMLHttpRequest](cbCtx.Instance())
+	instance, err0 := js.As[html1.XMLHttpRequest](cbCtx.Instance())
 	name, err1 := consumeArgument(cbCtx, "name", nil, w.decodeString)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -155,7 +291,7 @@ func (w xmlHttpRequestV8Wrapper) getResponseHeader(cbCtx *argumentHelper) js.Cal
 
 func (w xmlHttpRequestV8Wrapper) getAllResponseHeaders(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.getAllResponseHeaders")
-	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
+	instance, err := js.As[html1.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
 	}
@@ -169,7 +305,7 @@ func (w xmlHttpRequestV8Wrapper) getAllResponseHeaders(cbCtx *argumentHelper) js
 
 func (w xmlHttpRequestV8Wrapper) overrideMimeType(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.overrideMimeType")
-	instance, err0 := js.As[html.XMLHttpRequest](cbCtx.Instance())
+	instance, err0 := js.As[html1.XMLHttpRequest](cbCtx.Instance())
 	mime, err1 := consumeArgument(cbCtx, "mime", nil, w.decodeString)
 	if cbCtx.noOfReadArguments >= 1 {
 		err := errors.Join(err0, err1)
@@ -192,7 +328,7 @@ func (w xmlHttpRequestV8Wrapper) readyState(cbCtx *argumentHelper) js.CallbackRV
 
 func (w xmlHttpRequestV8Wrapper) timeout(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.timeout")
-	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
+	instance, err := js.As[html1.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
 	}
@@ -202,7 +338,7 @@ func (w xmlHttpRequestV8Wrapper) timeout(cbCtx *argumentHelper) js.CallbackRVal 
 
 func (w xmlHttpRequestV8Wrapper) setTimeout(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.setTimeout")
-	instance, err0 := js.As[html.XMLHttpRequest](cbCtx.Instance())
+	instance, err0 := js.As[html1.XMLHttpRequest](cbCtx.Instance())
 	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeUnsignedLong)
 	err := errors.Join(err0, err1)
 	if err != nil {
@@ -214,7 +350,7 @@ func (w xmlHttpRequestV8Wrapper) setTimeout(cbCtx *argumentHelper) js.CallbackRV
 
 func (w xmlHttpRequestV8Wrapper) withCredentials(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.withCredentials")
-	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
+	instance, err := js.As[html1.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
 	}
@@ -224,7 +360,7 @@ func (w xmlHttpRequestV8Wrapper) withCredentials(cbCtx *argumentHelper) js.Callb
 
 func (w xmlHttpRequestV8Wrapper) setWithCredentials(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.setWithCredentials")
-	instance, err0 := js.As[html.XMLHttpRequest](cbCtx.Instance())
+	instance, err0 := js.As[html1.XMLHttpRequest](cbCtx.Instance())
 	val, err1 := parseSetterArg(cbCtx.ScriptCtx(), cbCtx, w.decodeBoolean)
 	err := errors.Join(err0, err1)
 	if err != nil {
@@ -236,7 +372,7 @@ func (w xmlHttpRequestV8Wrapper) setWithCredentials(cbCtx *argumentHelper) js.Ca
 
 func (w xmlHttpRequestV8Wrapper) responseURL(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.responseURL")
-	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
+	instance, err := js.As[html1.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
 	}
@@ -246,7 +382,7 @@ func (w xmlHttpRequestV8Wrapper) responseURL(cbCtx *argumentHelper) js.CallbackR
 
 func (w xmlHttpRequestV8Wrapper) status(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.status")
-	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
+	instance, err := js.As[html1.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
 	}
@@ -256,7 +392,7 @@ func (w xmlHttpRequestV8Wrapper) status(cbCtx *argumentHelper) js.CallbackRVal {
 
 func (w xmlHttpRequestV8Wrapper) statusText(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.statusText")
-	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
+	instance, err := js.As[html1.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
 	}
@@ -276,7 +412,7 @@ func (w xmlHttpRequestV8Wrapper) setResponseType(cbCtx *argumentHelper) js.Callb
 
 func (w xmlHttpRequestV8Wrapper) response(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.response")
-	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
+	instance, err := js.As[html1.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
 	}
@@ -286,7 +422,7 @@ func (w xmlHttpRequestV8Wrapper) response(cbCtx *argumentHelper) js.CallbackRVal
 
 func (w xmlHttpRequestV8Wrapper) responseText(cbCtx *argumentHelper) js.CallbackRVal {
 	cbCtx.logger().Debug("V8 Function call: XMLHttpRequest.responseText")
-	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
+	instance, err := js.As[html1.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
 	}
