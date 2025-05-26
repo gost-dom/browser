@@ -36,6 +36,6 @@ func TestGenerationOfExplicitVariadicArgument(t *testing.T) {
 	expect(g).To(HaveRenderedSubstring("type MutationObserver interface {\n"))
 	expect(
 		g,
-	).To(HaveRenderedSubstring("\n\tObserve(dom.Node, ...func(*MutationObserverInit)) error\n"))
+	).To(HaveRenderedSubstring("\n\tObserve(dom.Node, ...ObserveOption) error\n"))
 
 }

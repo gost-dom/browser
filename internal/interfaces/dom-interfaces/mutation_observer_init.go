@@ -1,5 +1,7 @@
 package dominterfaces
 
+type ObserveOption = func(*MutationObserverInit)
+
 type MutationObserverInit struct {
 	Subtree               bool
 	ChildList             bool

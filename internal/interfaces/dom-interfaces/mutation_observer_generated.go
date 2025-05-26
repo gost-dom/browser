@@ -5,7 +5,7 @@ package dominterfaces
 import dom "github.com/gost-dom/browser/dom"
 
 type MutationObserver interface {
-	Observe(dom.Node, ...func(*MutationObserverInit)) error
+	Observe(dom.Node, ...ObserveOption) error
 	Disconnect()
 	TakeRecords() []MutationRecord
 }

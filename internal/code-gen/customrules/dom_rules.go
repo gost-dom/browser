@@ -29,7 +29,7 @@ var domRules = SpecRules{
 				HasError: true,
 				Arguments: ArgumentRules{
 					"options": {
-						Type:     idl.Type{Name: "func(*MutationObserverInit)"},
+						Type:     idl.Type{Name: "ObserveOption"},
 						Variadic: true,
 					},
 				}},
