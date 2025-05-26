@@ -32,12 +32,11 @@ func (w mutationObserverV8Wrapper) CreateInstance(
 func (w mutationObserverV8Wrapper) decodeMutationCallback(
 	cbCtx jsCallbackContext,
 	val jsValue,
-) (res mutation.Callback, err error) {
-	var f *v8go.Function
-	if f, err = val.AsFunction(); err == nil {
-		res = MutationCallback{cbCtx.ScriptCtx(), f}
+) (mutation.Callback, error) {
+	if f, ok := val.AsFunction(); ok {
+		return MutationCallback{cbCtx.ScriptCtx(), f.v8fn}, nil
 	}
-	return
+	return nil, v8go.NewTypeError(cbCtx.iso(), "Not a function")
 }
 
 func (w mutationObserverV8Wrapper) decodeObserveOption(

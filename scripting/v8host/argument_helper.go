@@ -81,13 +81,15 @@ func (h *argumentHelper) consumeValue() jsValue {
 	return &v8Value{v8.Undefined(h.iso())}
 }
 
-func (h *argumentHelper) consumeFunction() (*v8.Function, error) {
+func (h *argumentHelper) consumeFunction() (jsFunction, error) {
 	arg := h.ConsumeArg()
 	if arg == nil {
 		return nil, ErrWrongNoOfArguments
 	}
 	if arg.IsFunction() {
-		return arg.AsFunction()
+		if f, ok := arg.AsFunction(); ok {
+			return f, nil
+		}
 	}
 	return nil, h.newTypeError("Expected function", arg)
 }
