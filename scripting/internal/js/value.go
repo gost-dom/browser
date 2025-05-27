@@ -1,6 +1,8 @@
 package js
 
-type Value interface {
+type Value[T any] interface {
+	Self() T
+
 	String() string
 	Int32() int32
 	Uint32() uint32
@@ -13,21 +15,21 @@ type Value interface {
 	IsObject() bool
 	IsFunction() bool
 
-	AsFunction() (Function, bool)
-	AsObject() (Object, bool)
+	AsFunction() (Function[T], bool)
+	AsObject() (Object[T], bool)
 
-	StrictEquals(Value) bool
+	StrictEquals(Value[T]) bool
 }
 
-type Function interface {
-	Value
+type Function[T any] interface {
+	Value[T]
 
-	Call(this Object, args ...Value) (Value, error)
+	Call(this Object[T], args ...Value[T]) (Value[T], error)
 }
 
-type Object interface {
-	Value
+type Object[T any] interface {
+	Value[T]
 	NativeValue() any
 	SetNativeValue(any)
-	Get(name string) (Value, error)
+	Get(name string) (Value[T], error)
 }

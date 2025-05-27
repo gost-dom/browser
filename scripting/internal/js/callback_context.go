@@ -11,7 +11,7 @@ var ErrNoInternalValue = errors.New("object does not have an internal instance")
 // - Calling a native function
 // - Getting or setting an accessor property backed by a native function
 // - Named or indexed handler callbacks / interceptors.
-type CallbackContext interface {
+type CallbackContext[T any] interface {
 	// ConsumeArg pulls argument from the list of required arguments. If
 	// there are no more arguments to consume, an error wrapping
 	// ErrMissingArgument error will be returned. (e.g., if you call the method
@@ -26,7 +26,7 @@ type CallbackContext interface {
 	//  should be returned.
 	//
 	// The function is intended for parsing required arguments in the specs.
-	ConsumeArg() (Value, error)
+	ConsumeArg() (Value[T], error)
 
 	// ConsumeRestArgs returns all remaining arguments as a slice of values.
 	//
@@ -34,7 +34,7 @@ type CallbackContext interface {
 	// e.g., [Element.append]
 	//
 	// [Element.append]: https://developer.mozilla.org/en-US/docs/Web/API/Element/append
-	ConsumeRestArgs() []Value
+	ConsumeRestArgs() []Value[T]
 
 	// InternalInstance returns the Go value that is wrapped by "this", with
 	// "this" referring the the JavaScript value of "this". If the object does
@@ -42,18 +42,18 @@ type CallbackContext interface {
 	// returned.
 	InternalInstance() (any, error)
 
-	ReturnWithValue(Value) (Value, error)
-	ReturnWithError(error) (Value, error)
+	ReturnWithValue(Value[T]) (Value[T], error)
+	ReturnWithError(error) (Value[T], error)
 
 	// ValueFactory returns a "factory" that can be used to produce JavaScript
 	// values.
-	ValueFactory() ValueFactory
+	ValueFactory() ValueFactory[T]
 }
 
-type FunctionCallback func(CallbackContext) (Value, error)
+type FunctionCallback[T any] func(CallbackContext[T]) (Value[T], error)
 
 // ValueFactory allows creating JavaScript values from Go values
-type ValueFactory interface {
-	Null() Value
-	String(string) Value
+type ValueFactory[T any] interface {
+	Null() Value[T]
+	String(string) Value[T]
 }

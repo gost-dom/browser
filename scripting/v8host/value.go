@@ -1,43 +1,23 @@
 package v8host
 
-/*
 import (
 	"runtime/cgo"
 
-	"github.com/gost-dom/v8go"
-)
-
-type jsValue = *v8Value
-type jsFunction = *v8Function
-type jsObject = *v8Object
-
-func assertV8Value(v jsValue) *v8Value    { return v }
-func assertV8Object(v jsObject) *v8Object { return v }
-
-func functionAsValue(v jsFunction) jsValue { return &v.v8Value }
-
-/*/
-
-import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
-	"runtime/cgo"
 )
 
-type jsValue = js.Value
-type jsFunction = js.Function
-type jsObject = js.Object
+type jsValue = js.Value[*v8Value]
+type jsFunction = js.Function[*v8Value]
+type jsObject = js.Object[*v8Value]
 
-type v8valuer interface{ self() *v8Value }
+// TODO: Delete
 
 func assertV8Value(v jsValue) *v8Value {
 	if v == nil {
 		return nil
 	}
-	if r, ok := v.(v8valuer); ok {
-		return r.self()
-	}
-	panic("Expected a V8 Value")
+	return v.Self()
 }
 
 func assertV8Object(v jsObject) *v8Object {
@@ -54,12 +34,12 @@ type v8Value struct {
 	Value *v8go.Value
 }
 
-func (v *v8Value) self() *v8Value { return v }
+func (v *v8Value) Self() *v8Value { return v }
 
 // newV8Value creates a v8Value wrapping a v8go value. This is safe to use for
 // for mapping values that can be nil. If the v8go value is nil, this will
 // return nil.
-func newV8Value(iso *v8go.Isolate, v *v8go.Value) *v8Value {
+func newV8Value(iso *v8go.Isolate, v *v8go.Value) jsValue {
 	if v == nil {
 		return nil
 	}

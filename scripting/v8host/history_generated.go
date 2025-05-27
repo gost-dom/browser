@@ -49,12 +49,12 @@ func (w historyV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 		v8.None)
 }
 
-func (w historyV8Wrapper) Constructor(cbCtx *argumentHelper) (js.Value, error) {
+func (w historyV8Wrapper) Constructor(cbCtx *argumentHelper) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: History.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w historyV8Wrapper) go_(cbCtx *argumentHelper) (js.Value, error) {
+func (w historyV8Wrapper) go_(cbCtx *argumentHelper) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: History.go_")
 	instance, err0 := js.As[htmlinterfaces.History](cbCtx.Instance())
 	delta, err1 := consumeArgument(cbCtx, "delta", w.defaultDelta, w.decodeLong)
@@ -72,7 +72,7 @@ func (w historyV8Wrapper) go_(cbCtx *argumentHelper) (js.Value, error) {
 	return cbCtx.ReturnWithError(errors.New("History.go: Missing arguments"))
 }
 
-func (w historyV8Wrapper) back(cbCtx *argumentHelper) (js.Value, error) {
+func (w historyV8Wrapper) back(cbCtx *argumentHelper) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: History.back")
 	instance, err := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if err != nil {
@@ -85,7 +85,7 @@ func (w historyV8Wrapper) back(cbCtx *argumentHelper) (js.Value, error) {
 	return cbCtx.ReturnWithValue(nil)
 }
 
-func (w historyV8Wrapper) forward(cbCtx *argumentHelper) (js.Value, error) {
+func (w historyV8Wrapper) forward(cbCtx *argumentHelper) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: History.forward")
 	instance, err := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if err != nil {
@@ -98,7 +98,7 @@ func (w historyV8Wrapper) forward(cbCtx *argumentHelper) (js.Value, error) {
 	return cbCtx.ReturnWithValue(nil)
 }
 
-func (w historyV8Wrapper) pushState(cbCtx *argumentHelper) (js.Value, error) {
+func (w historyV8Wrapper) pushState(cbCtx *argumentHelper) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: History.pushState")
 	instance, err0 := js.As[htmlinterfaces.History](cbCtx.Instance())
 	data, err1 := consumeArgument(cbCtx, "data", nil, w.decodeHistoryState)
@@ -118,7 +118,7 @@ func (w historyV8Wrapper) pushState(cbCtx *argumentHelper) (js.Value, error) {
 	return cbCtx.ReturnWithError(errors.New("History.pushState: Missing arguments"))
 }
 
-func (w historyV8Wrapper) replaceState(cbCtx *argumentHelper) (js.Value, error) {
+func (w historyV8Wrapper) replaceState(cbCtx *argumentHelper) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: History.replaceState")
 	instance, err0 := js.As[htmlinterfaces.History](cbCtx.Instance())
 	data, err1 := consumeArgument(cbCtx, "data", nil, w.decodeHistoryState)
@@ -138,7 +138,7 @@ func (w historyV8Wrapper) replaceState(cbCtx *argumentHelper) (js.Value, error) 
 	return cbCtx.ReturnWithError(errors.New("History.replaceState: Missing arguments"))
 }
 
-func (w historyV8Wrapper) length(cbCtx *argumentHelper) (js.Value, error) {
+func (w historyV8Wrapper) length(cbCtx *argumentHelper) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: History.length")
 	instance, err := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if err != nil {
@@ -148,7 +148,7 @@ func (w historyV8Wrapper) length(cbCtx *argumentHelper) (js.Value, error) {
 	return w.toUnsignedLong(cbCtx, result)
 }
 
-func (w historyV8Wrapper) state(cbCtx *argumentHelper) (js.Value, error) {
+func (w historyV8Wrapper) state(cbCtx *argumentHelper) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: History.state")
 	instance, err := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if err != nil {
