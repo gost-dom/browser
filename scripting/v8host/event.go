@@ -25,7 +25,7 @@ func (w eventV8Wrapper) CreateInstance(
 	o eventInitWrapper,
 ) js.CallbackRVal {
 	e := &event.Event{Type: type_, Bubbles: o.bubbles, Cancelable: o.cancelable, Data: o.init}
-	return cbCtx.ReturnWithValueErr(w.store(e, cbCtx.ScriptCtx(), cbCtx.This()))
+	return cbCtx.ReturnWithJSValueErr(w.store(e, cbCtx.ScriptCtx(), cbCtx.This()))
 }
 
 func (w eventV8Wrapper) toEventTarget(

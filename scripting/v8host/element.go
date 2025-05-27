@@ -88,7 +88,7 @@ func (e elementV8Wrapper) classList(cbCtx *argumentHelper) js.CallbackRVal {
 	}
 	cl := instance.ClassList()
 	iso := cbCtx.iso()
-	return cbCtx.ReturnWithValueErr(
+	return cbCtx.ReturnWithJSValueErr(
 		storeObjectHandleInV8Instance(cl, cbCtx.ScriptCtx(), newV8Object(iso, res)),
 	)
 }

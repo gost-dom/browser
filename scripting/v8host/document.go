@@ -31,7 +31,9 @@ func (w *documentV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) 
 }
 
 func (w *documentV8Wrapper) CreateInstance(cbCtx *argumentHelper) js.CallbackRVal {
-	return cbCtx.ReturnWithValueErr(w.store(dom.NewDocument(nil), cbCtx.ScriptCtx(), cbCtx.This()))
+	return cbCtx.ReturnWithJSValueErr(
+		w.store(dom.NewDocument(nil), cbCtx.ScriptCtx(), cbCtx.This()),
+	)
 }
 
 func (w *documentV8Wrapper) getElementById(cbCtx *argumentHelper) js.CallbackRVal {

@@ -31,7 +31,7 @@ func (w uIEventV8Wrapper) CreateInstanceEventInitDict(
 	type_ string,
 	options ...interface{}) js.CallbackRVal {
 	e := uievents.NewUIEvent(type_)
-	return cbCtx.ReturnWithValueErr(w.store(e, cbCtx.ScriptCtx(), cbCtx.This()))
+	return cbCtx.ReturnWithJSValueErr(w.store(e, cbCtx.ScriptCtx(), cbCtx.This()))
 }
 
 func (w uIEventV8Wrapper) decodeUIEventInit(

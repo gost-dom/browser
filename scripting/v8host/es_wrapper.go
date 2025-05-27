@@ -188,7 +188,7 @@ func storeObjectHandleInV8Instance(
 	value any,
 	ctx *V8ScriptContext,
 	this jsObject,
-) (*v8.Value, error) {
+) (jsValue, error) {
 	handle := cgo.NewHandle(value)
 	ctx.addDisposer(handleDisposable(handle))
 
@@ -200,7 +200,7 @@ func storeObjectHandleInV8Instance(
 
 	internalField := v8.NewValueExternalHandle(ctx.v8ctx.Isolate(), handle)
 	this.Object.SetInternalField(0, internalField)
-	return this.Value, nil
+	return &this.v8Value, nil
 }
 
 // TODO: Return js.CallbackRVal
@@ -208,7 +208,7 @@ func (o handleReffedObject[T]) store(
 	value any,
 	ctx *V8ScriptContext,
 	this jsObject,
-) (*v8.Value, error) {
+) (jsValue, error) {
 	return storeObjectHandleInV8Instance(value, ctx, this)
 }
 
