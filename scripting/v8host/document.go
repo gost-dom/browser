@@ -90,7 +90,7 @@ func createDocumentPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
 				ctx := host.mustGetContext(arg.Context())
 				this, ok := ctx.getCachedNode(arg.This())
 				if e, e_ok := this.(dom.Document); ok && e_ok {
-					return ctx.getInstanceForNodeByName("HTMLElement", e.Head())
+					return ctx.getInstanceForNode(e.Head())
 				}
 				return nil, v8.NewTypeError(iso, "Object not a Document")
 			}),
@@ -102,7 +102,7 @@ func createDocumentPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
 			ctx := host.mustGetContext(arg.Context())
 			this, ok := ctx.getCachedNode(arg.This())
 			if e, e_ok := this.(dom.Document); ok && e_ok {
-				return ctx.getInstanceForNodeByName("HTMLElement", e.Body())
+				return ctx.getInstanceForNode(e.Body())
 			}
 			return nil, v8.NewTypeError(iso, "Object not a Document")
 		}),

@@ -96,5 +96,5 @@ func (e *elementV8Wrapper) toNamedNodeMap(
 	cbCtx *argumentHelper,
 	n dom.NamedNodeMap,
 ) js.CallbackRVal {
-	return cbCtx.ReturnWithValueErr(cbCtx.ScriptCtx().getInstanceForNodeByName("NamedNodeMap", n))
+	return cbCtx.ReturnWithValueErr(cbCtx.ScriptCtx().getInstanceForNode(n))
 }

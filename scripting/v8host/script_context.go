@@ -88,10 +88,14 @@ func (c *V8ScriptContext) getInstanceForNode(
 		return c.getInstanceForNodeByName("Document", n)
 	case dom.DocumentFragment:
 		return c.getInstanceForNodeByName("DocumentFragment", n)
-	case dom.Node:
-		return c.getInstanceForNodeByName("Node", n)
+	case dom.NamedNodeMap:
+		return c.getInstanceForNodeByName("NamedNodeMap", n)
 	case dom.Attr:
 		return c.getInstanceForNodeByName("Attr", n)
+	case dom.NodeList:
+		return c.getInstanceForNodeByName("NodeList", n)
+	case dom.Node:
+		return c.getInstanceForNodeByName("Node", n)
 	default:
 		panic(fmt.Sprintf("Cannot lookup node: %v", n))
 	}
