@@ -192,14 +192,13 @@ func storeObjectHandleInV8Instance(
 	handle := cgo.NewHandle(value)
 	ctx.addDisposer(handleDisposable(handle))
 
-	e, ok := value.(entity.ObjectIder)
-	if ok {
+	if e, ok := value.(entity.ObjectIder); ok {
 		objectId := e.ObjectId()
 		ctx.v8nodes[objectId] = &this.v8Value
 	}
 
-	internalField := v8.NewValueExternalHandle(ctx.v8ctx.Isolate(), handle)
-	this.Object.SetInternalField(0, internalField)
+	this.SetNativeHandle(value)
+	ctx.addDisposer(this)
 	return &this.v8Value, nil
 }
 

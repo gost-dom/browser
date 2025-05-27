@@ -22,9 +22,7 @@ func (w *nodeListV8Wrapper) CustomInitialiser(ft *v8.FunctionTemplate) {
 			if err != nil {
 				return cbCtx.ReturnWithError(err)
 			}
-			return cbCtx.ReturnWithValueErr(
-				nodeListIterator.newIteratorInstance(cbCtx.ScriptCtx(), nodeList.All()),
-			)
+			return nodeListIterator.newIteratorInstance(cbCtx, nodeList.All())
 		}))
 
 	instanceTemplate := ft.InstanceTemplate()

@@ -46,7 +46,7 @@ func (h *V8ScriptHost) mustGetContext(v8ctx *v8.Context) *V8ScriptContext {
 	panic("Unknown v8 context!!\n" + string(debug.Stack()))
 }
 
-func (c *V8ScriptContext) cacheNode(obj jsObject, node entity.ObjectIder) (*v8.Value, error) {
+func (c *V8ScriptContext) cacheNode(obj jsObject, node entity.ObjectIder) jsValue {
 	var val jsValue = &assertV8Object(obj).v8Value
 	objectId := node.ObjectId()
 	c.v8nodes[objectId] = val
@@ -54,7 +54,7 @@ func (c *V8ScriptContext) cacheNode(obj jsObject, node entity.ObjectIder) (*v8.V
 	c.addDisposer(handleDisposable(handle))
 	internal := v8.NewValueExternalHandle(c.host.iso, handle)
 	obj.Object.SetInternalField(0, internal)
-	return val.v8Value(), nil
+	return val
 }
 
 func lookupJSPrototype(entity entity.ObjectIder) string {
@@ -115,8 +115,7 @@ func (c *V8ScriptContext) getJSInstance(
 	}
 	value, err := prototype.InstanceTemplate().NewInstance(c.v8ctx)
 	if err == nil {
-		v, err := c.cacheNode(newV8Object(iso, value), node)
-		return newV8Value(iso, v), err
+		return c.cacheNode(newV8Object(iso, value), node), nil
 	}
 	return nil, err
 }

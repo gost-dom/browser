@@ -30,6 +30,7 @@ func (h argumentHelper) Global() jsObject {
 
 func (h argumentHelper) This() jsObject       { return newV8Object(h.iso(), h.v8Info.This()) }
 func (h argumentHelper) iso() *v8.Isolate     { return h.ScriptCtx().host.iso }
+func (h argumentHelper) v8ctx() *v8.Context   { return h.ScriptCtx().v8ctx }
 func (h argumentHelper) logger() *slog.Logger { return h.ScriptCtx().host.Logger() }
 func (h *argumentHelper) ScriptCtx() *V8ScriptContext {
 	return h.host.mustGetContext(h.v8Info.Context())

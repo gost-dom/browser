@@ -146,7 +146,7 @@ func (o *v8Object) NativeValue() any {
 	return internal.ExternalHandle().Value()
 }
 
-func (o *v8Object) SetNativeValue(v any) {
+func (o *v8Object) SetNativeHandle(v any) {
 	if o.handle != 0 {
 		o.handle.Delete()
 	}
@@ -154,6 +154,13 @@ func (o *v8Object) SetNativeValue(v any) {
 	ext := v8go.NewValueExternalHandle(o.iso, o.handle)
 	defer ext.Release()
 	o.Object.SetInternalField(0, ext)
+}
+
+func (o *v8Object) dispose() {
+	if o.handle != 0 {
+		o.handle.Delete()
+		o.handle = 0
+	}
 }
 
 func (o *v8Object) Get(name string) (jsValue, error) {
