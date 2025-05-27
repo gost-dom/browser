@@ -25,7 +25,7 @@ func newArgumentHelper(host *V8ScriptHost, info *v8.FunctionCallbackInfo) *argum
 
 func (h argumentHelper) Global() jsObject {
 	global := h.Context().Global()
-	return &v8Object{v8Value{global.Value}, global}
+	return &v8Object{v8Value{h.iso(), global.Value}, global}
 }
 
 func (h argumentHelper) iso() *v8.Isolate     { return h.FunctionCallbackInfo.Context().Isolate() }
@@ -83,7 +83,7 @@ func (h *argumentHelper) consumeValue() jsValue {
 	if arg := h.ConsumeArg(); arg != nil {
 		return arg
 	}
-	return &v8Value{v8.Undefined(h.iso())}
+	return &v8Value{h.iso(), v8.Undefined(h.iso())}
 }
 
 func (h *argumentHelper) consumeFunction() (jsFunction, error) {
@@ -132,7 +132,7 @@ func (h *argumentHelper) ConsumeArg() jsValue {
 		return nil
 	}
 	h.acceptIndex(index)
-	return &v8Value{arg}
+	return &v8Value{h.iso(), arg}
 }
 
 func (h *argumentHelper) consumeRest() []*v8.Value {

@@ -39,7 +39,10 @@ func assertV8Object(v jsObject) *v8Object {
 
 //*/
 
-type v8Value struct{ *v8go.Value }
+type v8Value struct {
+	iso *v8go.Isolate
+	*v8go.Value
+}
 
 func (v v8Value) String() string { return v.Value.String() }
 func (v v8Value) Int32() int32   { return v.Value.Int32() }
@@ -73,7 +76,7 @@ func (f v8Function) Call(this jsObject, args ...jsValue) (jsValue, error) {
 	var res jsValue
 	v, err := f.v8fn.Call(assertV8Object(this).Object, v8Args...)
 	if err == nil {
-		res = &v8Value{v}
+		res = &v8Value{f.iso, v}
 	}
 	return res, err
 }
@@ -108,5 +111,5 @@ func (o *v8Object) Get(name string) (jsValue, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &v8Value{res}, nil
+	return &v8Value{o.iso, res}, nil
 }

@@ -43,10 +43,10 @@ func (f v8ValueFactory) mustVal(val *v8go.Value, err error) jsValue {
 			),
 		)
 	}
-	return &v8Value{val}
+	return &v8Value{f.iso(), val}
 }
 func (f v8ValueFactory) toVal(val *v8go.Value) jsValue {
-	return &v8Value{val}
+	return &v8Value{f.iso(), val}
 }
 
 type internalCallback func(*argumentHelper) js.CallbackRVal
