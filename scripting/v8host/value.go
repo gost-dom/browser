@@ -66,6 +66,12 @@ func (v v8Value) Int32() int32   { return v.Value.Int32() }
 func (v v8Value) Uint32() uint32 { return v.Value.Uint32() }
 func (v v8Value) Boolean() bool  { return v.Value.Boolean() }
 
+func (v v8Value) StrictEquals(
+	other jsValue,
+) bool {
+	return v.Value.StrictEquals(assertV8Value(other).v8Value())
+}
+
 func (v v8Value) AsFunction() (jsFunction, bool) {
 	f, err := v.Value.AsFunction()
 	if err == nil {

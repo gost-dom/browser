@@ -9,30 +9,29 @@ import (
 
 type v8EventListener struct {
 	ctx *V8ScriptContext
-	val *v8.Value
+	val jsFunction
 }
 
-func newV8EventListener(ctx *V8ScriptContext, val *v8.Value) event.EventHandler {
+func newV8EventListener(ctx *V8ScriptContext, val jsFunction) event.EventHandler {
 	return v8EventListener{ctx, val}
 }
 
 func (l v8EventListener) HandleEvent(e *event.Event) error {
-	f, err := l.val.AsFunction()
+	f := l.val
+	event, err := l.ctx.getJSInstance(e)
 	if err == nil {
-		var event jsValue
-		event, err = l.ctx.getJSInstance(e)
-		if err == nil {
-			_, err1 := f.Call(l.val, event)
-			err2 := l.ctx.eventLoop.tick()
-			err = errors.Join(err1, err2)
-		}
+		iso := l.ctx.host.iso
+		global := l.ctx.v8ctx.Global()
+		_, err1 := f.Call(newV8Object(iso, global), event)
+		err2 := l.ctx.eventLoop.tick()
+		err = errors.Join(err1, err2)
 	}
 	return err
 }
 
 func (l v8EventListener) Equals(other event.EventHandler) bool {
 	x, ok := other.(v8EventListener)
-	return ok && x.val.StrictEquals(l.val)
+	return ok && x.val.StrictEquals(&l.val.v8Value)
 }
 
 type eventTargetV8Wrapper struct {
@@ -84,7 +83,7 @@ func createEventTarget(host *V8ScriptHost) *v8.FunctionTemplate {
 				}
 				err = errors.Join(e1, e2)
 				if err == nil {
-					listener := newV8EventListener(ctx, fn.Value)
+					listener := newV8EventListener(ctx, fn)
 					target.AddEventListener(eventType, listener, options...)
 				}
 				return v8.Undefined(iso), err
@@ -103,7 +102,7 @@ func createEventTarget(host *V8ScriptHost) *v8.FunctionTemplate {
 				fn, e2 := args.consumeFunction()
 				err = errors.Join(e1, e2)
 				if err == nil {
-					listener := newV8EventListener(ctx, fn.Value)
+					listener := newV8EventListener(ctx, fn)
 					target.RemoveEventListener(eventType, listener)
 				}
 				return v8.Undefined(iso), err
