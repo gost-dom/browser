@@ -207,7 +207,6 @@ func init() {
 	registerJSClass("CustomEvent", "Event", createCustomEvent)
 	registerJSClass("NamedNodeMap", "", createNamedNodeMap)
 	registerJSClass("Location", "", createLocationPrototype)
-	registerJSClass("NodeList", "", createNodeList)
 	registerJSClass("EventTarget", "", createEventTarget)
 	registerJSClass("XMLHttpRequestEventTarget", "EventTarget", createIllegalConstructor)
 

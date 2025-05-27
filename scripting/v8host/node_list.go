@@ -2,101 +2,32 @@ package v8host
 
 import (
 	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
 )
 
-/*
-Instance properties
-
-    length
-
-Instance methods
-
-    entries()  // returns an iterator
-    forEach()  // calls a callback
-    item()
-    keys()
-    values()
-
-
-## Foreach parameters
-
-    // foreach Behaviour in FF (by experimenting)
-    // for (i = 0; i < length; i++) {
-    //   element = item(i)
-    //   if (element) { callback(element, i) }
-    // }
-    // Inserting an element _before_ current element will iterate current
-// element twice (it has a new index), but last element isn't iterated.
-    // Removing an element, and it doesn't iterate _past_ the end of the element
-
-callback
-
-    A function to execute on each element of someNodeList. It accepts 3 parameters:
-
-    currentValue
-
-        The current element being processed in someNodeList.
-    currentIndex Optional
-
-        The index of the currentValue being processed in someNodeList.
-    listObj Optional
-
-        The someNodeList that forEach() is being applied to.
-
-thisArg Optional
-
-    Value to use as this when executing callback.
-*/
-
-func createNodeList(host *V8ScriptHost) *v8.FunctionTemplate {
-	nodeListIterator := newIterator[dom.Node](
-		host,
+func (w *nodeListV8Wrapper) CustomInitialiser(ft *v8.FunctionTemplate) {
+	host := w.scriptHost
+	iso := w.iso()
+	prototype := ft.PrototypeTemplate()
+	nodeListIterator := newIterator(host,
 		func(instance dom.Node, ctx *V8ScriptContext) (*v8.Value, error) {
 			v, err := ctx.getJSInstance(instance)
 			return v.v8Value(), err
 		},
 	)
-	iso := host.iso
-	builder := newIllegalConstructorBuilder[dom.NodeList](host)
-	builder.SetDefaultInstanceLookup()
-	proto := builder.NewPrototypeBuilder()
-	proto.CreateReadonlyProp2(
-		"length",
-		func(instance dom.NodeList, ctx *V8ScriptContext) (*v8.Value, error) {
-			return v8.NewValue(iso, uint32(instance.Length()))
-		},
-	)
-	proto.CreateFunction(
-		"item",
-		func(instance dom.NodeList, info *argumentHelper) (*v8.Value, error) {
-			index, err := info.consumeInt32()
+	prototype.SetSymbol(v8.SymbolIterator(iso),
+		wrapV8Callback(host, func(cbCtx *argumentHelper) js.CallbackRVal {
+			nodeList, err := js.As[dom.NodeList](cbCtx.Instance())
 			if err != nil {
-				return nil, v8.NewTypeError(iso, "Index must be an integer")
+				return cbCtx.ReturnWithError(err)
 			}
-			result := instance.Item(int(index))
-			if result == nil {
-				return v8.Null(iso), nil
-			}
-			v, err := info.ScriptCtx().getJSInstance(result)
-			return v.v8Value(), err
-		},
-	)
-	instanceTemplate := builder.NewInstanceBuilder().proto
-	instanceTemplate.SetSymbol(
-		v8.SymbolIterator(iso),
-		v8.NewFunctionTemplateWithError(
-			iso,
-			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-				ctx := host.mustGetContext(info.Context())
-				nodeList, err := getInstanceFromThis[dom.NodeList](ctx, info.This())
-				if err != nil {
-					return nil, err
-				}
-				return nodeListIterator.newIteratorInstance(ctx, nodeList.All())
-			},
-		),
-	)
+			return cbCtx.ReturnWithValueErr(
+				nodeListIterator.newIteratorInstance(cbCtx.ScriptCtx(), nodeList.All()),
+			)
+		}))
+
+	instanceTemplate := ft.InstanceTemplate()
 	instanceTemplate.SetIndexedHandler(
 		func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 			ctx := host.mustGetContext(info.Context())
@@ -114,6 +45,4 @@ func createNodeList(host *V8ScriptHost) *v8.FunctionTemplate {
 			return nil, v8.NewTypeError(iso, "dunno")
 		},
 	)
-
-	return builder.constructor
 }

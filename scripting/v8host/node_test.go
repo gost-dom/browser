@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/gost-dom/browser/internal/test/scripttests"
+	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/scripting/v8host"
 	. "github.com/onsi/gomega"
 	"github.com/stretchr/testify/suite"
@@ -15,7 +16,8 @@ type NodeTestSuite struct {
 
 func TestNode(t *testing.T) {
 	t.Parallel()
-	suite.Run(t, &NodeTestSuite{ScriptHostSuite: scripttests.NewScriptHostSuite(v8host.New())})
+	v8host.New(v8host.WithLogger(gosttest.NewTestLogger(t)))
+	suite.Run(t, &NodeTestSuite{ScriptHostSuite: scripttests.NewScriptHostSuite(host)})
 }
 
 func (s *NodeTestSuite) TestInsertBefore() {

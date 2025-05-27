@@ -79,6 +79,9 @@ func CreateV8Specs() WebIdlConfigurations {
 	document.Method("createElement").SetCustomImplementation()
 	document.Method("createTextNode").SetCustomImplementation()
 
+	nodeList := domSpecs.Type("NodeList")
+	nodeList.RunCustomCode = true
+
 	parentNode := domSpecs.Type("ParentNode")
 	parentNode.Method("children").Ignore()
 	parentNode.Method("append").SetCustomImplementation()
