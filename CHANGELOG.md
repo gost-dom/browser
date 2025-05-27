@@ -1,6 +1,35 @@
 # Changelog - Gost-DOM
 
 
+## [0.7.0](https://github.com/gost-dom/browser/compare/v0.6.0...v0.7.0) (2025-05-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* The following Go functions have changed return values from *string to
+(string, bool)
+
+- DOMTokenList.Item()
+- XMLHttpRequest.GetResponseHeader()
+
+DOMTokenList is returned by Element.ClassList() and
+HTMLAnchorElement.RelList()
+
+* *string return vaules are returned as (string, bool) ([9f2662f](https://github.com/gost-dom/browser/commit/9f2662f50232f809c91d5197ed7590e8a73ad1f0))
+
+
+### Features
+
+* Add missing FormData.getAll in JS ([48c42f4](https://github.com/gost-dom/browser/commit/48c42f485bdddc41c3a5d3d1199298b385ea91e2))
+* Use more idiomatic errors for DOMTokenList ([e4f7ad3](https://github.com/gost-dom/browser/commit/e4f7ad30048ef43a03469add7768c0065f4fc2b2))
+* **v8:** Add URL.toString() ([bd09002](https://github.com/gost-dom/browser/commit/bd0900207652d241725f13827a642973386d006b))
+
+
+### Bug Fixes
+
+* Fix potential race conditions with parallel tests ([a72cee7](https://github.com/gost-dom/browser/commit/a72cee7b926a76ce5855cde8199b2686a8c4f921))
+* Set correct prototype for document.documentElement ([17b695a](https://github.com/gost-dom/browser/commit/17b695abfe3a849ce0c005c8aa6bdfbc3558500c))
+
 ## [0.6.0](https://github.com/gost-dom/browser/compare/v0.5.8...v0.6.0) (2025-05-20)
 
 
