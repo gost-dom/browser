@@ -36,7 +36,11 @@ var _ = Describe("GojaDriver", func() {
 	})
 })
 
+type scriptHostFactory struct{}
+
+func (f scriptHostFactory) New() html.ScriptHost { return gojahost.New() }
+
 func TestGojaHost(t *testing.T) {
 	t.Parallel()
-	scripttests.RunSuites(t, gojahost.New())
+	scripttests.RunSuites(t, scriptHostFactory{})
 }

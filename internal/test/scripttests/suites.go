@@ -14,11 +14,13 @@ func runSuite(s suite.TestingSuite) func(t *testing.T) {
 	}
 }
 
-func RunSuites(t *testing.T, h html.ScriptHost) {
-	t.Run("Location", runSuite(NewLocationSuite(h)))
-	t.Run("EventLoop", runSuite(NewEventLoopTestSuite(h)))
-	t.Run("Window", runSuite(NewWindowTestSuite(h)))
-	t.Run("UIEvents", runSuite(NewUIEventTestSuite(h)))
-	t.Run("Document", runSuite(NewDocumentSuite(h)))
-	t.Run("EventTarget", runSuite(NewEventTargetTestSuite(h)))
+type ScriptHostFactory interface{ New() html.ScriptHost }
+
+func RunSuites(t *testing.T, h ScriptHostFactory) {
+	t.Run("Location", runSuite(NewLocationSuite(h.New())))
+	t.Run("EventLoop", runSuite(NewEventLoopTestSuite(h.New())))
+	t.Run("Window", runSuite(NewWindowTestSuite(h.New())))
+	t.Run("UIEvents", runSuite(NewUIEventTestSuite(h.New())))
+	t.Run("Document", runSuite(NewDocumentSuite(h.New())))
+	t.Run("EventTarget", runSuite(NewEventTargetTestSuite(h.New())))
 }
