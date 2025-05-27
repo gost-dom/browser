@@ -44,39 +44,35 @@ func createNamedNodeMap(host *V8ScriptHost) *v8.FunctionTemplate {
 			return v8.NewValue(iso, int32(instance.Length()))
 		},
 	)
-	proto.proto.Set(
-		"item",
-		wrapV8Callback(host,
-			func(cbCtx *argumentHelper) js.CallbackRVal {
-				idx, err0 := cbCtx.consumeInt32()
-				instance, err1 := js.As[dom.NamedNodeMap](cbCtx.Instance())
-				if err := errors.Join(err0, err1); err != nil {
-					return cbCtx.ReturnWithError(err)
-				}
-				item := instance.Item(int(idx))
-				if item != nil {
-					return cbCtx.ReturnWithJSValueErr(cbCtx.ScriptCtx().getJSInstance(item))
-				}
-				return cbCtx.ReturnWithValue(v8.Null(iso))
-			}),
+	proto.proto.Set("item",
+		wrapV8Callback(host, func(cbCtx *argumentHelper) js.CallbackRVal {
+			idx, err0 := cbCtx.consumeInt32()
+			instance, err1 := js.As[dom.NamedNodeMap](cbCtx.Instance())
+			if err := errors.Join(err0, err1); err != nil {
+				return cbCtx.ReturnWithError(err)
+			}
+			item := instance.Item(int(idx))
+			if item != nil {
+				return cbCtx.ReturnWithJSValueErr(cbCtx.ScriptCtx().getJSInstance(item))
+			}
+			return cbCtx.ReturnWithValue(v8.Null(iso))
+		}),
 		v8.ReadOnly,
 	)
 	instance := builder.NewInstanceBuilder()
-	instance.proto.SetIndexedHandler(func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-		ctx := host.mustGetContext(info.Context())
-		instance, ok := ctx.getCachedNode(info.This())
-		nodemap, ok_2 := instance.(dom.NamedNodeMap)
-		if ok && ok_2 {
-			index := int(info.Index())
-			item := nodemap.Item(index)
-			if item == nil {
-				return v8.Undefined(iso), nil
+	instance.proto.SetIndexedHandler(
+		// NOTE: This is the prototype index handler implementation.
+		wrapV8CallbackFn(host, func(cbCtx *argumentHelper) js.CallbackRVal {
+			instance, err := js.As[dom.NamedNodeMap](cbCtx.Instance())
+			if err != nil {
+				return cbCtx.ReturnWithError(err)
 			}
-			v, err := ctx.getJSInstance(item)
-			return v.Value, err
-		}
-		return nil, v8.NewTypeError(iso, "dunno")
-	})
-
+			index := int(cbCtx.Index())
+			item := instance.Item(index)
+			if item == nil {
+				return cbCtx.ReturnWithValue(nil)
+			}
+			return cbCtx.ReturnWithJSValueErr(cbCtx.ScriptCtx().getJSInstance(item))
+		}))
 	return builder.constructor
 }

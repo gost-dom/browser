@@ -71,6 +71,23 @@ func wrapV8Callback(
 	)
 }
 
+func wrapV8CallbackFn(
+	host *V8ScriptHost,
+	callback internalCallback,
+) v8go.FunctionCallbackWithError {
+	return func(info *v8go.FunctionCallbackInfo) (res *v8go.Value, err error) {
+		defer func() {
+			if r := recover(); r != nil {
+				err = fmt.Errorf("PANIC in callback: %v\n%s", r, debug.Stack())
+			}
+		}()
+		cbCtx := newArgumentHelper(host, info)
+		result := callback(cbCtx).(v8CallbackRVal)
+		val := assertV8Value(result.rtnVal)
+		return val.v8Value(), result.err
+	}
+}
+
 /* -------- Decoders -------- */
 
 func decodeInt32(cbCtx jsCallbackContext, val jsValue) (int32, error) {
