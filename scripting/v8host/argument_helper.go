@@ -94,7 +94,7 @@ func (h *argumentHelper) consumeFunction() (jsFunction, error) {
 	if f, ok := arg.AsFunction(); ok {
 		return f, nil
 	}
-	return nil, h.newTypeError("Expected function", arg)
+	return nil, h.newTypeError("Expected function")
 }
 
 func (h *argumentHelper) consumeInt32() (int32, error) {
@@ -146,12 +146,8 @@ func (h *argumentHelper) consumeRest() []*v8.Value {
 	return args[index:]
 }
 
-func (h *argumentHelper) newTypeError(msg string, v jsValue) error {
-	json, _ := v8.JSONStringify(h.FunctionCallbackInfo.Context(), v)
-	return v8.NewTypeError(
-		h.iso(),
-		fmt.Sprintf("TypeError: %s\n%s", msg, json),
-	)
+func (h *argumentHelper) newTypeError(msg string) error {
+	return v8.NewTypeError(h.iso(), fmt.Sprintf(msg))
 }
 
 var (
