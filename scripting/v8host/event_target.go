@@ -73,8 +73,8 @@ func createEventTarget(host *V8ScriptHost) *v8.FunctionTemplate {
 					if optionArg.IsBoolean() && optionArg.Boolean() {
 						options = append(options, event.Capture)
 					}
-					if optionArg.IsObject() {
-						if capture, err := optionArg.Object().Get("capture"); err == nil &&
+					if obj, ok := optionArg.AsObject(); ok {
+						if capture, err := obj.Get("capture"); err == nil &&
 							capture != nil {
 							if capture.Boolean() {
 								options = append(options, event.Capture)
