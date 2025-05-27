@@ -19,7 +19,7 @@ func (w historyV8Wrapper) decodeHistoryState(
 	ctx jsCallbackContext,
 	val jsValue,
 ) (html.HistoryState, error) {
-	r, err := v8.JSONStringify(ctx.ScriptCtx().v8ctx, val.v8Value())
+	r, err := v8.JSONStringify(ctx.ScriptCtx().v8ctx, assertV8Value(val).v8Value())
 	return html.HistoryState(r), err
 }
 

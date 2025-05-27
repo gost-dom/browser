@@ -11,6 +11,7 @@ type Value interface {
 	IsBoolean() bool
 	IsString() bool
 	IsObject() bool
+	IsFunction() bool
 
 	AsFunction() (Function, bool)
 	AsObject() (Object, bool)
@@ -27,5 +28,6 @@ type Function interface {
 type Object interface {
 	Value
 	NativeValue() any
+	SetNativeValue(any)
 	Get(name string) (Value, error)
 }

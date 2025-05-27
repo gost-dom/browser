@@ -13,7 +13,7 @@ func (w *nodeListV8Wrapper) CustomInitialiser(ft *v8.FunctionTemplate) {
 	nodeListIterator := newIterator(host,
 		func(instance dom.Node, ctx *V8ScriptContext) (*v8.Value, error) {
 			v, err := ctx.getJSInstance(instance)
-			return v.v8Value(), err
+			return assertV8Value(v).v8Value(), err
 		},
 	)
 	prototype.SetSymbol(v8.SymbolIterator(iso),
@@ -38,7 +38,7 @@ func (w *nodeListV8Wrapper) CustomInitialiser(ft *v8.FunctionTemplate) {
 					return v8.Undefined(iso), nil
 				}
 				v, err := ctx.getJSInstance(item)
-				return v.v8Value(), err
+				return assertV8Value(v).v8Value(), err
 			}
 			return nil, v8.NewTypeError(iso, "dunno")
 		},

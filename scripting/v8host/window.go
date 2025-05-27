@@ -22,7 +22,7 @@ func installGlobals(
 }
 
 func (w *windowV8Wrapper) window(cbCtx *argumentHelper) js.CallbackRVal {
-	return cbCtx.ReturnWithValue(cbCtx.This().Value)
+	return cbCtx.ReturnWithJSValue(cbCtx.This())
 }
 
 func (w *windowV8Wrapper) history(cbCtx *argumentHelper) js.CallbackRVal {

@@ -95,5 +95,5 @@ func (xhr xmlHttpRequestV8Wrapper) open(cbCtx *argumentHelper) js.CallbackRVal {
 }
 
 func (xhr xmlHttpRequestV8Wrapper) upload(cbCtx *argumentHelper) js.CallbackRVal {
-	return cbCtx.ReturnWithValue(cbCtx.This().Value)
+	return cbCtx.ReturnWithJSValue(cbCtx.This())
 }

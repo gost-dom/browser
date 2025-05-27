@@ -2,7 +2,6 @@ package v8host
 
 import (
 	"fmt"
-	"runtime/cgo"
 	"runtime/debug"
 	"strings"
 
@@ -47,14 +46,12 @@ func (h *V8ScriptHost) mustGetContext(v8ctx *v8.Context) *V8ScriptContext {
 }
 
 func (c *V8ScriptContext) cacheNode(obj jsObject, node entity.ObjectIder) jsValue {
-	var val jsValue = &assertV8Object(obj).v8Value
-	objectId := node.ObjectId()
-	c.v8nodes[objectId] = val
-	handle := cgo.NewHandle(node)
-	c.addDisposer(handleDisposable(handle))
-	internal := v8.NewValueExternalHandle(c.host.iso, handle)
-	obj.Object.SetInternalField(0, internal)
-	return val
+	if d, ok := obj.(disposable); ok {
+		c.addDisposer(d)
+	}
+	c.v8nodes[node.ObjectId()] = obj
+	obj.SetNativeValue(node)
+	return obj
 }
 
 func lookupJSPrototype(entity entity.ObjectIder) string {
@@ -107,12 +104,13 @@ func (c *V8ScriptContext) getJSInstance(
 	if node == nil {
 		return newV8Value(iso, v8.Null(iso)), nil
 	}
-	prototypeName := lookupJSPrototype(node)
-	prototype := c.getConstructor(prototypeName)
 	objectId := node.ObjectId()
 	if cached, ok := c.v8nodes[objectId]; ok {
 		return cached, nil
 	}
+
+	prototypeName := lookupJSPrototype(node)
+	prototype := c.getConstructor(prototypeName)
 	value, err := prototype.InstanceTemplate().NewInstance(c.v8ctx)
 	if err == nil {
 		return c.cacheNode(newV8Object(iso, value), node), nil

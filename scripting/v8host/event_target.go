@@ -31,7 +31,7 @@ func (l v8EventListener) HandleEvent(e *event.Event) error {
 
 func (l v8EventListener) Equals(other event.EventHandler) bool {
 	x, ok := other.(v8EventListener)
-	return ok && x.val.StrictEquals(&l.val.v8Value)
+	return ok && x.val.StrictEquals(l.val)
 }
 
 type eventTargetV8Wrapper struct {

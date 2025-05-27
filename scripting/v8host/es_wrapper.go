@@ -2,7 +2,6 @@ package v8host
 
 import (
 	"errors"
-	"runtime/cgo"
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
@@ -189,17 +188,16 @@ func storeObjectHandleInV8Instance(
 	ctx *V8ScriptContext,
 	this jsObject,
 ) (jsValue, error) {
-	handle := cgo.NewHandle(value)
-	ctx.addDisposer(handleDisposable(handle))
-
 	if e, ok := value.(entity.ObjectIder); ok {
 		objectId := e.ObjectId()
-		ctx.v8nodes[objectId] = &this.v8Value
+		ctx.v8nodes[objectId] = this
 	}
 
-	this.SetNativeHandle(value)
-	ctx.addDisposer(this)
-	return &this.v8Value, nil
+	this.SetNativeValue(value)
+	if d, ok := this.(disposable); ok {
+		ctx.addDisposer(d)
+	}
+	return this, nil
 }
 
 // TODO: Return js.CallbackRVal

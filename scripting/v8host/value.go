@@ -1,6 +1,6 @@
 package v8host
 
-//*
+/*
 import (
 	"runtime/cgo"
 
@@ -14,6 +14,8 @@ type jsObject = *v8Object
 func assertV8Value(v jsValue) *v8Value    { return v }
 func assertV8Object(v jsObject) *v8Object { return v }
 
+func functionAsValue(v jsFunction) jsValue { return &v.v8Value }
+
 /*/
 
 import (
@@ -26,9 +28,14 @@ type jsValue = js.Value
 type jsFunction = js.Function
 type jsObject = js.Object
 
+type v8valuer interface{ self() *v8Value }
+
 func assertV8Value(v jsValue) *v8Value {
-	if r, ok := v.(*v8Value); ok {
-		return r
+	if v == nil {
+		return nil
+	}
+	if r, ok := v.(v8valuer); ok {
+		return r.self()
 	}
 	panic("Expected a V8 Value")
 }
@@ -46,6 +53,8 @@ type v8Value struct {
 	iso   *v8go.Isolate
 	Value *v8go.Value
 }
+
+func (v *v8Value) self() *v8Value { return v }
 
 // newV8Value creates a v8Value wrapping a v8go value. This is safe to use for
 // for mapping values that can be nil. If the v8go value is nil, this will
@@ -146,7 +155,7 @@ func (o *v8Object) NativeValue() any {
 	return internal.ExternalHandle().Value()
 }
 
-func (o *v8Object) SetNativeHandle(v any) {
+func (o *v8Object) SetNativeValue(v any) {
 	if o.handle != 0 {
 		o.handle.Delete()
 	}
