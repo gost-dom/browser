@@ -1,7 +1,10 @@
 package v8host
 
 import (
+	"errors"
+
 	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/scripting/internal/js"
 
 	v8 "github.com/gost-dom/v8go"
 )
@@ -41,17 +44,22 @@ func createNamedNodeMap(host *V8ScriptHost) *v8.FunctionTemplate {
 			return v8.NewValue(iso, int32(instance.Length()))
 		},
 	)
-	proto.CreateFunction(
+	proto.proto.Set(
 		"item",
-		func(instance dom.NamedNodeMap, info *argumentHelper) (*v8.Value, error) {
-			idx, err := info.consumeInt32()
-			item := instance.Item(int(idx))
-			if item != nil && err == nil {
-				val, err := info.ScriptCtx().getJSInstance(item)
-				return val, err
-			}
-			return v8.Null(iso), err
-		},
+		wrapV8Callback(host,
+			func(cbCtx *argumentHelper) js.CallbackRVal {
+				idx, err0 := cbCtx.consumeInt32()
+				instance, err1 := js.As[dom.NamedNodeMap](cbCtx.Instance())
+				if err := errors.Join(err0, err1); err != nil {
+					return cbCtx.ReturnWithError(err)
+				}
+				item := instance.Item(int(idx))
+				if item != nil {
+					return cbCtx.ReturnWithValueErr(cbCtx.ScriptCtx().getJSInstance(item))
+				}
+				return cbCtx.ReturnWithValue(v8.Null(iso))
+			}),
+		v8.ReadOnly,
 	)
 	instance := builder.NewInstanceBuilder()
 	instance.proto.SetIndexedHandler(func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
