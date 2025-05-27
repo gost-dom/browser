@@ -1,6 +1,8 @@
 # Changelog - Gost-DOM
 
 
+## [0.7.1](https://github.com/gost-dom/browser/compare/v0.7.0...v0.7.1) (2025-05-27)
+
 ## [0.7.0](https://github.com/gost-dom/browser/compare/v0.6.0...v0.7.0) (2025-05-27)
 
 
