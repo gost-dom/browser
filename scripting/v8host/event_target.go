@@ -49,7 +49,7 @@ func createEventTarget(host *V8ScriptHost) *v8.FunctionTemplate {
 		iso,
 		func(info *v8.FunctionCallbackInfo) *v8.Value {
 			ctx := host.mustGetContext(info.Context())
-			wrapper.store(event.NewEventTarget(), ctx, info.This())
+			wrapper.store(event.NewEventTarget(), ctx, newV8Object(iso, info.This()))
 			return v8.Undefined(iso)
 		},
 	)

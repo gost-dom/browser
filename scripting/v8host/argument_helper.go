@@ -28,7 +28,7 @@ func (h argumentHelper) Global() jsObject {
 	return h.ScriptCtx().global
 }
 
-func (h argumentHelper) This() *v8.Object     { return h.v8Info.This() }
+func (h argumentHelper) This() jsObject       { return newV8Object(h.iso(), h.v8Info.This()) }
 func (h argumentHelper) iso() *v8.Isolate     { return h.ScriptCtx().host.iso }
 func (h argumentHelper) logger() *slog.Logger { return h.ScriptCtx().host.Logger() }
 func (h *argumentHelper) ScriptCtx() *V8ScriptContext {

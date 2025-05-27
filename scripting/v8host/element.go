@@ -87,7 +87,10 @@ func (e elementV8Wrapper) classList(cbCtx *argumentHelper) js.CallbackRVal {
 		return cbCtx.ReturnWithError(err)
 	}
 	cl := instance.ClassList()
-	return cbCtx.ReturnWithValueErr(storeObjectHandleInV8Instance(cl, cbCtx.ScriptCtx(), res))
+	iso := cbCtx.iso()
+	return cbCtx.ReturnWithValueErr(
+		storeObjectHandleInV8Instance(cl, cbCtx.ScriptCtx(), newV8Object(iso, res)),
+	)
 }
 
 func (e *elementV8Wrapper) toNamedNodeMap(

@@ -149,7 +149,7 @@ func (c *V8ScriptContext) createJSInstanceForObjectOfType(
 	}
 	prototype := c.getConstructor(constructor)
 	jsThis, err := prototype.InstanceTemplate().NewInstance(c.v8ctx)
-	storeObjectHandleInV8Instance(instance, c, jsThis)
+	storeObjectHandleInV8Instance(instance, c, newV8Object(iso, jsThis))
 	return jsThis.Value, err
 }
 

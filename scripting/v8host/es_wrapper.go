@@ -187,7 +187,7 @@ func (o handleReffedObject[T]) iso() *v8.Isolate { return o.scriptHost.iso }
 func storeObjectHandleInV8Instance(
 	value any,
 	ctx *V8ScriptContext,
-	this *v8.Object,
+	this jsObject,
 ) (*v8.Value, error) {
 	handle := cgo.NewHandle(value)
 	ctx.addDisposer(handleDisposable(handle))
@@ -195,12 +195,11 @@ func storeObjectHandleInV8Instance(
 	e, ok := value.(entity.ObjectIder)
 	if ok {
 		objectId := e.ObjectId()
-		obj := newV8Object(ctx.host.iso, this)
-		ctx.v8nodes[objectId] = &obj.v8Value
+		ctx.v8nodes[objectId] = &this.v8Value
 	}
 
 	internalField := v8.NewValueExternalHandle(ctx.v8ctx.Isolate(), handle)
-	this.SetInternalField(0, internalField)
+	this.Object.SetInternalField(0, internalField)
 	return this.Value, nil
 }
 
@@ -208,7 +207,7 @@ func storeObjectHandleInV8Instance(
 func (o handleReffedObject[T]) store(
 	value any,
 	ctx *V8ScriptContext,
-	this *v8.Object,
+	this jsObject,
 ) (*v8.Value, error) {
 	return storeObjectHandleInV8Instance(value, ctx, this)
 }
