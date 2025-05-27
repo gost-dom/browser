@@ -43,8 +43,8 @@ func assertV8Object(v jsObject) *v8Object {
 //*/
 
 type v8Value struct {
-	iso *v8go.Isolate
-	*v8go.Value
+	iso   *v8go.Isolate
+	Value *v8go.Value
 }
 
 // newV8Value creates a v8Value wrapping a v8go value. This is safe to use for
@@ -68,6 +68,13 @@ func (v v8Value) String() string { return v.Value.String() }
 func (v v8Value) Int32() int32   { return v.Value.Int32() }
 func (v v8Value) Uint32() uint32 { return v.Value.Uint32() }
 func (v v8Value) Boolean() bool  { return v.Value.Boolean() }
+
+func (v v8Value) IsUndefined() bool { return v.Value.IsUndefined() }
+func (v v8Value) IsNull() bool      { return v.Value.IsNull() }
+func (v v8Value) IsBoolean() bool   { return v.Value.IsBoolean() }
+func (v v8Value) IsString() bool    { return v.Value.IsString() }
+func (v v8Value) IsObject() bool    { return v.Value.IsObject() }
+func (v v8Value) IsFunction() bool  { return v.Value.IsFunction() }
 
 func (v v8Value) StrictEquals(
 	other jsValue,
@@ -99,7 +106,7 @@ type v8Function struct {
 func (f v8Function) Call(this jsObject, args ...jsValue) (jsValue, error) {
 	v8Args := make([]v8go.Valuer, len(args))
 	for i, a := range args {
-		v8Args[i] = assertV8Value(a)
+		v8Args[i] = assertV8Value(a).v8Value()
 	}
 	var res jsValue
 	v, err := f.v8fn.Call(assertV8Object(this).Object, v8Args...)

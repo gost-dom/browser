@@ -6,6 +6,8 @@ type Value interface {
 	Uint32() uint32
 	Boolean() bool
 
+	IsUndefined() bool
+	IsNull() bool
 	IsBoolean() bool
 	IsString() bool
 	IsObject() bool
