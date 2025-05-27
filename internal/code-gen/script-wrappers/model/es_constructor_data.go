@@ -21,6 +21,10 @@ type ESConstructorData struct {
 }
 
 func (d ESConstructorData) AllowConstructor() bool {
+	// You _can_ create a Document, but not HTMLDocument, nor other nodes.
+	if d.IdlInterface.Name == "Document" {
+		return true
+	}
 	if IsNodeType(d.IdlInterface.Name) {
 		return false
 	}

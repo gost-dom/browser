@@ -50,6 +50,34 @@ func CreateV8Specs() WebIdlConfigurations {
 	configureMutationObserver(domSpecs)
 
 	domSpecs.Type("NonDocumentTypeChildNode")
+	document := domSpecs.Type("Document")
+	document.RunCustomCode = true // Set instance properties
+	document.MarkMembersAsNotImplemented(
+		"createNodeIterator",
+		"createTreeWalker",
+		"getElementsByTagName",
+		"getElementsByTagNameNS",
+		"getElementsByClassName",
+		"createProcessingInstruction",
+		"importNode",
+		"adoptNode",
+		"createRange",
+		"createEvent",
+		"implementation",
+		"documentURI",
+		"doctype",
+		"contentType",
+		"inputEncoding",
+		"charset", "characterSet",
+		"compatMode", "URL",
+		"createAttributeNS",
+		"createElementNS",
+
+		// Custom Implementation
+		"createCDATASection",
+	)
+	document.Method("createElement").SetCustomImplementation()
+	document.Method("createTextNode").SetCustomImplementation()
 
 	parentNode := domSpecs.Type("ParentNode")
 	parentNode.Method("children").Ignore()

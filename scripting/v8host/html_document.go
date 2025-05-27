@@ -11,7 +11,7 @@ type htmlDocumentV8Wrapper struct {
 }
 
 func newHTMLDocumentV8Wrapper(host *V8ScriptHost) htmlDocumentV8Wrapper {
-	return htmlDocumentV8Wrapper{newDocumentV8Wrapper(host)}
+	return htmlDocumentV8Wrapper{*newDocumentV8Wrapper(host)}
 }
 
 func createHTMLDocumentPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
@@ -20,6 +20,6 @@ func createHTMLDocumentPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
 	constructor := builder.constructor
 	instanceTemplate := constructor.InstanceTemplate()
 	instanceTemplate.SetInternalFieldCount(1)
-	wrapper.BuildInstanceTemplate(constructor)
+	wrapper.CustomInitialiser(constructor)
 	return constructor
 }

@@ -1,24 +1,16 @@
 package v8host
 
 import (
-	"github.com/gost-dom/browser/dom"
+	"errors"
 
+	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
 )
 
-type documentV8Wrapper struct {
-	handleReffedObject[dom.Document]
-	parentNode *parentNodeV8Wrapper
-}
-
-func newDocumentV8Wrapper(host *V8ScriptHost) documentV8Wrapper {
-	return documentV8Wrapper{
-		newHandleReffedObject[dom.Document](host),
-		newParentNodeV8Wrapper(host),
-	}
-}
-
-func (w documentV8Wrapper) BuildInstanceTemplate(constructor *v8.FunctionTemplate) {
+func (w *documentV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) {
+	host := w.scriptHost
+	// iso := host.iso
 	tmpl := constructor.InstanceTemplate()
 	tmpl.SetAccessorProperty(
 		"location",
@@ -32,96 +24,71 @@ func (w documentV8Wrapper) BuildInstanceTemplate(constructor *v8.FunctionTemplat
 		nil,
 		v8.None,
 	)
+	proto := constructor.PrototypeTemplate()
+	proto.SetAccessorProperty("head", wrapV8Callback(host, w.head), nil, v8.None)
+	proto.SetAccessorProperty("body", wrapV8Callback(host, w.body), nil, v8.None)
+	proto.Set("getElementById", wrapV8Callback(host, w.getElementById))
 }
 
-func createDocumentPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
-	iso := host.iso
-	wrapper := newDocumentV8Wrapper(host)
-	builder := newConstructorBuilder[dom.Document](
-		host,
-		func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-			scriptContext := host.mustGetContext(info.Context())
-			return scriptContext.cacheNode(info.This(), dom.NewDocument(nil))
-		},
-	)
-	builder.SetDefaultInstanceLookup()
-	protoBuilder := builder.NewPrototypeBuilder()
-	instanceBuilder := builder.NewInstanceBuilder()
-	wrapper.BuildInstanceTemplate(builder.constructor)
-	instanceTemplate := instanceBuilder.proto
-	instanceTemplate.SetInternalFieldCount(1)
-	proto := builder.constructor.PrototypeTemplate()
-	protoBuilder.CreateFunction(
-		"createElement",
-		func(instance dom.Document, args *argumentHelper) (val *v8.Value, err error) {
-			var name string
-			name, err = args.consumeString()
-			if err == nil {
-				e := instance.CreateElement(name)
-				val, err = args.ScriptCtx().getInstanceForNode(e)
-			}
-			return
-		},
-	)
-	protoBuilder.CreateFunction(
-		"createDocumentFragment",
-		func(instance dom.Document, args *argumentHelper) (val *v8.Value, err error) {
-			e := instance.CreateDocumentFragment()
-			return args.ScriptCtx().getInstanceForNode(e)
-		},
-	)
+func (w *documentV8Wrapper) CreateInstance(cbCtx *argumentHelper) js.CallbackRVal {
+	return cbCtx.ReturnWithValueErr(w.store(dom.NewDocument(nil), cbCtx.ScriptCtx(), cbCtx.This()))
+}
 
-	proto.SetAccessorProperty("documentElement",
-		v8.NewFunctionTemplateWithError(iso,
-			func(arg *v8.FunctionCallbackInfo) (*v8.Value, error) {
-				ctx := host.mustGetContext(arg.Context())
-				this, ok := ctx.getCachedNode(arg.This())
-				if e, e_ok := this.(dom.Document); ok && e_ok {
-					return ctx.getInstanceForNode(e.DocumentElement())
-				}
-				return nil, v8.NewTypeError(iso, "Object not a Document")
-			}),
-		nil,
-		v8.ReadOnly,
-	)
-	proto.SetAccessorProperty("head",
-		v8.NewFunctionTemplateWithError(iso,
-			func(arg *v8.FunctionCallbackInfo) (*v8.Value, error) {
-				ctx := host.mustGetContext(arg.Context())
-				this, ok := ctx.getCachedNode(arg.This())
-				if e, e_ok := this.(dom.Document); ok && e_ok {
-					return ctx.getInstanceForNode(e.Head())
-				}
-				return nil, v8.NewTypeError(iso, "Object not a Document")
-			}),
-		nil,
-		v8.ReadOnly,
-	)
-	proto.SetAccessorProperty("body", v8.NewFunctionTemplateWithError(iso,
-		func(arg *v8.FunctionCallbackInfo) (*v8.Value, error) {
-			ctx := host.mustGetContext(arg.Context())
-			this, ok := ctx.getCachedNode(arg.This())
-			if e, e_ok := this.(dom.Document); ok && e_ok {
-				return ctx.getInstanceForNode(e.Body())
-			}
-			return nil, v8.NewTypeError(iso, "Object not a Document")
-		}),
-		nil,
-		v8.ReadOnly,
-	)
-	proto.Set(
-		"getElementById",
-		v8.NewFunctionTemplateWithError(iso,
-			func(args *v8.FunctionCallbackInfo) (*v8.Value, error) {
-				ctx := host.mustGetContext(args.Context())
-				this, ok := ctx.getCachedNode(args.This())
-				if doc, e_ok := this.(dom.Document); ok && e_ok {
-					element := doc.GetElementById(args.Args()[0].String())
-					return ctx.getInstanceForNode(element)
-				}
-				return nil, v8.NewTypeError(iso, "Object not a Document")
-			}),
-	)
-	wrapper.parentNode.installPrototype(proto)
-	return builder.constructor
+func (w *documentV8Wrapper) getElementById(cbCtx *argumentHelper) js.CallbackRVal {
+	instance, err0 := js.As[dom.Document](cbCtx.Instance())
+	id, err1 := consumeArgument(cbCtx, "id", nil, w.decodeString)
+	if err := errors.Join(err0, err1); err != nil {
+		return cbCtx.ReturnWithError(err)
+	}
+	return cbCtx.getInstanceForNode(instance.GetElementById(id))
+}
+
+func (w *documentV8Wrapper) head(cbCtx *argumentHelper) js.CallbackRVal {
+	instance, err := js.As[dom.Document](cbCtx.Instance())
+	if err == nil {
+		return cbCtx.getInstanceForNode(instance.Head())
+	} else {
+		return cbCtx.ReturnWithError(err)
+	}
+}
+
+func (w *documentV8Wrapper) body(cbCtx *argumentHelper) js.CallbackRVal {
+	instance, err := js.As[dom.Document](cbCtx.Instance())
+	if err == nil {
+		return cbCtx.getInstanceForNode(instance.Body())
+	} else {
+		return cbCtx.ReturnWithError(err)
+	}
+}
+
+func (w *documentV8Wrapper) toComment(cbCtx *argumentHelper, comment dom.Comment) js.CallbackRVal {
+	return cbCtx.getInstanceForNode(comment)
+}
+
+func (w *documentV8Wrapper) toAttr(cbCtx *argumentHelper, comment dom.Attr) js.CallbackRVal {
+	return cbCtx.getInstanceForNode(comment)
+}
+func (w *documentV8Wrapper) createElement(cbCtx *argumentHelper) js.CallbackRVal {
+	var name string
+	name, err1 := cbCtx.consumeString()
+	instance, err2 := js.As[dom.Document](cbCtx.Instance())
+	err := errors.Join(err1, err2)
+	if err == nil {
+		e := instance.CreateElement(name)
+		return cbCtx.getInstanceForNode(e)
+	} else {
+		return cbCtx.ReturnWithError(err)
+	}
+}
+func (w *documentV8Wrapper) createTextNode(cbCtx *argumentHelper) js.CallbackRVal {
+	var name string
+	name, err1 := cbCtx.consumeString()
+	instance, err2 := js.As[dom.Document](cbCtx.Instance())
+	err := errors.Join(err1, err2)
+	if err == nil {
+		e := instance.CreateText(name)
+		return cbCtx.getInstanceForNode(e)
+	} else {
+		return cbCtx.ReturnWithError(err)
+	}
 }

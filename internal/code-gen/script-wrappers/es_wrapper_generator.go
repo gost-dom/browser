@@ -224,6 +224,8 @@ func SanitizeVarName(name string) string {
 		return "type_"
 	case "select":
 		return "select_"
+	case "interface":
+		return "intf"
 	}
 	return name
 }
