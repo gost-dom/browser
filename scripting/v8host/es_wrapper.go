@@ -149,7 +149,7 @@ func (w converters) toBoolean(cbCtx *argumentHelper, val bool) js.CallbackRVal {
 }
 
 func (w converters) toNodeList(cbCtx *argumentHelper, val dom.NodeList) js.CallbackRVal {
-	return cbCtx.ReturnWithValueErr(cbCtx.ScriptCtx().getInstanceForNode(val))
+	return cbCtx.ReturnWithValueErr(cbCtx.ScriptCtx().getJSInstance(val))
 }
 
 func (w converters) toHTMLFormControlsCollection(

@@ -39,7 +39,7 @@ func createDOMParserPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
 				domParser := NewDOMParser()
 				var doc dom.Document
 				if err := domParser.ParseReader(window, &doc, strings.NewReader(html)); err == nil {
-					return ctx.getInstanceForNode(doc)
+					return ctx.getJSInstance(doc)
 				} else {
 					return nil, err
 				}

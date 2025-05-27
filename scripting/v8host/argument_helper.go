@@ -42,7 +42,7 @@ func (h *argumentHelper) ReturnWithValueErr(val *v8.Value, err error) js.Callbac
 }
 
 func (h *argumentHelper) getInstanceForNode(node dom.Node) js.CallbackRVal {
-	val, err := h.ScriptCtx().getInstanceForNode(node)
+	val, err := h.ScriptCtx().getJSInstance(node)
 	if err != nil {
 		return h.ReturnWithError(err)
 	} else {

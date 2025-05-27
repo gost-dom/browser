@@ -20,7 +20,7 @@ func (l v8EventListener) HandleEvent(e *event.Event) error {
 	f, err := l.val.AsFunction()
 	if err == nil {
 		var event *v8.Value
-		event, err = l.ctx.getInstanceForNode(e)
+		event, err = l.ctx.getJSInstance(e)
 		if err == nil {
 			_, err1 := f.Call(l.val, event)
 			err2 := l.ctx.eventLoop.tick()

@@ -63,7 +63,7 @@ func (xhr xmlHttpRequestV8Wrapper) CreateInstance(
 		prop := "on" + event.Type
 		handler, err := this.Get(prop)
 		if err == nil && handler.IsFunction() {
-			v8Event, err := ctx.getInstanceForNode(event)
+			v8Event, err := ctx.getJSInstance(event)
 			if err == nil {
 				f, _ := handler.AsFunction()
 				f.Call(this, v8Event)

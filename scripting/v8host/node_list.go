@@ -53,7 +53,7 @@ func createNodeList(host *V8ScriptHost) *v8.FunctionTemplate {
 	nodeListIterator := newIterator[dom.Node](
 		host,
 		func(instance dom.Node, ctx *V8ScriptContext) (*v8.Value, error) {
-			return ctx.getInstanceForNode(instance)
+			return ctx.getJSInstance(instance)
 		},
 	)
 	iso := host.iso
@@ -77,7 +77,7 @@ func createNodeList(host *V8ScriptHost) *v8.FunctionTemplate {
 			if result == nil {
 				return v8.Null(iso), nil
 			}
-			return info.ScriptCtx().getInstanceForNode(result)
+			return info.ScriptCtx().getJSInstance(result)
 		},
 	)
 	instanceTemplate := builder.NewInstanceBuilder().proto
@@ -106,7 +106,7 @@ func createNodeList(host *V8ScriptHost) *v8.FunctionTemplate {
 				if item == nil {
 					return v8.Undefined(iso), nil
 				}
-				return ctx.getInstanceForNode(item)
+				return ctx.getJSInstance(item)
 			}
 			return nil, v8.NewTypeError(iso, "dunno")
 		},
