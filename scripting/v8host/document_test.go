@@ -1,99 +1,79 @@
 package v8host_test
 
 import (
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
+	"testing"
+
+	"github.com/gost-dom/browser/internal/test/scripttests"
+	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
+	"github.com/gost-dom/browser/scripting/v8host"
+	"github.com/stretchr/testify/suite"
 )
 
-var _ = Describe("V8 Document", func() {
-	ctx := InitializeContextWithEmptyHtml()
+type DocumentTestSuite struct {
+	// Note, document tests also exists in the internal/test/scripting folder.
+	scripttests.ScriptHostSuite
+}
 
-	Describe("Constructor", func() {
-		It("Should have a documentElement when HTML is loaded", func() {
-			ctx := NewTestContext(LoadHTML(` <html> <body> </body> </html>`))
-			Expect(
-				ctx.Eval(
-					"Object.getPrototypeOf(document.documentElement).constructor.name",
-				),
-			).To(Equal("HTMLElement"))
-		})
+func TestDocument(t *testing.T) {
+	suite.Run(t, &DocumentTestSuite{*scripttests.NewScriptHostSuite(v8host.New())})
+}
 
-		It("Should have a documentElement instance of HTMLElement", func() {
-			ctx := NewTestContext(LoadHTML(` <html> <body> </body> </html>`))
-			Expect(
-				ctx.Eval("document.documentElement instanceof HTMLElement"),
-			).To(BeTrue())
-		})
-	})
+func (s *DocumentTestSuite) SetupTest() {
+	s.ScriptHostSuite.SetupTest()
+	s.MustLoadHTML(` <html> <body> </body> </html>`)
+}
 
-	Describe("location property", func() {
-		It("Should be a Location", func() {
-			Expect(ctx.Eval("document.location instanceof Location")).To(BeTrue())
-		})
+func (s *DocumentTestSuite) TestDocumentElement() {
+	s.Assert().Equal(
+		"HTMLElement",
+		s.MustEval("Object.getPrototypeOf(document.documentElement).constructor.name"))
+}
 
-		It("Should equal window.location", func() {
-			Expect(ctx.Eval("document.location === location")).To(BeTrue())
-		})
-	})
+func (s *DocumentTestSuite) TestLocationAttribute() {
+	s.Assert().
+		Equal(true,
+			s.MustEval("document.location instanceof Location"),
+			"document.location instanceof Location")
+	s.Assert().
+		Equal(true,
+			s.MustEval("document.location === location"),
+			"document.location is same as global location object")
+}
 
-	Describe("body and Body", func() {
-		It("document.body Should return a <body>", func() {
-			ctx := NewTestContext(LoadHTML(`<html><body></body></html>`))
-			Expect(ctx.Eval("document.body.tagName")).To(Equal("BODY"))
-		})
-		It("document.head Should return a <head>", func() {
-			ctx := NewTestContext(LoadHTML(`<html><body></body></html>`))
-			Expect(ctx.Eval("document.head.tagName")).To(Equal("HEAD"))
-		})
-	})
+func (s *DocumentTestSuite) TestDocumentStructur() {
+	s.Assert().Equal("BODY", s.MustEval("document.body.tagName"), "<body> tagName")
+	s.Assert().Equal("HEAD", s.MustEval("document.head.tagName"), "<head> tagName")
+}
 
-	Describe("querySelector", func() {
-		It("can find the right element", func() {
-			ctx := NewTestContext(
-				LoadHTML(
-					`<body><div>0</div><div data-key="1">1</div><div data-key="2">2</div><body>`,
-				),
-			)
-			Expect(
-				ctx.Eval("document.querySelector('[data-key]').outerHTML"),
-			).To(Equal(`<div data-key="1">1</div>`))
-			Expect(
-				ctx.Eval(`document.querySelector('[data-key="2"]').outerHTML`),
-			).To(Equal(`<div data-key="2">2</div>`))
-			Expect(
-				ctx.Eval(`document.querySelector('script')`),
-			).To(BeNil())
-		})
-	})
+func (s *DocumentTestSuite) TestQuerySelector() {
+	s.MustLoadHTML(
+		`<body><div>0</div><div data-key="1">1</div><div data-key="2">2</div><body>`,
+	)
+	s.Assert().Equal(
+		`<div data-key="1">1</div>`,
+		s.MustEval("document.querySelector('[data-key]').outerHTML"))
+	s.Expect(
+		s.MustEval(`document.querySelector('[data-key="2"]').outerHTML`),
+	).To(Equal(`<div data-key="2">2</div>`))
+	s.Expect(
+		s.MustEval(`document.querySelector('script')`),
+	).To(BeNil())
+}
 
-	Describe("querySelectorAll", func() {
-		It("can find the right element", func() {
-			ctx := NewTestContext(
-				LoadHTML(
-					`<body><div>0</div><div data-key="1">1</div><div data-key="2">2</div><body>`,
-				),
-			)
-			Expect(
-				ctx.Eval(
-					"Array.from(document.querySelectorAll('[data-key]')).map(x => x.outerHTML).join(',')",
-				),
-			).To(Equal(`<div data-key="1">1</div>,<div data-key="2">2</div>`))
-		})
-	})
+func (s *DocumentTestSuite) TestQuerySelectorAll() {
+	s.MustLoadHTML(
+		`<body><div>0</div><div data-key="1">1</div><div data-key="2">2</div><body>`,
+	)
+	s.Expect(
+		s.MustEval(
+			"Array.from(document.querySelectorAll('[data-key]')).map(x => x.outerHTML).join(',')",
+		),
+	).To(Equal(`<div data-key="1">1</div>,<div data-key="2">2</div>`))
+}
 
-	Describe("createDocumentFragment", func() {
-		It("Should return a DocumentFragment", func() {
-			ctx := NewTestContext()
-			Expect(ctx.Eval(`
-				const fragment = document.createDocumentFragment();
-				Object.getPrototypeOf(fragment) === DocumentFragment.prototype
-			`)).To(BeTrue())
-		})
-	})
-
-	It("Should create document fragments", func() {
-		Expect(ctx.Eval(
-			`Object.getPrototypeOf(document.createDocumentFragment()) === DocumentFragment.prototype`,
-		)).To(BeTrue())
-	})
-})
+func (s *DocumentTestSuite) TestCreateDocumentFragment() {
+	s.Expect(s.MustEval(`
+		const fragment = document.createDocumentFragment();
+		Object.getPrototypeOf(fragment) === DocumentFragment.prototype
+	`)).To(BeTrue())
+}
