@@ -47,6 +47,9 @@ type v8Value struct {
 	*v8go.Value
 }
 
+// newV8Value creates a v8Value wrapping a v8go value. This is safe to use for
+// for mapping values that can be nil. If the v8go value is nil, this will
+// return nil.
 func newV8Value(iso *v8go.Isolate, v *v8go.Value) *v8Value {
 	if v == nil {
 		return nil

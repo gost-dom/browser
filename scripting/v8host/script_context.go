@@ -29,6 +29,7 @@ type V8ScriptContext struct {
 	disposers  []disposable
 	clock      *clock.Clock
 	disposed   bool
+	global     jsObject
 }
 
 func (h *V8ScriptHost) getContext(v8ctx *v8.Context) (*V8ScriptContext, bool) {

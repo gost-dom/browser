@@ -356,13 +356,15 @@ func (host *V8ScriptHost) setDisposed() {
 // Calling with a nil value for w is allowed, but not supported; and any attempt
 // to access the DOM will result in a runtime error.
 func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
+	v8ctx := v8go.NewContext(host.iso, host.windowTemplate)
 	// TODO: The possibility to use nil is primarily for testing support
 	context := &V8ScriptContext{
 		host:    host,
 		clock:   clock.New(),
-		v8ctx:   v8go.NewContext(host.iso, host.windowTemplate),
+		v8ctx:   v8ctx,
 		window:  w,
 		v8nodes: make(map[entity.ObjectId]jsValue),
+		global:  newV8Object(host.iso, v8ctx.Global()),
 	}
 	host.addContext(context)
 	errorCallback := func(err error) {
