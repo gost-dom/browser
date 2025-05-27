@@ -52,139 +52,57 @@ convention, that a minor version increment indicates a breaking change.
 
 Breaking changes will be announced up-front in the [anouncements
 discussions](https://github.com/orgs/gost-dom/discussions/categories/announcements).
-
 When feasible withing a reasonable amount of work, an alternate solution will be
-made available as part of a deprecation before the the breaking change is
-released.
-
-## Adding support for library X
-
-The goal is to support all modern JS frameworks, but I can't make tests for all.
-If you can contribute a "test project" with specific JS frameworks that will be
-a great help to detect compatibility issues, and potential extension to the test
-suites.
-
-See the guidelines in the [contributor documentation](./CONTRIBUTING.md#Providing-test-projects)
-
-
-<!---
-## Project background
-
-Go and HTMX is gaining in popularity as a stack.
-
-While Go has great tooling for verifying request/responses of HTTP applications,
-but for HTMX, or just client-side scripting with server side rendering, you need
-browser automation to test the behaviour.
-
-This introduces a significant overhead; not only from out-of-process
-communication with the browser, but also the necessity of launching your server.
-
-This overhead discourages a TDD loop.
-
-The purpose of this project is to enable a fast TDD feedback loop these types of
-project, where verification depend on
-
-- Behaviour of client-side scripts.
-- Browser behaviour when interacting with browser elements, e.g., clicking the
-  submit button submits a form, and redirects are followed.
-
-### Unique features
-
-Being written in Go, this library supports consuming an
-[`http.Handler`](https://pkg.go.dev/net/http#Handler) directly. This removes the
-necessity managing TCP ports, and start a server on a real port. Your HTTP
-server is consumed by test code, like any other Go component would, also
-allowing you to replace dependencies for the test if applicable.
-
-This also makes it easy to run parallel tests in isolation as each can create
-their own _instance_ of the HTTP handler.
-
-### Drawbacks to Browser automation
-
-- You cannot verify how it look; e.g. you cannot get a screenshot of a failing
-test, nor use such screenshots for snapshot tests.
-- The verification doesn't prove that it works as intended in _all browsers_ you
-want to support.
-
-This isn't intended as a replacement for the cases where an end-2-end test is
-the right choice. It is intended as a tool to help when you want a smaller
-isolated test, e.g. mocking out part of the behaviour;
-
---->
+made available prior to releasing the breaking change. Reply to the anouncements
+if this would affect you.
 
 ## Project status
 
 This still early pre-release, and only the core web APIs are supported, and not
-100%. Check the [Feature list](./docs/Features.md) for a list.
+100%. Check the [Feature list](./docs/Features.md) for an overview.
 
-The 0.1 focus was to support a common session based login-flow using HTMX,
-meaning to support content swapping, XHR, forms, and cookies; in order to
-identify risks and architectural flaws.
+The original priority was to support session based login-flow using in an HTMX
+app. This is working, and Gost-DOM supports basic HTMX behaviour, including
+content swapping, XHR, forms, and cookies.
 
-### Current focus
+In order to identify risks and architectural flaws, focus has moved to support 
+[Datastar](https://data-star.dev/)
 
-Currently, the script binding layer is undergoing a lot of refactorings.
+### Upcoming changes
 
-A lot of work needed to happen in the JavaScript to add
-[Datastar](https://data-star.dev/) support, but there were some unsolved
-problems here.
+Currently, the script binding layer is undergoing a refactoring process. 
+
+In order to support DataStar, a lot of new JS APIs were needed. But the
+JavaScript layer has some unsolved problems problems in the JavaScript were a
+becoming a greater and greater burden:
 
 - Supporting different script engines without rebuilding the entire script layer
   from scratch.
-- Push the implementation of non-core web APIs to 3rd party modules without
-  being coupled to one specific JS engine.
-- Provide better code structure in the JS wrapping layer.
+- Design a modular approach, allowing non-core web APIs to be implemented as 3rd
+  party modules; without coupling them to V8 and the v8go project.
+- Provide better code structure in the JS wrapping layer; rather than all files
+  in one package.
 
 This task shows more details: https://github.com/gost-dom/browser/issues/92
 
-#### DataStar support
+#### JS Features
 
-I am working towards supporting [Datastar](https://data-star.dev/), another
-hypermedia framework. This brings some larger changes that have been underway
-for some time; but this also requires significant additions to v8go:
+To support DataStar, I need the following features:
 
-- ESM support
-- ECMAScript object property handlers
+- ESM support (requires new features in  v8go)
+- `HTMLElement.dataset` (requires new features in v8go)
 - [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver)
   support.
+- `fetch` API, including `AbortController` and `ReadableStream`.
 
-In addition, some existing features are incorrectly implemented, such as live
-collections.
+I have experimental working features for ESM, `dataset`. `MutationObserver` is
+included in the latest release, but the Go implementation is stil in an
+`internal/` package, as I don't think the Go interface is just right yet.
 
-A side project worked on in parallel is to support Goja as an alternate script
-engine; though it has had little attention for some time.
-
-#### ESM support
-
-Datastar is distrubuted ECMAScript modules, not scripts. So for Gost-DOM to
-support Datastar, ESM support is needed.
-
-However, v8go, which is the link to V8 doesn't expose Module compilation and
-execution. I am working on extending v8go to support ESM. This isn't trivial.
-
-#### ECMAScript object property handlers
-
-"Handlers" is a feature in V8, where access to properties on an object can be
-intercepted by native code. Gost-DOM uses a modified version of v8go that has
-where support for indexed getters was hastily added to progresss and explore the
-problem space.
-
-But full hander support will be needed for e.g.,
-[`HTMLElement.dataset`][dataset] support.
-
-#### MutationObserver
-
-DataStar uses the [MutationObserver] API
-
-Currently, a Go version exists as an `internal` module. The API is not yet
-exposed to JavaScript.
-
-The mutation observer API is also intended to serve as support for test code
-describing behaviour at a higher and more accessibility-friendly manner.
-
-E.g., rather than checking that a `role="Alert"` was not present _before_
-form submit, but present after, you could verify that submitting an invalid form
-causes an _announcement_ to be made.
+Only `fetch` is lacking completely. I tried a few polyfills to build it on the
+JS side on top if XHR - but I was unable to find a working combination of
+polyfills that works with Datastar's streaming. So a native fetch implementation
+is necessary.
 
 #### Fix already implemented features
 
