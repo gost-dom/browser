@@ -56,6 +56,46 @@ func (c *V8ScriptContext) cacheNode(obj *v8.Object, node entity.ObjectIder) (*v8
 	return val, nil
 }
 
+func lookupJSPrototype(entity entity.ObjectIder) string {
+	switch n := entity.(type) {
+	case *event.Event:
+		switch n.Data.(type) {
+		case event.CustomEventInit:
+			return "CustomEvent"
+		case uievents.PointerEventInit:
+			return "PointerEvent"
+		case uievents.MouseEventInit:
+			return "MouseEvent"
+		case uievents.UIEventInit:
+			return "UIEvent"
+		default:
+			return "Event"
+		}
+	case dom.Element:
+		if constructor, ok := scripting.HtmlElements[strings.ToLower(n.TagName())]; ok {
+			return constructor
+		} else {
+			return "Element"
+		}
+	case html.HTMLDocument:
+		return "HTMLDocument"
+	case dom.Document:
+		return "Document"
+	case dom.DocumentFragment:
+		return "DocumentFragment"
+	case dom.NamedNodeMap:
+		return "NamedNodeMap"
+	case dom.Attr:
+		return "Attr"
+	case dom.NodeList:
+		return "NodeList"
+	case dom.Node:
+		return "Node"
+	default:
+		panic(fmt.Sprintf("Cannot lookup node: %v", n))
+	}
+}
+
 func (c *V8ScriptContext) getInstanceForNode(
 	node entity.ObjectIder,
 ) (*v8.Value, error) {
@@ -63,42 +103,17 @@ func (c *V8ScriptContext) getInstanceForNode(
 	if node == nil {
 		return v8.Null(iso), nil
 	}
-	switch n := node.(type) {
-	case *event.Event:
-		switch n.Data.(type) {
-		case event.CustomEventInit:
-			return c.getInstanceForNodeByName("CustomEvent", n)
-		case uievents.PointerEventInit:
-			return c.getInstanceForNodeByName("PointerEvent", n)
-		case uievents.MouseEventInit:
-			return c.getInstanceForNodeByName("MouseEvent", n)
-		case uievents.UIEventInit:
-			return c.getInstanceForNodeByName("UIEvent", n)
-		default:
-			return c.getInstanceForNodeByName("Event", n)
-		}
-	case dom.Element:
-		if constructor, ok := scripting.HtmlElements[strings.ToLower(n.TagName())]; ok {
-			return c.getInstanceForNodeByName(constructor, n)
-		}
-		return c.getInstanceForNodeByName("Element", n)
-	case html.HTMLDocument:
-		return c.getInstanceForNodeByName("HTMLDocument", n)
-	case dom.Document:
-		return c.getInstanceForNodeByName("Document", n)
-	case dom.DocumentFragment:
-		return c.getInstanceForNodeByName("DocumentFragment", n)
-	case dom.NamedNodeMap:
-		return c.getInstanceForNodeByName("NamedNodeMap", n)
-	case dom.Attr:
-		return c.getInstanceForNodeByName("Attr", n)
-	case dom.NodeList:
-		return c.getInstanceForNodeByName("NodeList", n)
-	case dom.Node:
-		return c.getInstanceForNodeByName("Node", n)
-	default:
-		panic(fmt.Sprintf("Cannot lookup node: %v", n))
+	prototypeName := lookupJSPrototype(node)
+	prototype := c.getConstructor(prototypeName)
+	objectId := node.ObjectId()
+	if cached, ok := c.v8nodes[objectId]; ok {
+		return cached, nil
 	}
+	value, err := prototype.InstanceTemplate().NewInstance(c.v8ctx)
+	if err == nil {
+		return c.cacheNode(value, node)
+	}
+	return nil, err
 }
 
 // getConstructor returns the V8 FunctionTemplate with the specified name.
@@ -113,6 +128,11 @@ func (c *V8ScriptContext) getConstructor(name string) *v8.FunctionTemplate {
 	return prototype
 }
 
+// createJSInstanceForObjectOfType create a JavaScript object and sets the inner
+// native object to the specified Go object.
+//
+// This doesn't remember the object that was created, and is intended for
+// ephemeral objects that are only returned _once_ by the Go API.
 func (c *V8ScriptContext) createJSInstanceForObjectOfType(
 	constructor string,
 	instance any,
@@ -126,26 +146,6 @@ func (c *V8ScriptContext) createJSInstanceForObjectOfType(
 	jsThis, err := prototype.InstanceTemplate().NewInstance(c.v8ctx)
 	storeObjectHandleInV8Instance(instance, c, jsThis)
 	return jsThis.Value, err
-}
-
-func (c *V8ScriptContext) getInstanceForNodeByName(
-	constructor string,
-	node entity.ObjectIder,
-) (*v8.Value, error) {
-	iso := c.host.iso
-	if node == nil {
-		return v8.Null(iso), nil
-	}
-	prototype := c.getConstructor(constructor)
-	objectId := node.ObjectId()
-	if cached, ok := c.v8nodes[objectId]; ok {
-		return cached, nil
-	}
-	value, err := prototype.InstanceTemplate().NewInstance(c.v8ctx)
-	if err == nil {
-		return c.cacheNode(value, node)
-	}
-	return nil, err
 }
 
 func (c *V8ScriptContext) getCachedNode(this *v8.Object) (entity.ObjectIder, bool) {

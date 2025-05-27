@@ -57,10 +57,8 @@ func (w converters) decodeUnsignedLong(ctx jsCallbackContext, val jsValue) (int,
 }
 
 func (w converters) decodeNode(ctx jsCallbackContext, val jsValue) (dom.Node, error) {
-	if val.IsObject() {
-		o := val.Object()
-		cached, ok_1 := ctx.ScriptCtx().getCachedNode(o)
-		if node, ok_2 := cached.(dom.Node); ok_1 && ok_2 {
+	if obj, ok := val.AsObject(); ok {
+		if node, ok := obj.NativeValue().(dom.Node); ok {
 			return node, nil
 		}
 	}
