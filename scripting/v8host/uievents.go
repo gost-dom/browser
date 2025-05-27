@@ -2,7 +2,6 @@ package v8host
 
 import (
 	"github.com/gost-dom/browser/internal/uievents"
-	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
 func (w uIEventV8Wrapper) decodeMouseEventInit(
@@ -22,14 +21,14 @@ func (w uIEventV8Wrapper) decodePointerEventInit(
 func (w uIEventV8Wrapper) CreateInstance(
 	cbCtx *argumentHelper,
 	type_ string,
-) js.CallbackRVal {
+) (jsValue, error) {
 	return w.CreateInstanceEventInitDict(cbCtx, type_)
 }
 
 func (w uIEventV8Wrapper) CreateInstanceEventInitDict(
 	cbCtx *argumentHelper,
 	type_ string,
-	options ...interface{}) js.CallbackRVal {
+	options ...interface{}) (jsValue, error) {
 	e := uievents.NewUIEvent(type_)
 	return cbCtx.ReturnWithJSValueErr(w.store(e, cbCtx.ScriptCtx(), cbCtx.This()))
 }

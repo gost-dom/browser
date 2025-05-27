@@ -47,6 +47,6 @@ func (g V8WrapperStructGenerators) CallbackMethodArgs() generators.FunctionArgum
 	return generators.Arg(generators.Id("cbCtx"), v8CbCtx)
 }
 
-func (g V8WrapperStructGenerators) CallbackMethodRetTypes() []generators.Generator {
-	return generators.List(wrappers.CallbackRVal)
+func (gen V8WrapperStructGenerators) CallbackMethodRetTypes() []generators.Generator {
+	return generators.List(wrappers.JSValue, g.NewType("error"))
 }

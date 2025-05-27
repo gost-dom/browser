@@ -4,6 +4,7 @@ package v8host
 
 import (
 	"errors"
+
 	dom "github.com/gost-dom/browser/dom"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
@@ -100,32 +101,32 @@ func (w documentV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 	w.parentNode.installPrototype(prototypeTmpl)
 }
 
-func (w documentV8Wrapper) Constructor(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) Constructor(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.Constructor")
 	return w.CreateInstance(cbCtx)
 }
 
-func (w documentV8Wrapper) getElementsByTagName(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) getElementsByTagName(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.getElementsByTagName")
 	return cbCtx.ReturnWithError(errors.New("Document.getElementsByTagName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w documentV8Wrapper) getElementsByTagNameNS(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) getElementsByTagNameNS(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.getElementsByTagNameNS")
 	return cbCtx.ReturnWithError(errors.New("Document.getElementsByTagNameNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w documentV8Wrapper) getElementsByClassName(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) getElementsByClassName(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.getElementsByClassName")
 	return cbCtx.ReturnWithError(errors.New("Document.getElementsByClassName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w documentV8Wrapper) createElementNS(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) createElementNS(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.createElementNS")
 	return cbCtx.ReturnWithError(errors.New("Document.createElementNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w documentV8Wrapper) createDocumentFragment(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) createDocumentFragment(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.createDocumentFragment")
 	instance, err := js.As[dom.Document](cbCtx.Instance())
 	if err != nil {
@@ -135,12 +136,12 @@ func (w documentV8Wrapper) createDocumentFragment(cbCtx *argumentHelper) js.Call
 	return cbCtx.getInstanceForNode(result)
 }
 
-func (w documentV8Wrapper) createCDATASection(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) createCDATASection(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.createCDATASection")
 	return cbCtx.ReturnWithError(errors.New("Document.createCDATASection: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w documentV8Wrapper) createComment(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) createComment(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.createComment")
 	instance, err0 := js.As[dom.Document](cbCtx.Instance())
 	data, err1 := consumeArgument(cbCtx, "data", nil, w.decodeString)
@@ -155,22 +156,22 @@ func (w documentV8Wrapper) createComment(cbCtx *argumentHelper) js.CallbackRVal 
 	return cbCtx.ReturnWithError(errors.New("Document.createComment: Missing arguments"))
 }
 
-func (w documentV8Wrapper) createProcessingInstruction(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) createProcessingInstruction(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.createProcessingInstruction")
 	return cbCtx.ReturnWithError(errors.New("Document.createProcessingInstruction: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w documentV8Wrapper) importNode(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) importNode(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.importNode")
 	return cbCtx.ReturnWithError(errors.New("Document.importNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w documentV8Wrapper) adoptNode(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) adoptNode(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.adoptNode")
 	return cbCtx.ReturnWithError(errors.New("Document.adoptNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w documentV8Wrapper) createAttribute(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) createAttribute(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.createAttribute")
 	instance, err0 := js.As[dom.Document](cbCtx.Instance())
 	localName, err1 := consumeArgument(cbCtx, "localName", nil, w.decodeString)
@@ -185,77 +186,77 @@ func (w documentV8Wrapper) createAttribute(cbCtx *argumentHelper) js.CallbackRVa
 	return cbCtx.ReturnWithError(errors.New("Document.createAttribute: Missing arguments"))
 }
 
-func (w documentV8Wrapper) createAttributeNS(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) createAttributeNS(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.createAttributeNS")
 	return cbCtx.ReturnWithError(errors.New("Document.createAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w documentV8Wrapper) createEvent(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) createEvent(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.createEvent")
 	return cbCtx.ReturnWithError(errors.New("Document.createEvent: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w documentV8Wrapper) createRange(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) createRange(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.createRange")
 	return cbCtx.ReturnWithError(errors.New("Document.createRange: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w documentV8Wrapper) createNodeIterator(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) createNodeIterator(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.createNodeIterator")
 	return cbCtx.ReturnWithError(errors.New("Document.createNodeIterator: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w documentV8Wrapper) createTreeWalker(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) createTreeWalker(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.createTreeWalker")
 	return cbCtx.ReturnWithError(errors.New("Document.createTreeWalker: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w documentV8Wrapper) implementation(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) implementation(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.implementation")
 	return cbCtx.ReturnWithError(errors.New("Document.implementation: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w documentV8Wrapper) URL(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) URL(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.URL")
 	return cbCtx.ReturnWithError(errors.New("Document.URL: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w documentV8Wrapper) documentURI(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) documentURI(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.documentURI")
 	return cbCtx.ReturnWithError(errors.New("Document.documentURI: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w documentV8Wrapper) compatMode(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) compatMode(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.compatMode")
 	return cbCtx.ReturnWithError(errors.New("Document.compatMode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w documentV8Wrapper) characterSet(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) characterSet(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.characterSet")
 	return cbCtx.ReturnWithError(errors.New("Document.characterSet: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w documentV8Wrapper) charset(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) charset(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.charset")
 	return cbCtx.ReturnWithError(errors.New("Document.charset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w documentV8Wrapper) inputEncoding(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) inputEncoding(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.inputEncoding")
 	return cbCtx.ReturnWithError(errors.New("Document.inputEncoding: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w documentV8Wrapper) contentType(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) contentType(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.contentType")
 	return cbCtx.ReturnWithError(errors.New("Document.contentType: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w documentV8Wrapper) doctype(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) doctype(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.doctype")
 	return cbCtx.ReturnWithError(errors.New("Document.doctype: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w documentV8Wrapper) documentElement(cbCtx *argumentHelper) js.CallbackRVal {
+func (w documentV8Wrapper) documentElement(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.documentElement")
 	instance, err := js.As[dom.Document](cbCtx.Instance())
 	if err != nil {

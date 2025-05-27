@@ -42,12 +42,12 @@ func (w nodeListV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 		v8.None)
 }
 
-func (w nodeListV8Wrapper) Constructor(cbCtx *argumentHelper) js.CallbackRVal {
+func (w nodeListV8Wrapper) Constructor(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: NodeList.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w nodeListV8Wrapper) item(cbCtx *argumentHelper) js.CallbackRVal {
+func (w nodeListV8Wrapper) item(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: NodeList.item")
 	instance, err0 := js.As[dom.NodeList](cbCtx.Instance())
 	index, err1 := consumeArgument(cbCtx, "index", nil, w.decodeUnsignedLong)
@@ -62,7 +62,7 @@ func (w nodeListV8Wrapper) item(cbCtx *argumentHelper) js.CallbackRVal {
 	return cbCtx.ReturnWithError(errors.New("NodeList.item: Missing arguments"))
 }
 
-func (w nodeListV8Wrapper) length(cbCtx *argumentHelper) js.CallbackRVal {
+func (w nodeListV8Wrapper) length(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: NodeList.length")
 	instance, err := js.As[dom.NodeList](cbCtx.Instance())
 	if err != nil {

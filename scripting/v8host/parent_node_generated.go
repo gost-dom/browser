@@ -49,12 +49,12 @@ func (w parentNodeV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) 
 		v8.None)
 }
 
-func (w parentNodeV8Wrapper) Constructor(cbCtx *argumentHelper) js.CallbackRVal {
+func (w parentNodeV8Wrapper) Constructor(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: ParentNode.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w parentNodeV8Wrapper) querySelector(cbCtx *argumentHelper) js.CallbackRVal {
+func (w parentNodeV8Wrapper) querySelector(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: ParentNode.querySelector")
 	instance, err0 := js.As[dom.ParentNode](cbCtx.Instance())
 	selectors, err1 := consumeArgument(cbCtx, "selectors", nil, w.decodeString)
@@ -73,7 +73,7 @@ func (w parentNodeV8Wrapper) querySelector(cbCtx *argumentHelper) js.CallbackRVa
 	return cbCtx.ReturnWithError(errors.New("ParentNode.querySelector: Missing arguments"))
 }
 
-func (w parentNodeV8Wrapper) querySelectorAll(cbCtx *argumentHelper) js.CallbackRVal {
+func (w parentNodeV8Wrapper) querySelectorAll(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: ParentNode.querySelectorAll")
 	instance, err0 := js.As[dom.ParentNode](cbCtx.Instance())
 	selectors, err1 := consumeArgument(cbCtx, "selectors", nil, w.decodeString)
@@ -92,7 +92,7 @@ func (w parentNodeV8Wrapper) querySelectorAll(cbCtx *argumentHelper) js.Callback
 	return cbCtx.ReturnWithError(errors.New("ParentNode.querySelectorAll: Missing arguments"))
 }
 
-func (w parentNodeV8Wrapper) firstElementChild(cbCtx *argumentHelper) js.CallbackRVal {
+func (w parentNodeV8Wrapper) firstElementChild(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: ParentNode.firstElementChild")
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
@@ -102,7 +102,7 @@ func (w parentNodeV8Wrapper) firstElementChild(cbCtx *argumentHelper) js.Callbac
 	return cbCtx.getInstanceForNode(result)
 }
 
-func (w parentNodeV8Wrapper) lastElementChild(cbCtx *argumentHelper) js.CallbackRVal {
+func (w parentNodeV8Wrapper) lastElementChild(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: ParentNode.lastElementChild")
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
@@ -112,7 +112,7 @@ func (w parentNodeV8Wrapper) lastElementChild(cbCtx *argumentHelper) js.Callback
 	return cbCtx.getInstanceForNode(result)
 }
 
-func (w parentNodeV8Wrapper) childElementCount(cbCtx *argumentHelper) js.CallbackRVal {
+func (w parentNodeV8Wrapper) childElementCount(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: ParentNode.childElementCount")
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {

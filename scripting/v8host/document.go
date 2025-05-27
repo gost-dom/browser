@@ -30,13 +30,13 @@ func (w *documentV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) 
 	proto.Set("getElementById", wrapV8Callback(host, w.getElementById))
 }
 
-func (w *documentV8Wrapper) CreateInstance(cbCtx *argumentHelper) js.CallbackRVal {
+func (w *documentV8Wrapper) CreateInstance(cbCtx *argumentHelper) (jsValue, error) {
 	return cbCtx.ReturnWithJSValueErr(
 		w.store(dom.NewDocument(nil), cbCtx.ScriptCtx(), cbCtx.This()),
 	)
 }
 
-func (w *documentV8Wrapper) getElementById(cbCtx *argumentHelper) js.CallbackRVal {
+func (w *documentV8Wrapper) getElementById(cbCtx *argumentHelper) (jsValue, error) {
 	instance, err0 := js.As[dom.Document](cbCtx.Instance())
 	id, err1 := consumeArgument(cbCtx, "id", nil, w.decodeString)
 	if err := errors.Join(err0, err1); err != nil {
@@ -45,7 +45,7 @@ func (w *documentV8Wrapper) getElementById(cbCtx *argumentHelper) js.CallbackRVa
 	return cbCtx.getInstanceForNode(instance.GetElementById(id))
 }
 
-func (w *documentV8Wrapper) head(cbCtx *argumentHelper) js.CallbackRVal {
+func (w *documentV8Wrapper) head(cbCtx *argumentHelper) (jsValue, error) {
 	instance, err := js.As[dom.Document](cbCtx.Instance())
 	if err == nil {
 		return cbCtx.getInstanceForNode(instance.Head())
@@ -54,7 +54,7 @@ func (w *documentV8Wrapper) head(cbCtx *argumentHelper) js.CallbackRVal {
 	}
 }
 
-func (w *documentV8Wrapper) body(cbCtx *argumentHelper) js.CallbackRVal {
+func (w *documentV8Wrapper) body(cbCtx *argumentHelper) (jsValue, error) {
 	instance, err := js.As[dom.Document](cbCtx.Instance())
 	if err == nil {
 		return cbCtx.getInstanceForNode(instance.Body())
@@ -63,14 +63,14 @@ func (w *documentV8Wrapper) body(cbCtx *argumentHelper) js.CallbackRVal {
 	}
 }
 
-func (w *documentV8Wrapper) toComment(cbCtx *argumentHelper, comment dom.Comment) js.CallbackRVal {
+func (w *documentV8Wrapper) toComment(cbCtx *argumentHelper, comment dom.Comment) (jsValue, error) {
 	return cbCtx.getInstanceForNode(comment)
 }
 
-func (w *documentV8Wrapper) toAttr(cbCtx *argumentHelper, comment dom.Attr) js.CallbackRVal {
+func (w *documentV8Wrapper) toAttr(cbCtx *argumentHelper, comment dom.Attr) (jsValue, error) {
 	return cbCtx.getInstanceForNode(comment)
 }
-func (w *documentV8Wrapper) createElement(cbCtx *argumentHelper) js.CallbackRVal {
+func (w *documentV8Wrapper) createElement(cbCtx *argumentHelper) (jsValue, error) {
 	var name string
 	name, err1 := cbCtx.consumeString()
 	instance, err2 := js.As[dom.Document](cbCtx.Instance())
@@ -82,7 +82,7 @@ func (w *documentV8Wrapper) createElement(cbCtx *argumentHelper) js.CallbackRVal
 		return cbCtx.ReturnWithError(err)
 	}
 }
-func (w *documentV8Wrapper) createTextNode(cbCtx *argumentHelper) js.CallbackRVal {
+func (w *documentV8Wrapper) createTextNode(cbCtx *argumentHelper) (jsValue, error) {
 	var name string
 	name, err1 := cbCtx.consumeString()
 	instance, err2 := js.As[dom.Document](cbCtx.Instance())

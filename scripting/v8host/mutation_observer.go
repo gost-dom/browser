@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	mutation "github.com/gost-dom/browser/internal/dom/mutation"
-	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
 	v8 "github.com/gost-dom/v8go"
 )
@@ -24,7 +23,7 @@ func (cb MutationCallback) HandleMutation(recs []mutation.Record, obs *mutation.
 func (w mutationObserverV8Wrapper) CreateInstance(
 	cbCtx *argumentHelper,
 	cb mutation.Callback,
-) js.CallbackRVal {
+) (jsValue, error) {
 	ctx := cbCtx.ScriptCtx()
 	return cbCtx.ReturnWithJSValueErr(
 		w.store(mutation.NewObserver(ctx.clock, cb), ctx, cbCtx.This()),
@@ -72,7 +71,7 @@ func (w mutationObserverV8Wrapper) decodeObserveOption(
 func (w mutationObserverV8Wrapper) toSequenceMutationRecord(
 	cbCtx *argumentHelper,
 	records []mutation.Record,
-) js.CallbackRVal {
+) (jsValue, error) {
 	return cbCtx.ReturnWithJSValueErr(toSequenceMutationRecord(cbCtx.ScriptCtx(), records))
 }
 

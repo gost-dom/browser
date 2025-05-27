@@ -137,62 +137,62 @@ func (w windowV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 		v8.None)
 }
 
-func (w windowV8Wrapper) Constructor(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) Constructor(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w windowV8Wrapper) close(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) close(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.close")
 	return cbCtx.ReturnWithError(errors.New("Window.close: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) stop(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) stop(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.stop")
 	return cbCtx.ReturnWithError(errors.New("Window.stop: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) focus(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) focus(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.focus")
 	return cbCtx.ReturnWithError(errors.New("Window.focus: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) blur(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) blur(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.blur")
 	return cbCtx.ReturnWithError(errors.New("Window.blur: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) open(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) open(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.open")
 	return cbCtx.ReturnWithError(errors.New("Window.open: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) alert(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) alert(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.alert")
 	return cbCtx.ReturnWithError(errors.New("Window.alert: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) confirm(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) confirm(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.confirm")
 	return cbCtx.ReturnWithError(errors.New("Window.confirm: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) print(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) print(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.print")
 	return cbCtx.ReturnWithError(errors.New("Window.print: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) postMessage(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) postMessage(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.postMessage")
 	return cbCtx.ReturnWithError(errors.New("Window.postMessage: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) self(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) self(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.self")
 	return cbCtx.ReturnWithError(errors.New("Window.self: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) document(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) document(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.document")
 	instance, err := js.As[html.Window](cbCtx.Instance())
 	if err != nil {
@@ -202,112 +202,112 @@ func (w windowV8Wrapper) document(cbCtx *argumentHelper) js.CallbackRVal {
 	return cbCtx.getInstanceForNode(result)
 }
 
-func (w windowV8Wrapper) name(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) name(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.name")
 	return cbCtx.ReturnWithError(errors.New("Window.name: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) setName(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) setName(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.setName")
 	return cbCtx.ReturnWithError(errors.New("Window.setName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) navigation(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) navigation(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.navigation")
 	return cbCtx.ReturnWithError(errors.New("Window.navigation: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) customElements(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) customElements(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.customElements")
 	return cbCtx.ReturnWithError(errors.New("Window.customElements: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) locationbar(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) locationbar(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.locationbar")
 	return cbCtx.ReturnWithError(errors.New("Window.locationbar: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) menubar(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) menubar(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.menubar")
 	return cbCtx.ReturnWithError(errors.New("Window.menubar: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) personalbar(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) personalbar(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.personalbar")
 	return cbCtx.ReturnWithError(errors.New("Window.personalbar: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) scrollbars(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) scrollbars(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.scrollbars")
 	return cbCtx.ReturnWithError(errors.New("Window.scrollbars: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) statusbar(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) statusbar(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.statusbar")
 	return cbCtx.ReturnWithError(errors.New("Window.statusbar: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) toolbar(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) toolbar(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.toolbar")
 	return cbCtx.ReturnWithError(errors.New("Window.toolbar: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) status(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) status(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.status")
 	return cbCtx.ReturnWithError(errors.New("Window.status: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) setStatus(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) setStatus(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.setStatus")
 	return cbCtx.ReturnWithError(errors.New("Window.setStatus: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) closed(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) closed(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.closed")
 	return cbCtx.ReturnWithError(errors.New("Window.closed: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) frames(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) frames(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.frames")
 	return cbCtx.ReturnWithError(errors.New("Window.frames: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) length(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) length(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.length")
 	return cbCtx.ReturnWithError(errors.New("Window.length: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) top(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) top(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.top")
 	return cbCtx.ReturnWithError(errors.New("Window.top: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) opener(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) opener(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.opener")
 	return cbCtx.ReturnWithError(errors.New("Window.opener: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) setOpener(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) setOpener(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.setOpener")
 	return cbCtx.ReturnWithError(errors.New("Window.setOpener: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) frameElement(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) frameElement(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.frameElement")
 	return cbCtx.ReturnWithError(errors.New("Window.frameElement: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) navigator(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) navigator(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.navigator")
 	return cbCtx.ReturnWithError(errors.New("Window.navigator: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) clientInformation(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) clientInformation(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.clientInformation")
 	return cbCtx.ReturnWithError(errors.New("Window.clientInformation: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w windowV8Wrapper) originAgentCluster(cbCtx *argumentHelper) js.CallbackRVal {
+func (w windowV8Wrapper) originAgentCluster(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: Window.originAgentCluster")
 	return cbCtx.ReturnWithError(errors.New("Window.originAgentCluster: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }

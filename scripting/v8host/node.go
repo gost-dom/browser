@@ -6,7 +6,7 @@ import (
 	v8 "github.com/gost-dom/v8go"
 )
 
-func (n nodeV8Wrapper) textContent(cbCtx *argumentHelper) js.CallbackRVal {
+func (n nodeV8Wrapper) textContent(cbCtx *argumentHelper) (jsValue, error) {
 	i, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -16,7 +16,7 @@ func (n nodeV8Wrapper) textContent(cbCtx *argumentHelper) js.CallbackRVal {
 	return cbCtx.ReturnWithValueErr(v8.NewValue(n.iso(), r))
 }
 
-func (n nodeV8Wrapper) setTextContent(cbCtx *argumentHelper) js.CallbackRVal {
+func (n nodeV8Wrapper) setTextContent(cbCtx *argumentHelper) (jsValue, error) {
 	i, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -26,7 +26,7 @@ func (n nodeV8Wrapper) setTextContent(cbCtx *argumentHelper) js.CallbackRVal {
 	return cbCtx.ReturnWithValue(nil)
 }
 
-func (n nodeV8Wrapper) nodeType(cbCtx *argumentHelper) js.CallbackRVal {
+func (n nodeV8Wrapper) nodeType(cbCtx *argumentHelper) (jsValue, error) {
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)

@@ -7,7 +7,6 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
-	"github.com/gost-dom/browser/scripting/internal/js"
 
 	v8 "github.com/gost-dom/v8go"
 )
@@ -105,7 +104,7 @@ func (w converters) decodeNodeOrText(cbCtx jsCallbackContext, val jsValue) (dom.
 func (w converters) toNullableString_(
 	cbCtx *argumentHelper,
 	str *string,
-) js.CallbackRVal {
+) (jsValue, error) {
 	if str == nil {
 		return cbCtx.ReturnWithValue(v8.Null(cbCtx.iso()))
 	}
@@ -116,45 +115,45 @@ func (w converters) toNillableString_(
 	cbCtx *argumentHelper,
 	str string,
 	hasVal bool,
-) js.CallbackRVal {
+) (jsValue, error) {
 	if !hasVal {
 		return cbCtx.ReturnWithValue(v8.Null(cbCtx.iso()))
 	}
 	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), str))
 }
 
-func (w converters) toUnsignedLong(cbCtx *argumentHelper, val int) js.CallbackRVal {
+func (w converters) toUnsignedLong(cbCtx *argumentHelper, val int) (jsValue, error) {
 	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), uint32(val)))
 }
 
-func (w converters) toLong(cbCtx *argumentHelper, val int) js.CallbackRVal {
+func (w converters) toLong(cbCtx *argumentHelper, val int) (jsValue, error) {
 	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), int64(val)))
 }
 
-func (w converters) toAny(cbCtx *argumentHelper, val string) js.CallbackRVal {
+func (w converters) toAny(cbCtx *argumentHelper, val string) (jsValue, error) {
 	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), val))
 }
 
-func (w converters) toString_(cbCtx *argumentHelper, str string) js.CallbackRVal {
+func (w converters) toString_(cbCtx *argumentHelper, str string) (jsValue, error) {
 	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), str))
 }
 
-func (w converters) toUnsignedShort(cbCtx *argumentHelper, val int) js.CallbackRVal {
+func (w converters) toUnsignedShort(cbCtx *argumentHelper, val int) (jsValue, error) {
 	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), uint32(val)))
 }
 
-func (w converters) toBoolean(cbCtx *argumentHelper, val bool) js.CallbackRVal {
+func (w converters) toBoolean(cbCtx *argumentHelper, val bool) (jsValue, error) {
 	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), val))
 }
 
-func (w converters) toNodeList(cbCtx *argumentHelper, val dom.NodeList) js.CallbackRVal {
+func (w converters) toNodeList(cbCtx *argumentHelper, val dom.NodeList) (jsValue, error) {
 	return cbCtx.ReturnWithJSValueErr(cbCtx.ScriptCtx().getJSInstance(val))
 }
 
 func (w converters) toHTMLFormControlsCollection(
 	cbCtx *argumentHelper,
 	val dom.NodeList,
-) js.CallbackRVal {
+) (jsValue, error) {
 	return w.toNodeList(cbCtx, val)
 }
 

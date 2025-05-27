@@ -6,7 +6,6 @@ import (
 	"log/slog"
 
 	"github.com/gost-dom/browser/dom"
-	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
 	v8 "github.com/gost-dom/v8go"
 )
@@ -36,35 +35,33 @@ func (h *argumentHelper) ScriptCtx() *V8ScriptContext {
 	return h.host.mustGetContext(h.v8Info.Context())
 }
 
-func (h *argumentHelper) ReturnWithValue(val *v8go.Value) js.CallbackRVal {
+func (h *argumentHelper) ReturnWithValue(val *v8go.Value) (jsValue, error) {
 	return h.ReturnWithJSValue(newV8Value(h.iso(), val))
 }
 
-func (h *argumentHelper) ReturnWithJSValue(val jsValue) js.CallbackRVal {
-	return v8CallbackRVal{rtnVal: val}
+func (h *argumentHelper) ReturnWithJSValue(val jsValue) (jsValue, error) {
+	return val, nil
 }
 
-func (h *argumentHelper) ReturnWithValueErr(val *v8go.Value, err error) js.CallbackRVal {
-	return h.ReturnWithJSValueErr(newV8Value(h.iso(), val), err)
+func (h *argumentHelper) ReturnWithValueErr(val *v8go.Value, err error) (jsValue, error) {
+	return newV8Value(h.iso(), val), err
 }
 
-func (h *argumentHelper) ReturnWithJSValueErr(val jsValue, err error) js.CallbackRVal {
-	return v8CallbackRVal{val, err}
+func (h *argumentHelper) ReturnWithJSValueErr(val jsValue, err error) (jsValue, error) {
+	return val, err
 }
 
-func (h *argumentHelper) getInstanceForNode(node dom.Node) js.CallbackRVal {
+func (h *argumentHelper) getInstanceForNode(node dom.Node) (jsValue, error) {
 	v, err := h.ScriptCtx().getJSInstance(node)
 	return h.ReturnWithJSValueErr(v, err)
 }
 
-func (h *argumentHelper) ReturnWithError(
-	err error,
-) js.CallbackRVal {
-	return v8CallbackRVal{err: err}
+func (h *argumentHelper) ReturnWithError(err error) (jsValue, error) {
+	return nil, err
 }
 
-func (h *argumentHelper) ReturnWithTypeError(msg string) js.CallbackRVal {
-	return v8CallbackRVal{err: v8.NewTypeError(h.iso(), msg)}
+func (h *argumentHelper) ReturnWithTypeError(msg string) (jsValue, error) {
+	return nil, v8.NewTypeError(h.iso(), msg)
 }
 
 func (h *argumentHelper) Instance() (any, error) {

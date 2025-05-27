@@ -45,7 +45,7 @@ func createNamedNodeMap(host *V8ScriptHost) *v8.FunctionTemplate {
 		},
 	)
 	proto.proto.Set("item",
-		wrapV8Callback(host, func(cbCtx *argumentHelper) js.CallbackRVal {
+		wrapV8Callback(host, func(cbCtx *argumentHelper) (jsValue, error) {
 			idx, err0 := cbCtx.consumeInt32()
 			instance, err1 := js.As[dom.NamedNodeMap](cbCtx.Instance())
 			if err := errors.Join(err0, err1); err != nil {
@@ -62,7 +62,7 @@ func createNamedNodeMap(host *V8ScriptHost) *v8.FunctionTemplate {
 	instance := builder.NewInstanceBuilder()
 	instance.proto.SetIndexedHandler(
 		// NOTE: This is the prototype index handler implementation.
-		wrapV8CallbackFn(host, func(cbCtx *argumentHelper) js.CallbackRVal {
+		wrapV8CallbackFn(host, func(cbCtx *argumentHelper) (jsValue, error) {
 			instance, err := js.As[dom.NamedNodeMap](cbCtx.Instance())
 			if err != nil {
 				return cbCtx.ReturnWithError(err)

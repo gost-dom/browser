@@ -9,7 +9,6 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/constants"
 	urlinterfaces "github.com/gost-dom/browser/internal/interfaces/url-interfaces"
-	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/browser/url"
 
 	v8 "github.com/gost-dom/v8go"
@@ -30,7 +29,7 @@ func (h handleDisposable) dispose() { cgo.Handle(h).Delete() }
 func (w urlV8Wrapper) CreateInstance(
 	cbCtx *argumentHelper,
 	u string,
-) js.CallbackRVal {
+) (jsValue, error) {
 	value, err := url.NewUrl(u)
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -43,7 +42,7 @@ func (w urlV8Wrapper) CreateInstanceBase(
 	cbCtx *argumentHelper,
 	u string,
 	base string,
-) js.CallbackRVal {
+) (jsValue, error) {
 	value, err := url.NewUrlBase(u, base)
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -52,7 +51,7 @@ func (w urlV8Wrapper) CreateInstanceBase(
 	return cbCtx.ReturnWithValue(nil)
 }
 
-func (w urlSearchParamsV8Wrapper) Constructor(cbCtx *argumentHelper) js.CallbackRVal {
+func (w urlSearchParamsV8Wrapper) Constructor(cbCtx *argumentHelper) (jsValue, error) {
 	var err error
 	ctx := cbCtx.ScriptCtx()
 	args := cbCtx.consumeRest()
@@ -115,7 +114,7 @@ func (w urlSearchParamsV8Wrapper) toSequenceString_(
 	cbCtx *argumentHelper,
 	// ctx *V8ScriptContext,
 	values []string,
-) js.CallbackRVal {
+) (jsValue, error) {
 	vs := make([]*v8.Value, len(values))
 	for i, v := range values {
 		vs[i], _ = v8.NewValue(cbCtx.iso(), v)

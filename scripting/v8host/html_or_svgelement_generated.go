@@ -50,12 +50,12 @@ func (w htmlOrSVGElementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemp
 		v8.None)
 }
 
-func (w htmlOrSVGElementV8Wrapper) Constructor(cbCtx *argumentHelper) js.CallbackRVal {
+func (w htmlOrSVGElementV8Wrapper) Constructor(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLOrSVGElement.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w htmlOrSVGElementV8Wrapper) blur(cbCtx *argumentHelper) js.CallbackRVal {
+func (w htmlOrSVGElementV8Wrapper) blur(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLOrSVGElement.blur")
 	instance, err := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if err != nil {
@@ -65,12 +65,12 @@ func (w htmlOrSVGElementV8Wrapper) blur(cbCtx *argumentHelper) js.CallbackRVal {
 	return cbCtx.ReturnWithValue(nil)
 }
 
-func (w htmlOrSVGElementV8Wrapper) dataset(cbCtx *argumentHelper) js.CallbackRVal {
+func (w htmlOrSVGElementV8Wrapper) dataset(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLOrSVGElement.dataset")
 	return cbCtx.ReturnWithError(errors.New("HTMLOrSVGElement.dataset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w htmlOrSVGElementV8Wrapper) nonce(cbCtx *argumentHelper) js.CallbackRVal {
+func (w htmlOrSVGElementV8Wrapper) nonce(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLOrSVGElement.nonce")
 	instance, err := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if err != nil {
@@ -80,7 +80,7 @@ func (w htmlOrSVGElementV8Wrapper) nonce(cbCtx *argumentHelper) js.CallbackRVal 
 	return w.toString_(cbCtx, result)
 }
 
-func (w htmlOrSVGElementV8Wrapper) setNonce(cbCtx *argumentHelper) js.CallbackRVal {
+func (w htmlOrSVGElementV8Wrapper) setNonce(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLOrSVGElement.setNonce")
 	instance, err0 := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	val, err1 := parseSetterArg(cbCtx, w.decodeString)
@@ -92,7 +92,7 @@ func (w htmlOrSVGElementV8Wrapper) setNonce(cbCtx *argumentHelper) js.CallbackRV
 	return cbCtx.ReturnWithValue(nil)
 }
 
-func (w htmlOrSVGElementV8Wrapper) autofocus(cbCtx *argumentHelper) js.CallbackRVal {
+func (w htmlOrSVGElementV8Wrapper) autofocus(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLOrSVGElement.autofocus")
 	instance, err := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if err != nil {
@@ -102,7 +102,7 @@ func (w htmlOrSVGElementV8Wrapper) autofocus(cbCtx *argumentHelper) js.CallbackR
 	return w.toBoolean(cbCtx, result)
 }
 
-func (w htmlOrSVGElementV8Wrapper) setAutofocus(cbCtx *argumentHelper) js.CallbackRVal {
+func (w htmlOrSVGElementV8Wrapper) setAutofocus(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLOrSVGElement.setAutofocus")
 	instance, err0 := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	val, err1 := parseSetterArg(cbCtx, w.decodeBoolean)
@@ -114,7 +114,7 @@ func (w htmlOrSVGElementV8Wrapper) setAutofocus(cbCtx *argumentHelper) js.Callba
 	return cbCtx.ReturnWithValue(nil)
 }
 
-func (w htmlOrSVGElementV8Wrapper) tabIndex(cbCtx *argumentHelper) js.CallbackRVal {
+func (w htmlOrSVGElementV8Wrapper) tabIndex(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLOrSVGElement.tabIndex")
 	instance, err := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if err != nil {
@@ -124,7 +124,7 @@ func (w htmlOrSVGElementV8Wrapper) tabIndex(cbCtx *argumentHelper) js.CallbackRV
 	return w.toLong(cbCtx, result)
 }
 
-func (w htmlOrSVGElementV8Wrapper) setTabIndex(cbCtx *argumentHelper) js.CallbackRVal {
+func (w htmlOrSVGElementV8Wrapper) setTabIndex(cbCtx *argumentHelper) (js.Value, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLOrSVGElement.setTabIndex")
 	instance, err0 := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	val, err1 := parseSetterArg(cbCtx, w.decodeLong)

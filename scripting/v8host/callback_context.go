@@ -5,7 +5,6 @@ import (
 	"runtime/debug"
 
 	"github.com/gost-dom/browser/internal/constants"
-	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
 )
 
@@ -49,7 +48,7 @@ func (f v8ValueFactory) toVal(val *v8go.Value) jsValue {
 	return &v8Value{f.iso(), val}
 }
 
-type internalCallback func(*argumentHelper) js.CallbackRVal
+type internalCallback func(*argumentHelper) (jsValue, error)
 
 func wrapV8Callback(
 	host *V8ScriptHost,
@@ -64,9 +63,9 @@ func wrapV8Callback(
 				}
 			}()
 			cbCtx := newArgumentHelper(host, info)
-			result := callback(cbCtx).(v8CallbackRVal)
-			val := assertV8Value(result.rtnVal)
-			return val.v8Value(), result.err
+			result, err := callback(cbCtx)
+			val := assertV8Value(result)
+			return val.v8Value(), err
 		},
 	)
 }
@@ -82,9 +81,9 @@ func wrapV8CallbackFn(
 			}
 		}()
 		cbCtx := newArgumentHelper(host, info)
-		result := callback(cbCtx).(v8CallbackRVal)
-		val := assertV8Value(result.rtnVal)
-		return val.v8Value(), result.err
+		result, err := callback(cbCtx)
+		val := assertV8Value(result)
+		return val.v8Value(), err
 	}
 }
 

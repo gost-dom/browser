@@ -42,17 +42,15 @@ type CallbackContext interface {
 	// returned.
 	InternalInstance() (any, error)
 
-	ReturnWithValue(Value) CallbackRVal
-	ReturnWithError(error) CallbackRVal
+	ReturnWithValue(Value) (Value, error)
+	ReturnWithError(error) (Value, error)
 
 	// ValueFactory returns a "factory" that can be used to produce JavaScript
 	// values.
 	ValueFactory() ValueFactory
 }
 
-type CallbackRVal any
-
-type FunctionCallback func(CallbackContext) CallbackRVal
+type FunctionCallback func(CallbackContext) (Value, error)
 
 // ValueFactory allows creating JavaScript values from Go values
 type ValueFactory interface {

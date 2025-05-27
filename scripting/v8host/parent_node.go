@@ -19,7 +19,7 @@ func (w *parentNodeV8Wrapper) getNodesAndInstance(
 	return
 }
 
-func (w *parentNodeV8Wrapper) append(cbCtx *argumentHelper) js.CallbackRVal {
+func (w *parentNodeV8Wrapper) append(cbCtx *argumentHelper) (jsValue, error) {
 	if instance, nodes, err := w.getNodesAndInstance(cbCtx); err == nil {
 		if err = instance.Append(nodes...); err != nil {
 			return cbCtx.ReturnWithError(err)
@@ -28,7 +28,7 @@ func (w *parentNodeV8Wrapper) append(cbCtx *argumentHelper) js.CallbackRVal {
 	return cbCtx.ReturnWithValue(nil)
 }
 
-func (w *parentNodeV8Wrapper) prepend(cbCtx *argumentHelper) js.CallbackRVal {
+func (w *parentNodeV8Wrapper) prepend(cbCtx *argumentHelper) (jsValue, error) {
 	if instance, nodes, err := w.getNodesAndInstance(cbCtx); err == nil {
 		if err = instance.Prepend(nodes...); err != nil {
 			return cbCtx.ReturnWithError(err)
@@ -37,7 +37,7 @@ func (w *parentNodeV8Wrapper) prepend(cbCtx *argumentHelper) js.CallbackRVal {
 	return cbCtx.ReturnWithValue(nil)
 }
 
-func (w *parentNodeV8Wrapper) replaceChildren(cbCtx *argumentHelper) js.CallbackRVal {
+func (w *parentNodeV8Wrapper) replaceChildren(cbCtx *argumentHelper) (jsValue, error) {
 	if instance, nodes, err := w.getNodesAndInstance(cbCtx); err == nil {
 		if err = instance.ReplaceChildren(nodes...); err != nil {
 			return cbCtx.ReturnWithError(err)

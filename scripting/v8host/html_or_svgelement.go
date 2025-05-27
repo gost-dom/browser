@@ -5,7 +5,7 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w htmlOrSVGElementV8Wrapper) focus(cbCtx *argumentHelper) js.CallbackRVal {
+func (w htmlOrSVGElementV8Wrapper) focus(cbCtx *argumentHelper) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLOrSVGElement.focus")
 	instance, err := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if err != nil {

@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/gost-dom/browser/html"
-	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
 
 	v8 "github.com/gost-dom/v8go"
@@ -25,7 +24,7 @@ func (w formDataV8Wrapper) CustomInitialiser(constructor *v8go.FunctionTemplate)
 	iterator.installPrototype(constructor)
 }
 
-func (w formDataV8Wrapper) CreateInstance(cbCtx *argumentHelper) js.CallbackRVal {
+func (w formDataV8Wrapper) CreateInstance(cbCtx *argumentHelper) (jsValue, error) {
 	value := html.NewFormData()
 	w.store(value, cbCtx.ScriptCtx(), cbCtx.This())
 	return cbCtx.ReturnWithValue(nil)
@@ -34,7 +33,7 @@ func (w formDataV8Wrapper) CreateInstance(cbCtx *argumentHelper) js.CallbackRVal
 func (w formDataV8Wrapper) CreateInstanceForm(
 	cbCtx *argumentHelper,
 	form html.HTMLFormElement,
-) js.CallbackRVal {
+) (jsValue, error) {
 	value := html.NewFormDataForm(form)
 	w.store(value, cbCtx.ScriptCtx(), cbCtx.This())
 	return cbCtx.ReturnWithValue(nil)
@@ -44,7 +43,7 @@ func (w formDataV8Wrapper) CreateInstanceFormSubmitter(
 	cbCtx *argumentHelper,
 	form html.HTMLFormElement,
 	submitter html.HTMLElement,
-) js.CallbackRVal {
+) (jsValue, error) {
 	value := html.NewFormDataForm(form)
 	if submitter != nil {
 		value.AddElement(submitter)
@@ -63,14 +62,14 @@ func (w formDataV8Wrapper) decodeFormDataValue(
 func (w formDataV8Wrapper) toFormDataEntryValue(
 	cbCtx *argumentHelper,
 	val html.FormDataValue,
-) js.CallbackRVal {
+) (jsValue, error) {
 	return w.toString_(cbCtx, string(val))
 }
 
 func (w formDataV8Wrapper) toSequenceFormDataEntryValue(
 	cbCtx *argumentHelper,
 	data []html.FormDataValue,
-) js.CallbackRVal {
+) (jsValue, error) {
 	vals := make([]*v8.Value, len(data))
 	for i, d := range data {
 		var err error

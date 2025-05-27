@@ -23,7 +23,7 @@ func (w eventV8Wrapper) CreateInstance(
 	cbCtx *argumentHelper,
 	type_ string,
 	o eventInitWrapper,
-) js.CallbackRVal {
+) (jsValue, error) {
 	e := &event.Event{Type: type_, Bubbles: o.bubbles, Cancelable: o.cancelable, Data: o.init}
 	return cbCtx.ReturnWithJSValueErr(w.store(e, cbCtx.ScriptCtx(), cbCtx.This()))
 }
@@ -31,7 +31,7 @@ func (w eventV8Wrapper) CreateInstance(
 func (w eventV8Wrapper) toEventTarget(
 	cbCtx *argumentHelper,
 	e event.EventTarget,
-) js.CallbackRVal {
+) (jsValue, error) {
 	if e == nil {
 		return cbCtx.ReturnWithValue(v8.Null(w.scriptHost.iso))
 	}
@@ -41,7 +41,7 @@ func (w eventV8Wrapper) toEventTarget(
 	return cbCtx.ReturnWithError(v8.NewError(w.iso(), "TODO, Not yet supported"))
 }
 
-func (w eventV8Wrapper) eventPhase(cbCtx *argumentHelper) js.CallbackRVal {
+func (w eventV8Wrapper) eventPhase(cbCtx *argumentHelper) (jsValue, error) {
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)

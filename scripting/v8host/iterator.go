@@ -67,14 +67,14 @@ func (i sliceIterable[T]) All() iter.Seq[T] {
 	return seqOfSlice(i.items)
 }
 
-func (i iterator[T]) newIteratorInstance(cbCtx *argumentHelper, items []T) js.CallbackRVal {
+func (i iterator[T]) newIteratorInstance(cbCtx *argumentHelper, items []T) (jsValue, error) {
 	return i.newIteratorInstanceOfIterable(cbCtx, sliceIterable[T]{items})
 }
 
 func (i iterator[T]) newIteratorInstanceOfIterable(
 	cbCtx *argumentHelper,
 	items iterable[T],
-) js.CallbackRVal {
+) (jsValue, error) {
 	seq := items.All()
 	next, stop := iter.Pull(seq)
 
@@ -109,7 +109,7 @@ func (i iterator[T]) next(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 	}
 }
 
-func (i iterator[T]) newIterator(cbCtx *argumentHelper) js.CallbackRVal {
+func (i iterator[T]) newIterator(cbCtx *argumentHelper) (jsValue, error) {
 	instance, err := js.As[*iteratorInstance[T]](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -140,7 +140,7 @@ func (i iterator[T]) createNotDoneIteratorResult(
 }
 func (i iterator[T]) installPrototype(ft *v8.FunctionTemplate) {
 	iso := i.host.iso
-	getEntries := wrapV8Callback(i.host, func(cbCtx *argumentHelper) js.CallbackRVal {
+	getEntries := wrapV8Callback(i.host, func(cbCtx *argumentHelper) (jsValue, error) {
 		instance, err := js.As[iterable[T]](cbCtx.Instance())
 		if err != nil {
 			return cbCtx.ReturnWithError(err)
@@ -262,7 +262,7 @@ func (i iterator2[K, V]) next(info *v8.FunctionCallbackInfo) (*v8.Value, error) 
 	}
 }
 
-func (i iterator2[K, V]) newIterator(cbCtx *argumentHelper) js.CallbackRVal {
+func (i iterator2[K, V]) newIterator(cbCtx *argumentHelper) (jsValue, error) {
 	instance, err := js.As[*iterator2Instance[K, V]](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -300,7 +300,7 @@ func (i iterator2[K, V]) createNotDoneIteratorResult(
 func (i iterator2[K, V]) installPrototype(ft *v8.FunctionTemplate) {
 	iso := i.host.iso
 	getEntries := wrapV8Callback(i.host,
-		func(cbCtx *argumentHelper) js.CallbackRVal {
+		func(cbCtx *argumentHelper) (jsValue, error) {
 			instance, err := js.As[iterable2[K, V]](cbCtx.Instance())
 			if err != nil {
 				return cbCtx.ReturnWithError(err)
@@ -318,7 +318,7 @@ func (i iterator2[K, V]) installPrototype(ft *v8.FunctionTemplate) {
 		return v8.NewValue(iso, v)
 	})
 	prototypeTempl.Set("keys",
-		wrapV8Callback(i.host, func(cbCtx *argumentHelper) js.CallbackRVal {
+		wrapV8Callback(i.host, func(cbCtx *argumentHelper) (jsValue, error) {
 			instance, err := js.As[iterable2[K, V]](cbCtx.Instance())
 			if err != nil {
 				return cbCtx.ReturnWithError(err)
@@ -328,7 +328,7 @@ func (i iterator2[K, V]) installPrototype(ft *v8.FunctionTemplate) {
 		),
 	)
 	prototypeTempl.Set("values",
-		wrapV8Callback(i.host, func(cbCtx *argumentHelper) js.CallbackRVal {
+		wrapV8Callback(i.host, func(cbCtx *argumentHelper) (jsValue, error) {
 			instance, err := js.As[iterable2[K, V]](cbCtx.Instance())
 			if err != nil {
 				return cbCtx.ReturnWithError(err)

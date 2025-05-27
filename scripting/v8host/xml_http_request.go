@@ -52,7 +52,7 @@ func newXMLHttpRequestV8Wrapper(host *V8ScriptHost) xmlHttpRequestV8Wrapper {
 
 func (xhr xmlHttpRequestV8Wrapper) CreateInstance(
 	cbCtx *argumentHelper,
-) js.CallbackRVal {
+) (jsValue, error) {
 	ctx := cbCtx.ScriptCtx()
 	this := cbCtx.This()
 	result := NewXmlHttpRequest(ctx.window, ctx.clock)
@@ -72,7 +72,7 @@ func (xhr xmlHttpRequestV8Wrapper) CreateInstance(
 	return cbCtx.ReturnWithValue(nil)
 }
 
-func (xhr xmlHttpRequestV8Wrapper) open(cbCtx *argumentHelper) js.CallbackRVal {
+func (xhr xmlHttpRequestV8Wrapper) open(cbCtx *argumentHelper) (jsValue, error) {
 	method, err0 := consumeArgument(cbCtx, "method", nil, xhr.decodeString)
 	url, err1 := consumeArgument(cbCtx, "url", nil, xhr.decodeString)
 	async, err2 := consumeArgument(cbCtx, "async", nil, xhr.decodeBoolean)
@@ -94,6 +94,6 @@ func (xhr xmlHttpRequestV8Wrapper) open(cbCtx *argumentHelper) js.CallbackRVal {
 	return cbCtx.ReturnWithValue(nil)
 }
 
-func (xhr xmlHttpRequestV8Wrapper) upload(cbCtx *argumentHelper) js.CallbackRVal {
+func (xhr xmlHttpRequestV8Wrapper) upload(cbCtx *argumentHelper) (jsValue, error) {
 	return cbCtx.ReturnWithJSValue(cbCtx.This())
 }

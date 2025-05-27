@@ -17,10 +17,10 @@ func (w *nodeListV8Wrapper) CustomInitialiser(ft *v8.FunctionTemplate) {
 		},
 	)
 	prototype.SetSymbol(v8.SymbolIterator(iso),
-		wrapV8Callback(host, func(cbCtx *argumentHelper) js.CallbackRVal {
+		wrapV8Callback(host, func(cbCtx *argumentHelper) (jsValue, error) {
 			nodeList, err := js.As[dom.NodeList](cbCtx.Instance())
 			if err != nil {
-				return cbCtx.ReturnWithError(err)
+				return nil, err
 			}
 			return nodeListIterator.newIteratorInstance(cbCtx, nodeList.All())
 		}))

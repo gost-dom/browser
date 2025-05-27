@@ -6,7 +6,6 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	. "github.com/gost-dom/browser/html"
-	"github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -21,7 +20,7 @@ func createDOMParserPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
 	prototype := constructor.PrototypeTemplate()
 	prototype.Set(
 		"parseFromString",
-		wrapV8Callback(host, func(cbCtx *argumentHelper) js.CallbackRVal {
+		wrapV8Callback(host, func(cbCtx *argumentHelper) (jsValue, error) {
 			ctx := cbCtx.ScriptCtx()
 			window := ctx.window
 			html, err0 := cbCtx.consumeString()
