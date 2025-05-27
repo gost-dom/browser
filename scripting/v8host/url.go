@@ -9,7 +9,6 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/constants"
 	urlinterfaces "github.com/gost-dom/browser/internal/interfaces/url-interfaces"
-	log "github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/browser/url"
 
@@ -129,13 +128,11 @@ func (w urlSearchParamsV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemp
 	it := newIterator2(
 		w.scriptHost,
 		func(k string, v string, ctx *V8ScriptContext) (*v8.Value, *v8.Value, error) {
-			log.Info(w.scriptHost.logger, "Iterate", "key", k, "value", v)
 			r1, e1 := v8.NewValue(iso, k)
 			r2, e2 := v8.NewValue(iso, v)
 			return r1, r2, errors.Join(e1, e2)
 		},
 	)
-	fmt.Println("Install iterator")
 	it.installPrototype(constructor)
 }
 

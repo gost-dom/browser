@@ -302,7 +302,6 @@ var types = map[string][]eventSources{
 }
 
 func CreateEventGenerators(packageName string) error {
-	fmt.Println("Iterate", packageName, types[packageName])
 	for _, source := range types[packageName] {
 		fmt.Println("- Type: ", source.api)
 		for _, e := range source.names {

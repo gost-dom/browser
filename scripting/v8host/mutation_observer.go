@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	mutation "github.com/gost-dom/browser/internal/dom/mutation"
-	log "github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
 	v8 "github.com/gost-dom/v8go"
@@ -89,7 +88,6 @@ func toSequenceMutationRecord(
 		if err != nil {
 			return nil, fmt.Errorf("v8host: constructing mutation record: %w", err)
 		}
-		log.Info(ctx.window.Logger(), "Record", "val", rec)
 		res[i] = rec
 	}
 	return toArray(ctx.v8ctx, res...)
