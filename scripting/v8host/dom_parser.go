@@ -22,10 +22,8 @@ func createDOMParserPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
 	prototype.Set(
 		"parseFromString",
 		wrapV8Callback(host, func(cbCtx *argumentHelper) js.CallbackRVal {
-			// func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 			ctx := cbCtx.ScriptCtx()
 			window := ctx.window
-			// args := newArgumentHelper(host, info)
 			html, err0 := cbCtx.consumeString()
 			contentType, err1 := cbCtx.consumeString()
 			if err := errors.Join(err0, err1); err != nil {
@@ -40,7 +38,7 @@ func createDOMParserPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
 			var doc dom.Document
 			if err := domParser.ParseReader(window, &doc, strings.NewReader(html)); err == nil {
 				v, err := ctx.getJSInstance(doc)
-				return cbCtx.ReturnWithValueErr(v, err)
+				return cbCtx.ReturnWithJSValueErr(v, err)
 			} else {
 				return cbCtx.ReturnWithError(err)
 			}

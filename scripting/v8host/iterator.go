@@ -84,7 +84,7 @@ func (i iterator[T]) newIteratorInstanceOfIterable(
 	}
 	res, err := i.ot.NewInstance(context.v8ctx)
 	if err == nil {
-		return context.cacheNode(res, iterator)
+		return context.cacheNode(newV8Object(context.host.iso, res), iterator)
 	}
 	return res.Value, err
 }
@@ -240,7 +240,7 @@ func (i iterator2[K, V]) newIteratorInstanceOfIterable(
 	}
 	res, err := i.ot.NewInstance(context.v8ctx)
 	if err == nil {
-		return context.cacheNode(res, iterator)
+		return context.cacheNode(newV8Object(context.host.iso, res), iterator)
 	}
 	return res.Value, err
 }

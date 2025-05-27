@@ -87,14 +87,12 @@ func (e elementV8Wrapper) classList(cbCtx *argumentHelper) js.CallbackRVal {
 		return cbCtx.ReturnWithError(err)
 	}
 	cl := instance.ClassList()
-
-	storeObjectHandleInV8Instance(cl, cbCtx.ScriptCtx(), res)
-	return cbCtx.ReturnWithValue(res.Value)
+	return cbCtx.ReturnWithValueErr(storeObjectHandleInV8Instance(cl, cbCtx.ScriptCtx(), res))
 }
 
 func (e *elementV8Wrapper) toNamedNodeMap(
 	cbCtx *argumentHelper,
 	n dom.NamedNodeMap,
 ) js.CallbackRVal {
-	return cbCtx.ReturnWithValueErr(cbCtx.ScriptCtx().getJSInstance(n))
+	return cbCtx.ReturnWithJSValueErr(cbCtx.ScriptCtx().getJSInstance(n))
 }

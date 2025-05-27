@@ -7,6 +7,7 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/scripting/internal/js"
+	"github.com/gost-dom/v8go"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -25,7 +26,7 @@ func newArgumentHelper(host *V8ScriptHost, info *v8.FunctionCallbackInfo) *argum
 
 func (h argumentHelper) Global() jsObject {
 	global := h.Context().Global()
-	return &v8Object{v8Value{h.iso(), global.Value}, global}
+	return newV8Object(h.iso(), global)
 }
 
 func (h argumentHelper) iso() *v8.Isolate     { return h.FunctionCallbackInfo.Context().Isolate() }
@@ -34,20 +35,25 @@ func (h *argumentHelper) ScriptCtx() *V8ScriptContext {
 	return h.host.mustGetContext(h.FunctionCallbackInfo.Context())
 }
 
-func (h *argumentHelper) ReturnWithValue(val *v8.Value) js.CallbackRVal {
+func (h *argumentHelper) ReturnWithValue(val *v8go.Value) js.CallbackRVal {
+	return h.ReturnWithJSValue(newV8Value(h.iso(), val))
+}
+
+func (h *argumentHelper) ReturnWithJSValue(val jsValue) js.CallbackRVal {
 	return v8CallbackRVal{rtnVal: val}
 }
-func (h *argumentHelper) ReturnWithValueErr(val *v8.Value, err error) js.CallbackRVal {
+
+func (h *argumentHelper) ReturnWithValueErr(val *v8go.Value, err error) js.CallbackRVal {
+	return h.ReturnWithJSValueErr(newV8Value(h.iso(), val), err)
+}
+
+func (h *argumentHelper) ReturnWithJSValueErr(val jsValue, err error) js.CallbackRVal {
 	return v8CallbackRVal{val, err}
 }
 
 func (h *argumentHelper) getInstanceForNode(node dom.Node) js.CallbackRVal {
-	val, err := h.ScriptCtx().getJSInstance(node)
-	if err != nil {
-		return h.ReturnWithError(err)
-	} else {
-		return h.ReturnWithValue(val)
-	}
+	v, err := h.ScriptCtx().getJSInstance(node)
+	return h.ReturnWithJSValueErr(v, err)
 }
 
 func (h *argumentHelper) ReturnWithError(

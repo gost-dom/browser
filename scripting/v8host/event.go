@@ -36,7 +36,7 @@ func (w eventV8Wrapper) toEventTarget(
 		return cbCtx.ReturnWithValue(v8.Null(w.scriptHost.iso))
 	}
 	if entity, ok := e.(entity.ObjectIder); ok {
-		return cbCtx.ReturnWithValueErr(cbCtx.ScriptCtx().getJSInstance(entity))
+		return cbCtx.ReturnWithJSValueErr(cbCtx.ScriptCtx().getJSInstance(entity))
 	}
 	return cbCtx.ReturnWithError(v8.NewError(w.iso(), "TODO, Not yet supported"))
 }

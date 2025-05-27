@@ -2,6 +2,8 @@ package v8host
 
 //*
 import (
+	"runtime/cgo"
+
 	"github.com/gost-dom/v8go"
 )
 
@@ -17,6 +19,7 @@ func assertV8Object(v jsObject) *v8Object { return v }
 import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
+	"runtime/cgo"
 )
 
 type jsValue = js.Value
@@ -44,8 +47,24 @@ type v8Value struct {
 	*v8go.Value
 }
 
+func newV8Value(iso *v8go.Isolate, v *v8go.Value) *v8Value {
+	if v == nil {
+		return nil
+	}
+	return &v8Value{iso, v}
+}
+
+func (v *v8Value) v8Value() *v8go.Value {
+	if v == nil {
+		return nil
+	}
+	return v.Value
+}
+
 func (v v8Value) String() string { return v.Value.String() }
 func (v v8Value) Int32() int32   { return v.Value.Int32() }
+func (v v8Value) Uint32() uint32 { return v.Value.Uint32() }
+func (v v8Value) Boolean() bool  { return v.Value.Boolean() }
 
 func (v v8Value) AsFunction() (jsFunction, bool) {
 	f, err := v.Value.AsFunction()
@@ -58,7 +77,7 @@ func (v v8Value) AsFunction() (jsFunction, bool) {
 func (v v8Value) AsObject() (jsObject, bool) {
 	o, err := v.Value.AsObject()
 	if err == nil {
-		return &v8Object{v, o}, true
+		return newV8Object(v.iso, o), true
 	}
 	return nil, false
 }
@@ -85,7 +104,12 @@ func (f v8Function) Call(this jsObject, args ...jsValue) (jsValue, error) {
 
 type v8Object struct {
 	v8Value
-	*v8go.Object
+	Object *v8go.Object
+	handle cgo.Handle
+}
+
+func newV8Object(iso *v8go.Isolate, o *v8go.Object) *v8Object {
+	return &v8Object{v8Value{iso, o.Value}, o, 0}
 }
 
 // NativeValue returns the native Go value if any that this JS object is
@@ -104,6 +128,16 @@ func (o *v8Object) NativeValue() any {
 	}
 
 	return internal.ExternalHandle().Value()
+}
+
+func (o *v8Object) SetNativeValue(v any) {
+	if o.handle != 0 {
+		o.handle.Delete()
+	}
+	o.handle = cgo.NewHandle(v)
+	ext := v8go.NewValueExternalHandle(o.iso, o.handle)
+	defer ext.Release()
+	o.Object.SetInternalField(0, ext)
 }
 
 func (o *v8Object) Get(name string) (jsValue, error) {

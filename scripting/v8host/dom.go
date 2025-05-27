@@ -26,16 +26,19 @@ func (l domTokenListV8Wrapper) toggle(args *argumentHelper) js.CallbackRVal {
 		}
 		if force {
 			instance.Add(token)
-			return args.ReturnWithValueErr(v8.NewValue(l.scriptHost.iso, true))
+			v, err := v8.NewValue(l.scriptHost.iso, true)
+			return args.ReturnWithValueErr(v, err)
 		} else {
 			instance.Remove(token)
-			return args.ReturnWithValueErr(v8.NewValue(l.scriptHost.iso, false))
+			v, err := v8.NewValue(l.scriptHost.iso, false)
+			return args.ReturnWithValueErr(v, err)
 		}
 	}
 	if err := errors.Join(err0, errInstance); err != nil {
 		return args.ReturnWithError(err)
 	}
-	return args.ReturnWithValueErr(v8.NewValue(l.scriptHost.iso, instance.Toggle(token)))
+	v, err := v8.NewValue(l.scriptHost.iso, instance.Toggle(token))
+	return args.ReturnWithValueErr(v, err)
 }
 
 func (e htmlTemplateElementV8Wrapper) CreateInstance(
@@ -43,11 +46,4 @@ func (e htmlTemplateElementV8Wrapper) CreateInstance(
 	this *v8.Object,
 ) (*v8.Value, error) {
 	return nil, errors.New("TODO")
-}
-
-func (e htmlTemplateElementV8Wrapper) ToDocumentFragment(
-	ctx *V8ScriptContext,
-	fragment dom.DocumentFragment,
-) (*v8.Value, error) {
-	return ctx.getJSInstance(fragment)
 }

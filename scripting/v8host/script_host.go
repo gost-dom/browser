@@ -362,7 +362,7 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 		clock:   clock.New(),
 		v8ctx:   v8go.NewContext(host.iso, host.windowTemplate),
 		window:  w,
-		v8nodes: make(map[entity.ObjectId]*v8go.Value),
+		v8nodes: make(map[entity.ObjectId]jsValue),
 	}
 	host.addContext(context)
 	errorCallback := func(err error) {
@@ -373,7 +373,7 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 	context.eventLoop = newEventLoop(context, errorCallback)
 	host.inspector.ContextCreated(context.v8ctx)
 	if w != nil {
-		context.cacheNode(context.v8ctx.Global(), w)
+		context.cacheNode(newV8Object(host.iso, context.v8ctx.Global()), w)
 	}
 	err := installPolyfills(context)
 	if err != nil {

@@ -149,7 +149,7 @@ func (w converters) toBoolean(cbCtx *argumentHelper, val bool) js.CallbackRVal {
 }
 
 func (w converters) toNodeList(cbCtx *argumentHelper, val dom.NodeList) js.CallbackRVal {
-	return cbCtx.ReturnWithValueErr(cbCtx.ScriptCtx().getJSInstance(val))
+	return cbCtx.ReturnWithJSValueErr(cbCtx.ScriptCtx().getJSInstance(val))
 }
 
 func (w converters) toHTMLFormControlsCollection(
@@ -195,7 +195,8 @@ func storeObjectHandleInV8Instance(
 	e, ok := value.(entity.ObjectIder)
 	if ok {
 		objectId := e.ObjectId()
-		ctx.v8nodes[objectId] = this.Value
+		obj := newV8Object(ctx.host.iso, this)
+		ctx.v8nodes[objectId] = &obj.v8Value
 	}
 
 	internalField := v8.NewValueExternalHandle(ctx.v8ctx.Isolate(), handle)

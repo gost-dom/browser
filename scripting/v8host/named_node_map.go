@@ -55,7 +55,7 @@ func createNamedNodeMap(host *V8ScriptHost) *v8.FunctionTemplate {
 				}
 				item := instance.Item(int(idx))
 				if item != nil {
-					return cbCtx.ReturnWithValueErr(cbCtx.ScriptCtx().getJSInstance(item))
+					return cbCtx.ReturnWithJSValueErr(cbCtx.ScriptCtx().getJSInstance(item))
 				}
 				return cbCtx.ReturnWithValue(v8.Null(iso))
 			}),
@@ -72,7 +72,8 @@ func createNamedNodeMap(host *V8ScriptHost) *v8.FunctionTemplate {
 			if item == nil {
 				return v8.Undefined(iso), nil
 			}
-			return ctx.getJSInstance(item)
+			v, err := ctx.getJSInstance(item)
+			return v.Value, err
 		}
 		return nil, v8.NewTypeError(iso, "dunno")
 	})

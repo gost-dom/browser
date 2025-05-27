@@ -18,7 +18,7 @@ type v8CallbackContext struct {
 }
 
 type v8CallbackRVal struct {
-	rtnVal *v8go.Value
+	rtnVal jsValue
 	err    error
 }
 
@@ -65,7 +65,8 @@ func wrapV8Callback(
 			}()
 			cbCtx := newArgumentHelper(host, info)
 			result := callback(cbCtx).(v8CallbackRVal)
-			return result.rtnVal, result.err
+			val := assertV8Value(result.rtnVal)
+			return val.v8Value(), result.err
 		},
 	)
 }

@@ -19,7 +19,7 @@ func newV8EventListener(ctx *V8ScriptContext, val *v8.Value) event.EventHandler 
 func (l v8EventListener) HandleEvent(e *event.Event) error {
 	f, err := l.val.AsFunction()
 	if err == nil {
-		var event *v8.Value
+		var event jsValue
 		event, err = l.ctx.getJSInstance(e)
 		if err == nil {
 			_, err1 := f.Call(l.val, event)

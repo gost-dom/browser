@@ -24,7 +24,7 @@ type V8ScriptContext struct {
 	host       *V8ScriptHost
 	v8ctx      *v8.Context
 	window     html.Window
-	v8nodes    map[entity.ObjectId]*v8.Value
+	v8nodes    map[entity.ObjectId]jsValue
 	eventLoop  *eventLoop
 	disposers  []disposable
 	clock      *clock.Clock
@@ -45,15 +45,15 @@ func (h *V8ScriptHost) mustGetContext(v8ctx *v8.Context) *V8ScriptContext {
 	panic("Unknown v8 context!!\n" + string(debug.Stack()))
 }
 
-func (c *V8ScriptContext) cacheNode(obj *v8.Object, node entity.ObjectIder) (*v8.Value, error) {
-	val := obj.Value
+func (c *V8ScriptContext) cacheNode(obj jsObject, node entity.ObjectIder) (*v8.Value, error) {
+	var val jsValue = &assertV8Object(obj).v8Value
 	objectId := node.ObjectId()
 	c.v8nodes[objectId] = val
 	handle := cgo.NewHandle(node)
 	c.addDisposer(handleDisposable(handle))
 	internal := v8.NewValueExternalHandle(c.host.iso, handle)
-	obj.SetInternalField(0, internal)
-	return val, nil
+	obj.Object.SetInternalField(0, internal)
+	return val.v8Value(), nil
 }
 
 func lookupJSPrototype(entity entity.ObjectIder) string {
@@ -101,10 +101,10 @@ func lookupJSPrototype(entity entity.ObjectIder) string {
 // object is created with the correct prototype configured.
 func (c *V8ScriptContext) getJSInstance(
 	node entity.ObjectIder,
-) (*v8.Value, error) {
+) (jsValue, error) {
 	iso := c.host.iso
 	if node == nil {
-		return v8.Null(iso), nil
+		return newV8Value(iso, v8.Null(iso)), nil
 	}
 	prototypeName := lookupJSPrototype(node)
 	prototype := c.getConstructor(prototypeName)
@@ -114,7 +114,8 @@ func (c *V8ScriptContext) getJSInstance(
 	}
 	value, err := prototype.InstanceTemplate().NewInstance(c.v8ctx)
 	if err == nil {
-		return c.cacheNode(value, node)
+		v, err := c.cacheNode(newV8Object(iso, value), node)
+		return newV8Value(iso, v), err
 	}
 	return nil, err
 }

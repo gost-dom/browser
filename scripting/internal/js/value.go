@@ -3,9 +3,17 @@ package js
 type Value interface {
 	String() string
 	Int32() int32
+	Uint32() uint32
+	Boolean() bool
+
+	IsBoolean() bool
+	IsString() bool
+	IsObject() bool
 
 	AsFunction() (Function, bool)
 	AsObject() (Object, bool)
+
+	StrictEquals(Value) bool
 }
 
 type Function interface {
