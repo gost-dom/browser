@@ -67,7 +67,7 @@ func createNamedNodeMap(host *V8ScriptHost) *v8.FunctionTemplate {
 			if err != nil {
 				return cbCtx.ReturnWithError(err)
 			}
-			index := int(cbCtx.Index())
+			index := int(cbCtx.v8Info.Index())
 			item := instance.Item(index)
 			if item == nil {
 				return cbCtx.ReturnWithValue(nil)

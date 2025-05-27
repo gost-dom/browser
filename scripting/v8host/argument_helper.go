@@ -12,7 +12,7 @@ import (
 )
 
 type argumentHelper struct {
-	*v8.FunctionCallbackInfo
+	v8Info            *v8.FunctionCallbackInfo
 	host              *V8ScriptHost
 	noOfReadArguments int
 	currentIndex      int
@@ -25,14 +25,14 @@ func newArgumentHelper(host *V8ScriptHost, info *v8.FunctionCallbackInfo) *argum
 }
 
 func (h argumentHelper) Global() jsObject {
-	global := h.Context().Global()
-	return newV8Object(h.iso(), global)
+	return h.ScriptCtx().global
 }
 
-func (h argumentHelper) iso() *v8.Isolate     { return h.FunctionCallbackInfo.Context().Isolate() }
+func (h argumentHelper) This() *v8.Object     { return h.v8Info.This() }
+func (h argumentHelper) iso() *v8.Isolate     { return h.ScriptCtx().host.iso }
 func (h argumentHelper) logger() *slog.Logger { return h.ScriptCtx().host.Logger() }
 func (h *argumentHelper) ScriptCtx() *V8ScriptContext {
-	return h.host.mustGetContext(h.FunctionCallbackInfo.Context())
+	return h.host.mustGetContext(h.v8Info.Context())
 }
 
 func (h *argumentHelper) ReturnWithValue(val *v8go.Value) js.CallbackRVal {
@@ -67,11 +67,11 @@ func (h *argumentHelper) ReturnWithTypeError(msg string) js.CallbackRVal {
 }
 
 func (h *argumentHelper) Instance() (any, error) {
-	if h.This().InternalFieldCount() < 1 {
+	if h.v8Info.This().InternalFieldCount() < 1 {
 		// TODO: Create a type error
 		return nil, errors.New("TypeError")
 	}
-	return h.This().GetInternalField(0).ExternalHandle().Value(), nil
+	return h.v8Info.This().GetInternalField(0).ExternalHandle().Value(), nil
 }
 
 // acceptIndex informs argumentHelper that argument at index was accepted. This
@@ -129,7 +129,7 @@ func (h *argumentHelper) assertIndex(index int) {
 func (h *argumentHelper) ConsumeArg() jsValue {
 	index := h.currentIndex
 	h.assertIndex(index)
-	args := h.FunctionCallbackInfo.Args()
+	args := h.v8Info.Args()
 	if len(args) <= index {
 		return nil
 	}
@@ -144,7 +144,7 @@ func (h *argumentHelper) ConsumeArg() jsValue {
 func (h *argumentHelper) consumeRest() []*v8.Value {
 	index := h.currentIndex
 	// h.assertIndex(index)
-	args := h.FunctionCallbackInfo.Args()
+	args := h.v8Info.Args()
 	if len(args) <= index {
 		return nil
 	}

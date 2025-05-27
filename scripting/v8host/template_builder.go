@@ -196,13 +196,6 @@ func (h prototypeBuilder[T]) CreateFunction(
 	)
 }
 
-func (h prototypeBuilder[T]) CreateFunctionStringToString(name string, fn func(T, string) string) {
-	h.CreateFunction(name, func(instance T, info *argumentHelper) (*v8.Value, error) {
-		value := fn(instance, info.Args()[0].String())
-		return v8.NewValue(h.host.iso, value)
-	})
-}
-
 // parseSetterArg parses a single argument and is intended for attribute
 // setters, where exactly one argument must be passed by v8.
 func parseSetterArg[T any](
@@ -211,7 +204,7 @@ func parseSetterArg[T any](
 ) (result T, err error) {
 	arg := ctx.ConsumeArg()
 	if arg == nil {
-		err = fmt.Errorf("parseSetterArg: expected one argument. got: %d", len(ctx.Args()))
+		err = fmt.Errorf("parseSetterArg: expected one argument. got: %d", len(ctx.v8Info.Args()))
 	}
 
 	errs := make([]error, len(parsers))
