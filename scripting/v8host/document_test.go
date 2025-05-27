@@ -25,7 +25,7 @@ func (s *DocumentTestSuite) SetupTest() {
 
 func (s *DocumentTestSuite) TestDocumentElement() {
 	s.Assert().Equal(
-		"HTMLElement",
+		"HTMLHtmlElement",
 		s.MustEval("Object.getPrototypeOf(document.documentElement).constructor.name"))
 }
 
