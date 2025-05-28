@@ -123,7 +123,7 @@ func (w converters) toNillableString_(
 	if !hasVal {
 		return w.toNull(cbCtx)
 	}
-	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), str))
+	return w.toString_(cbCtx, str)
 }
 
 func (w converters) toUnsignedLong(cbCtx *v8CallbackContext, val int) (jsValue, error) {
@@ -132,7 +132,7 @@ func (w converters) toUnsignedLong(cbCtx *v8CallbackContext, val int) (jsValue, 
 
 func (w converters) toUnsignedShort(cbCtx *v8CallbackContext, val int) (jsValue, error) {
 	// TODO: This should be uint16 - but v8go doesn't support uint16
-	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), uint32(val)))
+	return cbCtx.ValueFactory().NewUint32(uint32(val)), nil
 }
 
 func (w converters) toLong(cbCtx *v8CallbackContext, val int) (jsValue, error) {
@@ -140,7 +140,7 @@ func (w converters) toLong(cbCtx *v8CallbackContext, val int) (jsValue, error) {
 }
 
 func (w converters) toAny(cbCtx *v8CallbackContext, val string) (jsValue, error) {
-	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), val))
+	return w.toString_(cbCtx, val)
 }
 
 func (w converters) toString_(cbCtx *v8CallbackContext, val string) (jsValue, error) {
@@ -148,7 +148,7 @@ func (w converters) toString_(cbCtx *v8CallbackContext, val string) (jsValue, er
 }
 
 func (w converters) toBoolean(cbCtx *v8CallbackContext, val bool) (jsValue, error) {
-	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), val))
+	return cbCtx.ValueFactory().NewBoolean(val), nil
 }
 
 func (w converters) toNodeList(cbCtx *v8CallbackContext, val dom.NodeList) (jsValue, error) {

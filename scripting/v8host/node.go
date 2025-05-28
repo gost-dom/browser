@@ -3,7 +3,6 @@ package v8host
 import (
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/scripting/internal/js"
-	v8 "github.com/gost-dom/v8go"
 )
 
 func (n nodeV8Wrapper) textContent(cbCtx *v8CallbackContext) (jsValue, error) {
@@ -13,7 +12,7 @@ func (n nodeV8Wrapper) textContent(cbCtx *v8CallbackContext) (jsValue, error) {
 	}
 
 	r := i.TextContent()
-	return cbCtx.ReturnWithValueErr(v8.NewValue(n.iso(), r))
+	return n.toString_(cbCtx, r)
 }
 
 func (n nodeV8Wrapper) setTextContent(cbCtx *v8CallbackContext) (jsValue, error) {
@@ -31,7 +30,7 @@ func (n nodeV8Wrapper) nodeType(cbCtx *v8CallbackContext) (jsValue, error) {
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
 	}
-	return cbCtx.ReturnWithValueErr(v8.NewValue(n.scriptHost.iso, int32(instance.NodeType())))
+	return n.toUnsignedShort(cbCtx, int(instance.NodeType()))
 }
 
 func (n nodeV8Wrapper) decodeGetRootNodeOptions(

@@ -44,7 +44,7 @@ func (w eventV8Wrapper) toEventTarget(
 func (w eventV8Wrapper) eventPhase(cbCtx *v8CallbackContext) (jsValue, error) {
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
-	return cbCtx.ReturnWithValueErr(v8.NewValue(w.iso(), uint32(instance.EventPhase)))
+	return w.toUnsignedShort(cbCtx, int(instance.EventPhase))
 }
