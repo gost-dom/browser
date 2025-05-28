@@ -48,7 +48,7 @@ func (e *elementV8Wrapper) insertAdjacentHTML(
 	info *v8.FunctionCallbackInfo,
 ) (val *v8.Value, err error) {
 	iso := e.scriptHost.iso
-	arg := newArgumentHelper(e.scriptHost, info)
+	arg := newCallbackContext(e.scriptHost, info)
 	element, e0 := e.getInstance(info)
 	position, e1 := arg.consumeString()
 	html, e2 := arg.consumeString()

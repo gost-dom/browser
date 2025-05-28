@@ -63,7 +63,7 @@ func createEventTarget(host *V8ScriptHost) *v8.FunctionTemplate {
 				if err != nil {
 					return nil, err
 				}
-				args := newArgumentHelper(host, info)
+				args := newCallbackContext(host, info)
 				eventType, e1 := args.consumeString()
 				fn, e2 := args.consumeFunction()
 				var options []func(*event.EventListener)
@@ -97,7 +97,7 @@ func createEventTarget(host *V8ScriptHost) *v8.FunctionTemplate {
 				if err != nil {
 					return nil, err
 				}
-				args := newArgumentHelper(host, info)
+				args := newCallbackContext(host, info)
 				eventType, e1 := args.consumeString()
 				fn, e2 := args.consumeFunction()
 				err = errors.Join(e1, e2)

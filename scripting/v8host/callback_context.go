@@ -25,7 +25,7 @@ type v8CallbackContext struct {
 	currentIndex      int
 }
 
-func newArgumentHelper(host *V8ScriptHost, info *v8.FunctionCallbackInfo) *v8CallbackContext {
+func newCallbackContext(host *V8ScriptHost, info *v8.FunctionCallbackInfo) *v8CallbackContext {
 	return &v8CallbackContext{info, host, 0, 0}
 }
 
@@ -201,7 +201,7 @@ func wrapV8Callback(
 					err = fmt.Errorf("PANIC in callback: %v\n%s", r, debug.Stack())
 				}
 			}()
-			cbCtx := newArgumentHelper(host, info)
+			cbCtx := newCallbackContext(host, info)
 			result, err := callback(cbCtx)
 			val := assertV8Value(result)
 			return val.v8Value(), err
@@ -219,7 +219,7 @@ func wrapV8CallbackFn(
 				err = fmt.Errorf("PANIC in callback: %v\n%s", r, debug.Stack())
 			}
 		}()
-		cbCtx := newArgumentHelper(host, info)
+		cbCtx := newCallbackContext(host, info)
 		result, err := callback(cbCtx)
 		val := assertV8Value(result)
 		return val.v8Value(), err

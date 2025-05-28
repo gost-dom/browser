@@ -189,7 +189,7 @@ func (h prototypeBuilder[T]) CreateFunction(
 				if err != nil {
 					return nil, err
 				}
-				return fn(instance, newArgumentHelper(h.host, info))
+				return fn(instance, newCallbackContext(h.host, info))
 			},
 		),
 		v8.ReadOnly,
