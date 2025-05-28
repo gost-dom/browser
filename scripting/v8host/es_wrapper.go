@@ -151,6 +151,31 @@ func (w converters) toBoolean(cbCtx *v8CallbackContext, val bool) (jsValue, erro
 	return cbCtx.ValueFactory().NewBoolean(val), nil
 }
 
+// =======
+// 	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), uint32(val)))
+// }
+//
+// func (w converters) toLong(cbCtx *v8CallbackContext, val int) (jsValue, error) {
+// 	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), int64(val)))
+// }
+//
+// func (w converters) toAny(cbCtx *v8CallbackContext, val string) (jsValue, error) {
+// 	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), val))
+// }
+//
+// func (w converters) toString_(cbCtx *v8CallbackContext, str string) (jsValue, error) {
+// 	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), str))
+// }
+//
+// func (w converters) toUnsignedShort(cbCtx *v8CallbackContext, val int) (jsValue, error) {
+// 	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), uint32(val)))
+// }
+//
+// func (w converters) toBoolean(cbCtx *v8CallbackContext, val bool) (jsValue, error) {
+// 	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), val))
+// >>>>>>> 4eef7f94 (refactor(v8): Rename argumentHelper to callbackContext)
+// }
+
 func (w converters) toNodeList(cbCtx *v8CallbackContext, val dom.NodeList) (jsValue, error) {
 	return cbCtx.ReturnWithJSValueErr(cbCtx.ScriptCtx().getJSInstance(val))
 }

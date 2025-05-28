@@ -42,6 +42,7 @@ func (h v8CallbackContext) logger() *slog.Logger { return h.ScriptCtx().host.Log
 func (h *v8CallbackContext) ScriptCtx() *V8ScriptContext {
 	return h.host.mustGetContext(h.v8Info.Context())
 }
+
 func (c *v8CallbackContext) ValueFactory() jsValueFactory { return c.valueFactory }
 
 func (h *v8CallbackContext) ReturnWithValue(val *v8go.Value) (jsValue, error) {
