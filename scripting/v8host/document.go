@@ -36,7 +36,7 @@ func (w *documentV8Wrapper) CreateInstance(cbCtx *v8CallbackContext) (jsValue, e
 	)
 }
 
-func (w *documentV8Wrapper) getElementById(cbCtx *v8CallbackContext) (jsValue, error) {
+func (w *documentV8Wrapper) getElementById(cbCtx jsCallbackContext) (jsValue, error) {
 	instance, err0 := js.As[dom.Document](cbCtx.Instance())
 	id, err1 := consumeArgument(cbCtx, "id", nil, w.decodeString)
 	if err := errors.Join(err0, err1); err != nil {
@@ -45,7 +45,7 @@ func (w *documentV8Wrapper) getElementById(cbCtx *v8CallbackContext) (jsValue, e
 	return cbCtx.getInstanceForNode(instance.GetElementById(id))
 }
 
-func (w *documentV8Wrapper) head(cbCtx *v8CallbackContext) (jsValue, error) {
+func (w *documentV8Wrapper) head(cbCtx jsCallbackContext) (jsValue, error) {
 	instance, err := js.As[dom.Document](cbCtx.Instance())
 	if err == nil {
 		return cbCtx.getInstanceForNode(instance.Head())
@@ -54,7 +54,7 @@ func (w *documentV8Wrapper) head(cbCtx *v8CallbackContext) (jsValue, error) {
 	}
 }
 
-func (w *documentV8Wrapper) body(cbCtx *v8CallbackContext) (jsValue, error) {
+func (w *documentV8Wrapper) body(cbCtx jsCallbackContext) (jsValue, error) {
 	instance, err := js.As[dom.Document](cbCtx.Instance())
 	if err == nil {
 		return cbCtx.getInstanceForNode(instance.Body())
@@ -70,10 +70,10 @@ func (w *documentV8Wrapper) toComment(
 	return cbCtx.getInstanceForNode(comment)
 }
 
-func (w *documentV8Wrapper) toAttr(cbCtx *v8CallbackContext, comment dom.Attr) (jsValue, error) {
+func (w *documentV8Wrapper) toAttr(cbCtx jsCallbackContext, comment dom.Attr) (jsValue, error) {
 	return cbCtx.getInstanceForNode(comment)
 }
-func (w *documentV8Wrapper) createElement(cbCtx *v8CallbackContext) (jsValue, error) {
+func (w *documentV8Wrapper) createElement(cbCtx jsCallbackContext) (jsValue, error) {
 	var name string
 	name, err1 := cbCtx.consumeString()
 	instance, err2 := js.As[dom.Document](cbCtx.Instance())
@@ -85,7 +85,7 @@ func (w *documentV8Wrapper) createElement(cbCtx *v8CallbackContext) (jsValue, er
 		return cbCtx.ReturnWithError(err)
 	}
 }
-func (w *documentV8Wrapper) createTextNode(cbCtx *v8CallbackContext) (jsValue, error) {
+func (w *documentV8Wrapper) createTextNode(cbCtx jsCallbackContext) (jsValue, error) {
 	var name string
 	name, err1 := cbCtx.consumeString()
 	instance, err2 := js.As[dom.Document](cbCtx.Instance())

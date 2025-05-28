@@ -39,12 +39,12 @@ func (w nonDocumentTypeChildNodeV8Wrapper) installPrototype(prototypeTmpl *v8.Ob
 		v8.None)
 }
 
-func (w nonDocumentTypeChildNodeV8Wrapper) Constructor(cbCtx *v8CallbackContext) (jsValue, error) {
+func (w nonDocumentTypeChildNodeV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: NonDocumentTypeChildNode.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w nonDocumentTypeChildNodeV8Wrapper) previousElementSibling(cbCtx *v8CallbackContext) (jsValue, error) {
+func (w nonDocumentTypeChildNodeV8Wrapper) previousElementSibling(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: NonDocumentTypeChildNode.previousElementSibling")
 	instance, err := js.As[dom.NonDocumentTypeChildNode](cbCtx.Instance())
 	if err != nil {
@@ -54,7 +54,7 @@ func (w nonDocumentTypeChildNodeV8Wrapper) previousElementSibling(cbCtx *v8Callb
 	return cbCtx.getInstanceForNode(result)
 }
 
-func (w nonDocumentTypeChildNodeV8Wrapper) nextElementSibling(cbCtx *v8CallbackContext) (jsValue, error) {
+func (w nonDocumentTypeChildNodeV8Wrapper) nextElementSibling(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: NonDocumentTypeChildNode.nextElementSibling")
 	instance, err := js.As[dom.NonDocumentTypeChildNode](cbCtx.Instance())
 	if err != nil {

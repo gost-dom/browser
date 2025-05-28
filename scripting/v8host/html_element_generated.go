@@ -40,12 +40,12 @@ func (w htmlElementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate)
 	w.htmlOrSVGElement.installPrototype(prototypeTmpl)
 }
 
-func (w htmlElementV8Wrapper) Constructor(cbCtx *v8CallbackContext) (jsValue, error) {
+func (w htmlElementV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLElement.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w htmlElementV8Wrapper) click(cbCtx *v8CallbackContext) (jsValue, error) {
+func (w htmlElementV8Wrapper) click(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLElement.click")
 	instance, err := js.As[html.HTMLElement](cbCtx.Instance())
 	if err != nil {
