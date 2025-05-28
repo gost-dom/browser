@@ -47,17 +47,15 @@ func (e *elementV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) {
 func (e *elementV8Wrapper) insertAdjacentHTML(
 	info *v8.FunctionCallbackInfo,
 ) (val *v8.Value, err error) {
-	iso := e.scriptHost.iso
 	arg := newCallbackContext(e.scriptHost, info)
 	element, e0 := e.getInstance(info)
 	position, e1 := arg.consumeString()
 	html, e2 := arg.consumeString()
 	err = errors.Join(e0, e1, e2)
 	if err == nil {
-		element.InsertAdjacentHTML(position, html)
-		val, err = v8.NewValue(iso, element.OuterHTML())
+		err = element.InsertAdjacentHTML(position, html)
 	}
-	return
+	return nil, err
 }
 
 func (e *elementV8Wrapper) outerHTML(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
