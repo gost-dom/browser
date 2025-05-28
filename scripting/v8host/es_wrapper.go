@@ -101,14 +101,18 @@ func (w converters) decodeNodeOrText(cbCtx jsCallbackContext, val jsValue) (dom.
 	return w.decodeNode(cbCtx, val)
 }
 
+func (w converters) toNull(cbCtx jsCallbackContext) (jsValue, error) {
+	return cbCtx.ValueFactory().Null(), nil
+}
+
 func (w converters) toNullableString_(
 	cbCtx *v8CallbackContext,
 	str *string,
 ) (jsValue, error) {
 	if str == nil {
-		return cbCtx.ReturnWithValue(v8.Null(cbCtx.iso()))
+		return w.toNull(cbCtx)
 	}
-	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), str))
+	return w.toString_(cbCtx, *str)
 }
 
 func (w converters) toNillableString_(
@@ -117,29 +121,30 @@ func (w converters) toNillableString_(
 	hasVal bool,
 ) (jsValue, error) {
 	if !hasVal {
-		return cbCtx.ReturnWithValue(v8.Null(cbCtx.iso()))
+		return w.toNull(cbCtx)
 	}
 	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), str))
 }
 
 func (w converters) toUnsignedLong(cbCtx *v8CallbackContext, val int) (jsValue, error) {
+	return cbCtx.ValueFactory().NewUint32(uint32(val)), nil
+}
+
+func (w converters) toUnsignedShort(cbCtx *v8CallbackContext, val int) (jsValue, error) {
+	// TODO: This should be uint16 - but v8go doesn't support uint16
 	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), uint32(val)))
 }
 
 func (w converters) toLong(cbCtx *v8CallbackContext, val int) (jsValue, error) {
-	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), int64(val)))
+	return cbCtx.ValueFactory().NewInt64(int64(val)), nil
 }
 
 func (w converters) toAny(cbCtx *v8CallbackContext, val string) (jsValue, error) {
 	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), val))
 }
 
-func (w converters) toString_(cbCtx *v8CallbackContext, str string) (jsValue, error) {
-	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), str))
-}
-
-func (w converters) toUnsignedShort(cbCtx *v8CallbackContext, val int) (jsValue, error) {
-	return cbCtx.ReturnWithValueErr(v8.NewValue(cbCtx.iso(), uint32(val)))
+func (w converters) toString_(cbCtx *v8CallbackContext, val string) (jsValue, error) {
+	return cbCtx.ValueFactory().NewString(val), nil
 }
 
 func (w converters) toBoolean(cbCtx *v8CallbackContext, val bool) (jsValue, error) {

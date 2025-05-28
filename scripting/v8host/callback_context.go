@@ -13,6 +13,7 @@ import (
 )
 
 type jsCallbackContext = *v8CallbackContext
+type jsValueFactory = v8ValueFactory
 
 var (
 	ErrWrongNoOfArguments = errors.New("Not enough arguments passed")
@@ -23,10 +24,11 @@ type v8CallbackContext struct {
 	host              *V8ScriptHost
 	noOfReadArguments int
 	currentIndex      int
+	valueFactory      v8ValueFactory
 }
 
 func newCallbackContext(host *V8ScriptHost, info *v8.FunctionCallbackInfo) *v8CallbackContext {
-	return &v8CallbackContext{info, host, 0, 0}
+	return &v8CallbackContext{info, host, 0, 0, v8ValueFactory{host}}
 }
 
 func (h v8CallbackContext) Global() jsObject {
@@ -40,6 +42,7 @@ func (h v8CallbackContext) logger() *slog.Logger { return h.ScriptCtx().host.Log
 func (h *v8CallbackContext) ScriptCtx() *V8ScriptContext {
 	return h.host.mustGetContext(h.v8Info.Context())
 }
+func (c *v8CallbackContext) ValueFactory() jsValueFactory { return c.valueFactory }
 
 func (h *v8CallbackContext) ReturnWithValue(val *v8go.Value) (jsValue, error) {
 	return h.ReturnWithJSValue(newV8Value(h.iso(), val))
@@ -165,13 +168,20 @@ type v8ValueFactory struct{ host *V8ScriptHost }
 func (f v8ValueFactory) iso() *v8go.Isolate { return f.host.iso }
 func (f v8ValueFactory) Null() jsValue      { return f.toVal(v8go.Null(f.iso())) }
 
-func (f v8ValueFactory) String(s string) jsValue {
-	return f.mustVal(v8go.NewValue(f.iso(), s))
-}
+func (f v8ValueFactory) NewString(val string) jsValue { return f.newV8Value(val) }
+func (f v8ValueFactory) NewInt32(val int32) jsValue   { return f.newV8Value(val) }
+func (f v8ValueFactory) NewUint32(val uint32) jsValue { return f.newV8Value(val) }
+func (f v8ValueFactory) NewInt64(val int64) jsValue   { return f.newV8Value(val) }
+func (f v8ValueFactory) NewBoolean(val bool) jsValue  { return f.newV8Value(val) }
 
-// mustVal is just a simple helper to crete Value wrappers on top of v8go values
-// where construction is assumed to succeed
-func (f v8ValueFactory) mustVal(val *v8go.Value, err error) jsValue {
+// Creates a value in V8 from any value. This variant is hidden, as not all
+// types are valid, and for type safety reasons, only valid types are exposed.
+func (f v8ValueFactory) newV8Value(val any) jsValue {
+	// I'm unsure _when_ this could fail. AFAIK, v8 could throw an error if there is
+	// currently an uncaught exception; but that scenario shouldn't occur from v8go.
+	//
+	// Maybe integer overflows?
+	res, err := v8go.NewValue(f.iso(), val)
 	if err != nil {
 		panic(
 			fmt.Sprintf(
@@ -181,10 +191,11 @@ func (f v8ValueFactory) mustVal(val *v8go.Value, err error) jsValue {
 			),
 		)
 	}
-	return &v8Value{f.iso(), val}
+	return &v8Value{f.iso(), res}
 }
+
 func (f v8ValueFactory) toVal(val *v8go.Value) jsValue {
-	return &v8Value{f.iso(), val}
+	return newV8Value(f.iso(), val)
 }
 
 type internalCallback func(*v8CallbackContext) (jsValue, error)
