@@ -144,7 +144,7 @@ func (e *htmlFormElement) RequestSubmit(submitter dom.Element) error {
 
 func (e *htmlFormElement) Method() string {
 	m, _ := e.GetAttribute("method")
-	if strings.ToLower(m) == "post" {
+	if strings.EqualFold(m, "post") {
 		return "post"
 	} else {
 		return "get"
