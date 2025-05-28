@@ -8,19 +8,6 @@ import (
 	"github.com/gost-dom/v8go"
 )
 
-type v8CallbackContext struct {
-	host         *V8ScriptHost
-	ctx          *V8ScriptContext
-	info         *v8go.FunctionCallbackInfo
-	args         []*v8go.Value
-	argsConsumed int
-}
-
-type v8CallbackRVal struct {
-	rtnVal jsValue
-	err    error
-}
-
 type v8ValueFactory struct{ host *V8ScriptHost }
 
 func (f v8ValueFactory) iso() *v8go.Isolate { return f.host.iso }
