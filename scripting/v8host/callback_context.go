@@ -12,6 +12,7 @@ import (
 	v8 "github.com/gost-dom/v8go"
 )
 
+// type jsCallbackContext = js.CallbackContext[*v8Value]
 type jsCallbackContext = *v8CallbackContext
 type jsValueFactory = v8ValueFactory
 
@@ -27,7 +28,7 @@ type v8CallbackContext struct {
 	valueFactory      v8ValueFactory
 }
 
-func newCallbackContext(host *V8ScriptHost, info *v8.FunctionCallbackInfo) *v8CallbackContext {
+func newCallbackContext(host *V8ScriptHost, info *v8.FunctionCallbackInfo) jsCallbackContext {
 	return &v8CallbackContext{info, host, 0, 0, v8ValueFactory{host}}
 }
 
@@ -199,7 +200,7 @@ func (f v8ValueFactory) toVal(val *v8go.Value) jsValue {
 	return newV8Value(f.iso(), val)
 }
 
-type internalCallback func(*v8CallbackContext) (jsValue, error)
+type internalCallback func(jsCallbackContext) (jsValue, error)
 
 func wrapV8Callback(
 	host *V8ScriptHost,
