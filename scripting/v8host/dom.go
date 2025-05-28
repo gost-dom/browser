@@ -10,9 +10,7 @@ import (
 )
 
 func (l domTokenListV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) {
-	it := newIterator(l.scriptHost, func(val string, ctx *V8ScriptContext) (*v8.Value, error) {
-		return v8.NewValue(ctx.host.iso, val)
-	})
+	it := newIterator(l.scriptHost, l.toString_)
 	it.installPrototype(constructor)
 }
 

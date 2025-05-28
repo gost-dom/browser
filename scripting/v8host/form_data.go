@@ -1,8 +1,6 @@
 package v8host
 
 import (
-	"errors"
-
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/v8go"
 
@@ -10,15 +8,11 @@ import (
 )
 
 func (w formDataV8Wrapper) CustomInitialiser(constructor *v8go.FunctionTemplate) {
-	iso := w.scriptHost.iso
 	iterator := newIterator2(
 		w.scriptHost,
-		func(k string, v html.FormDataValue, ctx *V8ScriptContext) (v1 *v8.Value, v2 *v8.Value, err error) {
-			var err1, err2 error
-			v1, err1 = v8go.NewValue(iso, k)
-			v2, err2 = v8go.NewValue(iso, string(v))
-			err = errors.Join(err1, err2)
-			return
+		w.toString_,
+		func(ctx jsCallbackContext, v html.FormDataValue) (jsValue, error) {
+			return w.toString_(ctx, string(v))
 		},
 	)
 	iterator.installPrototype(constructor)

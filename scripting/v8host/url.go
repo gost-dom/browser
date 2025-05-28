@@ -1,7 +1,6 @@
 package v8host
 
 import (
-	"errors"
 	"fmt"
 	"iter"
 	"runtime/cgo"
@@ -112,7 +111,6 @@ func (w urlSearchParamsV8Wrapper) Constructor(cbCtx *v8CallbackContext) (jsValue
 
 func (w urlSearchParamsV8Wrapper) toSequenceString_(
 	cbCtx *v8CallbackContext,
-	// ctx *V8ScriptContext,
 	values []string,
 ) (jsValue, error) {
 	vs := make([]*v8.Value, len(values))
@@ -123,15 +121,7 @@ func (w urlSearchParamsV8Wrapper) toSequenceString_(
 }
 
 func (w urlSearchParamsV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) {
-	iso := w.scriptHost.iso
-	it := newIterator2(
-		w.scriptHost,
-		func(k string, v string, ctx *V8ScriptContext) (*v8.Value, *v8.Value, error) {
-			r1, e1 := v8.NewValue(iso, k)
-			r2, e2 := v8.NewValue(iso, v)
-			return r1, r2, errors.Join(e1, e2)
-		},
-	)
+	it := newIterator2(w.scriptHost, w.toString_, w.toString_)
 	it.installPrototype(constructor)
 }
 

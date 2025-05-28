@@ -11,9 +11,8 @@ func (w *nodeListV8Wrapper) CustomInitialiser(ft *v8.FunctionTemplate) {
 	iso := w.iso()
 	prototype := ft.PrototypeTemplate()
 	nodeListIterator := newIterator(host,
-		func(instance dom.Node, ctx *V8ScriptContext) (*v8.Value, error) {
-			v, err := ctx.getJSInstance(instance)
-			return assertV8Value(v).v8Value(), err
+		func(ctx jsCallbackContext, instance dom.Node) (jsValue, error) {
+			return ctx.ScriptCtx().getJSInstance(instance)
 		},
 	)
 	prototype.SetSymbol(v8.SymbolIterator(iso),
