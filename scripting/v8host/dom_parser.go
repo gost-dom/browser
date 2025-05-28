@@ -20,7 +20,7 @@ func createDOMParserPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
 	prototype := constructor.PrototypeTemplate()
 	prototype.Set(
 		"parseFromString",
-		wrapV8Callback(host, func(cbCtx *argumentHelper) (jsValue, error) {
+		wrapV8Callback(host, func(cbCtx *v8CallbackContext) (jsValue, error) {
 			ctx := cbCtx.ScriptCtx()
 			window := ctx.window
 			html, err0 := cbCtx.consumeString()

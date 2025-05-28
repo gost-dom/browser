@@ -21,7 +21,7 @@ func (cb MutationCallback) HandleMutation(recs []mutation.Record, obs *mutation.
 }
 
 func (w mutationObserverV8Wrapper) CreateInstance(
-	cbCtx *argumentHelper,
+	cbCtx *v8CallbackContext,
 	cb mutation.Callback,
 ) (jsValue, error) {
 	ctx := cbCtx.ScriptCtx()
@@ -69,7 +69,7 @@ func (w mutationObserverV8Wrapper) decodeObserveOption(
 }
 
 func (w mutationObserverV8Wrapper) toSequenceMutationRecord(
-	cbCtx *argumentHelper,
+	cbCtx *v8CallbackContext,
 	records []mutation.Record,
 ) (jsValue, error) {
 	return cbCtx.ReturnWithJSValueErr(toSequenceMutationRecord(cbCtx.ScriptCtx(), records))

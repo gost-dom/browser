@@ -51,7 +51,7 @@ func newXMLHttpRequestV8Wrapper(host *V8ScriptHost) xmlHttpRequestV8Wrapper {
 }
 
 func (xhr xmlHttpRequestV8Wrapper) CreateInstance(
-	cbCtx *argumentHelper,
+	cbCtx *v8CallbackContext,
 ) (jsValue, error) {
 	ctx := cbCtx.ScriptCtx()
 	this := cbCtx.This()
@@ -72,7 +72,7 @@ func (xhr xmlHttpRequestV8Wrapper) CreateInstance(
 	return cbCtx.ReturnWithValue(nil)
 }
 
-func (xhr xmlHttpRequestV8Wrapper) open(cbCtx *argumentHelper) (jsValue, error) {
+func (xhr xmlHttpRequestV8Wrapper) open(cbCtx *v8CallbackContext) (jsValue, error) {
 	method, err0 := consumeArgument(cbCtx, "method", nil, xhr.decodeString)
 	url, err1 := consumeArgument(cbCtx, "url", nil, xhr.decodeString)
 	async, err2 := consumeArgument(cbCtx, "async", nil, xhr.decodeBoolean)
@@ -94,6 +94,6 @@ func (xhr xmlHttpRequestV8Wrapper) open(cbCtx *argumentHelper) (jsValue, error) 
 	return cbCtx.ReturnWithValue(nil)
 }
 
-func (xhr xmlHttpRequestV8Wrapper) upload(cbCtx *argumentHelper) (jsValue, error) {
+func (xhr xmlHttpRequestV8Wrapper) upload(cbCtx *v8CallbackContext) (jsValue, error) {
 	return cbCtx.ReturnWithJSValue(cbCtx.This())
 }

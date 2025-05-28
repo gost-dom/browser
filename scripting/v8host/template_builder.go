@@ -178,7 +178,7 @@ func (h prototypeBuilder[T]) CreateReadWriteProp(
 
 func (h prototypeBuilder[T]) CreateFunction(
 	name string,
-	fn func(T, *argumentHelper) (*v8.Value, error),
+	fn func(T, *v8CallbackContext) (*v8.Value, error),
 ) {
 	h.proto.Set(
 		name,
@@ -220,7 +220,7 @@ func parseSetterArg[T any](
 
 func zeroValue[T any]() (res T) { return }
 
-func ignoreArgument(args *argumentHelper) {
+func ignoreArgument(args *v8CallbackContext) {
 	args.ConsumeArg()
 	args.acceptIndex(args.noOfReadArguments)
 }
@@ -237,10 +237,10 @@ func ignoreArgument(args *argumentHelper) {
 // If the function returns with an error, the name will be used in the error
 // message. Otherwise, name has ho effect on the function.
 func consumeArgument[T any](
-	args *argumentHelper,
+	args *v8CallbackContext,
 	name string,
 	defaultValue func() T,
-	decoders ...func(*argumentHelper, jsValue) (T, error),
+	decoders ...func(*v8CallbackContext, jsValue) (T, error),
 ) (result T, err error) {
 	index := args.currentIndex
 	value := args.ConsumeArg()

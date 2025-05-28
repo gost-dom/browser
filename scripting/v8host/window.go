@@ -21,11 +21,11 @@ func installGlobals(
 	windowTemplate.Set("location", location.InstanceTemplate())
 }
 
-func (w *windowV8Wrapper) window(cbCtx *argumentHelper) (jsValue, error) {
+func (w *windowV8Wrapper) window(cbCtx *v8CallbackContext) (jsValue, error) {
 	return cbCtx.ReturnWithJSValue(cbCtx.This())
 }
 
-func (w *windowV8Wrapper) history(cbCtx *argumentHelper) (jsValue, error) {
+func (w *windowV8Wrapper) history(cbCtx *v8CallbackContext) (jsValue, error) {
 	win, err := js.As[html.Window](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)

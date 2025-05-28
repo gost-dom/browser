@@ -17,7 +17,7 @@ func (w *nodeListV8Wrapper) CustomInitialiser(ft *v8.FunctionTemplate) {
 		},
 	)
 	prototype.SetSymbol(v8.SymbolIterator(iso),
-		wrapV8Callback(host, func(cbCtx *argumentHelper) (jsValue, error) {
+		wrapV8Callback(host, func(cbCtx *v8CallbackContext) (jsValue, error) {
 			nodeList, err := js.As[dom.NodeList](cbCtx.Instance())
 			if err != nil {
 				return nil, err

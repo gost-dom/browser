@@ -23,7 +23,7 @@ func (w historyV8Wrapper) decodeHistoryState(
 }
 
 func (w historyV8Wrapper) toHistoryState(
-	cbCtx *argumentHelper,
+	cbCtx *v8CallbackContext,
 	val htmlinterfaces.HistoryState,
 ) (jsValue, error) {
 	return cbCtx.ReturnWithValueErr(v8.JSONParse(cbCtx.ScriptCtx().v8ctx, string(val)))

@@ -24,14 +24,14 @@ func (w formDataV8Wrapper) CustomInitialiser(constructor *v8go.FunctionTemplate)
 	iterator.installPrototype(constructor)
 }
 
-func (w formDataV8Wrapper) CreateInstance(cbCtx *argumentHelper) (jsValue, error) {
+func (w formDataV8Wrapper) CreateInstance(cbCtx *v8CallbackContext) (jsValue, error) {
 	value := html.NewFormData()
 	w.store(value, cbCtx.ScriptCtx(), cbCtx.This())
 	return cbCtx.ReturnWithValue(nil)
 }
 
 func (w formDataV8Wrapper) CreateInstanceForm(
-	cbCtx *argumentHelper,
+	cbCtx *v8CallbackContext,
 	form html.HTMLFormElement,
 ) (jsValue, error) {
 	value := html.NewFormDataForm(form)
@@ -40,7 +40,7 @@ func (w formDataV8Wrapper) CreateInstanceForm(
 }
 
 func (w formDataV8Wrapper) CreateInstanceFormSubmitter(
-	cbCtx *argumentHelper,
+	cbCtx *v8CallbackContext,
 	form html.HTMLFormElement,
 	submitter html.HTMLElement,
 ) (jsValue, error) {
@@ -60,14 +60,14 @@ func (w formDataV8Wrapper) decodeFormDataValue(
 }
 
 func (w formDataV8Wrapper) toFormDataEntryValue(
-	cbCtx *argumentHelper,
+	cbCtx *v8CallbackContext,
 	val html.FormDataValue,
 ) (jsValue, error) {
 	return w.toString_(cbCtx, string(val))
 }
 
 func (w formDataV8Wrapper) toSequenceFormDataEntryValue(
-	cbCtx *argumentHelper,
+	cbCtx *v8CallbackContext,
 	data []html.FormDataValue,
 ) (jsValue, error) {
 	vals := make([]*v8.Value, len(data))
