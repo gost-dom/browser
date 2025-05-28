@@ -6,7 +6,6 @@ import (
 
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/scripting/internal/js"
-	"github.com/gost-dom/v8go"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -17,7 +16,7 @@ type iterator[T any] struct {
 	entityLookup   entityLookup[T]
 }
 
-type entityLookup[T any] func(value T, ctx *V8ScriptContext) (*v8.Value, error)
+type entityLookup[T any] func(ctx jsCallbackContext, value T) (jsValue, error)
 
 func newIterator[T any](host *V8ScriptHost, entityLookup entityLookup[T]) iterator[T] {
 	iso := host.iso
@@ -29,7 +28,7 @@ func newIterator[T any](host *V8ScriptHost, entityLookup entityLookup[T]) iterat
 		v8.NewObjectTemplate(host.iso),
 		entityLookup,
 	}
-	iterator.ot.Set("next", v8.NewFunctionTemplateWithError(host.iso, iterator.next))
+	iterator.ot.Set("next", wrapV8Callback(host, iterator.next))
 	iterator.ot.SetSymbol(
 		v8.SymbolIterator(iso),
 		wrapV8Callback(host, iterator.newIterator),
@@ -67,12 +66,12 @@ func (i sliceIterable[T]) All() iter.Seq[T] {
 	return seqOfSlice(i.items)
 }
 
-func (i iterator[T]) newIteratorInstance(cbCtx *v8CallbackContext, items []T) (jsValue, error) {
+func (i iterator[T]) newIteratorInstance(cbCtx jsCallbackContext, items []T) (jsValue, error) {
 	return i.newIteratorInstanceOfIterable(cbCtx, sliceIterable[T]{items})
 }
 
 func (i iterator[T]) newIteratorInstanceOfIterable(
-	cbCtx *v8CallbackContext,
+	cbCtx jsCallbackContext,
 	items iterable[T],
 ) (jsValue, error) {
 	seq := items.All()
@@ -83,7 +82,7 @@ func (i iterator[T]) newIteratorInstanceOfIterable(
 		next:  next,
 		stop:  stop,
 	}
-	res, err := i.ot.NewInstance(cbCtx.ScriptCtx().v8ctx)
+	res, err := i.ot.NewInstance(cbCtx.v8ctx())
 	iso := cbCtx.iso()
 	if err == nil {
 		return cbCtx.ReturnWithJSValue(cbCtx.ScriptCtx().cacheNode(newV8Object(iso, res), iterator))
@@ -91,25 +90,26 @@ func (i iterator[T]) newIteratorInstanceOfIterable(
 	return cbCtx.ReturnWithValueErr(res.Value, err)
 }
 
-func (i iterator[T]) next(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := i.host.mustGetContext(info.Context())
-	instance, err := getInstanceFromThis[*iteratorInstance[T]](ctx, info.This())
-	if err != nil {
-		return nil, err
+func (i iterator[T]) next(cbCtx jsCallbackContext) (jsValue, error) {
+	instance, ok := (cbCtx.This().NativeValue()).(*iteratorInstance[T])
+	if !ok {
+		return cbCtx.ReturnWithTypeError("Not an iterator instance")
 	}
 	next := instance.next
 	stop := instance.stop
 	if item, ok := next(); !ok {
 		stop()
-		return i.createDoneIteratorResult(ctx.v8ctx)
+		return i.createDoneIteratorResult(cbCtx.v8ctx())
 	} else {
-		value, err1 := i.entityLookup(item, ctx)
-		result, err2 := i.createNotDoneIteratorResult(ctx.v8ctx, value)
-		return result, errors.Join(err1, err2)
+		value, err := i.entityLookup(cbCtx, item)
+		if err != nil {
+			return nil, err
+		}
+		return i.createNotDoneIteratorResult(cbCtx.v8ctx(), value)
 	}
 }
 
-func (i iterator[T]) newIterator(cbCtx *v8CallbackContext) (jsValue, error) {
+func (i iterator[T]) newIterator(cbCtx jsCallbackContext) (jsValue, error) {
 	instance, err := js.As[*iteratorInstance[T]](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -117,30 +117,30 @@ func (i iterator[T]) newIterator(cbCtx *v8CallbackContext) (jsValue, error) {
 	return i.newIteratorInstanceOfIterable(cbCtx, instance.items)
 }
 
-func (i iterator[T]) createDoneIteratorResult(ctx *v8.Context) (*v8.Value, error) {
+func (i iterator[T]) createDoneIteratorResult(ctx *v8.Context) (jsValue, error) {
 	result, err := i.resultTemplate.NewInstance(ctx)
 	if err != nil {
 		return nil, err
 	}
 	result.Set("done", true)
-	return result.Value, nil
+	return newV8Object(ctx.Isolate(), result), nil
 }
 
 func (i iterator[T]) createNotDoneIteratorResult(
 	ctx *v8.Context,
-	value interface{},
-) (*v8.Value, error) {
+	value jsValue,
+) (jsValue, error) {
 	result, err := i.resultTemplate.NewInstance(ctx)
 	if err != nil {
 		return nil, err
 	}
 	result.Set("done", false)
-	result.Set("value", value)
-	return result.Value, nil
+	result.Set("value", value.Self().v8Value())
+	return newV8Object(ctx.Isolate(), result), nil
 }
 func (i iterator[T]) installPrototype(ft *v8.FunctionTemplate) {
 	iso := i.host.iso
-	getEntries := wrapV8Callback(i.host, func(cbCtx *v8CallbackContext) (jsValue, error) {
+	getEntries := wrapV8Callback(i.host, func(cbCtx jsCallbackContext) (jsValue, error) {
 		instance, err := js.As[iterable[T]](cbCtx.Instance())
 		if err != nil {
 			return cbCtx.ReturnWithError(err)
@@ -150,35 +150,6 @@ func (i iterator[T]) installPrototype(ft *v8.FunctionTemplate) {
 	prototypeTempl := ft.PrototypeTemplate()
 	prototypeTempl.Set("entries", getEntries)
 	prototypeTempl.SetSymbol(v8.SymbolIterator(iso), getEntries)
-	// iterator for keys/values
-	// keys := newIterator(i.host, func(v T, ctx *V8ScriptContext) (*v8.Value, error) {
-	// 	return v8.NewValue(iso, v)
-	// })
-	// values := newIterator(i.host, func(v T, ctx *V8ScriptContext) (*v8.Value, error) {
-	// 	return v8.NewValue(iso, v)
-	// })
-	// prototypeTempl.Set("keys", v8.NewFunctionTemplateWithError(iso,
-	// 	func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	// 		ctx := i.host.mustGetContext(info.Context())
-	// 		instance, err := getWrappedInstance[iterable[T]](info.This())
-	// 		if err != nil {
-	// 			return nil, err
-	// 		}
-	// 		return keys.newIteratorInstanceOfIterable(ctx, Keys[K, V]{instance})
-	// 	},
-	// ),
-	// )
-	// prototypeTempl.Set("values", v8.NewFunctionTemplateWithError(iso,
-	// 	func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	// 		ctx := i.host.mustGetContext(info.Context())
-	// 		instance, err := getWrappedInstance[iterable[T]](info.This())
-	// 		if err != nil {
-	// 			return nil, err
-	// 		}
-	// 		return values.newIteratorInstanceOfIterable(ctx, iterValues[K, V]{instance})
-	// 	},
-	// ),
-	// )
 }
 
 /* -------- iterator2 -------- */
@@ -187,14 +158,14 @@ type iterator2[K, V any] struct {
 	host           *V8ScriptHost
 	ot             *v8.ObjectTemplate
 	resultTemplate *v8.ObjectTemplate
-	entityLookup   iteratorValueLookup2[K, V]
+	keyLookup      entityLookup[K]
+	valueLookup    entityLookup[V]
 }
-
-type iteratorValueLookup2[K, V any] func(k K, v V, ctx *V8ScriptContext) (*v8.Value, *v8.Value, error)
 
 func newIterator2[K, V any](
 	host *V8ScriptHost,
-	entityLookup iteratorValueLookup2[K, V],
+	keyLookup entityLookup[K],
+	valueLookup entityLookup[V],
 ) iterator2[K, V] {
 	iso := host.iso
 	// TODO, once we have weak handles in v8, we can release the iterator when it
@@ -203,9 +174,9 @@ func newIterator2[K, V any](
 		host,
 		v8.NewObjectTemplate(host.iso),
 		v8.NewObjectTemplate(host.iso),
-		entityLookup,
+		keyLookup, valueLookup,
 	}
-	iterator.ot.Set("next", v8.NewFunctionTemplateWithError(host.iso, iterator.next))
+	iterator.ot.Set("next", wrapV8Callback(host, iterator.next))
 	iterator.ot.SetSymbol(
 		v8.SymbolIterator(iso),
 		wrapV8Callback(host, iterator.newIterator),
@@ -226,7 +197,7 @@ type iterator2Instance[K, V any] struct {
 }
 
 func (i iterator2[K, V]) newIteratorInstanceOfIterable(
-	cbCtx *v8CallbackContext,
+	cbCtx jsCallbackContext,
 	items iterable2[K, V],
 ) (jsValue, error) {
 	seq := items.All()
@@ -241,28 +212,28 @@ func (i iterator2[K, V]) newIteratorInstanceOfIterable(
 	if err == nil {
 		return cbCtx.ScriptCtx().cacheNode(newV8Object(cbCtx.iso(), res), iterator), nil
 	}
-	return newV8Value(cbCtx.iso(), res.Value), err
+	return newV8Object(cbCtx.iso(), res), err
 }
 
-func (i iterator2[K, V]) next(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := i.host.mustGetContext(info.Context())
-	instance, err := getInstanceFromThis[*iterator2Instance[K, V]](ctx, info.This())
-	if err != nil {
-		return nil, err
+func (i iterator2[K, V]) next(cbCtx jsCallbackContext) (jsValue, error) {
+	instance, ok := (cbCtx.This().NativeValue()).(*iterator2Instance[K, V])
+	if !ok {
+		return cbCtx.ReturnWithTypeError("Not an iterator instance")
 	}
 	next := instance.next
 	stop := instance.stop
 	if k, v, ok := next(); !ok {
 		stop()
-		return i.createDoneIteratorResult(ctx.v8ctx)
+		return i.createDoneIteratorResult(cbCtx)
 	} else {
-		val1, val2, err1 := i.entityLookup(k, v, ctx)
-		result, err2 := i.createNotDoneIteratorResult(ctx.v8ctx, val1, val2)
-		return result, errors.Join(err1, err2)
+		val1, err1 := i.keyLookup(cbCtx, k)
+		val2, err2 := i.valueLookup(cbCtx, v)
+		result, err3 := i.createNotDoneIteratorResult(cbCtx, val1, val2)
+		return result, errors.Join(err1, err2, err3)
 	}
 }
 
-func (i iterator2[K, V]) newIterator(cbCtx *v8CallbackContext) (jsValue, error) {
+func (i iterator2[K, V]) newIterator(cbCtx jsCallbackContext) (jsValue, error) {
 	instance, err := js.As[*iterator2Instance[K, V]](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -270,37 +241,41 @@ func (i iterator2[K, V]) newIterator(cbCtx *v8CallbackContext) (jsValue, error) 
 	return cbCtx.ReturnWithJSValueErr(i.newIteratorInstanceOfIterable(cbCtx, instance.items))
 }
 
-func (i iterator2[K, V]) createDoneIteratorResult(ctx *v8.Context) (*v8.Value, error) {
-	result, err := i.resultTemplate.NewInstance(ctx)
+func (i iterator2[K, V]) createDoneIteratorResult(cbCtx jsCallbackContext) (jsValue, error) {
+	result, err := i.resultTemplate.NewInstance(cbCtx.v8ctx())
 	if err != nil {
 		return nil, err
 	}
 	result.Set("done", true)
-	return result.Value, nil
+	return newV8Object(cbCtx.iso(), result), nil
 }
 
 func (i iterator2[K, V]) createNotDoneIteratorResult(
-	ctx *v8.Context,
-	key, value *v8go.Value,
-) (*v8.Value, error) {
-	result, err := i.resultTemplate.NewInstance(ctx)
+	cbCtx jsCallbackContext,
+	key, value jsValue,
+) (jsValue, error) {
+	result, err := i.resultTemplate.NewInstance(cbCtx.v8ctx())
 	if err != nil {
 		return nil, err
 	}
-	pair, err := toArray(ctx, key, value)
+	pair, err := toArray(
+		cbCtx.v8ctx(),
+		assertV8Value(key).v8Value(),
+		assertV8Value(value).v8Value(),
+	)
 	if err != nil {
 		result.Release()
 		return nil, err
 	}
 	result.Set("done", false)
 	result.Set("value", pair)
-	return result.Value, nil
+	return newV8Value(cbCtx.iso(), result.Value), nil
 }
 
 func (i iterator2[K, V]) installPrototype(ft *v8.FunctionTemplate) {
 	iso := i.host.iso
 	getEntries := wrapV8Callback(i.host,
-		func(cbCtx *v8CallbackContext) (jsValue, error) {
+		func(cbCtx jsCallbackContext) (jsValue, error) {
 			instance, err := js.As[iterable2[K, V]](cbCtx.Instance())
 			if err != nil {
 				return cbCtx.ReturnWithError(err)
@@ -310,25 +285,19 @@ func (i iterator2[K, V]) installPrototype(ft *v8.FunctionTemplate) {
 	prototypeTempl := ft.PrototypeTemplate()
 	prototypeTempl.Set("entries", getEntries)
 	prototypeTempl.SetSymbol(v8.SymbolIterator(iso), getEntries)
-	// iterator for keys/values
-	keys := newIterator(i.host, func(k K, ctx *V8ScriptContext) (*v8.Value, error) {
-		return v8.NewValue(iso, k)
-	})
-	values := newIterator(i.host, func(v V, ctx *V8ScriptContext) (*v8.Value, error) {
-		return v8.NewValue(iso, v)
-	})
+	keys := newIterator(i.host, i.keyLookup)
+	values := newIterator(i.host, i.valueLookup)
 	prototypeTempl.Set("keys",
-		wrapV8Callback(i.host, func(cbCtx *v8CallbackContext) (jsValue, error) {
+		wrapV8Callback(i.host, func(cbCtx jsCallbackContext) (jsValue, error) {
 			instance, err := js.As[iterable2[K, V]](cbCtx.Instance())
 			if err != nil {
 				return cbCtx.ReturnWithError(err)
 			}
 			return keys.newIteratorInstanceOfIterable(cbCtx, Keys[K, V]{instance})
-		},
-		),
+		}),
 	)
 	prototypeTempl.Set("values",
-		wrapV8Callback(i.host, func(cbCtx *v8CallbackContext) (jsValue, error) {
+		wrapV8Callback(i.host, func(cbCtx jsCallbackContext) (jsValue, error) {
 			instance, err := js.As[iterable2[K, V]](cbCtx.Instance())
 			if err != nil {
 				return cbCtx.ReturnWithError(err)
