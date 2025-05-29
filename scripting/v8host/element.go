@@ -92,8 +92,8 @@ func (e elementV8Wrapper) classList(cbCtx *v8CallbackContext) (jsValue, error) {
 }
 
 func (e *elementV8Wrapper) toNamedNodeMap(
-	cbCtx *v8CallbackContext,
+	cbCtx jsCallbackContext,
 	n dom.NamedNodeMap,
 ) (jsValue, error) {
-	return cbCtx.ReturnWithJSValueErr(cbCtx.ScriptCtx().getJSInstance(n))
+	return e.toJSWrapper(cbCtx, n)
 }
