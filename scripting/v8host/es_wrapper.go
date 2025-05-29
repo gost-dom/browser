@@ -186,7 +186,9 @@ func (o handleReffedObject[T]) store(
 	ctx *V8ScriptContext,
 	this jsObject,
 ) (jsValue, error) {
-	ctx.cacheNode(this, value)
+	if e, ok := value.(entity.ObjectIder); ok {
+		ctx.cacheEntity(this, e)
+	}
 
 	this.SetNativeValue(value)
 	if d, ok := this.(disposable); ok {

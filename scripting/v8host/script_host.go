@@ -389,7 +389,7 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 		global := newV8Object(host.iso, context.v8ctx.Global())
 		global.SetNativeValue(w)
 		context.addDisposer(global.(disposable))
-		context.cacheNode(global, w)
+		context.cacheEntity(global, w)
 	}
 	err := installPolyfills(context)
 	if err != nil {
