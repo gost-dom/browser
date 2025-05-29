@@ -6,21 +6,11 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	. "github.com/gost-dom/browser/html"
-	v8 "github.com/gost-dom/v8go"
 )
 
-func createDOMParserPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
-	iso := host.iso
-	constructor := v8.NewFunctionTemplateWithError(
-		iso,
-		func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-			return nil, nil
-		},
-	)
-	prototype := constructor.PrototypeTemplate()
-	prototype.Set(
-		"parseFromString",
-		wrapV8Callback(host, func(cbCtx *v8CallbackContext) (jsValue, error) {
+func initDOMParser(ft jsConstructor) {
+	ft.CreatePrototypeMethod("parseFromString",
+		func(cbCtx jsCallbackContext) (jsValue, error) {
 			ctx := cbCtx.ScriptCtx()
 			window := ctx.window
 			html, err0 := cbCtx.consumeString()
@@ -41,6 +31,19 @@ func createDOMParserPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
 			} else {
 				return cbCtx.ReturnWithError(err)
 			}
-		}))
-	return constructor
+		})
+
+}
+
+func installDOMParser(host *V8ScriptHost) {
+	ctor := host.CreateClass(
+		"DOMParser",
+		nil,
+		func(cbCtx jsCallbackContext) (jsValue, error) { return nil, nil },
+	)
+	initDOMParser(ctor)
+}
+
+func init() {
+	initializers = append(initializers, installDOMParser)
 }

@@ -31,7 +31,6 @@ func createWindowPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 
 	wrapper.installPrototype(constructor.PrototypeTemplate())
 	installEventLoopGlobals(scriptHost, instanceTmpl)
-	// installGlobals(constructor, scriptHost, globalInstalls)
 
 	return constructor
 }

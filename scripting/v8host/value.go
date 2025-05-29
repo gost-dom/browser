@@ -167,12 +167,12 @@ func (o *v8Object) Get(name string) (jsValue, error) {
 }
 
 type v8Constructor struct {
-	iso *v8go.Isolate
-	ft  *v8go.FunctionTemplate
+	host *V8ScriptHost
+	ft   *v8go.FunctionTemplate
 }
 
-func newV8Constructor(iso *v8go.Isolate, ft *v8go.FunctionTemplate) jsConstructor {
-	return v8Constructor{iso, ft}
+func newV8Constructor(host *V8ScriptHost, ft *v8go.FunctionTemplate) jsConstructor {
+	return v8Constructor{host, ft}
 }
 
 func (c v8Constructor) NewInstance(
@@ -180,10 +180,15 @@ func (c v8Constructor) NewInstance(
 	nativeValue any,
 ) (jsObject, error) {
 	val, err := c.ft.InstanceTemplate().NewInstance(ctx.v8ctx)
-	obj := newV8Object(c.iso, val).(*v8Object)
+	obj := newV8Object(c.host.iso, val).(*v8Object)
 	if err == nil {
 		obj.SetNativeValue(nativeValue)
 		ctx.addDisposer(obj)
 	}
 	return obj, err
+}
+
+func (c v8Constructor) CreatePrototypeMethod(name string, cb internalCallback) {
+	v8cb := wrapV8Callback(c.host, cb)
+	c.ft.PrototypeTemplate().Set(name, v8cb, v8go.ReadOnly)
 }

@@ -18,6 +18,8 @@ import (
 	"github.com/gost-dom/v8go"
 )
 
+type jsScriptEngineInitializer = func(*V8ScriptHost)
+
 // MAX_POOL_SIZE sets a limit to the number of script hosts that will be pooled
 // for reuse. By default Go will run as many tests in parallel as you have CPU
 // cores, so there shouldn't be a reason for a larger pool, but this provides a
@@ -176,6 +178,7 @@ type classSpec struct {
 }
 
 var classes map[string]classSpec = make(map[string]classSpec)
+var initializers []jsScriptEngineInitializer
 
 func registerJSClass(
 	className string,
@@ -214,7 +217,7 @@ func init() {
 	registerJSClass("ShadowRoot", "DocumentFragment", createShadowRootPrototype)
 	registerJSClass("Attr", "Node", createAttr)
 
-	registerJSClass("DOMParser", "", createDOMParserPrototype)
+	// registerJSClass("DOMParser", "", createDOMParserPrototype)
 
 	for _, cls := range scripting.HtmlElements {
 		if _, found := classes[cls]; !found {
@@ -249,7 +252,7 @@ func createHostInstance(config hostOptions) *V8ScriptHost {
 		var window *v8go.FunctionTemplate
 		for _, globalInstall := range globalInstalls {
 			host.globals.namedGlobals[globalInstall.name] = newV8Constructor(
-				host.iso,
+				host,
 				globalInstall.constructor,
 			)
 			if globalInstall.name == "Window" {
@@ -262,6 +265,9 @@ func createHostInstance(config hostOptions) *V8ScriptHost {
 		host.windowTemplate = window.InstanceTemplate()
 		host.contexts = make(map[*v8go.Context]*V8ScriptContext)
 		installGlobals(window, host, globalInstalls)
+		for _, i := range initializers {
+			i(host)
+		}
 	}
 	return host
 }
@@ -398,4 +404,18 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 	}
 
 	return context
+}
+
+func (host *V8ScriptHost) CreateClass(
+	name string,
+	extends *v8go.FunctionTemplate,
+	callback internalCallback,
+) jsConstructor {
+	fn := wrapV8Callback(host, callback)
+	if extends != nil {
+		fn.Inherit(extends)
+	}
+	result := newV8Constructor(host, fn)
+	host.windowTemplate.Set(name, fn)
+	return result
 }
