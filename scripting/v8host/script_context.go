@@ -45,13 +45,10 @@ func (h *V8ScriptHost) mustGetContext(v8ctx *v8.Context) *V8ScriptContext {
 	panic("Unknown v8 context!!\n" + string(debug.Stack()))
 }
 
-func (c *V8ScriptContext) cacheNode(obj jsObject, node entity.ObjectIder) jsValue {
-	if d, ok := obj.(disposable); ok {
-		c.addDisposer(d)
+func (c *V8ScriptContext) cacheNode(obj jsObject, node any) {
+	if e, ok := node.(entity.ObjectIder); ok {
+		c.v8nodes[e.ObjectId()] = obj
 	}
-	c.v8nodes[node.ObjectId()] = obj
-	obj.SetNativeValue(node)
-	return obj
 }
 
 func lookupJSPrototype(entity entity.ObjectIder) string {
@@ -111,47 +108,26 @@ func (c *V8ScriptContext) getJSInstance(
 
 	prototypeName := lookupJSPrototype(node)
 	prototype := c.getConstructor(prototypeName)
-	value, err := prototype.InstanceTemplate().NewInstance(c.v8ctx)
+	value, err := prototype.NewInstance(c, node)
 	if err == nil {
-		return c.cacheNode(newV8Object(iso, value), node), nil
+		c.cacheNode(value, node)
 	}
-	return nil, err
+	return value, err
 }
 
 // getConstructor returns the V8 FunctionTemplate with the specified name.
 // Panics if the name is not one registered as a constructor. The name should
 // not originate from client code, only from this library, so it should be
 // guaranteed that this function is only called with valid values.
-func (c *V8ScriptContext) getConstructor(name string) *v8.FunctionTemplate {
+func (c *V8ScriptContext) getConstructor(name string) v8Constructor {
 	prototype, ok := c.host.globals.namedGlobals[name]
 	if !ok {
 		panic(fmt.Sprintf("Unrecognised constructor name: %s. %s", name, constants.BUG_ISSUE_URL))
 	}
-	return prototype
-}
-
-// createJSInstanceForObjectOfType create a JavaScript object and sets the inner
-// native object to the specified Go object.
-//
-// This doesn't remember the object that was created, and is intended for
-// ephemeral objects that are only returned _once_ by the Go API.
-func (c *V8ScriptContext) createJSInstanceForObjectOfType(
-	constructor string,
-	instance any,
-
-) (*v8.Value, error) {
-	iso := c.host.iso
-	if instance == nil {
-		return v8.Null(iso), nil
-	}
-	prototype := c.getConstructor(constructor)
-	jsThis, err := prototype.InstanceTemplate().NewInstance(c.v8ctx)
-	storeObjectHandleInV8Instance(instance, c, newV8Object(iso, jsThis))
-	return jsThis.Value, err
+	return newV8Constructor(c.host.iso, prototype)
 }
 
 func (c *V8ScriptContext) getCachedNode(this *v8.Object) (entity.ObjectIder, bool) {
-
 	h := this.GetInternalField(0).ExternalHandle()
 	r, ok := h.Value().(entity.ObjectIder)
 	return r, ok

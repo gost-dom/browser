@@ -374,7 +374,10 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 	context.eventLoop = newEventLoop(context, errorCallback)
 	host.inspector.ContextCreated(context.v8ctx)
 	if w != nil {
-		context.cacheNode(newV8Object(host.iso, context.v8ctx.Global()), w)
+		global := newV8Object(host.iso, context.v8ctx.Global())
+		global.SetNativeValue(w)
+		context.addDisposer(global.(disposable))
+		context.cacheNode(global, w)
 	}
 	err := installPolyfills(context)
 	if err != nil {

@@ -83,9 +83,10 @@ func (i iterator[T]) newIteratorInstanceOfIterable(
 		stop:  stop,
 	}
 	res, err := i.ot.NewInstance(cbCtx.v8ctx())
-	iso := cbCtx.iso()
 	if err == nil {
-		return cbCtx.ReturnWithJSValue(cbCtx.ScriptCtx().cacheNode(newV8Object(iso, res), iterator))
+		obj := newV8Object(cbCtx.iso(), res)
+		obj.SetNativeValue(iterator)
+		return obj, nil
 	}
 	return cbCtx.ReturnWithValueErr(res.Value, err)
 }
@@ -210,7 +211,9 @@ func (i iterator2[K, V]) newIteratorInstanceOfIterable(
 	}
 	res, err := i.ot.NewInstance(cbCtx.v8ctx())
 	if err == nil {
-		return cbCtx.ScriptCtx().cacheNode(newV8Object(cbCtx.iso(), res), iterator), nil
+		obj := newV8Object(cbCtx.iso(), res)
+		obj.SetNativeValue(iterator)
+		return obj, nil
 	}
 	return newV8Object(cbCtx.iso(), res), err
 }
