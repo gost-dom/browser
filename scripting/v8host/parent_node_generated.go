@@ -67,7 +67,7 @@ func (w parentNodeV8Wrapper) querySelector(cbCtx jsCallbackContext) (jsValue, er
 		if callErr != nil {
 			return cbCtx.ReturnWithError(callErr)
 		} else {
-			return cbCtx.getInstanceForNode(result)
+			return w.toJSWrapper(cbCtx, result)
 		}
 	}
 	return cbCtx.ReturnWithError(errors.New("ParentNode.querySelector: Missing arguments"))
@@ -86,7 +86,7 @@ func (w parentNodeV8Wrapper) querySelectorAll(cbCtx jsCallbackContext) (jsValue,
 		if callErr != nil {
 			return cbCtx.ReturnWithError(callErr)
 		} else {
-			return w.toNodeList(cbCtx, result)
+			return w.toJSWrapper(cbCtx, result)
 		}
 	}
 	return cbCtx.ReturnWithError(errors.New("ParentNode.querySelectorAll: Missing arguments"))
@@ -99,7 +99,7 @@ func (w parentNodeV8Wrapper) firstElementChild(cbCtx jsCallbackContext) (jsValue
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.FirstElementChild()
-	return cbCtx.getInstanceForNode(result)
+	return w.toJSWrapper(cbCtx, result)
 }
 
 func (w parentNodeV8Wrapper) lastElementChild(cbCtx jsCallbackContext) (jsValue, error) {
@@ -109,7 +109,7 @@ func (w parentNodeV8Wrapper) lastElementChild(cbCtx jsCallbackContext) (jsValue,
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.LastElementChild()
-	return cbCtx.getInstanceForNode(result)
+	return w.toJSWrapper(cbCtx, result)
 }
 
 func (w parentNodeV8Wrapper) childElementCount(cbCtx jsCallbackContext) (jsValue, error) {

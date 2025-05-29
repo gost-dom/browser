@@ -132,7 +132,7 @@ func (w documentV8Wrapper) createDocumentFragment(cbCtx jsCallbackContext) (jsVa
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.CreateDocumentFragment()
-	return cbCtx.getInstanceForNode(result)
+	return w.toJSWrapper(cbCtx, result)
 }
 
 func (w documentV8Wrapper) createCDATASection(cbCtx jsCallbackContext) (jsValue, error) {
@@ -180,7 +180,7 @@ func (w documentV8Wrapper) createAttribute(cbCtx jsCallbackContext) (jsValue, er
 			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.CreateAttribute(localName)
-		return w.toAttr(cbCtx, result)
+		return w.toJSWrapper(cbCtx, result)
 	}
 	return cbCtx.ReturnWithError(errors.New("Document.createAttribute: Missing arguments"))
 }
@@ -262,5 +262,5 @@ func (w documentV8Wrapper) documentElement(cbCtx jsCallbackContext) (jsValue, er
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.DocumentElement()
-	return cbCtx.getInstanceForNode(result)
+	return w.toJSWrapper(cbCtx, result)
 }

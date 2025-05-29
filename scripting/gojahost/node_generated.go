@@ -4,6 +4,7 @@ package gojahost
 
 import (
 	"errors"
+
 	g "github.com/dop251/goja"
 	dom "github.com/gost-dom/browser/dom"
 	js "github.com/gost-dom/browser/scripting/internal/js"
@@ -54,7 +55,7 @@ func (w nodeWrapper) getRootNode(cbCtx *callbackContext) g.Value {
 	}
 	options := w.decodeGetRootNodeOptions(cbCtx.Argument(0))
 	result := instance.GetRootNode(options)
-	return cbCtx.ReturnWithValue(w.toNode(result))
+	return cbCtx.ReturnWithValue(w.toJSWrapper(result))
 }
 
 func (w nodeWrapper) cloneNode(cbCtx *callbackContext) g.Value {
@@ -65,7 +66,7 @@ func (w nodeWrapper) cloneNode(cbCtx *callbackContext) g.Value {
 	}
 	subtree := w.decodeboolean(cbCtx.Argument(0))
 	result := instance.CloneNode(subtree)
-	return cbCtx.ReturnWithValue(w.toNode(result))
+	return cbCtx.ReturnWithValue(w.toJSWrapper(result))
 }
 
 func (w nodeWrapper) isSameNode(cbCtx *callbackContext) g.Value {
@@ -102,7 +103,7 @@ func (w nodeWrapper) insertBefore(cbCtx *callbackContext) g.Value {
 	if err != nil {
 		panic(err)
 	}
-	return cbCtx.ReturnWithValue(w.toNode(result))
+	return cbCtx.ReturnWithValue(w.toJSWrapper(result))
 }
 
 func (w nodeWrapper) appendChild(cbCtx *callbackContext) g.Value {
@@ -116,7 +117,7 @@ func (w nodeWrapper) appendChild(cbCtx *callbackContext) g.Value {
 	if err != nil {
 		panic(err)
 	}
-	return cbCtx.ReturnWithValue(w.toNode(result))
+	return cbCtx.ReturnWithValue(w.toJSWrapper(result))
 }
 
 func (w nodeWrapper) removeChild(cbCtx *callbackContext) g.Value {
@@ -130,7 +131,7 @@ func (w nodeWrapper) removeChild(cbCtx *callbackContext) g.Value {
 	if err != nil {
 		panic(err)
 	}
-	return cbCtx.ReturnWithValue(w.toNode(result))
+	return cbCtx.ReturnWithValue(w.toJSWrapper(result))
 }
 
 func (w nodeWrapper) nodeName(cbCtx *callbackContext) g.Value {
@@ -160,7 +161,7 @@ func (w nodeWrapper) ownerDocument(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.OwnerDocument()
-	return cbCtx.ReturnWithValue(w.toDocument(result))
+	return cbCtx.ReturnWithValue(w.toJSWrapper(result))
 }
 
 func (w nodeWrapper) parentElement(cbCtx *callbackContext) g.Value {
@@ -170,7 +171,7 @@ func (w nodeWrapper) parentElement(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.ParentElement()
-	return cbCtx.ReturnWithValue(w.toElement(result))
+	return cbCtx.ReturnWithValue(w.toJSWrapper(result))
 }
 
 func (w nodeWrapper) childNodes(cbCtx *callbackContext) g.Value {
@@ -185,7 +186,7 @@ func (w nodeWrapper) firstChild(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.FirstChild()
-	return cbCtx.ReturnWithValue(w.toNode(result))
+	return cbCtx.ReturnWithValue(w.toJSWrapper(result))
 }
 
 func (w nodeWrapper) previousSibling(cbCtx *callbackContext) g.Value {
@@ -195,7 +196,7 @@ func (w nodeWrapper) previousSibling(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.PreviousSibling()
-	return cbCtx.ReturnWithValue(w.toNode(result))
+	return cbCtx.ReturnWithValue(w.toJSWrapper(result))
 }
 
 func (w nodeWrapper) nextSibling(cbCtx *callbackContext) g.Value {
@@ -205,5 +206,5 @@ func (w nodeWrapper) nextSibling(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.NextSibling()
-	return cbCtx.ReturnWithValue(w.toNode(result))
+	return cbCtx.ReturnWithValue(w.toJSWrapper(result))
 }

@@ -57,7 +57,7 @@ func (w nodeListV8Wrapper) item(cbCtx jsCallbackContext) (jsValue, error) {
 			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.Item(index)
-		return cbCtx.getInstanceForNode(result)
+		return w.toJSWrapper(cbCtx, result)
 	}
 	return cbCtx.ReturnWithError(errors.New("NodeList.item: Missing arguments"))
 }

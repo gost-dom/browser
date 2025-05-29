@@ -6,7 +6,6 @@ import (
 	"github.com/gost-dom/code-gen/idltransform"
 	. "github.com/gost-dom/code-gen/internal"
 	wrappers "github.com/gost-dom/code-gen/script-wrappers"
-	"github.com/gost-dom/code-gen/script-wrappers/model"
 	. "github.com/gost-dom/code-gen/script-wrappers/model"
 	"github.com/gost-dom/code-gen/stdgen"
 	g "github.com/gost-dom/generators"
@@ -246,14 +245,10 @@ func (c V8InstanceInvocation) ConvertReturnValue(
 	cbCtx wrappers.CallbackContext,
 	retType idl.Type,
 ) g.Generator {
-	if model.IsNodeType(retType.Name) {
-		return g.Return(cbCtx.Field("getInstanceForNode").Call(g.Id("result")))
-	} else {
-		args := []g.Generator{cbCtx}
-		args = append(args, c.Op.RetValues(data)...)
-		converter := c.Op.Encoder(data)
-		return g.Return(c.Receiver.Method(converter).Call(args...))
-	}
+	args := []g.Generator{cbCtx}
+	args = append(args, c.Op.RetValues(data)...)
+	converter := c.Op.Encoder(data)
+	return g.Return(c.Receiver.Method(converter).Call(args...))
 }
 
 func (c V8InstanceInvocation) GetGenerator(

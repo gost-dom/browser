@@ -68,7 +68,7 @@ func (w htmlTemplateElementV8Wrapper) content(cbCtx jsCallbackContext) (jsValue,
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Content()
-	return cbCtx.getInstanceForNode(result)
+	return w.toJSWrapper(cbCtx, result)
 }
 
 func (w htmlTemplateElementV8Wrapper) shadowRootMode(cbCtx jsCallbackContext) (jsValue, error) {

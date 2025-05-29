@@ -59,7 +59,7 @@ func (w eventWrapper) toEventTarget(t event.EventTarget) g.Value {
 		return nil
 	}
 	if ider, ok := t.(entity.ObjectIder); ok {
-		return w.toNode(ider)
+		return w.toJSWrapper(ider)
 	}
 	panic("TODO: Handle instances of non-entity events")
 }

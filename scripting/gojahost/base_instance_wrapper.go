@@ -108,16 +108,8 @@ func (c *GojaContext) toNode(e entity.ObjectIder) g.Value {
 	return obj
 }
 
-func (c *GojaContext) toElement(e entity.ObjectIder) g.Value {
-	return c.toNode(e)
-}
-
-func (w baseInstanceWrapper[T]) toNode(e entity.ObjectIder) g.Value {
+func (w baseInstanceWrapper[T]) toJSWrapper(e entity.ObjectIder) g.Value {
 	return w.ctx.toNode(e)
-}
-
-func (w baseInstanceWrapper[T]) toElement(e entity.ObjectIder) g.Value {
-	return w.toNode(e)
 }
 
 func (w baseInstanceWrapper[T]) toBoolean(b bool) g.Value {
@@ -126,10 +118,6 @@ func (w baseInstanceWrapper[T]) toBoolean(b bool) g.Value {
 
 func (w baseInstanceWrapper[T]) toString_(b string) g.Value {
 	return w.ctx.vm.ToValue(b)
-}
-
-func (w baseInstanceWrapper[T]) toDocument(e entity.ObjectIder) g.Value {
-	return w.toNode(e)
 }
 
 func (w baseInstanceWrapper[T]) toUnsignedShort(i int) g.Value {
