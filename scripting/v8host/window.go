@@ -16,7 +16,7 @@ func installGlobals(
 		windowTemplate.Set(globalInstall.name, globalInstall.constructor)
 	}
 	location := host.globals.namedGlobals["Location"]
-	windowTemplate.Set("location", location.InstanceTemplate())
+	windowTemplate.Set("location", location.ft.InstanceTemplate())
 }
 
 func (w *windowV8Wrapper) window(cbCtx *v8CallbackContext) (jsValue, error) {

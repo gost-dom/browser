@@ -4,6 +4,7 @@ package v8host
 
 import (
 	"errors"
+
 	html "github.com/gost-dom/browser/html"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
@@ -29,9 +30,12 @@ func createWindowPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	instanceTmpl.SetInternalFieldCount(1)
 
 	wrapper.installPrototype(constructor.PrototypeTemplate())
+	installEventLoopGlobals(scriptHost, instanceTmpl)
+	// installGlobals(constructor, scriptHost, globalInstalls)
 
 	return constructor
 }
+
 func (w windowV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 	prototypeTmpl.Set("close", wrapV8Callback(w.scriptHost, w.close))
 	prototypeTmpl.Set("stop", wrapV8Callback(w.scriptHost, w.stop))
