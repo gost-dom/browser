@@ -124,7 +124,7 @@ func (c *V8ScriptContext) getConstructor(name string) v8Constructor {
 	if !ok {
 		panic(fmt.Sprintf("Unrecognised constructor name: %s. %s", name, constants.BUG_ISSUE_URL))
 	}
-	return newV8Constructor(c.host.iso, prototype)
+	return prototype
 }
 
 func (c *V8ScriptContext) getCachedNode(this *v8.Object) (entity.ObjectIder, bool) {

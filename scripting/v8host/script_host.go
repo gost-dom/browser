@@ -78,7 +78,7 @@ type globalInstall struct {
 }
 
 type globals struct {
-	namedGlobals map[string]*v8go.FunctionTemplate
+	namedGlobals map[string]jsConstructor
 }
 
 type hostOptions struct {
@@ -245,16 +245,23 @@ func createHostInstance(config hostOptions) *V8ScriptHost {
 	if !hostReused {
 		host.iso.SetPromiseRejectedCallback(host.promiseRejected)
 		globalInstalls := createGlobals(host)
-		host.globals = globals{make(map[string]*v8go.FunctionTemplate)}
+		host.globals = globals{make(map[string]jsConstructor)}
+		var window *v8go.FunctionTemplate
 		for _, globalInstall := range globalInstalls {
-			host.globals.namedGlobals[globalInstall.name] = globalInstall.constructor
+			host.globals.namedGlobals[globalInstall.name] = newV8Constructor(
+				host.iso,
+				globalInstall.constructor,
+			)
+			if globalInstall.name == "Window" {
+				window = globalInstall.constructor
+			}
 		}
-		constructors := host.globals.namedGlobals
-		window := constructors["Window"]
+		if window == nil {
+			panic("No window was created. " + constants.BUG_ISSUE_URL)
+		}
 		host.windowTemplate = window.InstanceTemplate()
 		host.contexts = make(map[*v8go.Context]*V8ScriptContext)
 		installGlobals(window, host, globalInstalls)
-		installEventLoopGlobals(host, host.windowTemplate)
 	}
 	return host
 }
