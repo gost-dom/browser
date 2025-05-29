@@ -261,17 +261,9 @@ func (i iterator2[K, V]) createNotDoneIteratorResult(
 	if err != nil {
 		return nil, err
 	}
-	pair, err := toArray(
-		cbCtx.v8ctx(),
-		assertV8Value(key).v8Value(),
-		assertV8Value(value).v8Value(),
-	)
-	if err != nil {
-		result.Release()
-		return nil, err
-	}
+	pair := cbCtx.ValueFactory().NewArray(key, value)
 	result.Set("done", false)
-	result.Set("value", pair)
+	result.Set("value", pair.Self().v8Value())
 	return newV8Value(cbCtx.iso(), result.Value), nil
 }
 
