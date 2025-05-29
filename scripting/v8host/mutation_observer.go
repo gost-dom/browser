@@ -6,18 +6,17 @@ import (
 
 	mutation "github.com/gost-dom/browser/internal/dom/mutation"
 	"github.com/gost-dom/v8go"
-	v8 "github.com/gost-dom/v8go"
 )
 
 type MutationCallback struct {
-	ctx      *V8ScriptContext
+	ctx      jsCallbackContext
 	function jsFunction
 }
 
 func (cb MutationCallback) HandleMutation(recs []mutation.Record, obs *mutation.Observer) {
 	v8Recs, _ := toSequenceMutationRecord(cb.ctx, recs)
 
-	cb.function.Call(cb.ctx.global, v8Recs)
+	cb.function.Call(cb.ctx.Global(), v8Recs)
 }
 
 func (w mutationObserverV8Wrapper) CreateInstance(
@@ -35,7 +34,7 @@ func (w mutationObserverV8Wrapper) decodeMutationCallback(
 	val jsValue,
 ) (mutation.Callback, error) {
 	if f, ok := val.AsFunction(); ok {
-		return MutationCallback{cbCtx.ScriptCtx(), f}, nil
+		return MutationCallback{cbCtx, f}, nil
 	}
 	return nil, v8go.NewTypeError(cbCtx.iso(), "Not a function")
 }
@@ -72,22 +71,22 @@ func (w mutationObserverV8Wrapper) toSequenceMutationRecord(
 	cbCtx *v8CallbackContext,
 	records []mutation.Record,
 ) (jsValue, error) {
-	return cbCtx.ReturnWithJSValueErr(toSequenceMutationRecord(cbCtx.ScriptCtx(), records))
+	return cbCtx.ReturnWithJSValueErr(toSequenceMutationRecord(cbCtx, records))
 }
 
 func toSequenceMutationRecord(
-	ctx *V8ScriptContext,
+	cbCtx jsCallbackContext,
 	records []mutation.Record,
 ) (jsValue, error) {
-	res := make([]*v8.Value, len(records))
+	res := make([]jsValue, len(records))
+	ctx := cbCtx.ScriptCtx()
 	prototype := ctx.getConstructor("MutationRecord")
 	for i, r := range records {
 		rec, err := prototype.NewInstance(ctx, &r)
 		if err != nil {
 			return nil, fmt.Errorf("v8host: constructing mutation record: %w", err)
 		}
-		res[i] = rec.Self().v8Value()
+		res[i] = rec
 	}
-	recs, err := toArray(ctx.v8ctx, res...)
-	return newV8Value(ctx.host.iso, recs), err
+	return cbCtx.ValueFactory().NewArray(res...), nil
 }

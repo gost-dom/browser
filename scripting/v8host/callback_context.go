@@ -25,11 +25,10 @@ type v8CallbackContext struct {
 	host              *V8ScriptHost
 	noOfReadArguments int
 	currentIndex      int
-	valueFactory      v8ValueFactory
 }
 
 func newCallbackContext(host *V8ScriptHost, info *v8.FunctionCallbackInfo) jsCallbackContext {
-	return &v8CallbackContext{info, host, 0, 0, v8ValueFactory{host}}
+	return &v8CallbackContext{v8Info: info, host: host}
 }
 
 func (h v8CallbackContext) Global() jsObject {
@@ -45,7 +44,7 @@ func (h *v8CallbackContext) ScriptCtx() *V8ScriptContext {
 	return h.host.mustGetContext(h.v8Info.Context())
 }
 
-func (c *v8CallbackContext) ValueFactory() jsValueFactory { return c.valueFactory }
+func (c *v8CallbackContext) ValueFactory() jsValueFactory { return v8ValueFactory{c.host, c} }
 
 func (h *v8CallbackContext) ReturnWithValue(val jsValue) (jsValue, error) {
 	return val, nil
@@ -164,7 +163,10 @@ func (h *v8CallbackContext) newTypeError(msg string) error {
 	return v8.NewTypeError(h.iso(), fmt.Sprintf(msg))
 }
 
-type v8ValueFactory struct{ host *V8ScriptHost }
+type v8ValueFactory struct {
+	host *V8ScriptHost
+	ctx  *v8CallbackContext
+}
 
 func (f v8ValueFactory) iso() *v8go.Isolate { return f.host.iso }
 func (f v8ValueFactory) Null() jsValue      { return f.toVal(v8go.Null(f.iso())) }
@@ -174,6 +176,25 @@ func (f v8ValueFactory) NewInt32(val int32) jsValue   { return f.newV8Value(val)
 func (f v8ValueFactory) NewUint32(val uint32) jsValue { return f.newV8Value(val) }
 func (f v8ValueFactory) NewInt64(val int64) jsValue   { return f.newV8Value(val) }
 func (f v8ValueFactory) NewBoolean(val bool) jsValue  { return f.newV8Value(val) }
+
+func (f v8ValueFactory) NewArray(values ...jsValue) jsValue {
+	// Total hack, v8go doesn't expose Array values, so we polyfill the engine
+	var err error
+	arrayOf, err := f.ctx.v8ctx().RunScript("Array.of", "gost-polyfills-array")
+	if err != nil {
+		panic(err)
+	}
+	arrVal := newV8Value(f.ctx.iso(), arrayOf)
+	if fn, ok := arrVal.AsFunction(); ok {
+		res, err := fn.Call(f.ctx.Global(), values...)
+		if err != nil {
+			panic(err)
+		}
+		return res
+	} else {
+		panic("Array.of is not a function")
+	}
+}
 
 // Creates a value in V8 from any value. This variant is hidden, as not all
 // types are valid, and for type safety reasons, only valid types are exposed.

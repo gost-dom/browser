@@ -113,12 +113,12 @@ func (w urlSearchParamsV8Wrapper) toSequenceString_(
 	cbCtx *v8CallbackContext,
 	values []string,
 ) (jsValue, error) {
-	vs := make([]*v8.Value, len(values))
+	vs := make([]jsValue, len(values))
+	fact := cbCtx.ValueFactory()
 	for i, v := range values {
-		vs[i], _ = v8.NewValue(cbCtx.iso(), v)
+		vs[i] = fact.NewString(v)
 	}
-	arr, err := toArray(cbCtx.ScriptCtx().v8ctx, vs...)
-	return newV8Value(nil, arr), err
+	return fact.NewArray(vs...), nil
 }
 
 func (w urlSearchParamsV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) {

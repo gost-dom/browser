@@ -3,8 +3,6 @@ package v8host
 import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/v8go"
-
-	v8 "github.com/gost-dom/v8go"
 )
 
 func (w formDataV8Wrapper) CustomInitialiser(constructor *v8go.FunctionTemplate) {
@@ -64,14 +62,9 @@ func (w formDataV8Wrapper) toSequenceFormDataEntryValue(
 	cbCtx *v8CallbackContext,
 	data []html.FormDataValue,
 ) (jsValue, error) {
-	vals := make([]*v8.Value, len(data))
+	vals := make([]jsValue, len(data))
 	for i, d := range data {
-		var err error
-		vals[i], err = v8go.NewValue(cbCtx.iso(), string(d))
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
+		vals[i] = cbCtx.ValueFactory().NewString(string(d))
 	}
-	arr, err := toArray(cbCtx.ScriptCtx().v8ctx, vals...)
-	return newV8Value(cbCtx.iso(), arr), err
+	return cbCtx.ValueFactory().NewArray(vals...), nil
 }
