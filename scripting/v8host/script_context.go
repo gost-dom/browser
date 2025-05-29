@@ -45,10 +45,8 @@ func (h *V8ScriptHost) mustGetContext(v8ctx *v8.Context) *V8ScriptContext {
 	panic("Unknown v8 context!!\n" + string(debug.Stack()))
 }
 
-func (c *V8ScriptContext) cacheNode(obj jsObject, node any) {
-	if e, ok := node.(entity.ObjectIder); ok {
-		c.v8nodes[e.ObjectId()] = obj
-	}
+func (c *V8ScriptContext) cacheEntity(obj jsObject, node entity.ObjectIder) {
+	c.v8nodes[node.ObjectId()] = obj
 }
 
 func lookupJSPrototype(entity entity.ObjectIder) string {
@@ -110,7 +108,7 @@ func (c *V8ScriptContext) getJSInstance(
 	prototype := c.getConstructor(prototypeName)
 	value, err := prototype.NewInstance(c, node)
 	if err == nil {
-		c.cacheNode(value, node)
+		c.cacheEntity(value, node)
 	}
 	return value, err
 }
