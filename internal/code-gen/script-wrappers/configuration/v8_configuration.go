@@ -4,6 +4,10 @@ import "github.com/gost-dom/code-gen/packagenames"
 
 func CreateV8Specs() WebIdlConfigurations {
 	specs := CreateSpecs()
+
+	configureDOMSpecs(specs.Module("dom"))
+	configureHTMLSpecs(specs.Module("html"))
+
 	xhrModule := specs.Module("xhr")
 	xhr := xhrModule.Type("XMLHttpRequest")
 	// TODO: Just need to support non-node objects
@@ -46,7 +50,10 @@ func CreateV8Specs() WebIdlConfigurations {
 		"setSearch",
 	)
 
-	domSpecs := specs.Module("dom")
+	return specs
+}
+
+func configureDOMSpecs(domSpecs *WebIdlConfiguration) {
 	configureMutationObserver(domSpecs)
 
 	domSpecs.Type("NonDocumentTypeChildNode")
@@ -132,8 +139,14 @@ func CreateV8Specs() WebIdlConfigurations {
 	domTokenList.RunCustomCode = true
 	domTokenList.Method("toggle").SetCustomImplementation()
 	domTokenList.Method("supports").SetNotImplemented()
+}
 
-	htmlSpecs := specs.Module("html")
+func configureMutationObserver(domSpecs *WebIdlConfiguration) {
+	domSpecs.Type("MutationObserver")
+	domSpecs.Type("MutationRecord")
+}
+
+func configureHTMLSpecs(htmlSpecs *WebIdlConfiguration) {
 	htmlSpecs.SetMultipleFiles(true)
 
 	htmlTemplateElement := htmlSpecs.Type("HTMLTemplateElement")
@@ -311,13 +324,4 @@ func CreateV8Specs() WebIdlConfigurations {
 	anchor.Method("referrerPolicy").Ignore()
 	anchor.Method("relList").Ignore()
 	anchor.Method("text").Ignore()
-
-	// htmlSpecs.Type("HTMLHyperlinkElementUtils")
-
-	return specs
-}
-
-func configureMutationObserver(domSpecs *WebIdlConfiguration) {
-	domSpecs.Type("MutationObserver")
-	domSpecs.Type("MutationRecord")
 }
