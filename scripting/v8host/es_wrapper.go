@@ -152,6 +152,10 @@ func (w converters) toBoolean(cbCtx jsCallbackContext, val bool) (jsValue, error
 }
 
 func (w converters) toNodeList(cbCtx jsCallbackContext, val dom.NodeList) (jsValue, error) {
+	return w.toJSWrapper(cbCtx, val)
+}
+
+func (w converters) toJSWrapper(cbCtx jsCallbackContext, val entity.ObjectIder) (jsValue, error) {
 	return cbCtx.ReturnWithJSValueErr(cbCtx.ScriptCtx().getJSInstance(val))
 }
 

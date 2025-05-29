@@ -40,6 +40,7 @@ func (h v8CallbackContext) This() jsObject       { return newV8Object(h.iso(), h
 func (h v8CallbackContext) iso() *v8.Isolate     { return h.ScriptCtx().host.iso }
 func (h v8CallbackContext) v8ctx() *v8.Context   { return h.ScriptCtx().v8ctx }
 func (h v8CallbackContext) logger() *slog.Logger { return h.ScriptCtx().host.Logger() }
+
 func (h *v8CallbackContext) ScriptCtx() *V8ScriptContext {
 	return h.host.mustGetContext(h.v8Info.Context())
 }
@@ -63,8 +64,7 @@ func (h *v8CallbackContext) ReturnWithJSValueErr(val jsValue, err error) (jsValu
 }
 
 func (h *v8CallbackContext) getInstanceForNode(node dom.Node) (jsValue, error) {
-	v, err := h.ScriptCtx().getJSInstance(node)
-	return h.ReturnWithJSValueErr(v, err)
+	return h.ScriptCtx().getJSInstance(node)
 }
 
 func (h *v8CallbackContext) ReturnWithError(err error) (jsValue, error) {
@@ -77,8 +77,7 @@ func (h *v8CallbackContext) ReturnWithTypeError(msg string) (jsValue, error) {
 
 func (h *v8CallbackContext) Instance() (any, error) {
 	if h.v8Info.This().InternalFieldCount() < 1 {
-		// TODO: Create a type error
-		return nil, errors.New("TypeError")
+		return h.ReturnWithTypeError("No internal instance")
 	}
 	return h.v8Info.This().GetInternalField(0).ExternalHandle().Value(), nil
 }

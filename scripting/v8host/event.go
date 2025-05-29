@@ -1,6 +1,8 @@
 package v8host
 
 import (
+	"errors"
+
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/scripting/internal/js"
@@ -36,9 +38,9 @@ func (w eventV8Wrapper) toEventTarget(
 		return cbCtx.ReturnWithValue(v8.Null(w.scriptHost.iso))
 	}
 	if entity, ok := e.(entity.ObjectIder); ok {
-		return cbCtx.ReturnWithJSValueErr(cbCtx.ScriptCtx().getJSInstance(entity))
+		return w.toJSWrapper(cbCtx, entity)
 	}
-	return cbCtx.ReturnWithError(v8.NewError(w.iso(), "TODO, Not yet supported"))
+	return cbCtx.ReturnWithError(errors.New("TODO, Not yet supported"))
 }
 
 func (w eventV8Wrapper) eventPhase(cbCtx *v8CallbackContext) (jsValue, error) {
