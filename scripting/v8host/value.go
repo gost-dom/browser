@@ -10,6 +10,7 @@ import (
 type jsValue = js.Value[*v8Value]
 type jsFunction = js.Function[*v8Value]
 type jsObject = js.Object[*v8Value]
+type jsConstructor = v8Constructor
 
 // TODO: Delete
 
@@ -113,7 +114,12 @@ type v8Object struct {
 	handle cgo.Handle
 }
 
-func newV8Object(iso *v8go.Isolate, o *v8go.Object) *v8Object {
+// newV8Object returns a jsObject wrapping o, a v8go *Object value. The function
+// returns nil when o is nil.
+func newV8Object(iso *v8go.Isolate, o *v8go.Object) jsObject {
+	if o == nil {
+		return nil
+	}
 	return &v8Object{v8Value{iso, o.Value}, o, 0}
 }
 
@@ -158,4 +164,26 @@ func (o *v8Object) Get(name string) (jsValue, error) {
 		return nil, err
 	}
 	return &v8Value{o.iso, res}, nil
+}
+
+type v8Constructor struct {
+	iso *v8go.Isolate
+	ft  *v8go.FunctionTemplate
+}
+
+func newV8Constructor(iso *v8go.Isolate, ft *v8go.FunctionTemplate) jsConstructor {
+	return v8Constructor{iso, ft}
+}
+
+func (c v8Constructor) NewInstance(
+	ctx /* TODO: jsCallbackContext */ *V8ScriptContext,
+	nativeValue any,
+) (jsObject, error) {
+	val, err := c.ft.InstanceTemplate().NewInstance(ctx.v8ctx)
+	obj := newV8Object(c.iso, val).(*v8Object)
+	if err == nil {
+		obj.SetNativeValue(nativeValue)
+		ctx.addDisposer(obj)
+	}
+	return obj, err
 }

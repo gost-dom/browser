@@ -80,12 +80,13 @@ func toSequenceMutationRecord(
 	records []mutation.Record,
 ) (jsValue, error) {
 	res := make([]*v8.Value, len(records))
+	prototype := ctx.getConstructor("MutationRecord")
 	for i, r := range records {
-		rec, err := ctx.createJSInstanceForObjectOfType("MutationRecord", &r)
+		rec, err := prototype.NewInstance(ctx, &r)
 		if err != nil {
 			return nil, fmt.Errorf("v8host: constructing mutation record: %w", err)
 		}
-		res[i] = rec
+		res[i] = rec.Self().v8Value()
 	}
 	recs, err := toArray(ctx.v8ctx, res...)
 	return newV8Value(ctx.host.iso, recs), err

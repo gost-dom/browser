@@ -75,20 +75,13 @@ func (w *elementV8Wrapper) setTextContent(info *v8.FunctionCallbackInfo) (*v8.Va
 }
 
 func (e elementV8Wrapper) classList(cbCtx *v8CallbackContext) (jsValue, error) {
-	tokenList := e.scriptHost.globals.namedGlobals["DOMTokenList"]
 	instance, err := js.As[dom.Element](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
 	}
-	res, err := tokenList.InstanceTemplate().NewInstance(cbCtx.ScriptCtx().v8ctx)
-	if err != nil {
-		return cbCtx.ReturnWithError(err)
-	}
 	cl := instance.ClassList()
-	iso := cbCtx.iso()
-	return cbCtx.ReturnWithJSValueErr(
-		storeObjectHandleInV8Instance(cl, cbCtx.ScriptCtx(), newV8Object(iso, res)),
-	)
+	tokenList := cbCtx.ScriptCtx().getConstructor("DOMTokenList")
+	return tokenList.NewInstance(cbCtx.ScriptCtx(), cl)
 }
 
 func (e *elementV8Wrapper) toNamedNodeMap(

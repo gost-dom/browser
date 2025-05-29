@@ -191,30 +191,19 @@ func newHandleReffedObject[T any](host *V8ScriptHost) handleReffedObject[T] {
 
 func (o handleReffedObject[T]) iso() *v8.Isolate { return o.scriptHost.iso }
 
-func storeObjectHandleInV8Instance(
-	value any,
-	ctx *V8ScriptContext,
-	this jsObject,
-) (jsValue, error) {
-	if e, ok := value.(entity.ObjectIder); ok {
-		objectId := e.ObjectId()
-		ctx.v8nodes[objectId] = this
-	}
-
-	this.SetNativeValue(value)
-	if d, ok := this.(disposable); ok {
-		ctx.addDisposer(d)
-	}
-	return this, nil
-}
-
 // TODO: Return js.CallbackRVal
 func (o handleReffedObject[T]) store(
 	value any,
 	ctx *V8ScriptContext,
 	this jsObject,
 ) (jsValue, error) {
-	return storeObjectHandleInV8Instance(value, ctx, this)
+	ctx.cacheNode(this, value)
+
+	this.SetNativeValue(value)
+	if d, ok := this.(disposable); ok {
+		ctx.addDisposer(d)
+	}
+	return this, nil
 }
 
 func getWrappedInstance[T any](object *v8.Object) (res T, err error) {
