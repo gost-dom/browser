@@ -8,13 +8,14 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/internal/constants"
+	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
 	v8 "github.com/gost-dom/v8go"
 )
 
 // type jsCallbackContext = js.CallbackContext[*v8Value]
 type jsCallbackContext = *v8CallbackContext
-type jsValueFactory = v8ValueFactory
+type jsValueFactory = js.ValueFactory[*v8Value]
 
 var (
 	ErrWrongNoOfArguments = errors.New("Not enough arguments passed")
