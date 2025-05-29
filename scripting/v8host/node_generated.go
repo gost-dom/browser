@@ -98,7 +98,7 @@ func (w nodeV8Wrapper) getRootNode(cbCtx jsCallbackContext) (jsValue, error) {
 			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.GetRootNode(options)
-		return cbCtx.getInstanceForNode(result)
+		return w.toJSWrapper(cbCtx, result)
 	}
 	return cbCtx.ReturnWithError(errors.New("Node.getRootNode: Missing arguments"))
 }
@@ -113,7 +113,7 @@ func (w nodeV8Wrapper) cloneNode(cbCtx jsCallbackContext) (jsValue, error) {
 			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.CloneNode(subtree)
-		return cbCtx.getInstanceForNode(result)
+		return w.toJSWrapper(cbCtx, result)
 	}
 	return cbCtx.ReturnWithError(errors.New("Node.cloneNode: Missing arguments"))
 }
@@ -162,7 +162,7 @@ func (w nodeV8Wrapper) insertBefore(cbCtx jsCallbackContext) (jsValue, error) {
 		if callErr != nil {
 			return cbCtx.ReturnWithError(callErr)
 		} else {
-			return cbCtx.getInstanceForNode(result)
+			return w.toJSWrapper(cbCtx, result)
 		}
 	}
 	return cbCtx.ReturnWithError(errors.New("Node.insertBefore: Missing arguments"))
@@ -181,7 +181,7 @@ func (w nodeV8Wrapper) appendChild(cbCtx jsCallbackContext) (jsValue, error) {
 		if callErr != nil {
 			return cbCtx.ReturnWithError(callErr)
 		} else {
-			return cbCtx.getInstanceForNode(result)
+			return w.toJSWrapper(cbCtx, result)
 		}
 	}
 	return cbCtx.ReturnWithError(errors.New("Node.appendChild: Missing arguments"))
@@ -200,7 +200,7 @@ func (w nodeV8Wrapper) removeChild(cbCtx jsCallbackContext) (jsValue, error) {
 		if callErr != nil {
 			return cbCtx.ReturnWithError(callErr)
 		} else {
-			return cbCtx.getInstanceForNode(result)
+			return w.toJSWrapper(cbCtx, result)
 		}
 	}
 	return cbCtx.ReturnWithError(errors.New("Node.removeChild: Missing arguments"))
@@ -233,7 +233,7 @@ func (w nodeV8Wrapper) ownerDocument(cbCtx jsCallbackContext) (jsValue, error) {
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.OwnerDocument()
-	return cbCtx.getInstanceForNode(result)
+	return w.toJSWrapper(cbCtx, result)
 }
 
 func (w nodeV8Wrapper) parentElement(cbCtx jsCallbackContext) (jsValue, error) {
@@ -243,7 +243,7 @@ func (w nodeV8Wrapper) parentElement(cbCtx jsCallbackContext) (jsValue, error) {
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.ParentElement()
-	return cbCtx.getInstanceForNode(result)
+	return w.toJSWrapper(cbCtx, result)
 }
 
 func (w nodeV8Wrapper) childNodes(cbCtx jsCallbackContext) (jsValue, error) {
@@ -253,7 +253,7 @@ func (w nodeV8Wrapper) childNodes(cbCtx jsCallbackContext) (jsValue, error) {
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.ChildNodes()
-	return w.toNodeList(cbCtx, result)
+	return w.toJSWrapper(cbCtx, result)
 }
 
 func (w nodeV8Wrapper) firstChild(cbCtx jsCallbackContext) (jsValue, error) {
@@ -263,7 +263,7 @@ func (w nodeV8Wrapper) firstChild(cbCtx jsCallbackContext) (jsValue, error) {
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.FirstChild()
-	return cbCtx.getInstanceForNode(result)
+	return w.toJSWrapper(cbCtx, result)
 }
 
 func (w nodeV8Wrapper) previousSibling(cbCtx jsCallbackContext) (jsValue, error) {
@@ -273,7 +273,7 @@ func (w nodeV8Wrapper) previousSibling(cbCtx jsCallbackContext) (jsValue, error)
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.PreviousSibling()
-	return cbCtx.getInstanceForNode(result)
+	return w.toJSWrapper(cbCtx, result)
 }
 
 func (w nodeV8Wrapper) nextSibling(cbCtx jsCallbackContext) (jsValue, error) {
@@ -283,5 +283,5 @@ func (w nodeV8Wrapper) nextSibling(cbCtx jsCallbackContext) (jsValue, error) {
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.NextSibling()
-	return cbCtx.getInstanceForNode(result)
+	return w.toJSWrapper(cbCtx, result)
 }

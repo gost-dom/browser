@@ -60,6 +60,18 @@ func idlTypeNameToGoName(t idl.Type) string {
 	}
 }
 
+func (o ESOperation) EncodeAsSimpleJSLookup() bool {
+	if IsNodeType(o.RetType.Name) {
+		return true
+	}
+	switch o.RetType.Name {
+	case "Attr", "NodeList", "HTMLFormControlsCollection":
+		return true
+	default:
+		return false
+	}
+}
+
 func (o ESOperation) Encoder(data ESConstructorData) string {
 	if e := o.MethodCustomization.Encoder; e != "" {
 		return e
@@ -77,7 +89,11 @@ func (o ESOperation) Encoder(data ESConstructorData) string {
 			converter += "Nillable"
 		}
 	}
-	converter += IdlNameToGoName(idlTypeNameToGoName(t))
+	if o.EncodeAsSimpleJSLookup() {
+		converter += "JSWrapper"
+	} else {
+		converter += IdlNameToGoName(idlTypeNameToGoName(t))
+	}
 	return converter
 }
 

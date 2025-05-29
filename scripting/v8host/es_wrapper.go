@@ -151,19 +151,8 @@ func (w converters) toBoolean(cbCtx jsCallbackContext, val bool) (jsValue, error
 	return cbCtx.ValueFactory().NewBoolean(val), nil
 }
 
-func (w converters) toNodeList(cbCtx jsCallbackContext, val dom.NodeList) (jsValue, error) {
-	return w.toJSWrapper(cbCtx, val)
-}
-
 func (w converters) toJSWrapper(cbCtx jsCallbackContext, val entity.ObjectIder) (jsValue, error) {
 	return cbCtx.ReturnWithJSValueErr(cbCtx.ScriptCtx().getJSInstance(val))
-}
-
-func (w converters) toHTMLFormControlsCollection(
-	cbCtx jsCallbackContext,
-	val dom.NodeList,
-) (jsValue, error) {
-	return w.toNodeList(cbCtx, val)
 }
 
 // handleReffedObject serves as a helper for building v8 wrapping code around go objects.

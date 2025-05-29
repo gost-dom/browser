@@ -41,7 +41,3 @@ func (w namedNodeMapV8Wrapper) CustomInitialiser(ft *v8go.FunctionTemplate) {
 			return cbCtx.ReturnWithJSValueErr(cbCtx.ScriptCtx().getJSInstance(item))
 		}))
 }
-
-func (w namedNodeMapV8Wrapper) toAttr(cbCtx jsCallbackContext, val dom.Attr) (jsValue, error) {
-	return w.toJSWrapper(cbCtx, val)
-}

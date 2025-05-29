@@ -61,11 +61,11 @@ func (w documentWrapper) location(c g.FunctionCall) g.Value {
 func (w documentWrapper) createElement(c g.FunctionCall) g.Value {
 	doc := w.getInstance(c)
 	name := c.Argument(0)
-	return w.toNode(doc.CreateElement(name.String()))
+	return w.toJSWrapper(doc.CreateElement(name.String()))
 }
 
 func (w documentWrapper) getElementById(c g.FunctionCall) g.Value {
 	doc := w.getInstance(c)
 	name := c.Argument(0)
-	return w.toNode(doc.GetElementById(name.String()))
+	return w.toJSWrapper(doc.GetElementById(name.String()))
 }

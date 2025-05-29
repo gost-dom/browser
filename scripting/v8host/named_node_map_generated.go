@@ -4,7 +4,6 @@ package v8host
 
 import (
 	"errors"
-
 	dom "github.com/gost-dom/browser/dom"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
@@ -64,7 +63,7 @@ func (w namedNodeMapV8Wrapper) item(cbCtx jsCallbackContext) (jsValue, error) {
 			return cbCtx.ReturnWithError(err)
 		}
 		result := instance.Item(index)
-		return w.toAttr(cbCtx, result)
+		return w.toJSWrapper(cbCtx, result)
 	}
 	return cbCtx.ReturnWithError(errors.New("NamedNodeMap.item: Missing arguments"))
 }
