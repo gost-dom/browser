@@ -117,7 +117,8 @@ func (w urlSearchParamsV8Wrapper) toSequenceString_(
 	for i, v := range values {
 		vs[i], _ = v8.NewValue(cbCtx.iso(), v)
 	}
-	return cbCtx.ReturnWithValueErr(toArray(cbCtx.ScriptCtx().v8ctx, vs...))
+	arr, err := toArray(cbCtx.ScriptCtx().v8ctx, vs...)
+	return newV8Value(nil, arr), err
 }
 
 func (w urlSearchParamsV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) {

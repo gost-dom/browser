@@ -47,16 +47,16 @@ func (h *v8CallbackContext) ScriptCtx() *V8ScriptContext {
 
 func (c *v8CallbackContext) ValueFactory() jsValueFactory { return c.valueFactory }
 
-func (h *v8CallbackContext) ReturnWithValue(val *v8go.Value) (jsValue, error) {
-	return h.ReturnWithJSValue(newV8Value(h.iso(), val))
+func (h *v8CallbackContext) ReturnWithValue(val jsValue) (jsValue, error) {
+	return val, nil
 }
 
 func (h *v8CallbackContext) ReturnWithJSValue(val jsValue) (jsValue, error) {
 	return val, nil
 }
 
-func (h *v8CallbackContext) ReturnWithValueErr(val *v8go.Value, err error) (jsValue, error) {
-	return newV8Value(h.iso(), val), err
+func (h *v8CallbackContext) ReturnWithValueErr(val jsValue, err error) (jsValue, error) {
+	return val, err
 }
 
 func (h *v8CallbackContext) ReturnWithJSValueErr(val jsValue, err error) (jsValue, error) {
