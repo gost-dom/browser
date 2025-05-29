@@ -43,5 +43,11 @@ type FunctionCallback[T any] func(CallbackContext[T]) (Value[T], error)
 // ValueFactory allows creating JavaScript values from Go values
 type ValueFactory[T any] interface {
 	Null() Value[T]
-	String(string) Value[T]
+
+	NewString(string) Value[T]
+	NewBoolean(bool) Value[T]
+	NewUint32(uint32) Value[T]
+	NewInt32(int32) Value[T]
+	NewInt64(int64) Value[T]
+	NewArray(...Value[T]) Value[T]
 }
