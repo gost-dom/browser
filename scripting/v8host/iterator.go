@@ -88,7 +88,7 @@ func (i iterator[T]) newIteratorInstanceOfIterable(
 		obj.SetNativeValue(iterator)
 		return obj, nil
 	}
-	return cbCtx.ReturnWithValueErr(res.Value, err)
+	return newV8Object(cbCtx.iso(), res), err
 }
 
 func (i iterator[T]) next(cbCtx jsCallbackContext) (jsValue, error) {

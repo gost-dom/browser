@@ -26,5 +26,6 @@ func (w historyV8Wrapper) toHistoryState(
 	cbCtx *v8CallbackContext,
 	val htmlinterfaces.HistoryState,
 ) (jsValue, error) {
-	return cbCtx.ReturnWithValueErr(v8.JSONParse(cbCtx.ScriptCtx().v8ctx, string(val)))
+	v, err := v8.JSONParse(cbCtx.ScriptCtx().v8ctx, string(val))
+	return newV8Value(cbCtx.iso(), v), err
 }

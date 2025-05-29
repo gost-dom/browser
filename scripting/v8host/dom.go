@@ -24,19 +24,16 @@ func (l domTokenListV8Wrapper) toggle(args *v8CallbackContext) (jsValue, error) 
 		}
 		if force {
 			instance.Add(token)
-			v, err := v8.NewValue(l.scriptHost.iso, true)
-			return args.ReturnWithValueErr(v, err)
+			return args.ValueFactory().NewBoolean(true), nil
 		} else {
 			instance.Remove(token)
-			v, err := v8.NewValue(l.scriptHost.iso, false)
-			return args.ReturnWithValueErr(v, err)
+			return args.ValueFactory().NewBoolean(false), nil
 		}
 	}
 	if err := errors.Join(err0, errInstance); err != nil {
-		return args.ReturnWithError(err)
+		return nil, err
 	}
-	v, err := v8.NewValue(l.scriptHost.iso, instance.Toggle(token))
-	return args.ReturnWithValueErr(v, err)
+	return args.ValueFactory().NewBoolean(instance.Toggle(token)), nil
 }
 
 func (e htmlTemplateElementV8Wrapper) CreateInstance(

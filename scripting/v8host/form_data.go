@@ -72,5 +72,6 @@ func (w formDataV8Wrapper) toSequenceFormDataEntryValue(
 			return cbCtx.ReturnWithError(err)
 		}
 	}
-	return cbCtx.ReturnWithValueErr(toArray(cbCtx.ScriptCtx().v8ctx, vals...))
+	arr, err := toArray(cbCtx.ScriptCtx().v8ctx, vals...)
+	return newV8Value(cbCtx.iso(), arr), err
 }

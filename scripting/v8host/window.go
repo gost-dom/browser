@@ -1,8 +1,6 @@
 package v8host
 
 import (
-	"runtime/cgo"
-
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
@@ -31,14 +29,5 @@ func (w *windowV8Wrapper) history(cbCtx *v8CallbackContext) (jsValue, error) {
 		return cbCtx.ReturnWithError(err)
 	}
 	ctx := cbCtx.ScriptCtx()
-	history, err := w.scriptHost.globals.namedGlobals["History"].InstanceTemplate().
-		NewInstance(ctx.v8ctx)
-	if err != nil {
-		return cbCtx.ReturnWithError(err)
-	}
-	handle := cgo.NewHandle(win.History())
-	ctx.addDisposer(handleDisposable(handle))
-	internal := v8.NewValueExternalHandle(w.iso(), handle)
-	history.SetInternalField(0, internal)
-	return cbCtx.ReturnWithValue(history.Value)
+	return ctx.getConstructor("History").NewInstance(ctx, win.History())
 }

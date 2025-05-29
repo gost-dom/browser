@@ -6,7 +6,6 @@ import (
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/scripting/internal/js"
-	v8 "github.com/gost-dom/v8go"
 )
 
 type eventV8Wrapper struct {
@@ -35,7 +34,7 @@ func (w eventV8Wrapper) toEventTarget(
 	e event.EventTarget,
 ) (jsValue, error) {
 	if e == nil {
-		return cbCtx.ReturnWithValue(v8.Null(w.scriptHost.iso))
+		return cbCtx.ReturnWithValue(cbCtx.ValueFactory().Null())
 	}
 	if entity, ok := e.(entity.ObjectIder); ok {
 		return w.toJSWrapper(cbCtx, entity)
