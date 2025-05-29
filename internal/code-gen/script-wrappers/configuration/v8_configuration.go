@@ -56,6 +56,17 @@ func CreateV8Specs() WebIdlConfigurations {
 func configureDOMSpecs(domSpecs *WebIdlConfiguration) {
 	configureMutationObserver(domSpecs)
 
+	namedNodeMap := domSpecs.Type("NamedNodeMap")
+	namedNodeMap.MarkMembersAsNotImplemented(
+		"getNamedItem",
+		"setNamedItem",
+		"getNamedItemNS",
+		"setNamedItemNS",
+		"removeNamedItem",
+		"removeNamedItemNS",
+	)
+	namedNodeMap.RunCustomCode = true
+
 	domSpecs.Type("NonDocumentTypeChildNode")
 	document := domSpecs.Type("Document")
 	document.RunCustomCode = true // Set instance properties
