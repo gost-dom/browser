@@ -3,7 +3,6 @@
 package v8host
 
 import (
-	"errors"
 	dom "github.com/gost-dom/browser/dom"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
@@ -49,17 +48,16 @@ func (w nodeListV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error)
 
 func (w nodeListV8Wrapper) item(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: NodeList.item")
-	instance, err0 := js.As[dom.NodeList](cbCtx.Instance())
-	index, err1 := consumeArgument(cbCtx, "index", nil, w.decodeUnsignedLong)
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		result := instance.Item(index)
-		return w.toJSWrapper(cbCtx, result)
+	instance, errInst := js.As[dom.NodeList](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("NodeList.item: Missing arguments"))
+	index, errArg1 := consumeArgument(cbCtx, "index", nil, w.decodeUnsignedLong)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result := instance.Item(index)
+	return w.toJSWrapper(cbCtx, result)
 }
 
 func (w nodeListV8Wrapper) length(cbCtx jsCallbackContext) (jsValue, error) {

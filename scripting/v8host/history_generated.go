@@ -56,20 +56,16 @@ func (w historyV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) 
 
 func (w historyV8Wrapper) go_(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: History.go_")
-	instance, err0 := js.As[htmlinterfaces.History](cbCtx.Instance())
-	delta, err1 := consumeArgument(cbCtx, "delta", w.defaultDelta, w.decodeLong)
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		callErr := instance.Go(delta)
-		if callErr != nil {
-			return cbCtx.ReturnWithError(callErr)
-		}
-		return cbCtx.ReturnWithValue(nil)
+	instance, errInst := js.As[htmlinterfaces.History](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("History.go: Missing arguments"))
+	delta, errArg1 := consumeArgument(cbCtx, "delta", w.defaultDelta, w.decodeLong)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	errCall := instance.Go(delta)
+	return nil, errCall
 }
 
 func (w historyV8Wrapper) back(cbCtx jsCallbackContext) (jsValue, error) {
@@ -78,11 +74,8 @@ func (w historyV8Wrapper) back(cbCtx jsCallbackContext) (jsValue, error) {
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
 	}
-	callErr := instance.Back()
-	if callErr != nil {
-		return cbCtx.ReturnWithError(callErr)
-	}
-	return cbCtx.ReturnWithValue(nil)
+	errCall := instance.Back()
+	return nil, errCall
 }
 
 func (w historyV8Wrapper) forward(cbCtx jsCallbackContext) (jsValue, error) {
@@ -91,51 +84,42 @@ func (w historyV8Wrapper) forward(cbCtx jsCallbackContext) (jsValue, error) {
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
 	}
-	callErr := instance.Forward()
-	if callErr != nil {
-		return cbCtx.ReturnWithError(callErr)
-	}
-	return cbCtx.ReturnWithValue(nil)
+	errCall := instance.Forward()
+	return nil, errCall
 }
 
 func (w historyV8Wrapper) pushState(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: History.pushState")
-	instance, err0 := js.As[htmlinterfaces.History](cbCtx.Instance())
-	data, err1 := consumeArgument(cbCtx, "data", nil, w.decodeHistoryState)
-	ignoreArgument(cbCtx)
-	url, err3 := consumeArgument(cbCtx, "url", w.defaultUrl, w.decodeString)
-	if cbCtx.noOfReadArguments >= 2 {
-		err := errors.Join(err0, err1, err3)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		callErr := instance.PushState(data, url)
-		if callErr != nil {
-			return cbCtx.ReturnWithError(callErr)
-		}
-		return cbCtx.ReturnWithValue(nil)
+	instance, errInst := js.As[htmlinterfaces.History](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("History.pushState: Missing arguments"))
+	data, errArg1 := consumeArgument(cbCtx, "data", nil, w.decodeHistoryState)
+	cbCtx.ConsumeArg()
+	url, errArg3 := consumeArgument(cbCtx, "url", w.defaultUrl, w.decodeString)
+	err := errors.Join(errArg1, errArg3)
+	if err != nil {
+		return nil, err
+	}
+	errCall := instance.PushState(data, url)
+	return nil, errCall
 }
 
 func (w historyV8Wrapper) replaceState(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: History.replaceState")
-	instance, err0 := js.As[htmlinterfaces.History](cbCtx.Instance())
-	data, err1 := consumeArgument(cbCtx, "data", nil, w.decodeHistoryState)
-	ignoreArgument(cbCtx)
-	url, err3 := consumeArgument(cbCtx, "url", w.defaultUrl, w.decodeString)
-	if cbCtx.noOfReadArguments >= 2 {
-		err := errors.Join(err0, err1, err3)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		callErr := instance.ReplaceState(data, url)
-		if callErr != nil {
-			return cbCtx.ReturnWithError(callErr)
-		}
-		return cbCtx.ReturnWithValue(nil)
+	instance, errInst := js.As[htmlinterfaces.History](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("History.replaceState: Missing arguments"))
+	data, errArg1 := consumeArgument(cbCtx, "data", nil, w.decodeHistoryState)
+	cbCtx.ConsumeArg()
+	url, errArg3 := consumeArgument(cbCtx, "url", w.defaultUrl, w.decodeString)
+	err := errors.Join(errArg1, errArg3)
+	if err != nil {
+		return nil, err
+	}
+	errCall := instance.ReplaceState(data, url)
+	return nil, errCall
 }
 
 func (w historyV8Wrapper) length(cbCtx jsCallbackContext) (jsValue, error) {

@@ -100,6 +100,10 @@ func (h *v8CallbackContext) consumeValue() jsValue {
 	return &v8Value{h.iso(), v8.Undefined(h.iso())}
 }
 
+func (c *v8CallbackContext) Logger() *slog.Logger {
+	return c.host.Logger()
+}
+
 func (h *v8CallbackContext) consumeFunction() (jsFunction, error) {
 	arg := h.ConsumeArg()
 	if arg == nil {

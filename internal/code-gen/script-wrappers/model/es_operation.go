@@ -21,8 +21,20 @@ type ESOperation struct {
 	Arguments            []ESOperationArgument
 }
 
+// CallbackMethodName gets the name for the unexported function that serves as a
+// function callback, i.e. the Go function to be executed when JavaScript code
+// calls a native function.
 func (o ESOperation) CallbackMethodName() string {
 	return idl.SanitizeName(o.Name)
+}
+
+// NativeFunctionName gets the name of the method in Go that implements the
+// behaviour.
+func (o ESOperation) NativeFunctionName() string {
+	if o.Name == "toString" {
+		return "String"
+	}
+	return IdlNameToGoName(o.Name)
 }
 
 func (op ESOperation) GetHasError() bool {
@@ -30,6 +42,9 @@ func (op ESOperation) GetHasError() bool {
 }
 
 func (op ESOperation) HasResult() bool {
+	if op.Name == "" {
+		return false
+	}
 	return op.RetType.Name != "undefined"
 }
 

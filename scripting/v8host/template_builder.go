@@ -262,3 +262,27 @@ func consumeArgument[T any](
 		return
 	}
 }
+
+func consumeOptionalArg[T any](
+	args *v8CallbackContext,
+	name string,
+	decoders ...func(*v8CallbackContext, jsValue) (T, error),
+) (result T, found bool, err error) {
+	value := args.ConsumeArg()
+	if value == nil {
+		return
+	}
+	found = true
+	errs := make([]error, len(decoders))
+	if value != nil {
+		for i, parser := range decoders {
+			result, errs[i] = parser(args, value)
+			if errs[i] == nil {
+				return
+			}
+		}
+	}
+	// TODO: This should eventually become a TypeError in JS
+	err = fmt.Errorf("tryParseArg: %s: %w", name, errors.Join(errs...))
+	return
+}

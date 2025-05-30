@@ -44,22 +44,18 @@ func (w pointerEventV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate
 
 func (w pointerEventV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: PointerEvent.Constructor")
-	type_, err1 := consumeArgument(cbCtx, "type", nil, w.decodeString)
-	eventInitDict, err2 := consumeArgument(cbCtx, "eventInitDict", nil, w.decodePointerEventInit)
-	if cbCtx.noOfReadArguments >= 2 {
-		err := errors.Join(err1, err2)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
+	type_, errArg1 := consumeArgument(cbCtx, "type", nil, w.decodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	eventInitDict, found, errArg := consumeOptionalArg(cbCtx, "eventInitDict", w.decodePointerEventInit)
+	if found {
+		if errArg != nil {
+			return nil, errArg
 		}
 		return w.CreateInstanceEventInitDict(cbCtx, type_, eventInitDict)
 	}
-	if cbCtx.noOfReadArguments >= 1 {
-		if err1 != nil {
-			return cbCtx.ReturnWithError(err1)
-		}
-		return w.CreateInstance(cbCtx, type_)
-	}
-	return cbCtx.ReturnWithError(errors.New("PointerEvent.constructor: Missing arguments"))
+	return w.CreateInstance(cbCtx, type_)
 }
 
 func (w pointerEventV8Wrapper) width(cbCtx jsCallbackContext) (jsValue, error) {

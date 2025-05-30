@@ -111,17 +111,16 @@ func (w elementV8Wrapper) getAttributeNames(cbCtx jsCallbackContext) (jsValue, e
 
 func (w elementV8Wrapper) getAttribute(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.getAttribute")
-	instance, err0 := js.As[dom.Element](cbCtx.Instance())
-	qualifiedName, err1 := consumeArgument(cbCtx, "qualifiedName", nil, w.decodeString)
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		result, hasValue := instance.GetAttribute(qualifiedName)
-		return w.toNillableString_(cbCtx, result, hasValue)
+	instance, errInst := js.As[dom.Element](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("Element.getAttribute: Missing arguments"))
+	qualifiedName, errArg1 := consumeArgument(cbCtx, "qualifiedName", nil, w.decodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result, hasValue := instance.GetAttribute(qualifiedName)
+	return w.toNillableString_(cbCtx, result, hasValue)
 }
 
 func (w elementV8Wrapper) getAttributeNS(cbCtx jsCallbackContext) (jsValue, error) {
@@ -131,18 +130,18 @@ func (w elementV8Wrapper) getAttributeNS(cbCtx jsCallbackContext) (jsValue, erro
 
 func (w elementV8Wrapper) setAttribute(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.setAttribute")
-	instance, err0 := js.As[dom.Element](cbCtx.Instance())
-	qualifiedName, err1 := consumeArgument(cbCtx, "qualifiedName", nil, w.decodeString)
-	value, err2 := consumeArgument(cbCtx, "value", nil, w.decodeString)
-	if cbCtx.noOfReadArguments >= 2 {
-		err := errors.Join(err0, err1, err2)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		instance.SetAttribute(qualifiedName, value)
-		return cbCtx.ReturnWithValue(nil)
+	instance, errInst := js.As[dom.Element](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("Element.setAttribute: Missing arguments"))
+	qualifiedName, errArg1 := consumeArgument(cbCtx, "qualifiedName", nil, w.decodeString)
+	value, errArg2 := consumeArgument(cbCtx, "value", nil, w.decodeString)
+	err := errors.Join(errArg1, errArg2)
+	if err != nil {
+		return nil, err
+	}
+	instance.SetAttribute(qualifiedName, value)
+	return nil, nil
 }
 
 func (w elementV8Wrapper) setAttributeNS(cbCtx jsCallbackContext) (jsValue, error) {
@@ -152,17 +151,16 @@ func (w elementV8Wrapper) setAttributeNS(cbCtx jsCallbackContext) (jsValue, erro
 
 func (w elementV8Wrapper) removeAttribute(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.removeAttribute")
-	instance, err0 := js.As[dom.Element](cbCtx.Instance())
-	qualifiedName, err1 := consumeArgument(cbCtx, "qualifiedName", nil, w.decodeString)
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		instance.RemoveAttribute(qualifiedName)
-		return cbCtx.ReturnWithValue(nil)
+	instance, errInst := js.As[dom.Element](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("Element.removeAttribute: Missing arguments"))
+	qualifiedName, errArg1 := consumeArgument(cbCtx, "qualifiedName", nil, w.decodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	instance.RemoveAttribute(qualifiedName)
+	return nil, nil
 }
 
 func (w elementV8Wrapper) removeAttributeNS(cbCtx jsCallbackContext) (jsValue, error) {
@@ -177,17 +175,16 @@ func (w elementV8Wrapper) toggleAttribute(cbCtx jsCallbackContext) (jsValue, err
 
 func (w elementV8Wrapper) hasAttribute(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.hasAttribute")
-	instance, err0 := js.As[dom.Element](cbCtx.Instance())
-	qualifiedName, err1 := consumeArgument(cbCtx, "qualifiedName", nil, w.decodeString)
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		result := instance.HasAttribute(qualifiedName)
-		return w.toBoolean(cbCtx, result)
+	instance, errInst := js.As[dom.Element](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("Element.hasAttribute: Missing arguments"))
+	qualifiedName, errArg1 := consumeArgument(cbCtx, "qualifiedName", nil, w.decodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result := instance.HasAttribute(qualifiedName)
+	return w.toBoolean(cbCtx, result)
 }
 
 func (w elementV8Wrapper) hasAttributeNS(cbCtx jsCallbackContext) (jsValue, error) {
@@ -227,21 +224,19 @@ func (w elementV8Wrapper) attachShadow(cbCtx jsCallbackContext) (jsValue, error)
 
 func (w elementV8Wrapper) matches(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: Element.matches")
-	instance, err0 := js.As[dom.Element](cbCtx.Instance())
-	selectors, err1 := consumeArgument(cbCtx, "selectors", nil, w.decodeString)
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		result, callErr := instance.Matches(selectors)
-		if callErr != nil {
-			return cbCtx.ReturnWithError(callErr)
-		} else {
-			return w.toBoolean(cbCtx, result)
-		}
+	instance, errInst := js.As[dom.Element](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("Element.matches: Missing arguments"))
+	selectors, errArg1 := consumeArgument(cbCtx, "selectors", nil, w.decodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result, errCall := instance.Matches(selectors)
+	if errCall != nil {
+		return nil, errCall
+	}
+	return w.toBoolean(cbCtx, result)
 }
 
 func (w elementV8Wrapper) getElementsByTagName(cbCtx jsCallbackContext) (jsValue, error) {

@@ -96,29 +96,22 @@ func (w htmlFormElementV8Wrapper) submit(cbCtx jsCallbackContext) (jsValue, erro
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
 	}
-	callErr := instance.Submit()
-	if callErr != nil {
-		return cbCtx.ReturnWithError(callErr)
-	}
-	return cbCtx.ReturnWithValue(nil)
+	errCall := instance.Submit()
+	return nil, errCall
 }
 
 func (w htmlFormElementV8Wrapper) requestSubmit(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: HTMLFormElement.requestSubmit")
-	instance, err0 := js.As[html.HTMLFormElement](cbCtx.Instance())
-	submitter, err1 := consumeArgument(cbCtx, "submitter", w.defaultHTMLElement, w.decodeHTMLElement)
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		callErr := instance.RequestSubmit(submitter)
-		if callErr != nil {
-			return cbCtx.ReturnWithError(callErr)
-		}
-		return cbCtx.ReturnWithValue(nil)
+	instance, errInst := js.As[html.HTMLFormElement](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("HTMLFormElement.requestSubmit: Missing arguments"))
+	submitter, errArg1 := consumeArgument(cbCtx, "submitter", w.defaultHTMLElement, w.decodeHTMLElement)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	errCall := instance.RequestSubmit(submitter)
+	return nil, errCall
 }
 
 func (w htmlFormElementV8Wrapper) reset(cbCtx jsCallbackContext) (jsValue, error) {

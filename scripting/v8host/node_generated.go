@@ -90,120 +90,111 @@ func (w nodeV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
 
 func (w nodeV8Wrapper) getRootNode(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: Node.getRootNode")
-	instance, err0 := js.As[dom.Node](cbCtx.Instance())
-	options, err1 := consumeArgument(cbCtx, "options", w.defaultGetRootNodeOptions, w.decodeGetRootNodeOptions)
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		result := instance.GetRootNode(options)
-		return w.toJSWrapper(cbCtx, result)
+	instance, errInst := js.As[dom.Node](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("Node.getRootNode: Missing arguments"))
+	options, errArg1 := consumeArgument(cbCtx, "options", w.defaultGetRootNodeOptions, w.decodeGetRootNodeOptions)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result := instance.GetRootNode(options)
+	return w.toJSWrapper(cbCtx, result)
 }
 
 func (w nodeV8Wrapper) cloneNode(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: Node.cloneNode")
-	instance, err0 := js.As[dom.Node](cbCtx.Instance())
-	subtree, err1 := consumeArgument(cbCtx, "subtree", w.defaultboolean, w.decodeBoolean)
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		result := instance.CloneNode(subtree)
-		return w.toJSWrapper(cbCtx, result)
+	instance, errInst := js.As[dom.Node](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("Node.cloneNode: Missing arguments"))
+	subtree, errArg1 := consumeArgument(cbCtx, "subtree", w.defaultboolean, w.decodeBoolean)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result := instance.CloneNode(subtree)
+	return w.toJSWrapper(cbCtx, result)
 }
 
 func (w nodeV8Wrapper) isSameNode(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: Node.isSameNode")
-	instance, err0 := js.As[dom.Node](cbCtx.Instance())
-	otherNode, err1 := consumeArgument(cbCtx, "otherNode", zeroValue, w.decodeNode)
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		result := instance.IsSameNode(otherNode)
-		return w.toBoolean(cbCtx, result)
+	instance, errInst := js.As[dom.Node](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("Node.isSameNode: Missing arguments"))
+	otherNode, errArg1 := consumeArgument(cbCtx, "otherNode", zeroValue, w.decodeNode)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result := instance.IsSameNode(otherNode)
+	return w.toBoolean(cbCtx, result)
 }
 
 func (w nodeV8Wrapper) contains(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: Node.contains")
-	instance, err0 := js.As[dom.Node](cbCtx.Instance())
-	other, err1 := consumeArgument(cbCtx, "other", zeroValue, w.decodeNode)
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		result := instance.Contains(other)
-		return w.toBoolean(cbCtx, result)
+	instance, errInst := js.As[dom.Node](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("Node.contains: Missing arguments"))
+	other, errArg1 := consumeArgument(cbCtx, "other", zeroValue, w.decodeNode)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result := instance.Contains(other)
+	return w.toBoolean(cbCtx, result)
 }
 
 func (w nodeV8Wrapper) insertBefore(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: Node.insertBefore")
-	instance, err0 := js.As[dom.Node](cbCtx.Instance())
-	node, err1 := consumeArgument(cbCtx, "node", nil, w.decodeNode)
-	child, err2 := consumeArgument(cbCtx, "child", zeroValue, w.decodeNode)
-	if cbCtx.noOfReadArguments >= 2 {
-		err := errors.Join(err0, err1, err2)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		result, callErr := instance.InsertBefore(node, child)
-		if callErr != nil {
-			return cbCtx.ReturnWithError(callErr)
-		} else {
-			return w.toJSWrapper(cbCtx, result)
-		}
+	instance, errInst := js.As[dom.Node](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("Node.insertBefore: Missing arguments"))
+	node, errArg1 := consumeArgument(cbCtx, "node", nil, w.decodeNode)
+	child, errArg2 := consumeArgument(cbCtx, "child", zeroValue, w.decodeNode)
+	err := errors.Join(errArg1, errArg2)
+	if err != nil {
+		return nil, err
+	}
+	result, errCall := instance.InsertBefore(node, child)
+	if errCall != nil {
+		return nil, errCall
+	}
+	return w.toJSWrapper(cbCtx, result)
 }
 
 func (w nodeV8Wrapper) appendChild(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: Node.appendChild")
-	instance, err0 := js.As[dom.Node](cbCtx.Instance())
-	node, err1 := consumeArgument(cbCtx, "node", nil, w.decodeNode)
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		result, callErr := instance.AppendChild(node)
-		if callErr != nil {
-			return cbCtx.ReturnWithError(callErr)
-		} else {
-			return w.toJSWrapper(cbCtx, result)
-		}
+	instance, errInst := js.As[dom.Node](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("Node.appendChild: Missing arguments"))
+	node, errArg1 := consumeArgument(cbCtx, "node", nil, w.decodeNode)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result, errCall := instance.AppendChild(node)
+	if errCall != nil {
+		return nil, errCall
+	}
+	return w.toJSWrapper(cbCtx, result)
 }
 
 func (w nodeV8Wrapper) removeChild(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: Node.removeChild")
-	instance, err0 := js.As[dom.Node](cbCtx.Instance())
-	child, err1 := consumeArgument(cbCtx, "child", nil, w.decodeNode)
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		result, callErr := instance.RemoveChild(child)
-		if callErr != nil {
-			return cbCtx.ReturnWithError(callErr)
-		} else {
-			return w.toJSWrapper(cbCtx, result)
-		}
+	instance, errInst := js.As[dom.Node](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("Node.removeChild: Missing arguments"))
+	child, errArg1 := consumeArgument(cbCtx, "child", nil, w.decodeNode)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result, errCall := instance.RemoveChild(child)
+	if errCall != nil {
+		return nil, errCall
+	}
+	return w.toJSWrapper(cbCtx, result)
 }
 
 func (w nodeV8Wrapper) nodeName(cbCtx jsCallbackContext) (jsValue, error) {

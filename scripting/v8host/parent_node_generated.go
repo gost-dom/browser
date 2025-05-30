@@ -3,7 +3,6 @@
 package v8host
 
 import (
-	"errors"
 	dom "github.com/gost-dom/browser/dom"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
@@ -56,40 +55,36 @@ func (w parentNodeV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, erro
 
 func (w parentNodeV8Wrapper) querySelector(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: ParentNode.querySelector")
-	instance, err0 := js.As[dom.ParentNode](cbCtx.Instance())
-	selectors, err1 := consumeArgument(cbCtx, "selectors", nil, w.decodeString)
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		result, callErr := instance.QuerySelector(selectors)
-		if callErr != nil {
-			return cbCtx.ReturnWithError(callErr)
-		} else {
-			return w.toJSWrapper(cbCtx, result)
-		}
+	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("ParentNode.querySelector: Missing arguments"))
+	selectors, errArg1 := consumeArgument(cbCtx, "selectors", nil, w.decodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result, errCall := instance.QuerySelector(selectors)
+	if errCall != nil {
+		return nil, errCall
+	}
+	return w.toJSWrapper(cbCtx, result)
 }
 
 func (w parentNodeV8Wrapper) querySelectorAll(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: ParentNode.querySelectorAll")
-	instance, err0 := js.As[dom.ParentNode](cbCtx.Instance())
-	selectors, err1 := consumeArgument(cbCtx, "selectors", nil, w.decodeString)
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		result, callErr := instance.QuerySelectorAll(selectors)
-		if callErr != nil {
-			return cbCtx.ReturnWithError(callErr)
-		} else {
-			return w.toJSWrapper(cbCtx, result)
-		}
+	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("ParentNode.querySelectorAll: Missing arguments"))
+	selectors, errArg1 := consumeArgument(cbCtx, "selectors", nil, w.decodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result, errCall := instance.QuerySelectorAll(selectors)
+	if errCall != nil {
+		return nil, errCall
+	}
+	return w.toJSWrapper(cbCtx, result)
 }
 
 func (w parentNodeV8Wrapper) firstElementChild(cbCtx jsCallbackContext) (jsValue, error) {

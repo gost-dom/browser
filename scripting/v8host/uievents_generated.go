@@ -58,22 +58,18 @@ func (w mouseEventV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) 
 
 func (w mouseEventV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: MouseEvent.Constructor")
-	type_, err1 := consumeArgument(cbCtx, "type", nil, w.decodeString)
-	eventInitDict, err2 := consumeArgument(cbCtx, "eventInitDict", nil, w.decodeMouseEventInit)
-	if cbCtx.noOfReadArguments >= 2 {
-		err := errors.Join(err1, err2)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
+	type_, errArg1 := consumeArgument(cbCtx, "type", nil, w.decodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	eventInitDict, found, errArg := consumeOptionalArg(cbCtx, "eventInitDict", w.decodeMouseEventInit)
+	if found {
+		if errArg != nil {
+			return nil, errArg
 		}
 		return w.CreateInstanceEventInitDict(cbCtx, type_, eventInitDict)
 	}
-	if cbCtx.noOfReadArguments >= 1 {
-		if err1 != nil {
-			return cbCtx.ReturnWithError(err1)
-		}
-		return w.CreateInstance(cbCtx, type_)
-	}
-	return cbCtx.ReturnWithError(errors.New("MouseEvent.constructor: Missing arguments"))
+	return w.CreateInstance(cbCtx, type_)
 }
 
 func (w mouseEventV8Wrapper) getModifierState(cbCtx jsCallbackContext) (jsValue, error) {
@@ -153,22 +149,18 @@ func (w uIEventV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 
 func (w uIEventV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: UIEvent.Constructor")
-	type_, err1 := consumeArgument(cbCtx, "type", nil, w.decodeString)
-	eventInitDict, err2 := consumeArgument(cbCtx, "eventInitDict", nil, w.decodeUIEventInit)
-	if cbCtx.noOfReadArguments >= 2 {
-		err := errors.Join(err1, err2)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
+	type_, errArg1 := consumeArgument(cbCtx, "type", nil, w.decodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	eventInitDict, found, errArg := consumeOptionalArg(cbCtx, "eventInitDict", w.decodeUIEventInit)
+	if found {
+		if errArg != nil {
+			return nil, errArg
 		}
 		return w.CreateInstanceEventInitDict(cbCtx, type_, eventInitDict)
 	}
-	if cbCtx.noOfReadArguments >= 1 {
-		if err1 != nil {
-			return cbCtx.ReturnWithError(err1)
-		}
-		return w.CreateInstance(cbCtx, type_)
-	}
-	return cbCtx.ReturnWithError(errors.New("UIEvent.constructor: Missing arguments"))
+	return w.CreateInstance(cbCtx, type_)
 }
 
 func (w uIEventV8Wrapper) view(cbCtx jsCallbackContext) (jsValue, error) {

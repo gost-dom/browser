@@ -265,6 +265,7 @@ func createHostInstance(config hostOptions) *V8ScriptHost {
 		host.windowTemplate = window.InstanceTemplate()
 		host.contexts = make(map[*v8go.Context]*V8ScriptContext)
 		installGlobals(window, host, globalInstalls)
+		installEventLoopGlobals(host, host.windowTemplate)
 		for _, i := range initializers {
 			i(host)
 		}

@@ -87,28 +87,14 @@ func (gen V8TargetGenerators) CreateAttributeGetter(
 	cbCtx wrappers.CallbackContext,
 	eval func(g.Generator) g.Generator,
 ) g.Generator {
-	instance := g.NewValue("instance")
-	err := g.NewValue("err")
 	naming := V8NamingStrategy{data}
-	receiver := WrapperInstance{g.NewValue(naming.Receiver())}
-
-	x := V8InstanceInvocation{
-		Name:     "",
-		Args:     nil,
-		Op:       op,
-		Instance: &instance,
-		Receiver: receiver,
-	}
-	return g.StatementList(
-		g.AssignMany(
-			g.List(instance, err),
-			wrappers.As.TypeParam(data.WrappedType()).Call(cbCtx.GetInstance()),
-		),
-		wrappers.IfError(
-			err,
-			wrappers.ReturnTransform(wrappers.TransformerFunc(cbCtx.ReturnWithError)),
-		),
-		x.ConvertResult(cbCtx.Context(), cbCtx, data, eval(instance)),
+	return V8CallbackGenerators{
+		data,
+		op,
+		g.NewValue(naming.Receiver()),
+	}.AttributeGetterCallback(
+		cbCtx,
+		wrappers.TransformerFunc(eval),
 	)
 }
 
@@ -150,52 +136,17 @@ func (gen V8TargetGenerators) CreateAttributeSetter(
 	)
 }
 
+func returnNilCommaErr(err g.Generator) g.Generator {
+	return g.Return(g.Nil, err)
+}
+
 func (gen V8TargetGenerators) CreateMethodCallbackBody(
 	data ESConstructorData,
 	op ESOperation,
 	cbCtx wrappers.CallbackContext,
 ) g.Generator {
-	naming := V8NamingStrategy{data}
-	receiver := WrapperInstance{g.NewValue(naming.Receiver())}
-	instance := g.NewValue("instance")
-	readArgsResult := ReadArguments(data, op, cbCtx)
-	err := g.Id("err0")
-	if len(op.Arguments) == 0 {
-		err = g.Id("err")
-	}
-	ctx := cbCtx.Context()
-	requireContext := false
-	var CreateCall = func(functionName string, argnames []g.Generator, op ESOperation) g.Generator {
-		if op.Name == "toString" {
-			functionName = "String"
-		}
-		requireContext = requireContext || op.HasResult()
-		return V8InstanceInvocation{
-			Name:     functionName,
-			Args:     argnames,
-			Op:       op,
-			Instance: &instance,
-			Receiver: receiver,
-		}.GetGenerator(ctx, cbCtx, data)
-	}
-	statements := g.StatementList(
-		g.AssignMany(
-			g.List(instance, err),
-			wrappers.As.TypeParam(data.WrappedType()).Call(cbCtx.GetInstance()),
-		),
-		readArgsResult,
-		CreateV8WrapperMethodInstanceInvocations(
-			data,
-			op,
-			cbCtx,
-			IdlNameToGoName(op.Name),
-			readArgsResult.Args,
-			err,
-			CreateCall,
-			true,
-		),
-	)
-	return statements
+	receiver := g.NewValue("w")
+	return V8CallbackGenerators{data, op, receiver}.OperationCallback(cbCtx)
 }
 
 func (gen V8TargetGenerators) CreateHostInitializer(data ESConstructorData) g.Generator {

@@ -21,7 +21,6 @@ const (
 	URLInterfaces  = BASE_PKG + "/internal/interfaces/url-interfaces"
 	HTMLInterfaces = BASE_PKG + "/internal/interfaces/html-interfaces"
 	HTMLInternal   = BASE_PKG + "/internal/html"
-	JSAbstraction  = BASE_PKG + "/scripting/v8host/internal/abstraction"
 	JS             = BASE_PKG + "/scripting/internal/js"
 	URL            = BASE_PKG + "/url"
 	V8go           = "github.com/gost-dom/v8go"

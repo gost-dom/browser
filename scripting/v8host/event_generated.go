@@ -60,16 +60,13 @@ func (w eventV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 
 func (w eventV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: Event.Constructor")
-	type_, err1 := consumeArgument(cbCtx, "type", nil, w.decodeString)
-	eventInitDict, err2 := consumeArgument(cbCtx, "eventInitDict", w.defaultEventInit, w.decodeEventInit)
-	if cbCtx.noOfReadArguments >= 2 {
-		err := errors.Join(err1, err2)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		return w.CreateInstance(cbCtx, type_, eventInitDict)
+	type_, errArg1 := consumeArgument(cbCtx, "type", nil, w.decodeString)
+	eventInitDict, errArg2 := consumeArgument(cbCtx, "eventInitDict", w.defaultEventInit, w.decodeEventInit)
+	err := errors.Join(errArg1, errArg2)
+	if err != nil {
+		return nil, err
 	}
-	return cbCtx.ReturnWithError(errors.New("Event.constructor: Missing arguments"))
+	return w.CreateInstance(cbCtx, type_, eventInitDict)
 }
 
 func (w eventV8Wrapper) stopPropagation(cbCtx jsCallbackContext) (jsValue, error) {
@@ -79,7 +76,7 @@ func (w eventV8Wrapper) stopPropagation(cbCtx jsCallbackContext) (jsValue, error
 		return cbCtx.ReturnWithError(err)
 	}
 	instance.StopPropagation()
-	return cbCtx.ReturnWithValue(nil)
+	return nil, nil
 }
 
 func (w eventV8Wrapper) preventDefault(cbCtx jsCallbackContext) (jsValue, error) {
@@ -89,7 +86,7 @@ func (w eventV8Wrapper) preventDefault(cbCtx jsCallbackContext) (jsValue, error)
 		return cbCtx.ReturnWithError(err)
 	}
 	instance.PreventDefault()
-	return cbCtx.ReturnWithValue(nil)
+	return nil, nil
 }
 
 func (w eventV8Wrapper) type_(cbCtx jsCallbackContext) (jsValue, error) {
