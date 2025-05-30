@@ -50,4 +50,6 @@ type ValueFactory[T any] interface {
 	NewInt32(int32) Value[T]
 	NewInt64(int64) Value[T]
 	NewArray(...Value[T]) Value[T]
+
+	NewTypeError(msg string) error
 }
