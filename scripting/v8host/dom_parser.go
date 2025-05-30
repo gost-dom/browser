@@ -13,8 +13,8 @@ func initDOMParser(ft jsConstructor) {
 		func(cbCtx jsCallbackContext) (jsValue, error) {
 			ctx := cbCtx.ScriptCtx()
 			window := ctx.window
-			html, err0 := cbCtx.consumeString()
-			contentType, err1 := cbCtx.consumeString()
+			html, err0 := consumeArgument(cbCtx, "html", nil, decodeString)
+			contentType, err1 := consumeArgument(cbCtx, "contentType", nil, decodeString)
 			if err := errors.Join(err0, err1); err != nil {
 				return cbCtx.ReturnWithError(err)
 			}
