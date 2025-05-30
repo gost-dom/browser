@@ -36,12 +36,6 @@ func (e *elementV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) {
 		nil,
 		v8.None,
 	)
-	prototype.SetAccessorProperty(
-		"textContent",
-		nil,
-		v8.NewFunctionTemplateWithError(iso, e.setTextContent),
-		v8.None,
-	)
 }
 
 func (e *elementV8Wrapper) insertAdjacentHTML(
@@ -64,14 +58,6 @@ func (e *elementV8Wrapper) outerHTML(info *v8.FunctionCallbackInfo) (*v8.Value, 
 	} else {
 		return nil, err
 	}
-}
-
-func (w *elementV8Wrapper) setTextContent(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	e, err := w.getInstance(info)
-	if err == nil {
-		e.SetTextContent(info.Args()[0].String())
-	}
-	return nil, err
 }
 
 func (e elementV8Wrapper) classList(cbCtx *v8CallbackContext) (jsValue, error) {
