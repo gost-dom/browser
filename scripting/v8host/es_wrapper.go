@@ -46,11 +46,11 @@ func (w converters[T]) decodeBoolean(ctx jsCallbackContext, val jsValue) (bool, 
 	return val.Boolean(), nil
 }
 
-func (w converters[T]) decodeLong(ctx jsCallbackContext, val jsValue) (int, error) {
+func (w converters[T]) decodeLong(_ jsCallbackContext, val jsValue) (int, error) {
 	return int(val.Int32()), nil
 }
 
-func (w converters[T]) decodeUnsignedLong(ctx jsCallbackContext, val jsValue) (int, error) {
+func (w converters[T]) decodeUnsignedLong(_ jsCallbackContext, val jsValue) (int, error) {
 	return int(val.Uint32()), nil
 }
 
@@ -60,7 +60,7 @@ func (w converters[T]) decodeNode(ctx jsCallbackContext, val jsValue) (dom.Node,
 			return node, nil
 		}
 	}
-	return nil, v8.NewTypeError(ctx.host.iso, "Must be a node")
+	return nil, ctx.ValueFactory().NewTypeError("Value is not a node")
 }
 
 func (w converters[T]) decodeHTMLElement(

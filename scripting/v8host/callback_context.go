@@ -190,6 +190,10 @@ func (f v8ValueFactory) NewArray(values ...jsValue) jsValue {
 	}
 }
 
+func (f v8ValueFactory) NewTypeError(msg string) error {
+	return v8go.NewTypeError(f.iso(), msg)
+}
+
 // Creates a value in V8 from any value. This variant is hidden, as not all
 // types are valid, and for type safety reasons, only valid types are exposed.
 func (f v8ValueFactory) newV8Value(val any) jsValue {
