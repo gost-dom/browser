@@ -24,22 +24,6 @@ func createIllegalConstructor(host *V8ScriptHost) *v8.FunctionTemplate {
 	return result
 }
 
-func newConstructorBuilder[T any](
-	host *V8ScriptHost,
-	cb v8.FunctionCallbackWithError,
-) constructorBuilder[T] {
-	constructor := v8.NewFunctionTemplateWithError(
-		host.iso,
-		cb,
-	)
-	constructor.InstanceTemplate().SetInternalFieldCount(1)
-
-	builder := constructorBuilder[T]{host: host,
-		constructor: constructor,
-	}
-	return builder
-}
-
 func newIllegalConstructorBuilder[T any](host *V8ScriptHost) constructorBuilder[T] {
 	constructor := createIllegalConstructor(host)
 
@@ -49,32 +33,6 @@ func newIllegalConstructorBuilder[T any](host *V8ScriptHost) constructorBuilder[
 	return builder
 }
 
-func getInstanceFromThis[T any](ctx *V8ScriptContext, this *v8.Object) (instance T, err error) {
-	cachedEntity, ok := ctx.getCachedNode(this)
-	if !ok {
-		err = errors.New("No cached entity could be found for `this`")
-		return
-	}
-	if i, e_ok := cachedEntity.(T); e_ok && ok {
-		return i, nil
-	} else {
-		err = v8.NewTypeError(ctx.host.iso, "Not an object of the correct type")
-		return
-	}
-}
-
-func (c *constructorBuilder[T]) SetDefaultInstanceLookup() {
-	c.instanceLookup = func(ctx *V8ScriptContext, this *v8.Object) (val T, err error) {
-		instance, ok := ctx.getCachedNode(this)
-		if instance, e_ok := instance.(T); e_ok && ok {
-			return instance, nil
-		} else {
-			err = v8.NewTypeError(ctx.host.iso, "Not an instance of NamedNodeMap")
-			return
-		}
-	}
-}
-
 func (c constructorBuilder[T]) NewPrototypeBuilder() prototypeBuilder[T] {
 	if c.instanceLookup == nil {
 		panic("Cannot build prototype builder if instance lookup not specified")
@@ -82,17 +40,6 @@ func (c constructorBuilder[T]) NewPrototypeBuilder() prototypeBuilder[T] {
 	return prototypeBuilder[T]{
 		host:   c.host,
 		proto:  c.constructor.PrototypeTemplate(),
-		lookup: c.instanceLookup,
-	}
-}
-
-func (c constructorBuilder[T]) NewInstanceBuilder() prototypeBuilder[T] {
-	if c.instanceLookup == nil {
-		panic("Cannot build prototype builder if instance lookup not specified")
-	}
-	return prototypeBuilder[T]{
-		host:   c.host,
-		proto:  c.constructor.InstanceTemplate(),
 		lookup: c.instanceLookup,
 	}
 }
