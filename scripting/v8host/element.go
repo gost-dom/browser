@@ -26,10 +26,7 @@ func newElementV8Wrapper(host *V8ScriptHost) *elementV8Wrapper {
 func (e *elementV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) {
 	iso := e.scriptHost.iso
 	prototype := constructor.PrototypeTemplate()
-	prototype.Set(
-		"insertAdjacentHTML",
-		v8.NewFunctionTemplateWithError(iso, e.insertAdjacentHTML),
-	)
+	prototype.Set("insertAdjacentHTML", wrapV8Callback(e.scriptHost, e.insertAdjacentHTML))
 	prototype.SetAccessorProperty(
 		"outerHTML",
 		v8.NewFunctionTemplateWithError(iso, e.outerHTML),
@@ -38,13 +35,10 @@ func (e *elementV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) {
 	)
 }
 
-func (e *elementV8Wrapper) insertAdjacentHTML(
-	info *v8.FunctionCallbackInfo,
-) (val *v8.Value, err error) {
-	arg := newCallbackContext(e.scriptHost, info)
-	element, e0 := e.getInstance(info)
-	position, e1 := arg.consumeString()
-	html, e2 := arg.consumeString()
+func (e *elementV8Wrapper) insertAdjacentHTML(cbCtx jsCallbackContext) (val jsValue, err error) {
+	element, e0 := js.As[dom.Element](cbCtx.Instance())
+	position, e1 := consumeArgument(cbCtx, "position", nil, decodeString)
+	html, e2 := consumeArgument(cbCtx, "html", nil, decodeString)
 	err = errors.Join(e0, e1, e2)
 	if err == nil {
 		err = element.InsertAdjacentHTML(position, html)
