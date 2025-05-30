@@ -84,12 +84,12 @@ func (w nodeV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 }
 
 func (w nodeV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: Node.Constructor")
+	cbCtx.Logger().Debug("V8 Function call: Node.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w nodeV8Wrapper) getRootNode(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: Node.getRootNode")
+	cbCtx.Logger().Debug("V8 Function call: Node.getRootNode")
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
@@ -103,7 +103,7 @@ func (w nodeV8Wrapper) getRootNode(cbCtx jsCallbackContext) (jsValue, error) {
 }
 
 func (w nodeV8Wrapper) cloneNode(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: Node.cloneNode")
+	cbCtx.Logger().Debug("V8 Function call: Node.cloneNode")
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
@@ -117,7 +117,7 @@ func (w nodeV8Wrapper) cloneNode(cbCtx jsCallbackContext) (jsValue, error) {
 }
 
 func (w nodeV8Wrapper) isSameNode(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: Node.isSameNode")
+	cbCtx.Logger().Debug("V8 Function call: Node.isSameNode")
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
@@ -131,7 +131,7 @@ func (w nodeV8Wrapper) isSameNode(cbCtx jsCallbackContext) (jsValue, error) {
 }
 
 func (w nodeV8Wrapper) contains(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: Node.contains")
+	cbCtx.Logger().Debug("V8 Function call: Node.contains")
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
@@ -145,7 +145,7 @@ func (w nodeV8Wrapper) contains(cbCtx jsCallbackContext) (jsValue, error) {
 }
 
 func (w nodeV8Wrapper) insertBefore(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: Node.insertBefore")
+	cbCtx.Logger().Debug("V8 Function call: Node.insertBefore")
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
@@ -164,7 +164,7 @@ func (w nodeV8Wrapper) insertBefore(cbCtx jsCallbackContext) (jsValue, error) {
 }
 
 func (w nodeV8Wrapper) appendChild(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: Node.appendChild")
+	cbCtx.Logger().Debug("V8 Function call: Node.appendChild")
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
@@ -181,7 +181,7 @@ func (w nodeV8Wrapper) appendChild(cbCtx jsCallbackContext) (jsValue, error) {
 }
 
 func (w nodeV8Wrapper) removeChild(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: Node.removeChild")
+	cbCtx.Logger().Debug("V8 Function call: Node.removeChild")
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
@@ -198,7 +198,7 @@ func (w nodeV8Wrapper) removeChild(cbCtx jsCallbackContext) (jsValue, error) {
 }
 
 func (w nodeV8Wrapper) nodeName(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: Node.nodeName")
+	cbCtx.Logger().Debug("V8 Function call: Node.nodeName")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -208,7 +208,7 @@ func (w nodeV8Wrapper) nodeName(cbCtx jsCallbackContext) (jsValue, error) {
 }
 
 func (w nodeV8Wrapper) isConnected(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: Node.isConnected")
+	cbCtx.Logger().Debug("V8 Function call: Node.isConnected")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -218,7 +218,7 @@ func (w nodeV8Wrapper) isConnected(cbCtx jsCallbackContext) (jsValue, error) {
 }
 
 func (w nodeV8Wrapper) ownerDocument(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: Node.ownerDocument")
+	cbCtx.Logger().Debug("V8 Function call: Node.ownerDocument")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -228,7 +228,7 @@ func (w nodeV8Wrapper) ownerDocument(cbCtx jsCallbackContext) (jsValue, error) {
 }
 
 func (w nodeV8Wrapper) parentElement(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: Node.parentElement")
+	cbCtx.Logger().Debug("V8 Function call: Node.parentElement")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -238,7 +238,7 @@ func (w nodeV8Wrapper) parentElement(cbCtx jsCallbackContext) (jsValue, error) {
 }
 
 func (w nodeV8Wrapper) childNodes(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: Node.childNodes")
+	cbCtx.Logger().Debug("V8 Function call: Node.childNodes")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -248,7 +248,7 @@ func (w nodeV8Wrapper) childNodes(cbCtx jsCallbackContext) (jsValue, error) {
 }
 
 func (w nodeV8Wrapper) firstChild(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: Node.firstChild")
+	cbCtx.Logger().Debug("V8 Function call: Node.firstChild")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -258,7 +258,7 @@ func (w nodeV8Wrapper) firstChild(cbCtx jsCallbackContext) (jsValue, error) {
 }
 
 func (w nodeV8Wrapper) previousSibling(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: Node.previousSibling")
+	cbCtx.Logger().Debug("V8 Function call: Node.previousSibling")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -268,7 +268,7 @@ func (w nodeV8Wrapper) previousSibling(cbCtx jsCallbackContext) (jsValue, error)
 }
 
 func (w nodeV8Wrapper) nextSibling(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: Node.nextSibling")
+	cbCtx.Logger().Debug("V8 Function call: Node.nextSibling")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)

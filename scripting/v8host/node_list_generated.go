@@ -42,12 +42,12 @@ func (w nodeListV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 }
 
 func (w nodeListV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: NodeList.Constructor")
+	cbCtx.Logger().Debug("V8 Function call: NodeList.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w nodeListV8Wrapper) item(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: NodeList.item")
+	cbCtx.Logger().Debug("V8 Function call: NodeList.item")
 	instance, errInst := js.As[dom.NodeList](cbCtx.Instance())
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
@@ -61,7 +61,7 @@ func (w nodeListV8Wrapper) item(cbCtx jsCallbackContext) (jsValue, error) {
 }
 
 func (w nodeListV8Wrapper) length(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: NodeList.length")
+	cbCtx.Logger().Debug("V8 Function call: NodeList.length")
 	instance, err := js.As[dom.NodeList](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)

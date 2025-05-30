@@ -19,7 +19,7 @@ func newArgumentHelper(ctx *GojaContext, c goja.FunctionCall) *callbackContext {
 	return &callbackContext{ctx, c, 0}
 }
 
-func (ctx *callbackContext) logger() *slog.Logger {
+func (ctx *callbackContext) Logger() *slog.Logger {
 	if l := ctx.ctx.window.Logger(); l != nil {
 		return l
 	}

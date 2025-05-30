@@ -25,12 +25,12 @@ func (w eventWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime) {
 }
 
 func (w eventWrapper) Constructor(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: Event.Constructor")
+	cbCtx.Logger().Debug("V8 Function call: Event.Constructor")
 	return cbCtx.ReturnWithTypeError("Goja constructor not yet implemented")
 }
 
 func (w eventWrapper) stopPropagation(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: Event.stopPropagation")
+	cbCtx.Logger().Debug("V8 Function call: Event.stopPropagation")
 	instance, instErr := js.As[*event.Event](cbCtx.Instance())
 	if instErr != nil {
 		return cbCtx.ReturnWithError(instErr)
@@ -40,7 +40,7 @@ func (w eventWrapper) stopPropagation(cbCtx *callbackContext) g.Value {
 }
 
 func (w eventWrapper) preventDefault(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: Event.preventDefault")
+	cbCtx.Logger().Debug("V8 Function call: Event.preventDefault")
 	instance, instErr := js.As[*event.Event](cbCtx.Instance())
 	if instErr != nil {
 		return cbCtx.ReturnWithError(instErr)
@@ -50,7 +50,7 @@ func (w eventWrapper) preventDefault(cbCtx *callbackContext) g.Value {
 }
 
 func (w eventWrapper) type_(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: Event.type_")
+	cbCtx.Logger().Debug("V8 Function call: Event.type_")
 	instance, instErr := js.As[*event.Event](cbCtx.Instance())
 	if instErr != nil {
 		return cbCtx.ReturnWithError(instErr)
@@ -60,7 +60,7 @@ func (w eventWrapper) type_(cbCtx *callbackContext) g.Value {
 }
 
 func (w eventWrapper) target(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: Event.target")
+	cbCtx.Logger().Debug("V8 Function call: Event.target")
 	instance, instErr := js.As[*event.Event](cbCtx.Instance())
 	if instErr != nil {
 		return cbCtx.ReturnWithError(instErr)
@@ -70,7 +70,7 @@ func (w eventWrapper) target(cbCtx *callbackContext) g.Value {
 }
 
 func (w eventWrapper) currentTarget(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: Event.currentTarget")
+	cbCtx.Logger().Debug("V8 Function call: Event.currentTarget")
 	instance, instErr := js.As[*event.Event](cbCtx.Instance())
 	if instErr != nil {
 		return cbCtx.ReturnWithError(instErr)
@@ -80,7 +80,7 @@ func (w eventWrapper) currentTarget(cbCtx *callbackContext) g.Value {
 }
 
 func (w eventWrapper) bubbles(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: Event.bubbles")
+	cbCtx.Logger().Debug("V8 Function call: Event.bubbles")
 	instance, instErr := js.As[*event.Event](cbCtx.Instance())
 	if instErr != nil {
 		return cbCtx.ReturnWithError(instErr)
@@ -90,7 +90,7 @@ func (w eventWrapper) bubbles(cbCtx *callbackContext) g.Value {
 }
 
 func (w eventWrapper) cancelable(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: Event.cancelable")
+	cbCtx.Logger().Debug("V8 Function call: Event.cancelable")
 	instance, instErr := js.As[*event.Event](cbCtx.Instance())
 	if instErr != nil {
 		return cbCtx.ReturnWithError(instErr)
@@ -100,7 +100,7 @@ func (w eventWrapper) cancelable(cbCtx *callbackContext) g.Value {
 }
 
 func (w eventWrapper) defaultPrevented(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: Event.defaultPrevented")
+	cbCtx.Logger().Debug("V8 Function call: Event.defaultPrevented")
 	instance, instErr := js.As[*event.Event](cbCtx.Instance())
 	if instErr != nil {
 		return cbCtx.ReturnWithError(instErr)

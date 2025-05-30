@@ -263,7 +263,7 @@ func (c MethodCallback) ReturnNotImplementedError(cbCtx CallbackContext) g.Gener
 }
 
 func (c MethodCallback) LogCall(cbCtx g.Generator) g.Generator {
-	return g.ValueOf(cbCtx).Field("logger").Call().Field("Debug").Call(
+	return g.ValueOf(cbCtx).Field("Logger").Call().Field("Debug").Call(
 		g.Lit(fmt.Sprintf("V8 Function call: %s.%s", c.data.Name(), c.name)))
 	// return stdgen.LogDebug(
 	// 	g.ValueOf(c.receiver).Field("logger").Call(c.platform.PlatformInfoArg()),

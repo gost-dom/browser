@@ -57,7 +57,7 @@ func (w mouseEventV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) 
 }
 
 func (w mouseEventV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: MouseEvent.Constructor")
+	cbCtx.Logger().Debug("V8 Function call: MouseEvent.Constructor")
 	type_, errArg1 := consumeArgument(cbCtx, "type", nil, w.decodeString)
 	if errArg1 != nil {
 		return nil, errArg1
@@ -73,42 +73,42 @@ func (w mouseEventV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, erro
 }
 
 func (w mouseEventV8Wrapper) getModifierState(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: MouseEvent.getModifierState")
+	cbCtx.Logger().Debug("V8 Function call: MouseEvent.getModifierState")
 	return cbCtx.ReturnWithError(errors.New("MouseEvent.getModifierState: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w mouseEventV8Wrapper) screenX(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: MouseEvent.screenX")
+	cbCtx.Logger().Debug("V8 Function call: MouseEvent.screenX")
 	return cbCtx.ReturnWithError(errors.New("MouseEvent.screenX: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w mouseEventV8Wrapper) screenY(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: MouseEvent.screenY")
+	cbCtx.Logger().Debug("V8 Function call: MouseEvent.screenY")
 	return cbCtx.ReturnWithError(errors.New("MouseEvent.screenY: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w mouseEventV8Wrapper) clientX(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: MouseEvent.clientX")
+	cbCtx.Logger().Debug("V8 Function call: MouseEvent.clientX")
 	return cbCtx.ReturnWithError(errors.New("MouseEvent.clientX: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w mouseEventV8Wrapper) clientY(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: MouseEvent.clientY")
+	cbCtx.Logger().Debug("V8 Function call: MouseEvent.clientY")
 	return cbCtx.ReturnWithError(errors.New("MouseEvent.clientY: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w mouseEventV8Wrapper) layerX(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: MouseEvent.layerX")
+	cbCtx.Logger().Debug("V8 Function call: MouseEvent.layerX")
 	return cbCtx.ReturnWithError(errors.New("MouseEvent.layerX: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w mouseEventV8Wrapper) layerY(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: MouseEvent.layerY")
+	cbCtx.Logger().Debug("V8 Function call: MouseEvent.layerY")
 	return cbCtx.ReturnWithError(errors.New("MouseEvent.layerY: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w mouseEventV8Wrapper) relatedTarget(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: MouseEvent.relatedTarget")
+	cbCtx.Logger().Debug("V8 Function call: MouseEvent.relatedTarget")
 	return cbCtx.ReturnWithError(errors.New("MouseEvent.relatedTarget: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
@@ -148,7 +148,7 @@ func (w uIEventV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 }
 
 func (w uIEventV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: UIEvent.Constructor")
+	cbCtx.Logger().Debug("V8 Function call: UIEvent.Constructor")
 	type_, errArg1 := consumeArgument(cbCtx, "type", nil, w.decodeString)
 	if errArg1 != nil {
 		return nil, errArg1
@@ -164,11 +164,11 @@ func (w uIEventV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) 
 }
 
 func (w uIEventV8Wrapper) view(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: UIEvent.view")
+	cbCtx.Logger().Debug("V8 Function call: UIEvent.view")
 	return cbCtx.ReturnWithError(errors.New("UIEvent.view: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w uIEventV8Wrapper) detail(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: UIEvent.detail")
+	cbCtx.Logger().Debug("V8 Function call: UIEvent.detail")
 	return cbCtx.ReturnWithError(errors.New("UIEvent.detail: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
