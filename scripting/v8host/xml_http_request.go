@@ -73,25 +73,21 @@ func (xhr xmlHttpRequestV8Wrapper) CreateInstance(
 }
 
 func (xhr xmlHttpRequestV8Wrapper) open(cbCtx *v8CallbackContext) (jsValue, error) {
+	instance, errInstance := js.As[XmlHttpRequest](cbCtx.Instance())
 	method, err0 := consumeArgument(cbCtx, "method", nil, xhr.decodeString)
 	url, err1 := consumeArgument(cbCtx, "url", nil, xhr.decodeString)
-	async, err2 := consumeArgument(cbCtx, "async", nil, xhr.decodeBoolean)
-	instance, errInstance := js.As[XmlHttpRequest](cbCtx.Instance())
-	if cbCtx.noOfReadArguments > 2 {
-		if err := errors.Join(err0, err1, err2, errInstance); err != nil {
-			return cbCtx.ReturnWithError(err)
+	if err := errors.Join(err0, err1, errInstance); err != nil {
+		return nil, err
+	}
+	if async, found, err2 := consumeOptionalArg(cbCtx, "async", xhr.decodeBoolean); found {
+		if err2 != nil {
+			return nil, err2
 		}
 		instance.Open(method, url, RequestOptionAsync(async))
-		return cbCtx.ReturnWithValue(nil)
-	}
-	if cbCtx.noOfReadArguments < 2 {
-		cbCtx.ReturnWithError(errors.New("Not enough arguments"))
-	}
-	if err := errors.Join(err0, err1, errInstance); err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, nil
 	}
 	instance.Open(method, url)
-	return cbCtx.ReturnWithValue(nil)
+	return nil, nil
 }
 
 func (xhr xmlHttpRequestV8Wrapper) upload(cbCtx *v8CallbackContext) (jsValue, error) {

@@ -15,12 +15,16 @@ func (l domTokenListV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplat
 }
 
 func (l domTokenListV8Wrapper) toggle(args *v8CallbackContext) (jsValue, error) {
-	token, err0 := consumeArgument(args, "toggle", nil, l.decodeString)
-	force, err1 := consumeArgument(args, "force", nil, l.decodeBoolean)
 	instance, errInstance := js.As[dom.DOMTokenList](args.Instance())
-	if args.noOfReadArguments >= 2 {
-		if err := errors.Join(err0, err1, errInstance); err != nil {
-			return args.ReturnWithError(err)
+	token, err0 := consumeArgument(args, "toggle", nil, l.decodeString)
+	if err := errors.Join(err0, errInstance); err != nil {
+		return nil, err
+	}
+
+	force, found, err1 := consumeOptionalArg(args, "force", l.decodeBoolean)
+	if found {
+		if err1 != nil {
+			return nil, err1
 		}
 		if force {
 			instance.Add(token)
@@ -29,9 +33,6 @@ func (l domTokenListV8Wrapper) toggle(args *v8CallbackContext) (jsValue, error) 
 			instance.Remove(token)
 			return args.ValueFactory().NewBoolean(false), nil
 		}
-	}
-	if err := errors.Join(err0, errInstance); err != nil {
-		return nil, err
 	}
 	return args.ValueFactory().NewBoolean(instance.Toggle(token)), nil
 }

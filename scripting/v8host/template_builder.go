@@ -220,11 +220,6 @@ func parseSetterArg[T any](
 
 func zeroValue[T any]() (res T) { return }
 
-func ignoreArgument(args *v8CallbackContext) {
-	args.ConsumeArg()
-	args.acceptIndex(args.noOfReadArguments)
-}
-
 // consumeArgument pulls one of the passed arguments and tries to convert it to
 // target type T using one of the passed decoders. The return value will be
 // taken from the first decode that does not return an error. If no decoder is
@@ -242,10 +237,8 @@ func consumeArgument[T any](
 	defaultValue func() T,
 	decoders ...func(*v8CallbackContext, jsValue) (T, error),
 ) (result T, err error) {
-	index := args.currentIndex
 	value := args.ConsumeArg()
 	if value == nil && defaultValue != nil {
-		args.acceptIndex(index)
 		return defaultValue(), nil
 	} else {
 		errs := make([]error, len(decoders))
@@ -269,17 +262,15 @@ func consumeOptionalArg[T any](
 	decoders ...func(*v8CallbackContext, jsValue) (T, error),
 ) (result T, found bool, err error) {
 	value := args.ConsumeArg()
-	if value == nil {
+	if value == nil || value.Self().v8Value() == nil {
 		return
 	}
 	found = true
 	errs := make([]error, len(decoders))
-	if value != nil {
-		for i, parser := range decoders {
-			result, errs[i] = parser(args, value)
-			if errs[i] == nil {
-				return
-			}
+	for i, parser := range decoders {
+		result, errs[i] = parser(args, value)
+		if errs[i] == nil {
+			return
 		}
 	}
 	// TODO: This should eventually become a TypeError in JS

@@ -22,10 +22,9 @@ var (
 )
 
 type v8CallbackContext struct {
-	v8Info            *v8.FunctionCallbackInfo
-	host              *V8ScriptHost
-	noOfReadArguments int
-	currentIndex      int
+	v8Info       *v8.FunctionCallbackInfo
+	host         *V8ScriptHost
+	currentIndex int
 }
 
 func newCallbackContext(host *V8ScriptHost, info *v8.FunctionCallbackInfo) jsCallbackContext {
@@ -80,15 +79,6 @@ func (h *v8CallbackContext) Instance() (any, error) {
 		return h.ReturnWithTypeError("No internal instance")
 	}
 	return h.v8Info.This().GetInternalField(0).ExternalHandle().Value(), nil
-}
-
-// acceptIndex informs argumentHelper that argument at index was accepted. This
-// affects when we query about how many arguments were read, in order to
-// determine which overload to call in the system.
-func (args *v8CallbackContext) acceptIndex(index int) {
-	if args.noOfReadArguments == index {
-		args.noOfReadArguments = index + 1
-	}
 }
 
 // consumeValue works like [argumentHelper.consumeArg], but returns undefined
@@ -149,7 +139,6 @@ func (h *v8CallbackContext) ConsumeArg() jsValue {
 	if arg.IsUndefined() {
 		return nil
 	}
-	h.acceptIndex(index)
 	return &v8Value{h.iso(), arg}
 }
 
