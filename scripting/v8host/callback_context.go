@@ -267,6 +267,10 @@ func decodeInt32(cbCtx jsCallbackContext, val jsValue) (int32, error) {
 	return val.Int32(), nil
 }
 
+func decodeString(cbCtx jsCallbackContext, val jsValue) (string, error) {
+	return val.String(), nil
+}
+
 /* -------- v8Scope -------- */
 
 type v8Scope struct {
