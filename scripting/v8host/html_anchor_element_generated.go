@@ -46,12 +46,12 @@ func (w htmlAnchorElementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTem
 }
 
 func (w htmlAnchorElementV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: HTMLAnchorElement.Constructor")
+	cbCtx.Logger().Debug("V8 Function call: HTMLAnchorElement.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w htmlAnchorElementV8Wrapper) target(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: HTMLAnchorElement.target")
+	cbCtx.Logger().Debug("V8 Function call: HTMLAnchorElement.target")
 	instance, err := js.As[html.HTMLAnchorElement](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -61,7 +61,7 @@ func (w htmlAnchorElementV8Wrapper) target(cbCtx jsCallbackContext) (jsValue, er
 }
 
 func (w htmlAnchorElementV8Wrapper) setTarget(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: HTMLAnchorElement.setTarget")
+	cbCtx.Logger().Debug("V8 Function call: HTMLAnchorElement.setTarget")
 	instance, err0 := js.As[html.HTMLAnchorElement](cbCtx.Instance())
 	val, err1 := parseSetterArg(cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)

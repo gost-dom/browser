@@ -57,12 +57,12 @@ func (w htmlTemplateElementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectT
 }
 
 func (w htmlTemplateElementV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: HTMLTemplateElement.Constructor")
+	cbCtx.Logger().Debug("V8 Function call: HTMLTemplateElement.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w htmlTemplateElementV8Wrapper) content(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: HTMLTemplateElement.content")
+	cbCtx.Logger().Debug("V8 Function call: HTMLTemplateElement.content")
 	instance, err := js.As[html.HTMLTemplateElement](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -72,41 +72,41 @@ func (w htmlTemplateElementV8Wrapper) content(cbCtx jsCallbackContext) (jsValue,
 }
 
 func (w htmlTemplateElementV8Wrapper) shadowRootMode(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: HTMLTemplateElement.shadowRootMode")
+	cbCtx.Logger().Debug("V8 Function call: HTMLTemplateElement.shadowRootMode")
 	return cbCtx.ReturnWithError(errors.New("HTMLTemplateElement.shadowRootMode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w htmlTemplateElementV8Wrapper) setShadowRootMode(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: HTMLTemplateElement.setShadowRootMode")
+	cbCtx.Logger().Debug("V8 Function call: HTMLTemplateElement.setShadowRootMode")
 	return cbCtx.ReturnWithError(errors.New("HTMLTemplateElement.setShadowRootMode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w htmlTemplateElementV8Wrapper) shadowRootDelegatesFocus(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: HTMLTemplateElement.shadowRootDelegatesFocus")
+	cbCtx.Logger().Debug("V8 Function call: HTMLTemplateElement.shadowRootDelegatesFocus")
 	return cbCtx.ReturnWithError(errors.New("HTMLTemplateElement.shadowRootDelegatesFocus: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w htmlTemplateElementV8Wrapper) setShadowRootDelegatesFocus(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: HTMLTemplateElement.setShadowRootDelegatesFocus")
+	cbCtx.Logger().Debug("V8 Function call: HTMLTemplateElement.setShadowRootDelegatesFocus")
 	return cbCtx.ReturnWithError(errors.New("HTMLTemplateElement.setShadowRootDelegatesFocus: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w htmlTemplateElementV8Wrapper) shadowRootClonable(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: HTMLTemplateElement.shadowRootClonable")
+	cbCtx.Logger().Debug("V8 Function call: HTMLTemplateElement.shadowRootClonable")
 	return cbCtx.ReturnWithError(errors.New("HTMLTemplateElement.shadowRootClonable: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w htmlTemplateElementV8Wrapper) setShadowRootClonable(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: HTMLTemplateElement.setShadowRootClonable")
+	cbCtx.Logger().Debug("V8 Function call: HTMLTemplateElement.setShadowRootClonable")
 	return cbCtx.ReturnWithError(errors.New("HTMLTemplateElement.setShadowRootClonable: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w htmlTemplateElementV8Wrapper) shadowRootSerializable(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: HTMLTemplateElement.shadowRootSerializable")
+	cbCtx.Logger().Debug("V8 Function call: HTMLTemplateElement.shadowRootSerializable")
 	return cbCtx.ReturnWithError(errors.New("HTMLTemplateElement.shadowRootSerializable: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w htmlTemplateElementV8Wrapper) setShadowRootSerializable(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: HTMLTemplateElement.setShadowRootSerializable")
+	cbCtx.Logger().Debug("V8 Function call: HTMLTemplateElement.setShadowRootSerializable")
 	return cbCtx.ReturnWithError(errors.New("HTMLTemplateElement.setShadowRootSerializable: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }

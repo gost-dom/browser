@@ -54,12 +54,12 @@ func (w domTokenListV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate
 }
 
 func (w domTokenListV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: DOMTokenList.Constructor")
+	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w domTokenListV8Wrapper) item(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: DOMTokenList.item")
+	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.item")
 	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
@@ -73,7 +73,7 @@ func (w domTokenListV8Wrapper) item(cbCtx jsCallbackContext) (jsValue, error) {
 }
 
 func (w domTokenListV8Wrapper) contains(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: DOMTokenList.contains")
+	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.contains")
 	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
@@ -87,7 +87,7 @@ func (w domTokenListV8Wrapper) contains(cbCtx jsCallbackContext) (jsValue, error
 }
 
 func (w domTokenListV8Wrapper) add(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: DOMTokenList.add")
+	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.add")
 	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
@@ -101,7 +101,7 @@ func (w domTokenListV8Wrapper) add(cbCtx jsCallbackContext) (jsValue, error) {
 }
 
 func (w domTokenListV8Wrapper) remove(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: DOMTokenList.remove")
+	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.remove")
 	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
@@ -115,7 +115,7 @@ func (w domTokenListV8Wrapper) remove(cbCtx jsCallbackContext) (jsValue, error) 
 }
 
 func (w domTokenListV8Wrapper) replace(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: DOMTokenList.replace")
+	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.replace")
 	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
@@ -131,12 +131,12 @@ func (w domTokenListV8Wrapper) replace(cbCtx jsCallbackContext) (jsValue, error)
 }
 
 func (w domTokenListV8Wrapper) supports(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: DOMTokenList.supports")
+	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.supports")
 	return cbCtx.ReturnWithError(errors.New("DOMTokenList.supports: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w domTokenListV8Wrapper) length(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: DOMTokenList.length")
+	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.length")
 	instance, err := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -146,7 +146,7 @@ func (w domTokenListV8Wrapper) length(cbCtx jsCallbackContext) (jsValue, error) 
 }
 
 func (w domTokenListV8Wrapper) value(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: DOMTokenList.value")
+	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.value")
 	instance, err := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -156,7 +156,7 @@ func (w domTokenListV8Wrapper) value(cbCtx jsCallbackContext) (jsValue, error) {
 }
 
 func (w domTokenListV8Wrapper) setValue(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: DOMTokenList.setValue")
+	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.setValue")
 	instance, err0 := js.As[dom.DOMTokenList](cbCtx.Instance())
 	val, err1 := parseSetterArg(cbCtx, w.decodeString)
 	err := errors.Join(err0, err1)

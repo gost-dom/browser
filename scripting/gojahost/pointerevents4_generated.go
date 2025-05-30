@@ -19,26 +19,26 @@ func (w pointerEventWrapper) initializePrototype(prototype *g.Object, vm *g.Runt
 }
 
 func (w pointerEventWrapper) Constructor(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: PointerEvent.Constructor")
+	cbCtx.Logger().Debug("V8 Function call: PointerEvent.Constructor")
 	return cbCtx.ReturnWithTypeError("Goja constructor not yet implemented")
 }
 
 func (w pointerEventWrapper) width(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: PointerEvent.width")
+	cbCtx.Logger().Debug("V8 Function call: PointerEvent.width")
 	return cbCtx.ReturnWithError(errors.New("PointerEvent.width: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w pointerEventWrapper) height(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: PointerEvent.height")
+	cbCtx.Logger().Debug("V8 Function call: PointerEvent.height")
 	return cbCtx.ReturnWithError(errors.New("PointerEvent.height: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w pointerEventWrapper) pressure(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: PointerEvent.pressure")
+	cbCtx.Logger().Debug("V8 Function call: PointerEvent.pressure")
 	return cbCtx.ReturnWithError(errors.New("PointerEvent.pressure: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w pointerEventWrapper) tangentialPressure(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: PointerEvent.tangentialPressure")
+	cbCtx.Logger().Debug("V8 Function call: PointerEvent.tangentialPressure")
 	return cbCtx.ReturnWithError(errors.New("PointerEvent.tangentialPressure: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }

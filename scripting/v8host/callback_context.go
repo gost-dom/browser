@@ -36,10 +36,9 @@ func (h v8CallbackContext) Global() jsObject {
 	return h.ScriptCtx().global
 }
 
-func (h v8CallbackContext) This() jsObject       { return newV8Object(h.iso(), h.v8Info.This()) }
-func (h v8CallbackContext) iso() *v8.Isolate     { return h.ScriptCtx().host.iso }
-func (h v8CallbackContext) v8ctx() *v8.Context   { return h.ScriptCtx().v8ctx }
-func (h v8CallbackContext) logger() *slog.Logger { return h.ScriptCtx().host.Logger() }
+func (h v8CallbackContext) This() jsObject     { return newV8Object(h.iso(), h.v8Info.This()) }
+func (h v8CallbackContext) iso() *v8.Isolate   { return h.ScriptCtx().host.iso }
+func (h v8CallbackContext) v8ctx() *v8.Context { return h.ScriptCtx().v8ctx }
 
 func (h *v8CallbackContext) ScriptCtx() *V8ScriptContext {
 	return h.host.mustGetContext(h.v8Info.Context())

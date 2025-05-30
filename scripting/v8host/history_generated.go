@@ -50,12 +50,12 @@ func (w historyV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 }
 
 func (w historyV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: History.Constructor")
+	cbCtx.Logger().Debug("V8 Function call: History.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w historyV8Wrapper) go_(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: History.go_")
+	cbCtx.Logger().Debug("V8 Function call: History.go_")
 	instance, errInst := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
@@ -69,7 +69,7 @@ func (w historyV8Wrapper) go_(cbCtx jsCallbackContext) (jsValue, error) {
 }
 
 func (w historyV8Wrapper) back(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: History.back")
+	cbCtx.Logger().Debug("V8 Function call: History.back")
 	instance, err := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -79,7 +79,7 @@ func (w historyV8Wrapper) back(cbCtx jsCallbackContext) (jsValue, error) {
 }
 
 func (w historyV8Wrapper) forward(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: History.forward")
+	cbCtx.Logger().Debug("V8 Function call: History.forward")
 	instance, err := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -89,7 +89,7 @@ func (w historyV8Wrapper) forward(cbCtx jsCallbackContext) (jsValue, error) {
 }
 
 func (w historyV8Wrapper) pushState(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: History.pushState")
+	cbCtx.Logger().Debug("V8 Function call: History.pushState")
 	instance, errInst := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
@@ -106,7 +106,7 @@ func (w historyV8Wrapper) pushState(cbCtx jsCallbackContext) (jsValue, error) {
 }
 
 func (w historyV8Wrapper) replaceState(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: History.replaceState")
+	cbCtx.Logger().Debug("V8 Function call: History.replaceState")
 	instance, errInst := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
@@ -123,7 +123,7 @@ func (w historyV8Wrapper) replaceState(cbCtx jsCallbackContext) (jsValue, error)
 }
 
 func (w historyV8Wrapper) length(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: History.length")
+	cbCtx.Logger().Debug("V8 Function call: History.length")
 	instance, err := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -133,7 +133,7 @@ func (w historyV8Wrapper) length(cbCtx jsCallbackContext) (jsValue, error) {
 }
 
 func (w historyV8Wrapper) state(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: History.state")
+	cbCtx.Logger().Debug("V8 Function call: History.state")
 	instance, err := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)

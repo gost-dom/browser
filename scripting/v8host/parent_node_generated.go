@@ -49,12 +49,12 @@ func (w parentNodeV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) 
 }
 
 func (w parentNodeV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: ParentNode.Constructor")
+	cbCtx.Logger().Debug("V8 Function call: ParentNode.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w parentNodeV8Wrapper) querySelector(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: ParentNode.querySelector")
+	cbCtx.Logger().Debug("V8 Function call: ParentNode.querySelector")
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
@@ -71,7 +71,7 @@ func (w parentNodeV8Wrapper) querySelector(cbCtx jsCallbackContext) (jsValue, er
 }
 
 func (w parentNodeV8Wrapper) querySelectorAll(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: ParentNode.querySelectorAll")
+	cbCtx.Logger().Debug("V8 Function call: ParentNode.querySelectorAll")
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
@@ -88,7 +88,7 @@ func (w parentNodeV8Wrapper) querySelectorAll(cbCtx jsCallbackContext) (jsValue,
 }
 
 func (w parentNodeV8Wrapper) firstElementChild(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: ParentNode.firstElementChild")
+	cbCtx.Logger().Debug("V8 Function call: ParentNode.firstElementChild")
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -98,7 +98,7 @@ func (w parentNodeV8Wrapper) firstElementChild(cbCtx jsCallbackContext) (jsValue
 }
 
 func (w parentNodeV8Wrapper) lastElementChild(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: ParentNode.lastElementChild")
+	cbCtx.Logger().Debug("V8 Function call: ParentNode.lastElementChild")
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -108,7 +108,7 @@ func (w parentNodeV8Wrapper) lastElementChild(cbCtx jsCallbackContext) (jsValue,
 }
 
 func (w parentNodeV8Wrapper) childElementCount(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: ParentNode.childElementCount")
+	cbCtx.Logger().Debug("V8 Function call: ParentNode.childElementCount")
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)

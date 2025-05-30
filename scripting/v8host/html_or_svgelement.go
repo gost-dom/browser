@@ -6,11 +6,10 @@ import (
 )
 
 func (w htmlOrSVGElementV8Wrapper) focus(cbCtx *v8CallbackContext) (jsValue, error) {
-	cbCtx.logger().Debug("V8 Function call: HTMLOrSVGElement.focus")
+	cbCtx.Logger().Debug("V8 Function call: HTMLOrSVGElement.focus")
 	instance, err := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
-	if err != nil {
-		return cbCtx.ReturnWithError(err)
+	if err == nil {
+		instance.Focus()
 	}
-	instance.Focus()
-	return cbCtx.ReturnWithValue(nil)
+	return nil, err
 }

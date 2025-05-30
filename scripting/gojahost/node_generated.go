@@ -42,12 +42,12 @@ func (w nodeWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime) {
 }
 
 func (w nodeWrapper) Constructor(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: Node.Constructor")
+	cbCtx.Logger().Debug("V8 Function call: Node.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w nodeWrapper) getRootNode(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: Node.getRootNode")
+	cbCtx.Logger().Debug("V8 Function call: Node.getRootNode")
 	instance, instErr := js.As[dom.Node](cbCtx.Instance())
 	if instErr != nil {
 		return cbCtx.ReturnWithError(instErr)
@@ -58,7 +58,7 @@ func (w nodeWrapper) getRootNode(cbCtx *callbackContext) g.Value {
 }
 
 func (w nodeWrapper) cloneNode(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: Node.cloneNode")
+	cbCtx.Logger().Debug("V8 Function call: Node.cloneNode")
 	instance, instErr := js.As[dom.Node](cbCtx.Instance())
 	if instErr != nil {
 		return cbCtx.ReturnWithError(instErr)
@@ -69,7 +69,7 @@ func (w nodeWrapper) cloneNode(cbCtx *callbackContext) g.Value {
 }
 
 func (w nodeWrapper) isSameNode(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: Node.isSameNode")
+	cbCtx.Logger().Debug("V8 Function call: Node.isSameNode")
 	instance, instErr := js.As[dom.Node](cbCtx.Instance())
 	if instErr != nil {
 		return cbCtx.ReturnWithError(instErr)
@@ -80,7 +80,7 @@ func (w nodeWrapper) isSameNode(cbCtx *callbackContext) g.Value {
 }
 
 func (w nodeWrapper) contains(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: Node.contains")
+	cbCtx.Logger().Debug("V8 Function call: Node.contains")
 	instance, instErr := js.As[dom.Node](cbCtx.Instance())
 	if instErr != nil {
 		return cbCtx.ReturnWithError(instErr)
@@ -91,7 +91,7 @@ func (w nodeWrapper) contains(cbCtx *callbackContext) g.Value {
 }
 
 func (w nodeWrapper) insertBefore(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: Node.insertBefore")
+	cbCtx.Logger().Debug("V8 Function call: Node.insertBefore")
 	instance, instErr := js.As[dom.Node](cbCtx.Instance())
 	if instErr != nil {
 		return cbCtx.ReturnWithError(instErr)
@@ -106,7 +106,7 @@ func (w nodeWrapper) insertBefore(cbCtx *callbackContext) g.Value {
 }
 
 func (w nodeWrapper) appendChild(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: Node.appendChild")
+	cbCtx.Logger().Debug("V8 Function call: Node.appendChild")
 	instance, instErr := js.As[dom.Node](cbCtx.Instance())
 	if instErr != nil {
 		return cbCtx.ReturnWithError(instErr)
@@ -120,7 +120,7 @@ func (w nodeWrapper) appendChild(cbCtx *callbackContext) g.Value {
 }
 
 func (w nodeWrapper) removeChild(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: Node.removeChild")
+	cbCtx.Logger().Debug("V8 Function call: Node.removeChild")
 	instance, instErr := js.As[dom.Node](cbCtx.Instance())
 	if instErr != nil {
 		return cbCtx.ReturnWithError(instErr)
@@ -134,7 +134,7 @@ func (w nodeWrapper) removeChild(cbCtx *callbackContext) g.Value {
 }
 
 func (w nodeWrapper) nodeName(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: Node.nodeName")
+	cbCtx.Logger().Debug("V8 Function call: Node.nodeName")
 	instance, instErr := js.As[dom.Node](cbCtx.Instance())
 	if instErr != nil {
 		return cbCtx.ReturnWithError(instErr)
@@ -144,7 +144,7 @@ func (w nodeWrapper) nodeName(cbCtx *callbackContext) g.Value {
 }
 
 func (w nodeWrapper) isConnected(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: Node.isConnected")
+	cbCtx.Logger().Debug("V8 Function call: Node.isConnected")
 	instance, instErr := js.As[dom.Node](cbCtx.Instance())
 	if instErr != nil {
 		return cbCtx.ReturnWithError(instErr)
@@ -154,7 +154,7 @@ func (w nodeWrapper) isConnected(cbCtx *callbackContext) g.Value {
 }
 
 func (w nodeWrapper) ownerDocument(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: Node.ownerDocument")
+	cbCtx.Logger().Debug("V8 Function call: Node.ownerDocument")
 	instance, instErr := js.As[dom.Node](cbCtx.Instance())
 	if instErr != nil {
 		return cbCtx.ReturnWithError(instErr)
@@ -164,7 +164,7 @@ func (w nodeWrapper) ownerDocument(cbCtx *callbackContext) g.Value {
 }
 
 func (w nodeWrapper) parentElement(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: Node.parentElement")
+	cbCtx.Logger().Debug("V8 Function call: Node.parentElement")
 	instance, instErr := js.As[dom.Node](cbCtx.Instance())
 	if instErr != nil {
 		return cbCtx.ReturnWithError(instErr)
@@ -174,12 +174,12 @@ func (w nodeWrapper) parentElement(cbCtx *callbackContext) g.Value {
 }
 
 func (w nodeWrapper) childNodes(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: Node.childNodes")
+	cbCtx.Logger().Debug("V8 Function call: Node.childNodes")
 	return cbCtx.ReturnWithError(errors.New("Node.childNodes: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
 func (w nodeWrapper) firstChild(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: Node.firstChild")
+	cbCtx.Logger().Debug("V8 Function call: Node.firstChild")
 	instance, instErr := js.As[dom.Node](cbCtx.Instance())
 	if instErr != nil {
 		return cbCtx.ReturnWithError(instErr)
@@ -189,7 +189,7 @@ func (w nodeWrapper) firstChild(cbCtx *callbackContext) g.Value {
 }
 
 func (w nodeWrapper) previousSibling(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: Node.previousSibling")
+	cbCtx.Logger().Debug("V8 Function call: Node.previousSibling")
 	instance, instErr := js.As[dom.Node](cbCtx.Instance())
 	if instErr != nil {
 		return cbCtx.ReturnWithError(instErr)
@@ -199,7 +199,7 @@ func (w nodeWrapper) previousSibling(cbCtx *callbackContext) g.Value {
 }
 
 func (w nodeWrapper) nextSibling(cbCtx *callbackContext) g.Value {
-	cbCtx.logger().Debug("V8 Function call: Node.nextSibling")
+	cbCtx.Logger().Debug("V8 Function call: Node.nextSibling")
 	instance, instErr := js.As[dom.Node](cbCtx.Instance())
 	if instErr != nil {
 		return cbCtx.ReturnWithError(instErr)
