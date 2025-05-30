@@ -13,7 +13,7 @@ func init() {
 }
 
 type mutationRecordV8Wrapper struct {
-	handleReffedObject[*dominterfaces.MutationRecord]
+	handleReffedObject[*dominterfaces.MutationRecord, jsTypeParam]
 }
 
 func newMutationRecordV8Wrapper(scriptHost *V8ScriptHost) *mutationRecordV8Wrapper {

@@ -9,7 +9,7 @@ import (
 )
 
 type parentNodeV8Wrapper struct {
-	handleReffedObject[dom.ParentNode]
+	handleReffedObject[dom.ParentNode, jsTypeParam]
 }
 
 func newParentNodeV8Wrapper(scriptHost *V8ScriptHost) *parentNodeV8Wrapper {

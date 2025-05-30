@@ -14,7 +14,7 @@ func init() {
 }
 
 type windowV8Wrapper struct {
-	handleReffedObject[html.Window]
+	handleReffedObject[html.Window, jsTypeParam]
 }
 
 func newWindowV8Wrapper(scriptHost *V8ScriptHost) *windowV8Wrapper {

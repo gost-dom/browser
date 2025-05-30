@@ -15,7 +15,7 @@ func init() {
 }
 
 type formDataV8Wrapper struct {
-	handleReffedObject[*html.FormData]
+	handleReffedObject[*html.FormData, jsTypeParam]
 }
 
 func newFormDataV8Wrapper(scriptHost *V8ScriptHost) *formDataV8Wrapper {

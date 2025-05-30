@@ -3,6 +3,7 @@ package v8gen
 import (
 	"fmt"
 
+	"github.com/dave/jennifer/jen"
 	. "github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/generators"
 	g "github.com/gost-dom/generators"
@@ -24,8 +25,13 @@ func (g V8WrapperStructGenerators) WrapperStructConstructorRetType(
 	return g.WrapperStructType(idlInterfaceName).Pointer()
 }
 
-func (g V8WrapperStructGenerators) EmbeddedType(wrappedType g.Generator) g.Generator {
-	return generators.NewType("handleReffedObject").TypeParam(wrappedType)
+func (gen V8WrapperStructGenerators) EmbeddedType(wrappedType g.Generator) g.Generator {
+	return g.Raw(
+		generators.NewType("handleReffedObject").Generate().
+			Types(
+				wrappedType.Generate(),
+				jen.Id("jsTypeParam"),
+			))
 }
 
 func (g V8WrapperStructGenerators) EmbeddedTypeConstructor(

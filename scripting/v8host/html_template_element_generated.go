@@ -14,7 +14,7 @@ func init() {
 }
 
 type htmlTemplateElementV8Wrapper struct {
-	handleReffedObject[html.HTMLTemplateElement]
+	handleReffedObject[html.HTMLTemplateElement, jsTypeParam]
 }
 
 func newHTMLTemplateElementV8Wrapper(scriptHost *V8ScriptHost) *htmlTemplateElementV8Wrapper {

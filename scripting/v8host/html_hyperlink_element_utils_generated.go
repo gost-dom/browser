@@ -10,7 +10,7 @@ import (
 )
 
 type htmlHyperlinkElementUtilsV8Wrapper struct {
-	handleReffedObject[html.HTMLHyperlinkElementUtils]
+	handleReffedObject[html.HTMLHyperlinkElementUtils, jsTypeParam]
 }
 
 func newHTMLHyperlinkElementUtilsV8Wrapper(scriptHost *V8ScriptHost) *htmlHyperlinkElementUtilsV8Wrapper {

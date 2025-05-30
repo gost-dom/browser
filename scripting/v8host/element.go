@@ -10,7 +10,7 @@ import (
 )
 
 type elementV8Wrapper struct {
-	handleReffedObject[dom.Element]
+	handleReffedObject[dom.Element, jsTypeParam]
 	parentNode               *parentNodeV8Wrapper
 	nonDocumentTypeChildNode *nonDocumentTypeChildNodeV8Wrapper
 }

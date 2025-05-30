@@ -14,7 +14,7 @@ func init() {
 }
 
 type documentV8Wrapper struct {
-	handleReffedObject[dom.Document]
+	handleReffedObject[dom.Document, jsTypeParam]
 	parentNode *parentNodeV8Wrapper
 }
 

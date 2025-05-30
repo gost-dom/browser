@@ -13,7 +13,7 @@ func init() {
 }
 
 type htmlElementV8Wrapper struct {
-	handleReffedObject[html.HTMLElement]
+	handleReffedObject[html.HTMLElement, jsTypeParam]
 	htmlOrSVGElement *htmlOrSVGElementV8Wrapper
 }
 

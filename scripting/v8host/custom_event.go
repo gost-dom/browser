@@ -11,7 +11,7 @@ import (
 )
 
 type customEventV8Wrapper struct {
-	handleReffedObject[*event.Event]
+	handleReffedObject[*event.Event, jsTypeParam]
 }
 
 func newCustomEventV8Wrapper(scriptHost *V8ScriptHost) *customEventV8Wrapper {

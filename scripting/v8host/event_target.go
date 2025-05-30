@@ -35,7 +35,7 @@ func (l v8EventListener) Equals(other event.EventHandler) bool {
 }
 
 type eventTargetV8Wrapper struct {
-	handleReffedObject[event.EventTarget]
+	handleReffedObject[event.EventTarget, jsTypeParam]
 }
 
 func newEventTargetV8Wrapper(host *V8ScriptHost) eventTargetV8Wrapper {

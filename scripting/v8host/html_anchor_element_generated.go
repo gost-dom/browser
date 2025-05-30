@@ -14,7 +14,7 @@ func init() {
 }
 
 type htmlAnchorElementV8Wrapper struct {
-	handleReffedObject[html.HTMLAnchorElement]
+	handleReffedObject[html.HTMLAnchorElement, jsTypeParam]
 	htmlHyperlinkElementUtils *htmlHyperlinkElementUtilsV8Wrapper
 }
 

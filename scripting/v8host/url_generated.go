@@ -268,7 +268,7 @@ func init() {
 }
 
 type urlSearchParamsV8Wrapper struct {
-	handleReffedObject[urlinterfaces.URLSearchParams]
+	handleReffedObject[urlinterfaces.URLSearchParams, jsTypeParam]
 }
 
 func newURLSearchParamsV8Wrapper(scriptHost *V8ScriptHost) *urlSearchParamsV8Wrapper {

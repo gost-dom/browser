@@ -14,7 +14,7 @@ func init() {
 }
 
 type domTokenListV8Wrapper struct {
-	handleReffedObject[dom.DOMTokenList]
+	handleReffedObject[dom.DOMTokenList, jsTypeParam]
 }
 
 func newDOMTokenListV8Wrapper(scriptHost *V8ScriptHost) *domTokenListV8Wrapper {

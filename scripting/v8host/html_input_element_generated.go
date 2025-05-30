@@ -14,7 +14,7 @@ func init() {
 }
 
 type htmlInputElementV8Wrapper struct {
-	handleReffedObject[html.HTMLInputElement]
+	handleReffedObject[html.HTMLInputElement, jsTypeParam]
 }
 
 func newHTMLInputElementV8Wrapper(scriptHost *V8ScriptHost) *htmlInputElementV8Wrapper {

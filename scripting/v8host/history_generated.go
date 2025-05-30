@@ -14,7 +14,7 @@ func init() {
 }
 
 type historyV8Wrapper struct {
-	handleReffedObject[htmlinterfaces.History]
+	handleReffedObject[htmlinterfaces.History, jsTypeParam]
 }
 
 func newHistoryV8Wrapper(scriptHost *V8ScriptHost) *historyV8Wrapper {
