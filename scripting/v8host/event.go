@@ -9,7 +9,7 @@ import (
 )
 
 type eventV8Wrapper struct {
-	handleReffedObject[*event.Event]
+	handleReffedObject[*event.Event, jsTypeParam]
 }
 
 func newEventV8Wrapper(scriptHost *V8ScriptHost) *eventV8Wrapper {

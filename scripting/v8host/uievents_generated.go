@@ -117,7 +117,7 @@ func init() {
 }
 
 type uIEventV8Wrapper struct {
-	handleReffedObject[uievents.UIEvent]
+	handleReffedObject[uievents.UIEvent, jsTypeParam]
 }
 
 func newUIEventV8Wrapper(scriptHost *V8ScriptHost) *uIEventV8Wrapper {

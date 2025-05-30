@@ -13,7 +13,7 @@ func init() {
 }
 
 type nodeListV8Wrapper struct {
-	handleReffedObject[dom.NodeList]
+	handleReffedObject[dom.NodeList, jsTypeParam]
 }
 
 func newNodeListV8Wrapper(scriptHost *V8ScriptHost) *nodeListV8Wrapper {

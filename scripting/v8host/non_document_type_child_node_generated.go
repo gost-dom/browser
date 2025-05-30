@@ -9,7 +9,7 @@ import (
 )
 
 type nonDocumentTypeChildNodeV8Wrapper struct {
-	handleReffedObject[dom.NonDocumentTypeChildNode]
+	handleReffedObject[dom.NonDocumentTypeChildNode, jsTypeParam]
 }
 
 func newNonDocumentTypeChildNodeV8Wrapper(scriptHost *V8ScriptHost) *nonDocumentTypeChildNodeV8Wrapper {

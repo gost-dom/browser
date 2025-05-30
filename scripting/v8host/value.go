@@ -7,6 +7,7 @@ import (
 	"github.com/gost-dom/v8go"
 )
 
+type jsTypeParam = *v8Value
 type jsValue = js.Value[*v8Value]
 type jsFunction = js.Function[*v8Value]
 type jsObject = js.Object[*v8Value]

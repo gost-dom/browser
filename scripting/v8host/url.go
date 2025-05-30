@@ -14,7 +14,7 @@ import (
 )
 
 type urlV8Wrapper struct {
-	handleReffedObject[urlinterfaces.URL]
+	handleReffedObject[urlinterfaces.URL, jsTypeParam]
 }
 
 func newURLV8Wrapper(host *V8ScriptHost) urlV8Wrapper {

@@ -12,7 +12,7 @@ import (
 )
 
 type xmlHttpRequestV8Wrapper struct {
-	handleReffedObject[XmlHttpRequest]
+	handleReffedObject[XmlHttpRequest, jsTypeParam]
 }
 
 func (xhr xmlHttpRequestV8Wrapper) decodeDocument(

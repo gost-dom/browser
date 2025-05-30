@@ -14,7 +14,7 @@ func init() {
 }
 
 type nodeV8Wrapper struct {
-	handleReffedObject[dom.Node]
+	handleReffedObject[dom.Node, jsTypeParam]
 }
 
 func newNodeV8Wrapper(scriptHost *V8ScriptHost) *nodeV8Wrapper {

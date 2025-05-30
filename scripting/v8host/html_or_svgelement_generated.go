@@ -10,7 +10,7 @@ import (
 )
 
 type htmlOrSVGElementV8Wrapper struct {
-	handleReffedObject[html.HTMLOrSVGElement]
+	handleReffedObject[html.HTMLOrSVGElement, jsTypeParam]
 }
 
 func newHTMLOrSVGElementV8Wrapper(scriptHost *V8ScriptHost) *htmlOrSVGElementV8Wrapper {

@@ -7,7 +7,7 @@ import (
 )
 
 type documentFragmentV8Wrapper struct {
-	handleReffedObject[dom.DocumentFragment]
+	handleReffedObject[dom.DocumentFragment, jsTypeParam]
 	parentNode *parentNodeV8Wrapper
 }
 
