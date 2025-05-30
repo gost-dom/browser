@@ -7,6 +7,7 @@ import (
 	"runtime/debug"
 
 	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
@@ -42,6 +43,10 @@ func (h v8CallbackContext) logger() *slog.Logger { return h.ScriptCtx().host.Log
 
 func (h *v8CallbackContext) ScriptCtx() *V8ScriptContext {
 	return h.host.mustGetContext(h.v8Info.Context())
+}
+
+func (c v8CallbackContext) Scope() js.Scope[jsTypeParam] {
+	return v8Scope{c.ScriptCtx()}
 }
 
 func (c *v8CallbackContext) ValueFactory() jsValueFactory { return v8ValueFactory{c.host, c} }
@@ -262,3 +267,11 @@ func wrapV8CallbackFn(
 func decodeInt32(cbCtx jsCallbackContext, val jsValue) (int32, error) {
 	return val.Int32(), nil
 }
+
+/* -------- v8Scope -------- */
+
+type v8Scope struct {
+	ctx *V8ScriptContext
+}
+
+func (s v8Scope) Window() html.Window { return s.ctx.window }
