@@ -1,9 +1,17 @@
 package js
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/gost-dom/browser/html"
+)
 
 var ErrMissingArgument = errors.New("missing argument")
 var ErrNoInternalValue = errors.New("object does not have an internal instance")
+
+type Scope[T any] interface {
+	Window() html.Window
+}
 
 // CallbackContext represents the execution context of a JavaScript function
 // or handler callback. For example
@@ -36,6 +44,8 @@ type CallbackContext[T any] interface {
 	// ValueFactory returns a "factory" that can be used to produce JavaScript
 	// values.
 	ValueFactory() ValueFactory[T]
+
+	Scope() Scope[T]
 }
 
 type FunctionCallback[T any] func(CallbackContext[T]) (Value[T], error)
