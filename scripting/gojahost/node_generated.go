@@ -4,7 +4,6 @@ package gojahost
 
 import (
 	"errors"
-
 	g "github.com/dop251/goja"
 	dom "github.com/gost-dom/browser/dom"
 	js "github.com/gost-dom/browser/scripting/internal/js"

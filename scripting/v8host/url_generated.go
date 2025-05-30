@@ -81,22 +81,18 @@ func (w urlV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 
 func (w urlV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: URL.Constructor")
-	url, err1 := consumeArgument(cbCtx, "url", nil, w.decodeString)
-	base, err2 := consumeArgument(cbCtx, "base", nil, w.decodeString)
-	if cbCtx.noOfReadArguments >= 2 {
-		err := errors.Join(err1, err2)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
+	url, errArg1 := consumeArgument(cbCtx, "url", nil, w.decodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	base, found, errArg := consumeOptionalArg(cbCtx, "base", w.decodeString)
+	if found {
+		if errArg != nil {
+			return nil, errArg
 		}
 		return w.CreateInstanceBase(cbCtx, url, base)
 	}
-	if cbCtx.noOfReadArguments >= 1 {
-		if err1 != nil {
-			return cbCtx.ReturnWithError(err1)
-		}
-		return w.CreateInstance(cbCtx, url)
-	}
-	return cbCtx.ReturnWithError(errors.New("URL.constructor: Missing arguments"))
+	return w.CreateInstance(cbCtx, url)
 }
 
 func (w urlV8Wrapper) toJSON(cbCtx jsCallbackContext) (jsValue, error) {
@@ -105,12 +101,11 @@ func (w urlV8Wrapper) toJSON(cbCtx jsCallbackContext) (jsValue, error) {
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
 	}
-	result, callErr := instance.ToJSON()
-	if callErr != nil {
-		return cbCtx.ReturnWithError(callErr)
-	} else {
-		return w.toString_(cbCtx, result)
+	result, errCall := instance.ToJSON()
+	if errCall != nil {
+		return nil, errCall
 	}
+	return w.toString_(cbCtx, result)
 }
 
 func (w urlV8Wrapper) href(cbCtx jsCallbackContext) (jsValue, error) {
@@ -310,112 +305,106 @@ func (w urlSearchParamsV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTempl
 
 func (w urlSearchParamsV8Wrapper) append(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: URLSearchParams.append")
-	instance, err0 := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
-	name, err1 := consumeArgument(cbCtx, "name", nil, w.decodeString)
-	value, err2 := consumeArgument(cbCtx, "value", nil, w.decodeString)
-	if cbCtx.noOfReadArguments >= 2 {
-		err := errors.Join(err0, err1, err2)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		instance.Append(name, value)
-		return cbCtx.ReturnWithValue(nil)
+	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("URLSearchParams.append: Missing arguments"))
+	name, errArg1 := consumeArgument(cbCtx, "name", nil, w.decodeString)
+	value, errArg2 := consumeArgument(cbCtx, "value", nil, w.decodeString)
+	err := errors.Join(errArg1, errArg2)
+	if err != nil {
+		return nil, err
+	}
+	instance.Append(name, value)
+	return nil, nil
 }
 
 func (w urlSearchParamsV8Wrapper) delete(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: URLSearchParams.delete")
-	instance, err0 := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
-	name, err1 := consumeArgument(cbCtx, "name", nil, w.decodeString)
-	value, err2 := consumeArgument(cbCtx, "value", nil, w.decodeString)
-	if cbCtx.noOfReadArguments >= 2 {
-		err := errors.Join(err0, err1, err2)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
+	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
+	}
+	name, errArg1 := consumeArgument(cbCtx, "name", nil, w.decodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	value, found, errArg := consumeOptionalArg(cbCtx, "value", w.decodeString)
+	if found {
+		if errArg != nil {
+			return nil, errArg
 		}
 		instance.DeleteValue(name, value)
-		return cbCtx.ReturnWithValue(nil)
+		return nil, nil
 	}
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		instance.Delete(name)
-		return cbCtx.ReturnWithValue(nil)
-	}
-	return cbCtx.ReturnWithError(errors.New("URLSearchParams.delete: Missing arguments"))
+	instance.Delete(name)
+	return nil, nil
 }
 
 func (w urlSearchParamsV8Wrapper) get(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: URLSearchParams.get")
-	instance, err0 := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
-	name, err1 := consumeArgument(cbCtx, "name", nil, w.decodeString)
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		result, hasValue := instance.Get(name)
-		return w.toNillableString_(cbCtx, result, hasValue)
+	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("URLSearchParams.get: Missing arguments"))
+	name, errArg1 := consumeArgument(cbCtx, "name", nil, w.decodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result, hasValue := instance.Get(name)
+	return w.toNillableString_(cbCtx, result, hasValue)
 }
 
 func (w urlSearchParamsV8Wrapper) getAll(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: URLSearchParams.getAll")
-	instance, err0 := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
-	name, err1 := consumeArgument(cbCtx, "name", nil, w.decodeString)
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		result := instance.GetAll(name)
-		return w.toSequenceString_(cbCtx, result)
+	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("URLSearchParams.getAll: Missing arguments"))
+	name, errArg1 := consumeArgument(cbCtx, "name", nil, w.decodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result := instance.GetAll(name)
+	return w.toSequenceString_(cbCtx, result)
 }
 
 func (w urlSearchParamsV8Wrapper) has(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: URLSearchParams.has")
-	instance, err0 := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
-	name, err1 := consumeArgument(cbCtx, "name", nil, w.decodeString)
-	value, err2 := consumeArgument(cbCtx, "value", nil, w.decodeString)
-	if cbCtx.noOfReadArguments >= 2 {
-		err := errors.Join(err0, err1, err2)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
+	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
+	}
+	name, errArg1 := consumeArgument(cbCtx, "name", nil, w.decodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	value, found, errArg := consumeOptionalArg(cbCtx, "value", w.decodeString)
+	if found {
+		if errArg != nil {
+			return nil, errArg
 		}
 		result := instance.HasValue(name, value)
 		return w.toBoolean(cbCtx, result)
 	}
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		result := instance.Has(name)
-		return w.toBoolean(cbCtx, result)
-	}
-	return cbCtx.ReturnWithError(errors.New("URLSearchParams.has: Missing arguments"))
+	result := instance.Has(name)
+	return w.toBoolean(cbCtx, result)
 }
 
 func (w urlSearchParamsV8Wrapper) set(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: URLSearchParams.set")
-	instance, err0 := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
-	name, err1 := consumeArgument(cbCtx, "name", nil, w.decodeString)
-	value, err2 := consumeArgument(cbCtx, "value", nil, w.decodeString)
-	if cbCtx.noOfReadArguments >= 2 {
-		err := errors.Join(err0, err1, err2)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		instance.Set(name, value)
-		return cbCtx.ReturnWithValue(nil)
+	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("URLSearchParams.set: Missing arguments"))
+	name, errArg1 := consumeArgument(cbCtx, "name", nil, w.decodeString)
+	value, errArg2 := consumeArgument(cbCtx, "value", nil, w.decodeString)
+	err := errors.Join(errArg1, errArg2)
+	if err != nil {
+		return nil, err
+	}
+	instance.Set(name, value)
+	return nil, nil
 }
 
 func (w urlSearchParamsV8Wrapper) sort(cbCtx jsCallbackContext) (jsValue, error) {
@@ -425,7 +414,7 @@ func (w urlSearchParamsV8Wrapper) sort(cbCtx jsCallbackContext) (jsValue, error)
 		return cbCtx.ReturnWithError(err)
 	}
 	instance.Sort()
-	return cbCtx.ReturnWithValue(nil)
+	return nil, nil
 }
 
 func (w urlSearchParamsV8Wrapper) toString(cbCtx jsCallbackContext) (jsValue, error) {

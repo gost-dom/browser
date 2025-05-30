@@ -55,17 +55,16 @@ func (w namedNodeMapV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, er
 
 func (w namedNodeMapV8Wrapper) item(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: NamedNodeMap.item")
-	instance, err0 := js.As[dom.NamedNodeMap](cbCtx.Instance())
-	index, err1 := consumeArgument(cbCtx, "index", nil, w.decodeUnsignedLong)
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		result := instance.Item(index)
-		return w.toJSWrapper(cbCtx, result)
+	instance, errInst := js.As[dom.NamedNodeMap](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("NamedNodeMap.item: Missing arguments"))
+	index, errArg1 := consumeArgument(cbCtx, "index", nil, w.decodeUnsignedLong)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result := instance.Item(index)
+	return w.toJSWrapper(cbCtx, result)
 }
 
 func (w namedNodeMapV8Wrapper) getNamedItem(cbCtx jsCallbackContext) (jsValue, error) {

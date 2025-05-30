@@ -8,8 +8,9 @@ import (
 
 var IdlTypeUndefined = idl.Type{Name: "undefined", Kind: idl.KindSimple}
 
-var callbackContextType = g.NewTypePackage("CallbackContext", packagenames.JSAbstraction)
-var callbackReturnType = g.NewTypePackage("CallbackRVal", packagenames.JSAbstraction)
+var callbackContextType = g.NewTypePackage("CallbackContext", packagenames.JS)
+var callbackReturnType = g.NewTypePackage("CallbackRVal", packagenames.JS)
 var As = g.NewTypePackage("As", packagenames.JS)
+
 var JSValue = g.NewTypePackage("Value", packagenames.JS)
-var decoders = g.NewValuePackage("Decoders", packagenames.JSAbstraction)
+var decoders = g.NewValuePackage("Decoders", packagenames.JS)

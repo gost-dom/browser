@@ -6,13 +6,8 @@ import (
 	v8 "github.com/gost-dom/v8go"
 )
 
-func (w historyV8Wrapper) defaultDelta() int {
-	return 0
-}
-
-func (w historyV8Wrapper) defaultUrl() string {
-	return ""
-}
+func (w historyV8Wrapper) defaultDelta() int  { return 0 }
+func (w historyV8Wrapper) defaultUrl() string { return "" }
 
 func (w historyV8Wrapper) decodeHistoryState(
 	ctx jsCallbackContext,

@@ -55,8 +55,8 @@ func (gen ScriptWrapperModulesGenerator) createPrototypeGenerator(
 		Platform: gen.TargetGenerators,
 		Data:     typeGenerationInformation,
 	}
-
 }
+
 func (gen ScriptWrapperModulesGenerator) writeModuleTypes(
 	spec *configuration.WebIdlConfiguration,
 ) error {

@@ -52,5 +52,5 @@ func (w htmlElementV8Wrapper) click(cbCtx jsCallbackContext) (jsValue, error) {
 		return cbCtx.ReturnWithError(err)
 	}
 	instance.Click()
-	return cbCtx.ReturnWithValue(nil)
+	return nil, nil
 }

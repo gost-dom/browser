@@ -142,17 +142,16 @@ func (w documentV8Wrapper) createCDATASection(cbCtx jsCallbackContext) (jsValue,
 
 func (w documentV8Wrapper) createComment(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.createComment")
-	instance, err0 := js.As[dom.Document](cbCtx.Instance())
-	data, err1 := consumeArgument(cbCtx, "data", nil, w.decodeString)
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		result := instance.CreateComment(data)
-		return w.toComment(cbCtx, result)
+	instance, errInst := js.As[dom.Document](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("Document.createComment: Missing arguments"))
+	data, errArg1 := consumeArgument(cbCtx, "data", nil, w.decodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result := instance.CreateComment(data)
+	return w.toComment(cbCtx, result)
 }
 
 func (w documentV8Wrapper) createProcessingInstruction(cbCtx jsCallbackContext) (jsValue, error) {
@@ -172,17 +171,16 @@ func (w documentV8Wrapper) adoptNode(cbCtx jsCallbackContext) (jsValue, error) {
 
 func (w documentV8Wrapper) createAttribute(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: Document.createAttribute")
-	instance, err0 := js.As[dom.Document](cbCtx.Instance())
-	localName, err1 := consumeArgument(cbCtx, "localName", nil, w.decodeString)
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		result := instance.CreateAttribute(localName)
-		return w.toJSWrapper(cbCtx, result)
+	instance, errInst := js.As[dom.Document](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("Document.createAttribute: Missing arguments"))
+	localName, errArg1 := consumeArgument(cbCtx, "localName", nil, w.decodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result := instance.CreateAttribute(localName)
+	return w.toJSWrapper(cbCtx, result)
 }
 
 func (w documentV8Wrapper) createAttributeNS(cbCtx jsCallbackContext) (jsValue, error) {

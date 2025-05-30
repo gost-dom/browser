@@ -3,13 +3,10 @@ package v8gen
 import (
 	"fmt"
 
-	"github.com/gost-dom/code-gen/idltransform"
 	. "github.com/gost-dom/code-gen/internal"
 	wrappers "github.com/gost-dom/code-gen/script-wrappers"
 	. "github.com/gost-dom/code-gen/script-wrappers/model"
-	"github.com/gost-dom/code-gen/stdgen"
 	g "github.com/gost-dom/generators"
-	"github.com/gost-dom/webref/idl"
 
 	"github.com/dave/jennifer/jen"
 )
@@ -62,210 +59,14 @@ func CreateV8ConstructorWrapperBody(
 	data ESConstructorData,
 	cbCtx wrappers.CallbackContext,
 ) g.Generator {
-	naming := V8NamingStrategy{data}
-	var readArgsResult V8ReadArguments
 	op := *data.Constructor
-	readArgsResult = ReadArguments(data, op, cbCtx)
-	statements := g.StatementList(
-		readArgsResult)
+	naming := V8NamingStrategy{data}
 	receiver := g.NewValue(naming.Receiver())
-	baseFunctionName := "CreateInstance"
-	var CreateCall = func(functionName string, argnames []g.Generator, op ESOperation) g.Generator {
-		return g.StatementList(
-			g.Return(
-				receiver.Field(functionName).Call(append([]g.Generator{cbCtx},
-					argnames...)...,
-				),
-			))
-	}
-	statements.Append(
-		CreateV8WrapperMethodInstanceInvocations(
-			data,
-			op,
-			cbCtx,
-			baseFunctionName,
-			readArgsResult.Args,
-			nil,
-			CreateCall,
-			false,
-		),
-	)
-	return statements
-}
-
-func CreateV8WrapperMethodInstanceInvocations(
-	prototype ESConstructorData,
-	op ESOperation,
-	cbCtx wrappers.CallbackContext,
-	baseFunctionName string,
-	args []V8ReadArg,
-	instanceErr g.Generator,
-	createCallInstance func(string, []g.Generator, ESOperation) g.Generator,
-	extraError bool,
-) g.Generator {
-	statements := g.StatementList()
-	missingArgsConts := fmt.Sprintf("%s.%s: Missing arguments", prototype.Name(), op.Name)
-	for i := len(args); i >= 0; i-- {
-		functionName := baseFunctionName
-		for j, arg := range args {
-			if j < i {
-				if arg.Argument.OptionalInGo() {
-					functionName += IdlNameToGoName(arg.Argument.Name)
-				}
-			}
-		}
-		currentArgs := args[0:i]
-		ei := i
-		if extraError {
-			ei++
-		}
-		errNames := make([]g.Generator, 0, i+1)
-		if instanceErr != nil {
-			errNames = append(errNames, instanceErr)
-		}
-		for _, a := range currentArgs {
-			errNames = append(errNames, a.ErrName)
-		}
-
-		callArgs := make([]g.Generator, i)
-		for idx, a := range currentArgs {
-			arg := a.ArgName
-			if a.Argument.CustomRule.Variadic {
-				arg = g.Raw(arg.Generate().Op("..."))
-			}
-			callArgs[idx] = arg
-		}
-		callInstance := createCallInstance(functionName, callArgs, op)
-		if i > 0 {
-			arg := args[i-1].Argument
-			statements.Append(g.StatementList(
-				g.IfStmt{
-					Condition: g.Raw(cbCtx.Generate().Dot("noOfReadArguments").Op(">=").Lit(i)),
-					Block: g.StatementList(
-						wrappers.IfAnyError(errNames,
-							wrappers.ReturnTransform(
-								wrappers.TransformerFunc(cbCtx.ReturnWithError),
-							),
-						),
-						callInstance,
-					),
-				}))
-			if !arg.OptionalInGo() {
-				statements.Append(
-					g.Return(
-						cbCtx.ReturnWithError(
-							stdgen.ErrorsNew(g.Lit(missingArgsConts))),
-					),
-				)
-				break
-			}
-		} else {
-			statements.Append(wrappers.IfAnyError(errNames, wrappers.ReturnTransform(
-				wrappers.TransformerFunc(cbCtx.ReturnWithError))))
-			statements.Append(callInstance)
-		}
-	}
-	return statements
-}
-
-type V8InstanceInvocation struct {
-	Name     string
-	Args     []g.Generator
-	Op       ESOperation
-	Instance *g.Value
-	Receiver WrapperInstance
-}
-
-type V8InstanceInvocationResult struct {
-	Generator      g.Generator
-	RequireContext bool
-}
-
-func (c V8InstanceInvocation) AssignValues(evaluation g.Generator) g.Generator {
-	HasError := c.Op.GetHasError()
-	HasValue := c.Op.HasResult()
-	if !HasError && !HasValue {
-		return evaluation
-	}
-
-	vals := make([]g.Generator, 0, 3)
-	if HasValue {
-		vals = append(vals, g.Id("result"))
-		t := idltransform.IdlType(c.Op.Spec.ReturnType)
-		if t.Nullable && !t.Nillable() {
-			vals = append(vals, g.Id("hasValue"))
-		}
-	}
-	if HasError {
-		vals = append(vals, g.Id("callErr"))
-	}
-	return g.AssignMany(vals, evaluation)
-}
-
-func (c V8InstanceInvocation) ConvertResult(
-	ctx g.Value,
-	cbCtx wrappers.CallbackContext,
-	data ESConstructorData,
-	evaluation g.Generator,
-) g.Generator {
-	hasError := c.Op.GetHasError()
-	hasValue := c.Op.HasResult() // != "undefined"
-
-	list := g.StatementListStmt{}
-	list.Append(c.AssignValues(evaluation))
-	callErr := g.Id("callErr")
-
-	if !hasValue {
-		if hasError {
-			list.Append(
-				wrappers.IfError(
-					callErr,
-					wrappers.ReturnTransform(wrappers.TransformerFunc(cbCtx.ReturnWithError)),
-				),
-			)
-		}
-		list.Append(g.Return(cbCtx.ReturnWithValue(g.Nil)))
-	} else {
-		returnValue := c.ConvertReturnValue(data, cbCtx, c.Op.RetType)
-		if hasError {
-			list.Append(g.IfStmt{
-				Condition: g.Neq{Lhs: callErr, Rhs: g.Nil},
-				Block:     g.Return(cbCtx.ReturnWithError(callErr)),
-				Else:      returnValue,
-			})
-		} else {
-			list.Append(returnValue)
-		}
-	}
-	return list
-}
-
-func (c V8InstanceInvocation) ConvertReturnValue(
-	data ESConstructorData,
-	cbCtx wrappers.CallbackContext,
-	retType idl.Type,
-) g.Generator {
-	args := []g.Generator{cbCtx}
-	args = append(args, c.Op.RetValues(data)...)
-	converter := c.Op.Encoder(data)
-	return g.Return(c.Receiver.Method(converter).Call(args...))
-}
-
-func (c V8InstanceInvocation) GetGenerator(
-	ctx g.Value,
-	cbCtx wrappers.CallbackContext,
-	data ESConstructorData,
-) g.Generator {
-	if c.Instance == nil {
-		return c.ConvertResult(
-			ctx,
-			cbCtx,
-			data,
-			g.NewValue(IdlNameToGoName(c.Name)).Call(c.Args...),
-		)
-	} else {
-		return c.ConvertResult(ctx, cbCtx, data, c.Instance.Method(IdlNameToGoName(c.Name)).Call(c.Args...))
-	}
+	return V8CallbackGenerators{
+		Data:     data,
+		Op:       op,
+		Receiver: receiver,
+	}.ConstructorCallback(cbCtx)
 }
 
 func CreateV8IllegalConstructorBody(

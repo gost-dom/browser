@@ -183,6 +183,10 @@ func createOperation(
 	return op
 }
 
+func IfAnyErrorF(errNames []g.Generator, block TransformerFunc) g.Generator {
+	return IfAnyError(errNames, block)
+}
+
 func IfAnyError(errNames []g.Generator, block Transformer) g.Generator {
 	switch len(errNames) {
 	case 0:
@@ -236,6 +240,8 @@ func ReturnIfError(err g.Generator) g.Generator {
 		TransformerFunc(func(err g.Generator) g.Generator { return g.Return(g.Nil, err) }),
 	)
 }
+
+func IfErrorF(err g.Generator, block TransformerFunc) g.Generator { return IfError(err, block) }
 
 func IfError(err g.Generator, block Transformer) g.Generator {
 	return g.IfStmt{

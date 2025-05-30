@@ -60,81 +60,74 @@ func (w domTokenListV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, er
 
 func (w domTokenListV8Wrapper) item(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: DOMTokenList.item")
-	instance, err0 := js.As[dom.DOMTokenList](cbCtx.Instance())
-	index, err1 := consumeArgument(cbCtx, "index", nil, w.decodeUnsignedLong)
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		result, hasValue := instance.Item(index)
-		return w.toNillableString_(cbCtx, result, hasValue)
+	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("DOMTokenList.item: Missing arguments"))
+	index, errArg1 := consumeArgument(cbCtx, "index", nil, w.decodeUnsignedLong)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result, hasValue := instance.Item(index)
+	return w.toNillableString_(cbCtx, result, hasValue)
 }
 
 func (w domTokenListV8Wrapper) contains(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: DOMTokenList.contains")
-	instance, err0 := js.As[dom.DOMTokenList](cbCtx.Instance())
-	token, err1 := consumeArgument(cbCtx, "token", nil, w.decodeString)
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		result := instance.Contains(token)
-		return w.toBoolean(cbCtx, result)
+	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("DOMTokenList.contains: Missing arguments"))
+	token, errArg1 := consumeArgument(cbCtx, "token", nil, w.decodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result := instance.Contains(token)
+	return w.toBoolean(cbCtx, result)
 }
 
 func (w domTokenListV8Wrapper) add(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: DOMTokenList.add")
-	instance, err0 := js.As[dom.DOMTokenList](cbCtx.Instance())
-	tokens, err1 := consumeArgument(cbCtx, "tokens", nil, w.decodeString)
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		callErr := instance.Add(tokens)
-		if callErr != nil {
-			return cbCtx.ReturnWithError(callErr)
-		}
-		return cbCtx.ReturnWithValue(nil)
+	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("DOMTokenList.add: Missing arguments"))
+	tokens, errArg1 := consumeArgument(cbCtx, "tokens", nil, w.decodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	errCall := instance.Add(tokens)
+	return nil, errCall
 }
 
 func (w domTokenListV8Wrapper) remove(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: DOMTokenList.remove")
-	instance, err0 := js.As[dom.DOMTokenList](cbCtx.Instance())
-	tokens, err1 := consumeArgument(cbCtx, "tokens", nil, w.decodeString)
-	if cbCtx.noOfReadArguments >= 1 {
-		err := errors.Join(err0, err1)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		instance.Remove(tokens)
-		return cbCtx.ReturnWithValue(nil)
+	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("DOMTokenList.remove: Missing arguments"))
+	tokens, errArg1 := consumeArgument(cbCtx, "tokens", nil, w.decodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	instance.Remove(tokens)
+	return nil, nil
 }
 
 func (w domTokenListV8Wrapper) replace(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: DOMTokenList.replace")
-	instance, err0 := js.As[dom.DOMTokenList](cbCtx.Instance())
-	token, err1 := consumeArgument(cbCtx, "token", nil, w.decodeString)
-	newToken, err2 := consumeArgument(cbCtx, "newToken", nil, w.decodeString)
-	if cbCtx.noOfReadArguments >= 2 {
-		err := errors.Join(err0, err1, err2)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		result := instance.Replace(token, newToken)
-		return w.toBoolean(cbCtx, result)
+	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("DOMTokenList.replace: Missing arguments"))
+	token, errArg1 := consumeArgument(cbCtx, "token", nil, w.decodeString)
+	newToken, errArg2 := consumeArgument(cbCtx, "newToken", nil, w.decodeString)
+	err := errors.Join(errArg1, errArg2)
+	if err != nil {
+		return nil, err
+	}
+	result := instance.Replace(token, newToken)
+	return w.toBoolean(cbCtx, result)
 }
 
 func (w domTokenListV8Wrapper) supports(cbCtx jsCallbackContext) (jsValue, error) {

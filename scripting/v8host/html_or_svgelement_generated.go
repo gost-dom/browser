@@ -62,7 +62,7 @@ func (w htmlOrSVGElementV8Wrapper) blur(cbCtx jsCallbackContext) (jsValue, error
 		return cbCtx.ReturnWithError(err)
 	}
 	instance.Blur()
-	return cbCtx.ReturnWithValue(nil)
+	return nil, nil
 }
 
 func (w htmlOrSVGElementV8Wrapper) dataset(cbCtx jsCallbackContext) (jsValue, error) {

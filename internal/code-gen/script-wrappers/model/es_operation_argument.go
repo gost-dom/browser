@@ -21,7 +21,11 @@ type ESOperationArgument struct {
 
 func (a ESOperationArgument) OptionalInGo() bool {
 	hasDefault := a.ArgumentSpec.HasDefault
-	return a.Optional && !hasDefault && !a.CustomRule.Variadic
+	return a.Optional && !hasDefault && !a.VariadicInGo()
+}
+
+func (a ESOperationArgument) VariadicInGo() bool {
+	return a.CustomRule.Variadic
 }
 
 func (a ESOperationArgument) DefaultValueInGo() (name string, ok bool) {
@@ -34,6 +38,12 @@ func (a ESOperationArgument) DefaultValueInGo() (name string, ok bool) {
 	return
 }
 
+// Returns whether the argument is specified as nullable in the IDL
+// specification.
+func (a ESOperationArgument) NullableInIDL() bool {
+	return a.IdlArg.Type.Nullable
+}
+
 func (a ESOperationArgument) GoTypeName() string {
 	if a.CustomRule.OverridesType() {
 		return a.CustomRule.Type.Name
@@ -44,4 +54,8 @@ func (a ESOperationArgument) GoTypeName() string {
 	default:
 		return a.IdlArg.Type.Name
 	}
+}
+
+func (a ESOperationArgument) HasDefault() bool {
+	return a.ArgumentSpec.HasDefault
 }

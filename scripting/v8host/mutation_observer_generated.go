@@ -40,33 +40,27 @@ func (w mutationObserverV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemp
 
 func (w mutationObserverV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: MutationObserver.Constructor")
-	callback, err1 := consumeArgument(cbCtx, "callback", nil, w.decodeMutationCallback)
-	if cbCtx.noOfReadArguments >= 1 {
-		if err1 != nil {
-			return cbCtx.ReturnWithError(err1)
-		}
-		return w.CreateInstance(cbCtx, callback)
+	callback, errArg1 := consumeArgument(cbCtx, "callback", nil, w.decodeMutationCallback)
+	if errArg1 != nil {
+		return nil, errArg1
 	}
-	return cbCtx.ReturnWithError(errors.New("MutationObserver.constructor: Missing arguments"))
+	return w.CreateInstance(cbCtx, callback)
 }
 
 func (w mutationObserverV8Wrapper) observe(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.logger().Debug("V8 Function call: MutationObserver.observe")
-	instance, err0 := js.As[dominterfaces.MutationObserver](cbCtx.Instance())
-	target, err1 := consumeArgument(cbCtx, "target", nil, w.decodeNode)
-	options, err2 := consumeArgument(cbCtx, "options", nil, w.decodeObserveOption)
-	if cbCtx.noOfReadArguments >= 2 {
-		err := errors.Join(err0, err1, err2)
-		if err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
-		callErr := instance.Observe(target, options...)
-		if callErr != nil {
-			return cbCtx.ReturnWithError(callErr)
-		}
-		return cbCtx.ReturnWithValue(nil)
+	instance, errInst := js.As[dominterfaces.MutationObserver](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
 	}
-	return cbCtx.ReturnWithError(errors.New("MutationObserver.observe: Missing arguments"))
+	target, errArg1 := consumeArgument(cbCtx, "target", nil, w.decodeNode)
+	options, errArg2 := consumeArgument(cbCtx, "options", nil, w.decodeObserveOption)
+	err := errors.Join(errArg1, errArg2)
+	if err != nil {
+		return nil, err
+	}
+	errCall := instance.Observe(target, options...)
+	return nil, errCall
 }
 
 func (w mutationObserverV8Wrapper) disconnect(cbCtx jsCallbackContext) (jsValue, error) {
@@ -76,7 +70,7 @@ func (w mutationObserverV8Wrapper) disconnect(cbCtx jsCallbackContext) (jsValue,
 		return cbCtx.ReturnWithError(err)
 	}
 	instance.Disconnect()
-	return cbCtx.ReturnWithValue(nil)
+	return nil, nil
 }
 
 func (w mutationObserverV8Wrapper) takeRecords(cbCtx jsCallbackContext) (jsValue, error) {
