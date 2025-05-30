@@ -257,18 +257,18 @@ func consumeArgument[T any](
 }
 
 func consumeOptionalArg[T any](
-	args *v8CallbackContext,
+	cbCtx *v8CallbackContext,
 	name string,
 	decoders ...func(*v8CallbackContext, jsValue) (T, error),
 ) (result T, found bool, err error) {
-	value := args.ConsumeArg()
+	value := cbCtx.ConsumeArg()
 	if value == nil || value.Self().v8Value() == nil {
 		return
 	}
 	found = true
 	errs := make([]error, len(decoders))
 	for i, parser := range decoders {
-		result, errs[i] = parser(args, value)
+		result, errs[i] = parser(cbCtx, value)
 		if errs[i] == nil {
 			return
 		}
