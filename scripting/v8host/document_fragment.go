@@ -11,11 +11,9 @@ type documentFragmentV8Wrapper struct {
 	parentNode *parentNodeV8Wrapper
 }
 
-func (w documentFragmentV8Wrapper) constructor(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	ctx := w.scriptHost.mustGetContext(info.Context())
-	result := dom.NewDocumentFragment(ctx.window.Document())
-	_, err := w.store(result, ctx, newV8Object(w.iso(), info.This()))
-	return nil, err
+func (w documentFragmentV8Wrapper) constructor(ctx jsCallbackContext) (jsValue, error) {
+	result := dom.NewDocumentFragment(ctx.Scope().Window().Document())
+	return w.store(result, ctx)
 }
 
 func createDocumentFragmentPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
@@ -23,7 +21,7 @@ func createDocumentFragmentPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
 		newHandleReffedObject[dom.DocumentFragment](host),
 		newParentNodeV8Wrapper(host),
 	}
-	constructor := v8.NewFunctionTemplateWithError(host.iso, wrapper.constructor)
+	constructor := wrapV8Callback(host, wrapper.constructor)
 	constructor.InstanceTemplate().SetInternalFieldCount(1)
 	wrapper.parentNode.installPrototype(constructor.PrototypeTemplate())
 	return constructor

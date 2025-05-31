@@ -68,7 +68,7 @@ func (xhr xmlHttpRequestV8Wrapper) CreateInstance(
 		}
 		return nil
 	}))
-	xhr.store(result, ctx, this)
+	xhr.store(result, cbCtx)
 	return cbCtx.ReturnWithValue(nil)
 }
 
