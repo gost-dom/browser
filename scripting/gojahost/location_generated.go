@@ -64,7 +64,7 @@ func (w locationWrapper) href(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.Href()
-	return cbCtx.ReturnWithValue(w.toString_(result))
+	return cbCtx.ReturnWithValue(w.toString_(cbCtx, result))
 }
 
 func (w locationWrapper) setHref(cbCtx *callbackContext) g.Value {
@@ -79,7 +79,7 @@ func (w locationWrapper) origin(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.Origin()
-	return cbCtx.ReturnWithValue(w.toString_(result))
+	return cbCtx.ReturnWithValue(w.toString_(cbCtx, result))
 }
 
 func (w locationWrapper) protocol(cbCtx *callbackContext) g.Value {
@@ -89,7 +89,7 @@ func (w locationWrapper) protocol(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.Protocol()
-	return cbCtx.ReturnWithValue(w.toString_(result))
+	return cbCtx.ReturnWithValue(w.toString_(cbCtx, result))
 }
 
 func (w locationWrapper) setProtocol(cbCtx *callbackContext) g.Value {
@@ -104,7 +104,7 @@ func (w locationWrapper) host(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.Host()
-	return cbCtx.ReturnWithValue(w.toString_(result))
+	return cbCtx.ReturnWithValue(w.toString_(cbCtx, result))
 }
 
 func (w locationWrapper) setHost(cbCtx *callbackContext) g.Value {
@@ -119,7 +119,7 @@ func (w locationWrapper) hostname(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.Hostname()
-	return cbCtx.ReturnWithValue(w.toString_(result))
+	return cbCtx.ReturnWithValue(w.toString_(cbCtx, result))
 }
 
 func (w locationWrapper) setHostname(cbCtx *callbackContext) g.Value {
@@ -134,7 +134,7 @@ func (w locationWrapper) port(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.Port()
-	return cbCtx.ReturnWithValue(w.toString_(result))
+	return cbCtx.ReturnWithValue(w.toString_(cbCtx, result))
 }
 
 func (w locationWrapper) setPort(cbCtx *callbackContext) g.Value {
@@ -149,7 +149,7 @@ func (w locationWrapper) pathname(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.Pathname()
-	return cbCtx.ReturnWithValue(w.toString_(result))
+	return cbCtx.ReturnWithValue(w.toString_(cbCtx, result))
 }
 
 func (w locationWrapper) setPathname(cbCtx *callbackContext) g.Value {
@@ -164,7 +164,7 @@ func (w locationWrapper) search(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.Search()
-	return cbCtx.ReturnWithValue(w.toString_(result))
+	return cbCtx.ReturnWithValue(w.toString_(cbCtx, result))
 }
 
 func (w locationWrapper) setSearch(cbCtx *callbackContext) g.Value {
@@ -179,7 +179,7 @@ func (w locationWrapper) hash(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.Hash()
-	return cbCtx.ReturnWithValue(w.toString_(result))
+	return cbCtx.ReturnWithValue(w.toString_(cbCtx, result))
 }
 
 func (w locationWrapper) setHash(cbCtx *callbackContext) g.Value {

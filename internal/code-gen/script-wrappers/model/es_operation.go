@@ -5,6 +5,7 @@ import (
 
 	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/idltransform"
+	"github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/code-gen/script-wrappers/configuration"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
@@ -80,18 +81,26 @@ func (o ESOperation) EncodeAsSimpleJSLookup() bool {
 		return true
 	}
 	switch o.RetType.Name {
-	case "Attr", "NodeList", "HTMLFormControlsCollection":
+	case "Attr", "NodeList", "HTMLFormControlsCollection", "Comment":
 		return true
 	default:
 		return false
 	}
 }
 
-func (o ESOperation) Encoder(data ESConstructorData) string {
+func (o ESOperation) Encoder(
+	receiver g.Value,
+	cbCtx g.Generator,
+	data ESConstructorData,
+) internal.BoundFunction {
+	if o.EncodeAsSimpleJSLookup() {
+		return internal.BindValues(g.NewValue("encodeEntity"), cbCtx)
+	}
 	if e := o.MethodCustomization.Encoder; e != "" {
-		return e
+		return internal.BindValues(receiver.Field(e))
 	}
 	t := o.RetType
+	var boundArgs []g.Generator
 	converter := "to"
 	if t.Kind == idl.KindSequence {
 		converter += "Sequence"
@@ -102,14 +111,11 @@ func (o ESOperation) Encoder(data ESConstructorData) string {
 			converter += "Nullable"
 		} else {
 			converter += "Nillable"
+			boundArgs = append(boundArgs, cbCtx)
 		}
 	}
-	if o.EncodeAsSimpleJSLookup() {
-		converter += "JSWrapper"
-	} else {
-		converter += IdlNameToGoName(idlTypeNameToGoName(t))
-	}
-	return converter
+	converter += IdlNameToGoName(idlTypeNameToGoName(t))
+	return internal.BindValues(receiver.Field(converter), cbCtx)
 }
 
 func (o ESOperation) RetValues(data ESConstructorData) []g.Generator {

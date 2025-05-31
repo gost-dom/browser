@@ -57,7 +57,7 @@ func (w nodeListV8Wrapper) item(cbCtx jsCallbackContext) (jsValue, error) {
 		return nil, errArg1
 	}
 	result := instance.Item(index)
-	return w.toJSWrapper(cbCtx, result)
+	return encodeEntity(cbCtx, result)
 }
 
 func (w nodeListV8Wrapper) length(cbCtx jsCallbackContext) (jsValue, error) {

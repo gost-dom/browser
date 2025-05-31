@@ -51,7 +51,7 @@ func (w nonDocumentTypeChildNodeV8Wrapper) previousElementSibling(cbCtx jsCallba
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.PreviousElementSibling()
-	return w.toJSWrapper(cbCtx, result)
+	return encodeEntity(cbCtx, result)
 }
 
 func (w nonDocumentTypeChildNodeV8Wrapper) nextElementSibling(cbCtx jsCallbackContext) (jsValue, error) {
@@ -61,5 +61,5 @@ func (w nonDocumentTypeChildNodeV8Wrapper) nextElementSibling(cbCtx jsCallbackCo
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.NextElementSibling()
-	return w.toJSWrapper(cbCtx, result)
+	return encodeEntity(cbCtx, result)
 }

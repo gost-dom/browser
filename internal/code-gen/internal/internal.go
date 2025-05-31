@@ -4,6 +4,8 @@ import (
 	"log/slog"
 	"strings"
 	"unicode"
+
+	g "github.com/gost-dom/generators"
 )
 
 // A list of possible acronyms that an interface can start with. Used as a very
@@ -38,4 +40,17 @@ func LowerCaseFirstLetter(s string) string {
 	buffer = append(buffer, unicode.ToLower([]rune(s)[0]))
 	buffer = append(buffer, []rune(s)[1:]...)
 	return string(buffer)
+}
+
+type BoundFunction struct {
+	fn     g.Value
+	values []g.Generator
+}
+
+func BindValues(val g.Value, values ...g.Generator) BoundFunction {
+	return BoundFunction{val, values}
+}
+
+func (f BoundFunction) Call(values ...g.Generator) g.Value {
+	return f.fn.Call(append(f.values, values...)...)
 }

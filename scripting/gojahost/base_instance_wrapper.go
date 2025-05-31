@@ -108,14 +108,19 @@ func (w baseInstanceWrapper[T]) toJSWrapper(e entity.ObjectIder) g.Value {
 	return w.ctx.toNode(e)
 }
 
-func (w baseInstanceWrapper[T]) toBoolean(b bool) g.Value {
+func (w baseInstanceWrapper[T]) toBoolean(_ *callbackContext, b bool) g.Value {
 	return w.ctx.vm.ToValue(b)
 }
 
-func (w baseInstanceWrapper[T]) toString_(b string) g.Value {
-	return w.ctx.vm.ToValue(b)
+func (w baseInstanceWrapper[T]) toString_(_ *callbackContext, val string) g.Value {
+	return w.ctx.vm.ToValue(val)
 }
 
 func (w baseInstanceWrapper[T]) toUnsignedShort(i int) g.Value {
 	return w.ctx.vm.ToValue(i)
+}
+
+func encodeEntity(cbCtx *callbackContext, e entity.ObjectIder) g.Value {
+	return cbCtx.ctx.toNode(e)
+
 }

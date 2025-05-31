@@ -245,7 +245,7 @@ func (w htmlFormElementV8Wrapper) elements(cbCtx jsCallbackContext) (jsValue, er
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Elements()
-	return w.toJSWrapper(cbCtx, result)
+	return encodeEntity(cbCtx, result)
 }
 
 func (w htmlFormElementV8Wrapper) length(cbCtx jsCallbackContext) (jsValue, error) {

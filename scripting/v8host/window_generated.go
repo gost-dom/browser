@@ -199,7 +199,7 @@ func (w windowV8Wrapper) document(cbCtx jsCallbackContext) (jsValue, error) {
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Document()
-	return w.toJSWrapper(cbCtx, result)
+	return encodeEntity(cbCtx, result)
 }
 
 func (w windowV8Wrapper) name(cbCtx jsCallbackContext) (jsValue, error) {

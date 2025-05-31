@@ -55,8 +55,8 @@ func (gen ReturnValueGenerator) encodeReturnValue(
 	cbCtx CallbackContext,
 	val []g.Generator,
 ) g.Generator {
-	encoder := gen.Op.Encoder(gen.Data)
-	return g.ValueOf(gen.Receiver).Field(encoder).Call(append([]g.Generator{cbCtx}, val...)...)
+	encoder := gen.Op.Encoder(g.ValueOf(gen.Receiver), cbCtx, gen.Data)
+	return encoder.Call(val...)
 }
 
 /*
