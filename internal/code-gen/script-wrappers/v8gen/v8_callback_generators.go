@@ -108,7 +108,8 @@ func (gen V8CallbackGenerators) CtxOrOperationCallback(
 	var noOfConsumed int
 	for i, a := range op.Arguments {
 		noOfConsumed = i
-		if a.Optional && !a.HasDefault() && !a.VariadicInGo() {
+		defaultValuer, hasDefault := gen.DefaultValuer(a)
+		if a.Optional && !hasDefault && !a.VariadicInGo() {
 			break
 		}
 		noOfConsumed = i + 1
@@ -124,7 +125,7 @@ func (gen V8CallbackGenerators) CtxOrOperationCallback(
 		err := g.Id(fmt.Sprintf("errArg%d", i+1))
 		reqArgs = append(reqArgs, reqArg)
 		errs = append(errs, err)
-		parseArgs := []g.Generator{cbCtx, g.Lit(a.Name), gen.DefaultValuer(a)}
+		parseArgs := []g.Generator{cbCtx, g.Lit(a.Name), defaultValuer}
 		var dec = wrappers.DecodersForArg(receiver, a)
 		parseArgs = append(parseArgs, dec...)
 		stmts.Append(
@@ -186,15 +187,15 @@ func (gen V8CallbackGenerators) AttributeGetterCallback(
 	)
 }
 
-func (gen V8CallbackGenerators) DefaultValuer(a model.ESOperationArgument) g.Generator {
+func (gen V8CallbackGenerators) DefaultValuer(a model.ESOperationArgument) (g.Generator, bool) {
 	defaultName, hasDefault := a.DefaultValueInGo()
 	zeroValueResolver := g.Id("zeroValue")
-	if hasDefault {
-		return gen.Receiver.Field(defaultName)
+	if hasDefault && defaultName != "" {
+		return gen.Receiver.Field(defaultName), hasDefault
 	} else if a.NullableInIDL() {
-		return zeroValueResolver
+		return zeroValueResolver, hasDefault
 	} else {
-		return g.Nil
+		return g.Nil, hasDefault
 	}
 }
 

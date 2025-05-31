@@ -209,7 +209,7 @@ func init() {
 	registerJSClass("File", "", createCustomEvent)
 	registerJSClass("CustomEvent", "Event", createCustomEvent)
 	registerJSClass("Location", "", createLocationPrototype)
-	registerJSClass("EventTarget", "", createEventTarget)
+	// registerJSClass("EventTarget", "", createEventTarget)
 	registerJSClass("XMLHttpRequestEventTarget", "EventTarget", createIllegalConstructor)
 
 	registerJSClass("HTMLDocument", "Document", createHTMLDocumentPrototype)

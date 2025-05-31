@@ -55,6 +55,16 @@ func CreateV8Specs() WebIdlConfigurations {
 func configureDOMSpecs(domSpecs *WebIdlConfiguration) {
 	configureMutationObserver(domSpecs)
 
+	eventTarget := domSpecs.Type("EventTarget")
+	addEventListenerOptions := eventTarget.Method("addEventListener").Argument("options")
+	addEventListenerOptions.SetDecoder("w.decodeEventListenerOptions")
+	addEventListenerOptions.HasDefault = true
+	addEventListenerOptions.DefaultValue = "defaultEventListenerOptions"
+	removeEventListenerOptions := eventTarget.Method("removeEventListener").Argument("options")
+	removeEventListenerOptions.SetDecoder("w.decodeEventListenerOptions")
+	removeEventListenerOptions.HasDefault = true
+	removeEventListenerOptions.DefaultValue = "defaultEventListenerOptions"
+
 	namedNodeMap := domSpecs.Type("NamedNodeMap")
 	namedNodeMap.MarkMembersAsNotImplemented(
 		"getNamedItem",

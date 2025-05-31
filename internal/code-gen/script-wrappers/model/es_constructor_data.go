@@ -48,7 +48,7 @@ func (d ESConstructorData) Includes() []idl.Interface {
 
 func (d ESConstructorData) GetInternalPackage() string {
 	switch d.Name() {
-	case "Event":
+	case "Event", "EventTarget":
 		return packagenames.Events
 	case "MutationObserver", "MutationRecord":
 		return packagenames.DomInterfaces
