@@ -64,7 +64,7 @@ func (w namedNodeMapV8Wrapper) item(cbCtx jsCallbackContext) (jsValue, error) {
 		return nil, errArg1
 	}
 	result := instance.Item(index)
-	return w.toJSWrapper(cbCtx, result)
+	return encodeEntity(cbCtx, result)
 }
 
 func (w namedNodeMapV8Wrapper) getNamedItem(cbCtx jsCallbackContext) (jsValue, error) {

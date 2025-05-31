@@ -155,7 +155,7 @@ func (w converters[T]) toJSWrapper(
 	cbCtx jsCallbackContext,
 	val entity.ObjectIder,
 ) (jsValue, error) {
-	return cbCtx.ReturnWithJSValueErr(cbCtx.ScriptCtx().getJSInstance(val))
+	return encodeEntity(cbCtx, val)
 }
 
 // handleReffedObject serves as a helper for building v8 wrapping code around go objects.

@@ -54,7 +54,7 @@ func (w nodeWrapper) getRootNode(cbCtx *callbackContext) g.Value {
 	}
 	options := w.decodeGetRootNodeOptions(cbCtx.Argument(0))
 	result := instance.GetRootNode(options)
-	return cbCtx.ReturnWithValue(w.toJSWrapper(result))
+	return cbCtx.ReturnWithValue(encodeEntity(cbCtx, result))
 }
 
 func (w nodeWrapper) cloneNode(cbCtx *callbackContext) g.Value {
@@ -65,7 +65,7 @@ func (w nodeWrapper) cloneNode(cbCtx *callbackContext) g.Value {
 	}
 	subtree := w.decodeboolean(cbCtx.Argument(0))
 	result := instance.CloneNode(subtree)
-	return cbCtx.ReturnWithValue(w.toJSWrapper(result))
+	return cbCtx.ReturnWithValue(encodeEntity(cbCtx, result))
 }
 
 func (w nodeWrapper) isSameNode(cbCtx *callbackContext) g.Value {
@@ -76,7 +76,7 @@ func (w nodeWrapper) isSameNode(cbCtx *callbackContext) g.Value {
 	}
 	otherNode := w.decodeNode(cbCtx.Argument(0))
 	result := instance.IsSameNode(otherNode)
-	return cbCtx.ReturnWithValue(w.toBoolean(result))
+	return cbCtx.ReturnWithValue(w.toBoolean(cbCtx, result))
 }
 
 func (w nodeWrapper) contains(cbCtx *callbackContext) g.Value {
@@ -87,7 +87,7 @@ func (w nodeWrapper) contains(cbCtx *callbackContext) g.Value {
 	}
 	other := w.decodeNode(cbCtx.Argument(0))
 	result := instance.Contains(other)
-	return cbCtx.ReturnWithValue(w.toBoolean(result))
+	return cbCtx.ReturnWithValue(w.toBoolean(cbCtx, result))
 }
 
 func (w nodeWrapper) insertBefore(cbCtx *callbackContext) g.Value {
@@ -102,7 +102,7 @@ func (w nodeWrapper) insertBefore(cbCtx *callbackContext) g.Value {
 	if err != nil {
 		panic(err)
 	}
-	return cbCtx.ReturnWithValue(w.toJSWrapper(result))
+	return cbCtx.ReturnWithValue(encodeEntity(cbCtx, result))
 }
 
 func (w nodeWrapper) appendChild(cbCtx *callbackContext) g.Value {
@@ -116,7 +116,7 @@ func (w nodeWrapper) appendChild(cbCtx *callbackContext) g.Value {
 	if err != nil {
 		panic(err)
 	}
-	return cbCtx.ReturnWithValue(w.toJSWrapper(result))
+	return cbCtx.ReturnWithValue(encodeEntity(cbCtx, result))
 }
 
 func (w nodeWrapper) removeChild(cbCtx *callbackContext) g.Value {
@@ -130,7 +130,7 @@ func (w nodeWrapper) removeChild(cbCtx *callbackContext) g.Value {
 	if err != nil {
 		panic(err)
 	}
-	return cbCtx.ReturnWithValue(w.toJSWrapper(result))
+	return cbCtx.ReturnWithValue(encodeEntity(cbCtx, result))
 }
 
 func (w nodeWrapper) nodeName(cbCtx *callbackContext) g.Value {
@@ -140,7 +140,7 @@ func (w nodeWrapper) nodeName(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.NodeName()
-	return cbCtx.ReturnWithValue(w.toString_(result))
+	return cbCtx.ReturnWithValue(w.toString_(cbCtx, result))
 }
 
 func (w nodeWrapper) isConnected(cbCtx *callbackContext) g.Value {
@@ -150,7 +150,7 @@ func (w nodeWrapper) isConnected(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.IsConnected()
-	return cbCtx.ReturnWithValue(w.toBoolean(result))
+	return cbCtx.ReturnWithValue(w.toBoolean(cbCtx, result))
 }
 
 func (w nodeWrapper) ownerDocument(cbCtx *callbackContext) g.Value {
@@ -160,7 +160,7 @@ func (w nodeWrapper) ownerDocument(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.OwnerDocument()
-	return cbCtx.ReturnWithValue(w.toJSWrapper(result))
+	return cbCtx.ReturnWithValue(encodeEntity(cbCtx, result))
 }
 
 func (w nodeWrapper) parentElement(cbCtx *callbackContext) g.Value {
@@ -170,7 +170,7 @@ func (w nodeWrapper) parentElement(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.ParentElement()
-	return cbCtx.ReturnWithValue(w.toJSWrapper(result))
+	return cbCtx.ReturnWithValue(encodeEntity(cbCtx, result))
 }
 
 func (w nodeWrapper) childNodes(cbCtx *callbackContext) g.Value {
@@ -185,7 +185,7 @@ func (w nodeWrapper) firstChild(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.FirstChild()
-	return cbCtx.ReturnWithValue(w.toJSWrapper(result))
+	return cbCtx.ReturnWithValue(encodeEntity(cbCtx, result))
 }
 
 func (w nodeWrapper) previousSibling(cbCtx *callbackContext) g.Value {
@@ -195,7 +195,7 @@ func (w nodeWrapper) previousSibling(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.PreviousSibling()
-	return cbCtx.ReturnWithValue(w.toJSWrapper(result))
+	return cbCtx.ReturnWithValue(encodeEntity(cbCtx, result))
 }
 
 func (w nodeWrapper) nextSibling(cbCtx *callbackContext) g.Value {
@@ -205,5 +205,5 @@ func (w nodeWrapper) nextSibling(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.NextSibling()
-	return cbCtx.ReturnWithValue(w.toJSWrapper(result))
+	return cbCtx.ReturnWithValue(encodeEntity(cbCtx, result))
 }

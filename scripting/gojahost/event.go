@@ -54,7 +54,7 @@ func newCustomEventWrapper(instance *GojaContext) wrapper {
 	return customEventWrapper{eventWrapper{newBaseInstanceWrapper[*event.Event](instance)}}
 }
 
-func (w eventWrapper) toEventTarget(t event.EventTarget) g.Value {
+func (w eventWrapper) toEventTarget(_ *callbackContext, t event.EventTarget) g.Value {
 	if t == nil {
 		return nil
 	}

@@ -1,9 +1,10 @@
 package v8host
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/gost-dom/browser/dom/event"
+	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -39,7 +40,10 @@ func (w eventV8Wrapper) toEventTarget(
 	if entity, ok := e.(entity.ObjectIder); ok {
 		return w.toJSWrapper(cbCtx, entity)
 	}
-	return cbCtx.ReturnWithError(errors.New("TODO, Not yet supported"))
+	return cbCtx.ReturnWithTypeError(fmt.Sprintf(
+		"encode EventTarget: Not an antity. %s",
+		constants.MISSING_FEATURE_ISSUE_URL),
+	)
 }
 
 func (w eventV8Wrapper) eventPhase(cbCtx jsCallbackContext) (jsValue, error) {

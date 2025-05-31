@@ -67,7 +67,7 @@ func (w parentNodeV8Wrapper) querySelector(cbCtx jsCallbackContext) (jsValue, er
 	if errCall != nil {
 		return nil, errCall
 	}
-	return w.toJSWrapper(cbCtx, result)
+	return encodeEntity(cbCtx, result)
 }
 
 func (w parentNodeV8Wrapper) querySelectorAll(cbCtx jsCallbackContext) (jsValue, error) {
@@ -84,7 +84,7 @@ func (w parentNodeV8Wrapper) querySelectorAll(cbCtx jsCallbackContext) (jsValue,
 	if errCall != nil {
 		return nil, errCall
 	}
-	return w.toJSWrapper(cbCtx, result)
+	return encodeEntity(cbCtx, result)
 }
 
 func (w parentNodeV8Wrapper) firstElementChild(cbCtx jsCallbackContext) (jsValue, error) {
@@ -94,7 +94,7 @@ func (w parentNodeV8Wrapper) firstElementChild(cbCtx jsCallbackContext) (jsValue
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.FirstElementChild()
-	return w.toJSWrapper(cbCtx, result)
+	return encodeEntity(cbCtx, result)
 }
 
 func (w parentNodeV8Wrapper) lastElementChild(cbCtx jsCallbackContext) (jsValue, error) {
@@ -104,7 +104,7 @@ func (w parentNodeV8Wrapper) lastElementChild(cbCtx jsCallbackContext) (jsValue,
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.LastElementChild()
-	return w.toJSWrapper(cbCtx, result)
+	return encodeEntity(cbCtx, result)
 }
 
 func (w parentNodeV8Wrapper) childElementCount(cbCtx jsCallbackContext) (jsValue, error) {

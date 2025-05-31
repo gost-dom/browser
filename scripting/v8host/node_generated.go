@@ -99,7 +99,7 @@ func (w nodeV8Wrapper) getRootNode(cbCtx jsCallbackContext) (jsValue, error) {
 		return nil, errArg1
 	}
 	result := instance.GetRootNode(options)
-	return w.toJSWrapper(cbCtx, result)
+	return encodeEntity(cbCtx, result)
 }
 
 func (w nodeV8Wrapper) cloneNode(cbCtx jsCallbackContext) (jsValue, error) {
@@ -113,7 +113,7 @@ func (w nodeV8Wrapper) cloneNode(cbCtx jsCallbackContext) (jsValue, error) {
 		return nil, errArg1
 	}
 	result := instance.CloneNode(subtree)
-	return w.toJSWrapper(cbCtx, result)
+	return encodeEntity(cbCtx, result)
 }
 
 func (w nodeV8Wrapper) isSameNode(cbCtx jsCallbackContext) (jsValue, error) {
@@ -160,7 +160,7 @@ func (w nodeV8Wrapper) insertBefore(cbCtx jsCallbackContext) (jsValue, error) {
 	if errCall != nil {
 		return nil, errCall
 	}
-	return w.toJSWrapper(cbCtx, result)
+	return encodeEntity(cbCtx, result)
 }
 
 func (w nodeV8Wrapper) appendChild(cbCtx jsCallbackContext) (jsValue, error) {
@@ -177,7 +177,7 @@ func (w nodeV8Wrapper) appendChild(cbCtx jsCallbackContext) (jsValue, error) {
 	if errCall != nil {
 		return nil, errCall
 	}
-	return w.toJSWrapper(cbCtx, result)
+	return encodeEntity(cbCtx, result)
 }
 
 func (w nodeV8Wrapper) removeChild(cbCtx jsCallbackContext) (jsValue, error) {
@@ -194,7 +194,7 @@ func (w nodeV8Wrapper) removeChild(cbCtx jsCallbackContext) (jsValue, error) {
 	if errCall != nil {
 		return nil, errCall
 	}
-	return w.toJSWrapper(cbCtx, result)
+	return encodeEntity(cbCtx, result)
 }
 
 func (w nodeV8Wrapper) nodeName(cbCtx jsCallbackContext) (jsValue, error) {
@@ -224,7 +224,7 @@ func (w nodeV8Wrapper) ownerDocument(cbCtx jsCallbackContext) (jsValue, error) {
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.OwnerDocument()
-	return w.toJSWrapper(cbCtx, result)
+	return encodeEntity(cbCtx, result)
 }
 
 func (w nodeV8Wrapper) parentElement(cbCtx jsCallbackContext) (jsValue, error) {
@@ -234,7 +234,7 @@ func (w nodeV8Wrapper) parentElement(cbCtx jsCallbackContext) (jsValue, error) {
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.ParentElement()
-	return w.toJSWrapper(cbCtx, result)
+	return encodeEntity(cbCtx, result)
 }
 
 func (w nodeV8Wrapper) childNodes(cbCtx jsCallbackContext) (jsValue, error) {
@@ -244,7 +244,7 @@ func (w nodeV8Wrapper) childNodes(cbCtx jsCallbackContext) (jsValue, error) {
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.ChildNodes()
-	return w.toJSWrapper(cbCtx, result)
+	return encodeEntity(cbCtx, result)
 }
 
 func (w nodeV8Wrapper) firstChild(cbCtx jsCallbackContext) (jsValue, error) {
@@ -254,7 +254,7 @@ func (w nodeV8Wrapper) firstChild(cbCtx jsCallbackContext) (jsValue, error) {
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.FirstChild()
-	return w.toJSWrapper(cbCtx, result)
+	return encodeEntity(cbCtx, result)
 }
 
 func (w nodeV8Wrapper) previousSibling(cbCtx jsCallbackContext) (jsValue, error) {
@@ -264,7 +264,7 @@ func (w nodeV8Wrapper) previousSibling(cbCtx jsCallbackContext) (jsValue, error)
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.PreviousSibling()
-	return w.toJSWrapper(cbCtx, result)
+	return encodeEntity(cbCtx, result)
 }
 
 func (w nodeV8Wrapper) nextSibling(cbCtx jsCallbackContext) (jsValue, error) {
@@ -274,5 +274,5 @@ func (w nodeV8Wrapper) nextSibling(cbCtx jsCallbackContext) (jsValue, error) {
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.NextSibling()
-	return w.toJSWrapper(cbCtx, result)
+	return encodeEntity(cbCtx, result)
 }
