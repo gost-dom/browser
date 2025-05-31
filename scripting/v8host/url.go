@@ -23,7 +23,7 @@ func newURLV8Wrapper(host *V8ScriptHost) urlV8Wrapper {
 
 type handleDisposable cgo.Handle
 
-func (h handleDisposable) dispose() { cgo.Handle(h).Delete() }
+func (h handleDisposable) Dispose() { cgo.Handle(h).Delete() }
 
 func (w urlV8Wrapper) CreateInstance(
 	cbCtx jsCallbackContext,

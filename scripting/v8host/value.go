@@ -152,7 +152,7 @@ func (o *v8Object) SetNativeValue(v any) {
 	o.Object.SetInternalField(0, ext)
 }
 
-func (o *v8Object) dispose() {
+func (o *v8Object) Dispose() {
 	if o.handle != 0 {
 		o.handle.Delete()
 		o.handle = 0

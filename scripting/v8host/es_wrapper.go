@@ -7,6 +7,7 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
+	"github.com/gost-dom/browser/scripting/internal/js"
 
 	v8 "github.com/gost-dom/v8go"
 )
@@ -198,8 +199,8 @@ func (o handleReffedObject[T, U]) store(
 	}
 
 	this.SetNativeValue(value)
-	if d, ok := this.(disposable); ok {
-		cbCtx.ScriptCtx().addDisposer(d)
+	if d, ok := this.(js.Disposable); ok {
+		cbCtx.Scope().AddDisposable(d)
 	}
 	return this, nil
 }
