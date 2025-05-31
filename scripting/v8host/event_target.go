@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/gost-dom/browser/dom/event"
-	v8 "github.com/gost-dom/v8go"
+	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
 type v8EventListener struct {
@@ -34,96 +34,53 @@ func (l v8EventListener) Equals(other event.EventHandler) bool {
 	return ok && x.val.StrictEquals(l.val)
 }
 
-type eventTargetV8Wrapper struct {
-	handleReffedObject[event.EventTarget, jsTypeParam]
+func (w eventTargetV8Wrapper) CreateInstance(cbCtx jsCallbackContext) (jsValue, error) {
+	t := event.NewEventTarget()
+	cbCtx.This().SetNativeValue(t)
+	return nil, nil
 }
 
-func newEventTargetV8Wrapper(host *V8ScriptHost) eventTargetV8Wrapper {
-	return eventTargetV8Wrapper{newHandleReffedObject[event.EventTarget](host)}
+func (w eventTargetV8Wrapper) decodeEventListener(
+	cbCtx jsCallbackContext,
+	val jsValue,
+) (event.EventHandler, error) {
+	if fn, ok := val.AsFunction(); ok {
+		return newV8EventListener(cbCtx.ScriptCtx(), fn), nil
+	} else {
+		return nil, cbCtx.ValueFactory().NewTypeError("Must be a function")
+	}
 }
 
-func createEventTarget(host *V8ScriptHost) *v8.FunctionTemplate {
-	iso := host.iso
-	wrapper := newEventTargetV8Wrapper(host)
-	res := v8.NewFunctionTemplate(
-		iso,
-		func(info *v8.FunctionCallbackInfo) *v8.Value {
-			ctx := host.mustGetContext(info.Context())
-			wrapper.store(event.NewEventTarget(), ctx, newV8Object(iso, info.This()))
-			return v8.Undefined(iso)
-		},
-	)
-	proto := res.PrototypeTemplate()
-	proto.Set(
-		"addEventListener",
-		v8.NewFunctionTemplateWithError(iso,
-			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-				ctx := host.mustGetContext(info.Context())
-				target, err := wrapper.getInstance(info)
-				if err != nil {
-					return nil, err
-				}
-				args := newCallbackContext(host, info)
-				eventType, e1 := args.consumeString()
-				fn, e2 := args.consumeFunction()
-				var options []func(*event.EventListener)
-				optionArg := args.ConsumeArg()
-				if optionArg != nil {
-					if optionArg.IsBoolean() && optionArg.Boolean() {
-						options = append(options, event.Capture)
-					}
-					if obj, ok := optionArg.AsObject(); ok {
-						if capture, err := obj.Get("capture"); err == nil &&
-							capture != nil {
-							if capture.Boolean() {
-								options = append(options, event.Capture)
-							}
-						}
-					}
-				}
-				err = errors.Join(e1, e2)
-				if err == nil {
-					listener := newV8EventListener(ctx, fn)
-					target.AddEventListener(eventType, listener, options...)
-				}
-				return v8.Undefined(iso), err
-			}), v8.ReadOnly)
-	proto.Set(
-		"removeEventListener",
-		v8.NewFunctionTemplateWithError(iso,
-			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-				ctx := host.mustGetContext(info.Context())
-				target, err := wrapper.getInstance(info)
-				if err != nil {
-					return nil, err
-				}
-				args := newCallbackContext(host, info)
-				eventType, e1 := args.consumeString()
-				fn, e2 := args.consumeFunction()
-				err = errors.Join(e1, e2)
-				if err == nil {
-					listener := newV8EventListener(ctx, fn)
-					target.RemoveEventListener(eventType, listener)
-				}
-				return v8.Undefined(iso), err
-			}), v8.ReadOnly)
-	proto.Set(
-		"dispatchEvent",
-		v8.NewFunctionTemplateWithError(iso,
-			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-				target, err := wrapper.getInstance(info)
-				if err != nil {
-					return nil, err
-				}
-				e := info.Args()[0]
-				handle := e.Object().GetInternalField(0).ExternalHandle()
-				if evt, ok := handle.Value().(*event.Event); ok {
-					return v8.NewValue(iso, target.DispatchEvent(evt))
-				} else {
-					return nil, v8.NewTypeError(iso, "Not an Event")
-				}
-			}), v8.ReadOnly)
-	instanceTemplate := res.InstanceTemplate()
-	instanceTemplate.SetInternalFieldCount(1)
-	return res
+func (w eventTargetV8Wrapper) defaultEventListenerOptions() []event.EventListenerOption {
+	return nil
+}
+
+func (w eventTargetV8Wrapper) decodeEventListenerOptions(
+	cbCtx jsCallbackContext,
+	val jsValue,
+) ([]event.EventListenerOption, error) {
+	var options []func(*event.EventListener)
+	if val.IsBoolean() && val.Boolean() {
+		options = append(options, event.Capture)
+	}
+	if obj, ok := val.AsObject(); ok {
+		if capture, err := obj.Get("capture"); err == nil &&
+			capture != nil {
+			if capture.Boolean() {
+				options = append(options, event.Capture)
+			}
+		}
+	}
+	return options, nil
+}
+
+func (w eventTargetV8Wrapper) decodeEvent(
+	cbCtx jsCallbackContext,
+	val jsValue,
+) (*event.Event, error) {
+	obj, err := js.AssertObjectArg(cbCtx, val)
+	if err == nil {
+		return js.As[*event.Event](obj.NativeValue(), nil)
+	}
+	return nil, err
 }

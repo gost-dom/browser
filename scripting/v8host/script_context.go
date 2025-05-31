@@ -49,6 +49,10 @@ func (c *V8ScriptContext) cacheEntity(obj jsObject, node entity.ObjectIder) {
 	c.v8nodes[node.ObjectId()] = obj
 }
 
+func (c *V8ScriptContext) SetValue(entity entity.ObjectIder, value jsValue) {
+	c.v8nodes[entity.ObjectId()] = value
+}
+
 func lookupJSPrototype(entity entity.ObjectIder) string {
 	switch n := entity.(type) {
 	case *event.Event:

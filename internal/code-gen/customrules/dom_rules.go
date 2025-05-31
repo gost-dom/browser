@@ -4,6 +4,10 @@ import "github.com/gost-dom/webref/idl"
 
 var domRules = SpecRules{
 	"Event": {OutputType: OutputTypeStruct},
+	"EventTarget": {Operations: OperationRules{
+		"addEventListener":    {Arguments: ArgumentRules{"options": {Variadic: true}}},
+		"removeEventListener": {Arguments: ArgumentRules{"options": {Variadic: true}}},
+	}},
 	"DOMTokenList": {Operations: OperationRules{
 		"add": {HasError: true},
 	}},

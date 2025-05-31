@@ -7,8 +7,8 @@ type ESMethodArgument struct {
 	HasDefault   bool
 	DefaultValue string
 	Ignored      bool
-	encoder      string
-	decoder      string
+	Encoder      string
+	Decoder      string
 }
 
 func (a *ESMethodArgument) SetRequired() *ESMethodArgument   { a.Required = true; return a }
@@ -24,10 +24,10 @@ func (a *ESMethodArgument) Ignore() {
 }
 
 func (a *ESMethodArgument) SetEncoder(e string) *ESMethodArgument {
-	a.encoder = e
+	a.Encoder = e
 	return a
 }
 func (a *ESMethodArgument) SetDecoder(d string) *ESMethodArgument {
-	a.decoder = d
+	a.Decoder = d
 	return a
 }

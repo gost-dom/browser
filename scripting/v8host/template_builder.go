@@ -179,10 +179,10 @@ func zeroValue[T any]() (res T) { return }
 // If the function returns with an error, the name will be used in the error
 // message. Otherwise, name has ho effect on the function.
 func consumeArgument[T any](
-	args *v8CallbackContext,
+	args jsCallbackContext,
 	name string,
 	defaultValue func() T,
-	decoders ...func(*v8CallbackContext, jsValue) (T, error),
+	decoders ...func(jsCallbackContext, jsValue) (T, error),
 ) (result T, err error) {
 	value := args.ConsumeArg()
 	if value == nil && defaultValue != nil {

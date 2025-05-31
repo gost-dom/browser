@@ -22,8 +22,10 @@ const (
 func Capture(o *EventListener) { o.Capture = true }
 func Once(o *EventListener)    { o.Once = true }
 
+type EventListenerOption = func(*EventListener)
+
 type EventTarget interface {
-	AddEventListener(eventType string, listener EventHandler, options ...func(*EventListener))
+	AddEventListener(eventType string, listener EventHandler, options ...EventListenerOption)
 	RemoveEventListener(eventType string, listener EventHandler, options ...func(*EventListener))
 	DispatchEvent(event *Event) bool
 	// Adds a listener that will receive _all_ dispatched event. This listener

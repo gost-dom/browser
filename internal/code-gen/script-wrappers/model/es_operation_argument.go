@@ -33,7 +33,11 @@ func (a ESOperationArgument) DefaultValueInGo() (name string, ok bool) {
 	if defaultValue := a.ArgumentSpec.DefaultValue; defaultValue != "" {
 		name = defaultValue
 	} else {
-		name = fmt.Sprintf("default%s", a.IdlArg.Type.Name)
+		if n := a.IdlArg.Type.Name; n == "" {
+			name = fmt.Sprintf("default%s", IdlNameToGoName(a.Name))
+		} else {
+			name = fmt.Sprintf("default%s", a.IdlArg.Type.Name)
+		}
 	}
 	return
 }

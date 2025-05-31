@@ -10,6 +10,11 @@ import (
 
 func DecodersForArg(receiver g.Generator, arg model.ESOperationArgument) []g.Generator {
 	var convertNames []string
+
+	if d := arg.ArgumentSpec.Decoder; d != "" {
+		return g.List(g.Id(d))
+	}
+
 	argType := arg.IdlArg.Type
 	if argType.Kind == idl.KindUnion {
 		convertNames = make([]string, len(argType.Types))
