@@ -71,10 +71,6 @@ func (pool *scriptHostPool) tryGet() (iso *V8ScriptHost, found bool) {
 
 var pool = &scriptHostPool{}
 
-// disposable represents a resource that needs cleanup when a context is closed.
-// E.g., cgo handles that need to be released.
-type disposable interface{ dispose() }
-
 type globalInstall struct {
 	name        string
 	constructor *v8go.FunctionTemplate
@@ -384,7 +380,7 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 	if w != nil {
 		global := newV8Object(host.iso, context.v8ctx.Global())
 		global.SetNativeValue(w)
-		context.addDisposer(global.(disposable))
+		context.addDisposer(global.(js.Disposable))
 		context.cacheEntity(global, w)
 	}
 	err := installPolyfills(context)

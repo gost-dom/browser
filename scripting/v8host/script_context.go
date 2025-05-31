@@ -14,6 +14,7 @@ import (
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/internal/uievents"
 	"github.com/gost-dom/browser/scripting"
+	"github.com/gost-dom/browser/scripting/internal/js"
 
 	v8 "github.com/gost-dom/v8go"
 )
@@ -24,7 +25,7 @@ type V8ScriptContext struct {
 	v8ctx      *v8.Context
 	window     html.Window
 	v8nodes    map[entity.ObjectId]jsValue
-	disposers  []disposable
+	disposers  []js.Disposable
 	clock      *clock.Clock
 	disposed   bool
 	global     jsObject
@@ -153,13 +154,13 @@ func (ctx *V8ScriptContext) Close() {
 	ctx.host.inspector.ContextDestroyed(ctx.v8ctx)
 	log.Debug(ctx.host.logger, "ScriptContext: Dispose")
 	for _, dispose := range ctx.disposers {
-		dispose.dispose()
+		dispose.Dispose()
 	}
 	ctx.host.deleteContext(ctx)
 	ctx.v8ctx.Close()
 }
 
-func (ctx *V8ScriptContext) addDisposer(disposer disposable) {
+func (ctx *V8ScriptContext) addDisposer(disposer js.Disposable) {
 	ctx.disposers = append(ctx.disposers, disposer)
 }
 
