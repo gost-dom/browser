@@ -21,7 +21,7 @@ func (w eventV8Wrapper) defaultEventInit() eventInitWrapper {
 }
 
 func (w eventV8Wrapper) CreateInstance(
-	cbCtx *v8CallbackContext,
+	cbCtx jsCallbackContext,
 	type_ string,
 	o eventInitWrapper,
 ) (jsValue, error) {
@@ -30,7 +30,7 @@ func (w eventV8Wrapper) CreateInstance(
 }
 
 func (w eventV8Wrapper) toEventTarget(
-	cbCtx *v8CallbackContext,
+	cbCtx jsCallbackContext,
 	e event.EventTarget,
 ) (jsValue, error) {
 	if e == nil {
@@ -42,7 +42,7 @@ func (w eventV8Wrapper) toEventTarget(
 	return cbCtx.ReturnWithError(errors.New("TODO, Not yet supported"))
 }
 
-func (w eventV8Wrapper) eventPhase(cbCtx *v8CallbackContext) (jsValue, error) {
+func (w eventV8Wrapper) eventPhase(cbCtx jsCallbackContext) (jsValue, error) {
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err

@@ -5,7 +5,7 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (n nodeV8Wrapper) textContent(cbCtx *v8CallbackContext) (jsValue, error) {
+func (n nodeV8Wrapper) textContent(cbCtx jsCallbackContext) (jsValue, error) {
 	i, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)

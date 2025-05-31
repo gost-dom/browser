@@ -26,7 +26,7 @@ type handleDisposable cgo.Handle
 func (h handleDisposable) dispose() { cgo.Handle(h).Delete() }
 
 func (w urlV8Wrapper) CreateInstance(
-	cbCtx *v8CallbackContext,
+	cbCtx jsCallbackContext,
 	u string,
 ) (jsValue, error) {
 	value, err := url.NewUrl(u)
@@ -38,7 +38,7 @@ func (w urlV8Wrapper) CreateInstance(
 }
 
 func (w urlV8Wrapper) CreateInstanceBase(
-	cbCtx *v8CallbackContext,
+	cbCtx jsCallbackContext,
 	u string,
 	base string,
 ) (jsValue, error) {
@@ -50,7 +50,7 @@ func (w urlV8Wrapper) CreateInstanceBase(
 	return cbCtx.ReturnWithValue(nil)
 }
 
-func (w urlSearchParamsV8Wrapper) Constructor(cbCtx *v8CallbackContext) (jsValue, error) {
+func (w urlSearchParamsV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
 	var err error
 	ctx := cbCtx.ScriptCtx()
 	args := cbCtx.consumeRest()
@@ -110,7 +110,7 @@ func (w urlSearchParamsV8Wrapper) Constructor(cbCtx *v8CallbackContext) (jsValue
 }
 
 func (w urlSearchParamsV8Wrapper) toSequenceString_(
-	cbCtx *v8CallbackContext,
+	cbCtx jsCallbackContext,
 	values []string,
 ) (jsValue, error) {
 	vs := make([]jsValue, len(values))

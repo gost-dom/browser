@@ -19,8 +19,8 @@ func installGlobals(
 	windowTemplate.Set("location", location.ft.InstanceTemplate())
 }
 
-func (w *windowV8Wrapper) window(cbCtx *v8CallbackContext) (jsValue, error) {
-	return cbCtx.ReturnWithJSValue(cbCtx.This())
+func (w *windowV8Wrapper) window(cbCtx jsCallbackContext) (jsValue, error) {
+	return cbCtx.This(), nil
 }
 
 func (w *windowV8Wrapper) history(cbCtx *v8CallbackContext) (jsValue, error) {

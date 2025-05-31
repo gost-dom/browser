@@ -125,7 +125,7 @@ func (h prototypeBuilder[T]) CreateReadWriteProp(
 
 func (h prototypeBuilder[T]) CreateFunction(
 	name string,
-	fn func(T, *v8CallbackContext) (*v8.Value, error),
+	fn func(T, jsCallbackContext) (*v8.Value, error),
 ) {
 	h.proto.Set(
 		name,

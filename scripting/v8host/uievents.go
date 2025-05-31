@@ -19,14 +19,14 @@ func (w uIEventV8Wrapper) decodePointerEventInit(
 }
 
 func (w uIEventV8Wrapper) CreateInstance(
-	cbCtx *v8CallbackContext,
+	cbCtx jsCallbackContext,
 	type_ string,
 ) (jsValue, error) {
 	return w.CreateInstanceEventInitDict(cbCtx, type_)
 }
 
 func (w uIEventV8Wrapper) CreateInstanceEventInitDict(
-	cbCtx *v8CallbackContext,
+	cbCtx jsCallbackContext,
 	type_ string,
 	options ...interface{}) (jsValue, error) {
 	e := uievents.NewUIEvent(type_)

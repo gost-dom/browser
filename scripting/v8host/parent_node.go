@@ -6,7 +6,7 @@ import (
 )
 
 func (w *parentNodeV8Wrapper) getNodesAndInstance(
-	cbCtx *v8CallbackContext,
+	cbCtx jsCallbackContext,
 ) (i dom.ParentNode, nodes []dom.Node, err error) {
 	args := cbCtx.consumeRest()
 	nodes = make([]dom.Node, len(args))
@@ -19,7 +19,7 @@ func (w *parentNodeV8Wrapper) getNodesAndInstance(
 	return
 }
 
-func (w *parentNodeV8Wrapper) append(cbCtx *v8CallbackContext) (jsValue, error) {
+func (w *parentNodeV8Wrapper) append(cbCtx jsCallbackContext) (jsValue, error) {
 	if instance, nodes, err := w.getNodesAndInstance(cbCtx); err == nil {
 		if err = instance.Append(nodes...); err != nil {
 			return cbCtx.ReturnWithError(err)
@@ -28,7 +28,7 @@ func (w *parentNodeV8Wrapper) append(cbCtx *v8CallbackContext) (jsValue, error) 
 	return cbCtx.ReturnWithValue(nil)
 }
 
-func (w *parentNodeV8Wrapper) prepend(cbCtx *v8CallbackContext) (jsValue, error) {
+func (w *parentNodeV8Wrapper) prepend(cbCtx jsCallbackContext) (jsValue, error) {
 	if instance, nodes, err := w.getNodesAndInstance(cbCtx); err == nil {
 		if err = instance.Prepend(nodes...); err != nil {
 			return cbCtx.ReturnWithError(err)
@@ -37,7 +37,7 @@ func (w *parentNodeV8Wrapper) prepend(cbCtx *v8CallbackContext) (jsValue, error)
 	return cbCtx.ReturnWithValue(nil)
 }
 
-func (w *parentNodeV8Wrapper) replaceChildren(cbCtx *v8CallbackContext) (jsValue, error) {
+func (w *parentNodeV8Wrapper) replaceChildren(cbCtx jsCallbackContext) (jsValue, error) {
 	if instance, nodes, err := w.getNodesAndInstance(cbCtx); err == nil {
 		if err = instance.ReplaceChildren(nodes...); err != nil {
 			return cbCtx.ReturnWithError(err)
