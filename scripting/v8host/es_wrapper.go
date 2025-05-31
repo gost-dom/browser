@@ -190,16 +190,16 @@ func (o handleReffedObject[T, U]) iso() *v8.Isolate { return o.scriptHost.iso }
 // TODO: Return js.CallbackRVal
 func (o handleReffedObject[T, U]) store(
 	value any,
-	ctx *V8ScriptContext,
-	this jsObject,
+	cbCtx jsCallbackContext,
 ) (jsValue, error) {
+	this := cbCtx.This()
 	if e, ok := value.(entity.ObjectIder); ok {
-		ctx.cacheEntity(this, e)
+		cbCtx.Scope().SetValue(e, this)
 	}
 
 	this.SetNativeValue(value)
 	if d, ok := this.(disposable); ok {
-		ctx.addDisposer(d)
+		cbCtx.ScriptCtx().addDisposer(d)
 	}
 	return this, nil
 }

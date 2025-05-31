@@ -33,8 +33,8 @@ func (w urlV8Wrapper) CreateInstance(
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
 	}
-	w.store(value, cbCtx.ScriptCtx(), cbCtx.This())
-	return cbCtx.ReturnWithValue(nil)
+	w.store(value, cbCtx)
+	return nil, nil
 }
 
 func (w urlV8Wrapper) CreateInstanceBase(
@@ -46,7 +46,7 @@ func (w urlV8Wrapper) CreateInstanceBase(
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
 	}
-	w.store(value, cbCtx.ScriptCtx(), cbCtx.This())
+	w.store(value, cbCtx)
 	return cbCtx.ReturnWithValue(nil)
 }
 
@@ -105,7 +105,7 @@ func (w urlSearchParamsV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue,
 				))
 		}
 	}
-	w.store(&res, ctx, cbCtx.This())
+	w.store(&res, cbCtx)
 	return cbCtx.ReturnWithValue(nil)
 }
 

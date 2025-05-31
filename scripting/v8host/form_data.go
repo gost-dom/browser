@@ -18,7 +18,7 @@ func (w formDataV8Wrapper) CustomInitialiser(constructor *v8go.FunctionTemplate)
 
 func (w formDataV8Wrapper) CreateInstance(cbCtx jsCallbackContext) (jsValue, error) {
 	value := html.NewFormData()
-	w.store(value, cbCtx.ScriptCtx(), cbCtx.This())
+	w.store(value, cbCtx)
 	return cbCtx.ReturnWithValue(nil)
 }
 
@@ -27,7 +27,7 @@ func (w formDataV8Wrapper) CreateInstanceForm(
 	form html.HTMLFormElement,
 ) (jsValue, error) {
 	value := html.NewFormDataForm(form)
-	w.store(value, cbCtx.ScriptCtx(), cbCtx.This())
+	w.store(value, cbCtx)
 	return cbCtx.ReturnWithValue(nil)
 }
 
@@ -40,7 +40,7 @@ func (w formDataV8Wrapper) CreateInstanceFormSubmitter(
 	if submitter != nil {
 		value.AddElement(submitter)
 	}
-	w.store(value, cbCtx.ScriptCtx(), cbCtx.This())
+	w.store(value, cbCtx)
 	return cbCtx.ReturnWithValue(nil)
 }
 

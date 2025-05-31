@@ -27,7 +27,7 @@ func (w eventV8Wrapper) CreateInstance(
 	o eventInitWrapper,
 ) (jsValue, error) {
 	e := &event.Event{Type: type_, Bubbles: o.bubbles, Cancelable: o.cancelable, Data: o.init}
-	return cbCtx.ReturnWithJSValueErr(w.store(e, cbCtx.ScriptCtx(), cbCtx.This()))
+	return w.store(e, cbCtx)
 }
 
 func (w eventV8Wrapper) toEventTarget(

@@ -23,10 +23,7 @@ func (w mutationObserverV8Wrapper) CreateInstance(
 	cbCtx *v8CallbackContext,
 	cb mutation.Callback,
 ) (jsValue, error) {
-	ctx := cbCtx.ScriptCtx()
-	return cbCtx.ReturnWithJSValueErr(
-		w.store(mutation.NewObserver(ctx.clock, cb), ctx, cbCtx.This()),
-	)
+	return w.store(mutation.NewObserver(cbCtx.ScriptCtx().clock, cb), cbCtx)
 }
 
 func (w mutationObserverV8Wrapper) decodeMutationCallback(
