@@ -43,6 +43,7 @@ type CallbackContext[T any] interface {
 
 	ReturnWithValue(Value[T]) (Value[T], error)
 	ReturnWithError(error) (Value[T], error)
+	ReturnWithTypeError(msg string) (Value[T], error)
 
 	// ValueFactory returns a "factory" that can be used to produce JavaScript
 	// values.
