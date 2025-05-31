@@ -8,6 +8,7 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
@@ -30,10 +31,6 @@ type v8CallbackContext struct {
 
 func newCallbackContext(host *V8ScriptHost, info *v8.FunctionCallbackInfo) jsCallbackContext {
 	return &v8CallbackContext{v8Info: info, host: host}
-}
-
-func (h v8CallbackContext) Global() jsObject {
-	return h.ScriptCtx().global
 }
 
 func (h v8CallbackContext) This() jsObject     { return newV8Object(h.iso(), h.v8Info.This()) }
@@ -184,7 +181,7 @@ func (f v8ValueFactory) NewArray(values ...jsValue) jsValue {
 	}
 	arrVal := newV8Value(f.ctx.iso(), arrayOf)
 	if fn, ok := arrVal.AsFunction(); ok {
-		res, err := fn.Call(f.ctx.Global(), values...)
+		res, err := fn.Call(f.ctx.ScriptCtx().global, values...)
 		if err != nil {
 			panic(err)
 		}
@@ -295,4 +292,6 @@ type v8Scope struct {
 	*V8ScriptContext
 }
 
-func (s v8Scope) Window() html.Window { return s.window }
+func (s v8Scope) Window() html.Window  { return s.window }
+func (s v8Scope) GlobalThis() jsObject { return s.global }
+func (s v8Scope) Clock() *clock.Clock  { return s.clock }

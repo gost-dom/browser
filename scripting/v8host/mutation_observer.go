@@ -15,8 +15,10 @@ type MutationCallback struct {
 
 func (cb MutationCallback) HandleMutation(recs []mutation.Record, obs *mutation.Observer) {
 	v8Recs, _ := toSequenceMutationRecord(cb.ctx, recs)
-
-	cb.function.Call(cb.ctx.Global(), v8Recs)
+	scope := cb.ctx.Scope()
+	if _, err := cb.function.Call(scope.GlobalThis(), v8Recs); err != nil {
+		UnhandledError(scope, err)
+	}
 }
 
 func (w mutationObserverV8Wrapper) CreateInstance(

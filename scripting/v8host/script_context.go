@@ -24,7 +24,6 @@ type V8ScriptContext struct {
 	v8ctx      *v8.Context
 	window     html.Window
 	v8nodes    map[entity.ObjectId]jsValue
-	eventLoop  *eventLoop
 	disposers  []disposable
 	clock      *clock.Clock
 	disposed   bool
@@ -166,7 +165,7 @@ func (ctx *V8ScriptContext) addDisposer(disposer disposable) {
 
 func (ctx *V8ScriptContext) runScript(script string) (res *v8.Value, err error) {
 	res, err = ctx.v8ctx.RunScript(script, "")
-	ctx.eventLoop.tick()
+	ctx.clock.Tick()
 	return
 }
 

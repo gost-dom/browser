@@ -23,7 +23,7 @@ func (l v8EventListener) HandleEvent(e *event.Event) error {
 		iso := l.ctx.host.iso
 		global := l.ctx.v8ctx.Global()
 		_, err1 := f.Call(newV8Object(iso, global), event)
-		err2 := l.ctx.eventLoop.tick()
+		err2 := l.ctx.clock.Tick()
 		err = errors.Join(err1, err2)
 	}
 	return err
