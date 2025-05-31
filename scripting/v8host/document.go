@@ -30,7 +30,7 @@ func (w *documentV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) 
 	proto.Set("getElementById", wrapV8Callback(host, w.getElementById))
 }
 
-func (w *documentV8Wrapper) CreateInstance(cbCtx *v8CallbackContext) (jsValue, error) {
+func (w *documentV8Wrapper) CreateInstance(cbCtx jsCallbackContext) (jsValue, error) {
 	return cbCtx.ReturnWithJSValueErr(
 		w.store(dom.NewDocument(nil), cbCtx.ScriptCtx(), cbCtx.This()),
 	)
@@ -64,7 +64,7 @@ func (w *documentV8Wrapper) body(cbCtx jsCallbackContext) (jsValue, error) {
 }
 
 func (w *documentV8Wrapper) toComment(
-	cbCtx *v8CallbackContext,
+	cbCtx jsCallbackContext,
 	comment dom.Comment,
 ) (jsValue, error) {
 	return cbCtx.getInstanceForNode(comment)

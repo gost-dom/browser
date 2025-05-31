@@ -14,7 +14,7 @@ func (l domTokenListV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplat
 	it.installPrototype(constructor)
 }
 
-func (l domTokenListV8Wrapper) toggle(args *v8CallbackContext) (jsValue, error) {
+func (l domTokenListV8Wrapper) toggle(args jsCallbackContext) (jsValue, error) {
 	instance, errInstance := js.As[dom.DOMTokenList](args.Instance())
 	token, err0 := consumeArgument(args, "toggle", nil, l.decodeString)
 	if err := errors.Join(err0, errInstance); err != nil {
