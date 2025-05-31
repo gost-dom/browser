@@ -8,22 +8,23 @@ import (
 )
 
 type v8EventListener struct {
-	ctx *V8ScriptContext
+	// TODO: Replace with "scope" - as we keep on to this for longer than the
+	// callback
+	ctx jsCallbackContext
 	val jsFunction
 }
 
-func newV8EventListener(ctx *V8ScriptContext, val jsFunction) event.EventHandler {
+func newV8EventListener(ctx jsCallbackContext, val jsFunction) event.EventHandler {
 	return v8EventListener{ctx, val}
 }
 
 func (l v8EventListener) HandleEvent(e *event.Event) error {
 	f := l.val
-	event, err := l.ctx.getJSInstance(e)
+	event, err := encodeEntity(l.ctx, e)
 	if err == nil {
-		iso := l.ctx.host.iso
-		global := l.ctx.v8ctx.Global()
-		_, err1 := f.Call(newV8Object(iso, global), event)
-		err2 := l.ctx.clock.Tick()
+		global := l.ctx.Scope().GlobalThis()
+		_, err1 := f.Call(global, event)
+		err2 := l.ctx.Scope().Clock().Tick()
 		err = errors.Join(err1, err2)
 	}
 	return err
@@ -45,7 +46,7 @@ func (w eventTargetV8Wrapper) decodeEventListener(
 	val jsValue,
 ) (event.EventHandler, error) {
 	if fn, ok := val.AsFunction(); ok {
-		return newV8EventListener(cbCtx.ScriptCtx(), fn), nil
+		return newV8EventListener(cbCtx, fn), nil
 	} else {
 		return nil, cbCtx.ValueFactory().NewTypeError("Must be a function")
 	}
