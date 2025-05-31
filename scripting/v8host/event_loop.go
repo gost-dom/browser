@@ -26,104 +26,82 @@ func newEventLoop(context *V8ScriptContext, cb func(error)) *eventLoop {
 }
 
 func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.ObjectTemplate) {
-	iso := host.iso
-
 	globalObjectTemplate.Set(
 		"queueMicrotask",
-		v8.NewFunctionTemplateWithError(
-			iso,
-			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-				cbCtx := newCallbackContext(host, info)
-				ctx := host.mustGetContext(info.Context())
-				helper := newCallbackContext(host, info)
-				f, err := helper.consumeFunction()
-				if err == nil {
-					ctx.clock.AddSafeMicrotask(func() {
-						if _, err := f.Call(cbCtx.Global()); err != nil {
-							ctx.eventLoop.errorCb(err)
-						}
-					})
-				}
-				return nil, err
-			},
-		),
+		wrapV8Callback(host, func(cbCtx jsCallbackContext) (jsValue, error) {
+			f, err := consumeArgument(cbCtx, "callback", nil, decodeFunction)
+			if err == nil {
+				ctx := cbCtx.ScriptCtx()
+				clock := ctx.clock
+				clock.AddSafeMicrotask(func() {
+					if _, err := f.Call(cbCtx.Global()); err != nil {
+						ctx.eventLoop.errorCb(err)
+					}
+				})
+			}
+			return nil, err
+		}),
 	)
 	globalObjectTemplate.Set(
 		"setTimeout",
-		v8.NewFunctionTemplateWithError(
-			iso,
-			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-				cbCtx := newCallbackContext(host, info)
-				ctx := cbCtx.ScriptCtx()
-				helper := newCallbackContext(host, info)
-				f, err1 := helper.consumeFunction()
-				delay, err2 := helper.consumeInt32()
-				err := errors.Join(err1, err2)
-				if err != nil {
-					return v8.Undefined(iso), err
-				}
-				handle := ctx.clock.AddSafeTask(
-					func() {
-						if _, err := f.Call(cbCtx.Global()); err != nil {
-							ctx.eventLoop.errorCb(err)
-						}
-					},
-					time.Duration(delay)*time.Millisecond,
-				)
-				return v8.NewValue(iso, uint32(handle))
-			},
-		),
+		wrapV8Callback(host, func(cbCtx jsCallbackContext) (jsValue, error) {
+			f, err1 := consumeArgument(cbCtx, "callback", nil, decodeFunction)
+			delay, err2 := consumeArgument(cbCtx, "delay", nil, decodeInt32)
+			err := errors.Join(err1, err2)
+			if err != nil {
+				return nil, err
+			}
+			ctx := cbCtx.ScriptCtx()
+			handle := ctx.clock.AddSafeTask(
+				func() {
+					if _, err := f.Call(cbCtx.Global()); err != nil {
+						ctx.eventLoop.errorCb(err)
+					}
+				},
+				time.Duration(delay)*time.Millisecond,
+			)
+			return cbCtx.ValueFactory().NewUint32(uint32(handle)), nil
+		}),
 	)
 	globalObjectTemplate.Set(
 		"clearTimeout",
-		v8.NewFunctionTemplateWithError(
-			iso,
-			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-				ctx := host.mustGetContext(info.Context())
-				helper := newCallbackContext(host, info)
-				handle := helper.consumeValue()
-				ctx.clock.Cancel(clock.TaskHandle(handle.Uint32()))
-				return nil, nil
-			},
-		),
+		wrapV8Callback(host, func(cbCtx jsCallbackContext) (jsValue, error) {
+			handle := cbCtx.consumeValue()
+			ctx := cbCtx.ScriptCtx()
+			ctx.clock.Cancel(clock.TaskHandle(handle.Uint32()))
+			return nil, nil
+		}),
 	)
 	globalObjectTemplate.Set(
 		"setInterval",
-		v8.NewFunctionTemplateWithError(
-			iso,
-			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-				cbCtx := newCallbackContext(host, info)
-				ctx := cbCtx.ScriptCtx()
-				helper := newCallbackContext(host, info)
-				f, err1 := helper.consumeFunction()
-				delay, err2 := consumeArgument(helper, "delay", nil, decodeInt32)
-				err := errors.Join(err1, err2)
-				if err != nil {
-					return v8.Undefined(iso), err
-				}
-				handle := ctx.clock.SetInterval(
-					func() {
-						if _, err := f.Call(cbCtx.Global()); err != nil {
-							ctx.eventLoop.errorCb(err)
-						}
-					},
-					time.Duration(delay)*time.Millisecond,
-				)
-				return v8.NewValue(iso, uint32(handle))
-			},
-		),
+		wrapV8Callback(host, func(cbCtx jsCallbackContext) (jsValue, error) {
+			f, err1 := consumeArgument(cbCtx, "callback", nil, decodeFunction)
+			delay, err2 := consumeArgument(cbCtx, "delay", nil, decodeInt32)
+			err := errors.Join(err1, err2)
+			if err != nil {
+				return nil, err
+			}
+			ctx := cbCtx.ScriptCtx()
+			handle := ctx.clock.SetInterval(
+				func() {
+					if _, err := f.Call(cbCtx.Global()); err != nil {
+						ctx.eventLoop.errorCb(err)
+					}
+				},
+				time.Duration(delay)*time.Millisecond,
+			)
+			return encodeUint32(cbCtx, uint32(handle))
+		}),
 	)
 	globalObjectTemplate.Set(
 		"clearInterval",
-		v8.NewFunctionTemplateWithError(
-			iso,
-			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-				ctx := host.mustGetContext(info.Context())
-				helper := newCallbackContext(host, info)
-				handle := helper.consumeValue()
-				ctx.clock.Cancel(clock.TaskHandle(handle.Uint32()))
-				return nil, nil
-			},
-		),
+		wrapV8Callback(host, func(cbCtx jsCallbackContext) (jsValue, error) {
+			handle, err := consumeArgument(cbCtx, "handle", nil, decodeUint32)
+			ctx := cbCtx.ScriptCtx()
+			if err == nil {
+				ctx.clock.Cancel(clock.TaskHandle(handle))
+			}
+			return nil, err
+		}),
 	)
 }

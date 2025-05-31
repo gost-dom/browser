@@ -4,6 +4,10 @@ import (
 	"github.com/gost-dom/browser/internal/entity"
 )
 
+func encodeUint32(cbCtx jsCallbackContext, val uint32) (jsValue, error) {
+	return cbCtx.ValueFactory().NewUint32(val), nil
+}
+
 func encodeEntity(cbCtx jsCallbackContext, e entity.ObjectIder) (jsValue, error) {
 	fact := cbCtx.ValueFactory()
 	scope := cbCtx.Scope()
