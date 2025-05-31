@@ -49,6 +49,11 @@ func (c *V8ScriptContext) cacheEntity(obj jsObject, node entity.ObjectIder) {
 	c.v8nodes[node.ObjectId()] = obj
 }
 
+func (c *V8ScriptContext) GetValue(entity entity.ObjectIder) (jsValue, bool) {
+	res, ok := c.v8nodes[entity.ObjectId()]
+	return res, ok
+}
+
 func (c *V8ScriptContext) SetValue(entity entity.ObjectIder, value jsValue) {
 	c.v8nodes[entity.ObjectId()] = value
 }
@@ -119,7 +124,7 @@ func (c *V8ScriptContext) getJSInstance(node entity.ObjectIder) (jsValue, error)
 // Panics if the name is not one registered as a constructor. The name should
 // not originate from client code, only from this library, so it should be
 // guaranteed that this function is only called with valid values.
-func (c *V8ScriptContext) getConstructor(name string) v8Constructor {
+func (c *V8ScriptContext) getConstructor(name string) jsConstructor {
 	prototype, ok := c.host.globals.namedGlobals[name]
 	if !ok {
 		panic(fmt.Sprintf("Unrecognised constructor name: %s. %s", name, constants.BUG_ISSUE_URL))

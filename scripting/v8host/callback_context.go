@@ -274,7 +274,7 @@ func decodeString(cbCtx jsCallbackContext, val jsValue) (string, error) {
 /* -------- v8Scope -------- */
 
 type v8Scope struct {
-	ctx *V8ScriptContext
+	*V8ScriptContext
 }
 
-func (s v8Scope) Window() html.Window { return s.ctx.window }
+func (s v8Scope) Window() html.Window { return s.window }

@@ -1,0 +1,26 @@
+package v8host
+
+import (
+	"github.com/gost-dom/browser/internal/entity"
+)
+
+func encodeEntity(cbCtx jsCallbackContext, e entity.ObjectIder) (jsValue, error) {
+	fact := cbCtx.ValueFactory()
+	scope := cbCtx.Scope()
+
+	if e == nil {
+		return fact.Null(), nil
+	}
+
+	if cached, ok := scope.GetValue(e); ok {
+		return cached, nil
+	}
+
+	prototypeName := lookupJSPrototype(e)
+	prototype := cbCtx.ScriptCtx().getConstructor(prototypeName)
+	value, err := prototype.NewInstance(cbCtx.ScriptCtx(), e)
+	if err == nil {
+		scope.SetValue(e, value)
+	}
+	return value, err
+}
