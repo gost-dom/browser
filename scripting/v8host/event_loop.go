@@ -48,8 +48,10 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 	globalObjectTemplate.Set(
 		"clearTimeout",
 		wrapV8Callback(host, func(cbCtx jsCallbackContext) (jsValue, error) {
-			handle := cbCtx.consumeValue()
-			cbCtx.Scope().Clock().Cancel(clock.TaskHandle(handle.Uint32()))
+			handle, err := consumeArgument(cbCtx, "handle", nil, decodeUint32)
+			if err == nil {
+				cbCtx.Scope().Clock().Cancel(clock.TaskHandle(handle))
+			}
 			return nil, nil
 		}),
 	)
