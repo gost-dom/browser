@@ -267,8 +267,26 @@ func decodeInt32(cbCtx jsCallbackContext, val jsValue) (int32, error) {
 	return val.Int32(), nil
 }
 
+func decodeUint32(cbCtx jsCallbackContext, val jsValue) (uint32, error) {
+	return val.Uint32(), nil
+}
+
 func decodeString(cbCtx jsCallbackContext, val jsValue) (string, error) {
 	return val.String(), nil
+}
+
+func decodeFunction(cbCtx jsCallbackContext, val jsValue) (js.Function[jsTypeParam], error) {
+	if f, ok := val.AsFunction(); ok {
+		return f, nil
+	}
+	return nil, newTypeError(cbCtx, "Must be a function")
+}
+
+func newTypeError(
+	cbCtx jsCallbackContext,
+	msg string,
+) error {
+	return cbCtx.ValueFactory().NewTypeError(msg)
 }
 
 /* -------- v8Scope -------- */
