@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/entity"
 )
 
@@ -12,6 +13,8 @@ var ErrNoInternalValue = errors.New("object does not have an internal instance")
 
 type Scope[T any] interface {
 	Window() html.Window
+	GlobalThis() Object[T]
+	Clock() *clock.Clock
 	GetValue(entity.ObjectIder) (Value[T], bool)
 	SetValue(entity.ObjectIder, Value[T])
 }

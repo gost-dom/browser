@@ -15,6 +15,7 @@ import (
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting"
+	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
 )
 
@@ -295,8 +296,8 @@ func (host *V8ScriptHost) promiseRejected(msg v8go.PromiseRejectMessage) {
 		}
 	}
 
-	ctx.eventLoop.errorCb(err)
 	log.Error(host.logger, "Rejected promise", log.ErrAttr(err))
+	UnhandledError(&v8Scope{ctx}, err)
 }
 
 func (host *V8ScriptHost) Logger() log.Logger {
@@ -379,12 +380,6 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 		global:  newV8Object(host.iso, v8ctx.Global()),
 	}
 	host.addContext(context)
-	errorCallback := func(err error) {
-		if w != nil {
-			w.DispatchEvent(event.NewErrorEvent(err))
-		}
-	}
-	context.eventLoop = newEventLoop(context, errorCallback)
 	host.inspector.ContextCreated(context.v8ctx)
 	if w != nil {
 		global := newV8Object(host.iso, context.v8ctx.Global())
@@ -419,4 +414,8 @@ func (host *V8ScriptHost) CreateClass(
 	result := newV8Constructor(host, fn)
 	host.windowTemplate.Set(name, fn)
 	return result
+}
+
+func UnhandledError(scope js.Scope[jsTypeParam], err error) {
+	scope.Window().DispatchEvent(event.NewErrorEvent(err))
 }
