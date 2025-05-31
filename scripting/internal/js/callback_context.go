@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/entity"
 )
 
 var ErrMissingArgument = errors.New("missing argument")
@@ -11,6 +12,8 @@ var ErrNoInternalValue = errors.New("object does not have an internal instance")
 
 type Scope[T any] interface {
 	Window() html.Window
+	GetValue(entity.ObjectIder) (Value[T], bool)
+	SetValue(entity.ObjectIder, Value[T])
 }
 
 // CallbackContext represents the execution context of a JavaScript function

@@ -11,8 +11,7 @@ import (
 func initDOMParser(ft jsConstructor) {
 	ft.CreatePrototypeMethod("parseFromString",
 		func(cbCtx jsCallbackContext) (jsValue, error) {
-			ctx := cbCtx.ScriptCtx()
-			window := ctx.window
+			window := cbCtx.Scope().Window()
 			html, err0 := consumeArgument(cbCtx, "html", nil, decodeString)
 			contentType, err1 := consumeArgument(cbCtx, "contentType", nil, decodeString)
 			if err := errors.Join(err0, err1); err != nil {
@@ -26,10 +25,9 @@ func initDOMParser(ft jsConstructor) {
 			domParser := NewDOMParser()
 			var doc dom.Document
 			if err := domParser.ParseReader(window, &doc, strings.NewReader(html)); err == nil {
-				v, err := ctx.getJSInstance(doc)
-				return cbCtx.ReturnWithJSValueErr(v, err)
+				return encodeEntity(cbCtx, doc)
 			} else {
-				return cbCtx.ReturnWithError(err)
+				return nil, err
 			}
 		})
 
