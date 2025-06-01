@@ -73,21 +73,22 @@ func (w converters[T]) decodeHTMLElement(
 			return node, nil
 		}
 	}
-	return nil, v8.NewTypeError(cbCtx.iso(), "Must be a node")
+	return nil, cbCtx.ValueFactory().NewTypeError("Must be a node")
 }
+
 func (w converters[T]) decodeHTMLFormElement(
-	ctx jsCallbackContext,
+	cbCtx jsCallbackContext,
 	val jsValue,
 ) (html.HTMLFormElement, error) {
 	var (
 		res html.HTMLFormElement
 		ok  bool
 	)
-	node, err := w.decodeNode(ctx, val)
+	node, err := w.decodeNode(cbCtx, val)
 	if err == nil {
 		res, ok = node.(html.HTMLFormElement)
 		if !ok {
-			err = v8.NewTypeError(ctx.host.iso, "Not a form")
+			err = cbCtx.ValueFactory().NewTypeError("Not a form")
 		}
 	}
 	return res, err

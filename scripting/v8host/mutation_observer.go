@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	mutation "github.com/gost-dom/browser/internal/dom/mutation"
-	"github.com/gost-dom/v8go"
 )
 
 type MutationCallback struct {
@@ -35,7 +34,7 @@ func (w mutationObserverV8Wrapper) decodeMutationCallback(
 	if f, ok := val.AsFunction(); ok {
 		return MutationCallback{cbCtx, f}, nil
 	}
-	return nil, v8go.NewTypeError(cbCtx.iso(), "Not a function")
+	return nil, cbCtx.ValueFactory().NewTypeError("Not a function")
 }
 
 func (w mutationObserverV8Wrapper) decodeObserveOption(
@@ -44,7 +43,7 @@ func (w mutationObserverV8Wrapper) decodeObserveOption(
 ) ([]mutation.ObserveOption, error) {
 	obj, ok := val.AsObject()
 	if !ok {
-		return nil, v8go.NewTypeError(cbCtx.iso(), "Obtions not an object")
+		return nil, cbCtx.ValueFactory().NewTypeError("Obtions not an object")
 	}
 	var res []mutation.ObserveOption
 	ap := func(key string, o mutation.ObserveOption) {
