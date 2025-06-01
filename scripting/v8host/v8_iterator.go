@@ -65,7 +65,7 @@ func (i v8Iterator) newIterator(
 	if err != nil {
 		panic(fmt.Sprintf("Could not create iterator instance. %s", constants.BUG_ISSUE_URL))
 	}
-	obj := newV8Object(cbCtx.iso(), cbCtx.ScriptCtx(), res)
+	obj := newV8Object(cbCtx.ScriptCtx(), res)
 	obj.SetNativeValue(iterator)
 	return obj
 }
@@ -94,7 +94,7 @@ func (i v8Iterator) createDoneIteratorResult(ctx jsCallbackContext) (jsValue, er
 		return nil, err
 	}
 	result.Set("done", true)
-	return newV8Object(ctx.iso(), ctx.ScriptCtx(), result), nil
+	return newV8Object(ctx.ScriptCtx(), result), nil
 }
 
 func (i v8Iterator) createNotDoneIteratorResult(
@@ -107,7 +107,7 @@ func (i v8Iterator) createNotDoneIteratorResult(
 	}
 	result.Set("done", false)
 	result.Set("value", value.Self().v8Value())
-	return newV8Object(ctx.iso(), ctx.ScriptCtx(), result), nil
+	return newV8Object(ctx.ScriptCtx(), result), nil
 }
 
 /* -------- iterator[T] -------- */

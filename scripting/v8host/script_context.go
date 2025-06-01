@@ -31,6 +31,8 @@ type V8ScriptContext struct {
 	global     jsObject
 }
 
+func (c *V8ScriptContext) iso() *v8.Isolate { return c.host.iso }
+
 func (h *V8ScriptHost) getContext(v8ctx *v8.Context) (*V8ScriptContext, bool) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
@@ -104,7 +106,7 @@ func lookupJSPrototype(entity entity.ObjectIder) string {
 func (c *V8ScriptContext) getJSInstance(node entity.ObjectIder) (jsValue, error) {
 	iso := c.host.iso
 	if node == nil {
-		return newV8Value(iso, c, v8.Null(iso)), nil
+		return newV8Value(c, v8.Null(iso)), nil
 	}
 	objectId := node.ObjectId()
 	if cached, ok := c.v8nodes[objectId]; ok {

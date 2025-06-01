@@ -32,21 +32,22 @@ func assertV8Object(v jsObject) *v8Object {
 //*/
 
 type v8Value struct {
-	iso   *v8go.Isolate
 	ctx   *V8ScriptContext
 	Value *v8go.Value
 }
+
+func (v *v8Value) iso() *v8go.Isolate { return v.ctx.iso() }
 
 func (v *v8Value) Self() *v8Value { return v }
 
 // newV8Value creates a v8Value wrapping a v8go value. This is safe to use for
 // for mapping values that can be nil. If the v8go value is nil, this will
 // return nil.
-func newV8Value(iso *v8go.Isolate, ctx *V8ScriptContext, v *v8go.Value) jsValue {
+func newV8Value(ctx *V8ScriptContext, v *v8go.Value) jsValue {
 	if v == nil {
 		return nil
 	}
-	return &v8Value{iso, ctx, v}
+	return &v8Value{ctx, v}
 }
 
 func (v *v8Value) v8Value() *v8go.Value {
@@ -85,7 +86,7 @@ func (v v8Value) AsFunction() (jsFunction, bool) {
 func (v v8Value) AsObject() (jsObject, bool) {
 	o, err := v.Value.AsObject()
 	if err == nil {
-		return newV8Object(v.iso, v.ctx, o), true
+		return newV8Object(v.ctx, o), true
 	}
 	return nil, false
 }
@@ -103,7 +104,7 @@ func (f v8Function) Call(this jsObject, args ...jsValue) (jsValue, error) {
 	var res jsValue
 	v, err := f.v8fn.Call(assertV8Object(this).Object, v8Args...)
 	if err == nil {
-		res = &v8Value{f.iso, f.ctx, v}
+		res = newV8Value(f.ctx, v)
 	}
 	return res, err
 }
@@ -118,11 +119,11 @@ type v8Object struct {
 
 // newV8Object returns a jsObject wrapping o, a v8go *Object value. The function
 // returns nil when o is nil.
-func newV8Object(iso *v8go.Isolate, ctx *V8ScriptContext, o *v8go.Object) jsObject {
+func newV8Object(ctx *V8ScriptContext, o *v8go.Object) jsObject {
 	if o == nil {
 		return nil
 	}
-	return &v8Object{v8Value{iso, ctx, o.Value}, o, 0}
+	return &v8Object{v8Value{ctx, o.Value}, o, 0}
 }
 
 // NativeValue returns the native Go value if any that this JS object is
@@ -148,7 +149,7 @@ func (o *v8Object) SetNativeValue(v any) {
 		o.handle.Delete()
 	}
 	o.handle = cgo.NewHandle(v)
-	ext := v8go.NewValueExternalHandle(o.iso, o.handle)
+	ext := v8go.NewValueExternalHandle(o.iso(), o.handle)
 	defer ext.Release()
 	o.Object.SetInternalField(0, ext)
 }
@@ -165,7 +166,7 @@ func (o *v8Object) Get(name string) (jsValue, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &v8Value{o.iso, o.ctx, res}, nil
+	return newV8Value(o.ctx, res), nil
 }
 
 func (o *v8Object) Keys() ([]string, error) {
@@ -206,7 +207,7 @@ func (c v8Constructor) NewInstance(
 	nativeValue any,
 ) (jsObject, error) {
 	val, err := c.ft.InstanceTemplate().NewInstance(ctx.v8ctx)
-	obj := newV8Object(c.host.iso, ctx, val).(*v8Object)
+	obj := newV8Object(ctx, val).(*v8Object)
 	if err == nil {
 		obj.SetNativeValue(nativeValue)
 		ctx.addDisposer(obj)

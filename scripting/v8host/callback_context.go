@@ -35,7 +35,7 @@ func newCallbackContext(host *V8ScriptHost, info *v8.FunctionCallbackInfo) jsCal
 }
 
 func (h v8CallbackContext) This() jsObject {
-	return newV8Object(h.iso(), h.ScriptCtx(), h.v8Info.This())
+	return newV8Object(h.ScriptCtx(), h.v8Info.This())
 }
 func (h v8CallbackContext) iso() *v8.Isolate   { return h.ScriptCtx().host.iso }
 func (h v8CallbackContext) v8ctx() *v8.Context { return h.ScriptCtx().v8ctx }
@@ -91,7 +91,7 @@ func (h *v8CallbackContext) consumeValue() jsValue {
 	if arg, _ := h.ConsumeArg(); arg != nil {
 		return arg
 	}
-	return &v8Value{h.iso(), h.ScriptCtx(), v8.Undefined(h.iso())}
+	return &v8Value{h.ScriptCtx(), v8.Undefined(h.iso())}
 }
 
 func (c *v8CallbackContext) Logger() *slog.Logger {
@@ -143,7 +143,7 @@ func (h *v8CallbackContext) ConsumeArg() (jsValue, bool) {
 	if arg.IsUndefined() {
 		return nil, true
 	}
-	return &v8Value{h.iso(), h.ScriptCtx(), arg}, true
+	return newV8Value(h.ScriptCtx(), arg), true
 }
 
 func (h *v8CallbackContext) consumeRest() []*v8.Value {
@@ -185,7 +185,7 @@ func (f v8ValueFactory) JSONStringify(val jsValue) string {
 
 func (f v8ValueFactory) JSONParse(val string) (jsValue, error) {
 	v, err := v8.JSONParse(f.ctx.v8ctx(), val)
-	return newV8Value(f.iso(), f.ctx.ScriptCtx(), v), err
+	return newV8Value(f.ctx.ScriptCtx(), v), err
 
 }
 
@@ -196,7 +196,7 @@ func (f v8ValueFactory) NewArray(values ...jsValue) jsValue {
 	if err != nil {
 		panic(err)
 	}
-	arrVal := newV8Value(f.ctx.iso(), f.ctx.ScriptCtx(), arrayOf)
+	arrVal := newV8Value(f.ctx.ScriptCtx(), arrayOf)
 	if fn, ok := arrVal.AsFunction(); ok {
 		res, err := fn.Call(f.ctx.ScriptCtx().global, values...)
 		if err != nil {
@@ -235,11 +235,11 @@ func (f v8ValueFactory) newV8Value(val any) jsValue {
 			),
 		)
 	}
-	return &v8Value{f.iso(), f.ctx.ScriptCtx(), res}
+	return newV8Value(f.ctx.ScriptCtx(), res)
 }
 
 func (f v8ValueFactory) toVal(val *v8go.Value) jsValue {
-	return newV8Value(f.iso(), f.ctx.ScriptCtx(), val)
+	return newV8Value(f.ctx.ScriptCtx(), val)
 }
 
 type internalCallback func(jsCallbackContext) (jsValue, error)
