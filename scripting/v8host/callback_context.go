@@ -7,7 +7,6 @@ import (
 	"log/slog"
 	"runtime/debug"
 
-	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/constants"
@@ -64,10 +63,6 @@ func (h *v8CallbackContext) ReturnWithValueErr(val jsValue, err error) (jsValue,
 
 func (h *v8CallbackContext) ReturnWithJSValueErr(val jsValue, err error) (jsValue, error) {
 	return val, err
-}
-
-func (h *v8CallbackContext) getInstanceForNode(node dom.Node) (jsValue, error) {
-	return h.ScriptCtx().getJSInstance(node)
 }
 
 func (h *v8CallbackContext) ReturnWithError(err error) (jsValue, error) {

@@ -39,13 +39,13 @@ func (w *documentV8Wrapper) getElementById(cbCtx jsCallbackContext) (jsValue, er
 	if err := errors.Join(err0, err1); err != nil {
 		return cbCtx.ReturnWithError(err)
 	}
-	return cbCtx.getInstanceForNode(instance.GetElementById(id))
+	return encodeEntity(cbCtx, instance.GetElementById(id))
 }
 
 func (w *documentV8Wrapper) head(cbCtx jsCallbackContext) (jsValue, error) {
 	instance, err := js.As[dom.Document](cbCtx.Instance())
 	if err == nil {
-		return cbCtx.getInstanceForNode(instance.Head())
+		return encodeEntity(cbCtx, instance.Head())
 	} else {
 		return cbCtx.ReturnWithError(err)
 	}
@@ -54,7 +54,7 @@ func (w *documentV8Wrapper) head(cbCtx jsCallbackContext) (jsValue, error) {
 func (w *documentV8Wrapper) body(cbCtx jsCallbackContext) (jsValue, error) {
 	instance, err := js.As[dom.Document](cbCtx.Instance())
 	if err == nil {
-		return cbCtx.getInstanceForNode(instance.Body())
+		return encodeEntity(cbCtx, instance.Body())
 	} else {
 		return cbCtx.ReturnWithError(err)
 	}
@@ -66,10 +66,9 @@ func (w *documentV8Wrapper) createElement(cbCtx jsCallbackContext) (jsValue, err
 	instance, err2 := js.As[dom.Document](cbCtx.Instance())
 	err := errors.Join(err1, err2)
 	if err == nil {
-		e := instance.CreateElement(name)
-		return cbCtx.getInstanceForNode(e)
+		return encodeEntity(cbCtx, instance.CreateElement(name))
 	} else {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 }
 func (w *documentV8Wrapper) createTextNode(cbCtx jsCallbackContext) (jsValue, error) {
@@ -78,9 +77,8 @@ func (w *documentV8Wrapper) createTextNode(cbCtx jsCallbackContext) (jsValue, er
 	instance, err2 := js.As[dom.Document](cbCtx.Instance())
 	err := errors.Join(err1, err2)
 	if err == nil {
-		e := instance.CreateText(name)
-		return cbCtx.getInstanceForNode(e)
+		return encodeEntity(cbCtx, instance.CreateText(name))
 	} else {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 }

@@ -27,6 +27,7 @@ func (w *nodeListV8Wrapper) CustomInitialiser(ft *v8.FunctionTemplate) {
 	instanceTemplate.SetIndexedHandler(
 		func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
 			ctx := host.mustGetContext(info.Context())
+			cbCtx := newCallbackContext(host, info)
 			instance, ok := ctx.getCachedNode(info.This())
 			nodemap, ok_2 := instance.(dom.NodeList)
 			if ok && ok_2 {
@@ -35,7 +36,7 @@ func (w *nodeListV8Wrapper) CustomInitialiser(ft *v8.FunctionTemplate) {
 				if item == nil {
 					return v8.Undefined(iso), nil
 				}
-				v, err := ctx.getJSInstance(item)
+				v, err := encodeEntity(cbCtx, item)
 				return toV8Value(v), err
 			}
 			return nil, v8.NewTypeError(iso, "dunno")

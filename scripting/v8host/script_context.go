@@ -100,28 +100,6 @@ func lookupJSPrototype(entity entity.ObjectIder) string {
 	}
 }
 
-// getJSInstance gets the JavaScript object that wraps a specific Go object. If
-// a wrapper already has been created, that wrapper is returned; otherwise a new
-// object is created with the correct prototype configured.
-func (c *V8ScriptContext) getJSInstance(node entity.ObjectIder) (jsValue, error) {
-	iso := c.host.iso
-	if node == nil {
-		return newV8Value(c, v8.Null(iso)), nil
-	}
-	objectId := node.ObjectId()
-	if cached, ok := c.v8nodes[objectId]; ok {
-		return cached, nil
-	}
-
-	prototypeName := lookupJSPrototype(node)
-	prototype := c.getConstructor(prototypeName)
-	value, err := prototype.NewInstance(v8Scope{c}, node)
-	if err == nil {
-		c.cacheEntity(value, node)
-	}
-	return value, err
-}
-
 // getConstructor returns the V8 FunctionTemplate with the specified name.
 // Panics if the name is not one registered as a constructor. The name should
 // not originate from client code, only from this library, so it should be
