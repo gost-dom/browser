@@ -149,8 +149,8 @@ func parseSetterArg[T any](
 	ctx jsCallbackContext,
 	parsers ...func(jsCallbackContext, jsValue) (T, error),
 ) (result T, err error) {
-	arg := ctx.ConsumeArg()
-	if arg == nil {
+	arg, ok := ctx.ConsumeArg()
+	if !ok {
 		err = fmt.Errorf("parseSetterArg: expected one argument. got: %d", len(ctx.v8Info.Args()))
 	}
 
@@ -184,7 +184,7 @@ func consumeArgument[T any](
 	defaultValue func() T,
 	decoders ...func(jsCallbackContext, jsValue) (T, error),
 ) (result T, err error) {
-	value := args.ConsumeArg()
+	value, _ := args.ConsumeArg()
 	if value == nil && defaultValue != nil {
 		return defaultValue(), nil
 	} else {
@@ -208,7 +208,7 @@ func consumeOptionalArg[T any](
 	name string,
 	decoders ...func(*v8CallbackContext, jsValue) (T, error),
 ) (result T, found bool, err error) {
-	value := cbCtx.ConsumeArg()
+	value, _ := cbCtx.ConsumeArg()
 	if value == nil || value.Self().v8Value() == nil {
 		return
 	}
@@ -223,4 +223,44 @@ func consumeOptionalArg[T any](
 	// TODO: This should eventually become a TypeError in JS
 	err = fmt.Errorf("tryParseArg: %s: %w", name, errors.Join(errs...))
 	return
+}
+
+func consumeRestArguments[T any](
+	args jsCallbackContext,
+	name string,
+	defaultValue func() T,
+	decoders ...func(jsCallbackContext, jsValue) (T, error),
+) (results []T, err error) {
+	errs := make([]error, len(decoders))
+outer:
+	for arg, ok := args.ConsumeArg(); ok; arg, ok = args.ConsumeArg() {
+		for i, parser := range decoders {
+			var result T
+			result, errs[i] = parser(args, arg)
+			if errs[i] == nil {
+				results = append(results, result)
+				continue outer
+			}
+		}
+		err = errors.Join(errs...)
+		return
+	}
+	return
+	// if value == nil && defaultValue != nil {
+	// 	return nil, nil
+	// } else {
+	// 	errs := make([]error, len(decoders))
+	// 	if value != nil {
+	// 		for i, parser := range decoders {
+	// 			var result T
+	// 			result, errs[i] = parser(args, value)
+	// 			if errs[i] == nil {
+	// 				break;
+	// 			}
+	// 		}
+	// 	}
+	// 	// TODO: This should eventually become a TypeError in JS
+	// 	err = fmt.Errorf("tryParseArg: %s: %w", name, errors.Join(errs...))
+	// 	return
+	// }
 }

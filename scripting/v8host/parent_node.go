@@ -20,12 +20,17 @@ func (w *parentNodeV8Wrapper) getNodesAndInstance(
 }
 
 func (w *parentNodeV8Wrapper) append(cbCtx jsCallbackContext) (jsValue, error) {
-	if instance, nodes, err := w.getNodesAndInstance(cbCtx); err == nil {
-		if err = instance.Append(nodes...); err != nil {
-			return cbCtx.ReturnWithError(err)
-		}
+
+	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
+	if err != nil {
+		return nil, err
 	}
-	return cbCtx.ReturnWithValue(nil)
+	nodes, err := consumeRestArguments(cbCtx, "nodes", nil, w.decodeNodeOrText)
+	if err != nil {
+		return nil, err
+	}
+	return nil, instance.Append(nodes...)
+
 }
 
 func (w *parentNodeV8Wrapper) prepend(cbCtx jsCallbackContext) (jsValue, error) {

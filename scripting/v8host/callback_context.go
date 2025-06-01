@@ -86,7 +86,7 @@ func (h *v8CallbackContext) Instance() (any, error) {
 // consumeValue works like [argumentHelper.consumeArg], but returns undefined
 // instead of nil if the value doesn't exist.
 func (h *v8CallbackContext) consumeValue() jsValue {
-	if arg := h.ConsumeArg(); arg != nil {
+	if arg, _ := h.ConsumeArg(); arg != nil {
 		return arg
 	}
 	return &v8Value{h.iso(), v8.Undefined(h.iso())}
@@ -97,7 +97,7 @@ func (c *v8CallbackContext) Logger() *slog.Logger {
 }
 
 func (h *v8CallbackContext) consumeFunction() (jsFunction, error) {
-	arg := h.ConsumeArg()
+	arg, _ := h.ConsumeArg()
 	if arg == nil {
 		return nil, ErrWrongNoOfArguments
 	}
@@ -108,7 +108,7 @@ func (h *v8CallbackContext) consumeFunction() (jsFunction, error) {
 }
 
 func (h *v8CallbackContext) consumeInt32() (int32, error) {
-	arg := h.ConsumeArg()
+	arg, _ := h.ConsumeArg()
 	if arg == nil {
 		return 0, ErrWrongNoOfArguments
 	}
@@ -116,7 +116,7 @@ func (h *v8CallbackContext) consumeInt32() (int32, error) {
 }
 
 func (h *v8CallbackContext) consumeString() (string, error) {
-	arg := h.ConsumeArg()
+	arg, _ := h.ConsumeArg()
 	if arg == nil {
 		return "", ErrWrongNoOfArguments
 	}
@@ -130,18 +130,18 @@ func (h *v8CallbackContext) assertIndex(index int) {
 	h.currentIndex++
 }
 
-func (h *v8CallbackContext) ConsumeArg() jsValue {
+func (h *v8CallbackContext) ConsumeArg() (jsValue, bool) {
 	index := h.currentIndex
 	h.assertIndex(index)
 	args := h.v8Info.Args()
 	if len(args) <= index {
-		return nil
+		return nil, false
 	}
 	arg := args[index]
 	if arg.IsUndefined() {
-		return nil
+		return nil, true
 	}
-	return &v8Value{h.iso(), arg}
+	return &v8Value{h.iso(), arg}, true
 }
 
 func (h *v8CallbackContext) consumeRest() []*v8.Value {

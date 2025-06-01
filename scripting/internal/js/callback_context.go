@@ -32,10 +32,20 @@ type Scope[T any] interface {
 // - Getting or setting an accessor property backed by a native function
 // - Named or indexed handler callbacks / interceptors.
 type CallbackContext[T any] interface {
-	// ConsumeArg pulls argument from the list of required arguments. If there
-	// are no more arguments to consume, the function returns nil. (e.g., if you
-	// call the method 3 times, but only two arguments were passed).
-	ConsumeArg() Value[T]
+	// ConsumeArg pulls argument from the list of passed arguments. The return
+	// value arg will contain the argument. If no argument is passed, or
+	// the value is undefined, arg will be nil. Ok indicates whether there were
+	// more arguments to consume,
+	// the function returns nil. (e.g., if you call the method 3 times, but only
+	// two arguments were passed).
+	//
+	// For most use cases, the client shouldn't care about the ok return value;
+	// but treat the value as if undefined was passed. The primary use for ok is
+	// when consuming the remaining arguments for a variadic argument list, e.g.
+	// [Element.append]
+	//
+	// [Element.append]: https://developer.mozilla.org/en-US/docs/Web/API/Element/append
+	ConsumeArg() (arg Value[T], ok bool)
 
 	// ConsumeRestArgs returns all remaining arguments as a slice of values.
 	//
