@@ -13,13 +13,11 @@ type jsFunction = js.Function[*v8Value]
 type jsObject = js.Object[*v8Value]
 type jsConstructor = v8Constructor
 
-// TODO: Delete
-
-func assertV8Value(v jsValue) *v8Value {
+func toV8Value(v jsValue) *v8go.Value {
 	if v == nil {
 		return nil
 	}
-	return v.Self()
+	return v.Self().v8Value()
 }
 
 func assertV8Object(v jsObject) *v8Object {
@@ -70,7 +68,7 @@ func (v v8Value) IsFunction() bool  { return v.Value.IsFunction() }
 func (v v8Value) StrictEquals(
 	other jsValue,
 ) bool {
-	return v.Value.StrictEquals(assertV8Value(other).v8Value())
+	return v.Value.StrictEquals(toV8Value(other))
 }
 
 func (v v8Value) AsFunction() (jsFunction, bool) {
@@ -97,7 +95,7 @@ type v8Function struct {
 func (f v8Function) Call(this jsObject, args ...jsValue) (jsValue, error) {
 	v8Args := make([]v8go.Valuer, len(args))
 	for i, a := range args {
-		v8Args[i] = assertV8Value(a).v8Value()
+		v8Args[i] = toV8Value(a)
 	}
 	var res jsValue
 	v, err := f.v8fn.Call(assertV8Object(this).Object, v8Args...)

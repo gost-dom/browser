@@ -242,8 +242,7 @@ func wrapV8Callback(
 			}()
 			cbCtx := newCallbackContext(host, info)
 			result, err := callback(cbCtx)
-			val := assertV8Value(result)
-			return val.v8Value(), err
+			return toV8Value(result), err
 		},
 	)
 }
@@ -260,8 +259,7 @@ func wrapV8CallbackFn(
 		}()
 		cbCtx := newCallbackContext(host, info)
 		result, err := callback(cbCtx)
-		val := assertV8Value(result)
-		return val.v8Value(), err
+		return toV8Value(result), err
 	}
 }
 

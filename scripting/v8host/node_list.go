@@ -38,7 +38,7 @@ func (w *nodeListV8Wrapper) CustomInitialiser(ft *v8.FunctionTemplate) {
 					return v8.Undefined(iso), nil
 				}
 				v, err := ctx.getJSInstance(item)
-				return assertV8Value(v).v8Value(), err
+				return toV8Value(v), err
 			}
 			return nil, v8.NewTypeError(iso, "dunno")
 		},

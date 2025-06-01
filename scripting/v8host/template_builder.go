@@ -246,21 +246,4 @@ outer:
 		return
 	}
 	return
-	// if value == nil && defaultValue != nil {
-	// 	return nil, nil
-	// } else {
-	// 	errs := make([]error, len(decoders))
-	// 	if value != nil {
-	// 		for i, parser := range decoders {
-	// 			var result T
-	// 			result, errs[i] = parser(args, value)
-	// 			if errs[i] == nil {
-	// 				break;
-	// 			}
-	// 		}
-	// 	}
-	// 	// TODO: This should eventually become a TypeError in JS
-	// 	err = fmt.Errorf("tryParseArg: %s: %w", name, errors.Join(errs...))
-	// 	return
-	// }
 }
