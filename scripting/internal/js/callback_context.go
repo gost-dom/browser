@@ -92,4 +92,7 @@ type ValueFactory[T any] interface {
 	NewIterator(iter.Seq2[Value[T], error]) Value[T]
 
 	NewTypeError(msg string) error
+
+	JSONStringify(val Value[T]) string
+	JSONParse(val string) (Value[T], error)
 }

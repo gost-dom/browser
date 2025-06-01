@@ -173,6 +173,20 @@ func (f v8ValueFactory) NewUint32(val uint32) jsValue { return f.newV8Value(val)
 func (f v8ValueFactory) NewInt64(val int64) jsValue   { return f.newV8Value(val) }
 func (f v8ValueFactory) NewBoolean(val bool) jsValue  { return f.newV8Value(val) }
 
+func (f v8ValueFactory) JSONStringify(val jsValue) string {
+	r, err := v8.JSONStringify(f.ctx.v8ctx(), toV8Value(val))
+	if err != nil {
+		panic(fmt.Sprintf("JSONStringify: unexpected error: %v. %s", err, constants.BUG_ISSUE_URL))
+	}
+	return r
+}
+
+func (f v8ValueFactory) JSONParse(val string) (jsValue, error) {
+	v, err := v8.JSONParse(f.ctx.v8ctx(), val)
+	return newV8Value(f.iso(), v), err
+
+}
+
 func (f v8ValueFactory) NewArray(values ...jsValue) jsValue {
 	// Total hack, v8go doesn't expose Array values, so we polyfill the engine
 	var err error
