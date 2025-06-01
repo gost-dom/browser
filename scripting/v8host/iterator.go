@@ -2,8 +2,10 @@ package v8host
 
 import (
 	"errors"
+	"fmt"
 	"iter"
 
+	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
@@ -38,7 +40,7 @@ func (i jsIterator) newIterator(cbCtx jsCallbackContext) (jsValue, error) {
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
 	}
-	return i.newIteratorInstanceOfIterable(cbCtx, instance.items)
+	return i.newIteratorInstanceOfIterable(cbCtx, instance.items), nil
 }
 
 type jsIteratorInstance struct {
@@ -51,7 +53,7 @@ type jsIteratorInstance struct {
 func (i jsIterator) newIteratorInstanceOfIterable(
 	cbCtx jsCallbackContext,
 	items iter.Seq2[jsValue, error],
-) (jsValue, error) {
+) jsValue {
 	seq := items
 	next, stop := iter.Pull2(seq)
 
@@ -61,12 +63,12 @@ func (i jsIterator) newIteratorInstanceOfIterable(
 		stop:  stop,
 	}
 	res, err := i.ot.NewInstance(cbCtx.v8ctx())
-	if err == nil {
-		obj := newV8Object(cbCtx.iso(), res)
-		obj.SetNativeValue(iterator)
-		return obj, nil
+	if err != nil {
+		panic(fmt.Sprintf("Could not create iterator instance. %s", constants.BUG_ISSUE_URL))
 	}
-	return newV8Object(cbCtx.iso(), res), err
+	obj := newV8Object(cbCtx.iso(), res)
+	obj.SetNativeValue(iterator)
+	return obj
 }
 
 func (i jsIterator) next(cbCtx jsCallbackContext) (jsValue, error) {
@@ -174,7 +176,8 @@ func (i iterator[T]) newIteratorInstanceOfIterable(
 	cbCtx jsCallbackContext,
 	items iterable[T],
 ) (jsValue, error) {
-	return i.jsIterator.newIteratorInstanceOfIterable(cbCtx, i.mapItems(cbCtx, items))
+	return cbCtx.ValueFactory().NewIterator(i.mapItems(cbCtx, items)), nil
+	// return i.jsIterator.newIteratorInstanceOfIterable(cbCtx, i.mapItems(cbCtx, items)), nil
 }
 
 func (i iterator[T]) installPrototype(ft *v8.FunctionTemplate) {
@@ -250,7 +253,7 @@ func (i iterator2[K, V]) newIteratorInstanceOfIterable(
 	cbCtx jsCallbackContext,
 	items iterable2[K, V],
 ) (jsValue, error) {
-	return i.jsIterator.newIteratorInstanceOfIterable(cbCtx, i.mapItems(cbCtx, items.All()))
+	return cbCtx.ValueFactory().NewIterator(i.mapItems(cbCtx, items.All())), nil
 }
 
 func (i iterator2[K, V]) installPrototype(ft *v8.FunctionTemplate) {

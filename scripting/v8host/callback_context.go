@@ -3,6 +3,7 @@ package v8host
 import (
 	"errors"
 	"fmt"
+	"iter"
 	"log/slog"
 	"runtime/debug"
 
@@ -189,6 +190,12 @@ func (f v8ValueFactory) NewArray(values ...jsValue) jsValue {
 	} else {
 		panic("Array.of is not a function")
 	}
+}
+
+func (f v8ValueFactory) NewIterator(
+	i iter.Seq2[js.Value[jsTypeParam], error],
+) js.Value[jsTypeParam] {
+	return newJSIterator(f.host).newIteratorInstanceOfIterable(f.ctx, i)
 }
 
 func (f v8ValueFactory) NewTypeError(msg string) error {

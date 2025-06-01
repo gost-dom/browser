@@ -2,6 +2,7 @@ package js
 
 import (
 	"errors"
+	"iter"
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
@@ -72,6 +73,7 @@ type ValueFactory[T any] interface {
 	NewInt32(int32) Value[T]
 	NewInt64(int64) Value[T]
 	NewArray(...Value[T]) Value[T]
+	NewIterator(iter.Seq2[Value[T], error]) Value[T]
 
 	NewTypeError(msg string) error
 }
