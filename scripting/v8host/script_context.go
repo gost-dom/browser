@@ -104,7 +104,7 @@ func lookupJSPrototype(entity entity.ObjectIder) string {
 func (c *V8ScriptContext) getJSInstance(node entity.ObjectIder) (jsValue, error) {
 	iso := c.host.iso
 	if node == nil {
-		return newV8Value(iso, v8.Null(iso)), nil
+		return newV8Value(iso, c, v8.Null(iso)), nil
 	}
 	objectId := node.ObjectId()
 	if cached, ok := c.v8nodes[objectId]; ok {

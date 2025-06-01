@@ -1,8 +1,10 @@
 package v8host
 
 import (
+	"fmt"
 	"runtime/cgo"
 
+	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
 )
@@ -31,6 +33,7 @@ func assertV8Object(v jsObject) *v8Object {
 
 type v8Value struct {
 	iso   *v8go.Isolate
+	ctx   *V8ScriptContext
 	Value *v8go.Value
 }
 
@@ -39,11 +42,11 @@ func (v *v8Value) Self() *v8Value { return v }
 // newV8Value creates a v8Value wrapping a v8go value. This is safe to use for
 // for mapping values that can be nil. If the v8go value is nil, this will
 // return nil.
-func newV8Value(iso *v8go.Isolate, v *v8go.Value) jsValue {
+func newV8Value(iso *v8go.Isolate, ctx *V8ScriptContext, v *v8go.Value) jsValue {
 	if v == nil {
 		return nil
 	}
-	return &v8Value{iso, v}
+	return &v8Value{iso, ctx, v}
 }
 
 func (v *v8Value) v8Value() *v8go.Value {
@@ -82,7 +85,7 @@ func (v v8Value) AsFunction() (jsFunction, bool) {
 func (v v8Value) AsObject() (jsObject, bool) {
 	o, err := v.Value.AsObject()
 	if err == nil {
-		return newV8Object(v.iso, o), true
+		return newV8Object(v.iso, v.ctx, o), true
 	}
 	return nil, false
 }
@@ -100,7 +103,7 @@ func (f v8Function) Call(this jsObject, args ...jsValue) (jsValue, error) {
 	var res jsValue
 	v, err := f.v8fn.Call(assertV8Object(this).Object, v8Args...)
 	if err == nil {
-		res = &v8Value{f.iso, v}
+		res = &v8Value{f.iso, f.ctx, v}
 	}
 	return res, err
 }
@@ -115,11 +118,11 @@ type v8Object struct {
 
 // newV8Object returns a jsObject wrapping o, a v8go *Object value. The function
 // returns nil when o is nil.
-func newV8Object(iso *v8go.Isolate, o *v8go.Object) jsObject {
+func newV8Object(iso *v8go.Isolate, ctx *V8ScriptContext, o *v8go.Object) jsObject {
 	if o == nil {
 		return nil
 	}
-	return &v8Object{v8Value{iso, o.Value}, o, 0}
+	return &v8Object{v8Value{iso, ctx, o.Value}, o, 0}
 }
 
 // NativeValue returns the native Go value if any that this JS object is
@@ -162,7 +165,31 @@ func (o *v8Object) Get(name string) (jsValue, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &v8Value{o.iso, res}, nil
+	return &v8Value{o.iso, o.ctx, res}, nil
+}
+
+func (o *v8Object) Keys() ([]string, error) {
+	if k, err := o.ctx.runScript("Object.keys"); err == nil {
+		if f, err := k.AsFunction(); err == nil {
+			if keys, err := f.Call(o.ctx.v8ctx.Global(), o.Value); err == nil {
+				if goKeys, err := v8ValueToGoValue(keys); err == nil {
+					if arr, ok := goKeys.([]any); ok {
+						res := make([]string, len(arr))
+						for i, v := range arr {
+							if strKey, isString := v.(string); isString {
+								res[i] = strKey
+							} else {
+								return nil, fmt.Errorf("Unexpected return value from Object.keys.%s", constants.BUG_ISSUE_URL)
+							}
+						}
+						return res, nil
+					}
+				}
+			}
+		}
+	}
+	return nil, fmt.Errorf("Unexpected return value from Object.keys.%s", constants.BUG_ISSUE_URL)
+
 }
 
 type v8Constructor struct {
@@ -179,7 +206,7 @@ func (c v8Constructor) NewInstance(
 	nativeValue any,
 ) (jsObject, error) {
 	val, err := c.ft.InstanceTemplate().NewInstance(ctx.v8ctx)
-	obj := newV8Object(c.host.iso, val).(*v8Object)
+	obj := newV8Object(c.host.iso, ctx, val).(*v8Object)
 	if err == nil {
 		obj.SetNativeValue(nativeValue)
 		ctx.addDisposer(obj)

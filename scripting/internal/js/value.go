@@ -31,6 +31,7 @@ type Object[T any] interface {
 	Value[T]
 	NativeValue() any
 	SetNativeValue(any)
+	Keys() ([]string, error)
 	Get(name string) (Value[T], error)
 }
 

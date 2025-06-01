@@ -52,50 +52,32 @@ func (w urlV8Wrapper) CreateInstanceBase(
 
 func (w urlSearchParamsV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
 	var err error
-	ctx := cbCtx.ScriptCtx()
-	args := cbCtx.consumeRest()
+	arg, ok := cbCtx.ConsumeArg()
 	var res url.URLSearchParams
-	if len(args) > 0 {
-		arg := args[0]
-
+	if ok {
+		obj, isObj := arg.AsObject()
 		switch {
 		case arg.IsString():
 			res, err = url.ParseURLSearchParams(arg.String())
 			if err != nil {
 				return cbCtx.ReturnWithError(err)
 			}
-		case arg.IsObject():
-			if gv, err2 := v8ValueToGoValue(arg); err2 == nil {
-				if fd, ok := gv.(*html.FormData); ok {
-					res = url.URLSearchParams{}
-					for _, pair := range fd.Entries {
-						res.Append(pair.Name, string(pair.Value))
-
-					}
-					break
+		case isObj:
+			if fd, ok := obj.NativeValue().(*html.FormData); ok {
+				res = url.URLSearchParams{}
+				for _, pair := range fd.Entries {
+					res.Append(pair.Name, string(pair.Value))
 				}
+				break
 			}
-			o, _ := arg.AsObject()
-			if k, err := ctx.v8ctx.RunScript("Object.keys", ""); err == nil {
-				if f, err := k.AsFunction(); err == nil {
-					if keys, err := f.Call(ctx.v8ctx.Global(), arg); err == nil {
-						if goKeys, err := v8ValueToGoValue(keys); err == nil {
-							if arr, ok := goKeys.([]any); ok {
-								res = url.URLSearchParams{}
-								for _, key := range arr {
-									if strKey, isString := key.(string); isString {
-										if val, err := o.Get(strKey); err == nil {
-											res.Append(strKey, val.String())
-										}
-									}
-								}
-								break
-							}
-						}
+			if keys, err := obj.Keys(); err == nil {
+				for _, key := range keys {
+					if val, err := obj.Get(key); err == nil {
+						res.Append(key, val.String())
 					}
 				}
+				break
 			}
-
 			fallthrough
 		default:
 			return cbCtx.ReturnWithError(

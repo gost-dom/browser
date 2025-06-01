@@ -375,12 +375,12 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 		v8ctx:   v8ctx,
 		window:  w,
 		v8nodes: make(map[entity.ObjectId]jsValue),
-		global:  newV8Object(host.iso, v8ctx.Global()),
 	}
+	context.global = newV8Object(host.iso, context, v8ctx.Global())
 	host.addContext(context)
 	host.inspector.ContextCreated(context.v8ctx)
 	if w != nil {
-		global := newV8Object(host.iso, context.v8ctx.Global())
+		global := newV8Object(host.iso, context, context.v8ctx.Global())
 		global.SetNativeValue(w)
 		context.addDisposer(global.(js.Disposable))
 		context.cacheEntity(global, w)
