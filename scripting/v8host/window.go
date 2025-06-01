@@ -29,5 +29,5 @@ func (w *windowV8Wrapper) history(cbCtx *v8CallbackContext) (jsValue, error) {
 		return cbCtx.ReturnWithError(err)
 	}
 	ctx := cbCtx.ScriptCtx()
-	return ctx.getConstructor("History").NewInstance(ctx, win.History())
+	return ctx.getConstructor("History").NewInstance(cbCtx.Scope(), win.History())
 }

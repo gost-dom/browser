@@ -115,7 +115,7 @@ func (c *V8ScriptContext) getJSInstance(node entity.ObjectIder) (jsValue, error)
 
 	prototypeName := lookupJSPrototype(node)
 	prototype := c.getConstructor(prototypeName)
-	value, err := prototype.NewInstance(c, node)
+	value, err := prototype.NewInstance(v8Scope{c}, node)
 	if err == nil {
 		c.cacheEntity(value, node)
 	}

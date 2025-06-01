@@ -203,14 +203,15 @@ func newV8Constructor(host *V8ScriptHost, ft *v8go.FunctionTemplate) jsConstruct
 }
 
 func (c v8Constructor) NewInstance(
-	ctx /* TODO: jsCallbackContext */ *V8ScriptContext,
+	scope js.Scope[jsTypeParam],
 	nativeValue any,
 ) (jsObject, error) {
-	val, err := c.ft.InstanceTemplate().NewInstance(ctx.v8ctx)
-	obj := newV8Object(ctx, val).(*v8Object)
+	s := scope.(v8Scope)
+	val, err := c.ft.InstanceTemplate().NewInstance(s.v8ctx)
+	obj := newV8Object(s.V8ScriptContext, val).(*v8Object)
 	if err == nil {
 		obj.SetNativeValue(nativeValue)
-		ctx.addDisposer(obj)
+		s.V8ScriptContext.addDisposer(obj)
 	}
 	return obj, err
 }

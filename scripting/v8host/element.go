@@ -61,7 +61,7 @@ func (e elementV8Wrapper) classList(cbCtx *v8CallbackContext) (jsValue, error) {
 	}
 	cl := instance.ClassList()
 	tokenList := cbCtx.ScriptCtx().getConstructor("DOMTokenList")
-	return tokenList.NewInstance(cbCtx.ScriptCtx(), cl)
+	return tokenList.NewInstance(cbCtx.Scope(), cl)
 }
 
 func (e *elementV8Wrapper) toNamedNodeMap(
