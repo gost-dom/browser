@@ -195,7 +195,7 @@ func (f v8ValueFactory) NewArray(values ...jsValue) jsValue {
 func (f v8ValueFactory) NewIterator(
 	i iter.Seq2[js.Value[jsTypeParam], error],
 ) js.Value[jsTypeParam] {
-	return newJSIterator(f.host).newIteratorInstanceOfIterable(f.ctx, i)
+	return f.host.iterator.newIterator(f.ctx, i)
 }
 
 func (f v8ValueFactory) NewTypeError(msg string) error {

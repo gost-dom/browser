@@ -98,6 +98,7 @@ type V8ScriptHost struct {
 	globals         globals
 	contexts        map[*v8go.Context]*V8ScriptContext
 	disposed        bool
+	iterator        v8Iterator
 }
 
 type jsConstructorFactory = func(*V8ScriptHost) *v8go.FunctionTemplate
@@ -140,6 +141,7 @@ func createGlobals(host *V8ScriptHost) []globalInstall {
 	for _, class := range classes {
 		iter(class)
 	}
+	host.iterator = newV8Iterator(host)
 	return result
 }
 
