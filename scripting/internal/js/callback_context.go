@@ -72,7 +72,13 @@ type ValueFactory[T any] interface {
 	NewUint32(uint32) Value[T]
 	NewInt32(int32) Value[T]
 	NewInt64(int64) Value[T]
+
+	// NewArray creates a JavaScript array containing the values. If any value
+	// is nil, it will become undefined in the resulting array.
 	NewArray(...Value[T]) Value[T]
+	// NewIterator returns an object implementing the [Iterator protocol]
+	//
+	// [Iterator protocol]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterator_protocol
 	NewIterator(iter.Seq2[Value[T], error]) Value[T]
 
 	NewTypeError(msg string) error

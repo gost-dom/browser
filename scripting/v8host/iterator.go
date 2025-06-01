@@ -4,7 +4,6 @@ import (
 	"errors"
 	"iter"
 
-	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
 )
@@ -12,25 +11,17 @@ import (
 type iterator[T any] struct {
 	host         *V8ScriptHost
 	entityLookup entityLookup[T]
-	jsIterator   v8Iterator
 }
 
 type entityLookup[T any] func(ctx jsCallbackContext, value T) (jsValue, error)
 
 func newIterator[T any](host *V8ScriptHost, entityLookup entityLookup[T]) iterator[T] {
-	iterator := iterator[T]{host, entityLookup, newV8Iterator(host)}
+	iterator := iterator[T]{host, entityLookup}
 	return iterator
 }
 
 type iterable[T any] interface {
 	All() iter.Seq[T]
-}
-
-type iteratorInstance[T any] struct {
-	entity.Entity
-	items iterable[T]
-	next  func() (T, bool)
-	stop  func()
 }
 
 func seqOfSlice[T any](items []T) iter.Seq[T] {
@@ -51,8 +42,8 @@ func (i sliceIterable[T]) All() iter.Seq[T] {
 	return seqOfSlice(i.items)
 }
 
-func (i iterator[T]) newIteratorInstance(cbCtx jsCallbackContext, items []T) (jsValue, error) {
-	return i.newIteratorInstanceOfIterable(cbCtx, sliceIterable[T]{items})
+func (i iterator[T]) newIteratorOfSlice(cbCtx jsCallbackContext, items []T) (jsValue, error) {
+	return i.newIterator(cbCtx, sliceIterable[T]{items})
 }
 
 func (i iterator[T]) mapItems(
@@ -68,10 +59,7 @@ func (i iterator[T]) mapItems(
 	}
 }
 
-func (i iterator[T]) newIteratorInstanceOfIterable(
-	cbCtx jsCallbackContext,
-	items iterable[T],
-) (jsValue, error) {
+func (i iterator[T]) newIterator(cbCtx jsCallbackContext, items iterable[T]) (jsValue, error) {
 	return cbCtx.ValueFactory().NewIterator(i.mapItems(cbCtx, items)), nil
 }
 
@@ -82,7 +70,7 @@ func (i iterator[T]) installPrototype(ft *v8.FunctionTemplate) {
 		if err != nil {
 			return cbCtx.ReturnWithError(err)
 		}
-		return i.newIteratorInstanceOfIterable(cbCtx, instance)
+		return i.newIterator(cbCtx, instance)
 	})
 	prototypeTempl := ft.PrototypeTemplate()
 	prototypeTempl.Set("entries", getEntries)
@@ -95,7 +83,6 @@ type iterator2[K, V any] struct {
 	host        *V8ScriptHost
 	keyLookup   entityLookup[K]
 	valueLookup entityLookup[V]
-	jsIterator  v8Iterator
 }
 
 func newIterator2[K, V any](
@@ -109,7 +96,6 @@ func newIterator2[K, V any](
 	iterator := iterator2[K, V]{
 		host,
 		keyLookup, valueLookup,
-		newV8Iterator(host),
 	}
 	return iterator
 }
@@ -118,25 +104,15 @@ type iterable2[K, V any] interface {
 	All() iter.Seq2[K, V]
 }
 
-type iterator2Instance[K, V any] struct {
-	entity.Entity
-	items iterable2[K, V]
-	next  func() (K, V, bool)
-	stop  func()
-}
-
 func (i iterator2[K, V]) mapItems(
 	cbCtx jsCallbackContext,
 	items iter.Seq2[K, V]) iter.Seq2[jsValue, error] {
 	return func(yield func(jsValue, error) bool) {
 		for k, v := range items {
-			var res jsValue
 			kk, err1 := i.keyLookup(cbCtx, k)
 			vv, err2 := i.valueLookup(cbCtx, v)
 			err := errors.Join(err1, err2)
-			if err == nil {
-				res = cbCtx.ValueFactory().NewArray(kk, vv)
-			}
+			res := cbCtx.ValueFactory().NewArray(kk, vv) // Safe to call on nil jsValues
 			if !yield(res, err) {
 				return
 			}
@@ -144,7 +120,7 @@ func (i iterator2[K, V]) mapItems(
 	}
 }
 
-func (i iterator2[K, V]) newIteratorInstanceOfIterable(
+func (i iterator2[K, V]) newIterator(
 	cbCtx jsCallbackContext,
 	items iterable2[K, V],
 ) (jsValue, error) {
@@ -159,7 +135,7 @@ func (i iterator2[K, V]) installPrototype(ft *v8.FunctionTemplate) {
 			if err != nil {
 				return cbCtx.ReturnWithError(err)
 			}
-			return cbCtx.ReturnWithJSValueErr(i.newIteratorInstanceOfIterable(cbCtx, instance))
+			return cbCtx.ReturnWithJSValueErr(i.newIterator(cbCtx, instance))
 		})
 	prototypeTempl := ft.PrototypeTemplate()
 	prototypeTempl.Set("entries", getEntries)
@@ -172,7 +148,7 @@ func (i iterator2[K, V]) installPrototype(ft *v8.FunctionTemplate) {
 			if err != nil {
 				return nil, err
 			}
-			return keys.newIteratorInstanceOfIterable(cbCtx, Keys[K, V]{instance})
+			return keys.newIterator(cbCtx, Keys[K, V]{instance})
 		}),
 	)
 	prototypeTempl.Set("values",
@@ -181,7 +157,7 @@ func (i iterator2[K, V]) installPrototype(ft *v8.FunctionTemplate) {
 			if err != nil {
 				return nil, err
 			}
-			return values.newIteratorInstanceOfIterable(cbCtx, iterValues[K, V]{instance})
+			return values.newIterator(cbCtx, iterValues[K, V]{instance})
 		}),
 	)
 }

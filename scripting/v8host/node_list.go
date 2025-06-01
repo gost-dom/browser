@@ -15,13 +15,14 @@ func (w *nodeListV8Wrapper) CustomInitialiser(ft *v8.FunctionTemplate) {
 			return ctx.ScriptCtx().getJSInstance(instance)
 		},
 	)
+
 	prototype.SetSymbol(v8.SymbolIterator(iso),
 		wrapV8Callback(host, func(cbCtx jsCallbackContext) (jsValue, error) {
 			nodeList, err := js.As[dom.NodeList](cbCtx.Instance())
 			if err != nil {
 				return nil, err
 			}
-			return nodeListIterator.newIteratorInstance(cbCtx, nodeList.All())
+			return nodeListIterator.newIteratorOfSlice(cbCtx, nodeList.All())
 		}))
 
 	instanceTemplate := ft.InstanceTemplate()
