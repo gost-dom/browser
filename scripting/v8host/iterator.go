@@ -16,8 +16,7 @@ type iterator[T any] struct {
 type entityLookup[T any] func(ctx jsCallbackContext, value T) (jsValue, error)
 
 func newIterator[T any](host *V8ScriptHost, entityLookup entityLookup[T]) iterator[T] {
-	iterator := iterator[T]{host, entityLookup}
-	return iterator
+	return iterator[T]{host, entityLookup}
 }
 
 type iterable[T any] interface {
