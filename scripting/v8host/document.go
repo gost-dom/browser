@@ -10,7 +10,6 @@ import (
 
 func (w *documentV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) {
 	host := w.scriptHost
-	// iso := host.iso
 	tmpl := constructor.InstanceTemplate()
 	tmpl.SetAccessorProperty(
 		"location",
@@ -61,16 +60,6 @@ func (w *documentV8Wrapper) body(cbCtx jsCallbackContext) (jsValue, error) {
 	}
 }
 
-func (w *documentV8Wrapper) toComment(
-	cbCtx jsCallbackContext,
-	comment dom.Comment,
-) (jsValue, error) {
-	return cbCtx.getInstanceForNode(comment)
-}
-
-func (w *documentV8Wrapper) toAttr(cbCtx jsCallbackContext, comment dom.Attr) (jsValue, error) {
-	return cbCtx.getInstanceForNode(comment)
-}
 func (w *documentV8Wrapper) createElement(cbCtx jsCallbackContext) (jsValue, error) {
 	var name string
 	name, err1 := cbCtx.consumeString()
