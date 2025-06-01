@@ -53,17 +53,16 @@ func newXMLHttpRequestV8Wrapper(host *V8ScriptHost) xmlHttpRequestV8Wrapper {
 func (xhr xmlHttpRequestV8Wrapper) CreateInstance(
 	cbCtx jsCallbackContext,
 ) (jsValue, error) {
-	ctx := cbCtx.ScriptCtx()
 	this := cbCtx.This()
-	result := NewXmlHttpRequest(ctx.window, ctx.clock)
+	result := NewXmlHttpRequest(cbCtx.Scope().Window(), cbCtx.Scope().Clock())
 	result.SetCatchAllHandler(event.NewEventHandlerFunc(func(event *event.Event) error {
 		prop := "on" + event.Type
 		handler, err := this.Get(prop)
 		if err == nil && handler.IsFunction() {
-			v8Event, err := ctx.getJSInstance(event)
+			ev, err := encodeEntity(cbCtx, event)
 			if err == nil {
 				f, _ := handler.AsFunction()
-				f.Call(this, v8Event)
+				f.Call(this, ev)
 			}
 		}
 		return nil

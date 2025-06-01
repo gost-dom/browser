@@ -38,6 +38,9 @@ func (w namedNodeMapV8Wrapper) CustomInitialiser(ft *v8go.FunctionTemplate) {
 			if item == nil {
 				return cbCtx.ReturnWithValue(nil)
 			}
-			return cbCtx.ReturnWithJSValueErr(cbCtx.ScriptCtx().getJSInstance(item))
+			return encodeEntity(
+				cbCtx,
+				item,
+			)
 		}))
 }
