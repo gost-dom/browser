@@ -142,7 +142,7 @@ func iterate(d dom.Document, dest dom.Node, child *html.Node) {
 	case html.ElementNode:
 		createElementFromNode(d, dest, child)
 	case html.TextNode:
-		dest.AppendChild(d.CreateText(child.Data))
+		dest.AppendChild(d.CreateTextNode(child.Data))
 	case html.DoctypeNode:
 		dest.AppendChild(d.CreateDocumentType(child.Data))
 	case html.CommentNode:

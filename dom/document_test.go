@@ -9,9 +9,9 @@ import (
 	"github.com/onsi/gomega"
 )
 
-func TestDocumentCreateText(t *testing.T) {
+func TestDocumentCreateTextNode(t *testing.T) {
 	doc := ParseHtmlString("")
-	text := doc.CreateText("data")
+	text := doc.CreateTextNode("data")
 	assert.Equal(t, doc, text.OwnerDocument())
 }
 

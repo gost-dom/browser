@@ -33,7 +33,9 @@ type Document interface {
 	Head() Element
 	CreateDocumentFragment() DocumentFragment
 	CreateAttribute(string) Attr
+	// Deprecated: Use CreateTextNode instead.
 	CreateText(data string) Text
+	CreateTextNode(data string) Text
 	CreateComment(data string) Comment
 	CreateDocumentType(name string) DocumentType
 	CreateElementNS(string, string) Element
@@ -118,7 +120,8 @@ func (d *document) Head() Element {
 
 func (d *document) CreateAttribute(name string) Attr  { return newAttr(name, "", d.document) }
 func (d *document) CreateElement(name string) Element { return NewElement(name, d.document) }
-func (d *document) CreateText(data string) Text       { return NewText(data, d.document) }
+func (d *document) CreateText(data string) Text       { return d.CreateTextNode(data) }
+func (d *document) CreateTextNode(data string) Text   { return NewText(data, d.document) }
 func (d *document) CreateComment(data string) Comment { return NewComment(data, d.document) }
 func (d *document) CreateElementNS(_ string, name string) Element {
 	return NewElement(name, d.document)

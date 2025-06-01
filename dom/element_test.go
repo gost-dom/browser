@@ -148,7 +148,7 @@ func (s *ElementTestSuite) TestMatchesAttributeNameValue() {
 func (s *ElementTestSuite) TestTextContent() {
 	d := s.doc.CreateElement("div")
 	p := s.doc.CreateElement("p")
-	p.AppendChild(s.doc.CreateText("Original paragraph"))
+	p.AppendChild(s.doc.CreateTextNode("Original paragraph"))
 	d.AppendChild(p)
 	s.Expect(d).To(HaveTextContent("Original paragraph"))
 	d.SetTextContent("Replace the p")
@@ -317,9 +317,9 @@ func (s *ParentElementTestSuite) TestAppend() {
 	divE := doc.CreateElement("div")
 	divE.SetTextContent("e")
 	b.Append(
-		doc.CreateText("d"),
+		doc.CreateTextNode("d"),
 		divE,
-		doc.CreateText("f"),
+		doc.CreateTextNode("f"),
 	)
 	s.Expect(b).To(HaveOuterHTML(`<body>a<div>b</div>cd<div>e</div>f</body>`))
 }
@@ -330,9 +330,9 @@ func (s *ParentElementTestSuite) TestPrepend() {
 	divE := doc.CreateElement("div")
 	divE.SetTextContent("e")
 	b.Prepend(
-		doc.CreateText("d"),
+		doc.CreateTextNode("d"),
 		divE,
-		doc.CreateText("f"),
+		doc.CreateTextNode("f"),
 	)
 	s.Expect(b).To(HaveOuterHTML(`<body>d<div>e</div>fa<div>b</div>c</body>`))
 }
@@ -343,9 +343,9 @@ func (s *ParentElementTestSuite) TestReplaceChildren() {
 	divE := doc.CreateElement("div")
 	divE.SetTextContent("e")
 	b.ReplaceChildren(
-		doc.CreateText("d"),
+		doc.CreateTextNode("d"),
 		divE,
-		doc.CreateText("f"),
+		doc.CreateTextNode("f"),
 	)
 	s.Expect(b).To(HaveOuterHTML(`<body>d<div>e</div>f</body>`))
 

@@ -186,7 +186,7 @@ func Test(t *testing.T) {
 
 func (s *MutationObserverTestSuite) TestChangeCDataValue() {
 	doc := html.NewHTMLDocument(nil)
-	textNode := doc.CreateText("Original value")
+	textNode := doc.CreateTextNode("Original value")
 	commentNode := doc.CreateComment("Original comment")
 	doc.Body().AppendChild(textNode)
 	doc.Body().AppendChild(commentNode)
