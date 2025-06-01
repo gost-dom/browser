@@ -53,6 +53,48 @@ func (w parentNodeV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, erro
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
+func (w parentNodeV8Wrapper) prepend(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: ParentNode.prepend")
+	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
+	}
+	nodes, errArg1 := consumeRestArguments(cbCtx, "nodes", nil, w.decodeNodeOrText)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	errCall := instance.Prepend(nodes...)
+	return nil, errCall
+}
+
+func (w parentNodeV8Wrapper) append(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: ParentNode.append")
+	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
+	}
+	nodes, errArg1 := consumeRestArguments(cbCtx, "nodes", nil, w.decodeNodeOrText)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	errCall := instance.Append(nodes...)
+	return nil, errCall
+}
+
+func (w parentNodeV8Wrapper) replaceChildren(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: ParentNode.replaceChildren")
+	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
+	}
+	nodes, errArg1 := consumeRestArguments(cbCtx, "nodes", nil, w.decodeNodeOrText)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	errCall := instance.ReplaceChildren(nodes...)
+	return nil, errCall
+}
+
 func (w parentNodeV8Wrapper) querySelector(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.Logger().Debug("V8 Function call: ParentNode.querySelector")
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())

@@ -128,10 +128,17 @@ func (gen V8CallbackGenerators) CtxOrOperationCallback(
 		parseArgs := []g.Generator{cbCtx, g.Lit(a.Name), defaultValuer}
 		var dec = wrappers.DecodersForArg(receiver, a)
 		parseArgs = append(parseArgs, dec...)
-		stmts.Append(
-			g.AssignMany(g.List(arg, err),
-				g.NewValue("consumeArgument").Call(parseArgs...)),
-		)
+		if a.Variadic {
+			stmts.Append(
+				g.AssignMany(g.List(arg, err),
+					g.NewValue("consumeRestArguments").Call(parseArgs...)),
+			)
+		} else {
+			stmts.Append(
+				g.AssignMany(g.List(arg, err),
+					g.NewValue("consumeArgument").Call(parseArgs...)),
+			)
+		}
 	}
 
 	optArgsBlock := g.StatementList()

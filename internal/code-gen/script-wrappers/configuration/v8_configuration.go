@@ -111,9 +111,9 @@ func configureDOMSpecs(domSpecs *WebIdlConfiguration) {
 
 	parentNode := domSpecs.Type("ParentNode")
 	parentNode.Method("children").Ignore()
-	parentNode.Method("append").SetCustomImplementation()
-	parentNode.Method("prepend").SetCustomImplementation()
-	parentNode.Method("replaceChildren").SetCustomImplementation()
+	parentNode.Method("append").Argument("nodes").Decoder = "w.decodeNodeOrText"
+	parentNode.Method("prepend").Argument("nodes").Decoder = "w.decodeNodeOrText"
+	parentNode.Method("replaceChildren").Argument("nodes").Decoder = "w.decodeNodeOrText"
 
 	domElement := domSpecs.Type("Element")
 	domElement.SkipWrapper = true
@@ -158,6 +158,7 @@ func configureDOMSpecs(domSpecs *WebIdlConfiguration) {
 	domTokenList := domSpecs.Type("DOMTokenList")
 	domTokenList.RunCustomCode = true
 	domTokenList.Method("toggle").SetCustomImplementation()
+	domTokenList.Method("remove").SetCustomImplementation()
 	domTokenList.Method("supports").SetNotImplemented()
 }
 

@@ -25,7 +25,7 @@ func (a ESOperationArgument) OptionalInGo() bool {
 }
 
 func (a ESOperationArgument) VariadicInGo() bool {
-	return a.CustomRule.Variadic
+	return a.CustomRule.Variadic || a.Variadic
 }
 
 func (a ESOperationArgument) DefaultValueInGo() (name string, ok bool) {

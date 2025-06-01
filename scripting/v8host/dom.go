@@ -43,3 +43,16 @@ func (e htmlTemplateElementV8Wrapper) CreateInstance(
 ) (*v8.Value, error) {
 	return nil, errors.New("TODO")
 }
+func (w domTokenListV8Wrapper) remove(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.remove")
+	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
+	if errInst != nil {
+		return cbCtx.ReturnWithError(errInst)
+	}
+	tokens, errArg1 := consumeArgument(cbCtx, "tokens", nil, w.decodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	instance.Remove(tokens)
+	return nil, nil
+}

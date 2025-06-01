@@ -174,6 +174,7 @@ func createOperation(
 			ArgumentSpec: esArgumentSpec,
 			Ignore:       esArgumentSpec.Ignored,
 			CustomRule:   opRules.Argument(idlArg.Name),
+			Variadic:     idlArg.Variadic,
 		}
 		op.Arguments = append(op.Arguments, esArg)
 	}
