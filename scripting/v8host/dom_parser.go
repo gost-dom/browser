@@ -18,7 +18,7 @@ func initDOMParser(ft jsConstructor) {
 				return nil, err
 			}
 			if contentType != "text/html" {
-				return cbCtx.ReturnWithTypeError(
+				return nil, cbCtx.ValueFactory().NewTypeError(
 					"DOMParser.parseFromString only supports text/html yet",
 				)
 			}

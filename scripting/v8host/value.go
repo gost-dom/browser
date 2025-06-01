@@ -13,7 +13,7 @@ type jsTypeParam = *v8Value
 type jsValue = js.Value[*v8Value]
 type jsFunction = js.Function[*v8Value]
 type jsObject = js.Object[*v8Value]
-type jsConstructor = v8Constructor
+type jsConstructor = js.Constructor[jsTypeParam]
 
 func toV8Value(v jsValue) *v8go.Value {
 	if v == nil {
@@ -198,11 +198,11 @@ type v8Constructor struct {
 	ft   *v8go.FunctionTemplate
 }
 
-func newV8Constructor(host *V8ScriptHost, ft *v8go.FunctionTemplate) jsConstructor {
+func newV8Constructor(host *V8ScriptHost, ft *v8go.FunctionTemplate) v8Constructor {
 	return v8Constructor{host, ft}
 }
 
-func (c v8Constructor) CreatePrototypeMethod(name string, cb internalCallback) {
+func (c v8Constructor) CreatePrototypeMethod(name string, cb js.FunctionCallback[jsTypeParam]) {
 	v8cb := wrapV8Callback(c.host, cb)
 	c.ft.PrototypeTemplate().Set(name, v8cb, v8go.ReadOnly)
 }

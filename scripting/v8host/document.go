@@ -31,7 +31,6 @@ func (w *documentV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) 
 
 func (w *documentV8Wrapper) CreateInstance(cbCtx jsCallbackContext) (jsValue, error) {
 	res := dom.NewDocument(nil)
-	// w.store(res, cbCtx)
 	cbCtx.This().SetNativeValue(res)
 	cbCtx.Scope().SetValue(res, cbCtx.This())
 	return nil, nil
@@ -64,9 +63,20 @@ func (w *documentV8Wrapper) body(cbCtx jsCallbackContext) (jsValue, error) {
 	}
 }
 
+func (w *documentV8Wrapper) toComment(
+	cbCtx jsCallbackContext,
+	comment dom.Comment,
+) (jsValue, error) {
+	return encodeEntity(cbCtx, comment)
+}
+
+func (w *documentV8Wrapper) toAttr(cbCtx jsCallbackContext, comment dom.Attr) (jsValue, error) {
+	return encodeEntity(cbCtx, comment)
+}
+
 func (w *documentV8Wrapper) createElement(cbCtx jsCallbackContext) (jsValue, error) {
 	var name string
-	name, err1 := cbCtx.consumeString()
+	name, err1 := consumeArgument(cbCtx, "name", nil, decodeString)
 	instance, err2 := js.As[dom.Document](cbCtx.Instance())
 	err := errors.Join(err1, err2)
 	if err == nil {
@@ -77,7 +87,7 @@ func (w *documentV8Wrapper) createElement(cbCtx jsCallbackContext) (jsValue, err
 }
 func (w *documentV8Wrapper) createTextNode(cbCtx jsCallbackContext) (jsValue, error) {
 	var name string
-	name, err1 := cbCtx.consumeString()
+	name, err1 := consumeArgument(cbCtx, "name", nil, decodeString)
 	instance, err2 := js.As[dom.Document](cbCtx.Instance())
 	err := errors.Join(err1, err2)
 	if err == nil {

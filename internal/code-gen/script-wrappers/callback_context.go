@@ -41,3 +41,7 @@ func (c CallbackContext) ReturnWithError(val g.Generator) g.Generator {
 func (c CallbackContext) ConsumeArg() g.Generator {
 	return c.Field("ConsumeArg").Call()
 }
+
+func (c CallbackContext) Scope() g.Generator {
+	return c.Field("Scope").Call()
+}

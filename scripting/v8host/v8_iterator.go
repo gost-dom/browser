@@ -61,11 +61,12 @@ func (i v8Iterator) newIterator(
 		next:  next,
 		stop:  stop,
 	}
-	res, err := i.ot.NewInstance(cbCtx.v8ctx())
+	ctx := cbCtx.(*v8CallbackContext)
+	res, err := i.ot.NewInstance(ctx.v8ctx())
 	if err != nil {
 		panic(fmt.Sprintf("Could not create iterator instance. %s", constants.BUG_ISSUE_URL))
 	}
-	obj := newV8Object(cbCtx.ScriptCtx(), res)
+	obj := newV8Object(ctx.ScriptCtx(), res)
 	obj.SetNativeValue(iterator)
 	return obj
 }
@@ -77,37 +78,38 @@ func (i v8Iterator) next(cbCtx jsCallbackContext) (jsValue, error) {
 	}
 	next := instance.next
 	stop := instance.stop
+	ctx := cbCtx.(*v8CallbackContext).ScriptCtx()
 	if item, err, ok := next(); !ok {
 		stop()
-		return i.createDoneIteratorResult(cbCtx)
+		return i.createDoneIteratorResult(ctx)
 	} else {
 		if err != nil {
 			return nil, err
 		}
-		return i.createNotDoneIteratorResult(cbCtx, item)
+		return i.createNotDoneIteratorResult(ctx, item)
 	}
 }
 
-func (i v8Iterator) createDoneIteratorResult(ctx jsCallbackContext) (jsValue, error) {
-	result, err := i.resultTemplate.NewInstance(ctx.v8ctx())
+func (i v8Iterator) createDoneIteratorResult(ctx *V8ScriptContext) (jsValue, error) {
+	result, err := i.resultTemplate.NewInstance(ctx.v8ctx)
 	if err != nil {
 		return nil, err
 	}
 	result.Set("done", true)
-	return newV8Object(ctx.ScriptCtx(), result), nil
+	return newV8Object(ctx, result), nil
 }
 
 func (i v8Iterator) createNotDoneIteratorResult(
-	ctx jsCallbackContext,
+	ctx *V8ScriptContext,
 	value jsValue,
 ) (jsValue, error) {
-	result, err := i.resultTemplate.NewInstance(ctx.v8ctx())
+	result, err := i.resultTemplate.NewInstance(ctx.v8ctx)
 	if err != nil {
 		return nil, err
 	}
 	result.Set("done", false)
 	result.Set("value", value.Self().v8Value())
-	return newV8Object(ctx.ScriptCtx(), result), nil
+	return newV8Object(ctx, result), nil
 }
 
 /* -------- iterator[T] -------- */

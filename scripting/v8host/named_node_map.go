@@ -33,7 +33,7 @@ func (w namedNodeMapV8Wrapper) CustomInitialiser(ft *v8go.FunctionTemplate) {
 			if err != nil {
 				return nil, err
 			}
-			index := int(cbCtx.v8Info.Index())
+			index := int(cbCtx.(*v8CallbackContext).v8Info.Index())
 			item := instance.Item(index)
 			if item == nil {
 				return cbCtx.ReturnWithValue(nil)

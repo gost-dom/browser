@@ -134,7 +134,7 @@ func (i iterator2[K, V]) installPrototype(ft *v8.FunctionTemplate) {
 			if err != nil {
 				return nil, err
 			}
-			return cbCtx.ReturnWithJSValueErr(i.newIterator(cbCtx, instance))
+			return i.newIterator(cbCtx, instance)
 		})
 	prototypeTempl := ft.PrototypeTemplate()
 	prototypeTempl.Set("entries", getEntries)

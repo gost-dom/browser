@@ -77,7 +77,7 @@ type globalInstall struct {
 }
 
 type globals struct {
-	namedGlobals map[string]jsConstructor
+	namedGlobals map[string]v8Constructor
 }
 
 type hostOptions struct {
@@ -247,7 +247,7 @@ func createHostInstance(config hostOptions) *V8ScriptHost {
 	if !hostReused {
 		host.iso.SetPromiseRejectedCallback(host.promiseRejected)
 		globalInstalls := createGlobals(host)
-		host.globals = globals{make(map[string]jsConstructor)}
+		host.globals = globals{make(map[string]v8Constructor)}
 		var window *v8go.FunctionTemplate
 		for _, globalInstall := range globalInstalls {
 			host.globals.namedGlobals[globalInstall.name] = newV8Constructor(

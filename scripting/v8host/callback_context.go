@@ -16,7 +16,7 @@ import (
 )
 
 // type jsCallbackContext = js.CallbackContext[*v8Value]
-type jsCallbackContext = *v8CallbackContext
+type jsCallbackContext = js.CallbackContext[*v8Value]
 type jsValueFactory = js.ValueFactory[*v8Value]
 
 var (
@@ -43,9 +43,7 @@ func (h *v8CallbackContext) ScriptCtx() *V8ScriptContext {
 	return h.host.mustGetContext(h.v8Info.Context())
 }
 
-func (c v8CallbackContext) Scope() js.Scope[jsTypeParam] {
-	return v8Scope{c.ScriptCtx()}
-}
+func (c *v8CallbackContext) Scope() js.Scope[jsTypeParam] { return v8Scope{c.ScriptCtx()} }
 
 func (c *v8CallbackContext) ValueFactory() jsValueFactory { return v8ValueFactory{c.host, c} }
 
@@ -205,11 +203,11 @@ func (f v8ValueFactory) toVal(val *v8go.Value) jsValue {
 	return newV8Value(f.ctx.ScriptCtx(), val)
 }
 
-type internalCallback func(jsCallbackContext) (jsValue, error)
+type internalCallback = func(js.CallbackContext[jsTypeParam]) (jsValue, error)
 
 func wrapV8Callback(
 	host *V8ScriptHost,
-	callback internalCallback,
+	callback js.FunctionCallback[jsTypeParam],
 ) *v8go.FunctionTemplate {
 	return v8go.NewFunctionTemplateWithError(
 		host.iso,

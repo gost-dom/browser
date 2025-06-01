@@ -20,7 +20,7 @@ func (n nodeV8Wrapper) setTextContent(cbCtx jsCallbackContext) (jsValue, error) 
 	if err != nil {
 		return nil, err
 	}
-	arg := cbCtx.consumeValue()
+	arg, _ := cbCtx.ConsumeArg()
 	i.SetTextContent(arg.String())
 	return cbCtx.ReturnWithValue(nil)
 }

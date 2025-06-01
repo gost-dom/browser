@@ -31,7 +31,8 @@ type V8ScriptContext struct {
 	global     jsObject
 }
 
-func (c *V8ScriptContext) iso() *v8.Isolate { return c.host.iso }
+func (c *V8ScriptContext) iso() *v8.Isolate    { return c.host.iso }
+func (c *V8ScriptContext) Window() html.Window { return c.window }
 
 func (h *V8ScriptHost) getContext(v8ctx *v8.Context) (*V8ScriptContext, bool) {
 	h.mu.Lock()
@@ -100,11 +101,15 @@ func lookupJSPrototype(entity entity.ObjectIder) string {
 	}
 }
 
-// getConstructor returns the V8 FunctionTemplate with the specified name.
+// Constructor returns the V8 FunctionTemplate with the specified name.
 // Panics if the name is not one registered as a constructor. The name should
 // not originate from client code, only from this library, so it should be
 // guaranteed that this function is only called with valid values.
-func (c *V8ScriptContext) getConstructor(name string) jsConstructor {
+func (c *V8ScriptContext) Constructor(name string) v8Constructor {
+	return c.getConstructor(name)
+}
+
+func (c *V8ScriptContext) getConstructor(name string) v8Constructor {
 	prototype, ok := c.host.globals.namedGlobals[name]
 	if !ok {
 		panic(fmt.Sprintf("Unrecognised constructor name: %s. %s", name, constants.BUG_ISSUE_URL))

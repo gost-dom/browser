@@ -3,6 +3,7 @@ package js
 import (
 	"errors"
 	"iter"
+	"log/slog"
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
@@ -61,6 +62,8 @@ type CallbackScope[T any] interface {
 	ValueFactory() ValueFactory[T]
 
 	Scope() Scope[T]
+	Logger() *slog.Logger
+	This() Object[T]
 }
 
 // CallbackContext represents the execution context of a JavaScript function

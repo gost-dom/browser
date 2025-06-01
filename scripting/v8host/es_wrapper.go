@@ -20,8 +20,11 @@ type eventInitWrapper struct {
 	init       any
 }
 
-func (w converters[T]) decodeEventInit(ctx jsCallbackContext, v jsValue) (eventInitWrapper, error) {
-	options, ok := v.AsObject()
+func (w converters[T]) decodeEventInit(
+	ctx js.CallbackContext[T],
+	val js.Value[T],
+) (eventInitWrapper, error) {
+	options, ok := val.AsObject()
 	if !ok {
 		return eventInitWrapper{}, errors.New("Not an event init object")
 	}
@@ -39,23 +42,23 @@ func (w converters[T]) decodeEventInit(ctx jsCallbackContext, v jsValue) (eventI
 	return init, nil
 }
 
-func (w converters[T]) decodeString(ctx jsCallbackContext, val jsValue) (string, error) {
+func (w converters[T]) decodeString(ctx js.CallbackContext[T], val js.Value[T]) (string, error) {
 	return val.String(), nil
 }
 
-func (w converters[T]) decodeBoolean(ctx jsCallbackContext, val jsValue) (bool, error) {
+func (w converters[T]) decodeBoolean(ctx js.CallbackContext[T], val js.Value[T]) (bool, error) {
 	return val.Boolean(), nil
 }
 
-func (w converters[T]) decodeLong(_ jsCallbackContext, val jsValue) (int, error) {
+func (w converters[T]) decodeLong(ctx js.CallbackContext[T], val js.Value[T]) (int, error) {
 	return int(val.Int32()), nil
 }
 
-func (w converters[T]) decodeUnsignedLong(_ jsCallbackContext, val jsValue) (int, error) {
+func (w converters[T]) decodeUnsignedLong(ctx js.CallbackContext[T], val js.Value[T]) (int, error) {
 	return int(val.Uint32()), nil
 }
 
-func (w converters[T]) decodeNode(ctx jsCallbackContext, val jsValue) (dom.Node, error) {
+func (w converters[T]) decodeNode(ctx js.CallbackContext[T], val js.Value[T]) (dom.Node, error) {
 	if obj, ok := val.AsObject(); ok {
 		if node, ok := obj.NativeValue().(dom.Node); ok {
 			return node, nil
@@ -77,8 +80,8 @@ func (w converters[T]) decodeHTMLElement(
 }
 
 func (w converters[T]) decodeHTMLFormElement(
-	cbCtx jsCallbackContext,
-	val jsValue,
+	cbCtx js.CallbackContext[T],
+	val js.Value[T],
 ) (html.HTMLFormElement, error) {
 	var (
 		res html.HTMLFormElement
@@ -96,7 +99,10 @@ func (w converters[T]) decodeHTMLFormElement(
 
 func (c converters[T]) defaultHTMLElement() html.HTMLElement { return nil }
 
-func (w converters[T]) decodeNodeOrText(cbCtx jsCallbackContext, val jsValue) (dom.Node, error) {
+func (w converters[T]) decodeNodeOrText(
+	cbCtx js.CallbackContext[T],
+	val js.Value[T],
+) (dom.Node, error) {
 	if val.IsString() {
 		return cbCtx.Scope().Window().Document().CreateTextNode(val.String()), nil
 	}
@@ -219,4 +225,20 @@ func getWrappedInstance[T any](object *v8.Object) (res T, err error) {
 
 type callbackInfo interface {
 	This() *v8.Object
+}
+
+func encodeInstance[T any](cbCtx js.CallbackContext[T], e entity.ObjectIder) (js.Value[T], error) {
+
+	scope := cbCtx.Scope()
+	if res, ok := cbCtx.Scope().GetValue(e); ok {
+		return res, nil
+	}
+	prototypeName := lookupJSPrototype(e)
+	ctor := cbCtx.Scope().Constructor(prototypeName)
+	value, err := ctor.NewInstance(cbCtx.Scope(), e)
+	if err == nil {
+		scope.SetValue(e, value)
+	}
+	return value, err
+
 }

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
 )
 
@@ -151,7 +152,7 @@ func parseSetterArg[T any](
 ) (result T, err error) {
 	arg, ok := ctx.ConsumeArg()
 	if !ok {
-		err = fmt.Errorf("parseSetterArg: expected one argument. got: %d", len(ctx.v8Info.Args()))
+		err = errors.New("parseSetterArg: expected one argument. got none")
 	}
 
 	errs := make([]error, len(parsers))
@@ -178,11 +179,11 @@ func zeroValue[T any]() (res T) { return }
 //
 // If the function returns with an error, the name will be used in the error
 // message. Otherwise, name has ho effect on the function.
-func consumeArgument[T any](
-	args jsCallbackContext,
+func consumeArgument[T, U any](
+	args js.CallbackContext[U],
 	name string,
 	defaultValue func() T,
-	decoders ...func(jsCallbackContext, jsValue) (T, error),
+	decoders ...func(js.CallbackContext[U], js.Value[U]) (T, error),
 ) (result T, err error) {
 	value, _ := args.ConsumeArg()
 	if value == nil && defaultValue != nil {
@@ -203,13 +204,13 @@ func consumeArgument[T any](
 	}
 }
 
-func consumeOptionalArg[T any](
-	cbCtx jsCallbackContext,
+func consumeOptionalArg[T, U any](
+	cbCtx js.CallbackContext[T],
 	name string,
-	decoders ...func(jsCallbackContext, jsValue) (T, error),
-) (result T, found bool, err error) {
+	decoders ...func(js.CallbackContext[T], js.Value[T]) (U, error),
+) (result U, found bool, err error) {
 	value, _ := cbCtx.ConsumeArg()
-	if value == nil || value.Self().v8Value() == nil {
+	if value == nil {
 		return
 	}
 	found = true
