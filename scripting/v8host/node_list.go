@@ -2,30 +2,21 @@ package v8host
 
 import (
 	"github.com/gost-dom/browser/dom"
-	"github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
 )
 
 func (w *nodeListV8Wrapper) CustomInitialiser(ft *v8.FunctionTemplate) {
 	host := w.scriptHost
-	iso := w.iso()
-	prototype := ft.PrototypeTemplate()
 	nodeListIterator := newIterator(host,
 		func(ctx jsCallbackContext, instance dom.Node) (jsValue, error) {
 			return encodeEntity(ctx, instance)
 		})
-	prototype.SetSymbol(v8.SymbolIterator(iso),
-		wrapV8Callback(host, func(cbCtx jsCallbackContext) (jsValue, error) {
-			nodeList, err := js.As[dom.NodeList](cbCtx.Instance())
-			if err != nil {
-				return nil, err
-			}
-			return nodeListIterator.newIteratorOfSlice(cbCtx, nodeList.All())
-		}))
+	nodeListIterator.installPrototype(ft)
 
 	instanceTemplate := ft.InstanceTemplate()
 	instanceTemplate.SetIndexedHandler(
 		func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
+			iso := w.iso()
 			ctx := host.mustGetContext(info.Context())
 			cbCtx := newCallbackContext(host, info)
 			instance, ok := ctx.getCachedNode(info.This())

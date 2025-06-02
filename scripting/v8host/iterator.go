@@ -2,6 +2,7 @@ package v8host
 
 import (
 	"errors"
+	"fmt"
 	"iter"
 	"slices"
 
@@ -22,6 +23,9 @@ func newIterator[T any](host *V8ScriptHost, entityLookup entityLookup[T]) iterat
 
 type iterable[T any] interface {
 	All() iter.Seq[T]
+}
+type sliceIter[T any] interface {
+	All() []T
 }
 
 func (i iterator[T]) newIteratorOfSlice(cbCtx jsCallbackContext, items []T) (jsValue, error) {
@@ -47,16 +51,21 @@ func (i iterator[T]) newIterator(cbCtx jsCallbackContext, items iter.Seq[T]) (js
 
 func (i iterator[T]) installPrototype(ft *v8.FunctionTemplate) {
 	iso := i.host.iso
-	getEntries := wrapV8Callback(i.host, func(cbCtx jsCallbackContext) (jsValue, error) {
-		instance, err := js.As[iterable[T]](cbCtx.Instance())
-		if err != nil {
-			return nil, err
-		}
-		return i.newIterator(cbCtx, instance.All())
-	})
 	prototypeTempl := ft.PrototypeTemplate()
-	prototypeTempl.Set("entries", getEntries)
-	prototypeTempl.SetSymbol(v8.SymbolIterator(iso), getEntries)
+	prototypeTempl.Set("entries", wrapV8Callback(i.host, i.entries))
+	prototypeTempl.SetSymbol(v8.SymbolIterator(iso), wrapV8Callback(i.host, i.entries))
+}
+
+func (i iterator[T]) entries(cbCtx jsCallbackContext) (jsValue, error) {
+	instance, err1 := js.As[iterable[T]](cbCtx.Instance())
+	if err1 == nil {
+		return i.newIterator(cbCtx, instance.All())
+	}
+	sliceIter, err2 := js.As[sliceIter[T]](cbCtx.Instance())
+	if err2 == nil {
+		return i.newIteratorOfSlice(cbCtx, sliceIter.All())
+	}
+	return nil, fmt.Errorf("iterator.getEntries: %w", errors.Join(err1, err2))
 }
 
 /* -------- iterator2 -------- */
