@@ -206,7 +206,7 @@ func (o *v8Object) Keys() ([]string, error) {
 	// necessary data, and then convert the value into a slice of strings.
 	global := o.global().Value
 	objectKeys := result.Bind(
-		result.New(o.ctx.runScript("Object.keys")),
+		result.New(o.ctx.runScript("Object.keys", "")),
 		(*v8go.Value).AsFunction,
 	)
 	keysV8Value := result.Bind2(objectKeys, callV8Function, global, o.Value)

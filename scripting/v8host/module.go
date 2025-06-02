@@ -28,7 +28,7 @@ func (mod V8Module) Run() error {
 		}
 	}
 	if err == nil {
-		mod.ctx.eventLoop.tick()
+		mod.ctx.clock.Tick()
 	}
 	return err
 }

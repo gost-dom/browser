@@ -18,7 +18,7 @@ func (w htmlOrSVGElementV8Wrapper) dataset(cbCtx jsCallbackContext) (jsValue, er
 	cbCtx.Logger().Debug("V8 Function call: HTMLOrSVGElement.focus")
 	instance, err := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	return encodeEntity(cbCtx, instance.Dataset())
 }

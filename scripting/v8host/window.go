@@ -31,6 +31,6 @@ func (w *windowV8Wrapper) history(cbCtx jsCallbackContext) (jsValue, error) {
 	return cbCtx.Scope().Constructor("History").NewInstance(cbCtx.Scope(), win.History())
 }
 
-func (w *windowV8Wrapper) self(cbCtx *argumentHelper) js.CallbackRVal {
-	return cbCtx.ReturnWithValue(cbCtx.This().Value)
+func (w *windowV8Wrapper) self(cbCtx jsCallbackContext) (jsValue, error) {
+	return cbCtx.This(), nil
 }

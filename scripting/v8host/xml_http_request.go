@@ -16,16 +16,16 @@ type xmlHttpRequestV8Wrapper struct {
 }
 
 func (xhr xmlHttpRequestV8Wrapper) decodeXMLHttpRequestResponseType(
-	ctx *V8ScriptContext,
-	val *v8.Value,
+	cbCtx jsCallbackContext,
+	val jsValue,
 ) (string, error) {
-	return xhr.decodeString(ctx, val)
+	return xhr.decodeString(cbCtx, val)
 }
 
 func (xhr xmlHttpRequestV8Wrapper) toXMLHttpRequestResponseType(
-	cbCtx *argumentHelper,
+	cbCtx jsCallbackContext,
 	val string,
-) js.CallbackRVal {
+) (jsValue, error) {
 	return xhr.toString_(cbCtx, val)
 }
 
