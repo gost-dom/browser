@@ -44,5 +44,5 @@ func installDOMParser[T any](host js.ScriptEngine[T]) {
 }
 
 func init() {
-	initializers = append(initializers, installDOMParser[jsTypeParam])
+	js.Register(ScriptEngineConfigurer{}, installDOMParser)
 }

@@ -49,4 +49,11 @@ type Constructable[T any] interface {
 	NewInstance(cbCtx Scope[T], nativeValue any) (Object[T], error)
 }
 
-type ScriptEngineInitializer[T any] = func(ScriptEngine[T])
+type Configurator[T any] interface{ Configure(ScriptEngine[T]) }
+type ConfigurerFunc[T any] func(ScriptEngine[T])
+
+func (f ConfigurerFunc[T]) Configure(e ScriptEngine[T]) { f(e) }
+
+func Register[T any](fact ScriptEngineFactory[T], conf ConfigurerFunc[T]) {
+	fact.Register(conf)
+}

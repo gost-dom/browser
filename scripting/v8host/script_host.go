@@ -177,7 +177,7 @@ type classSpec struct {
 }
 
 var classes map[string]classSpec = make(map[string]classSpec)
-var initializers []jsScriptEngineInitializer
+var initializers []js.Configurator[jsTypeParam]
 
 func registerJSClass(
 	className string,
@@ -266,7 +266,7 @@ func createHostInstance(config hostOptions) *V8ScriptHost {
 		installGlobals(window, host, globalInstalls)
 		installEventLoopGlobals(host, host.windowTemplate)
 		for _, i := range initializers {
-			i(host)
+			i.Configure(host)
 		}
 	}
 	return host
