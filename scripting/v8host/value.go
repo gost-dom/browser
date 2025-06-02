@@ -1,10 +1,11 @@
 package v8host
 
 import (
+	"errors"
 	"fmt"
 	"runtime/cgo"
 
-	"github.com/gost-dom/browser/internal/constants"
+	"github.com/gost-dom/browser/internal/monads/result"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
 )
@@ -36,7 +37,8 @@ type v8Value struct {
 	Value *v8go.Value
 }
 
-func (v *v8Value) iso() *v8go.Isolate { return v.ctx.iso() }
+func (v *v8Value) iso() *v8go.Isolate   { return v.ctx.iso() }
+func (v *v8Value) global() *v8go.Object { return v.ctx.v8ctx.Global() }
 
 func (v *v8Value) Self() *v8Value { return v }
 
@@ -169,28 +171,48 @@ func (o *v8Object) Get(name string) (jsValue, error) {
 	return newV8Value(o.ctx, res), nil
 }
 
-func (o *v8Object) Keys() ([]string, error) {
-	if k, err := o.ctx.runScript("Object.keys"); err == nil {
-		if f, err := k.AsFunction(); err == nil {
-			if keys, err := f.Call(o.ctx.v8ctx.Global(), o.Value); err == nil {
-				if goKeys, err := v8ValueToGoValue(keys); err == nil {
-					if arr, ok := goKeys.([]any); ok {
-						res := make([]string, len(arr))
-						for i, v := range arr {
-							if strKey, isString := v.(string); isString {
-								res[i] = strKey
-							} else {
-								return nil, fmt.Errorf("Unexpected return value from Object.keys.%s", constants.BUG_ISSUE_URL)
-							}
-						}
-						return res, nil
-					}
-				}
-			}
+func callV8Function(f *v8go.Function, arg0 *v8go.Value, arg *v8go.Value) (*v8go.Value, error) {
+	return f.Call(arg0, arg)
+}
+
+func asSlice(v any) ([]any, error) {
+	if res, ok := v.([]any); ok {
+		return res, nil
+	}
+	return nil, errors.New("value not a go slice")
+}
+
+func mapSlice[T, U any](s []T, fn func(T) (U, error)) ([]U, error) {
+	var err error
+	r := make([]U, len(s))
+	for i, e := range s {
+		if r[i], err = fn(e); err != nil {
+			return nil, err
 		}
 	}
-	return nil, fmt.Errorf("Unexpected return value from Object.keys.%s", constants.BUG_ISSUE_URL)
+	return r, nil
+}
 
+func asString(v any) (string, error) {
+	if s, ok := v.(string); ok {
+		return s, nil
+	}
+	return "", fmt.Errorf("not a string: %v", v)
+}
+
+func (o *v8Object) Keys() ([]string, error) {
+	// v8go doesn't support retrieving all keys for an object, so this
+	// evaluates "Object.keys" to get the JavaScript function that retrieves the
+	// necessary data, and then convert the value into a slice of strings.
+	global := o.global().Value
+	objectKeys := result.Bind(
+		result.New(o.ctx.runScript("Object.keys")),
+		(*v8go.Value).AsFunction,
+	)
+	keysV8Value := result.Bind2(objectKeys, callV8Function, global, o.Value)
+	keysAsAny := result.Bind(keysV8Value, v8ValueToGoValue)
+	keysAsSlice := result.Bind(keysAsAny, asSlice)
+	return result.Bind1(keysAsSlice, mapSlice, asString).Unwrap()
 }
 
 type v8Constructor struct {
