@@ -28,19 +28,19 @@ func createAttr(host *V8ScriptHost) *v8.FunctionTemplate {
 func (w namedNodeMapV8Wrapper) CustomInitialiser(ft *v8go.FunctionTemplate) {
 	ft.InstanceTemplate().SetIndexedHandler(
 		// NOTE: This is the prototype index handler implementation.
-		wrapV8CallbackFn(w.scriptHost, func(cbCtx jsCallbackContext) (jsValue, error) {
-			instance, err := js.As[dom.NamedNodeMap](cbCtx.Instance())
-			if err != nil {
-				return nil, err
-			}
-			index := int(cbCtx.(*v8CallbackContext).v8Info.Index())
-			item := instance.Item(index)
-			if item == nil {
-				return cbCtx.ReturnWithValue(nil)
-			}
-			return encodeEntity(
-				cbCtx,
-				item,
-			)
-		}))
+		wrapV8IndexedGetterCallbackFn(
+			w.scriptHost,
+			func(cbCtx js.GetterCallbackContext[jsTypeParam, int]) (jsValue, error) {
+				instance, err := js.As[dom.NamedNodeMap](cbCtx.Instance())
+				if err != nil {
+					return nil, err
+				}
+				index := int(cbCtx.Key())
+				item := instance.Item(index)
+				if item == nil {
+					return nil, nil
+				}
+				return encodeEntity(cbCtx, item)
+			},
+		))
 }
