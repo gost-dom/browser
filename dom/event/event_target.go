@@ -26,7 +26,7 @@ type EventListenerOption = func(*EventListener)
 
 type EventTarget interface {
 	AddEventListener(eventType string, listener EventHandler, options ...EventListenerOption)
-	RemoveEventListener(eventType string, listener EventHandler, options ...func(*EventListener))
+	RemoveEventListener(eventType string, listener EventHandler, options ...EventListenerOption)
 	DispatchEvent(event *Event) bool
 	// Adds a listener that will receive _all_ dispatched event. This listener
 	// will not be removed from the window when navigating. This makes it useful

@@ -15,7 +15,6 @@ import (
 	v8 "github.com/gost-dom/v8go"
 )
 
-// type jsCallbackContext = js.CallbackContext[*v8Value]
 type jsCallbackContext = js.CallbackContext[*v8Value]
 type jsValueFactory = js.ValueFactory[*v8Value]
 

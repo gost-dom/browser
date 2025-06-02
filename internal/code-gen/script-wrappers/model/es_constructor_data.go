@@ -110,14 +110,3 @@ func (d ESConstructorData) WrappedType() g.Generator {
 	}
 	return res
 }
-
-// func (d ESConstructorData) LookupProperty(attr ESAttribute) func(g.Generator) g.Generator {
-// 	return func(instance g.Generator) g.Generator {
-// 		field := g.ValueOf(instance).Field(attr.Getter.NativeFunctionName())
-// 		if d.CustomRule.OutputType == customrules.OutputTypeStruct {
-// 			return field
-// 		} else {
-// 			return field.Call()
-// 		}
-// 	}
-// }
