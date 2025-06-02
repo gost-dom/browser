@@ -202,20 +202,6 @@ func newV8Constructor(host *V8ScriptHost, ft *v8go.FunctionTemplate) jsConstruct
 	return v8Constructor{host, ft}
 }
 
-func (c v8Constructor) NewInstance(
-	scope js.Scope[jsTypeParam],
-	nativeValue any,
-) (jsObject, error) {
-	s := scope.(v8Scope)
-	val, err := c.ft.InstanceTemplate().NewInstance(s.v8ctx)
-	obj := newV8Object(s.V8ScriptContext, val).(*v8Object)
-	if err == nil {
-		obj.SetNativeValue(nativeValue)
-		s.V8ScriptContext.addDisposer(obj)
-	}
-	return obj, err
-}
-
 func (c v8Constructor) CreatePrototypeMethod(name string, cb internalCallback) {
 	v8cb := wrapV8Callback(c.host, cb)
 	c.ft.PrototypeTemplate().Set(name, v8cb, v8go.ReadOnly)

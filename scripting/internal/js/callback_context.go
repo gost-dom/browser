@@ -30,6 +30,7 @@ type Scope[T any] interface {
 	GetValue(entity.ObjectIder) (Value[T], bool)
 	SetValue(entity.ObjectIder, Value[T])
 	AddDisposable(Disposable)
+	Constructor(string) Constructable[T]
 }
 
 type ArgumentConsumer[T any] interface {

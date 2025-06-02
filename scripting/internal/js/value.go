@@ -40,12 +40,13 @@ type Object[T any] interface {
 // While a constructor IS a function in JavaScript, this abstraction has two
 // separate represenatation as they have two completely different roles. You
 // cannot "call" a constructor, doing so at runtime will result in a TypeError,
-// they can only be constructed using the JavaScript new operator. On the Go
-// side, a new intance can be created using [Constructor.NewInstance], passing
-// the object that should be wrapped.
+// they can only be constructed using the JavaScript new operator.
 type Constructor[T any] interface {
-	NewInstance(cbCtx CallbackContext[T], nativeValue any) (Object[T], error)
 	CreatePrototypeMethod(name string, cb FunctionCallback[T])
+}
+
+type Constructable[T any] interface {
+	NewInstance(cbCtx Scope[T], nativeValue any) (Object[T], error)
 }
 
 type ScriptEngineInitializer[T any] = func(ScriptEngine[T])

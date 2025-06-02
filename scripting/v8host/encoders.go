@@ -24,7 +24,7 @@ func encodeEntity(cbCtx jsCallbackContext, e entity.ObjectIder) (jsValue, error)
 	}
 
 	prototypeName := lookupJSPrototype(e)
-	prototype := cbCtx.ScriptCtx().getConstructor(prototypeName)
+	prototype := cbCtx.Scope().Constructor(prototypeName)
 	value, err := prototype.NewInstance(cbCtx.Scope(), e)
 	if err == nil {
 		scope.SetValue(e, value)

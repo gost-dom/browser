@@ -280,3 +280,27 @@ func (s v8Scope) Window() html.Window           { return s.window }
 func (s v8Scope) GlobalThis() jsObject          { return s.global }
 func (s v8Scope) Clock() *clock.Clock           { return s.clock }
 func (s v8Scope) AddDisposable(d js.Disposable) { s.V8ScriptContext.addDisposer(d) }
+
+func (c v8Scope) Constructor(name string) js.Constructable[jsTypeParam] {
+	return v8Constructable{c, c.getConstructor(name)}
+}
+
+/* -------- v8Constructable -------- */
+
+type v8Constructable struct {
+	scope v8Scope
+	ctor  v8Constructor
+}
+
+func (c v8Constructable) NewInstance(
+	scope js.Scope[jsTypeParam],
+	nativeValue any,
+) (jsObject, error) {
+	val, err := c.ctor.ft.InstanceTemplate().NewInstance(c.scope.v8ctx)
+	obj := newV8Object(c.scope.V8ScriptContext, val).(*v8Object)
+	if err == nil {
+		obj.SetNativeValue(nativeValue)
+		c.scope.V8ScriptContext.addDisposer(obj)
+	}
+	return obj, err
+}

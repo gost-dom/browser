@@ -60,7 +60,7 @@ func (e elementV8Wrapper) classList(cbCtx *v8CallbackContext) (jsValue, error) {
 		return cbCtx.ReturnWithError(err)
 	}
 	cl := instance.ClassList()
-	tokenList := cbCtx.ScriptCtx().getConstructor("DOMTokenList")
+	tokenList := cbCtx.Scope().Constructor("DOMTokenList")
 	return tokenList.NewInstance(cbCtx.Scope(), cl)
 }
 

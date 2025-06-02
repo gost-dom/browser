@@ -77,8 +77,7 @@ func toSequenceMutationRecord(
 	records []mutation.Record,
 ) (jsValue, error) {
 	res := make([]jsValue, len(records))
-	ctx := cbCtx.ScriptCtx()
-	prototype := ctx.getConstructor("MutationRecord")
+	prototype := cbCtx.Scope().Constructor("MutationRecord")
 	for i, r := range records {
 		rec, err := prototype.NewInstance(cbCtx.Scope(), &r)
 		if err != nil {
