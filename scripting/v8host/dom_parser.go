@@ -26,7 +26,7 @@ func initDOMParser[T any](ft js.Constructor[T]) {
 			domParser := NewDOMParser()
 			var doc dom.Document
 			if err := domParser.ParseReader(window, &doc, strings.NewReader(html)); err == nil {
-				return encodeEntity[T](cbCtx, doc)
+				return encodeEntity(cbCtx, doc)
 			} else {
 				return nil, err
 			}

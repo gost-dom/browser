@@ -67,8 +67,7 @@ func (xhr xmlHttpRequestV8Wrapper) CreateInstance(
 		}
 		return nil
 	}))
-	xhr.store(result, cbCtx)
-	return cbCtx.ReturnWithValue(nil)
+	return xhr.store(result, cbCtx)
 }
 
 func (xhr xmlHttpRequestV8Wrapper) open(cbCtx jsCallbackContext) (jsValue, error) {

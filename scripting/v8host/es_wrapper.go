@@ -6,7 +6,6 @@ import (
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/entity"
-	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting/internal/js"
 
 	v8 "github.com/gost-dom/v8go"
@@ -21,7 +20,7 @@ type eventInitWrapper struct {
 }
 
 func (w converters[T]) decodeEventInit(
-	ctx js.CallbackContext[T],
+	_ js.CallbackContext[T],
 	val js.Value[T],
 ) (eventInitWrapper, error) {
 	options, ok := val.AsObject()
@@ -42,19 +41,19 @@ func (w converters[T]) decodeEventInit(
 	return init, nil
 }
 
-func (w converters[T]) decodeString(ctx js.CallbackContext[T], val js.Value[T]) (string, error) {
+func (w converters[T]) decodeString(_ js.CallbackContext[T], val js.Value[T]) (string, error) {
 	return val.String(), nil
 }
 
-func (w converters[T]) decodeBoolean(ctx js.CallbackContext[T], val js.Value[T]) (bool, error) {
+func (w converters[T]) decodeBoolean(_ js.CallbackContext[T], val js.Value[T]) (bool, error) {
 	return val.Boolean(), nil
 }
 
-func (w converters[T]) decodeLong(ctx js.CallbackContext[T], val js.Value[T]) (int, error) {
+func (w converters[T]) decodeLong(_ js.CallbackContext[T], val js.Value[T]) (int, error) {
 	return int(val.Int32()), nil
 }
 
-func (w converters[T]) decodeUnsignedLong(ctx js.CallbackContext[T], val js.Value[T]) (int, error) {
+func (w converters[T]) decodeUnsignedLong(_ js.CallbackContext[T], val js.Value[T]) (int, error) {
 	return int(val.Uint32()), nil
 }
 
@@ -68,8 +67,8 @@ func (w converters[T]) decodeNode(ctx js.CallbackContext[T], val js.Value[T]) (d
 }
 
 func (w converters[T]) decodeHTMLElement(
-	cbCtx jsCallbackContext,
-	val jsValue,
+	cbCtx js.CallbackContext[T],
+	val js.Value[T],
 ) (html.HTMLElement, error) {
 	if o, ok := val.AsObject(); ok {
 		if node, ok := o.NativeValue().(html.HTMLElement); ok {
@@ -174,15 +173,6 @@ type handleReffedObject[T, U any] struct {
 	converters[U]
 }
 
-func (w handleReffedObject[T, U]) logger(info *v8.FunctionCallbackInfo) log.Logger {
-	ctx := w.mustGetContext(info)
-	return ctx.window.Logger()
-}
-
-func (o handleReffedObject[T, U]) mustGetContext(info *v8.FunctionCallbackInfo) *V8ScriptContext {
-	return o.scriptHost.mustGetContext(info.Context())
-}
-
 func newHandleReffedObject[T any](host *V8ScriptHost) handleReffedObject[T, jsTypeParam] {
 	return handleReffedObject[T, jsTypeParam]{
 		scriptHost: host,
@@ -195,20 +185,13 @@ func (o handleReffedObject[T, U]) getInstance(info callbackInfo) (T, error) {
 
 func (o handleReffedObject[T, U]) iso() *v8.Isolate { return o.scriptHost.iso }
 
-// TODO: Return js.CallbackRVal
-func (o handleReffedObject[T, U]) store(
-	value any,
-	cbCtx jsCallbackContext,
-) (jsValue, error) {
+func (o handleReffedObject[T, U]) store(value any, cbCtx jsCallbackContext) (jsValue, error) {
 	this := cbCtx.This()
 	if e, ok := value.(entity.ObjectIder); ok {
 		cbCtx.Scope().SetValue(e, this)
 	}
 
 	this.SetNativeValue(value)
-	if d, ok := this.(js.Disposable); ok {
-		cbCtx.Scope().AddDisposable(d)
-	}
 	return this, nil
 }
 
@@ -225,20 +208,4 @@ func getWrappedInstance[T any](object *v8.Object) (res T, err error) {
 
 type callbackInfo interface {
 	This() *v8.Object
-}
-
-func encodeInstance[T any](cbCtx js.CallbackContext[T], e entity.ObjectIder) (js.Value[T], error) {
-
-	scope := cbCtx.Scope()
-	if res, ok := cbCtx.Scope().GetValue(e); ok {
-		return res, nil
-	}
-	prototypeName := lookupJSPrototype(e)
-	ctor := cbCtx.Scope().Constructor(prototypeName)
-	value, err := ctor.NewInstance(cbCtx.Scope(), e)
-	if err == nil {
-		scope.SetValue(e, value)
-	}
-	return value, err
-
 }

@@ -47,7 +47,7 @@ func (w urlV8Wrapper) CreateInstanceBase(
 		return nil, err
 	}
 	w.store(value, cbCtx)
-	return cbCtx.ReturnWithValue(nil)
+	return nil, nil
 }
 
 func (w urlSearchParamsV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
@@ -87,7 +87,7 @@ func (w urlSearchParamsV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue,
 		}
 	}
 	w.store(&res, cbCtx)
-	return cbCtx.ReturnWithValue(nil)
+	return nil, nil
 }
 
 func (w urlSearchParamsV8Wrapper) toSequenceString_(

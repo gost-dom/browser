@@ -38,7 +38,7 @@ func (w *documentV8Wrapper) CreateInstance(cbCtx jsCallbackContext) (jsValue, er
 
 func (w *documentV8Wrapper) getElementById(cbCtx jsCallbackContext) (jsValue, error) {
 	instance, err0 := js.As[dom.Document](cbCtx.Instance())
-	id, err1 := consumeArgument(cbCtx, "id", nil, w.decodeString)
+	id, err1 := consumeArgument(cbCtx, "id", nil, decodeString)
 	if err := errors.Join(err0, err1); err != nil {
 		return nil, err
 	}
@@ -47,31 +47,18 @@ func (w *documentV8Wrapper) getElementById(cbCtx jsCallbackContext) (jsValue, er
 
 func (w *documentV8Wrapper) head(cbCtx jsCallbackContext) (jsValue, error) {
 	instance, err := js.As[dom.Document](cbCtx.Instance())
-	if err == nil {
-		return encodeEntity(cbCtx, instance.Head())
-	} else {
+	if err != nil {
 		return nil, err
 	}
+	return encodeEntity(cbCtx, instance.Head())
 }
 
 func (w *documentV8Wrapper) body(cbCtx jsCallbackContext) (jsValue, error) {
 	instance, err := js.As[dom.Document](cbCtx.Instance())
-	if err == nil {
-		return encodeEntity(cbCtx, instance.Body())
-	} else {
+	if err != nil {
 		return nil, err
 	}
-}
-
-func (w *documentV8Wrapper) toComment(
-	cbCtx jsCallbackContext,
-	comment dom.Comment,
-) (jsValue, error) {
-	return encodeEntity(cbCtx, comment)
-}
-
-func (w *documentV8Wrapper) toAttr(cbCtx jsCallbackContext, comment dom.Attr) (jsValue, error) {
-	return encodeEntity(cbCtx, comment)
+	return encodeEntity(cbCtx, instance.Body())
 }
 
 func (w *documentV8Wrapper) createElement(cbCtx jsCallbackContext) (jsValue, error) {
@@ -79,20 +66,18 @@ func (w *documentV8Wrapper) createElement(cbCtx jsCallbackContext) (jsValue, err
 	name, err1 := consumeArgument(cbCtx, "name", nil, decodeString)
 	instance, err2 := js.As[dom.Document](cbCtx.Instance())
 	err := errors.Join(err1, err2)
-	if err == nil {
-		return encodeEntity(cbCtx, instance.CreateElement(name))
-	} else {
+	if err != nil {
 		return nil, err
 	}
+	return encodeEntity(cbCtx, instance.CreateElement(name))
 }
+
 func (w *documentV8Wrapper) createTextNode(cbCtx jsCallbackContext) (jsValue, error) {
-	var name string
-	name, err1 := consumeArgument(cbCtx, "name", nil, decodeString)
+	data, err1 := consumeArgument(cbCtx, "data", nil, decodeString)
 	instance, err2 := js.As[dom.Document](cbCtx.Instance())
 	err := errors.Join(err1, err2)
-	if err == nil {
-		return encodeEntity(cbCtx, instance.CreateText(name))
-	} else {
+	if err != nil {
 		return nil, err
 	}
+	return encodeEntity(cbCtx, instance.CreateText(data))
 }
