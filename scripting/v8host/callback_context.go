@@ -93,25 +93,6 @@ func (c *v8CallbackContext) Logger() *slog.Logger {
 	return c.host.Logger()
 }
 
-func (h *v8CallbackContext) consumeFunction() (jsFunction, error) {
-	arg, _ := h.ConsumeArg()
-	if arg == nil {
-		return nil, ErrWrongNoOfArguments
-	}
-	if f, ok := arg.AsFunction(); ok {
-		return f, nil
-	}
-	return nil, h.newTypeError("Expected function")
-}
-
-func (h *v8CallbackContext) consumeInt32() (int32, error) {
-	arg, _ := h.ConsumeArg()
-	if arg == nil {
-		return 0, ErrWrongNoOfArguments
-	}
-	return arg.Int32(), nil
-}
-
 func (h *v8CallbackContext) consumeString() (string, error) {
 	arg, _ := h.ConsumeArg()
 	if arg == nil {
@@ -141,20 +122,7 @@ func (h *v8CallbackContext) ConsumeArg() (jsValue, bool) {
 	return newV8Value(h.ScriptCtx(), arg), true
 }
 
-func (h *v8CallbackContext) consumeRest() []*v8.Value {
-	index := h.currentIndex
-	// h.assertIndex(index)
-	args := h.v8Info.Args()
-	if len(args) <= index {
-		return nil
-	}
-	h.currentIndex = len(args)
-	return args[index:]
-}
-
-func (h *v8CallbackContext) newTypeError(msg string) error {
-	return v8.NewTypeError(h.iso(), fmt.Sprintf(msg))
-}
+/* -------- v8ValueFactory -------- */
 
 type v8ValueFactory struct {
 	host *V8ScriptHost
