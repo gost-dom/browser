@@ -16,6 +16,13 @@ var ErrNoInternalValue = errors.New("object does not have an internal instance")
 // E.g., cgo handles that need to be released.
 type Disposable interface{ Dispose() }
 
+// Scope provides access to the JavaScript execution context not coupled to a
+// specific function callback. CallbackScope is safe use outside the scope of a
+// function callback.
+//
+// One case for storing the callback scope is when JavaScript code passes a
+// function as a callback argument, which Go code need to call at a later point
+// in time. E.g., when adding event listeners.
 type Scope[T any] interface {
 	Window() html.Window
 	GlobalThis() Object[T]
@@ -25,13 +32,7 @@ type Scope[T any] interface {
 	AddDisposable(Disposable)
 }
 
-// CallbackContext represents the execution context of a JavaScript function
-// or handler callback. For example
-//
-// - Calling a native function
-// - Getting or setting an accessor property backed by a native function
-// - Named or indexed handler callbacks / interceptors.
-type CallbackContext[T any] interface {
+type ArgumentConsumer[T any] interface {
 	// ConsumeArg pulls argument from the list of passed arguments. The return
 	// value arg will contain the argument. If no argument is passed, or
 	// the value is undefined, arg will be nil. Ok indicates whether there were
@@ -46,23 +47,13 @@ type CallbackContext[T any] interface {
 	//
 	// [Element.append]: https://developer.mozilla.org/en-US/docs/Web/API/Element/append
 	ConsumeArg() (arg Value[T], ok bool)
+}
 
-	// ConsumeRestArgs returns all remaining arguments as a slice of values.
-	//
-	// This is intended for implementing functions with variadic arguments,
-	// e.g., [Element.append]
-	//
-	// [Element.append]: https://developer.mozilla.org/en-US/docs/Web/API/Element/append
-	// ConsumeRestArgs() []Value[T]
-
+type CallbackScope[T any] interface {
 	// Instance returns the Go value that is wrapped by "this", with "this"
 	// referring the the JavaScript value of "this". If the object does not
 	// contain an internal Go value an [ErrNoInternalValue] error is returned.
 	Instance() (any, error)
-
-	ReturnWithValue(Value[T]) (Value[T], error)
-	ReturnWithError(error) (Value[T], error)
-	ReturnWithTypeError(msg string) (Value[T], error)
 
 	// ValueFactory returns a "factory" that can be used to produce JavaScript
 	// values.
@@ -71,7 +62,36 @@ type CallbackContext[T any] interface {
 	Scope() Scope[T]
 }
 
+// CallbackContext represents the execution context of a JavaScript function
+// or handler callback. For example
+//
+// - Calling a native function or constructor
+// - Getting or setting an accessor property backed by a native function
+//
+// An instance of CallbackContext can only be used inside the actual function
+// callback.
+type CallbackContext[T any] interface {
+	ArgumentConsumer[T]
+	CallbackScope[T]
+
+	ReturnWithValue(Value[T]) (Value[T], error)
+	ReturnWithError(error) (Value[T], error)
+	ReturnWithTypeError(msg string) (Value[T], error)
+}
+
+type GetterCallbackContext[T, U any] interface {
+	CallbackScope[T]
+	Key() U
+}
+type SetterCallbackContext[T, U any] interface {
+	CallbackScope[T]
+	Key() U
+	Value() Value[T]
+}
+
 type FunctionCallback[T any] func(CallbackContext[T]) (Value[T], error)
+
+type HandlerGetterCallback[T, U any] func(GetterCallbackContext[T, U])
 
 // ValueFactory allows creating JavaScript values from Go values
 type ValueFactory[T any] interface {
