@@ -3,6 +3,7 @@ package v8host
 import (
 	"errors"
 	"iter"
+	"slices"
 
 	"github.com/gost-dom/browser/scripting/internal/js"
 	v8 "github.com/gost-dom/v8go"
@@ -23,34 +24,16 @@ type iterable[T any] interface {
 	All() iter.Seq[T]
 }
 
-func seqOfSlice[T any](items []T) iter.Seq[T] {
-	return func(yield func(T) bool) {
-		for _, item := range items {
-			if !yield(item) {
-				return
-			}
-		}
-	}
-}
-
-type sliceIterable[T any] struct {
-	items []T
-}
-
-func (i sliceIterable[T]) All() iter.Seq[T] {
-	return seqOfSlice(i.items)
-}
-
 func (i iterator[T]) newIteratorOfSlice(cbCtx jsCallbackContext, items []T) (jsValue, error) {
-	return i.newIterator(cbCtx, sliceIterable[T]{items})
+	return i.newIterator(cbCtx, slices.Values(items))
 }
 
 func (i iterator[T]) mapItems(
 	cbCtx jsCallbackContext,
-	items iterable[T],
+	items iter.Seq[T],
 ) iter.Seq2[jsValue, error] {
 	return func(yield func(jsValue, error) bool) {
-		for item := range items.All() {
+		for item := range items {
 			if !yield(i.entityLookup(cbCtx, item)) {
 				return
 			}
@@ -58,7 +41,7 @@ func (i iterator[T]) mapItems(
 	}
 }
 
-func (i iterator[T]) newIterator(cbCtx jsCallbackContext, items iterable[T]) (jsValue, error) {
+func (i iterator[T]) newIterator(cbCtx jsCallbackContext, items iter.Seq[T]) (jsValue, error) {
 	return cbCtx.ValueFactory().NewIterator(i.mapItems(cbCtx, items)), nil
 }
 
@@ -69,7 +52,7 @@ func (i iterator[T]) installPrototype(ft *v8.FunctionTemplate) {
 		if err != nil {
 			return nil, err
 		}
-		return i.newIterator(cbCtx, instance)
+		return i.newIterator(cbCtx, instance.All())
 	})
 	prototypeTempl := ft.PrototypeTemplate()
 	prototypeTempl.Set("entries", getEntries)
@@ -147,7 +130,7 @@ func (i iterator2[K, V]) installPrototype(ft *v8.FunctionTemplate) {
 			if err != nil {
 				return nil, err
 			}
-			return keys.newIterator(cbCtx, Keys[K, V]{instance})
+			return keys.newIterator(cbCtx, pairKeys(instance.All()))
 		}),
 	)
 	prototypeTempl.Set("values",
@@ -156,7 +139,29 @@ func (i iterator2[K, V]) installPrototype(ft *v8.FunctionTemplate) {
 			if err != nil {
 				return nil, err
 			}
-			return values.newIterator(cbCtx, iterValues[K, V]{instance})
+			return values.newIterator(cbCtx, pairValues(instance.All()))
 		}),
 	)
+}
+
+// pairKeys returns a sequences of the keys in a sequence of key/value pairs
+func pairKeys[K, V any](i iter.Seq2[K, V]) iter.Seq[K] {
+	return func(yield func(K) bool) {
+		for k := range i {
+			if !yield(k) {
+				return
+			}
+		}
+	}
+}
+
+// pairValues returns a sequences of the values in a sequence of key/value pairs
+func pairValues[K, V any](i iter.Seq2[K, V]) iter.Seq[V] {
+	return func(yield func(V) bool) {
+		for _, v := range i {
+			if !yield(v) {
+				return
+			}
+		}
+	}
 }

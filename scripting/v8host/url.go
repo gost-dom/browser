@@ -2,7 +2,6 @@ package v8host
 
 import (
 	"fmt"
-	"iter"
 	"runtime/cgo"
 
 	"github.com/gost-dom/browser/html"
@@ -105,32 +104,4 @@ func (w urlSearchParamsV8Wrapper) toSequenceString_(
 func (w urlSearchParamsV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) {
 	it := newIterator2(w.scriptHost, w.toString_, w.toString_)
 	it.installPrototype(constructor)
-}
-
-type Keys[K, V any] struct {
-	iter iterable2[K, V]
-}
-
-func (k Keys[K, V]) All() iter.Seq[K] {
-	return func(yield func(K) bool) {
-		for k := range k.iter.All() {
-			if !yield(k) {
-				return
-			}
-		}
-	}
-}
-
-type iterValues[K, V any] struct {
-	iter iterable2[K, V]
-}
-
-func (k iterValues[K, V]) All() iter.Seq[V] {
-	return func(yield func(V) bool) {
-		for _, v := range k.iter.All() {
-			if !yield(v) {
-				return
-			}
-		}
-	}
 }
