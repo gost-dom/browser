@@ -12,7 +12,7 @@ func encodeUint32(cbCtx jsCallbackContext, val uint32) (jsValue, error) {
 // getJSInstance gets the JavaScript object that wraps a specific Go object. If
 // a wrapper already has been created, that wrapper is returned; otherwise a new
 // object is created with the correct prototype configured.
-func encodeEntity(cbCtx js.CallbackScope[jsTypeParam], e entity.ObjectIder) (jsValue, error) {
+func encodeEntity[T any](cbCtx js.CallbackScope[T], e entity.ObjectIder) (js.Value[T], error) {
 	fact := cbCtx.ValueFactory()
 	scope := cbCtx.Scope()
 

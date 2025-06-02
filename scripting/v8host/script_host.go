@@ -19,7 +19,7 @@ import (
 	"github.com/gost-dom/v8go"
 )
 
-type jsScriptEngineInitializer = func(*V8ScriptHost)
+type jsScriptEngineInitializer = func(js.ScriptEngine[jsTypeParam])
 
 // MAX_POOL_SIZE sets a limit to the number of script hosts that will be pooled
 // for reuse. By default Go will run as many tests in parallel as you have CPU
@@ -402,12 +402,12 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 
 func (host *V8ScriptHost) CreateClass(
 	name string,
-	extends *v8go.FunctionTemplate,
-	callback internalCallback,
-) jsConstructor {
+	extends js.Constructor[jsTypeParam],
+	callback js.FunctionCallback[jsTypeParam],
+) js.Constructor[jsTypeParam] {
 	fn := wrapV8Callback(host, callback)
 	if extends != nil {
-		fn.Inherit(extends)
+		fn.Inherit(extends.(v8Constructor).ft)
 	}
 	result := newV8Constructor(host, fn)
 	host.windowTemplate.Set(name, fn)

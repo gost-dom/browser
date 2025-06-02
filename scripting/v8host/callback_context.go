@@ -266,7 +266,7 @@ func decodeUint32(cbCtx jsCallbackContext, val jsValue) (uint32, error) {
 	return val.Uint32(), nil
 }
 
-func decodeString(cbCtx jsCallbackContext, val jsValue) (string, error) {
+func decodeString[T any](cbCtx js.CallbackContext[T], val js.Value[T]) (string, error) {
 	return val.String(), nil
 }
 
