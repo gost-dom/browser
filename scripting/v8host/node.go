@@ -15,7 +15,7 @@ func (n nodeV8Wrapper) textContent(cbCtx jsCallbackContext) (jsValue, error) {
 	return n.toString_(cbCtx, r)
 }
 
-func (n nodeV8Wrapper) setTextContent(cbCtx *v8CallbackContext) (jsValue, error) {
+func (n nodeV8Wrapper) setTextContent(cbCtx jsCallbackContext) (jsValue, error) {
 	i, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -25,7 +25,7 @@ func (n nodeV8Wrapper) setTextContent(cbCtx *v8CallbackContext) (jsValue, error)
 	return cbCtx.ReturnWithValue(nil)
 }
 
-func (n nodeV8Wrapper) nodeType(cbCtx *v8CallbackContext) (jsValue, error) {
+func (n nodeV8Wrapper) nodeType(cbCtx jsCallbackContext) (jsValue, error) {
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)

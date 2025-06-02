@@ -24,12 +24,10 @@ func newElementV8Wrapper(host *V8ScriptHost) *elementV8Wrapper {
 }
 
 func (e *elementV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) {
-	iso := e.scriptHost.iso
 	prototype := constructor.PrototypeTemplate()
 	prototype.Set("insertAdjacentHTML", wrapV8Callback(e.scriptHost, e.insertAdjacentHTML))
-	prototype.SetAccessorProperty(
-		"outerHTML",
-		v8.NewFunctionTemplateWithError(iso, e.outerHTML),
+	prototype.SetAccessorProperty("outerHTML",
+		wrapV8Callback(e.scriptHost, e.outerHTML),
 		nil,
 		v8.None,
 	)
@@ -46,15 +44,15 @@ func (e *elementV8Wrapper) insertAdjacentHTML(cbCtx jsCallbackContext) (val jsVa
 	return nil, err
 }
 
-func (e *elementV8Wrapper) outerHTML(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-	if i, err := e.getInstance(info); err == nil {
-		return v8.NewValue(e.scriptHost.iso, i.OuterHTML())
+func (e *elementV8Wrapper) outerHTML(cbCtx jsCallbackContext) (jsValue, error) {
+	if element, err := js.As[dom.Element](cbCtx.Instance()); err == nil {
+		return e.toString_(cbCtx, element.OuterHTML())
 	} else {
 		return nil, err
 	}
 }
 
-func (e elementV8Wrapper) classList(cbCtx *v8CallbackContext) (jsValue, error) {
+func (e elementV8Wrapper) classList(cbCtx jsCallbackContext) (jsValue, error) {
 	instance, err := js.As[dom.Element](cbCtx.Instance())
 	if err != nil {
 		return cbCtx.ReturnWithError(err)

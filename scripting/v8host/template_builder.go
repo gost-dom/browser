@@ -204,9 +204,9 @@ func consumeArgument[T any](
 }
 
 func consumeOptionalArg[T any](
-	cbCtx *v8CallbackContext,
+	cbCtx jsCallbackContext,
 	name string,
-	decoders ...func(*v8CallbackContext, jsValue) (T, error),
+	decoders ...func(jsCallbackContext, jsValue) (T, error),
 ) (result T, found bool, err error) {
 	value, _ := cbCtx.ConsumeArg()
 	if value == nil || value.Self().v8Value() == nil {
