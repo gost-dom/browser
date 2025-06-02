@@ -30,7 +30,11 @@ func (w *documentV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) 
 }
 
 func (w *documentV8Wrapper) CreateInstance(cbCtx jsCallbackContext) (jsValue, error) {
-	return w.store(dom.NewDocument(nil), cbCtx)
+	res := dom.NewDocument(nil)
+	// w.store(res, cbCtx)
+	cbCtx.This().SetNativeValue(res)
+	cbCtx.Scope().SetValue(res, cbCtx.This())
+	return nil, nil
 }
 
 func (w *documentV8Wrapper) getElementById(cbCtx jsCallbackContext) (jsValue, error) {
