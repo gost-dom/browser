@@ -1,0 +1,44 @@
+package dom
+
+import (
+	"errors"
+	"strings"
+
+	"github.com/gost-dom/browser/dom"
+	. "github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/scripting/internal/codec"
+	"github.com/gost-dom/browser/scripting/internal/js"
+)
+
+func initDOMParser[T any](ft js.Constructor[T]) {
+	ft.CreatePrototypeMethod("parseFromString", domParserParseFromString)
+}
+func domParserParseFromString[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	window := cbCtx.Scope().Window()
+	html, err0 := js.ConsumeArgument(cbCtx, "html", nil, js.DecodeString)
+	contentType, err1 := js.ConsumeArgument(cbCtx, "contentType", nil, js.DecodeString)
+	if err := errors.Join(err0, err1); err != nil {
+		return nil, err
+	}
+	if contentType != "text/html" {
+		return nil, cbCtx.ValueFactory().NewTypeError(
+			"DOMParser.parseFromString only supports text/html yet",
+		)
+	}
+	domParser := NewDOMParser()
+	var doc dom.Document
+	if err := domParser.ParseReader(window, &doc, strings.NewReader(html)); err == nil {
+		return codec.EncodeEntity(cbCtx, doc)
+	} else {
+		return nil, err
+	}
+}
+
+func installDOMParser[T any](host js.ScriptEngine[T]) {
+	ctor := host.CreateClass(
+		"DOMParser",
+		nil,
+		func(cbCtx js.CallbackContext[T]) (js.Value[T], error) { return nil, nil },
+	)
+	initDOMParser(ctor)
+}

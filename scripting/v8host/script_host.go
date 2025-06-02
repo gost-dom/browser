@@ -405,12 +405,14 @@ func (host *V8ScriptHost) CreateClass(
 	extends js.Constructor[jsTypeParam],
 	callback js.FunctionCallback[jsTypeParam],
 ) js.Constructor[jsTypeParam] {
-	fn := wrapV8Callback(host, callback)
+	ft := wrapV8Callback(host, callback)
+	ft.InstanceTemplate().SetInternalFieldCount(1)
 	if extends != nil {
-		fn.Inherit(extends.(v8Constructor).ft)
+		ft.Inherit(extends.(v8Constructor).ft)
 	}
-	result := newV8Constructor(host, fn)
-	host.windowTemplate.Set(name, fn)
+	result := newV8Constructor(host, ft)
+	host.windowTemplate.Set(name, ft)
+	host.globals.namedGlobals[name] = result
 	return result
 }
 
