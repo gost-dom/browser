@@ -67,7 +67,7 @@ func (i iterator[T]) installPrototype(ft *v8.FunctionTemplate) {
 	getEntries := wrapV8Callback(i.host, func(cbCtx jsCallbackContext) (jsValue, error) {
 		instance, err := js.As[iterable[T]](cbCtx.Instance())
 		if err != nil {
-			return cbCtx.ReturnWithError(err)
+			return nil, err
 		}
 		return i.newIterator(cbCtx, instance)
 	})
@@ -132,7 +132,7 @@ func (i iterator2[K, V]) installPrototype(ft *v8.FunctionTemplate) {
 		func(cbCtx jsCallbackContext) (jsValue, error) {
 			instance, err := js.As[iterable2[K, V]](cbCtx.Instance())
 			if err != nil {
-				return cbCtx.ReturnWithError(err)
+				return nil, err
 			}
 			return cbCtx.ReturnWithJSValueErr(i.newIterator(cbCtx, instance))
 		})

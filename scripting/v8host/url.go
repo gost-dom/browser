@@ -31,7 +31,7 @@ func (w urlV8Wrapper) CreateInstance(
 ) (jsValue, error) {
 	value, err := url.NewUrl(u)
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	w.store(value, cbCtx)
 	return nil, nil
@@ -44,7 +44,7 @@ func (w urlV8Wrapper) CreateInstanceBase(
 ) (jsValue, error) {
 	value, err := url.NewUrlBase(u, base)
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	w.store(value, cbCtx)
 	return cbCtx.ReturnWithValue(nil)
@@ -60,7 +60,7 @@ func (w urlSearchParamsV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue,
 		case arg.IsString():
 			res, err = url.ParseURLSearchParams(arg.String())
 			if err != nil {
-				return cbCtx.ReturnWithError(err)
+				return nil, err
 			}
 		case isObj:
 			if fd, ok := obj.NativeValue().(*html.FormData); ok {
@@ -80,11 +80,10 @@ func (w urlSearchParamsV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue,
 			}
 			fallthrough
 		default:
-			return cbCtx.ReturnWithError(
-				fmt.Errorf(
-					"URLSearchParams: unsupported argument. If the argument is _valid_: %s",
-					constants.BUG_ISSUE_URL,
-				))
+			return nil, fmt.Errorf(
+				"URLSearchParams: unsupported argument. If the argument is _valid_: %s",
+				constants.BUG_ISSUE_URL,
+			)
 		}
 	}
 	w.store(&res, cbCtx)

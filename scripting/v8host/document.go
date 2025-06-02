@@ -37,7 +37,7 @@ func (w *documentV8Wrapper) getElementById(cbCtx jsCallbackContext) (jsValue, er
 	instance, err0 := js.As[dom.Document](cbCtx.Instance())
 	id, err1 := consumeArgument(cbCtx, "id", nil, w.decodeString)
 	if err := errors.Join(err0, err1); err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	return encodeEntity(cbCtx, instance.GetElementById(id))
 }
@@ -47,7 +47,7 @@ func (w *documentV8Wrapper) head(cbCtx jsCallbackContext) (jsValue, error) {
 	if err == nil {
 		return encodeEntity(cbCtx, instance.Head())
 	} else {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 }
 
@@ -56,7 +56,7 @@ func (w *documentV8Wrapper) body(cbCtx jsCallbackContext) (jsValue, error) {
 	if err == nil {
 		return encodeEntity(cbCtx, instance.Body())
 	} else {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 }
 

@@ -8,7 +8,7 @@ import (
 func (n nodeV8Wrapper) textContent(cbCtx jsCallbackContext) (jsValue, error) {
 	i, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 
 	r := i.TextContent()
@@ -18,7 +18,7 @@ func (n nodeV8Wrapper) textContent(cbCtx jsCallbackContext) (jsValue, error) {
 func (n nodeV8Wrapper) setTextContent(cbCtx jsCallbackContext) (jsValue, error) {
 	i, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	arg := cbCtx.consumeValue()
 	i.SetTextContent(arg.String())
@@ -28,7 +28,7 @@ func (n nodeV8Wrapper) setTextContent(cbCtx jsCallbackContext) (jsValue, error) 
 func (n nodeV8Wrapper) nodeType(cbCtx jsCallbackContext) (jsValue, error) {
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	return n.toUnsignedShort(cbCtx, int(instance.NodeType()))
 }

@@ -55,7 +55,7 @@ func (e *elementV8Wrapper) outerHTML(cbCtx jsCallbackContext) (jsValue, error) {
 func (e elementV8Wrapper) classList(cbCtx jsCallbackContext) (jsValue, error) {
 	instance, err := js.As[dom.Element](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	cl := instance.ClassList()
 	tokenList := cbCtx.Scope().Constructor("DOMTokenList")

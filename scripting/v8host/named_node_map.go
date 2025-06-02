@@ -31,7 +31,7 @@ func (w namedNodeMapV8Wrapper) CustomInitialiser(ft *v8go.FunctionTemplate) {
 		wrapV8CallbackFn(w.scriptHost, func(cbCtx jsCallbackContext) (jsValue, error) {
 			instance, err := js.As[dom.NamedNodeMap](cbCtx.Instance())
 			if err != nil {
-				return cbCtx.ReturnWithError(err)
+				return nil, err
 			}
 			index := int(cbCtx.v8Info.Index())
 			item := instance.Item(index)
