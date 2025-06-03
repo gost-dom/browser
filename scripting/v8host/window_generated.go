@@ -43,99 +43,29 @@ func (w windowV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	jsClass.CreatePrototypeMethod("confirm", w.confirm)
 	jsClass.CreatePrototypeMethod("print", w.print)
 	jsClass.CreatePrototypeMethod("postMessage", w.postMessage)
-	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.SetAccessorProperty("window",
-		wrapV8Callback(w.scriptHost, w.window),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("self",
-		wrapV8Callback(w.scriptHost, w.self),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("document",
-		wrapV8Callback(w.scriptHost, w.document),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("name",
-		wrapV8Callback(w.scriptHost, w.name),
-		wrapV8Callback(w.scriptHost, w.setName),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("history",
-		wrapV8Callback(w.scriptHost, w.history),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("navigation",
-		wrapV8Callback(w.scriptHost, w.navigation),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("customElements",
-		wrapV8Callback(w.scriptHost, w.customElements),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("locationbar",
-		wrapV8Callback(w.scriptHost, w.locationbar),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("menubar",
-		wrapV8Callback(w.scriptHost, w.menubar),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("personalbar",
-		wrapV8Callback(w.scriptHost, w.personalbar),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("scrollbars",
-		wrapV8Callback(w.scriptHost, w.scrollbars),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("statusbar",
-		wrapV8Callback(w.scriptHost, w.statusbar),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("toolbar",
-		wrapV8Callback(w.scriptHost, w.toolbar),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("status",
-		wrapV8Callback(w.scriptHost, w.status),
-		wrapV8Callback(w.scriptHost, w.setStatus),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("closed",
-		wrapV8Callback(w.scriptHost, w.closed),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("frames",
-		wrapV8Callback(w.scriptHost, w.frames),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("length",
-		wrapV8Callback(w.scriptHost, w.length),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("top",
-		wrapV8Callback(w.scriptHost, w.top),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("opener",
-		wrapV8Callback(w.scriptHost, w.opener),
-		wrapV8Callback(w.scriptHost, w.setOpener),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("frameElement",
-		wrapV8Callback(w.scriptHost, w.frameElement),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("navigator",
-		wrapV8Callback(w.scriptHost, w.navigator),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("clientInformation",
-		wrapV8Callback(w.scriptHost, w.clientInformation),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("originAgentCluster",
-		wrapV8Callback(w.scriptHost, w.originAgentCluster),
-		nil,
-		v8.None)
+	jsClass.CreatePrototypeAttribute("window", w.window, nil)
+	jsClass.CreatePrototypeAttribute("self", w.self, nil)
+	jsClass.CreatePrototypeAttribute("document", w.document, nil)
+	jsClass.CreatePrototypeAttribute("name", w.name, w.setName)
+	jsClass.CreatePrototypeAttribute("history", w.history, nil)
+	jsClass.CreatePrototypeAttribute("navigation", w.navigation, nil)
+	jsClass.CreatePrototypeAttribute("customElements", w.customElements, nil)
+	jsClass.CreatePrototypeAttribute("locationbar", w.locationbar, nil)
+	jsClass.CreatePrototypeAttribute("menubar", w.menubar, nil)
+	jsClass.CreatePrototypeAttribute("personalbar", w.personalbar, nil)
+	jsClass.CreatePrototypeAttribute("scrollbars", w.scrollbars, nil)
+	jsClass.CreatePrototypeAttribute("statusbar", w.statusbar, nil)
+	jsClass.CreatePrototypeAttribute("toolbar", w.toolbar, nil)
+	jsClass.CreatePrototypeAttribute("status", w.status, w.setStatus)
+	jsClass.CreatePrototypeAttribute("closed", w.closed, nil)
+	jsClass.CreatePrototypeAttribute("frames", w.frames, nil)
+	jsClass.CreatePrototypeAttribute("length", w.length, nil)
+	jsClass.CreatePrototypeAttribute("top", w.top, nil)
+	jsClass.CreatePrototypeAttribute("opener", w.opener, w.setOpener)
+	jsClass.CreatePrototypeAttribute("frameElement", w.frameElement, nil)
+	jsClass.CreatePrototypeAttribute("navigator", w.navigator, nil)
+	jsClass.CreatePrototypeAttribute("clientInformation", w.clientInformation, nil)
+	jsClass.CreatePrototypeAttribute("originAgentCluster", w.originAgentCluster, nil)
 }
 
 func (w windowV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {

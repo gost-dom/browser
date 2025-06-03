@@ -9,13 +9,17 @@ import (
 
 /* -------- jsClass -------- */
 
-type jsClass g.Value
+type jsClass struct{ g.Value }
 
 func newJSClass(host g.Generator, ft v8FunctionTemplate) jsClass {
-	return jsClass(g.NewValue("newV8Class").Call(host, ft))
+	return jsClass{g.NewValue("newV8Class").Call(host, ft)}
 }
 func (c jsClass) CreatePrototypeMethod(name string, callback g.Generator) g.Generator {
-	return g.Value(c).Field("CreatePrototypeMethod").Call(g.Lit(name), callback)
+	return c.Field("CreatePrototypeMethod").Call(g.Lit(name), callback)
+}
+
+func (c jsClass) CreateAttribute(name string, getter g.Generator, setter g.Generator) g.Generator {
+	return c.Field("CreatePrototypeAttribute").Call(g.Lit(name), getter, setter)
 }
 
 /* -------- v8ArgInfo -------- */

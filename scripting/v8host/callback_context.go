@@ -208,6 +208,9 @@ func wrapV8Callback(
 	host *V8ScriptHost,
 	callback js.FunctionCallback[jsTypeParam],
 ) *v8go.FunctionTemplate {
+	if callback == nil {
+		return nil
+	}
 	return v8go.NewFunctionTemplateWithError(
 		host.iso,
 		func(info *v8go.FunctionCallbackInfo) (res *v8go.Value, err error) {

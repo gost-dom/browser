@@ -33,27 +33,12 @@ func createHTMLTemplateElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTe
 	return constructor
 }
 func (w htmlTemplateElementV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
-	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.SetAccessorProperty("content",
-		wrapV8Callback(w.scriptHost, w.content),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("shadowRootMode",
-		wrapV8Callback(w.scriptHost, w.shadowRootMode),
-		wrapV8Callback(w.scriptHost, w.setShadowRootMode),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("shadowRootDelegatesFocus",
-		wrapV8Callback(w.scriptHost, w.shadowRootDelegatesFocus),
-		wrapV8Callback(w.scriptHost, w.setShadowRootDelegatesFocus),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("shadowRootClonable",
-		wrapV8Callback(w.scriptHost, w.shadowRootClonable),
-		wrapV8Callback(w.scriptHost, w.setShadowRootClonable),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("shadowRootSerializable",
-		wrapV8Callback(w.scriptHost, w.shadowRootSerializable),
-		wrapV8Callback(w.scriptHost, w.setShadowRootSerializable),
-		v8.None)
+	jsClass := newV8Class(w.scriptHost, ft)
+	jsClass.CreatePrototypeAttribute("content", w.content, nil)
+	jsClass.CreatePrototypeAttribute("shadowRootMode", w.shadowRootMode, w.setShadowRootMode)
+	jsClass.CreatePrototypeAttribute("shadowRootDelegatesFocus", w.shadowRootDelegatesFocus, w.setShadowRootDelegatesFocus)
+	jsClass.CreatePrototypeAttribute("shadowRootClonable", w.shadowRootClonable, w.setShadowRootClonable)
+	jsClass.CreatePrototypeAttribute("shadowRootSerializable", w.shadowRootSerializable, w.setShadowRootSerializable)
 }
 
 func (w htmlTemplateElementV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {

@@ -32,23 +32,10 @@ func (w htmlOrSVGElementV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	jsClass := newV8Class(w.scriptHost, ft)
 	jsClass.CreatePrototypeMethod("focus", w.focus)
 	jsClass.CreatePrototypeMethod("blur", w.blur)
-	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.SetAccessorProperty("dataset",
-		wrapV8Callback(w.scriptHost, w.dataset),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("nonce",
-		wrapV8Callback(w.scriptHost, w.nonce),
-		wrapV8Callback(w.scriptHost, w.setNonce),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("autofocus",
-		wrapV8Callback(w.scriptHost, w.autofocus),
-		wrapV8Callback(w.scriptHost, w.setAutofocus),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("tabIndex",
-		wrapV8Callback(w.scriptHost, w.tabIndex),
-		wrapV8Callback(w.scriptHost, w.setTabIndex),
-		v8.None)
+	jsClass.CreatePrototypeAttribute("dataset", w.dataset, nil)
+	jsClass.CreatePrototypeAttribute("nonce", w.nonce, w.setNonce)
+	jsClass.CreatePrototypeAttribute("autofocus", w.autofocus, w.setAutofocus)
+	jsClass.CreatePrototypeAttribute("tabIndex", w.tabIndex, w.setTabIndex)
 }
 
 func (w htmlOrSVGElementV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {

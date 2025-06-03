@@ -216,15 +216,26 @@ func (o *v8Object) Keys() ([]string, error) {
 }
 
 type v8Constructor struct {
-	host *V8ScriptHost
-	ft   *v8go.FunctionTemplate
+	host  *V8ScriptHost
+	ft    *v8go.FunctionTemplate
+	proto *v8go.ObjectTemplate
 }
 
 func newV8Class(host *V8ScriptHost, ft *v8go.FunctionTemplate) v8Constructor {
-	return v8Constructor{host, ft}
+	return v8Constructor{host, ft, ft.PrototypeTemplate()}
 }
 
 func (c v8Constructor) CreatePrototypeMethod(name string, cb js.FunctionCallback[jsTypeParam]) {
 	v8cb := wrapV8Callback(c.host, cb)
-	c.ft.PrototypeTemplate().Set(name, v8cb, v8go.ReadOnly)
+	c.proto.Set(name, v8cb, v8go.ReadOnly)
+}
+
+func (c v8Constructor) CreatePrototypeAttribute(
+	name string,
+	getter js.FunctionCallback[jsTypeParam],
+	setter js.FunctionCallback[jsTypeParam],
+) {
+	v8Getter := wrapV8Callback(c.host, getter)
+	v8Setter := wrapV8Callback(c.host, setter)
+	c.proto.SetAccessorProperty(name, v8Getter, v8Setter, v8go.None)
 }

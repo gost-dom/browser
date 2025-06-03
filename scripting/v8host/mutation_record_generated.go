@@ -32,43 +32,16 @@ func createMutationRecordPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplat
 	return constructor
 }
 func (w mutationRecordV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
-	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.SetAccessorProperty("type",
-		wrapV8Callback(w.scriptHost, w.type_),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("target",
-		wrapV8Callback(w.scriptHost, w.target),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("addedNodes",
-		wrapV8Callback(w.scriptHost, w.addedNodes),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("removedNodes",
-		wrapV8Callback(w.scriptHost, w.removedNodes),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("previousSibling",
-		wrapV8Callback(w.scriptHost, w.previousSibling),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("nextSibling",
-		wrapV8Callback(w.scriptHost, w.nextSibling),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("attributeName",
-		wrapV8Callback(w.scriptHost, w.attributeName),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("attributeNamespace",
-		wrapV8Callback(w.scriptHost, w.attributeNamespace),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("oldValue",
-		wrapV8Callback(w.scriptHost, w.oldValue),
-		nil,
-		v8.None)
+	jsClass := newV8Class(w.scriptHost, ft)
+	jsClass.CreatePrototypeAttribute("type", w.type_, nil)
+	jsClass.CreatePrototypeAttribute("target", w.target, nil)
+	jsClass.CreatePrototypeAttribute("addedNodes", w.addedNodes, nil)
+	jsClass.CreatePrototypeAttribute("removedNodes", w.removedNodes, nil)
+	jsClass.CreatePrototypeAttribute("previousSibling", w.previousSibling, nil)
+	jsClass.CreatePrototypeAttribute("nextSibling", w.nextSibling, nil)
+	jsClass.CreatePrototypeAttribute("attributeName", w.attributeName, nil)
+	jsClass.CreatePrototypeAttribute("attributeNamespace", w.attributeNamespace, nil)
+	jsClass.CreatePrototypeAttribute("oldValue", w.oldValue, nil)
 }
 
 func (w mutationRecordV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {

@@ -28,15 +28,9 @@ func createNonDocumentTypeChildNodePrototype(scriptHost *V8ScriptHost) *v8.Funct
 	return constructor
 }
 func (w nonDocumentTypeChildNodeV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
-	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.SetAccessorProperty("previousElementSibling",
-		wrapV8Callback(w.scriptHost, w.previousElementSibling),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("nextElementSibling",
-		wrapV8Callback(w.scriptHost, w.nextElementSibling),
-		nil,
-		v8.None)
+	jsClass := newV8Class(w.scriptHost, ft)
+	jsClass.CreatePrototypeAttribute("previousElementSibling", w.previousElementSibling, nil)
+	jsClass.CreatePrototypeAttribute("nextElementSibling", w.nextElementSibling, nil)
 }
 
 func (w nonDocumentTypeChildNodeV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {

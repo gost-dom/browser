@@ -42,10 +42,11 @@ type PrototypeInstaller struct {
 }
 
 func (i PrototypeInstaller) Generate() *jen.Statement {
-	class := jsClass(g.NewValue("jsClass"))
+	class := jsClass{g.NewValue("jsClass")}
 	return g.StatementList(
+		g.Assign(class, newJSClass(i.Host, i.Ft)),
 		i.InstallFunctionHandlers(i.Data, class),
-		i.InstallAttributeHandlers(i.Host, i.Data),
+		i.InstallAttributeHandlers(i.Data, class),
 	).Generate()
 }
 
@@ -53,9 +54,7 @@ func (b PrototypeInstaller) InstallFunctionHandlers(
 	data ESConstructorData, class jsClass,
 ) g.Generator {
 	renderedAny := false
-	stmts := g.StatementList(
-		g.Assign(class, newJSClass(b.Host, b.Ft)),
-	)
+	stmts := g.StatementList()
 	for _, op := range data.Operations {
 		if op.MethodCustomization.Ignored {
 			continue
@@ -76,24 +75,19 @@ func wrapCallback(host, callback g.Generator) g.Generator {
 }
 
 func (builder PrototypeInstaller) InstallAttributeHandlers(
-	host g.Generator,
 	data ESConstructorData,
+	class jsClass,
 ) g.Generator {
-	length := len(data.Attributes)
-	if length == 0 {
-		return g.Noop
-	}
-	generators := make([]g.Generator, 1, length+1)
-	generators[0] = g.Assign(g.NewValue("prototypeTmpl"), builder.Ft.GetPrototypeTemplate())
+	stmts := g.StatementList()
 	for op := range data.AttributesToInstall() {
-		generators = append(generators, builder.InstallAttributeHandler(host, op))
+		stmts.Append(builder.InstallAttributeHandler(op, class))
 	}
-	return g.StatementList(generators...)
+	return stmts
 }
 
 func (builder PrototypeInstaller) InstallAttributeHandler(
-	host g.Generator,
 	op ESAttribute,
+	class jsClass,
 ) g.Generator {
 	wrapper := builder.Wrapper
 	getter := op.Getter
@@ -101,23 +95,19 @@ func (builder PrototypeInstaller) InstallAttributeHandler(
 	if getter == nil {
 		return g.Noop
 	}
-	getterFt := wrapCallback(host, wrapper.Field(getter.CallbackMethodName()))
-	setterFt := g.Nil
+	getterFn := wrapper.Field(getter.CallbackMethodName())
+	setterFn := g.Nil
 	if setter != nil {
-		setterFt = wrapCallback(host, wrapper.Field(setter.CallbackMethodName()))
+		setterFn = wrapper.Field(setter.CallbackMethodName())
 	}
 
-	generator := builder.Proto.SetAccessorProperty(
-		op.Name,
-		g.WrapLine(getterFt),
-		g.WrapLine(setterFt),
-		g.WrapLine(v8None),
+	res := g.StatementList(
+		class.CreateAttribute(op.Name, getterFn, setterFn),
 	)
 	if op.Spec.Stringifier {
-		return g.StatementList(generator,
-			builder.InstallFunction(host, "toString", getter.CallbackMethodName()),
+		res.Append(
+			class.CreatePrototypeMethod("toString", getterFn),
 		)
-	} else {
-		return generator
 	}
+	return res
 }

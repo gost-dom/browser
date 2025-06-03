@@ -34,19 +34,9 @@ func (w parentNodeV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	jsClass.CreatePrototypeMethod("replaceChildren", w.replaceChildren)
 	jsClass.CreatePrototypeMethod("querySelector", w.querySelector)
 	jsClass.CreatePrototypeMethod("querySelectorAll", w.querySelectorAll)
-	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.SetAccessorProperty("firstElementChild",
-		wrapV8Callback(w.scriptHost, w.firstElementChild),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("lastElementChild",
-		wrapV8Callback(w.scriptHost, w.lastElementChild),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("childElementCount",
-		wrapV8Callback(w.scriptHost, w.childElementCount),
-		nil,
-		v8.None)
+	jsClass.CreatePrototypeAttribute("firstElementChild", w.firstElementChild, nil)
+	jsClass.CreatePrototypeAttribute("lastElementChild", w.lastElementChild, nil)
+	jsClass.CreatePrototypeAttribute("childElementCount", w.childElementCount, nil)
 }
 
 func (w parentNodeV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {

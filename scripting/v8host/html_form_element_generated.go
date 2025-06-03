@@ -39,51 +39,17 @@ func (w htmlFormElementV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	jsClass.CreatePrototypeMethod("reset", w.reset)
 	jsClass.CreatePrototypeMethod("checkValidity", w.checkValidity)
 	jsClass.CreatePrototypeMethod("reportValidity", w.reportValidity)
-	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.SetAccessorProperty("acceptCharset",
-		wrapV8Callback(w.scriptHost, w.acceptCharset),
-		wrapV8Callback(w.scriptHost, w.setAcceptCharset),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("action",
-		wrapV8Callback(w.scriptHost, w.action),
-		wrapV8Callback(w.scriptHost, w.setAction),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("autocomplete",
-		wrapV8Callback(w.scriptHost, w.autocomplete),
-		wrapV8Callback(w.scriptHost, w.setAutocomplete),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("enctype",
-		wrapV8Callback(w.scriptHost, w.enctype),
-		wrapV8Callback(w.scriptHost, w.setEnctype),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("encoding",
-		wrapV8Callback(w.scriptHost, w.encoding),
-		wrapV8Callback(w.scriptHost, w.setEncoding),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("method",
-		wrapV8Callback(w.scriptHost, w.method),
-		wrapV8Callback(w.scriptHost, w.setMethod),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("target",
-		wrapV8Callback(w.scriptHost, w.target),
-		wrapV8Callback(w.scriptHost, w.setTarget),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("rel",
-		wrapV8Callback(w.scriptHost, w.rel),
-		wrapV8Callback(w.scriptHost, w.setRel),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("relList",
-		wrapV8Callback(w.scriptHost, w.relList),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("elements",
-		wrapV8Callback(w.scriptHost, w.elements),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("length",
-		wrapV8Callback(w.scriptHost, w.length),
-		nil,
-		v8.None)
+	jsClass.CreatePrototypeAttribute("acceptCharset", w.acceptCharset, w.setAcceptCharset)
+	jsClass.CreatePrototypeAttribute("action", w.action, w.setAction)
+	jsClass.CreatePrototypeAttribute("autocomplete", w.autocomplete, w.setAutocomplete)
+	jsClass.CreatePrototypeAttribute("enctype", w.enctype, w.setEnctype)
+	jsClass.CreatePrototypeAttribute("encoding", w.encoding, w.setEncoding)
+	jsClass.CreatePrototypeAttribute("method", w.method, w.setMethod)
+	jsClass.CreatePrototypeAttribute("target", w.target, w.setTarget)
+	jsClass.CreatePrototypeAttribute("rel", w.rel, w.setRel)
+	jsClass.CreatePrototypeAttribute("relList", w.relList, nil)
+	jsClass.CreatePrototypeAttribute("elements", w.elements, nil)
+	jsClass.CreatePrototypeAttribute("length", w.length, nil)
 }
 
 func (w htmlFormElementV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {

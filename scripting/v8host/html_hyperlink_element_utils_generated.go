@@ -29,52 +29,19 @@ func createHTMLHyperlinkElementUtilsPrototype(scriptHost *V8ScriptHost) *v8.Func
 	return constructor
 }
 func (w htmlHyperlinkElementUtilsV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
-	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.SetAccessorProperty("href",
-		wrapV8Callback(w.scriptHost, w.href),
-		wrapV8Callback(w.scriptHost, w.setHref),
-		v8.None)
-	prototypeTmpl.Set("toString", wrapV8Callback(w.scriptHost, w.href))
-	prototypeTmpl.SetAccessorProperty("origin",
-		wrapV8Callback(w.scriptHost, w.origin),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("protocol",
-		wrapV8Callback(w.scriptHost, w.protocol),
-		wrapV8Callback(w.scriptHost, w.setProtocol),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("username",
-		wrapV8Callback(w.scriptHost, w.username),
-		wrapV8Callback(w.scriptHost, w.setUsername),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("password",
-		wrapV8Callback(w.scriptHost, w.password),
-		wrapV8Callback(w.scriptHost, w.setPassword),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("host",
-		wrapV8Callback(w.scriptHost, w.host),
-		wrapV8Callback(w.scriptHost, w.setHost),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("hostname",
-		wrapV8Callback(w.scriptHost, w.hostname),
-		wrapV8Callback(w.scriptHost, w.setHostname),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("port",
-		wrapV8Callback(w.scriptHost, w.port),
-		wrapV8Callback(w.scriptHost, w.setPort),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("pathname",
-		wrapV8Callback(w.scriptHost, w.pathname),
-		wrapV8Callback(w.scriptHost, w.setPathname),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("search",
-		wrapV8Callback(w.scriptHost, w.search),
-		wrapV8Callback(w.scriptHost, w.setSearch),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("hash",
-		wrapV8Callback(w.scriptHost, w.hash),
-		wrapV8Callback(w.scriptHost, w.setHash),
-		v8.None)
+	jsClass := newV8Class(w.scriptHost, ft)
+	jsClass.CreatePrototypeAttribute("href", w.href, w.setHref)
+	jsClass.CreatePrototypeMethod("toString", w.href)
+	jsClass.CreatePrototypeAttribute("origin", w.origin, nil)
+	jsClass.CreatePrototypeAttribute("protocol", w.protocol, w.setProtocol)
+	jsClass.CreatePrototypeAttribute("username", w.username, w.setUsername)
+	jsClass.CreatePrototypeAttribute("password", w.password, w.setPassword)
+	jsClass.CreatePrototypeAttribute("host", w.host, w.setHost)
+	jsClass.CreatePrototypeAttribute("hostname", w.hostname, w.setHostname)
+	jsClass.CreatePrototypeAttribute("port", w.port, w.setPort)
+	jsClass.CreatePrototypeAttribute("pathname", w.pathname, w.setPathname)
+	jsClass.CreatePrototypeAttribute("search", w.search, w.setSearch)
+	jsClass.CreatePrototypeAttribute("hash", w.hash, w.setHash)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {

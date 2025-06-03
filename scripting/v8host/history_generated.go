@@ -39,15 +39,8 @@ func (w historyV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	jsClass.CreatePrototypeMethod("forward", w.forward)
 	jsClass.CreatePrototypeMethod("pushState", w.pushState)
 	jsClass.CreatePrototypeMethod("replaceState", w.replaceState)
-	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.SetAccessorProperty("length",
-		wrapV8Callback(w.scriptHost, w.length),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("state",
-		wrapV8Callback(w.scriptHost, w.state),
-		nil,
-		v8.None)
+	jsClass.CreatePrototypeAttribute("length", w.length, nil)
+	jsClass.CreatePrototypeAttribute("state", w.state, nil)
 }
 
 func (w historyV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {

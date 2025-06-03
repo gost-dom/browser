@@ -41,47 +41,16 @@ func (w nodeV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	jsClass.CreatePrototypeMethod("insertBefore", w.insertBefore)
 	jsClass.CreatePrototypeMethod("appendChild", w.appendChild)
 	jsClass.CreatePrototypeMethod("removeChild", w.removeChild)
-	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.SetAccessorProperty("nodeType",
-		wrapV8Callback(w.scriptHost, w.nodeType),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("nodeName",
-		wrapV8Callback(w.scriptHost, w.nodeName),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("isConnected",
-		wrapV8Callback(w.scriptHost, w.isConnected),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("ownerDocument",
-		wrapV8Callback(w.scriptHost, w.ownerDocument),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("parentElement",
-		wrapV8Callback(w.scriptHost, w.parentElement),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("childNodes",
-		wrapV8Callback(w.scriptHost, w.childNodes),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("firstChild",
-		wrapV8Callback(w.scriptHost, w.firstChild),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("previousSibling",
-		wrapV8Callback(w.scriptHost, w.previousSibling),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("nextSibling",
-		wrapV8Callback(w.scriptHost, w.nextSibling),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("textContent",
-		wrapV8Callback(w.scriptHost, w.textContent),
-		wrapV8Callback(w.scriptHost, w.setTextContent),
-		v8.None)
+	jsClass.CreatePrototypeAttribute("nodeType", w.nodeType, nil)
+	jsClass.CreatePrototypeAttribute("nodeName", w.nodeName, nil)
+	jsClass.CreatePrototypeAttribute("isConnected", w.isConnected, nil)
+	jsClass.CreatePrototypeAttribute("ownerDocument", w.ownerDocument, nil)
+	jsClass.CreatePrototypeAttribute("parentElement", w.parentElement, nil)
+	jsClass.CreatePrototypeAttribute("childNodes", w.childNodes, nil)
+	jsClass.CreatePrototypeAttribute("firstChild", w.firstChild, nil)
+	jsClass.CreatePrototypeAttribute("previousSibling", w.previousSibling, nil)
+	jsClass.CreatePrototypeAttribute("nextSibling", w.nextSibling, nil)
+	jsClass.CreatePrototypeAttribute("textContent", w.textContent, w.setTextContent)
 }
 
 func (w nodeV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {

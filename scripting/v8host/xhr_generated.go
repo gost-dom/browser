@@ -175,51 +175,17 @@ func (w xmlHttpRequestV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	jsClass.CreatePrototypeMethod("getResponseHeader", w.getResponseHeader)
 	jsClass.CreatePrototypeMethod("getAllResponseHeaders", w.getAllResponseHeaders)
 	jsClass.CreatePrototypeMethod("overrideMimeType", w.overrideMimeType)
-	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.SetAccessorProperty("readyState",
-		wrapV8Callback(w.scriptHost, w.readyState),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("timeout",
-		wrapV8Callback(w.scriptHost, w.timeout),
-		wrapV8Callback(w.scriptHost, w.setTimeout),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("withCredentials",
-		wrapV8Callback(w.scriptHost, w.withCredentials),
-		wrapV8Callback(w.scriptHost, w.setWithCredentials),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("upload",
-		wrapV8Callback(w.scriptHost, w.upload),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("responseURL",
-		wrapV8Callback(w.scriptHost, w.responseURL),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("status",
-		wrapV8Callback(w.scriptHost, w.status),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("statusText",
-		wrapV8Callback(w.scriptHost, w.statusText),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("responseType",
-		wrapV8Callback(w.scriptHost, w.responseType),
-		wrapV8Callback(w.scriptHost, w.setResponseType),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("response",
-		wrapV8Callback(w.scriptHost, w.response),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("responseText",
-		wrapV8Callback(w.scriptHost, w.responseText),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("responseXML",
-		wrapV8Callback(w.scriptHost, w.responseXML),
-		nil,
-		v8.None)
+	jsClass.CreatePrototypeAttribute("readyState", w.readyState, nil)
+	jsClass.CreatePrototypeAttribute("timeout", w.timeout, w.setTimeout)
+	jsClass.CreatePrototypeAttribute("withCredentials", w.withCredentials, w.setWithCredentials)
+	jsClass.CreatePrototypeAttribute("upload", w.upload, nil)
+	jsClass.CreatePrototypeAttribute("responseURL", w.responseURL, nil)
+	jsClass.CreatePrototypeAttribute("status", w.status, nil)
+	jsClass.CreatePrototypeAttribute("statusText", w.statusText, nil)
+	jsClass.CreatePrototypeAttribute("responseType", w.responseType, w.setResponseType)
+	jsClass.CreatePrototypeAttribute("response", w.response, nil)
+	jsClass.CreatePrototypeAttribute("responseText", w.responseText, nil)
+	jsClass.CreatePrototypeAttribute("responseXML", w.responseXML, nil)
 }
 
 func (w xmlHttpRequestV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {

@@ -28,35 +28,13 @@ func (w eventV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	jsClass := newV8Class(w.scriptHost, ft)
 	jsClass.CreatePrototypeMethod("stopPropagation", w.stopPropagation)
 	jsClass.CreatePrototypeMethod("preventDefault", w.preventDefault)
-	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.SetAccessorProperty("type",
-		wrapV8Callback(w.scriptHost, w.type_),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("target",
-		wrapV8Callback(w.scriptHost, w.target),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("currentTarget",
-		wrapV8Callback(w.scriptHost, w.currentTarget),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("eventPhase",
-		wrapV8Callback(w.scriptHost, w.eventPhase),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("bubbles",
-		wrapV8Callback(w.scriptHost, w.bubbles),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("cancelable",
-		wrapV8Callback(w.scriptHost, w.cancelable),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("defaultPrevented",
-		wrapV8Callback(w.scriptHost, w.defaultPrevented),
-		nil,
-		v8.None)
+	jsClass.CreatePrototypeAttribute("type", w.type_, nil)
+	jsClass.CreatePrototypeAttribute("target", w.target, nil)
+	jsClass.CreatePrototypeAttribute("currentTarget", w.currentTarget, nil)
+	jsClass.CreatePrototypeAttribute("eventPhase", w.eventPhase, nil)
+	jsClass.CreatePrototypeAttribute("bubbles", w.bubbles, nil)
+	jsClass.CreatePrototypeAttribute("cancelable", w.cancelable, nil)
+	jsClass.CreatePrototypeAttribute("defaultPrevented", w.defaultPrevented, nil)
 }
 
 func (w eventV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {

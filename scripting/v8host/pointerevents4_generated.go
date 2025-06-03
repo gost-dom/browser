@@ -23,23 +23,11 @@ func createPointerEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate 
 	return constructor
 }
 func (w pointerEventV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
-	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.SetAccessorProperty("width",
-		wrapV8Callback(w.scriptHost, w.width),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("height",
-		wrapV8Callback(w.scriptHost, w.height),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("pressure",
-		wrapV8Callback(w.scriptHost, w.pressure),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("tangentialPressure",
-		wrapV8Callback(w.scriptHost, w.tangentialPressure),
-		nil,
-		v8.None)
+	jsClass := newV8Class(w.scriptHost, ft)
+	jsClass.CreatePrototypeAttribute("width", w.width, nil)
+	jsClass.CreatePrototypeAttribute("height", w.height, nil)
+	jsClass.CreatePrototypeAttribute("pressure", w.pressure, nil)
+	jsClass.CreatePrototypeAttribute("tangentialPressure", w.tangentialPressure, nil)
 }
 
 func (w pointerEventV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {

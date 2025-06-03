@@ -26,35 +26,13 @@ func createMouseEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 func (w mouseEventV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	jsClass := newV8Class(w.scriptHost, ft)
 	jsClass.CreatePrototypeMethod("getModifierState", w.getModifierState)
-	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.SetAccessorProperty("screenX",
-		wrapV8Callback(w.scriptHost, w.screenX),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("screenY",
-		wrapV8Callback(w.scriptHost, w.screenY),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("clientX",
-		wrapV8Callback(w.scriptHost, w.clientX),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("clientY",
-		wrapV8Callback(w.scriptHost, w.clientY),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("layerX",
-		wrapV8Callback(w.scriptHost, w.layerX),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("layerY",
-		wrapV8Callback(w.scriptHost, w.layerY),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("relatedTarget",
-		wrapV8Callback(w.scriptHost, w.relatedTarget),
-		nil,
-		v8.None)
+	jsClass.CreatePrototypeAttribute("screenX", w.screenX, nil)
+	jsClass.CreatePrototypeAttribute("screenY", w.screenY, nil)
+	jsClass.CreatePrototypeAttribute("clientX", w.clientX, nil)
+	jsClass.CreatePrototypeAttribute("clientY", w.clientY, nil)
+	jsClass.CreatePrototypeAttribute("layerX", w.layerX, nil)
+	jsClass.CreatePrototypeAttribute("layerY", w.layerY, nil)
+	jsClass.CreatePrototypeAttribute("relatedTarget", w.relatedTarget, nil)
 }
 
 func (w mouseEventV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
@@ -137,15 +115,9 @@ func createUIEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	return constructor
 }
 func (w uIEventV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
-	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.SetAccessorProperty("view",
-		wrapV8Callback(w.scriptHost, w.view),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("detail",
-		wrapV8Callback(w.scriptHost, w.detail),
-		nil,
-		v8.None)
+	jsClass := newV8Class(w.scriptHost, ft)
+	jsClass.CreatePrototypeAttribute("view", w.view, nil)
+	jsClass.CreatePrototypeAttribute("detail", w.detail, nil)
 }
 
 func (w uIEventV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {

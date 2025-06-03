@@ -57,47 +57,16 @@ func (w documentV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	jsClass.CreatePrototypeMethod("createRange", w.createRange)
 	jsClass.CreatePrototypeMethod("createNodeIterator", w.createNodeIterator)
 	jsClass.CreatePrototypeMethod("createTreeWalker", w.createTreeWalker)
-	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.SetAccessorProperty("implementation",
-		wrapV8Callback(w.scriptHost, w.implementation),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("URL",
-		wrapV8Callback(w.scriptHost, w.URL),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("documentURI",
-		wrapV8Callback(w.scriptHost, w.documentURI),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("compatMode",
-		wrapV8Callback(w.scriptHost, w.compatMode),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("characterSet",
-		wrapV8Callback(w.scriptHost, w.characterSet),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("charset",
-		wrapV8Callback(w.scriptHost, w.charset),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("inputEncoding",
-		wrapV8Callback(w.scriptHost, w.inputEncoding),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("contentType",
-		wrapV8Callback(w.scriptHost, w.contentType),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("doctype",
-		wrapV8Callback(w.scriptHost, w.doctype),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("documentElement",
-		wrapV8Callback(w.scriptHost, w.documentElement),
-		nil,
-		v8.None)
+	jsClass.CreatePrototypeAttribute("implementation", w.implementation, nil)
+	jsClass.CreatePrototypeAttribute("URL", w.URL, nil)
+	jsClass.CreatePrototypeAttribute("documentURI", w.documentURI, nil)
+	jsClass.CreatePrototypeAttribute("compatMode", w.compatMode, nil)
+	jsClass.CreatePrototypeAttribute("characterSet", w.characterSet, nil)
+	jsClass.CreatePrototypeAttribute("charset", w.charset, nil)
+	jsClass.CreatePrototypeAttribute("inputEncoding", w.inputEncoding, nil)
+	jsClass.CreatePrototypeAttribute("contentType", w.contentType, nil)
+	jsClass.CreatePrototypeAttribute("doctype", w.doctype, nil)
+	jsClass.CreatePrototypeAttribute("documentElement", w.documentElement, nil)
 	w.parentNode.installPrototype(ft)
 }
 

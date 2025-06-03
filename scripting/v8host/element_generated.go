@@ -50,47 +50,16 @@ func (w elementV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	jsClass.CreatePrototypeMethod("getElementsByClassName", w.getElementsByClassName)
 	jsClass.CreatePrototypeMethod("insertAdjacentElement", w.insertAdjacentElement)
 	jsClass.CreatePrototypeMethod("insertAdjacentText", w.insertAdjacentText)
-	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.SetAccessorProperty("namespaceURI",
-		wrapV8Callback(w.scriptHost, w.namespaceURI),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("prefix",
-		wrapV8Callback(w.scriptHost, w.prefix),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("localName",
-		wrapV8Callback(w.scriptHost, w.localName),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("tagName",
-		wrapV8Callback(w.scriptHost, w.tagName),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("id",
-		wrapV8Callback(w.scriptHost, w.id),
-		wrapV8Callback(w.scriptHost, w.setID),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("className",
-		wrapV8Callback(w.scriptHost, w.className),
-		wrapV8Callback(w.scriptHost, w.setClassName),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("classList",
-		wrapV8Callback(w.scriptHost, w.classList),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("slot",
-		wrapV8Callback(w.scriptHost, w.slot),
-		wrapV8Callback(w.scriptHost, w.setSlot),
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("attributes",
-		wrapV8Callback(w.scriptHost, w.attributes),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("shadowRoot",
-		wrapV8Callback(w.scriptHost, w.shadowRoot),
-		nil,
-		v8.None)
+	jsClass.CreatePrototypeAttribute("namespaceURI", w.namespaceURI, nil)
+	jsClass.CreatePrototypeAttribute("prefix", w.prefix, nil)
+	jsClass.CreatePrototypeAttribute("localName", w.localName, nil)
+	jsClass.CreatePrototypeAttribute("tagName", w.tagName, nil)
+	jsClass.CreatePrototypeAttribute("id", w.id, w.setID)
+	jsClass.CreatePrototypeAttribute("className", w.className, w.setClassName)
+	jsClass.CreatePrototypeAttribute("classList", w.classList, nil)
+	jsClass.CreatePrototypeAttribute("slot", w.slot, w.setSlot)
+	jsClass.CreatePrototypeAttribute("attributes", w.attributes, nil)
+	jsClass.CreatePrototypeAttribute("shadowRoot", w.shadowRoot, nil)
 	w.parentNode.installPrototype(ft)
 	w.nonDocumentTypeChildNode.installPrototype(ft)
 }

@@ -42,16 +42,9 @@ func (w domTokenListV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	jsClass.CreatePrototypeMethod("toggle", w.toggle)
 	jsClass.CreatePrototypeMethod("replace", w.replace)
 	jsClass.CreatePrototypeMethod("supports", w.supports)
-	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.SetAccessorProperty("length",
-		wrapV8Callback(w.scriptHost, w.length),
-		nil,
-		v8.None)
-	prototypeTmpl.SetAccessorProperty("value",
-		wrapV8Callback(w.scriptHost, w.value),
-		wrapV8Callback(w.scriptHost, w.setValue),
-		v8.None)
-	prototypeTmpl.Set("toString", wrapV8Callback(w.scriptHost, w.value))
+	jsClass.CreatePrototypeAttribute("length", w.length, nil)
+	jsClass.CreatePrototypeAttribute("value", w.value, w.setValue)
+	jsClass.CreatePrototypeMethod("toString", w.value)
 }
 
 func (w domTokenListV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {

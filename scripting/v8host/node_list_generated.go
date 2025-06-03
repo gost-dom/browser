@@ -35,11 +35,7 @@ func createNodeListPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 func (w nodeListV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	jsClass := newV8Class(w.scriptHost, ft)
 	jsClass.CreatePrototypeMethod("item", w.item)
-	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.SetAccessorProperty("length",
-		wrapV8Callback(w.scriptHost, w.length),
-		nil,
-		v8.None)
+	jsClass.CreatePrototypeAttribute("length", w.length, nil)
 }
 
 func (w nodeListV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {

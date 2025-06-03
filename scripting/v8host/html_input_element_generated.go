@@ -35,11 +35,7 @@ func createHTMLInputElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTempl
 func (w htmlInputElementV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	jsClass := newV8Class(w.scriptHost, ft)
 	jsClass.CreatePrototypeMethod("checkValidity", w.checkValidity)
-	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.SetAccessorProperty("type",
-		wrapV8Callback(w.scriptHost, w.type_),
-		wrapV8Callback(w.scriptHost, w.setType),
-		v8.None)
+	jsClass.CreatePrototypeAttribute("type", w.type_, w.setType)
 }
 
 func (w htmlInputElementV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {

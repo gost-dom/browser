@@ -42,11 +42,7 @@ func (w namedNodeMapV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	jsClass.CreatePrototypeMethod("setNamedItemNS", w.setNamedItemNS)
 	jsClass.CreatePrototypeMethod("removeNamedItem", w.removeNamedItem)
 	jsClass.CreatePrototypeMethod("removeNamedItemNS", w.removeNamedItemNS)
-	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.SetAccessorProperty("length",
-		wrapV8Callback(w.scriptHost, w.length),
-		nil,
-		v8.None)
+	jsClass.CreatePrototypeAttribute("length", w.length, nil)
 }
 
 func (w namedNodeMapV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
