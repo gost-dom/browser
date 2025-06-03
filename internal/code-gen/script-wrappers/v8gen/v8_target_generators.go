@@ -55,11 +55,9 @@ func (gen V8TargetGenerators) CreatePrototypeInitializerBody(
 	naming := V8NamingStrategy{data}
 	receiver := g.NewValue(naming.Receiver())
 	host := receiver.Field("scriptHost")
-	builder := NewConstructorBuilder()
 	ft := v8FunctionTemplate{g.NewValue("ft")}
 	return PrototypeInstaller{
 		ft,
-		builder.Proto,
 		WrapperInstance{g.Value{Generator: receiver}},
 		host,
 		data,

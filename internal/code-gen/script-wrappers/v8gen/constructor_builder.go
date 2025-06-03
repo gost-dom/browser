@@ -28,13 +28,8 @@ func NewConstructorBuilder() ConstructorBuilder {
 	}
 }
 
-func (builder ConstructorBuilder) NewFunctionTemplateOfWrappedMethod(name string) g.Generator {
-	return builder.NewFunctionTemplate(builder.Wrapper.Method(name))
-}
-
 type PrototypeInstaller struct {
 	Ft       v8FunctionTemplate
-	Proto    v8PrototypeTemplate
 	Wrapper  WrapperInstance
 	Host     g.Generator
 	Data     model.ESConstructorData
