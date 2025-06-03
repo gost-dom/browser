@@ -28,11 +28,12 @@ func createHTMLTemplateElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTe
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor.PrototypeTemplate())
+	wrapper.installPrototype(constructor)
 
 	return constructor
 }
-func (w htmlTemplateElementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
+func (w htmlTemplateElementV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	prototypeTmpl := ft.PrototypeTemplate()
 
 	prototypeTmpl.SetAccessorProperty("content",
 		wrapV8Callback(w.scriptHost, w.content),

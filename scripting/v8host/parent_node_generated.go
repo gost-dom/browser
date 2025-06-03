@@ -23,11 +23,12 @@ func createParentNodePrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor.PrototypeTemplate())
+	wrapper.installPrototype(constructor)
 
 	return constructor
 }
-func (w parentNodeV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
+func (w parentNodeV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	prototypeTmpl := ft.PrototypeTemplate()
 	prototypeTmpl.Set("prepend", wrapV8Callback(w.scriptHost, w.prepend))
 	prototypeTmpl.Set("append", wrapV8Callback(w.scriptHost, w.append))
 	prototypeTmpl.Set("replaceChildren", wrapV8Callback(w.scriptHost, w.replaceChildren))

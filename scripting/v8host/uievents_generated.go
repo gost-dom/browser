@@ -19,11 +19,12 @@ func createMouseEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor.PrototypeTemplate())
+	wrapper.installPrototype(constructor)
 
 	return constructor
 }
-func (w mouseEventV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
+func (w mouseEventV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	prototypeTmpl := ft.PrototypeTemplate()
 	prototypeTmpl.Set("getModifierState", wrapV8Callback(w.scriptHost, w.getModifierState))
 
 	prototypeTmpl.SetAccessorProperty("screenX",
@@ -131,11 +132,12 @@ func createUIEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor.PrototypeTemplate())
+	wrapper.installPrototype(constructor)
 
 	return constructor
 }
-func (w uIEventV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
+func (w uIEventV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	prototypeTmpl := ft.PrototypeTemplate()
 
 	prototypeTmpl.SetAccessorProperty("view",
 		wrapV8Callback(w.scriptHost, w.view),

@@ -28,11 +28,12 @@ func createMutationObserverPrototype(scriptHost *V8ScriptHost) *v8.FunctionTempl
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor.PrototypeTemplate())
+	wrapper.installPrototype(constructor)
 
 	return constructor
 }
-func (w mutationObserverV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
+func (w mutationObserverV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	prototypeTmpl := ft.PrototypeTemplate()
 	prototypeTmpl.Set("observe", wrapV8Callback(w.scriptHost, w.observe))
 	prototypeTmpl.Set("disconnect", wrapV8Callback(w.scriptHost, w.disconnect))
 	prototypeTmpl.Set("takeRecords", wrapV8Callback(w.scriptHost, w.takeRecords))

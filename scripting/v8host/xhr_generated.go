@@ -4,6 +4,7 @@ package v8host
 
 import (
 	"errors"
+
 	html "github.com/gost-dom/browser/html"
 	html1 "github.com/gost-dom/browser/internal/html"
 	js "github.com/gost-dom/browser/scripting/internal/js"
@@ -29,12 +30,13 @@ func createFormDataPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor.PrototypeTemplate())
+	wrapper.installPrototype(constructor)
 
 	wrapper.CustomInitialiser(constructor)
 	return constructor
 }
-func (w formDataV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
+func (w formDataV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	prototypeTmpl := ft.PrototypeTemplate()
 	prototypeTmpl.Set("append", wrapV8Callback(w.scriptHost, w.append))
 	prototypeTmpl.Set("delete", wrapV8Callback(w.scriptHost, w.delete))
 	prototypeTmpl.Set("get", wrapV8Callback(w.scriptHost, w.get))
@@ -161,11 +163,12 @@ func createXMLHttpRequestPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplat
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor.PrototypeTemplate())
+	wrapper.installPrototype(constructor)
 
 	return constructor
 }
-func (w xmlHttpRequestV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
+func (w xmlHttpRequestV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	prototypeTmpl := ft.PrototypeTemplate()
 	prototypeTmpl.Set("open", wrapV8Callback(w.scriptHost, w.open))
 	prototypeTmpl.Set("setRequestHeader", wrapV8Callback(w.scriptHost, w.setRequestHeader))
 	prototypeTmpl.Set("send", wrapV8Callback(w.scriptHost, w.send))

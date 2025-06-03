@@ -27,12 +27,13 @@ func createNodeListPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor.PrototypeTemplate())
+	wrapper.installPrototype(constructor)
 
 	wrapper.CustomInitialiser(constructor)
 	return constructor
 }
-func (w nodeListV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
+func (w nodeListV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	prototypeTmpl := ft.PrototypeTemplate()
 	prototypeTmpl.Set("item", wrapV8Callback(w.scriptHost, w.item))
 
 	prototypeTmpl.SetAccessorProperty("length",

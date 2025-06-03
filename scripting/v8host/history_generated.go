@@ -28,11 +28,12 @@ func createHistoryPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor.PrototypeTemplate())
+	wrapper.installPrototype(constructor)
 
 	return constructor
 }
-func (w historyV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
+func (w historyV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	prototypeTmpl := ft.PrototypeTemplate()
 	prototypeTmpl.Set("go", wrapV8Callback(w.scriptHost, w.go_))
 	prototypeTmpl.Set("back", wrapV8Callback(w.scriptHost, w.back))
 	prototypeTmpl.Set("forward", wrapV8Callback(w.scriptHost, w.forward))

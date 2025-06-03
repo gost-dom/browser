@@ -43,7 +43,7 @@ func CreateV8ConstructorBody(data ESConstructorData) g.Generator {
 		g.Assign(builder.InstanceTmpl, constructor.GetInstanceTemplate()),
 		builder.InstanceTmpl.SetInternalFieldCount(1),
 		g.Line,
-		builder.Wrapper.Field("installPrototype").Call(constructor.GetPrototypeTemplate()),
+		builder.Wrapper.Field("installPrototype").Call(constructor),
 		g.Line,
 	)
 	if data.RunCustomCode {

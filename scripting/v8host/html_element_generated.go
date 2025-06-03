@@ -31,13 +31,14 @@ func createHTMLElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor.PrototypeTemplate())
+	wrapper.installPrototype(constructor)
 
 	return constructor
 }
-func (w htmlElementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
+func (w htmlElementV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	prototypeTmpl := ft.PrototypeTemplate()
 	prototypeTmpl.Set("click", wrapV8Callback(w.scriptHost, w.click))
-	w.htmlOrSVGElement.installPrototype(prototypeTmpl)
+	w.htmlOrSVGElement.installPrototype(ft)
 }
 
 func (w htmlElementV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {

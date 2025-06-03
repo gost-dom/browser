@@ -23,11 +23,12 @@ func createNonDocumentTypeChildNodePrototype(scriptHost *V8ScriptHost) *v8.Funct
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor.PrototypeTemplate())
+	wrapper.installPrototype(constructor)
 
 	return constructor
 }
-func (w nonDocumentTypeChildNodeV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
+func (w nonDocumentTypeChildNodeV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	prototypeTmpl := ft.PrototypeTemplate()
 
 	prototypeTmpl.SetAccessorProperty("previousElementSibling",
 		wrapV8Callback(w.scriptHost, w.previousElementSibling),

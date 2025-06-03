@@ -28,11 +28,12 @@ func createHTMLFormElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTempla
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor.PrototypeTemplate())
+	wrapper.installPrototype(constructor)
 
 	return constructor
 }
-func (w htmlFormElementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
+func (w htmlFormElementV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	prototypeTmpl := ft.PrototypeTemplate()
 	prototypeTmpl.Set("submit", wrapV8Callback(w.scriptHost, w.submit))
 	prototypeTmpl.Set("requestSubmit", wrapV8Callback(w.scriptHost, w.requestSubmit))
 	prototypeTmpl.Set("reset", wrapV8Callback(w.scriptHost, w.reset))

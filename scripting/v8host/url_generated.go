@@ -21,11 +21,12 @@ func createURLPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor.PrototypeTemplate())
+	wrapper.installPrototype(constructor)
 
 	return constructor
 }
-func (w urlV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
+func (w urlV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	prototypeTmpl := ft.PrototypeTemplate()
 	prototypeTmpl.Set("toJSON", wrapV8Callback(w.scriptHost, w.toJSON))
 
 	prototypeTmpl.SetAccessorProperty("href",
@@ -282,12 +283,13 @@ func createURLSearchParamsPrototype(scriptHost *V8ScriptHost) *v8.FunctionTempla
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor.PrototypeTemplate())
+	wrapper.installPrototype(constructor)
 
 	wrapper.CustomInitialiser(constructor)
 	return constructor
 }
-func (w urlSearchParamsV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
+func (w urlSearchParamsV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	prototypeTmpl := ft.PrototypeTemplate()
 	prototypeTmpl.Set("append", wrapV8Callback(w.scriptHost, w.append))
 	prototypeTmpl.Set("delete", wrapV8Callback(w.scriptHost, w.delete))
 	prototypeTmpl.Set("get", wrapV8Callback(w.scriptHost, w.get))

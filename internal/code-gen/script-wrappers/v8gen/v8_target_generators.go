@@ -44,7 +44,7 @@ func (gen V8TargetGenerators) CreatePrototypeInitializer(
 			Name: receiver,
 			Type: g.Id(naming.PrototypeWrapperName()),
 		},
-		Args: g.Arg(builder.Proto, v8ObjectTemplatePtr),
+		Args: g.Arg(builder.FT, v8FunctionTemplatePtr),
 		Body: body,
 	}
 }
@@ -56,12 +56,14 @@ func (gen V8TargetGenerators) CreatePrototypeInitializerBody(
 	receiver := g.NewValue(naming.Receiver())
 	host := receiver.Field("scriptHost")
 	builder := NewConstructorBuilder()
+	ft := v8FunctionTemplate{g.NewValue("ft")}
 	installer := PrototypeInstaller{
 		builder.v8Iso,
 		builder.Proto,
 		WrapperInstance{g.Value{Generator: receiver}},
 	}
 	return g.StatementList(
+		g.Assign(g.NewValue("prototypeTmpl"), ft.GetPrototypeTemplate()),
 		installer.InstallFunctionHandlers(host, data),
 		installer.InstallAttributeHandlers(host, data),
 	)

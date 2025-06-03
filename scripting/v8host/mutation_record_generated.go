@@ -27,11 +27,12 @@ func createMutationRecordPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplat
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor.PrototypeTemplate())
+	wrapper.installPrototype(constructor)
 
 	return constructor
 }
-func (w mutationRecordV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
+func (w mutationRecordV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	prototypeTmpl := ft.PrototypeTemplate()
 
 	prototypeTmpl.SetAccessorProperty("type",
 		wrapV8Callback(w.scriptHost, w.type_),

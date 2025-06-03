@@ -20,12 +20,13 @@ func createElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor.PrototypeTemplate())
+	wrapper.installPrototype(constructor)
 
 	wrapper.CustomInitialiser(constructor)
 	return constructor
 }
-func (w elementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
+func (w elementV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	prototypeTmpl := ft.PrototypeTemplate()
 	prototypeTmpl.Set("hasAttributes", wrapV8Callback(w.scriptHost, w.hasAttributes))
 	prototypeTmpl.Set("getAttributeNames", wrapV8Callback(w.scriptHost, w.getAttributeNames))
 	prototypeTmpl.Set("getAttribute", wrapV8Callback(w.scriptHost, w.getAttribute))
@@ -90,8 +91,8 @@ func (w elementV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
 		wrapV8Callback(w.scriptHost, w.shadowRoot),
 		nil,
 		v8.None)
-	w.parentNode.installPrototype(prototypeTmpl)
-	w.nonDocumentTypeChildNode.installPrototype(prototypeTmpl)
+	w.parentNode.installPrototype(ft)
+	w.nonDocumentTypeChildNode.installPrototype(ft)
 }
 
 func (w elementV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {

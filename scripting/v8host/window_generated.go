@@ -28,11 +28,12 @@ func createWindowPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor.PrototypeTemplate())
+	wrapper.installPrototype(constructor)
 
 	return constructor
 }
-func (w windowV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
+func (w windowV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	prototypeTmpl := ft.PrototypeTemplate()
 	prototypeTmpl.Set("close", wrapV8Callback(w.scriptHost, w.close))
 	prototypeTmpl.Set("stop", wrapV8Callback(w.scriptHost, w.stop))
 	prototypeTmpl.Set("focus", wrapV8Callback(w.scriptHost, w.focus))

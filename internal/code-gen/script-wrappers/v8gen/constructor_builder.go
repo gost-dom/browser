@@ -10,6 +10,7 @@ import (
 // template, etc.
 type ConstructorBuilder struct {
 	v8Iso
+	FT           v8FunctionTemplate
 	Proto        v8PrototypeTemplate
 	InstanceTmpl v8InstanceTemplate
 	Wrapper      WrapperInstance
@@ -18,6 +19,7 @@ type ConstructorBuilder struct {
 func NewConstructorBuilder() ConstructorBuilder {
 	return ConstructorBuilder{
 		v8Iso:        v8Iso{g.NewValue("iso")},
+		FT:           v8FunctionTemplate{g.NewValue("ft")},
 		Proto:        v8PrototypeTemplate{g.NewValue("prototypeTmpl")},
 		InstanceTmpl: v8InstanceTemplate{g.NewValue("instanceTmpl")},
 		Wrapper:      WrapperInstance{g.NewValue("wrapper")},

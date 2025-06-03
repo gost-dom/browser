@@ -28,12 +28,13 @@ func createDOMTokenListPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor.PrototypeTemplate())
+	wrapper.installPrototype(constructor)
 
 	wrapper.CustomInitialiser(constructor)
 	return constructor
 }
-func (w domTokenListV8Wrapper) installPrototype(prototypeTmpl *v8.ObjectTemplate) {
+func (w domTokenListV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	prototypeTmpl := ft.PrototypeTemplate()
 	prototypeTmpl.Set("item", wrapV8Callback(w.scriptHost, w.item))
 	prototypeTmpl.Set("contains", wrapV8Callback(w.scriptHost, w.contains))
 	prototypeTmpl.Set("add", wrapV8Callback(w.scriptHost, w.add))
