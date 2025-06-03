@@ -31,6 +31,8 @@ type ScriptWrapperModulesGenerator struct {
 	TargetGenerators TargetGenerators
 }
 
+func (gen ScriptWrapperModulesGenerator) GonstructorCallbackEnabled() bool { return false }
+
 func (gen ScriptWrapperModulesGenerator) writeModule(
 	writer io.Writer,
 	spec *configuration.WebIdlConfiguration,

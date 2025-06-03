@@ -23,11 +23,6 @@ func (w mouseEventWrapper) initializePrototype(prototype *g.Object, vm *g.Runtim
 	prototype.DefineAccessorProperty("relatedTarget", wrapCallback(w.ctx, w.relatedTarget), nil, g.FLAG_TRUE, g.FLAG_TRUE)
 }
 
-func (w mouseEventWrapper) Constructor(cbCtx *callbackContext) g.Value {
-	cbCtx.Logger().Debug("V8 Function call: MouseEvent.Constructor")
-	return cbCtx.ReturnWithTypeError("Goja constructor not yet implemented")
-}
-
 func (w mouseEventWrapper) getModifierState(cbCtx *callbackContext) g.Value {
 	cbCtx.Logger().Debug("V8 Function call: MouseEvent.getModifierState")
 	return cbCtx.ReturnWithError(errors.New("MouseEvent.getModifierState: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
@@ -83,11 +78,6 @@ func newUIEventWrapper(instance *GojaContext) wrapper {
 func (w uIEventWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime) {
 	prototype.DefineAccessorProperty("view", wrapCallback(w.ctx, w.view), nil, g.FLAG_TRUE, g.FLAG_TRUE)
 	prototype.DefineAccessorProperty("detail", wrapCallback(w.ctx, w.detail), nil, g.FLAG_TRUE, g.FLAG_TRUE)
-}
-
-func (w uIEventWrapper) Constructor(cbCtx *callbackContext) g.Value {
-	cbCtx.Logger().Debug("V8 Function call: UIEvent.Constructor")
-	return cbCtx.ReturnWithTypeError("Goja constructor not yet implemented")
 }
 
 func (w uIEventWrapper) view(cbCtx *callbackContext) g.Value {

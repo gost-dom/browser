@@ -37,11 +37,6 @@ func (w locationWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime)
 	prototype.DefineAccessorProperty("ancestorOrigins", wrapCallback(w.ctx, w.ancestorOrigins), nil, g.FLAG_TRUE, g.FLAG_TRUE)
 }
 
-func (w locationWrapper) Constructor(cbCtx *callbackContext) g.Value {
-	cbCtx.Logger().Debug("V8 Function call: Location.Constructor")
-	return cbCtx.ReturnWithTypeError("Illegal constructor")
-}
-
 func (w locationWrapper) assign(cbCtx *callbackContext) g.Value {
 	cbCtx.Logger().Debug("V8 Function call: Location.assign")
 	return cbCtx.ReturnWithError(errors.New("Location.assign: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))

@@ -24,11 +24,6 @@ func (w eventWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime) {
 	prototype.DefineAccessorProperty("defaultPrevented", wrapCallback(w.ctx, w.defaultPrevented), nil, g.FLAG_TRUE, g.FLAG_TRUE)
 }
 
-func (w eventWrapper) Constructor(cbCtx *callbackContext) g.Value {
-	cbCtx.Logger().Debug("V8 Function call: Event.Constructor")
-	return cbCtx.ReturnWithTypeError("Goja constructor not yet implemented")
-}
-
 func (w eventWrapper) stopPropagation(cbCtx *callbackContext) g.Value {
 	cbCtx.Logger().Debug("V8 Function call: Event.stopPropagation")
 	instance, instErr := js.As[*event.Event](cbCtx.Instance())

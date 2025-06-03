@@ -41,11 +41,6 @@ func (w nodeWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime) {
 	prototype.DefineAccessorProperty("textContent", wrapCallback(w.ctx, w.textContent), wrapCallback(w.ctx, w.setTextContent), g.FLAG_TRUE, g.FLAG_TRUE)
 }
 
-func (w nodeWrapper) Constructor(cbCtx *callbackContext) g.Value {
-	cbCtx.Logger().Debug("V8 Function call: Node.Constructor")
-	return cbCtx.ReturnWithTypeError("Illegal constructor")
-}
-
 func (w nodeWrapper) getRootNode(cbCtx *callbackContext) g.Value {
 	cbCtx.Logger().Debug("V8 Function call: Node.getRootNode")
 	instance, instErr := js.As[dom.Node](cbCtx.Instance())

@@ -44,6 +44,7 @@ type TargetGenerators interface {
 	// methods, and accessor properties for attributes.
 	CreatePrototypeInitializer(ESConstructorData, Generator) Generator
 	CreatePrototypeInitializerBody(ESConstructorData) Generator
+	ConstructorCallbackEnabled() bool
 	// CreateConstructorCallback generates the function to be called whan
 	// JavaScript code constructs an instance.
 	CreateConstructorCallbackBody(ESConstructorData, CallbackContext) Generator
@@ -104,7 +105,7 @@ func (g PrototypeWrapperGenerator) Generate() *jen.Statement {
 }
 
 func (gen PrototypeWrapperGenerator) Constructor() g.Generator {
-	if gen.Data.Spec.SkipConstructor {
+	if gen.Data.Spec.SkipConstructor || !gen.Platform.ConstructorCallbackEnabled() {
 		return g.Noop
 	}
 	receiver := generators.Id("w")

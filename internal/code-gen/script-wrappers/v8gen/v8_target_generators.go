@@ -9,6 +9,8 @@ import (
 
 type V8TargetGenerators struct{}
 
+func (gen V8TargetGenerators) ConstructorCallbackEnabled() bool { return true }
+
 func (gen V8TargetGenerators) Host(receiver g.Generator) g.Generator {
 	return g.ValueOf(receiver).Field("scriptHost")
 }
