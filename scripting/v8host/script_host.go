@@ -101,7 +101,8 @@ type V8ScriptHost struct {
 	iterator        v8Iterator
 }
 
-type jsConstructorFactory = func(*V8ScriptHost) *v8go.FunctionTemplate
+type jsConstructorFactory1 = func(*V8ScriptHost) *v8go.FunctionTemplate
+type jsConstructorFactory = func(*V8ScriptHost, *v8go.FunctionTemplate) *v8go.FunctionTemplate
 
 type class struct {
 	globalIdentifier string
@@ -124,16 +125,14 @@ func createGlobals(host *V8ScriptHost) []globalInstall {
 		if class.superClassName != "" {
 			superClassSpec, found := classes[class.superClassName]
 			if !found {
-				panic(
-					"Missing super class spec. Class: " + class.name + ". Super: " + class.superClassName,
-				)
+				panic(fmt.Sprintf(
+					"Missing super class spec. Class: %s. Super: %s",
+					class.name, class.superClassName,
+				))
 			}
 			superClassConstructor = iter(superClassSpec)
 		}
-		constructor := class.factory(host)
-		if superClassConstructor != nil {
-			constructor.Inherit(superClassConstructor)
-		}
+		constructor := class.factory(host, superClassConstructor)
 		uniqueNames[class.name] = constructor
 		result = append(result, globalInstall{class.name, constructor})
 		return constructor
@@ -182,10 +181,16 @@ var initializers []js.Configurator[jsTypeParam]
 func registerJSClass(
 	className string,
 	superClassName string,
-	constructorFactory jsConstructorFactory,
+	constructorFactory jsConstructorFactory1,
 ) {
 	spec := classSpec{
-		className, superClassName, constructorFactory,
+		className, superClassName, func(host *V8ScriptHost, extends *v8go.FunctionTemplate) *v8go.FunctionTemplate {
+			res := constructorFactory(host)
+			if extends != nil {
+				res.Inherit(extends)
+			}
+			return res
+		},
 	}
 	if _, ok := classes[className]; ok {
 		panic("Same class added twice: " + className)
