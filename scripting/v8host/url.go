@@ -8,8 +8,6 @@ import (
 	"github.com/gost-dom/browser/internal/constants"
 	urlinterfaces "github.com/gost-dom/browser/internal/interfaces/url-interfaces"
 	"github.com/gost-dom/browser/url"
-
-	v8 "github.com/gost-dom/v8go"
 )
 
 type urlV8Wrapper struct {
@@ -101,7 +99,7 @@ func (w urlSearchParamsV8Wrapper) toSequenceString_(
 	return fact.NewArray(vs...), nil
 }
 
-func (w urlSearchParamsV8Wrapper) CustomInitializer(constructor *v8.FunctionTemplate) {
+func (w urlSearchParamsV8Wrapper) CustomInitializer(class jsClass) {
 	it := newIterator2(w.scriptHost, w.toString_, w.toString_)
-	it.installPrototype(constructor)
+	it.installPrototype(class.(v8Class).ft)
 }

@@ -20,6 +20,8 @@ func createHTMLDocumentPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
 	constructor := builder.constructor
 	instanceTemplate := constructor.InstanceTemplate()
 	instanceTemplate.SetInternalFieldCount(1)
-	wrapper.CustomInitializer(constructor)
+	wrapper.CustomInitializer(
+		v8Class{host, constructor, constructor.PrototypeTemplate(), constructor.InstanceTemplate()},
+	)
 	return constructor
 }

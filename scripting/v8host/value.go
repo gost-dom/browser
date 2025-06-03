@@ -217,10 +217,13 @@ type v8Class struct {
 	host  *V8ScriptHost
 	ft    *v8go.FunctionTemplate
 	proto *v8go.ObjectTemplate
+	inst  *v8go.ObjectTemplate
 }
 
+type jsClass = js.Class[jsTypeParam]
+
 func newV8Class(host *V8ScriptHost, ft *v8go.FunctionTemplate) v8Class {
-	return v8Class{host, ft, ft.PrototypeTemplate()}
+	return v8Class{host, ft, ft.PrototypeTemplate(), ft.InstanceTemplate()}
 }
 
 func (c v8Class) CreatePrototypeMethod(name string, cb js.FunctionCallback[jsTypeParam]) {
@@ -236,4 +239,14 @@ func (c v8Class) CreatePrototypeAttribute(
 	v8Getter := wrapV8Callback(c.host, getter)
 	v8Setter := wrapV8Callback(c.host, setter)
 	c.proto.SetAccessorProperty(name, v8Getter, v8Setter, v8go.None)
+}
+
+func (c v8Class) CreateInstanceAttribute(
+	name string,
+	getter js.FunctionCallback[jsTypeParam],
+	setter js.FunctionCallback[jsTypeParam],
+) {
+	v8Getter := wrapV8Callback(c.host, getter)
+	v8Setter := wrapV8Callback(c.host, setter)
+	c.inst.SetAccessorProperty(name, v8Getter, v8Setter, v8go.None)
 }

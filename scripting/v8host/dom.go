@@ -9,9 +9,9 @@ import (
 	v8 "github.com/gost-dom/v8go"
 )
 
-func (l domTokenListV8Wrapper) CustomInitializer(constructor *v8.FunctionTemplate) {
+func (l domTokenListV8Wrapper) CustomInitializer(constructor jsClass) {
 	it := newIterator(l.scriptHost, l.toString_)
-	it.installPrototype(constructor)
+	it.installPrototype(constructor.(v8Class).ft)
 }
 
 func (l domTokenListV8Wrapper) toggle(args jsCallbackContext) (jsValue, error) {

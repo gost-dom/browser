@@ -5,8 +5,6 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/scripting/internal/js"
-
-	v8 "github.com/gost-dom/v8go"
 )
 
 type elementV8Wrapper struct {
@@ -23,14 +21,9 @@ func newElementV8Wrapper(host *V8ScriptHost) *elementV8Wrapper {
 	}
 }
 
-func (e *elementV8Wrapper) CustomInitializer(constructor *v8.FunctionTemplate) {
-	prototype := constructor.PrototypeTemplate()
-	prototype.Set("insertAdjacentHTML", wrapV8Callback(e.scriptHost, e.insertAdjacentHTML))
-	prototype.SetAccessorProperty("outerHTML",
-		wrapV8Callback(e.scriptHost, e.outerHTML),
-		nil,
-		v8.None,
-	)
+func (e *elementV8Wrapper) CustomInitializer(class js.Class[jsTypeParam]) {
+	class.CreatePrototypeMethod("insertAdjacentHTML", e.insertAdjacentHTML)
+	class.CreatePrototypeAttribute("outerHTML", e.outerHTML, nil)
 }
 
 func (e *elementV8Wrapper) insertAdjacentHTML(cbCtx jsCallbackContext) (val jsValue, err error) {

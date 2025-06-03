@@ -3,7 +3,6 @@ package v8host
 import (
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/scripting/internal/js"
-	"github.com/gost-dom/v8go"
 
 	v8 "github.com/gost-dom/v8go"
 )
@@ -25,8 +24,8 @@ func createAttr(host *V8ScriptHost) *v8.FunctionTemplate {
 	return builder.constructor
 }
 
-func (w namedNodeMapV8Wrapper) CustomInitializer(ft *v8go.FunctionTemplate) {
-	ft.InstanceTemplate().SetIndexedHandler(
+func (w namedNodeMapV8Wrapper) CustomInitializer(class jsClass) {
+	class.(v8Class).ft.InstanceTemplate().SetIndexedHandler(
 		// NOTE: This is the prototype index handler implementation.
 		wrapV8IndexedGetterCallbackFn(
 			w.scriptHost,

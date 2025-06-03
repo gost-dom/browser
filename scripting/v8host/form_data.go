@@ -2,10 +2,9 @@ package v8host
 
 import (
 	"github.com/gost-dom/browser/html"
-	"github.com/gost-dom/v8go"
 )
 
-func (w formDataV8Wrapper) CustomInitializer(constructor *v8go.FunctionTemplate) {
+func (w formDataV8Wrapper) CustomInitializer(class jsClass) {
 	iterator := newIterator2(
 		w.scriptHost,
 		w.toString_,
@@ -13,7 +12,7 @@ func (w formDataV8Wrapper) CustomInitializer(constructor *v8go.FunctionTemplate)
 			return w.toString_(ctx, string(v))
 		},
 	)
-	iterator.installPrototype(constructor)
+	iterator.installPrototype(class.(v8Class).ft)
 }
 
 func (w formDataV8Wrapper) CreateInstance(cbCtx jsCallbackContext) (jsValue, error) {

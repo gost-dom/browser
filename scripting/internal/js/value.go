@@ -47,6 +47,7 @@ type Object[T any] interface {
 type Class[T any] interface {
 	CreatePrototypeMethod(name string, cb FunctionCallback[T])
 	CreatePrototypeAttribute(name string, getter FunctionCallback[T], setter FunctionCallback[T])
+	CreateInstanceAttribute(name string, getter FunctionCallback[T], setter FunctionCallback[T])
 }
 
 // Constructor represents a JavaScript "class" that wraps a Go object.

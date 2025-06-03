@@ -5,28 +5,18 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/scripting/internal/js"
-	v8 "github.com/gost-dom/v8go"
 )
 
-func (w *documentV8Wrapper) CustomInitializer(constructor *v8.FunctionTemplate) {
-	host := w.scriptHost
-	tmpl := constructor.InstanceTemplate()
-	tmpl.SetAccessorProperty(
-		"location",
-		v8.NewFunctionTemplateWithError(
-			w.scriptHost.iso,
-			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-				ctx := w.scriptHost.mustGetContext(info.Context())
-				return ctx.v8ctx.Global().Get("location")
-			},
-		),
-		nil,
-		v8.None,
-	)
-	proto := constructor.PrototypeTemplate()
-	proto.SetAccessorProperty("head", wrapV8Callback(host, w.head), nil, v8.None)
-	proto.SetAccessorProperty("body", wrapV8Callback(host, w.body), nil, v8.None)
-	proto.Set("getElementById", wrapV8Callback(host, w.getElementById))
+func (w *documentV8Wrapper) CustomInitializer(class jsClass) {
+	// host := w.scriptHost
+	// tmpl := constructor.InstanceTemplate()
+	class.CreateInstanceAttribute("location",
+		func(ctx jsCallbackContext) (jsValue, error) {
+			return ctx.Scope().GlobalThis().Get("location")
+		}, nil)
+	class.CreatePrototypeAttribute("head", w.head, nil)
+	class.CreatePrototypeAttribute("body", w.body, nil)
+	class.CreatePrototypeMethod("getElementById", w.getElementById)
 }
 
 func (w *documentV8Wrapper) CreateInstance(cbCtx jsCallbackContext) (jsValue, error) {
