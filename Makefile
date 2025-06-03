@@ -18,11 +18,7 @@ main: codegen-watch
 
 .PHONY: codegen-clean
 codegen-clean:
-	rm -f scripting/*_generated.go
-	rm -f scripting/**/*_generated.go
-	rm -f dom/*_generated.go
-	rm -f internal/**/*_generated.go
-	rm -f html/*_generated.go
+	rm -f **/*_generated.go
 
 .PHONY: codegen-watch codegen-run
 codegen-run:
