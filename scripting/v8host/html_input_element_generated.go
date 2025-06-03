@@ -23,7 +23,7 @@ func newHTMLInputElementV8Wrapper(scriptHost *V8ScriptHost) *htmlInputElementV8W
 
 func createHTMLInputElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	wrapper := newHTMLInputElementV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -39,8 +39,8 @@ func (w htmlInputElementV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeAttribute("type", w.type_, w.setType)
 }
 
-func (w htmlInputElementV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLInputElement.Constructor")
+func (w htmlInputElementV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: HTMLInputElement.constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

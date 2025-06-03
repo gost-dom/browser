@@ -49,7 +49,7 @@ func (w urlV8Wrapper) CreateInstanceBase(
 	return nil, nil
 }
 
-func (w urlSearchParamsV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlSearchParamsV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
 	var err error
 	arg, ok := cbCtx.ConsumeArg()
 	var res url.URLSearchParams

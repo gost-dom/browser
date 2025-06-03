@@ -23,7 +23,7 @@ func newMutationObserverV8Wrapper(scriptHost *V8ScriptHost) *mutationObserverV8W
 
 func createMutationObserverPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	wrapper := newMutationObserverV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -40,8 +40,8 @@ func (w mutationObserverV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("takeRecords", w.takeRecords)
 }
 
-func (w mutationObserverV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: MutationObserver.Constructor")
+func (w mutationObserverV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: MutationObserver.constructor")
 	callback, errArg1 := consumeArgument(cbCtx, "callback", nil, w.decodeMutationCallback)
 	if errArg1 != nil {
 		return nil, errArg1

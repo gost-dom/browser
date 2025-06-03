@@ -23,7 +23,7 @@ func newNamedNodeMapV8Wrapper(scriptHost *V8ScriptHost) *namedNodeMapV8Wrapper {
 
 func createNamedNodeMapPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	wrapper := newNamedNodeMapV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -46,8 +46,8 @@ func (w namedNodeMapV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeAttribute("length", w.length, nil)
 }
 
-func (w namedNodeMapV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: NamedNodeMap.Constructor")
+func (w namedNodeMapV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: NamedNodeMap.constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

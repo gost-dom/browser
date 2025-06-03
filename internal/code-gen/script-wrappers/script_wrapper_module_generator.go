@@ -112,7 +112,7 @@ func (gen PrototypeWrapperGenerator) Constructor() g.Generator {
 	return g.StatementList(
 		g.Line,
 		MethodCallback{
-			"Constructor", receiver, gen.Data, nil, gen.Platform,
+			"constructor", receiver, gen.Data, nil, gen.Platform,
 			ConstructorCallbackBody{receiver, gen.Data, gen.Platform},
 		},
 	)

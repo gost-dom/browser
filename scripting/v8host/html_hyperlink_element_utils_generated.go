@@ -19,7 +19,7 @@ func newHTMLHyperlinkElementUtilsV8Wrapper(scriptHost *V8ScriptHost) *htmlHyperl
 
 func createHTMLHyperlinkElementUtilsPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	wrapper := newHTMLHyperlinkElementUtilsV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -45,8 +45,8 @@ func (w htmlHyperlinkElementUtilsV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeAttribute("hash", w.hash, w.setHash)
 }
 
-func (w htmlHyperlinkElementUtilsV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.Constructor")
+func (w htmlHyperlinkElementUtilsV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

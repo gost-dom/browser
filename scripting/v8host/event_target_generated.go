@@ -23,7 +23,7 @@ func newEventTargetV8Wrapper(scriptHost *V8ScriptHost) *eventTargetV8Wrapper {
 
 func createEventTargetPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	wrapper := newEventTargetV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -40,8 +40,8 @@ func (w eventTargetV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("dispatchEvent", w.dispatchEvent)
 }
 
-func (w eventTargetV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: EventTarget.Constructor")
+func (w eventTargetV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: EventTarget.constructor")
 	return w.CreateInstance(cbCtx)
 }
 

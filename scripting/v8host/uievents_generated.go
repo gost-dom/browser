@@ -14,7 +14,7 @@ func init() {
 
 func createMouseEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	wrapper := newMouseEventV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -36,8 +36,8 @@ func (w mouseEventV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeAttribute("relatedTarget", w.relatedTarget, nil)
 }
 
-func (w mouseEventV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: MouseEvent.Constructor")
+func (w mouseEventV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: MouseEvent.constructor")
 	type_, errArg1 := consumeArgument(cbCtx, "type", nil, w.decodeString)
 	if errArg1 != nil {
 		return nil, errArg1
@@ -106,7 +106,7 @@ func newUIEventV8Wrapper(scriptHost *V8ScriptHost) *uIEventV8Wrapper {
 
 func createUIEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	wrapper := newUIEventV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -122,8 +122,8 @@ func (w uIEventV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeAttribute("detail", w.detail, nil)
 }
 
-func (w uIEventV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: UIEvent.Constructor")
+func (w uIEventV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: UIEvent.constructor")
 	type_, errArg1 := consumeArgument(cbCtx, "type", nil, w.decodeString)
 	if errArg1 != nil {
 		return nil, errArg1

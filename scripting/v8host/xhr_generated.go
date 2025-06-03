@@ -24,7 +24,7 @@ func newFormDataV8Wrapper(scriptHost *V8ScriptHost) *formDataV8Wrapper {
 
 func createFormDataPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	wrapper := newFormDataV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -45,8 +45,8 @@ func (w formDataV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("set", w.set)
 }
 
-func (w formDataV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: FormData.Constructor")
+func (w formDataV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: FormData.constructor")
 	form, found, errArg := consumeOptionalArg(cbCtx, "form", w.decodeHTMLFormElement)
 	if found {
 		if errArg != nil {
@@ -158,7 +158,7 @@ func init() {
 
 func createXMLHttpRequestPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	wrapper := newXMLHttpRequestV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -190,8 +190,8 @@ func (w xmlHttpRequestV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeAttribute("responseXML", w.responseXML, nil)
 }
 
-func (w xmlHttpRequestV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.Constructor")
+func (w xmlHttpRequestV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.constructor")
 	return w.CreateInstance(cbCtx)
 }
 

@@ -15,7 +15,7 @@ func init() {
 
 func createEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	wrapper := newEventV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -38,8 +38,8 @@ func (w eventV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeAttribute("defaultPrevented", w.defaultPrevented, nil)
 }
 
-func (w eventV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: Event.Constructor")
+func (w eventV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: Event.constructor")
 	type_, errArg1 := consumeArgument(cbCtx, "type", nil, w.decodeString)
 	eventInitDict, errArg2 := consumeArgument(cbCtx, "eventInitDict", w.defaultEventInit, w.decodeEventInit)
 	err := errors.Join(errArg1, errArg2)

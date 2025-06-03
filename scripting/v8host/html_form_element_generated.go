@@ -23,7 +23,7 @@ func newHTMLFormElementV8Wrapper(scriptHost *V8ScriptHost) *htmlFormElementV8Wra
 
 func createHTMLFormElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	wrapper := newHTMLFormElementV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -53,8 +53,8 @@ func (w htmlFormElementV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeAttribute("length", w.length, nil)
 }
 
-func (w htmlFormElementV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLFormElement.Constructor")
+func (w htmlFormElementV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: HTMLFormElement.constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

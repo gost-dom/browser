@@ -37,7 +37,7 @@ func CreateV8ConstructorBody(data ESConstructorData) g.Generator {
 
 	statements := g.StatementList(
 		g.Assign(builder.Wrapper, createWrapperFunction.Call(scriptHost)),
-		g.Assign(constructor, wrapCallback(scriptHost, builder.Wrapper.Field("Constructor"))),
+		g.Assign(constructor, wrapCallback(scriptHost, builder.Wrapper.Field("constructor"))),
 		g.Line,
 		g.Assign(builder.InstanceTmpl, constructor.GetInstanceTemplate()),
 		builder.InstanceTmpl.SetInternalFieldCount(1),

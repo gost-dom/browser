@@ -16,7 +16,7 @@ func init() {
 
 func createURLPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	wrapper := newURLV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -44,8 +44,8 @@ func (w urlV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeAttribute("hash", w.hash, w.setHash)
 }
 
-func (w urlV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.Constructor")
+func (w urlV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: URL.constructor")
 	url, errArg1 := consumeArgument(cbCtx, "url", nil, w.decodeString)
 	if errArg1 != nil {
 		return nil, errArg1
@@ -242,7 +242,7 @@ func newURLSearchParamsV8Wrapper(scriptHost *V8ScriptHost) *urlSearchParamsV8Wra
 
 func createURLSearchParamsPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	wrapper := newURLSearchParamsV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)

@@ -13,7 +13,7 @@ func init() {
 
 func createPointerEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	wrapper := newPointerEventV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -31,8 +31,8 @@ func (w pointerEventV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeAttribute("tangentialPressure", w.tangentialPressure, nil)
 }
 
-func (w pointerEventV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: PointerEvent.Constructor")
+func (w pointerEventV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: PointerEvent.constructor")
 	type_, errArg1 := consumeArgument(cbCtx, "type", nil, w.decodeString)
 	if errArg1 != nil {
 		return nil, errArg1

@@ -23,7 +23,7 @@ func newHTMLTemplateElementV8Wrapper(scriptHost *V8ScriptHost) *htmlTemplateElem
 
 func createHTMLTemplateElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	wrapper := newHTMLTemplateElementV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -42,8 +42,8 @@ func (w htmlTemplateElementV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeAttribute("shadowRootSerializable", w.shadowRootSerializable, w.setShadowRootSerializable)
 }
 
-func (w htmlTemplateElementV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLTemplateElement.Constructor")
+func (w htmlTemplateElementV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: HTMLTemplateElement.constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

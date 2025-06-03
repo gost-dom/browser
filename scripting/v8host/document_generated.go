@@ -27,7 +27,7 @@ func newDocumentV8Wrapper(scriptHost *V8ScriptHost) *documentV8Wrapper {
 
 func createDocumentPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	wrapper := newDocumentV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -71,8 +71,8 @@ func (w documentV8Wrapper) installPrototype(jsClass v8Class) {
 	w.parentNode.installPrototype(jsClass)
 }
 
-func (w documentV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: Document.Constructor")
+func (w documentV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: Document.constructor")
 	return w.CreateInstance(cbCtx)
 }
 

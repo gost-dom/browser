@@ -23,7 +23,7 @@ func newHistoryV8Wrapper(scriptHost *V8ScriptHost) *historyV8Wrapper {
 
 func createHistoryPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	wrapper := newHistoryV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.Constructor)
+	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
@@ -44,8 +44,8 @@ func (w historyV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeAttribute("state", w.state, nil)
 }
 
-func (w historyV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: History.Constructor")
+func (w historyV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: History.constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
