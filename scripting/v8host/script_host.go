@@ -266,9 +266,10 @@ func createHostInstance(config hostOptions) *V8ScriptHost {
 		if window == nil {
 			panic("No window was created. " + constants.BUG_ISSUE_URL)
 		}
-		host.windowTemplate = window.InstanceTemplate()
+		host.windowTemplate = v8go.NewObjectTemplate(host.iso)
+		host.windowTemplate.SetInternalFieldCount(1)
 		host.contexts = make(map[*v8go.Context]*V8ScriptContext)
-		installGlobals(window, host, globalInstalls)
+		installGlobals(host.windowTemplate, host, globalInstalls)
 		installEventLoopGlobals(host, host.windowTemplate)
 		for _, i := range initializers {
 			i.Configure(host)
@@ -380,6 +381,9 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 		v8ctx:   v8ctx,
 		window:  w,
 		v8nodes: make(map[entity.ObjectId]jsValue),
+	}
+	if _, err := context.runScript("Object.setPrototypeOf(globalThis, globalThis.Window.prototype)"); err != nil {
+		panic(err)
 	}
 	context.global = newV8Object(context, v8ctx.Global())
 	host.addContext(context)

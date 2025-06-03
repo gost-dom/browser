@@ -47,7 +47,6 @@ func (s *WindowTestSuite) TestDocumentProperty() {
 }
 
 func (s *WindowTestSuite) TestConstructorName() {
-	s.T().Skip("The Window function doesn't have a name. We might need to add setName to v8go")
 	s.Expect(s.Eval("window.constructor.name")).To(Equal("Window"))
 }
 

@@ -7,11 +7,10 @@ import (
 )
 
 func installGlobals(
-	windowFnTemplate *v8.FunctionTemplate,
+	windowTemplate *v8.ObjectTemplate,
 	host *V8ScriptHost,
 	globalInstalls []globalInstall,
 ) {
-	windowTemplate := windowFnTemplate.InstanceTemplate()
 	for _, globalInstall := range globalInstalls {
 		windowTemplate.Set(globalInstall.name, globalInstall.constructor)
 	}
