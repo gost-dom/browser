@@ -250,7 +250,7 @@ func createURLSearchParamsPrototype(scriptHost *V8ScriptHost) *v8.FunctionTempla
 	jsClass := newV8Class(scriptHost, constructor)
 	wrapper.installPrototype(jsClass)
 
-	wrapper.CustomInitialiser(constructor)
+	wrapper.CustomInitializer(constructor)
 	return constructor
 }
 

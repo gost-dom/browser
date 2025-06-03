@@ -23,7 +23,7 @@ func newElementV8Wrapper(host *V8ScriptHost) *elementV8Wrapper {
 	}
 }
 
-func (e *elementV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) {
+func (e *elementV8Wrapper) CustomInitializer(constructor *v8.FunctionTemplate) {
 	prototype := constructor.PrototypeTemplate()
 	prototype.Set("insertAdjacentHTML", wrapV8Callback(e.scriptHost, e.insertAdjacentHTML))
 	prototype.SetAccessorProperty("outerHTML",

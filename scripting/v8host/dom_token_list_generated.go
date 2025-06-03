@@ -31,7 +31,7 @@ func createDOMTokenListPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate 
 	jsClass := newV8Class(scriptHost, constructor)
 	wrapper.installPrototype(jsClass)
 
-	wrapper.CustomInitialiser(constructor)
+	wrapper.CustomInitializer(constructor)
 	return constructor
 }
 

@@ -48,7 +48,7 @@ func CreateV8ConstructorBody(data ESConstructorData) g.Generator {
 	)
 	if data.RunCustomCode {
 		statements.Append(
-			g.Raw(jen.Id("wrapper").Dot("CustomInitialiser").Call(jen.Id("constructor"))),
+			g.NewValue("wrapper").Field("CustomInitializer").Call(g.Id("constructor")),
 		)
 	}
 	statements.Append(g.Return(constructor))

@@ -8,7 +8,7 @@ import (
 	v8 "github.com/gost-dom/v8go"
 )
 
-func (w *documentV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) {
+func (w *documentV8Wrapper) CustomInitializer(constructor *v8.FunctionTemplate) {
 	host := w.scriptHost
 	tmpl := constructor.InstanceTemplate()
 	tmpl.SetAccessorProperty(

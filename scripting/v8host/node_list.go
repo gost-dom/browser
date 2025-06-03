@@ -5,7 +5,7 @@ import (
 	v8 "github.com/gost-dom/v8go"
 )
 
-func (w *nodeListV8Wrapper) CustomInitialiser(ft *v8.FunctionTemplate) {
+func (w *nodeListV8Wrapper) CustomInitializer(ft *v8.FunctionTemplate) {
 	host := w.scriptHost
 	nodeListIterator := newIterator(host,
 		func(ctx jsCallbackContext, instance dom.Node) (jsValue, error) {

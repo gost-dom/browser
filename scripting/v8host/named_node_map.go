@@ -25,7 +25,7 @@ func createAttr(host *V8ScriptHost) *v8.FunctionTemplate {
 	return builder.constructor
 }
 
-func (w namedNodeMapV8Wrapper) CustomInitialiser(ft *v8go.FunctionTemplate) {
+func (w namedNodeMapV8Wrapper) CustomInitializer(ft *v8go.FunctionTemplate) {
 	ft.InstanceTemplate().SetIndexedHandler(
 		// NOTE: This is the prototype index handler implementation.
 		wrapV8IndexedGetterCallbackFn(

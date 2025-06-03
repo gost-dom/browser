@@ -5,7 +5,7 @@ import (
 	"github.com/gost-dom/v8go"
 )
 
-func (w formDataV8Wrapper) CustomInitialiser(constructor *v8go.FunctionTemplate) {
+func (w formDataV8Wrapper) CustomInitializer(constructor *v8go.FunctionTemplate) {
 	iterator := newIterator2(
 		w.scriptHost,
 		w.toString_,

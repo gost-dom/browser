@@ -101,7 +101,7 @@ func (w urlSearchParamsV8Wrapper) toSequenceString_(
 	return fact.NewArray(vs...), nil
 }
 
-func (w urlSearchParamsV8Wrapper) CustomInitialiser(constructor *v8.FunctionTemplate) {
+func (w urlSearchParamsV8Wrapper) CustomInitializer(constructor *v8.FunctionTemplate) {
 	it := newIterator2(w.scriptHost, w.toString_, w.toString_)
 	it.installPrototype(constructor)
 }
