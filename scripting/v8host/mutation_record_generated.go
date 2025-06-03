@@ -31,6 +31,7 @@ func createMutationRecordPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplat
 
 	return constructor
 }
+
 func (w mutationRecordV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	jsClass := newV8Class(w.scriptHost, ft)
 	jsClass.CreatePrototypeAttribute("type", w.type_, nil)

@@ -27,6 +27,7 @@ func createNonDocumentTypeChildNodePrototype(scriptHost *V8ScriptHost) *v8.Funct
 
 	return constructor
 }
+
 func (w nonDocumentTypeChildNodeV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	jsClass := newV8Class(w.scriptHost, ft)
 	jsClass.CreatePrototypeAttribute("previousElementSibling", w.previousElementSibling, nil)

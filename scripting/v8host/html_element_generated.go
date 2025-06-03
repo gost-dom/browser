@@ -35,6 +35,7 @@ func createHTMLElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 
 	return constructor
 }
+
 func (w htmlElementV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	jsClass := newV8Class(w.scriptHost, ft)
 	jsClass.CreatePrototypeMethod("click", w.click)

@@ -93,6 +93,7 @@ func (g PrototypeWrapperGenerator) Generate() *jen.Statement {
 
 	list.Append(
 		g.Platform.CreateHostInitializer(g.Data),
+		generators.Line,
 		PrototypeInitializerGenerator(g),
 		g.Constructor(),
 		g.CreateOperationCallbacks(g.Data),

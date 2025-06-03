@@ -32,6 +32,7 @@ func createNodeListPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	wrapper.CustomInitialiser(constructor)
 	return constructor
 }
+
 func (w nodeListV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	jsClass := newV8Class(w.scriptHost, ft)
 	jsClass.CreatePrototypeMethod("item", w.item)

@@ -32,6 +32,7 @@ func createWindowPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 
 	return constructor
 }
+
 func (w windowV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	jsClass := newV8Class(w.scriptHost, ft)
 	jsClass.CreatePrototypeMethod("close", w.close)

@@ -25,6 +25,7 @@ func createURLPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 
 	return constructor
 }
+
 func (w urlV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	jsClass := newV8Class(w.scriptHost, ft)
 	jsClass.CreatePrototypeMethod("toJSON", w.toJSON)
@@ -251,6 +252,7 @@ func createURLSearchParamsPrototype(scriptHost *V8ScriptHost) *v8.FunctionTempla
 	wrapper.CustomInitialiser(constructor)
 	return constructor
 }
+
 func (w urlSearchParamsV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	jsClass := newV8Class(w.scriptHost, ft)
 	jsClass.CreatePrototypeMethod("append", w.append)

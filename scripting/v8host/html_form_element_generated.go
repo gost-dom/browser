@@ -32,6 +32,7 @@ func createHTMLFormElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTempla
 
 	return constructor
 }
+
 func (w htmlFormElementV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	jsClass := newV8Class(w.scriptHost, ft)
 	jsClass.CreatePrototypeMethod("submit", w.submit)

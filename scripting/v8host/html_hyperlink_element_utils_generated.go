@@ -28,6 +28,7 @@ func createHTMLHyperlinkElementUtilsPrototype(scriptHost *V8ScriptHost) *v8.Func
 
 	return constructor
 }
+
 func (w htmlHyperlinkElementUtilsV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	jsClass := newV8Class(w.scriptHost, ft)
 	jsClass.CreatePrototypeAttribute("href", w.href, w.setHref)

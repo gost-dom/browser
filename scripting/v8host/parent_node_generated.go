@@ -27,6 +27,7 @@ func createParentNodePrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 
 	return constructor
 }
+
 func (w parentNodeV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	jsClass := newV8Class(w.scriptHost, ft)
 	jsClass.CreatePrototypeMethod("prepend", w.prepend)
