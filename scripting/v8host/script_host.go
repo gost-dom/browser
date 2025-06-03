@@ -73,7 +73,7 @@ var pool = &scriptHostPool{}
 
 type globalInstall struct {
 	name        string
-	constructor *v8go.FunctionTemplate
+	constructor v8Class
 }
 
 type globals struct {
@@ -102,7 +102,7 @@ type V8ScriptHost struct {
 }
 
 type jsConstructorFactory1 = func(*V8ScriptHost) *v8go.FunctionTemplate
-type jsConstructorFactory = func(*V8ScriptHost, *v8go.FunctionTemplate) *v8go.FunctionTemplate
+type jsConstructorFactory = func(*V8ScriptHost, jsClass) v8Class
 
 type class struct {
 	globalIdentifier string
@@ -115,13 +115,13 @@ type class struct {
 // before subclasses
 func createGlobals(host *V8ScriptHost) []globalInstall {
 	result := make([]globalInstall, 0)
-	var iter func(class classSpec) *v8go.FunctionTemplate
-	uniqueNames := make(map[string]*v8go.FunctionTemplate)
-	iter = func(class classSpec) *v8go.FunctionTemplate {
+	var iter func(class classSpec) jsClass
+	uniqueNames := make(map[string]jsClass)
+	iter = func(class classSpec) jsClass {
 		if constructor, found := uniqueNames[class.name]; found {
 			return constructor
 		}
-		var superClassConstructor *v8go.FunctionTemplate
+		var superClassConstructor jsClass
 		if class.superClassName != "" {
 			superClassSpec, found := classes[class.superClassName]
 			if !found {
@@ -184,11 +184,13 @@ func registerJSClass(
 	constructorFactory jsConstructorFactory1,
 ) {
 	spec := classSpec{
-		className, superClassName, func(host *V8ScriptHost, extends *v8go.FunctionTemplate) *v8go.FunctionTemplate {
-			res := constructorFactory(host)
+		className, superClassName, func(host *V8ScriptHost, extends jsClass) v8Class {
+			res := newV8Class(host, constructorFactory(host))
 			if extends != nil {
-				res.Inherit(extends)
+				res.ft.Inherit(extends.(v8Class).ft)
 			}
+			host.windowTemplate.Set(className, res.ft)
+			host.globals.namedGlobals[className] = res
 			return res
 		},
 	}
@@ -251,25 +253,13 @@ func createHostInstance(config hostOptions) *V8ScriptHost {
 
 	if !hostReused {
 		host.iso.SetPromiseRejectedCallback(host.promiseRejected)
-		globalInstalls := createGlobals(host)
-		host.globals = globals{make(map[string]v8Class)}
-		var window *v8go.FunctionTemplate
-		for _, globalInstall := range globalInstalls {
-			host.globals.namedGlobals[globalInstall.name] = newV8Class(
-				host,
-				globalInstall.constructor,
-			)
-			if globalInstall.name == "Window" {
-				window = globalInstall.constructor
-			}
-		}
-		if window == nil {
-			panic("No window was created. " + constants.BUG_ISSUE_URL)
-		}
 		host.windowTemplate = v8go.NewObjectTemplate(host.iso)
+		host.globals = globals{make(map[string]v8Class)}
+		globalInstalls := createGlobals(host)
 		host.windowTemplate.SetInternalFieldCount(1)
 		host.contexts = make(map[*v8go.Context]*V8ScriptContext)
-		installGlobals(host.windowTemplate, host, globalInstalls)
+		var _ []globalInstall = globalInstalls
+		installGlobals(host.windowTemplate, host)
 		installEventLoopGlobals(host, host.windowTemplate)
 		for _, i := range initializers {
 			i.Configure(host)

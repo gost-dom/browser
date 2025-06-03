@@ -6,14 +6,7 @@ import (
 	v8 "github.com/gost-dom/v8go"
 )
 
-func installGlobals(
-	windowTemplate *v8.ObjectTemplate,
-	host *V8ScriptHost,
-	globalInstalls []globalInstall,
-) {
-	for _, globalInstall := range globalInstalls {
-		windowTemplate.Set(globalInstall.name, globalInstall.constructor)
-	}
+func installGlobals(windowTemplate *v8.ObjectTemplate, host *V8ScriptHost) {
 	location := host.globals.namedGlobals["Location"]
 	windowTemplate.Set("location", location.ft.InstanceTemplate())
 }
