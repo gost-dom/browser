@@ -30,8 +30,6 @@ func assertV8Object(v jsObject) *v8Object {
 	panic("Expected a V8 Object")
 }
 
-//*/
-
 type v8Value struct {
 	ctx   *V8ScriptContext
 	Value *v8go.Value
