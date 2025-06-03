@@ -27,14 +27,14 @@ func createNodeListPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor)
+	jsClass := newV8Class(scriptHost, constructor)
+	wrapper.installPrototype(jsClass)
 
 	wrapper.CustomInitialiser(constructor)
 	return constructor
 }
 
-func (w nodeListV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
-	jsClass := newV8Class(w.scriptHost, ft)
+func (w nodeListV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("item", w.item)
 	jsClass.CreatePrototypeAttribute("length", w.length, nil)
 }

@@ -32,15 +32,15 @@ func createHTMLAnchorElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemp
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor)
+	jsClass := newV8Class(scriptHost, constructor)
+	wrapper.installPrototype(jsClass)
 
 	return constructor
 }
 
-func (w htmlAnchorElementV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
-	jsClass := newV8Class(w.scriptHost, ft)
+func (w htmlAnchorElementV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeAttribute("target", w.target, w.setTarget)
-	w.htmlHyperlinkElementUtils.installPrototype(ft)
+	w.htmlHyperlinkElementUtils.installPrototype(jsClass)
 }
 
 func (w htmlAnchorElementV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {

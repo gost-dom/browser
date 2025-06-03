@@ -28,13 +28,13 @@ func createHTMLTemplateElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTe
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor)
+	jsClass := newV8Class(scriptHost, constructor)
+	wrapper.installPrototype(jsClass)
 
 	return constructor
 }
 
-func (w htmlTemplateElementV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
-	jsClass := newV8Class(w.scriptHost, ft)
+func (w htmlTemplateElementV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeAttribute("content", w.content, nil)
 	jsClass.CreatePrototypeAttribute("shadowRootMode", w.shadowRootMode, w.setShadowRootMode)
 	jsClass.CreatePrototypeAttribute("shadowRootDelegatesFocus", w.shadowRootDelegatesFocus, w.setShadowRootDelegatesFocus)

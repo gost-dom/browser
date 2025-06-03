@@ -213,22 +213,22 @@ func (o *v8Object) Keys() ([]string, error) {
 	return result.Bind1(keysAsSlice, mapSlice, asString).Unwrap()
 }
 
-type v8Constructor struct {
+type v8Class struct {
 	host  *V8ScriptHost
 	ft    *v8go.FunctionTemplate
 	proto *v8go.ObjectTemplate
 }
 
-func newV8Class(host *V8ScriptHost, ft *v8go.FunctionTemplate) v8Constructor {
-	return v8Constructor{host, ft, ft.PrototypeTemplate()}
+func newV8Class(host *V8ScriptHost, ft *v8go.FunctionTemplate) v8Class {
+	return v8Class{host, ft, ft.PrototypeTemplate()}
 }
 
-func (c v8Constructor) CreatePrototypeMethod(name string, cb js.FunctionCallback[jsTypeParam]) {
+func (c v8Class) CreatePrototypeMethod(name string, cb js.FunctionCallback[jsTypeParam]) {
 	v8cb := wrapV8Callback(c.host, cb)
 	c.proto.Set(name, v8cb, v8go.ReadOnly)
 }
 
-func (c v8Constructor) CreatePrototypeAttribute(
+func (c v8Class) CreatePrototypeAttribute(
 	name string,
 	getter js.FunctionCallback[jsTypeParam],
 	setter js.FunctionCallback[jsTypeParam],

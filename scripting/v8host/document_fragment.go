@@ -23,6 +23,7 @@ func createDocumentFragmentPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
 	}
 	constructor := wrapV8Callback(host, wrapper.constructor)
 	constructor.InstanceTemplate().SetInternalFieldCount(1)
-	wrapper.parentNode.installPrototype(constructor)
+	jsClass := newV8Class(host, constructor)
+	wrapper.parentNode.installPrototype(jsClass)
 	return constructor
 }

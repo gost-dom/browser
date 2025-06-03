@@ -20,13 +20,13 @@ func createEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor)
+	jsClass := newV8Class(scriptHost, constructor)
+	wrapper.installPrototype(jsClass)
 
 	return constructor
 }
 
-func (w eventV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
-	jsClass := newV8Class(w.scriptHost, ft)
+func (w eventV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("stopPropagation", w.stopPropagation)
 	jsClass.CreatePrototypeMethod("preventDefault", w.preventDefault)
 	jsClass.CreatePrototypeAttribute("type", w.type_, nil)

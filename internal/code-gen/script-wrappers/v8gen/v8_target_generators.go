@@ -44,7 +44,7 @@ func (gen V8TargetGenerators) CreatePrototypeInitializer(
 			Name: receiver,
 			Type: g.Id(naming.PrototypeWrapperName()),
 		},
-		Args: g.Arg(builder.FT, v8FunctionTemplatePtr),
+		Args: g.Arg(builder.Class, v8Class),
 		Body: body,
 	}
 }

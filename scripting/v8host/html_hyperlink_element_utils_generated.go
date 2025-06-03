@@ -24,13 +24,13 @@ func createHTMLHyperlinkElementUtilsPrototype(scriptHost *V8ScriptHost) *v8.Func
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor)
+	jsClass := newV8Class(scriptHost, constructor)
+	wrapper.installPrototype(jsClass)
 
 	return constructor
 }
 
-func (w htmlHyperlinkElementUtilsV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
-	jsClass := newV8Class(w.scriptHost, ft)
+func (w htmlHyperlinkElementUtilsV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeAttribute("href", w.href, w.setHref)
 	jsClass.CreatePrototypeMethod("toString", w.href)
 	jsClass.CreatePrototypeAttribute("origin", w.origin, nil)

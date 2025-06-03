@@ -305,7 +305,7 @@ func (c v8Scope) Constructor(name string) js.Constructor[jsTypeParam] {
 
 type v8Constructable struct {
 	scope v8Scope
-	ctor  v8Constructor
+	ctor  v8Class
 }
 
 func (c v8Constructable) NewInstance(

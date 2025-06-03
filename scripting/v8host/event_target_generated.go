@@ -28,13 +28,13 @@ func createEventTargetPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor)
+	jsClass := newV8Class(scriptHost, constructor)
+	wrapper.installPrototype(jsClass)
 
 	return constructor
 }
 
-func (w eventTargetV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
-	jsClass := newV8Class(w.scriptHost, ft)
+func (w eventTargetV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("addEventListener", w.addEventListener)
 	jsClass.CreatePrototypeMethod("removeEventListener", w.removeEventListener)
 	jsClass.CreatePrototypeMethod("dispatchEvent", w.dispatchEvent)

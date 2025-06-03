@@ -28,14 +28,14 @@ func createNamedNodeMapPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate 
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor)
+	jsClass := newV8Class(scriptHost, constructor)
+	wrapper.installPrototype(jsClass)
 
 	wrapper.CustomInitialiser(constructor)
 	return constructor
 }
 
-func (w namedNodeMapV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
-	jsClass := newV8Class(w.scriptHost, ft)
+func (w namedNodeMapV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("item", w.item)
 	jsClass.CreatePrototypeMethod("getNamedItem", w.getNamedItem)
 	jsClass.CreatePrototypeMethod("getNamedItemNS", w.getNamedItemNS)

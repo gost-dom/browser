@@ -28,13 +28,13 @@ func createNodePrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor)
+	jsClass := newV8Class(scriptHost, constructor)
+	wrapper.installPrototype(jsClass)
 
 	return constructor
 }
 
-func (w nodeV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
-	jsClass := newV8Class(w.scriptHost, ft)
+func (w nodeV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("getRootNode", w.getRootNode)
 	jsClass.CreatePrototypeMethod("cloneNode", w.cloneNode)
 	jsClass.CreatePrototypeMethod("isSameNode", w.isSameNode)

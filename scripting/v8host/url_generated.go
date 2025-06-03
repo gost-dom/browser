@@ -21,13 +21,13 @@ func createURLPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor)
+	jsClass := newV8Class(scriptHost, constructor)
+	wrapper.installPrototype(jsClass)
 
 	return constructor
 }
 
-func (w urlV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
-	jsClass := newV8Class(w.scriptHost, ft)
+func (w urlV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("toJSON", w.toJSON)
 	jsClass.CreatePrototypeAttribute("href", w.href, w.setHref)
 	jsClass.CreatePrototypeMethod("toString", w.href)
@@ -247,14 +247,14 @@ func createURLSearchParamsPrototype(scriptHost *V8ScriptHost) *v8.FunctionTempla
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor)
+	jsClass := newV8Class(scriptHost, constructor)
+	wrapper.installPrototype(jsClass)
 
 	wrapper.CustomInitialiser(constructor)
 	return constructor
 }
 
-func (w urlSearchParamsV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
-	jsClass := newV8Class(w.scriptHost, ft)
+func (w urlSearchParamsV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("append", w.append)
 	jsClass.CreatePrototypeMethod("delete", w.delete)
 	jsClass.CreatePrototypeMethod("get", w.get)

@@ -24,13 +24,13 @@ func createHTMLOrSVGElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTempl
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor)
+	jsClass := newV8Class(scriptHost, constructor)
+	wrapper.installPrototype(jsClass)
 
 	return constructor
 }
 
-func (w htmlOrSVGElementV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
-	jsClass := newV8Class(w.scriptHost, ft)
+func (w htmlOrSVGElementV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("focus", w.focus)
 	jsClass.CreatePrototypeMethod("blur", w.blur)
 	jsClass.CreatePrototypeAttribute("dataset", w.dataset, nil)

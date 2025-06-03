@@ -41,7 +41,7 @@ func (g PrototypeInitializerGenerator) MixinsGenerator() generators.Generator {
 		if _, included := g.Data.Spec.DomSpec.Interfaces[mixin.Name]; included {
 			result.Append(
 				gen.NewValue("w").Field(wrapperName).Field("installPrototype").Call(
-					gen.Id("ft")),
+					gen.Id("jsClass")),
 			)
 		}
 	}

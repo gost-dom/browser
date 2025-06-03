@@ -13,6 +13,7 @@ import (
 type ConstructorBuilder struct {
 	v8Iso
 	FT           v8FunctionTemplate
+	Class        jsClass
 	Proto        v8PrototypeTemplate
 	InstanceTmpl v8InstanceTemplate
 	Wrapper      WrapperInstance
@@ -22,6 +23,7 @@ func NewConstructorBuilder() ConstructorBuilder {
 	return ConstructorBuilder{
 		v8Iso:        v8Iso{g.NewValue("iso")},
 		FT:           v8FunctionTemplate{g.NewValue("ft")},
+		Class:        jsClass{g.NewValue("jsClass")},
 		Proto:        v8PrototypeTemplate{g.NewValue("prototypeTmpl")},
 		InstanceTmpl: v8InstanceTemplate{g.NewValue("instanceTmpl")},
 		Wrapper:      WrapperInstance{g.NewValue("wrapper")},
@@ -39,7 +41,7 @@ type PrototypeInstaller struct {
 func (i PrototypeInstaller) Generate() *jen.Statement {
 	class := jsClass{g.NewValue("jsClass")}
 	return g.StatementList(
-		g.Assign(class, newJSClass(i.Host, i.Ft)),
+		// g.Assign(class, newJSClass(i.Host, i.Ft)),
 		i.InstallFunctionHandlers(i.Data, class),
 		i.InstallAttributeHandlers(i.Data, class),
 	).Generate()

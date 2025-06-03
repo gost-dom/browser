@@ -36,14 +36,14 @@ func CreateV8ConstructorBody(data ESConstructorData) g.Generator {
 	createWrapperFunction := g.NewValue(fmt.Sprintf("new%s", naming.PrototypeWrapperBaseName()))
 
 	statements := g.StatementList(
-		// builder.v8Iso.Assign(scriptHost.Field("iso")),
 		g.Assign(builder.Wrapper, createWrapperFunction.Call(scriptHost)),
 		g.Assign(constructor, wrapCallback(scriptHost, builder.Wrapper.Field("Constructor"))),
 		g.Line,
 		g.Assign(builder.InstanceTmpl, constructor.GetInstanceTemplate()),
 		builder.InstanceTmpl.SetInternalFieldCount(1),
 		g.Line,
-		builder.Wrapper.Field("installPrototype").Call(constructor),
+		g.Assign(builder.Class, newJSClass(scriptHost, constructor)),
+		builder.Wrapper.InitializeClass(builder.Class),
 		g.Line,
 	)
 	if data.RunCustomCode {

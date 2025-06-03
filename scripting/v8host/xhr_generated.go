@@ -29,14 +29,14 @@ func createFormDataPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor)
+	jsClass := newV8Class(scriptHost, constructor)
+	wrapper.installPrototype(jsClass)
 
 	wrapper.CustomInitialiser(constructor)
 	return constructor
 }
 
-func (w formDataV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
-	jsClass := newV8Class(w.scriptHost, ft)
+func (w formDataV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("append", w.append)
 	jsClass.CreatePrototypeMethod("delete", w.delete)
 	jsClass.CreatePrototypeMethod("get", w.get)
@@ -163,13 +163,13 @@ func createXMLHttpRequestPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplat
 	instanceTmpl := constructor.InstanceTemplate()
 	instanceTmpl.SetInternalFieldCount(1)
 
-	wrapper.installPrototype(constructor)
+	jsClass := newV8Class(scriptHost, constructor)
+	wrapper.installPrototype(jsClass)
 
 	return constructor
 }
 
-func (w xmlHttpRequestV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
-	jsClass := newV8Class(w.scriptHost, ft)
+func (w xmlHttpRequestV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("open", w.open)
 	jsClass.CreatePrototypeMethod("setRequestHeader", w.setRequestHeader)
 	jsClass.CreatePrototypeMethod("send", w.send)

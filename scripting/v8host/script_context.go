@@ -105,11 +105,11 @@ func lookupJSPrototype(entity entity.ObjectIder) string {
 // Panics if the name is not one registered as a constructor. The name should
 // not originate from client code, only from this library, so it should be
 // guaranteed that this function is only called with valid values.
-func (c *V8ScriptContext) Constructor(name string) v8Constructor {
+func (c *V8ScriptContext) Constructor(name string) v8Class {
 	return c.getConstructor(name)
 }
 
-func (c *V8ScriptContext) getConstructor(name string) v8Constructor {
+func (c *V8ScriptContext) getConstructor(name string) v8Class {
 	prototype, ok := c.host.globals.namedGlobals[name]
 	if !ok {
 		panic(fmt.Sprintf("Unrecognised constructor name: %s. %s", name, constants.BUG_ISSUE_URL))
