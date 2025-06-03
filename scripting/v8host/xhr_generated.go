@@ -4,7 +4,6 @@ package v8host
 
 import (
 	"errors"
-
 	html "github.com/gost-dom/browser/html"
 	html1 "github.com/gost-dom/browser/internal/html"
 	js "github.com/gost-dom/browser/scripting/internal/js"
@@ -36,13 +35,13 @@ func createFormDataPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	return constructor
 }
 func (w formDataV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
-	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.Set("append", wrapV8Callback(w.scriptHost, w.append))
-	prototypeTmpl.Set("delete", wrapV8Callback(w.scriptHost, w.delete))
-	prototypeTmpl.Set("get", wrapV8Callback(w.scriptHost, w.get))
-	prototypeTmpl.Set("getAll", wrapV8Callback(w.scriptHost, w.getAll))
-	prototypeTmpl.Set("has", wrapV8Callback(w.scriptHost, w.has))
-	prototypeTmpl.Set("set", wrapV8Callback(w.scriptHost, w.set))
+	jsClass := newV8Class(w.scriptHost, ft)
+	jsClass.CreatePrototypeMethod("append", w.append)
+	jsClass.CreatePrototypeMethod("delete", w.delete)
+	jsClass.CreatePrototypeMethod("get", w.get)
+	jsClass.CreatePrototypeMethod("getAll", w.getAll)
+	jsClass.CreatePrototypeMethod("has", w.has)
+	jsClass.CreatePrototypeMethod("set", w.set)
 }
 
 func (w formDataV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
@@ -168,15 +167,15 @@ func createXMLHttpRequestPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplat
 	return constructor
 }
 func (w xmlHttpRequestV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	jsClass := newV8Class(w.scriptHost, ft)
+	jsClass.CreatePrototypeMethod("open", w.open)
+	jsClass.CreatePrototypeMethod("setRequestHeader", w.setRequestHeader)
+	jsClass.CreatePrototypeMethod("send", w.send)
+	jsClass.CreatePrototypeMethod("abort", w.abort)
+	jsClass.CreatePrototypeMethod("getResponseHeader", w.getResponseHeader)
+	jsClass.CreatePrototypeMethod("getAllResponseHeaders", w.getAllResponseHeaders)
+	jsClass.CreatePrototypeMethod("overrideMimeType", w.overrideMimeType)
 	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.Set("open", wrapV8Callback(w.scriptHost, w.open))
-	prototypeTmpl.Set("setRequestHeader", wrapV8Callback(w.scriptHost, w.setRequestHeader))
-	prototypeTmpl.Set("send", wrapV8Callback(w.scriptHost, w.send))
-	prototypeTmpl.Set("abort", wrapV8Callback(w.scriptHost, w.abort))
-	prototypeTmpl.Set("getResponseHeader", wrapV8Callback(w.scriptHost, w.getResponseHeader))
-	prototypeTmpl.Set("getAllResponseHeaders", wrapV8Callback(w.scriptHost, w.getAllResponseHeaders))
-	prototypeTmpl.Set("overrideMimeType", wrapV8Callback(w.scriptHost, w.overrideMimeType))
-
 	prototypeTmpl.SetAccessorProperty("readyState",
 		wrapV8Callback(w.scriptHost, w.readyState),
 		nil,

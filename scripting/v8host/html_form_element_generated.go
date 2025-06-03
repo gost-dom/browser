@@ -33,13 +33,13 @@ func createHTMLFormElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTempla
 	return constructor
 }
 func (w htmlFormElementV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	jsClass := newV8Class(w.scriptHost, ft)
+	jsClass.CreatePrototypeMethod("submit", w.submit)
+	jsClass.CreatePrototypeMethod("requestSubmit", w.requestSubmit)
+	jsClass.CreatePrototypeMethod("reset", w.reset)
+	jsClass.CreatePrototypeMethod("checkValidity", w.checkValidity)
+	jsClass.CreatePrototypeMethod("reportValidity", w.reportValidity)
 	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.Set("submit", wrapV8Callback(w.scriptHost, w.submit))
-	prototypeTmpl.Set("requestSubmit", wrapV8Callback(w.scriptHost, w.requestSubmit))
-	prototypeTmpl.Set("reset", wrapV8Callback(w.scriptHost, w.reset))
-	prototypeTmpl.Set("checkValidity", wrapV8Callback(w.scriptHost, w.checkValidity))
-	prototypeTmpl.Set("reportValidity", wrapV8Callback(w.scriptHost, w.reportValidity))
-
 	prototypeTmpl.SetAccessorProperty("acceptCharset",
 		wrapV8Callback(w.scriptHost, w.acceptCharset),
 		wrapV8Callback(w.scriptHost, w.setAcceptCharset),

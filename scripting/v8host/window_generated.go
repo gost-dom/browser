@@ -33,17 +33,17 @@ func createWindowPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	return constructor
 }
 func (w windowV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	jsClass := newV8Class(w.scriptHost, ft)
+	jsClass.CreatePrototypeMethod("close", w.close)
+	jsClass.CreatePrototypeMethod("stop", w.stop)
+	jsClass.CreatePrototypeMethod("focus", w.focus)
+	jsClass.CreatePrototypeMethod("blur", w.blur)
+	jsClass.CreatePrototypeMethod("open", w.open)
+	jsClass.CreatePrototypeMethod("alert", w.alert)
+	jsClass.CreatePrototypeMethod("confirm", w.confirm)
+	jsClass.CreatePrototypeMethod("print", w.print)
+	jsClass.CreatePrototypeMethod("postMessage", w.postMessage)
 	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.Set("close", wrapV8Callback(w.scriptHost, w.close))
-	prototypeTmpl.Set("stop", wrapV8Callback(w.scriptHost, w.stop))
-	prototypeTmpl.Set("focus", wrapV8Callback(w.scriptHost, w.focus))
-	prototypeTmpl.Set("blur", wrapV8Callback(w.scriptHost, w.blur))
-	prototypeTmpl.Set("open", wrapV8Callback(w.scriptHost, w.open))
-	prototypeTmpl.Set("alert", wrapV8Callback(w.scriptHost, w.alert))
-	prototypeTmpl.Set("confirm", wrapV8Callback(w.scriptHost, w.confirm))
-	prototypeTmpl.Set("print", wrapV8Callback(w.scriptHost, w.print))
-	prototypeTmpl.Set("postMessage", wrapV8Callback(w.scriptHost, w.postMessage))
-
 	prototypeTmpl.SetAccessorProperty("window",
 		wrapV8Callback(w.scriptHost, w.window),
 		nil,

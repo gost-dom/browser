@@ -38,7 +38,6 @@ func createHTMLAnchorElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemp
 }
 func (w htmlAnchorElementV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	prototypeTmpl := ft.PrototypeTemplate()
-
 	prototypeTmpl.SetAccessorProperty("target",
 		wrapV8Callback(w.scriptHost, w.target),
 		wrapV8Callback(w.scriptHost, w.setTarget),

@@ -26,9 +26,9 @@ func createURLPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	return constructor
 }
 func (w urlV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	jsClass := newV8Class(w.scriptHost, ft)
+	jsClass.CreatePrototypeMethod("toJSON", w.toJSON)
 	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.Set("toJSON", wrapV8Callback(w.scriptHost, w.toJSON))
-
 	prototypeTmpl.SetAccessorProperty("href",
 		wrapV8Callback(w.scriptHost, w.href),
 		wrapV8Callback(w.scriptHost, w.setHref),
@@ -289,16 +289,16 @@ func createURLSearchParamsPrototype(scriptHost *V8ScriptHost) *v8.FunctionTempla
 	return constructor
 }
 func (w urlSearchParamsV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	jsClass := newV8Class(w.scriptHost, ft)
+	jsClass.CreatePrototypeMethod("append", w.append)
+	jsClass.CreatePrototypeMethod("delete", w.delete)
+	jsClass.CreatePrototypeMethod("get", w.get)
+	jsClass.CreatePrototypeMethod("getAll", w.getAll)
+	jsClass.CreatePrototypeMethod("has", w.has)
+	jsClass.CreatePrototypeMethod("set", w.set)
+	jsClass.CreatePrototypeMethod("sort", w.sort)
+	jsClass.CreatePrototypeMethod("toString", w.toString)
 	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.Set("append", wrapV8Callback(w.scriptHost, w.append))
-	prototypeTmpl.Set("delete", wrapV8Callback(w.scriptHost, w.delete))
-	prototypeTmpl.Set("get", wrapV8Callback(w.scriptHost, w.get))
-	prototypeTmpl.Set("getAll", wrapV8Callback(w.scriptHost, w.getAll))
-	prototypeTmpl.Set("has", wrapV8Callback(w.scriptHost, w.has))
-	prototypeTmpl.Set("set", wrapV8Callback(w.scriptHost, w.set))
-	prototypeTmpl.Set("sort", wrapV8Callback(w.scriptHost, w.sort))
-	prototypeTmpl.Set("toString", wrapV8Callback(w.scriptHost, w.toString))
-
 	prototypeTmpl.SetAccessorProperty("size",
 		wrapV8Callback(w.scriptHost, w.size),
 		nil,

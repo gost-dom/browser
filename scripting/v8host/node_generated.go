@@ -33,15 +33,15 @@ func createNodePrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	return constructor
 }
 func (w nodeV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	jsClass := newV8Class(w.scriptHost, ft)
+	jsClass.CreatePrototypeMethod("getRootNode", w.getRootNode)
+	jsClass.CreatePrototypeMethod("cloneNode", w.cloneNode)
+	jsClass.CreatePrototypeMethod("isSameNode", w.isSameNode)
+	jsClass.CreatePrototypeMethod("contains", w.contains)
+	jsClass.CreatePrototypeMethod("insertBefore", w.insertBefore)
+	jsClass.CreatePrototypeMethod("appendChild", w.appendChild)
+	jsClass.CreatePrototypeMethod("removeChild", w.removeChild)
 	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.Set("getRootNode", wrapV8Callback(w.scriptHost, w.getRootNode))
-	prototypeTmpl.Set("cloneNode", wrapV8Callback(w.scriptHost, w.cloneNode))
-	prototypeTmpl.Set("isSameNode", wrapV8Callback(w.scriptHost, w.isSameNode))
-	prototypeTmpl.Set("contains", wrapV8Callback(w.scriptHost, w.contains))
-	prototypeTmpl.Set("insertBefore", wrapV8Callback(w.scriptHost, w.insertBefore))
-	prototypeTmpl.Set("appendChild", wrapV8Callback(w.scriptHost, w.appendChild))
-	prototypeTmpl.Set("removeChild", wrapV8Callback(w.scriptHost, w.removeChild))
-
 	prototypeTmpl.SetAccessorProperty("nodeType",
 		wrapV8Callback(w.scriptHost, w.nodeType),
 		nil,

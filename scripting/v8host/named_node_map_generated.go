@@ -34,15 +34,15 @@ func createNamedNodeMapPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate 
 	return constructor
 }
 func (w namedNodeMapV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	jsClass := newV8Class(w.scriptHost, ft)
+	jsClass.CreatePrototypeMethod("item", w.item)
+	jsClass.CreatePrototypeMethod("getNamedItem", w.getNamedItem)
+	jsClass.CreatePrototypeMethod("getNamedItemNS", w.getNamedItemNS)
+	jsClass.CreatePrototypeMethod("setNamedItem", w.setNamedItem)
+	jsClass.CreatePrototypeMethod("setNamedItemNS", w.setNamedItemNS)
+	jsClass.CreatePrototypeMethod("removeNamedItem", w.removeNamedItem)
+	jsClass.CreatePrototypeMethod("removeNamedItemNS", w.removeNamedItemNS)
 	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.Set("item", wrapV8Callback(w.scriptHost, w.item))
-	prototypeTmpl.Set("getNamedItem", wrapV8Callback(w.scriptHost, w.getNamedItem))
-	prototypeTmpl.Set("getNamedItemNS", wrapV8Callback(w.scriptHost, w.getNamedItemNS))
-	prototypeTmpl.Set("setNamedItem", wrapV8Callback(w.scriptHost, w.setNamedItem))
-	prototypeTmpl.Set("setNamedItemNS", wrapV8Callback(w.scriptHost, w.setNamedItemNS))
-	prototypeTmpl.Set("removeNamedItem", wrapV8Callback(w.scriptHost, w.removeNamedItem))
-	prototypeTmpl.Set("removeNamedItemNS", wrapV8Callback(w.scriptHost, w.removeNamedItemNS))
-
 	prototypeTmpl.SetAccessorProperty("length",
 		wrapV8Callback(w.scriptHost, w.length),
 		nil,

@@ -30,7 +30,6 @@ func createHTMLHyperlinkElementUtilsPrototype(scriptHost *V8ScriptHost) *v8.Func
 }
 func (w htmlHyperlinkElementUtilsV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	prototypeTmpl := ft.PrototypeTemplate()
-
 	prototypeTmpl.SetAccessorProperty("href",
 		wrapV8Callback(w.scriptHost, w.href),
 		wrapV8Callback(w.scriptHost, w.setHref),

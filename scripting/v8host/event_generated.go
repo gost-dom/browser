@@ -25,10 +25,10 @@ func createEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	return constructor
 }
 func (w eventV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	jsClass := newV8Class(w.scriptHost, ft)
+	jsClass.CreatePrototypeMethod("stopPropagation", w.stopPropagation)
+	jsClass.CreatePrototypeMethod("preventDefault", w.preventDefault)
 	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.Set("stopPropagation", wrapV8Callback(w.scriptHost, w.stopPropagation))
-	prototypeTmpl.Set("preventDefault", wrapV8Callback(w.scriptHost, w.preventDefault))
-
 	prototypeTmpl.SetAccessorProperty("type",
 		wrapV8Callback(w.scriptHost, w.type_),
 		nil,

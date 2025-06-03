@@ -24,7 +24,6 @@ func createPointerEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate 
 }
 func (w pointerEventV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	prototypeTmpl := ft.PrototypeTemplate()
-
 	prototypeTmpl.SetAccessorProperty("width",
 		wrapV8Callback(w.scriptHost, w.width),
 		nil,

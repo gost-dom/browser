@@ -34,15 +34,15 @@ func createDOMTokenListPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate 
 	return constructor
 }
 func (w domTokenListV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	jsClass := newV8Class(w.scriptHost, ft)
+	jsClass.CreatePrototypeMethod("item", w.item)
+	jsClass.CreatePrototypeMethod("contains", w.contains)
+	jsClass.CreatePrototypeMethod("add", w.add)
+	jsClass.CreatePrototypeMethod("remove", w.remove)
+	jsClass.CreatePrototypeMethod("toggle", w.toggle)
+	jsClass.CreatePrototypeMethod("replace", w.replace)
+	jsClass.CreatePrototypeMethod("supports", w.supports)
 	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.Set("item", wrapV8Callback(w.scriptHost, w.item))
-	prototypeTmpl.Set("contains", wrapV8Callback(w.scriptHost, w.contains))
-	prototypeTmpl.Set("add", wrapV8Callback(w.scriptHost, w.add))
-	prototypeTmpl.Set("remove", wrapV8Callback(w.scriptHost, w.remove))
-	prototypeTmpl.Set("toggle", wrapV8Callback(w.scriptHost, w.toggle))
-	prototypeTmpl.Set("replace", wrapV8Callback(w.scriptHost, w.replace))
-	prototypeTmpl.Set("supports", wrapV8Callback(w.scriptHost, w.supports))
-
 	prototypeTmpl.SetAccessorProperty("length",
 		wrapV8Callback(w.scriptHost, w.length),
 		nil,

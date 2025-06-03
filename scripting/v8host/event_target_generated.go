@@ -33,10 +33,10 @@ func createEventTargetPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	return constructor
 }
 func (w eventTargetV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
-	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.Set("addEventListener", wrapV8Callback(w.scriptHost, w.addEventListener))
-	prototypeTmpl.Set("removeEventListener", wrapV8Callback(w.scriptHost, w.removeEventListener))
-	prototypeTmpl.Set("dispatchEvent", wrapV8Callback(w.scriptHost, w.dispatchEvent))
+	jsClass := newV8Class(w.scriptHost, ft)
+	jsClass.CreatePrototypeMethod("addEventListener", w.addEventListener)
+	jsClass.CreatePrototypeMethod("removeEventListener", w.removeEventListener)
+	jsClass.CreatePrototypeMethod("dispatchEvent", w.dispatchEvent)
 }
 
 func (w eventTargetV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {

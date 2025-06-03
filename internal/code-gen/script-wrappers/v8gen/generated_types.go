@@ -7,6 +7,19 @@ import (
 	g "github.com/gost-dom/generators"
 )
 
+/* -------- jsClass -------- */
+
+type jsClass g.Value
+
+func newJSClass(host g.Generator, ft v8FunctionTemplate) jsClass {
+	return jsClass(g.NewValue("newV8Class").Call(host, ft))
+}
+func (c jsClass) CreatePrototypeMethod(name string, callback g.Generator) g.Generator {
+	return g.Value(c).Field("CreatePrototypeMethod").Call(g.Lit(name), callback)
+}
+
+/* -------- v8ArgInfo -------- */
+
 type v8ArgInfo g.Value
 
 func (info v8ArgInfo) GetV8Context() g.Generator { return g.Value(info).Method("Context").Call() }

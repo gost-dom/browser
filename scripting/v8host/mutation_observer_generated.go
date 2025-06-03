@@ -33,10 +33,10 @@ func createMutationObserverPrototype(scriptHost *V8ScriptHost) *v8.FunctionTempl
 	return constructor
 }
 func (w mutationObserverV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
-	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.Set("observe", wrapV8Callback(w.scriptHost, w.observe))
-	prototypeTmpl.Set("disconnect", wrapV8Callback(w.scriptHost, w.disconnect))
-	prototypeTmpl.Set("takeRecords", wrapV8Callback(w.scriptHost, w.takeRecords))
+	jsClass := newV8Class(w.scriptHost, ft)
+	jsClass.CreatePrototypeMethod("observe", w.observe)
+	jsClass.CreatePrototypeMethod("disconnect", w.disconnect)
+	jsClass.CreatePrototypeMethod("takeRecords", w.takeRecords)
 }
 
 func (w mutationObserverV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {

@@ -33,13 +33,13 @@ func createHistoryPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	return constructor
 }
 func (w historyV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	jsClass := newV8Class(w.scriptHost, ft)
+	jsClass.CreatePrototypeMethod("go", w.go_)
+	jsClass.CreatePrototypeMethod("back", w.back)
+	jsClass.CreatePrototypeMethod("forward", w.forward)
+	jsClass.CreatePrototypeMethod("pushState", w.pushState)
+	jsClass.CreatePrototypeMethod("replaceState", w.replaceState)
 	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.Set("go", wrapV8Callback(w.scriptHost, w.go_))
-	prototypeTmpl.Set("back", wrapV8Callback(w.scriptHost, w.back))
-	prototypeTmpl.Set("forward", wrapV8Callback(w.scriptHost, w.forward))
-	prototypeTmpl.Set("pushState", wrapV8Callback(w.scriptHost, w.pushState))
-	prototypeTmpl.Set("replaceState", wrapV8Callback(w.scriptHost, w.replaceState))
-
 	prototypeTmpl.SetAccessorProperty("length",
 		wrapV8Callback(w.scriptHost, w.length),
 		nil,

@@ -33,7 +33,6 @@ func createMutationRecordPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplat
 }
 func (w mutationRecordV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	prototypeTmpl := ft.PrototypeTemplate()
-
 	prototypeTmpl.SetAccessorProperty("type",
 		wrapV8Callback(w.scriptHost, w.type_),
 		nil,

@@ -24,9 +24,9 @@ func createMouseEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	return constructor
 }
 func (w mouseEventV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	jsClass := newV8Class(w.scriptHost, ft)
+	jsClass.CreatePrototypeMethod("getModifierState", w.getModifierState)
 	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.Set("getModifierState", wrapV8Callback(w.scriptHost, w.getModifierState))
-
 	prototypeTmpl.SetAccessorProperty("screenX",
 		wrapV8Callback(w.scriptHost, w.screenX),
 		nil,
@@ -138,7 +138,6 @@ func createUIEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 }
 func (w uIEventV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	prototypeTmpl := ft.PrototypeTemplate()
-
 	prototypeTmpl.SetAccessorProperty("view",
 		wrapV8Callback(w.scriptHost, w.view),
 		nil,

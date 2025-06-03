@@ -34,7 +34,6 @@ func createHTMLTemplateElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTe
 }
 func (w htmlTemplateElementV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	prototypeTmpl := ft.PrototypeTemplate()
-
 	prototypeTmpl.SetAccessorProperty("content",
 		wrapV8Callback(w.scriptHost, w.content),
 		nil,

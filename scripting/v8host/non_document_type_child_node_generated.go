@@ -29,7 +29,6 @@ func createNonDocumentTypeChildNodePrototype(scriptHost *V8ScriptHost) *v8.Funct
 }
 func (w nonDocumentTypeChildNodeV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
 	prototypeTmpl := ft.PrototypeTemplate()
-
 	prototypeTmpl.SetAccessorProperty("previousElementSibling",
 		wrapV8Callback(w.scriptHost, w.previousElementSibling),
 		nil,

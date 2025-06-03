@@ -1,6 +1,8 @@
 package v8gen
 
 import (
+	"github.com/dave/jennifer/jen"
+	"github.com/gost-dom/code-gen/script-wrappers/model"
 	. "github.com/gost-dom/code-gen/script-wrappers/model"
 	g "github.com/gost-dom/generators"
 )
@@ -31,31 +33,42 @@ func (builder ConstructorBuilder) NewFunctionTemplateOfWrappedMethod(name string
 }
 
 type PrototypeInstaller struct {
-	v8Iso
-	Proto   v8PrototypeTemplate
-	Wrapper WrapperInstance
+	Ft       v8FunctionTemplate
+	Proto    v8PrototypeTemplate
+	Wrapper  WrapperInstance
+	Host     g.Generator
+	Data     model.ESConstructorData
+	Receiver g.Value
 }
 
-func (builder PrototypeInstaller) InstallFunctionHandlers(
-	host g.Generator,
-	data ESConstructorData,
+func (i PrototypeInstaller) Generate() *jen.Statement {
+	class := jsClass(g.NewValue("jsClass"))
+	return g.StatementList(
+		i.InstallFunctionHandlers(i.Data, class),
+		i.InstallAttributeHandlers(i.Host, i.Data),
+	).Generate()
+}
+
+func (b PrototypeInstaller) InstallFunctionHandlers(
+	data ESConstructorData, class jsClass,
 ) g.Generator {
-	generators := make([]g.Generator, 0, len(data.Operations))
+	renderedAny := false
+	stmts := g.StatementList(
+		g.Assign(class, newJSClass(b.Host, b.Ft)),
+	)
 	for _, op := range data.Operations {
-		if !op.MethodCustomization.Ignored {
-			generators = append(generators,
-				builder.InstallFunction(host, op.Name, op.CallbackMethodName()),
-			)
+		if op.MethodCustomization.Ignored {
+			continue
 		}
+		cb := b.Receiver.Field(op.CallbackMethodName())
+		stmts.Append(class.CreatePrototypeMethod(op.Name, cb))
+		renderedAny = true
 	}
-	return g.StatementList(generators...)
-}
-
-func (builder PrototypeInstaller) InstallFunction(
-	host g.Generator,
-	name, cbMethod string,
-) g.Generator {
-	return builder.Proto.Set(name, wrapCallback(host, builder.Wrapper.Field(cbMethod)))
+	if renderedAny {
+		return stmts
+	} else {
+		return g.Noop
+	}
 }
 
 func wrapCallback(host, callback g.Generator) g.Generator {
@@ -71,7 +84,7 @@ func (builder PrototypeInstaller) InstallAttributeHandlers(
 		return g.Noop
 	}
 	generators := make([]g.Generator, 1, length+1)
-	generators[0] = g.Line
+	generators[0] = g.Assign(g.NewValue("prototypeTmpl"), builder.Ft.GetPrototypeTemplate())
 	for op := range data.AttributesToInstall() {
 		generators = append(generators, builder.InstallAttributeHandler(host, op))
 	}

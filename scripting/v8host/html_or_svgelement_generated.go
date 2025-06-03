@@ -29,10 +29,10 @@ func createHTMLOrSVGElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTempl
 	return constructor
 }
 func (w htmlOrSVGElementV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	jsClass := newV8Class(w.scriptHost, ft)
+	jsClass.CreatePrototypeMethod("focus", w.focus)
+	jsClass.CreatePrototypeMethod("blur", w.blur)
 	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.Set("focus", wrapV8Callback(w.scriptHost, w.focus))
-	prototypeTmpl.Set("blur", wrapV8Callback(w.scriptHost, w.blur))
-
 	prototypeTmpl.SetAccessorProperty("dataset",
 		wrapV8Callback(w.scriptHost, w.dataset),
 		nil,

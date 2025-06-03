@@ -28,13 +28,13 @@ func createParentNodePrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	return constructor
 }
 func (w parentNodeV8Wrapper) installPrototype(ft *v8.FunctionTemplate) {
+	jsClass := newV8Class(w.scriptHost, ft)
+	jsClass.CreatePrototypeMethod("prepend", w.prepend)
+	jsClass.CreatePrototypeMethod("append", w.append)
+	jsClass.CreatePrototypeMethod("replaceChildren", w.replaceChildren)
+	jsClass.CreatePrototypeMethod("querySelector", w.querySelector)
+	jsClass.CreatePrototypeMethod("querySelectorAll", w.querySelectorAll)
 	prototypeTmpl := ft.PrototypeTemplate()
-	prototypeTmpl.Set("prepend", wrapV8Callback(w.scriptHost, w.prepend))
-	prototypeTmpl.Set("append", wrapV8Callback(w.scriptHost, w.append))
-	prototypeTmpl.Set("replaceChildren", wrapV8Callback(w.scriptHost, w.replaceChildren))
-	prototypeTmpl.Set("querySelector", wrapV8Callback(w.scriptHost, w.querySelector))
-	prototypeTmpl.Set("querySelectorAll", wrapV8Callback(w.scriptHost, w.querySelectorAll))
-
 	prototypeTmpl.SetAccessorProperty("firstElementChild",
 		wrapV8Callback(w.scriptHost, w.firstElementChild),
 		nil,
