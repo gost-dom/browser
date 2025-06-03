@@ -10,7 +10,7 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func initDOMParser[T any](ft js.Constructor[T]) {
+func initDOMParser[T any](ft js.Class[T]) {
 	ft.CreatePrototypeMethod("parseFromString", domParserParseFromString)
 }
 func domParserParseFromString[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {

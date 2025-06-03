@@ -35,17 +35,27 @@ type Object[T any] interface {
 	Get(name string) (Value[T], error)
 }
 
-// Constructor represents a JavaScript "class" that wraps a Go object.
+// Class represents a JavaScript "class" that wraps a Go object.
 //
-// While a constructor IS a function in JavaScript, this abstraction has two
-// separate represenatation as they have two completely different roles. You
-// cannot "call" a constructor, doing so at runtime will result in a TypeError,
-// they can only be constructed using the JavaScript new operator.
-type Constructor[T any] interface {
+// This package has two separate abstractions for a class serving two different
+// roles. This abstractions serves the role of configuring the methods and
+// attributes that exists on a class. To create an instance of a class, you use
+// the [Constructor]
+//
+// This is independent of any actual execution context, so values in global
+// scope can be declared before creating a JavaScript execution context.
+type Class[T any] interface {
 	CreatePrototypeMethod(name string, cb FunctionCallback[T])
 }
 
-type Constructable[T any] interface {
+// Constructor represents a JavaScript "class" that wraps a Go object.
+//
+// This package has two separate abstractions for a class serving two different
+// roles. This abstraction is used to create instances of a class in a
+// JavaScript execution context.
+//
+// The class must previously have been configured using the [Class] interface.
+type Constructor[T any] interface {
 	NewInstance(cbCtx Scope[T], nativeValue any) (Object[T], error)
 }
 

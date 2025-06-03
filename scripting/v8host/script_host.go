@@ -250,7 +250,7 @@ func createHostInstance(config hostOptions) *V8ScriptHost {
 		host.globals = globals{make(map[string]v8Constructor)}
 		var window *v8go.FunctionTemplate
 		for _, globalInstall := range globalInstalls {
-			host.globals.namedGlobals[globalInstall.name] = newV8Constructor(
+			host.globals.namedGlobals[globalInstall.name] = newV8Class(
 				host,
 				globalInstall.constructor,
 			)
@@ -402,15 +402,15 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 
 func (host *V8ScriptHost) CreateClass(
 	name string,
-	extends js.Constructor[jsTypeParam],
+	extends js.Class[jsTypeParam],
 	callback js.FunctionCallback[jsTypeParam],
-) js.Constructor[jsTypeParam] {
+) js.Class[jsTypeParam] {
 	ft := wrapV8Callback(host, callback)
 	ft.InstanceTemplate().SetInternalFieldCount(1)
 	if extends != nil {
 		ft.Inherit(extends.(v8Constructor).ft)
 	}
-	result := newV8Constructor(host, ft)
+	result := newV8Class(host, ft)
 	host.windowTemplate.Set(name, ft)
 	host.globals.namedGlobals[name] = result
 	return result
