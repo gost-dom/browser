@@ -250,8 +250,8 @@ func registerClass[T jsInitializer, U jsInitializerFactory[T]](
 }
 
 func init() {
-	registerJSClass("File", "", createCustomEvent)
-	registerJSClass("CustomEvent", "Event", createCustomEvent)
+	registerClass("File", "", newCustomEventV8Wrapper)
+	registerClass("CustomEvent", "Event", newCustomEventV8Wrapper)
 	registerJSClass("Location", "", createLocationPrototype)
 	registerJSClass("XMLHttpRequestEventTarget", "EventTarget", createIllegalConstructor)
 
