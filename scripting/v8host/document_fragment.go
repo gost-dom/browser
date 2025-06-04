@@ -16,15 +16,6 @@ func newDocumentFragmentV8Wrapper(host *V8ScriptHost) jsInitializer {
 	}
 }
 
-func createDocumentFragmentPrototype(host *V8ScriptHost) v8Class {
-	wrapper := newDocumentFragmentV8Wrapper(host)
-	constructor := wrapV8Callback(host, wrapper.constructor)
-	constructor.InstanceTemplate().SetInternalFieldCount(1)
-	jsClass := newV8Class(host, constructor)
-	wrapper.initialize(jsClass)
-	return jsClass
-}
-
 func (w documentFragmentV8Wrapper) constructor(ctx jsCallbackContext) (jsValue, error) {
 	result := dom.NewDocumentFragment(ctx.Scope().Window().Document())
 	return w.store(result, ctx)
