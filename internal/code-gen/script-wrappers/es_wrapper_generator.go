@@ -42,7 +42,6 @@ func CreateConstructor(
 	interfaceConfig *configuration.IdlInterfaceConfiguration,
 	idlName idl.TypeSpec) *ESOperation {
 	if c, ok := idlName.Constructor(); ok {
-		fmt.Printf("Create constructor %s '%s'\n", interfaceConfig.TypeName, c.Name)
 		c.Name = "constructor"
 		// TODO: Fix for constructor overloads
 		result := createOperation(
