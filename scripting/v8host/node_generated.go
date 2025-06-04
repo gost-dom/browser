@@ -20,7 +20,7 @@ func newNodeV8Wrapper(scriptHost *V8ScriptHost) *nodeV8Wrapper {
 	return &nodeV8Wrapper{newHandleReffedObject[dom.Node](scriptHost)}
 }
 
-func createNodePrototype(scriptHost *V8ScriptHost) v8Class {
+func createNodePrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newNodeV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -32,11 +32,11 @@ func createNodePrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
-func (wrapper nodeV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper nodeV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w nodeV8Wrapper) installPrototype(jsClass v8Class) {
+func (w nodeV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeMethod("getRootNode", w.getRootNode)
 	jsClass.CreatePrototypeMethod("cloneNode", w.cloneNode)
 	jsClass.CreatePrototypeMethod("isSameNode", w.isSameNode)

@@ -24,7 +24,7 @@ func newDocumentV8Wrapper(scriptHost *V8ScriptHost) *documentV8Wrapper {
 	}
 }
 
-func createDocumentPrototype(scriptHost *V8ScriptHost) v8Class {
+func createDocumentPrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newDocumentV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -37,12 +37,12 @@ func createDocumentPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper.CustomInitializer(jsClass)
 	return jsClass
 }
-func (wrapper documentV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper documentV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)
 }
 
-func (w documentV8Wrapper) installPrototype(jsClass v8Class) {
+func (w documentV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeMethod("getElementsByTagName", w.getElementsByTagName)
 	jsClass.CreatePrototypeMethod("getElementsByTagNameNS", w.getElementsByTagNameNS)
 	jsClass.CreatePrototypeMethod("getElementsByClassName", w.getElementsByClassName)

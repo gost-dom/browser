@@ -11,7 +11,7 @@ func init() {
 	registerClass("MouseEvent", "UIEvent", newMouseEventV8Wrapper)
 }
 
-func createMouseEventPrototype(scriptHost *V8ScriptHost) v8Class {
+func createMouseEventPrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newMouseEventV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -23,11 +23,11 @@ func createMouseEventPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
-func (wrapper mouseEventV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper mouseEventV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w mouseEventV8Wrapper) installPrototype(jsClass v8Class) {
+func (w mouseEventV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeMethod("getModifierState", w.getModifierState)
 	jsClass.CreatePrototypeAttribute("screenX", w.screenX, nil)
 	jsClass.CreatePrototypeAttribute("screenY", w.screenY, nil)
@@ -106,7 +106,7 @@ func newUIEventV8Wrapper(scriptHost *V8ScriptHost) *uIEventV8Wrapper {
 	return &uIEventV8Wrapper{newHandleReffedObject[uievents.UIEvent](scriptHost)}
 }
 
-func createUIEventPrototype(scriptHost *V8ScriptHost) v8Class {
+func createUIEventPrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newUIEventV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -118,11 +118,11 @@ func createUIEventPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
-func (wrapper uIEventV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper uIEventV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w uIEventV8Wrapper) installPrototype(jsClass v8Class) {
+func (w uIEventV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("view", w.view, nil)
 	jsClass.CreatePrototypeAttribute("detail", w.detail, nil)
 }

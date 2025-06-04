@@ -21,7 +21,7 @@ func newFormDataV8Wrapper(scriptHost *V8ScriptHost) *formDataV8Wrapper {
 	return &formDataV8Wrapper{newHandleReffedObject[*html.FormData](scriptHost)}
 }
 
-func createFormDataPrototype(scriptHost *V8ScriptHost) v8Class {
+func createFormDataPrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newFormDataV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -34,12 +34,12 @@ func createFormDataPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper.CustomInitializer(jsClass)
 	return jsClass
 }
-func (wrapper formDataV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper formDataV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)
 }
 
-func (w formDataV8Wrapper) installPrototype(jsClass v8Class) {
+func (w formDataV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeMethod("append", w.append)
 	jsClass.CreatePrototypeMethod("delete", w.delete)
 	jsClass.CreatePrototypeMethod("get", w.get)
@@ -159,7 +159,7 @@ func init() {
 	registerClass("XMLHttpRequest", "XMLHttpRequestEventTarget", newXMLHttpRequestV8Wrapper)
 }
 
-func createXMLHttpRequestPrototype(scriptHost *V8ScriptHost) v8Class {
+func createXMLHttpRequestPrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newXMLHttpRequestV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -171,11 +171,11 @@ func createXMLHttpRequestPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
-func (wrapper xmlHttpRequestV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper xmlHttpRequestV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w xmlHttpRequestV8Wrapper) installPrototype(jsClass v8Class) {
+func (w xmlHttpRequestV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeMethod("open", w.open)
 	jsClass.CreatePrototypeMethod("setRequestHeader", w.setRequestHeader)
 	jsClass.CreatePrototypeMethod("send", w.send)

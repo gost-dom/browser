@@ -20,7 +20,7 @@ func newEventTargetV8Wrapper(scriptHost *V8ScriptHost) *eventTargetV8Wrapper {
 	return &eventTargetV8Wrapper{newHandleReffedObject[event.EventTarget](scriptHost)}
 }
 
-func createEventTargetPrototype(scriptHost *V8ScriptHost) v8Class {
+func createEventTargetPrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newEventTargetV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -32,11 +32,11 @@ func createEventTargetPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
-func (wrapper eventTargetV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper eventTargetV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w eventTargetV8Wrapper) installPrototype(jsClass v8Class) {
+func (w eventTargetV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeMethod("addEventListener", w.addEventListener)
 	jsClass.CreatePrototypeMethod("removeEventListener", w.removeEventListener)
 	jsClass.CreatePrototypeMethod("dispatchEvent", w.dispatchEvent)

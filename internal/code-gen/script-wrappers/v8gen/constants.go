@@ -16,7 +16,7 @@ var (
 	v8ReadOnly                = g.Raw(jen.Qual(v8, "ReadOnly"))
 	v8None                    = g.Raw(jen.Qual(v8, "None"))
 	v8CbCtx                   = g.NewType("jsCallbackContext")
-	v8Class                   = g.NewType("v8Class")
+	v8Class                   = g.NewType("jsClass")
 	scriptHostPtr             = g.NewType("V8ScriptHost").Pointer()
 )
 

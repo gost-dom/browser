@@ -20,7 +20,7 @@ func newHTMLInputElementV8Wrapper(scriptHost *V8ScriptHost) *htmlInputElementV8W
 	return &htmlInputElementV8Wrapper{newHandleReffedObject[html.HTMLInputElement](scriptHost)}
 }
 
-func createHTMLInputElementPrototype(scriptHost *V8ScriptHost) v8Class {
+func createHTMLInputElementPrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newHTMLInputElementV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -32,11 +32,11 @@ func createHTMLInputElementPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
-func (wrapper htmlInputElementV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper htmlInputElementV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w htmlInputElementV8Wrapper) installPrototype(jsClass v8Class) {
+func (w htmlInputElementV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeMethod("checkValidity", w.checkValidity)
 	jsClass.CreatePrototypeAttribute("type", w.type_, w.setType)
 }

@@ -19,7 +19,7 @@ func newNodeListV8Wrapper(scriptHost *V8ScriptHost) *nodeListV8Wrapper {
 	return &nodeListV8Wrapper{newHandleReffedObject[dom.NodeList](scriptHost)}
 }
 
-func createNodeListPrototype(scriptHost *V8ScriptHost) v8Class {
+func createNodeListPrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newNodeListV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -32,12 +32,12 @@ func createNodeListPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper.CustomInitializer(jsClass)
 	return jsClass
 }
-func (wrapper nodeListV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper nodeListV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)
 }
 
-func (w nodeListV8Wrapper) installPrototype(jsClass v8Class) {
+func (w nodeListV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeMethod("item", w.item)
 	jsClass.CreatePrototypeAttribute("length", w.length, nil)
 }

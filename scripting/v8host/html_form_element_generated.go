@@ -20,7 +20,7 @@ func newHTMLFormElementV8Wrapper(scriptHost *V8ScriptHost) *htmlFormElementV8Wra
 	return &htmlFormElementV8Wrapper{newHandleReffedObject[html.HTMLFormElement](scriptHost)}
 }
 
-func createHTMLFormElementPrototype(scriptHost *V8ScriptHost) v8Class {
+func createHTMLFormElementPrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newHTMLFormElementV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -32,11 +32,11 @@ func createHTMLFormElementPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
-func (wrapper htmlFormElementV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper htmlFormElementV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w htmlFormElementV8Wrapper) installPrototype(jsClass v8Class) {
+func (w htmlFormElementV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeMethod("submit", w.submit)
 	jsClass.CreatePrototypeMethod("requestSubmit", w.requestSubmit)
 	jsClass.CreatePrototypeMethod("reset", w.reset)

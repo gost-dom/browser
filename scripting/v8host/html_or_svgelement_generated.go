@@ -16,7 +16,7 @@ func newHTMLOrSVGElementV8Wrapper(scriptHost *V8ScriptHost) *htmlOrSVGElementV8W
 	return &htmlOrSVGElementV8Wrapper{newHandleReffedObject[html.HTMLOrSVGElement](scriptHost)}
 }
 
-func createHTMLOrSVGElementPrototype(scriptHost *V8ScriptHost) v8Class {
+func createHTMLOrSVGElementPrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newHTMLOrSVGElementV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -28,11 +28,11 @@ func createHTMLOrSVGElementPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
-func (wrapper htmlOrSVGElementV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper htmlOrSVGElementV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w htmlOrSVGElementV8Wrapper) installPrototype(jsClass v8Class) {
+func (w htmlOrSVGElementV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeMethod("focus", w.focus)
 	jsClass.CreatePrototypeMethod("blur", w.blur)
 	jsClass.CreatePrototypeAttribute("dataset", w.dataset, nil)

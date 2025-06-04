@@ -73,7 +73,7 @@ var pool = &scriptHostPool{}
 
 type globalInstall struct {
 	name        string
-	constructor v8Class
+	constructor jsClass
 }
 
 type globals struct {
@@ -101,7 +101,7 @@ type V8ScriptHost struct {
 	iterator        v8Iterator
 }
 
-type jsConstructorFactory = func(*V8ScriptHost, jsClass) v8Class
+type jsConstructorFactory = func(*V8ScriptHost, jsClass) jsClass
 type jsConstructorFactory1 = func(*V8ScriptHost) v8Class
 
 type class struct {
@@ -176,6 +176,7 @@ type classSpec struct {
 }
 
 var classes map[string]classSpec = make(map[string]classSpec)
+
 var initializers []js.Configurator[jsTypeParam]
 
 func registerJSClass(
@@ -184,7 +185,7 @@ func registerJSClass(
 	constructorFactory jsConstructorFactory1,
 ) {
 	spec := classSpec{
-		className, superClassName, func(host *V8ScriptHost, extends jsClass) v8Class {
+		className, superClassName, func(host *V8ScriptHost, extends jsClass) jsClass {
 			res := constructorFactory(host)
 			if extends != nil {
 				res.ft.Inherit(extends.(v8Class).ft)
@@ -213,7 +214,7 @@ func registerJSClass(
 
 type jsInitializer interface {
 	constructor(jsCallbackContext) (jsValue, error)
-	initialize(v8Class)
+	initialize(jsClass)
 }
 
 type jsInitializerFactory[T jsInitializer] = func(*V8ScriptHost) T
@@ -224,7 +225,7 @@ func registerClass[T jsInitializer, U jsInitializerFactory[T]](
 	constructorFactory U,
 ) {
 	spec := classSpec{
-		className, superClassName, func(host *V8ScriptHost, extends jsClass) v8Class {
+		className, superClassName, func(host *V8ScriptHost, extends jsClass) jsClass {
 			wrapper := constructorFactory(host)
 			res := host.CreateClass(className, extends, wrapper.constructor).(v8Class)
 			wrapper.initialize(res)

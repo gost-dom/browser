@@ -20,7 +20,7 @@ func newDOMTokenListV8Wrapper(scriptHost *V8ScriptHost) *domTokenListV8Wrapper {
 	return &domTokenListV8Wrapper{newHandleReffedObject[dom.DOMTokenList](scriptHost)}
 }
 
-func createDOMTokenListPrototype(scriptHost *V8ScriptHost) v8Class {
+func createDOMTokenListPrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newDOMTokenListV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -33,12 +33,12 @@ func createDOMTokenListPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper.CustomInitializer(jsClass)
 	return jsClass
 }
-func (wrapper domTokenListV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper domTokenListV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)
 }
 
-func (w domTokenListV8Wrapper) installPrototype(jsClass v8Class) {
+func (w domTokenListV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeMethod("item", w.item)
 	jsClass.CreatePrototypeMethod("contains", w.contains)
 	jsClass.CreatePrototypeMethod("add", w.add)

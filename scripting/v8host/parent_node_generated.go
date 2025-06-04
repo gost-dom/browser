@@ -15,7 +15,7 @@ func newParentNodeV8Wrapper(scriptHost *V8ScriptHost) *parentNodeV8Wrapper {
 	return &parentNodeV8Wrapper{newHandleReffedObject[dom.ParentNode](scriptHost)}
 }
 
-func createParentNodePrototype(scriptHost *V8ScriptHost) v8Class {
+func createParentNodePrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newParentNodeV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -27,11 +27,11 @@ func createParentNodePrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
-func (wrapper parentNodeV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper parentNodeV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w parentNodeV8Wrapper) installPrototype(jsClass v8Class) {
+func (w parentNodeV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeMethod("prepend", w.prepend)
 	jsClass.CreatePrototypeMethod("append", w.append)
 	jsClass.CreatePrototypeMethod("replaceChildren", w.replaceChildren)

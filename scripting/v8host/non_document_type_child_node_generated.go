@@ -15,7 +15,7 @@ func newNonDocumentTypeChildNodeV8Wrapper(scriptHost *V8ScriptHost) *nonDocument
 	return &nonDocumentTypeChildNodeV8Wrapper{newHandleReffedObject[dom.NonDocumentTypeChildNode](scriptHost)}
 }
 
-func createNonDocumentTypeChildNodePrototype(scriptHost *V8ScriptHost) v8Class {
+func createNonDocumentTypeChildNodePrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newNonDocumentTypeChildNodeV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -27,11 +27,11 @@ func createNonDocumentTypeChildNodePrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
-func (wrapper nonDocumentTypeChildNodeV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper nonDocumentTypeChildNodeV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w nonDocumentTypeChildNodeV8Wrapper) installPrototype(jsClass v8Class) {
+func (w nonDocumentTypeChildNodeV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("previousElementSibling", w.previousElementSibling, nil)
 	jsClass.CreatePrototypeAttribute("nextElementSibling", w.nextElementSibling, nil)
 }

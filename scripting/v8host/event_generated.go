@@ -12,7 +12,7 @@ func init() {
 	registerClass("Event", "", newEventV8Wrapper)
 }
 
-func createEventPrototype(scriptHost *V8ScriptHost) v8Class {
+func createEventPrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newEventV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -24,11 +24,11 @@ func createEventPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
-func (wrapper eventV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper eventV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w eventV8Wrapper) installPrototype(jsClass v8Class) {
+func (w eventV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeMethod("stopPropagation", w.stopPropagation)
 	jsClass.CreatePrototypeMethod("preventDefault", w.preventDefault)
 	jsClass.CreatePrototypeAttribute("type", w.type_, nil)

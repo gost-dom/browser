@@ -20,7 +20,7 @@ func newMutationObserverV8Wrapper(scriptHost *V8ScriptHost) *mutationObserverV8W
 	return &mutationObserverV8Wrapper{newHandleReffedObject[dominterfaces.MutationObserver](scriptHost)}
 }
 
-func createMutationObserverPrototype(scriptHost *V8ScriptHost) v8Class {
+func createMutationObserverPrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newMutationObserverV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -32,11 +32,11 @@ func createMutationObserverPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
-func (wrapper mutationObserverV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper mutationObserverV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w mutationObserverV8Wrapper) installPrototype(jsClass v8Class) {
+func (w mutationObserverV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeMethod("observe", w.observe)
 	jsClass.CreatePrototypeMethod("disconnect", w.disconnect)
 	jsClass.CreatePrototypeMethod("takeRecords", w.takeRecords)

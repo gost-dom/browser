@@ -20,7 +20,7 @@ func newWindowV8Wrapper(scriptHost *V8ScriptHost) *windowV8Wrapper {
 	return &windowV8Wrapper{newHandleReffedObject[html.Window](scriptHost)}
 }
 
-func createWindowPrototype(scriptHost *V8ScriptHost) v8Class {
+func createWindowPrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newWindowV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -32,11 +32,11 @@ func createWindowPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
-func (wrapper windowV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper windowV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w windowV8Wrapper) installPrototype(jsClass v8Class) {
+func (w windowV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeMethod("close", w.close)
 	jsClass.CreatePrototypeMethod("stop", w.stop)
 	jsClass.CreatePrototypeMethod("focus", w.focus)

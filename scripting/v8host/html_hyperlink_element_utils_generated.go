@@ -16,7 +16,7 @@ func newHTMLHyperlinkElementUtilsV8Wrapper(scriptHost *V8ScriptHost) *htmlHyperl
 	return &htmlHyperlinkElementUtilsV8Wrapper{newHandleReffedObject[html.HTMLHyperlinkElementUtils](scriptHost)}
 }
 
-func createHTMLHyperlinkElementUtilsPrototype(scriptHost *V8ScriptHost) v8Class {
+func createHTMLHyperlinkElementUtilsPrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newHTMLHyperlinkElementUtilsV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -28,11 +28,11 @@ func createHTMLHyperlinkElementUtilsPrototype(scriptHost *V8ScriptHost) v8Class 
 
 	return jsClass
 }
-func (wrapper htmlHyperlinkElementUtilsV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper htmlHyperlinkElementUtilsV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w htmlHyperlinkElementUtilsV8Wrapper) installPrototype(jsClass v8Class) {
+func (w htmlHyperlinkElementUtilsV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("href", w.href, w.setHref)
 	jsClass.CreatePrototypeMethod("toString", w.href)
 	jsClass.CreatePrototypeAttribute("origin", w.origin, nil)

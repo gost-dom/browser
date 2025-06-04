@@ -12,7 +12,7 @@ func init() {
 	registerClass("Element", "Node", newElementV8Wrapper)
 }
 
-func createElementPrototype(scriptHost *V8ScriptHost) v8Class {
+func createElementPrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newElementV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -25,12 +25,12 @@ func createElementPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper.CustomInitializer(jsClass)
 	return jsClass
 }
-func (wrapper elementV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper elementV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)
 }
 
-func (w elementV8Wrapper) installPrototype(jsClass v8Class) {
+func (w elementV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeMethod("hasAttributes", w.hasAttributes)
 	jsClass.CreatePrototypeMethod("getAttributeNames", w.getAttributeNames)
 	jsClass.CreatePrototypeMethod("getAttribute", w.getAttribute)

@@ -13,7 +13,7 @@ func init() {
 	registerClass("URL", "", newURLV8Wrapper)
 }
 
-func createURLPrototype(scriptHost *V8ScriptHost) v8Class {
+func createURLPrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newURLV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -25,11 +25,11 @@ func createURLPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
-func (wrapper urlV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper urlV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w urlV8Wrapper) installPrototype(jsClass v8Class) {
+func (w urlV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeMethod("toJSON", w.toJSON)
 	jsClass.CreatePrototypeAttribute("href", w.href, w.setHref)
 	jsClass.CreatePrototypeMethod("toString", w.href)
@@ -242,7 +242,7 @@ func newURLSearchParamsV8Wrapper(scriptHost *V8ScriptHost) *urlSearchParamsV8Wra
 	return &urlSearchParamsV8Wrapper{newHandleReffedObject[urlinterfaces.URLSearchParams](scriptHost)}
 }
 
-func createURLSearchParamsPrototype(scriptHost *V8ScriptHost) v8Class {
+func createURLSearchParamsPrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newURLSearchParamsV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -255,12 +255,12 @@ func createURLSearchParamsPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper.CustomInitializer(jsClass)
 	return jsClass
 }
-func (wrapper urlSearchParamsV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper urlSearchParamsV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)
 }
 
-func (w urlSearchParamsV8Wrapper) installPrototype(jsClass v8Class) {
+func (w urlSearchParamsV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeMethod("append", w.append)
 	jsClass.CreatePrototypeMethod("delete", w.delete)
 	jsClass.CreatePrototypeMethod("get", w.get)

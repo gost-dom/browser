@@ -20,7 +20,7 @@ func newHTMLTemplateElementV8Wrapper(scriptHost *V8ScriptHost) *htmlTemplateElem
 	return &htmlTemplateElementV8Wrapper{newHandleReffedObject[html.HTMLTemplateElement](scriptHost)}
 }
 
-func createHTMLTemplateElementPrototype(scriptHost *V8ScriptHost) v8Class {
+func createHTMLTemplateElementPrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newHTMLTemplateElementV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -32,11 +32,11 @@ func createHTMLTemplateElementPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
-func (wrapper htmlTemplateElementV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper htmlTemplateElementV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w htmlTemplateElementV8Wrapper) installPrototype(jsClass v8Class) {
+func (w htmlTemplateElementV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("content", w.content, nil)
 	jsClass.CreatePrototypeAttribute("shadowRootMode", w.shadowRootMode, w.setShadowRootMode)
 	jsClass.CreatePrototypeAttribute("shadowRootDelegatesFocus", w.shadowRootDelegatesFocus, w.setShadowRootDelegatesFocus)

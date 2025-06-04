@@ -19,7 +19,7 @@ func newMutationRecordV8Wrapper(scriptHost *V8ScriptHost) *mutationRecordV8Wrapp
 	return &mutationRecordV8Wrapper{newHandleReffedObject[*dominterfaces.MutationRecord](scriptHost)}
 }
 
-func createMutationRecordPrototype(scriptHost *V8ScriptHost) v8Class {
+func createMutationRecordPrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newMutationRecordV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -31,11 +31,11 @@ func createMutationRecordPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
-func (wrapper mutationRecordV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper mutationRecordV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w mutationRecordV8Wrapper) installPrototype(jsClass v8Class) {
+func (w mutationRecordV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("type", w.type_, nil)
 	jsClass.CreatePrototypeAttribute("target", w.target, nil)
 	jsClass.CreatePrototypeAttribute("addedNodes", w.addedNodes, nil)

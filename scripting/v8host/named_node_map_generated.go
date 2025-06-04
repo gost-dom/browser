@@ -20,7 +20,7 @@ func newNamedNodeMapV8Wrapper(scriptHost *V8ScriptHost) *namedNodeMapV8Wrapper {
 	return &namedNodeMapV8Wrapper{newHandleReffedObject[dom.NamedNodeMap](scriptHost)}
 }
 
-func createNamedNodeMapPrototype(scriptHost *V8ScriptHost) v8Class {
+func createNamedNodeMapPrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newNamedNodeMapV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -33,12 +33,12 @@ func createNamedNodeMapPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper.CustomInitializer(jsClass)
 	return jsClass
 }
-func (wrapper namedNodeMapV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper namedNodeMapV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)
 }
 
-func (w namedNodeMapV8Wrapper) installPrototype(jsClass v8Class) {
+func (w namedNodeMapV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeMethod("item", w.item)
 	jsClass.CreatePrototypeMethod("getNamedItem", w.getNamedItem)
 	jsClass.CreatePrototypeMethod("getNamedItemNS", w.getNamedItemNS)

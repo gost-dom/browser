@@ -21,6 +21,6 @@ func (w documentFragmentV8Wrapper) constructor(ctx jsCallbackContext) (jsValue, 
 	return w.store(result, ctx)
 }
 
-func (w documentFragmentV8Wrapper) initialize(class v8Class) {
+func (w documentFragmentV8Wrapper) initialize(class jsClass) {
 	w.parentNode.installPrototype(class)
 }

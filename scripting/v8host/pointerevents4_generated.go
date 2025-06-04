@@ -8,7 +8,7 @@ func init() {
 	registerClass("PointerEvent", "MouseEvent", newPointerEventV8Wrapper)
 }
 
-func createPointerEventPrototype(scriptHost *V8ScriptHost) v8Class {
+func createPointerEventPrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newPointerEventV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -20,11 +20,11 @@ func createPointerEventPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
-func (wrapper pointerEventV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper pointerEventV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w pointerEventV8Wrapper) installPrototype(jsClass v8Class) {
+func (w pointerEventV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("width", w.width, nil)
 	jsClass.CreatePrototypeAttribute("height", w.height, nil)
 	jsClass.CreatePrototypeAttribute("pressure", w.pressure, nil)

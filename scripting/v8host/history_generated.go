@@ -20,7 +20,7 @@ func newHistoryV8Wrapper(scriptHost *V8ScriptHost) *historyV8Wrapper {
 	return &historyV8Wrapper{newHandleReffedObject[htmlinterfaces.History](scriptHost)}
 }
 
-func createHistoryPrototype(scriptHost *V8ScriptHost) v8Class {
+func createHistoryPrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newHistoryV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -32,11 +32,11 @@ func createHistoryPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
-func (wrapper historyV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper historyV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w historyV8Wrapper) installPrototype(jsClass v8Class) {
+func (w historyV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeMethod("go", w.go_)
 	jsClass.CreatePrototypeMethod("back", w.back)
 	jsClass.CreatePrototypeMethod("forward", w.forward)

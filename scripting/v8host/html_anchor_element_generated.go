@@ -24,7 +24,7 @@ func newHTMLAnchorElementV8Wrapper(scriptHost *V8ScriptHost) *htmlAnchorElementV
 	}
 }
 
-func createHTMLAnchorElementPrototype(scriptHost *V8ScriptHost) v8Class {
+func createHTMLAnchorElementPrototype(scriptHost *V8ScriptHost) jsClass {
 	wrapper := newHTMLAnchorElementV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -36,11 +36,11 @@ func createHTMLAnchorElementPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
-func (wrapper htmlAnchorElementV8Wrapper) initialize(jsClass v8Class) {
+func (wrapper htmlAnchorElementV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w htmlAnchorElementV8Wrapper) installPrototype(jsClass v8Class) {
+func (w htmlAnchorElementV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("target", w.target, w.setTarget)
 	w.htmlHyperlinkElementUtils.installPrototype(jsClass)
 }
