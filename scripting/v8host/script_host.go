@@ -101,8 +101,8 @@ type V8ScriptHost struct {
 	iterator        v8Iterator
 }
 
-type jsConstructorFactory1 = func(*V8ScriptHost) v8Class
 type jsConstructorFactory = func(*V8ScriptHost, jsClass) v8Class
+type jsConstructorFactory1 = func(*V8ScriptHost) v8Class
 
 type class struct {
 	globalIdentifier string
@@ -211,19 +211,53 @@ func registerJSClass(
 	classes[className] = spec
 }
 
+type jsInitializer interface {
+	constructor(jsCallbackContext) (jsValue, error)
+	initialize(v8Class)
+}
+
+type jsInitializerFactory = func(*V8ScriptHost) jsInitializer
+
+func registerClass(
+	className string,
+	superClassName string,
+	constructorFactory jsInitializerFactory,
+) {
+	spec := classSpec{
+		className, superClassName, func(host *V8ScriptHost, extends jsClass) v8Class {
+			wrapper := constructorFactory(host)
+			res := host.CreateClass(className, extends, wrapper.constructor).(v8Class)
+			wrapper.initialize(res)
+			return res
+		},
+	}
+	if _, ok := classes[className]; ok {
+		panic("Same class added twice: " + className)
+	}
+	if superClassName == "" {
+		classes[className] = spec
+		return
+	}
+	parent, parentFound := classes[superClassName]
+	for parentFound {
+		if parent.superClassName == className {
+			panic("Recursive class parents" + className)
+		}
+		parent, parentFound = classes[parent.superClassName]
+	}
+	classes[className] = spec
+}
+
 func init() {
 	registerJSClass("File", "", createCustomEvent)
 	registerJSClass("CustomEvent", "Event", createCustomEvent)
 	registerJSClass("Location", "", createLocationPrototype)
-	// registerJSClass("EventTarget", "", createEventTarget)
 	registerJSClass("XMLHttpRequestEventTarget", "EventTarget", createIllegalConstructor)
 
 	registerJSClass("HTMLDocument", "Document", createHTMLDocumentPrototype)
-	registerJSClass("DocumentFragment", "Node", createDocumentFragmentPrototype)
+	registerClass("DocumentFragment", "Node", newDocumentFragmentV8Wrapper)
 	registerJSClass("ShadowRoot", "DocumentFragment", createIllegalConstructor)
 	registerJSClass("Attr", "Node", createAttr)
-
-	// registerJSClass("DOMParser", "", createDOMParserPrototype)
 
 	for _, cls := range scripting.HtmlElements {
 		if _, found := classes[cls]; !found {
