@@ -5,9 +5,7 @@ package v8host
 import "errors"
 
 func init() {
-	registerClass("PointerEvent", "MouseEvent", func(engine *V8ScriptHost) jsInitializer {
-		return newPointerEventV8Wrapper(engine)
-	})
+	registerClass("PointerEvent", "MouseEvent", newPointerEventV8Wrapper)
 }
 
 func createPointerEventPrototype(scriptHost *V8ScriptHost) v8Class {

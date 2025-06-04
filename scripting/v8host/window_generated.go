@@ -9,9 +9,7 @@ import (
 )
 
 func init() {
-	registerClass("Window", "EventTarget", func(engine *V8ScriptHost) jsInitializer {
-		return newWindowV8Wrapper(engine)
-	})
+	registerClass("Window", "EventTarget", newWindowV8Wrapper)
 }
 
 type windowV8Wrapper struct {

@@ -9,9 +9,7 @@ import (
 )
 
 func init() {
-	registerClass("MutationObserver", "", func(engine *V8ScriptHost) jsInitializer {
-		return newMutationObserverV8Wrapper(engine)
-	})
+	registerClass("MutationObserver", "", newMutationObserverV8Wrapper)
 }
 
 type mutationObserverV8Wrapper struct {

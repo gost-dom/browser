@@ -9,9 +9,7 @@ import (
 )
 
 func init() {
-	registerClass("Element", "Node", func(engine *V8ScriptHost) jsInitializer {
-		return newElementV8Wrapper(engine)
-	})
+	registerClass("Element", "Node", newElementV8Wrapper)
 }
 
 func createElementPrototype(scriptHost *V8ScriptHost) v8Class {

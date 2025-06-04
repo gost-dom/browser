@@ -9,9 +9,7 @@ import (
 )
 
 func init() {
-	registerClass("History", "", func(engine *V8ScriptHost) jsInitializer {
-		return newHistoryV8Wrapper(engine)
-	})
+	registerClass("History", "", newHistoryV8Wrapper)
 }
 
 type historyV8Wrapper struct {

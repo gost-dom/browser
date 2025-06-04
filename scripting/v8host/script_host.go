@@ -216,12 +216,12 @@ type jsInitializer interface {
 	initialize(v8Class)
 }
 
-type jsInitializerFactory = func(*V8ScriptHost) jsInitializer
+type jsInitializerFactory[T jsInitializer] = func(*V8ScriptHost) T
 
-func registerClass(
+func registerClass[T jsInitializer, U jsInitializerFactory[T]](
 	className string,
 	superClassName string,
-	constructorFactory jsInitializerFactory,
+	constructorFactory U,
 ) {
 	spec := classSpec{
 		className, superClassName, func(host *V8ScriptHost, extends jsClass) v8Class {

@@ -10,9 +10,7 @@ import (
 )
 
 func init() {
-	registerClass("FormData", "", func(engine *V8ScriptHost) jsInitializer {
-		return newFormDataV8Wrapper(engine)
-	})
+	registerClass("FormData", "", newFormDataV8Wrapper)
 }
 
 type formDataV8Wrapper struct {
@@ -158,9 +156,7 @@ func (w formDataV8Wrapper) set(cbCtx jsCallbackContext) (jsValue, error) {
 }
 
 func init() {
-	registerClass("XMLHttpRequest", "XMLHttpRequestEventTarget", func(engine *V8ScriptHost) jsInitializer {
-		return newXMLHttpRequestV8Wrapper(engine)
-	})
+	registerClass("XMLHttpRequest", "XMLHttpRequestEventTarget", newXMLHttpRequestV8Wrapper)
 }
 
 func createXMLHttpRequestPrototype(scriptHost *V8ScriptHost) v8Class {

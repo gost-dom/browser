@@ -8,9 +8,7 @@ import (
 )
 
 func init() {
-	registerClass("HTMLElement", "Element", func(engine *V8ScriptHost) jsInitializer {
-		return newHTMLElementV8Wrapper(engine)
-	})
+	registerClass("HTMLElement", "Element", newHTMLElementV8Wrapper)
 }
 
 type htmlElementV8Wrapper struct {

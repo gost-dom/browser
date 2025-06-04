@@ -9,9 +9,7 @@ import (
 )
 
 func init() {
-	registerClass("HTMLFormElement", "HTMLElement", func(engine *V8ScriptHost) jsInitializer {
-		return newHTMLFormElementV8Wrapper(engine)
-	})
+	registerClass("HTMLFormElement", "HTMLElement", newHTMLFormElementV8Wrapper)
 }
 
 type htmlFormElementV8Wrapper struct {

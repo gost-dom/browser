@@ -9,9 +9,7 @@ import (
 )
 
 func init() {
-	registerClass("HTMLAnchorElement", "HTMLElement", func(engine *V8ScriptHost) jsInitializer {
-		return newHTMLAnchorElementV8Wrapper(engine)
-	})
+	registerClass("HTMLAnchorElement", "HTMLElement", newHTMLAnchorElementV8Wrapper)
 }
 
 type htmlAnchorElementV8Wrapper struct {

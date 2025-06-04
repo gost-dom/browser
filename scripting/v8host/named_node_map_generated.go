@@ -9,9 +9,7 @@ import (
 )
 
 func init() {
-	registerClass("NamedNodeMap", "", func(engine *V8ScriptHost) jsInitializer {
-		return newNamedNodeMapV8Wrapper(engine)
-	})
+	registerClass("NamedNodeMap", "", newNamedNodeMapV8Wrapper)
 }
 
 type namedNodeMapV8Wrapper struct {

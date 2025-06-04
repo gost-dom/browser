@@ -9,9 +9,7 @@ import (
 )
 
 func init() {
-	registerClass("Event", "", func(engine *V8ScriptHost) jsInitializer {
-		return newEventV8Wrapper(engine)
-	})
+	registerClass("Event", "", newEventV8Wrapper)
 }
 
 func createEventPrototype(scriptHost *V8ScriptHost) v8Class {
