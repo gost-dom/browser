@@ -37,6 +37,10 @@ func createDocumentPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper.CustomInitializer(jsClass)
 	return jsClass
 }
+func (wrapper documentV8Wrapper) initialize(jsClass v8Class) {
+	wrapper.installPrototype(jsClass)
+	wrapper.CustomInitializer(jsClass)
+}
 
 func (w documentV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("getElementsByTagName", w.getElementsByTagName)

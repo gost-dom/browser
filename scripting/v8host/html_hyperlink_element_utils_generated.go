@@ -28,6 +28,9 @@ func createHTMLHyperlinkElementUtilsPrototype(scriptHost *V8ScriptHost) v8Class 
 
 	return jsClass
 }
+func (wrapper htmlHyperlinkElementUtilsV8Wrapper) initialize(jsClass v8Class) {
+	wrapper.installPrototype(jsClass)
+}
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeAttribute("href", w.href, w.setHref)

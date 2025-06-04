@@ -55,6 +55,19 @@ func CreateV8ConstructorBody(data ESConstructorData) g.Generator {
 	return statements
 }
 
+func CreateV8ClassInitializerBody(data ESConstructorData) g.Generator {
+	builder := NewConstructorBuilder()
+	statements := g.StatementList(
+		builder.Wrapper.InitializeClass(builder.Class),
+	)
+	if data.RunCustomCode {
+		statements.Append(
+			g.NewValue("wrapper").Field("CustomInitializer").Call(builder.Class),
+		)
+	}
+	return statements
+}
+
 func CreateV8ConstructorWrapperBody(
 	data ESConstructorData,
 	cbCtx wrappers.CallbackContext,

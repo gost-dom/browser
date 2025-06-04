@@ -25,6 +25,9 @@ func createURLPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
+func (wrapper urlV8Wrapper) initialize(jsClass v8Class) {
+	wrapper.installPrototype(jsClass)
+}
 
 func (w urlV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("toJSON", w.toJSON)
@@ -251,6 +254,10 @@ func createURLSearchParamsPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	wrapper.CustomInitializer(jsClass)
 	return jsClass
+}
+func (wrapper urlSearchParamsV8Wrapper) initialize(jsClass v8Class) {
+	wrapper.installPrototype(jsClass)
+	wrapper.CustomInitializer(jsClass)
 }
 
 func (w urlSearchParamsV8Wrapper) installPrototype(jsClass v8Class) {

@@ -32,6 +32,9 @@ func createEventTargetPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
+func (wrapper eventTargetV8Wrapper) initialize(jsClass v8Class) {
+	wrapper.installPrototype(jsClass)
+}
 
 func (w eventTargetV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("addEventListener", w.addEventListener)

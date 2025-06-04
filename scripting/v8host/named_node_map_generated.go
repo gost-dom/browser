@@ -33,6 +33,10 @@ func createNamedNodeMapPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper.CustomInitializer(jsClass)
 	return jsClass
 }
+func (wrapper namedNodeMapV8Wrapper) initialize(jsClass v8Class) {
+	wrapper.installPrototype(jsClass)
+	wrapper.CustomInitializer(jsClass)
+}
 
 func (w namedNodeMapV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("item", w.item)

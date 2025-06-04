@@ -24,6 +24,9 @@ func createEventPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
+func (wrapper eventV8Wrapper) initialize(jsClass v8Class) {
+	wrapper.installPrototype(jsClass)
+}
 
 func (w eventV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("stopPropagation", w.stopPropagation)

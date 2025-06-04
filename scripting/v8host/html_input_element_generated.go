@@ -32,6 +32,9 @@ func createHTMLInputElementPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
+func (wrapper htmlInputElementV8Wrapper) initialize(jsClass v8Class) {
+	wrapper.installPrototype(jsClass)
+}
 
 func (w htmlInputElementV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("checkValidity", w.checkValidity)

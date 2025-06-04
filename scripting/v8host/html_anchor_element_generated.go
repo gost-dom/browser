@@ -36,6 +36,9 @@ func createHTMLAnchorElementPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
+func (wrapper htmlAnchorElementV8Wrapper) initialize(jsClass v8Class) {
+	wrapper.installPrototype(jsClass)
+}
 
 func (w htmlAnchorElementV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeAttribute("target", w.target, w.setTarget)

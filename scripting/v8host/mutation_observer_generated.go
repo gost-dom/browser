@@ -32,6 +32,9 @@ func createMutationObserverPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
+func (wrapper mutationObserverV8Wrapper) initialize(jsClass v8Class) {
+	wrapper.installPrototype(jsClass)
+}
 
 func (w mutationObserverV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("observe", w.observe)

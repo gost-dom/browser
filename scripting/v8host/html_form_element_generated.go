@@ -32,6 +32,9 @@ func createHTMLFormElementPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
+func (wrapper htmlFormElementV8Wrapper) initialize(jsClass v8Class) {
+	wrapper.installPrototype(jsClass)
+}
 
 func (w htmlFormElementV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("submit", w.submit)

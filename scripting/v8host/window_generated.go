@@ -32,6 +32,9 @@ func createWindowPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
+func (wrapper windowV8Wrapper) initialize(jsClass v8Class) {
+	wrapper.installPrototype(jsClass)
+}
 
 func (w windowV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("close", w.close)

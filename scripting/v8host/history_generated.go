@@ -32,6 +32,9 @@ func createHistoryPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
+func (wrapper historyV8Wrapper) initialize(jsClass v8Class) {
+	wrapper.installPrototype(jsClass)
+}
 
 func (w historyV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("go", w.go_)

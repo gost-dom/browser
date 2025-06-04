@@ -439,11 +439,11 @@ func (host *V8ScriptHost) CreateClass(
 	callback js.FunctionCallback[jsTypeParam],
 ) js.Class[jsTypeParam] {
 	ft := wrapV8Callback(host, callback)
-	ft.InstanceTemplate().SetInternalFieldCount(1)
+	result := newV8Class(host, ft)
+	result.inst.SetInternalFieldCount(1)
 	if extends != nil {
 		ft.Inherit(extends.(v8Class).ft)
 	}
-	result := newV8Class(host, ft)
 	host.windowTemplate.Set(name, ft)
 	host.globals.namedGlobals[name] = result
 	return result

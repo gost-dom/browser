@@ -32,6 +32,9 @@ func createNodePrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
+func (wrapper nodeV8Wrapper) initialize(jsClass v8Class) {
+	wrapper.installPrototype(jsClass)
+}
 
 func (w nodeV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("getRootNode", w.getRootNode)

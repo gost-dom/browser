@@ -25,6 +25,10 @@ func createElementPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper.CustomInitializer(jsClass)
 	return jsClass
 }
+func (wrapper elementV8Wrapper) initialize(jsClass v8Class) {
+	wrapper.installPrototype(jsClass)
+	wrapper.CustomInitializer(jsClass)
+}
 
 func (w elementV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("hasAttributes", w.hasAttributes)

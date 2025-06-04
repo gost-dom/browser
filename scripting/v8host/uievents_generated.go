@@ -23,6 +23,9 @@ func createMouseEventPrototype(scriptHost *V8ScriptHost) v8Class {
 
 	return jsClass
 }
+func (wrapper mouseEventV8Wrapper) initialize(jsClass v8Class) {
+	wrapper.installPrototype(jsClass)
+}
 
 func (w mouseEventV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("getModifierState", w.getModifierState)
@@ -114,6 +117,9 @@ func createUIEventPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper.installPrototype(jsClass)
 
 	return jsClass
+}
+func (wrapper uIEventV8Wrapper) initialize(jsClass v8Class) {
+	wrapper.installPrototype(jsClass)
 }
 
 func (w uIEventV8Wrapper) installPrototype(jsClass v8Class) {

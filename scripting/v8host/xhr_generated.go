@@ -34,6 +34,10 @@ func createFormDataPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper.CustomInitializer(jsClass)
 	return jsClass
 }
+func (wrapper formDataV8Wrapper) initialize(jsClass v8Class) {
+	wrapper.installPrototype(jsClass)
+	wrapper.CustomInitializer(jsClass)
+}
 
 func (w formDataV8Wrapper) installPrototype(jsClass v8Class) {
 	jsClass.CreatePrototypeMethod("append", w.append)
@@ -166,6 +170,9 @@ func createXMLHttpRequestPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper.installPrototype(jsClass)
 
 	return jsClass
+}
+func (wrapper xmlHttpRequestV8Wrapper) initialize(jsClass v8Class) {
+	wrapper.installPrototype(jsClass)
 }
 
 func (w xmlHttpRequestV8Wrapper) installPrototype(jsClass v8Class) {

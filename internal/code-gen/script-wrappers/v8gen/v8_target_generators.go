@@ -150,12 +150,20 @@ func (gen V8TargetGenerators) CreateMethodCallbackBody(
 }
 
 func (gen V8TargetGenerators) CreateHostInitializer(data ESConstructorData) g.Generator {
-	return g.FunctionDefinition{
-		Name:     prototypeFactoryFunctionName(data),
-		Args:     g.Arg(scriptHost, scriptHostPtr),
-		RtnTypes: g.List(v8Class),
-		Body:     CreateV8ConstructorBody(data),
-	}
+	wrapperType := gen.WrapperStructGenerators().WrapperStructType(data.Name())
+	return g.StatementList(
+		g.FunctionDefinition{
+			Name:     prototypeFactoryFunctionName(data),
+			Args:     g.Arg(scriptHost, scriptHostPtr),
+			RtnTypes: g.List(v8Class),
+			Body:     CreateV8ConstructorBody(data),
+		},
+		g.FunctionDefinition{
+			Name:     "initialize", // prototypeFactoryFunctionName(data),
+			Receiver: g.FunctionArgument{Name: g.Id("wrapper"), Type: wrapperType},
+			Args:     g.Arg(g.Id("jsClass"), v8Class),
+			Body:     CreateV8ClassInitializerBody(data),
+		})
 }
 
 func (gen V8TargetGenerators) PlatformInfoArg() g.Generator { return g.Id("info") }
