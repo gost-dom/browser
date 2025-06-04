@@ -6,7 +6,6 @@ import (
 	"errors"
 	html "github.com/gost-dom/browser/html"
 	js "github.com/gost-dom/browser/scripting/internal/js"
-	v8 "github.com/gost-dom/v8go"
 )
 
 type htmlHyperlinkElementUtilsV8Wrapper struct {
@@ -17,7 +16,7 @@ func newHTMLHyperlinkElementUtilsV8Wrapper(scriptHost *V8ScriptHost) *htmlHyperl
 	return &htmlHyperlinkElementUtilsV8Wrapper{newHandleReffedObject[html.HTMLHyperlinkElementUtils](scriptHost)}
 }
 
-func createHTMLHyperlinkElementUtilsPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
+func createHTMLHyperlinkElementUtilsPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper := newHTMLHyperlinkElementUtilsV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -27,7 +26,7 @@ func createHTMLHyperlinkElementUtilsPrototype(scriptHost *V8ScriptHost) *v8.Func
 	jsClass := newV8Class(scriptHost, constructor)
 	wrapper.installPrototype(jsClass)
 
-	return constructor
+	return jsClass
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper) installPrototype(jsClass v8Class) {

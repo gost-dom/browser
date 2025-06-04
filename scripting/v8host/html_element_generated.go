@@ -5,7 +5,6 @@ package v8host
 import (
 	html "github.com/gost-dom/browser/html"
 	js "github.com/gost-dom/browser/scripting/internal/js"
-	v8 "github.com/gost-dom/v8go"
 )
 
 func init() {
@@ -24,7 +23,7 @@ func newHTMLElementV8Wrapper(scriptHost *V8ScriptHost) *htmlElementV8Wrapper {
 	}
 }
 
-func createHTMLElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
+func createHTMLElementPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper := newHTMLElementV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -34,7 +33,7 @@ func createHTMLElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	jsClass := newV8Class(scriptHost, constructor)
 	wrapper.installPrototype(jsClass)
 
-	return constructor
+	return jsClass
 }
 
 func (w htmlElementV8Wrapper) installPrototype(jsClass v8Class) {

@@ -5,7 +5,6 @@ package v8host
 import (
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
 	js "github.com/gost-dom/browser/scripting/internal/js"
-	v8 "github.com/gost-dom/v8go"
 )
 
 func init() {
@@ -20,7 +19,7 @@ func newMutationRecordV8Wrapper(scriptHost *V8ScriptHost) *mutationRecordV8Wrapp
 	return &mutationRecordV8Wrapper{newHandleReffedObject[*dominterfaces.MutationRecord](scriptHost)}
 }
 
-func createMutationRecordPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
+func createMutationRecordPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper := newMutationRecordV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -30,7 +29,7 @@ func createMutationRecordPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplat
 	jsClass := newV8Class(scriptHost, constructor)
 	wrapper.installPrototype(jsClass)
 
-	return constructor
+	return jsClass
 }
 
 func (w mutationRecordV8Wrapper) installPrototype(jsClass v8Class) {

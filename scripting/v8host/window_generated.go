@@ -6,7 +6,6 @@ import (
 	"errors"
 	html "github.com/gost-dom/browser/html"
 	js "github.com/gost-dom/browser/scripting/internal/js"
-	v8 "github.com/gost-dom/v8go"
 )
 
 func init() {
@@ -21,7 +20,7 @@ func newWindowV8Wrapper(scriptHost *V8ScriptHost) *windowV8Wrapper {
 	return &windowV8Wrapper{newHandleReffedObject[html.Window](scriptHost)}
 }
 
-func createWindowPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
+func createWindowPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper := newWindowV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -31,7 +30,7 @@ func createWindowPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	jsClass := newV8Class(scriptHost, constructor)
 	wrapper.installPrototype(jsClass)
 
-	return constructor
+	return jsClass
 }
 
 func (w windowV8Wrapper) installPrototype(jsClass v8Class) {

@@ -2,16 +2,13 @@
 
 package v8host
 
-import (
-	"errors"
-	v8 "github.com/gost-dom/v8go"
-)
+import "errors"
 
 func init() {
 	registerJSClass("PointerEvent", "MouseEvent", createPointerEventPrototype)
 }
 
-func createPointerEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
+func createPointerEventPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper := newPointerEventV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -21,7 +18,7 @@ func createPointerEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate 
 	jsClass := newV8Class(scriptHost, constructor)
 	wrapper.installPrototype(jsClass)
 
-	return constructor
+	return jsClass
 }
 
 func (w pointerEventV8Wrapper) installPrototype(jsClass v8Class) {

@@ -5,7 +5,6 @@ package v8host
 import (
 	dom "github.com/gost-dom/browser/dom"
 	js "github.com/gost-dom/browser/scripting/internal/js"
-	v8 "github.com/gost-dom/v8go"
 )
 
 func init() {
@@ -20,7 +19,7 @@ func newNodeListV8Wrapper(scriptHost *V8ScriptHost) *nodeListV8Wrapper {
 	return &nodeListV8Wrapper{newHandleReffedObject[dom.NodeList](scriptHost)}
 }
 
-func createNodeListPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
+func createNodeListPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper := newNodeListV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -31,7 +30,7 @@ func createNodeListPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	wrapper.installPrototype(jsClass)
 
 	wrapper.CustomInitializer(jsClass)
-	return constructor
+	return jsClass
 }
 
 func (w nodeListV8Wrapper) installPrototype(jsClass v8Class) {

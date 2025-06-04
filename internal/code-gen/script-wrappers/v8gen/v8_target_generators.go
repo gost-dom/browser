@@ -153,7 +153,7 @@ func (gen V8TargetGenerators) CreateHostInitializer(data ESConstructorData) g.Ge
 	return g.FunctionDefinition{
 		Name:     prototypeFactoryFunctionName(data),
 		Args:     g.Arg(scriptHost, scriptHostPtr),
-		RtnTypes: g.List(v8FunctionTemplatePtr),
+		RtnTypes: g.List(v8Class),
 		Body:     CreateV8ConstructorBody(data),
 	}
 }

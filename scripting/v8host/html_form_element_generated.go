@@ -6,7 +6,6 @@ import (
 	"errors"
 	html "github.com/gost-dom/browser/html"
 	js "github.com/gost-dom/browser/scripting/internal/js"
-	v8 "github.com/gost-dom/v8go"
 )
 
 func init() {
@@ -21,7 +20,7 @@ func newHTMLFormElementV8Wrapper(scriptHost *V8ScriptHost) *htmlFormElementV8Wra
 	return &htmlFormElementV8Wrapper{newHandleReffedObject[html.HTMLFormElement](scriptHost)}
 }
 
-func createHTMLFormElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
+func createHTMLFormElementPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper := newHTMLFormElementV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -31,7 +30,7 @@ func createHTMLFormElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTempla
 	jsClass := newV8Class(scriptHost, constructor)
 	wrapper.installPrototype(jsClass)
 
-	return constructor
+	return jsClass
 }
 
 func (w htmlFormElementV8Wrapper) installPrototype(jsClass v8Class) {

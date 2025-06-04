@@ -5,7 +5,7 @@ import (
 	v8 "github.com/gost-dom/v8go"
 )
 
-func createLocationPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
+func createLocationPrototype(host *V8ScriptHost) v8Class {
 	builder := newIllegalConstructorBuilder[html.Location](host)
 	builder.instanceLookup = func(ctx *V8ScriptContext, this *v8.Object) (html.Location, error) {
 		location := ctx.window.Location()
@@ -21,5 +21,5 @@ func createLocationPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
 	helper.CreateReadonlyProp("port", html.Location.Port)
 	helper.CreateReadonlyProp("protocol", html.Location.Protocol)
 	helper.CreateReadonlyProp("search", html.Location.Search)
-	return builder.constructor
+	return newV8Class(host, builder.constructor)
 }

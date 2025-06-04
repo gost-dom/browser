@@ -2,8 +2,6 @@ package v8host
 
 import (
 	"github.com/gost-dom/browser/dom"
-
-	v8 "github.com/gost-dom/v8go"
 )
 
 type documentFragmentV8Wrapper struct {
@@ -16,7 +14,7 @@ func (w documentFragmentV8Wrapper) constructor(ctx jsCallbackContext) (jsValue, 
 	return w.store(result, ctx)
 }
 
-func createDocumentFragmentPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
+func createDocumentFragmentPrototype(host *V8ScriptHost) v8Class {
 	wrapper := documentFragmentV8Wrapper{
 		newHandleReffedObject[dom.DocumentFragment](host),
 		newParentNodeV8Wrapper(host),
@@ -25,5 +23,5 @@ func createDocumentFragmentPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
 	constructor.InstanceTemplate().SetInternalFieldCount(1)
 	jsClass := newV8Class(host, constructor)
 	wrapper.parentNode.installPrototype(jsClass)
-	return constructor
+	return newV8Class(host, constructor)
 }

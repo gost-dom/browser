@@ -6,7 +6,6 @@ import (
 	"errors"
 	dom "github.com/gost-dom/browser/dom"
 	js "github.com/gost-dom/browser/scripting/internal/js"
-	v8 "github.com/gost-dom/v8go"
 )
 
 func init() {
@@ -21,7 +20,7 @@ func newDOMTokenListV8Wrapper(scriptHost *V8ScriptHost) *domTokenListV8Wrapper {
 	return &domTokenListV8Wrapper{newHandleReffedObject[dom.DOMTokenList](scriptHost)}
 }
 
-func createDOMTokenListPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
+func createDOMTokenListPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper := newDOMTokenListV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -32,7 +31,7 @@ func createDOMTokenListPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate 
 	wrapper.installPrototype(jsClass)
 
 	wrapper.CustomInitializer(jsClass)
-	return constructor
+	return jsClass
 }
 
 func (w domTokenListV8Wrapper) installPrototype(jsClass v8Class) {

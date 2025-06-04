@@ -6,7 +6,6 @@ import (
 	"errors"
 	html "github.com/gost-dom/browser/html"
 	js "github.com/gost-dom/browser/scripting/internal/js"
-	v8 "github.com/gost-dom/v8go"
 )
 
 func init() {
@@ -21,7 +20,7 @@ func newHTMLInputElementV8Wrapper(scriptHost *V8ScriptHost) *htmlInputElementV8W
 	return &htmlInputElementV8Wrapper{newHandleReffedObject[html.HTMLInputElement](scriptHost)}
 }
 
-func createHTMLInputElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
+func createHTMLInputElementPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper := newHTMLInputElementV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -31,7 +30,7 @@ func createHTMLInputElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTempl
 	jsClass := newV8Class(scriptHost, constructor)
 	wrapper.installPrototype(jsClass)
 
-	return constructor
+	return jsClass
 }
 
 func (w htmlInputElementV8Wrapper) installPrototype(jsClass v8Class) {

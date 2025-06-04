@@ -5,14 +5,13 @@ package v8host
 import (
 	"errors"
 	uievents "github.com/gost-dom/browser/internal/uievents"
-	v8 "github.com/gost-dom/v8go"
 )
 
 func init() {
 	registerJSClass("MouseEvent", "UIEvent", createMouseEventPrototype)
 }
 
-func createMouseEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
+func createMouseEventPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper := newMouseEventV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -22,7 +21,7 @@ func createMouseEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	jsClass := newV8Class(scriptHost, constructor)
 	wrapper.installPrototype(jsClass)
 
-	return constructor
+	return jsClass
 }
 
 func (w mouseEventV8Wrapper) installPrototype(jsClass v8Class) {
@@ -104,7 +103,7 @@ func newUIEventV8Wrapper(scriptHost *V8ScriptHost) *uIEventV8Wrapper {
 	return &uIEventV8Wrapper{newHandleReffedObject[uievents.UIEvent](scriptHost)}
 }
 
-func createUIEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
+func createUIEventPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper := newUIEventV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -114,7 +113,7 @@ func createUIEventPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	jsClass := newV8Class(scriptHost, constructor)
 	wrapper.installPrototype(jsClass)
 
-	return constructor
+	return jsClass
 }
 
 func (w uIEventV8Wrapper) installPrototype(jsClass v8Class) {

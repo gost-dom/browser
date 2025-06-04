@@ -6,7 +6,6 @@ import (
 	"errors"
 	event "github.com/gost-dom/browser/dom/event"
 	js "github.com/gost-dom/browser/scripting/internal/js"
-	v8 "github.com/gost-dom/v8go"
 )
 
 func init() {
@@ -21,7 +20,7 @@ func newEventTargetV8Wrapper(scriptHost *V8ScriptHost) *eventTargetV8Wrapper {
 	return &eventTargetV8Wrapper{newHandleReffedObject[event.EventTarget](scriptHost)}
 }
 
-func createEventTargetPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
+func createEventTargetPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper := newEventTargetV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -31,7 +30,7 @@ func createEventTargetPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	jsClass := newV8Class(scriptHost, constructor)
 	wrapper.installPrototype(jsClass)
 
-	return constructor
+	return jsClass
 }
 
 func (w eventTargetV8Wrapper) installPrototype(jsClass v8Class) {

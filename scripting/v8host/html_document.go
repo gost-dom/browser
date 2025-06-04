@@ -2,8 +2,6 @@ package v8host
 
 import (
 	"github.com/gost-dom/browser/html"
-
-	v8 "github.com/gost-dom/v8go"
 )
 
 type htmlDocumentV8Wrapper struct {
@@ -14,7 +12,7 @@ func newHTMLDocumentV8Wrapper(host *V8ScriptHost) htmlDocumentV8Wrapper {
 	return htmlDocumentV8Wrapper{*newDocumentV8Wrapper(host)}
 }
 
-func createHTMLDocumentPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
+func createHTMLDocumentPrototype(host *V8ScriptHost) v8Class {
 	wrapper := newDocumentV8Wrapper(host)
 	builder := newIllegalConstructorBuilder[html.HTMLDocument](host)
 	constructor := builder.constructor
@@ -23,5 +21,5 @@ func createHTMLDocumentPrototype(host *V8ScriptHost) *v8.FunctionTemplate {
 	wrapper.CustomInitializer(
 		v8Class{host, constructor, constructor.PrototypeTemplate(), constructor.InstanceTemplate()},
 	)
-	return constructor
+	return newV8Class(host, constructor)
 }

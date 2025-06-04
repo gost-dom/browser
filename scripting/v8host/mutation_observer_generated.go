@@ -6,7 +6,6 @@ import (
 	"errors"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
 	js "github.com/gost-dom/browser/scripting/internal/js"
-	v8 "github.com/gost-dom/v8go"
 )
 
 func init() {
@@ -21,7 +20,7 @@ func newMutationObserverV8Wrapper(scriptHost *V8ScriptHost) *mutationObserverV8W
 	return &mutationObserverV8Wrapper{newHandleReffedObject[dominterfaces.MutationObserver](scriptHost)}
 }
 
-func createMutationObserverPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
+func createMutationObserverPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper := newMutationObserverV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -31,7 +30,7 @@ func createMutationObserverPrototype(scriptHost *V8ScriptHost) *v8.FunctionTempl
 	jsClass := newV8Class(scriptHost, constructor)
 	wrapper.installPrototype(jsClass)
 
-	return constructor
+	return jsClass
 }
 
 func (w mutationObserverV8Wrapper) installPrototype(jsClass v8Class) {

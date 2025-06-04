@@ -6,7 +6,6 @@ import (
 	"errors"
 	htmlinterfaces "github.com/gost-dom/browser/internal/interfaces/html-interfaces"
 	js "github.com/gost-dom/browser/scripting/internal/js"
-	v8 "github.com/gost-dom/v8go"
 )
 
 func init() {
@@ -21,7 +20,7 @@ func newHistoryV8Wrapper(scriptHost *V8ScriptHost) *historyV8Wrapper {
 	return &historyV8Wrapper{newHandleReffedObject[htmlinterfaces.History](scriptHost)}
 }
 
-func createHistoryPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
+func createHistoryPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper := newHistoryV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -31,7 +30,7 @@ func createHistoryPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	jsClass := newV8Class(scriptHost, constructor)
 	wrapper.installPrototype(jsClass)
 
-	return constructor
+	return jsClass
 }
 
 func (w historyV8Wrapper) installPrototype(jsClass v8Class) {

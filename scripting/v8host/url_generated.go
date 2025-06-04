@@ -7,14 +7,13 @@ import (
 	urlinterfaces "github.com/gost-dom/browser/internal/interfaces/url-interfaces"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 	url "github.com/gost-dom/browser/url"
-	v8 "github.com/gost-dom/v8go"
 )
 
 func init() {
 	registerJSClass("URL", "", createURLPrototype)
 }
 
-func createURLPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
+func createURLPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper := newURLV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -24,7 +23,7 @@ func createURLPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	jsClass := newV8Class(scriptHost, constructor)
 	wrapper.installPrototype(jsClass)
 
-	return constructor
+	return jsClass
 }
 
 func (w urlV8Wrapper) installPrototype(jsClass v8Class) {
@@ -240,7 +239,7 @@ func newURLSearchParamsV8Wrapper(scriptHost *V8ScriptHost) *urlSearchParamsV8Wra
 	return &urlSearchParamsV8Wrapper{newHandleReffedObject[urlinterfaces.URLSearchParams](scriptHost)}
 }
 
-func createURLSearchParamsPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
+func createURLSearchParamsPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper := newURLSearchParamsV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -251,7 +250,7 @@ func createURLSearchParamsPrototype(scriptHost *V8ScriptHost) *v8.FunctionTempla
 	wrapper.installPrototype(jsClass)
 
 	wrapper.CustomInitializer(jsClass)
-	return constructor
+	return jsClass
 }
 
 func (w urlSearchParamsV8Wrapper) installPrototype(jsClass v8Class) {

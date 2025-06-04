@@ -6,7 +6,6 @@ import (
 	"errors"
 	dom "github.com/gost-dom/browser/dom"
 	js "github.com/gost-dom/browser/scripting/internal/js"
-	v8 "github.com/gost-dom/v8go"
 )
 
 func init() {
@@ -21,7 +20,7 @@ func newNamedNodeMapV8Wrapper(scriptHost *V8ScriptHost) *namedNodeMapV8Wrapper {
 	return &namedNodeMapV8Wrapper{newHandleReffedObject[dom.NamedNodeMap](scriptHost)}
 }
 
-func createNamedNodeMapPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
+func createNamedNodeMapPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper := newNamedNodeMapV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -32,7 +31,7 @@ func createNamedNodeMapPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate 
 	wrapper.installPrototype(jsClass)
 
 	wrapper.CustomInitializer(jsClass)
-	return constructor
+	return jsClass
 }
 
 func (w namedNodeMapV8Wrapper) installPrototype(jsClass v8Class) {

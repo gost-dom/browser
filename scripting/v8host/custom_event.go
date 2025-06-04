@@ -18,7 +18,7 @@ func newCustomEventV8Wrapper(scriptHost *V8ScriptHost) *customEventV8Wrapper {
 	return &customEventV8Wrapper{newHandleReffedObject[*event.Event](scriptHost)}
 }
 
-func createCustomEvent(host *V8ScriptHost) *v8go.FunctionTemplate {
+func createCustomEvent(host *V8ScriptHost) v8Class {
 	iso := host.iso
 	wrapper := newCustomEventV8Wrapper(host)
 
@@ -26,7 +26,7 @@ func createCustomEvent(host *V8ScriptHost) *v8go.FunctionTemplate {
 	res.InstanceTemplate().SetInternalFieldCount(1)
 	res.PrototypeTemplate().
 		SetAccessorProperty("detail", v8go.NewFunctionTemplateWithError(iso, wrapper.detail), nil, v8go.None)
-	return res
+	return newV8Class(host, res)
 }
 func (w customEventV8Wrapper) constructor(info *v8go.FunctionCallbackInfo) (*v8go.Value, error) {
 	host := w.scriptHost

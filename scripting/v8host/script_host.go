@@ -101,7 +101,7 @@ type V8ScriptHost struct {
 	iterator        v8Iterator
 }
 
-type jsConstructorFactory1 = func(*V8ScriptHost) *v8go.FunctionTemplate
+type jsConstructorFactory1 = func(*V8ScriptHost) v8Class
 type jsConstructorFactory = func(*V8ScriptHost, jsClass) v8Class
 
 type class struct {
@@ -185,7 +185,7 @@ func registerJSClass(
 ) {
 	spec := classSpec{
 		className, superClassName, func(host *V8ScriptHost, extends jsClass) v8Class {
-			res := newV8Class(host, constructorFactory(host))
+			res := constructorFactory(host)
 			if extends != nil {
 				res.ft.Inherit(extends.(v8Class).ft)
 			}
@@ -220,7 +220,7 @@ func init() {
 
 	registerJSClass("HTMLDocument", "Document", createHTMLDocumentPrototype)
 	registerJSClass("DocumentFragment", "Node", createDocumentFragmentPrototype)
-	registerJSClass("ShadowRoot", "DocumentFragment", createShadowRootPrototype)
+	registerJSClass("ShadowRoot", "DocumentFragment", createIllegalConstructor)
 	registerJSClass("Attr", "Node", createAttr)
 
 	// registerJSClass("DOMParser", "", createDOMParserPrototype)

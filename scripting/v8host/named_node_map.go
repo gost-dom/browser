@@ -7,7 +7,7 @@ import (
 	v8 "github.com/gost-dom/v8go"
 )
 
-func createAttr(host *V8ScriptHost) *v8.FunctionTemplate {
+func createAttr(host *V8ScriptHost) v8Class {
 	iso := host.iso
 	builder := newIllegalConstructorBuilder[dom.Attr](host)
 	builder.instanceLookup = func(ctx *V8ScriptContext, this *v8.Object) (dom.Attr, error) {
@@ -21,7 +21,7 @@ func createAttr(host *V8ScriptHost) *v8.FunctionTemplate {
 	proto := builder.NewPrototypeBuilder()
 	proto.CreateReadonlyProp("name", dom.Attr.Name)
 	proto.CreateReadWriteProp("value", dom.Attr.Value, dom.Attr.SetValue)
-	return builder.constructor
+	return newV8Class(host, builder.constructor)
 }
 
 func (w namedNodeMapV8Wrapper) CustomInitializer(class jsClass) {

@@ -7,7 +7,6 @@ import (
 	html "github.com/gost-dom/browser/html"
 	html1 "github.com/gost-dom/browser/internal/html"
 	js "github.com/gost-dom/browser/scripting/internal/js"
-	v8 "github.com/gost-dom/v8go"
 )
 
 func init() {
@@ -22,7 +21,7 @@ func newFormDataV8Wrapper(scriptHost *V8ScriptHost) *formDataV8Wrapper {
 	return &formDataV8Wrapper{newHandleReffedObject[*html.FormData](scriptHost)}
 }
 
-func createFormDataPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
+func createFormDataPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper := newFormDataV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -33,7 +32,7 @@ func createFormDataPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
 	wrapper.installPrototype(jsClass)
 
 	wrapper.CustomInitializer(jsClass)
-	return constructor
+	return jsClass
 }
 
 func (w formDataV8Wrapper) installPrototype(jsClass v8Class) {
@@ -156,7 +155,7 @@ func init() {
 	registerJSClass("XMLHttpRequest", "XMLHttpRequestEventTarget", createXMLHttpRequestPrototype)
 }
 
-func createXMLHttpRequestPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
+func createXMLHttpRequestPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper := newXMLHttpRequestV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -166,7 +165,7 @@ func createXMLHttpRequestPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplat
 	jsClass := newV8Class(scriptHost, constructor)
 	wrapper.installPrototype(jsClass)
 
-	return constructor
+	return jsClass
 }
 
 func (w xmlHttpRequestV8Wrapper) installPrototype(jsClass v8Class) {

@@ -5,7 +5,6 @@ package v8host
 import (
 	dom "github.com/gost-dom/browser/dom"
 	js "github.com/gost-dom/browser/scripting/internal/js"
-	v8 "github.com/gost-dom/v8go"
 )
 
 type nonDocumentTypeChildNodeV8Wrapper struct {
@@ -16,7 +15,7 @@ func newNonDocumentTypeChildNodeV8Wrapper(scriptHost *V8ScriptHost) *nonDocument
 	return &nonDocumentTypeChildNodeV8Wrapper{newHandleReffedObject[dom.NonDocumentTypeChildNode](scriptHost)}
 }
 
-func createNonDocumentTypeChildNodePrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
+func createNonDocumentTypeChildNodePrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper := newNonDocumentTypeChildNodeV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -26,7 +25,7 @@ func createNonDocumentTypeChildNodePrototype(scriptHost *V8ScriptHost) *v8.Funct
 	jsClass := newV8Class(scriptHost, constructor)
 	wrapper.installPrototype(jsClass)
 
-	return constructor
+	return jsClass
 }
 
 func (w nonDocumentTypeChildNodeV8Wrapper) installPrototype(jsClass v8Class) {

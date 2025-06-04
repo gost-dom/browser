@@ -6,7 +6,6 @@ import (
 	"errors"
 	html "github.com/gost-dom/browser/html"
 	js "github.com/gost-dom/browser/scripting/internal/js"
-	v8 "github.com/gost-dom/v8go"
 )
 
 type htmlOrSVGElementV8Wrapper struct {
@@ -17,7 +16,7 @@ func newHTMLOrSVGElementV8Wrapper(scriptHost *V8ScriptHost) *htmlOrSVGElementV8W
 	return &htmlOrSVGElementV8Wrapper{newHandleReffedObject[html.HTMLOrSVGElement](scriptHost)}
 }
 
-func createHTMLOrSVGElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
+func createHTMLOrSVGElementPrototype(scriptHost *V8ScriptHost) v8Class {
 	wrapper := newHTMLOrSVGElementV8Wrapper(scriptHost)
 	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
 
@@ -27,7 +26,7 @@ func createHTMLOrSVGElementPrototype(scriptHost *V8ScriptHost) *v8.FunctionTempl
 	jsClass := newV8Class(scriptHost, constructor)
 	wrapper.installPrototype(jsClass)
 
-	return constructor
+	return jsClass
 }
 
 func (w htmlOrSVGElementV8Wrapper) installPrototype(jsClass v8Class) {
