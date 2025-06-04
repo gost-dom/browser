@@ -9,7 +9,9 @@ import (
 )
 
 func init() {
-	registerJSClass("NamedNodeMap", "", createNamedNodeMapPrototype)
+	registerClass("NamedNodeMap", "", func(engine *V8ScriptHost) jsInitializer {
+		return newNamedNodeMapV8Wrapper(engine)
+	})
 }
 
 type namedNodeMapV8Wrapper struct {

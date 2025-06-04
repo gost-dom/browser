@@ -10,7 +10,9 @@ import (
 )
 
 func init() {
-	registerJSClass("URL", "", createURLPrototype)
+	registerClass("URL", "", func(engine *V8ScriptHost) jsInitializer {
+		return newURLV8Wrapper(engine)
+	})
 }
 
 func createURLPrototype(scriptHost *V8ScriptHost) v8Class {
@@ -231,7 +233,9 @@ func (w urlV8Wrapper) setHash(cbCtx jsCallbackContext) (jsValue, error) {
 }
 
 func init() {
-	registerJSClass("URLSearchParams", "", createURLSearchParamsPrototype)
+	registerClass("URLSearchParams", "", func(engine *V8ScriptHost) jsInitializer {
+		return newURLSearchParamsV8Wrapper(engine)
+	})
 }
 
 type urlSearchParamsV8Wrapper struct {

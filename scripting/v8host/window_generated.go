@@ -9,7 +9,9 @@ import (
 )
 
 func init() {
-	registerJSClass("Window", "EventTarget", createWindowPrototype)
+	registerClass("Window", "EventTarget", func(engine *V8ScriptHost) jsInitializer {
+		return newWindowV8Wrapper(engine)
+	})
 }
 
 type windowV8Wrapper struct {

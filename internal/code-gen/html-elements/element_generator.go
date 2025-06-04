@@ -221,20 +221,16 @@ func toStructName(name string) string {
 func (gen htmlElementGenerator) GenerateStruct() g.Generator {
 	res := g.Struct{Name: g.NewType(toStructName(gen.idlType.Name))}
 	res.Embed(g.Id("HTMLElement"))
-	// for a := range gen.idlType.Attributes() {
-	// 	res.Field(g.Id(idl.SanitizeName(a.Name)), g.Id("string"))
-	// }
 	return res
 }
 
 func (gen htmlElementGenerator) GenerateConstructor() g.Generator {
 	res := g.NewValue("result")
-	i := g.NewType(gen.idlType.Name)
 	t := g.NewType(toStructName(gen.idlType.Name))
 	owner := g.Id("ownerDoc")
 	return g.FunctionDefinition{
 		Name:     fmt.Sprintf("New%s", gen.idlType.Name),
-		RtnTypes: g.List(i),
+		RtnTypes: g.List(g.Id("jsInitializer")), // g.List(i),
 		Args:     g.Arg(owner, g.Id("HTMLDocument")),
 		Body: g.StatementList(
 			g.Assign(

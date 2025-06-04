@@ -16,12 +16,18 @@ func (gen V8TargetGenerators) Host(receiver g.Generator) g.Generator {
 }
 
 func (gen V8TargetGenerators) CreateInitFunction(data ESConstructorData) g.Generator {
+	ctrName := V8WrapperStructGenerators{}.WrapperStructConstructorName(data.Name())
+	engine := g.Id("engine")
 	return g.FunctionDefinition{
 		Name: "init",
-		Body: g.NewValue("registerJSClass").Call(
+		Body: g.NewValue("registerClass").Call(
 			g.Lit(data.Spec.TypeName),
 			g.Lit(data.IdlInterface.Inheritance),
-			g.Id(prototypeFactoryFunctionName(data))),
+			g.FunctionDefinition{
+				Args:     g.Arg(engine, g.NewType("V8ScriptHost").Pointer()),
+				RtnTypes: g.List(g.Id("jsInitializer")),
+				Body:     g.Return(g.NewValue(ctrName).Call(engine)),
+			}),
 	}
 }
 

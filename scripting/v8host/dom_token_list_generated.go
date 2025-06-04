@@ -9,7 +9,9 @@ import (
 )
 
 func init() {
-	registerJSClass("DOMTokenList", "", createDOMTokenListPrototype)
+	registerClass("DOMTokenList", "", func(engine *V8ScriptHost) jsInitializer {
+		return newDOMTokenListV8Wrapper(engine)
+	})
 }
 
 type domTokenListV8Wrapper struct {

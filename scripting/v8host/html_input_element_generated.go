@@ -9,7 +9,9 @@ import (
 )
 
 func init() {
-	registerJSClass("HTMLInputElement", "HTMLElement", createHTMLInputElementPrototype)
+	registerClass("HTMLInputElement", "HTMLElement", func(engine *V8ScriptHost) jsInitializer {
+		return newHTMLInputElementV8Wrapper(engine)
+	})
 }
 
 type htmlInputElementV8Wrapper struct {

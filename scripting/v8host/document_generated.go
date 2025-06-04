@@ -9,7 +9,9 @@ import (
 )
 
 func init() {
-	registerJSClass("Document", "Node", createDocumentPrototype)
+	registerClass("Document", "Node", func(engine *V8ScriptHost) jsInitializer {
+		return newDocumentV8Wrapper(engine)
+	})
 }
 
 type documentV8Wrapper struct {

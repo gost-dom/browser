@@ -9,7 +9,9 @@ import (
 )
 
 func init() {
-	registerJSClass("Node", "EventTarget", createNodePrototype)
+	registerClass("Node", "EventTarget", func(engine *V8ScriptHost) jsInitializer {
+		return newNodeV8Wrapper(engine)
+	})
 }
 
 type nodeV8Wrapper struct {

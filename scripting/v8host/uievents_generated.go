@@ -8,7 +8,9 @@ import (
 )
 
 func init() {
-	registerJSClass("MouseEvent", "UIEvent", createMouseEventPrototype)
+	registerClass("MouseEvent", "UIEvent", func(engine *V8ScriptHost) jsInitializer {
+		return newMouseEventV8Wrapper(engine)
+	})
 }
 
 func createMouseEventPrototype(scriptHost *V8ScriptHost) v8Class {
@@ -95,7 +97,9 @@ func (w mouseEventV8Wrapper) relatedTarget(cbCtx jsCallbackContext) (jsValue, er
 }
 
 func init() {
-	registerJSClass("UIEvent", "Event", createUIEventPrototype)
+	registerClass("UIEvent", "Event", func(engine *V8ScriptHost) jsInitializer {
+		return newUIEventV8Wrapper(engine)
+	})
 }
 
 type uIEventV8Wrapper struct {
