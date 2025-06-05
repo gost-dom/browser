@@ -167,11 +167,13 @@ func (w converters[T]) toJSWrapper(
 // Generated code assumes that a wrapper type is used with specific helper
 // methods implemented.
 type handleReffedObject[T, U any] struct {
-	scriptHost *V8ScriptHost
+	scriptHost js.ScriptEngine[U]
 	converters[U]
 }
 
-func newHandleReffedObject[T any](host *V8ScriptHost) handleReffedObject[T, jsTypeParam] {
+func newHandleReffedObject[T any](
+	host js.ScriptEngine[jsTypeParam],
+) handleReffedObject[T, jsTypeParam] {
 	return handleReffedObject[T, jsTypeParam]{
 		scriptHost: host,
 	}
