@@ -8,10 +8,6 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func init() {
-	registerClass("History", "", newHistoryV8Wrapper)
-}
-
 type historyV8Wrapper[T any] struct {
 	handleReffedObject[htmlinterfaces.History, T]
 }

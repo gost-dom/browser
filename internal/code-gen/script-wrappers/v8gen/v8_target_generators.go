@@ -18,15 +18,7 @@ func (gen V8TargetGenerators) Host(receiver g.Generator) g.Generator {
 }
 
 func (gen V8TargetGenerators) CreateInitFunction(data ESConstructorData) g.Generator {
-	ctrName := V8WrapperStructGenerators{}.WrapperStructConstructorName(data.Name())
-	return g.FunctionDefinition{
-		Name: "init",
-		Body: g.NewValue("registerClass").Call(
-			g.Lit(data.Spec.TypeName),
-			g.Lit(data.IdlInterface.Inheritance),
-			g.NewValue(ctrName),
-		),
-	}
+	return g.Noop
 }
 
 func (gen V8TargetGenerators) ReturnErrMsg(errGen g.Generator) g.Generator {

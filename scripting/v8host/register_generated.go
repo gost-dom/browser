@@ -5,8 +5,6 @@ package v8host
 import js "github.com/gost-dom/browser/scripting/internal/js"
 
 func Bootstrap[T any](reg js.ClassBuilder[T]) {
-	js.RegisterClass(reg, "URL", "", newURLV8Wrapper)
-	js.RegisterClass(reg, "URLSearchParams", "", newURLSearchParamsV8Wrapper)
 	js.RegisterClass(reg, "Attr", "Node", newAttrV8Wrapper)
 	js.RegisterClass(reg, "DOMTokenList", "", newDOMTokenListV8Wrapper)
 	js.RegisterClass(reg, "Document", "Node", newDocumentV8Wrapper)
@@ -20,9 +18,6 @@ func Bootstrap[T any](reg js.ClassBuilder[T]) {
 	js.RegisterClass(reg, "NodeList", "", newNodeListV8Wrapper)
 	js.RegisterClass(reg, "NonDocumentTypeChildNode", "", newNonDocumentTypeChildNodeV8Wrapper)
 	js.RegisterClass(reg, "ParentNode", "", newParentNodeV8Wrapper)
-	js.RegisterClass(reg, "MouseEvent", "UIEvent", newMouseEventV8Wrapper)
-	js.RegisterClass(reg, "UIEvent", "Event", newUIEventV8Wrapper)
-	js.RegisterClass(reg, "PointerEvent", "MouseEvent", newPointerEventV8Wrapper)
 	js.RegisterClass(reg, "HTMLAnchorElement", "HTMLElement", newHTMLAnchorElementV8Wrapper)
 	js.RegisterClass(reg, "HTMLElement", "Element", newHTMLElementV8Wrapper)
 	js.RegisterClass(reg, "HTMLFormElement", "HTMLElement", newHTMLFormElementV8Wrapper)
@@ -33,6 +28,11 @@ func Bootstrap[T any](reg js.ClassBuilder[T]) {
 	js.RegisterClass(reg, "History", "", newHistoryV8Wrapper)
 	js.RegisterClass(reg, "Location", "", newLocationV8Wrapper)
 	js.RegisterClass(reg, "Window", "EventTarget", newWindowV8Wrapper)
+	js.RegisterClass(reg, "PointerEvent", "MouseEvent", newPointerEventV8Wrapper)
+	js.RegisterClass(reg, "MouseEvent", "UIEvent", newMouseEventV8Wrapper)
+	js.RegisterClass(reg, "UIEvent", "Event", newUIEventV8Wrapper)
+	js.RegisterClass(reg, "URL", "", newURLV8Wrapper)
+	js.RegisterClass(reg, "URLSearchParams", "", newURLSearchParamsV8Wrapper)
 	js.RegisterClass(reg, "FormData", "", newFormDataV8Wrapper)
 	js.RegisterClass(reg, "XMLHttpRequest", "XMLHttpRequestEventTarget", newXMLHttpRequestV8Wrapper)
 	js.RegisterClass(reg, "XMLHttpRequestEventTarget", "EventTarget", newXMLHttpRequestEventTargetV8Wrapper)

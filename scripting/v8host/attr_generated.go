@@ -8,10 +8,6 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func init() {
-	registerClass("Attr", "Node", newAttrV8Wrapper)
-}
-
 type attrV8Wrapper[T any] struct {
 	handleReffedObject[dom.Attr, T]
 }

@@ -7,10 +7,6 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func init() {
-	registerClass("PointerEvent", "MouseEvent", newPointerEventV8Wrapper)
-}
-
 func (wrapper pointerEventV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
 }

@@ -8,10 +8,6 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func init() {
-	registerClass("Window", "EventTarget", newWindowV8Wrapper)
-}
-
 type windowV8Wrapper[T any] struct {
 	handleReffedObject[html.Window, T]
 }

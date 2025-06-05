@@ -8,10 +8,6 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func init() {
-	registerClass("Location", "", newLocationV8Wrapper)
-}
-
 type locationV8Wrapper[T any] struct {
 	handleReffedObject[html.Location, T]
 }

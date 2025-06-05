@@ -7,10 +7,6 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func init() {
-	registerClass("NodeList", "", newNodeListV8Wrapper)
-}
-
 type nodeListV8Wrapper[T any] struct {
 	handleReffedObject[dom.NodeList, T]
 }

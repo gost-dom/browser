@@ -8,10 +8,6 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func init() {
-	registerClass("Event", "", newEventV8Wrapper)
-}
-
 type eventV8Wrapper[T any] struct {
 	handleReffedObject[*event.Event, T]
 }

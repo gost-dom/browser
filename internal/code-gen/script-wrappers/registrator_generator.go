@@ -1,8 +1,11 @@
 package wrappers
 
 import (
+	"cmp"
 	"fmt"
+	"maps"
 	"os"
+	"slices"
 
 	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/packagenames"
@@ -14,7 +17,12 @@ import (
 func Write(specs configuration.WebIdlConfigurations) error {
 	statements := g.StatementList()
 	registrator := g.Id("reg")
-	for _, spec := range specs {
+	s := slices.Collect(maps.Values(specs))
+	slices.SortFunc(
+		s,
+		func(x, y *configuration.WebIdlConfiguration) int { return cmp.Compare(x.Name, y.Name) },
+	)
+	for _, spec := range s {
 		data, err := idl.Load(spec.Name)
 		if err != nil {
 			return err
@@ -47,7 +55,6 @@ func Write(specs configuration.WebIdlConfigurations) error {
 }
 
 func GenerateRegisterFunctions() error {
-
 	specs := configuration.CreateV8Specs()
 	return Write(specs)
 }

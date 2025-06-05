@@ -8,10 +8,6 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func init() {
-	registerClass("HTMLFormElement", "HTMLElement", newHTMLFormElementV8Wrapper)
-}
-
 type htmlFormElementV8Wrapper[T any] struct {
 	handleReffedObject[html.HTMLFormElement, T]
 }

@@ -9,10 +9,6 @@ import (
 	url "github.com/gost-dom/browser/url"
 )
 
-func init() {
-	registerClass("URL", "", newURLV8Wrapper)
-}
-
 func (wrapper urlV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
 }
@@ -216,10 +212,6 @@ func (w urlV8Wrapper[T]) hash(cbCtx js.CallbackContext[T]) (js.Value[T], error) 
 func (w urlV8Wrapper[T]) setHash(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.setHash")
 	return cbCtx.ReturnWithError(errors.New("URL.setHash: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
-}
-
-func init() {
-	registerClass("URLSearchParams", "", newURLSearchParamsV8Wrapper)
 }
 
 type urlSearchParamsV8Wrapper[T any] struct {

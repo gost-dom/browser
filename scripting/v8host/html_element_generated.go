@@ -7,10 +7,6 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func init() {
-	registerClass("HTMLElement", "Element", newHTMLElementV8Wrapper)
-}
-
 type htmlElementV8Wrapper[T any] struct {
 	handleReffedObject[html.HTMLElement, T]
 	htmlOrSVGElement *htmlOrSVGElementV8Wrapper[T]

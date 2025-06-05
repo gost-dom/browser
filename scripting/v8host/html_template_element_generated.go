@@ -8,10 +8,6 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func init() {
-	registerClass("HTMLTemplateElement", "HTMLElement", newHTMLTemplateElementV8Wrapper)
-}
-
 type htmlTemplateElementV8Wrapper[T any] struct {
 	handleReffedObject[html.HTMLTemplateElement, T]
 }

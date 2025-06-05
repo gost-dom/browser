@@ -7,10 +7,6 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func init() {
-	registerClass("MutationRecord", "", newMutationRecordV8Wrapper)
-}
-
 type mutationRecordV8Wrapper[T any] struct {
 	handleReffedObject[*dominterfaces.MutationRecord, T]
 }

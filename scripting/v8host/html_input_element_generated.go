@@ -8,10 +8,6 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func init() {
-	registerClass("HTMLInputElement", "HTMLElement", newHTMLInputElementV8Wrapper)
-}
-
 type htmlInputElementV8Wrapper[T any] struct {
 	handleReffedObject[html.HTMLInputElement, T]
 }

@@ -8,10 +8,6 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func init() {
-	registerClass("HTMLAnchorElement", "HTMLElement", newHTMLAnchorElementV8Wrapper)
-}
-
 type htmlAnchorElementV8Wrapper[T any] struct {
 	handleReffedObject[html.HTMLAnchorElement, T]
 	htmlHyperlinkElementUtils *htmlHyperlinkElementUtilsV8Wrapper[T]

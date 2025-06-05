@@ -8,10 +8,6 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func init() {
-	registerClass("DOMTokenList", "", newDOMTokenListV8Wrapper)
-}
-
 type domTokenListV8Wrapper[T any] struct {
 	handleReffedObject[dom.DOMTokenList, T]
 }

@@ -8,10 +8,6 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func init() {
-	registerClass("MouseEvent", "UIEvent", newMouseEventV8Wrapper)
-}
-
 func (wrapper mouseEventV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
 }
@@ -81,10 +77,6 @@ func (w mouseEventV8Wrapper[T]) layerY(cbCtx js.CallbackContext[T]) (js.Value[T]
 func (w mouseEventV8Wrapper[T]) relatedTarget(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: MouseEvent.relatedTarget")
 	return cbCtx.ReturnWithError(errors.New("MouseEvent.relatedTarget: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
-}
-
-func init() {
-	registerClass("UIEvent", "Event", newUIEventV8Wrapper)
 }
 
 type uIEventV8Wrapper[T any] struct {

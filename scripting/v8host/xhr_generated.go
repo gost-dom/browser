@@ -10,10 +10,6 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func init() {
-	registerClass("FormData", "", newFormDataV8Wrapper)
-}
-
 type formDataV8Wrapper[T any] struct {
 	handleReffedObject[*html.FormData, T]
 }
@@ -141,10 +137,6 @@ func (w formDataV8Wrapper[T]) set(cbCtx js.CallbackContext[T]) (js.Value[T], err
 	}
 	instance.Set(name, value)
 	return nil, nil
-}
-
-func init() {
-	registerClass("XMLHttpRequest", "XMLHttpRequestEventTarget", newXMLHttpRequestV8Wrapper)
 }
 
 type xmlHttpRequestV8Wrapper[T any] struct {
@@ -382,10 +374,6 @@ func (w xmlHttpRequestV8Wrapper[T]) responseText(cbCtx js.CallbackContext[T]) (j
 func (w xmlHttpRequestV8Wrapper[T]) responseXML(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.responseXML")
 	return cbCtx.ReturnWithError(errors.New("XMLHttpRequest.responseXML: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
-}
-
-func init() {
-	registerClass("XMLHttpRequestEventTarget", "EventTarget", newXMLHttpRequestEventTargetV8Wrapper)
 }
 
 type xmlHttpRequestEventTargetV8Wrapper[T any] struct {

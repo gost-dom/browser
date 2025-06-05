@@ -8,10 +8,6 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func init() {
-	registerClass("NamedNodeMap", "", newNamedNodeMapV8Wrapper)
-}
-
 type namedNodeMapV8Wrapper[T any] struct {
 	handleReffedObject[dom.NamedNodeMap, T]
 }

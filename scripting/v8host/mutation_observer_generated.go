@@ -8,10 +8,6 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func init() {
-	registerClass("MutationObserver", "", newMutationObserverV8Wrapper)
-}
-
 type mutationObserverV8Wrapper[T any] struct {
 	handleReffedObject[dominterfaces.MutationObserver, T]
 }
