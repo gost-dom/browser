@@ -7,20 +7,6 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type elementV8Wrapper[T any] struct {
-	handleReffedObject[dom.Element, T]
-	parentNode               *parentNodeV8Wrapper[T]
-	nonDocumentTypeChildNode *nonDocumentTypeChildNodeV8Wrapper[T]
-}
-
-func newElementV8Wrapper(host jsScriptEngine) *elementV8Wrapper[jsTypeParam] {
-	return &elementV8Wrapper[jsTypeParam]{
-		newHandleReffedObject[dom.Element](host),
-		newParentNodeV8Wrapper(host),
-		newNonDocumentTypeChildNodeV8Wrapper(host),
-	}
-}
-
 func (e *elementV8Wrapper[T]) CustomInitializer(class js.Class[T]) {
 	class.CreatePrototypeMethod("insertAdjacentHTML", e.insertAdjacentHTML)
 	class.CreatePrototypeAttribute("outerHTML", e.outerHTML, nil)

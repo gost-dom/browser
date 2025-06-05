@@ -14,3 +14,5 @@ var As = g.NewTypePackage("As", packagenames.JS)
 
 var JSValue = g.NewTypePackage("Value", packagenames.JS)
 var decoders = g.NewValuePackage("Decoders", packagenames.JS)
+var JSRegister = g.NewValuePackage("RegisterClass", packagenames.JS)
+var JSClassBiulder = g.NewValuePackage("ClassBuilder", packagenames.JS)

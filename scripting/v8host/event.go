@@ -9,14 +9,6 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type eventV8Wrapper[T any] struct {
-	handleReffedObject[*event.Event, T]
-}
-
-func newEventV8Wrapper(scriptHost jsScriptEngine) *eventV8Wrapper[jsTypeParam] {
-	return &eventV8Wrapper[jsTypeParam]{newHandleReffedObject[*event.Event](scriptHost)}
-}
-
 func (w eventV8Wrapper[T]) defaultEventInit() eventInitWrapper {
 	return eventInitWrapper{}
 }

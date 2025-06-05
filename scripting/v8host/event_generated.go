@@ -12,6 +12,14 @@ func init() {
 	registerClass("Event", "", newEventV8Wrapper)
 }
 
+type eventV8Wrapper[T any] struct {
+	handleReffedObject[*event.Event, T]
+}
+
+func newEventV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *eventV8Wrapper[T] {
+	return &eventV8Wrapper[T]{newHandleReffedObject[*event.Event, T](scriptHost)}
+}
+
 func (wrapper eventV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
 }

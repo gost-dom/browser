@@ -15,8 +15,8 @@ type urlV8Wrapper[T any] struct {
 	handleReffedObject[urlinterfaces.URL, T]
 }
 
-func newURLV8Wrapper(host jsScriptEngine) urlV8Wrapper[jsTypeParam] {
-	return urlV8Wrapper[jsTypeParam]{newHandleReffedObject[urlinterfaces.URL](host)}
+func newURLV8Wrapper[T any](host js.ScriptEngine[T]) urlV8Wrapper[T] {
+	return urlV8Wrapper[T]{newHandleReffedObject[urlinterfaces.URL](host)}
 }
 
 type handleDisposable cgo.Handle

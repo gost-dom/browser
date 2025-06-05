@@ -30,7 +30,7 @@ func configureDOMNode(domSpecs *WebIdlConfiguration) {
 
 func configureDOMEvent(domSpecs *WebIdlConfiguration) {
 	event := domSpecs.Type("Event")
-	event.SkipWrapper = true
+	// event.SkipWrapper = true
 	event.Method("eventPhase").SetCustomImplementation()
 	event.Method("constructor").Argument("eventInitDict").SetHasDefault()
 	event.Method("initEvent").Ignore()

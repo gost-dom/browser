@@ -11,12 +11,8 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type xmlHttpRequestV8Wrapper[T any] struct {
-	handleReffedObject[XmlHttpRequest, T]
-}
-
 func (xhr xmlHttpRequestV8Wrapper[T]) decodeDocument(
-	cbCtx js.CallbackContext[T],
+	_ js.CallbackContext[T],
 	val js.Value[T],
 ) (io.Reader, error) {
 	if val.IsNull() {
@@ -44,10 +40,6 @@ func (xhr xmlHttpRequestV8Wrapper[T]) decodeXMLHttpRequestBodyInit(
 		}
 	}
 	return nil, errors.New("XMLHTTPRequest only accepts FormData body yet")
-}
-
-func newXMLHttpRequestV8Wrapper(host jsScriptEngine) xmlHttpRequestV8Wrapper[jsTypeParam] {
-	return xmlHttpRequestV8Wrapper[jsTypeParam]{newHandleReffedObject[XmlHttpRequest](host)}
 }
 
 func (xhr xmlHttpRequestV8Wrapper[T]) CreateInstance(

@@ -147,6 +147,14 @@ func init() {
 	registerClass("XMLHttpRequest", "XMLHttpRequestEventTarget", newXMLHttpRequestV8Wrapper)
 }
 
+type xmlHttpRequestV8Wrapper[T any] struct {
+	handleReffedObject[html1.XMLHttpRequest, T]
+}
+
+func newXMLHttpRequestV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *xmlHttpRequestV8Wrapper[T] {
+	return &xmlHttpRequestV8Wrapper[T]{newHandleReffedObject[html1.XMLHttpRequest, T](scriptHost)}
+}
+
 func (wrapper xmlHttpRequestV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
 }

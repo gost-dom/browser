@@ -11,6 +11,7 @@ import (
 
 	"github.com/gost-dom/code-gen/events"
 	htmlelements "github.com/gost-dom/code-gen/html-elements"
+	wrappers "github.com/gost-dom/code-gen/script-wrappers"
 	"github.com/gost-dom/code-gen/script-wrappers/gojagen"
 	"github.com/gost-dom/code-gen/script-wrappers/v8gen"
 )
@@ -46,6 +47,7 @@ func main() {
 	case "scripting":
 		gen := v8gen.NewScriptWrapperModulesGenerator()
 		exitOnError(gen.GenerateScriptWrappers())
+		exitOnError(wrappers.GenerateRegisterFunctions())
 		os.Exit(0)
 		return
 	case "htmlelements":

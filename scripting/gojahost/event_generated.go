@@ -12,6 +12,14 @@ func init() {
 	installClass("Event", "", newEventWrapper)
 }
 
+type eventWrapper struct {
+	baseInstanceWrapper[*event.Event]
+}
+
+func newEventWrapper(instance *GojaContext) wrapper {
+	return &eventWrapper{newBaseInstanceWrapper[*event.Event](instance)}
+}
+
 func (w eventWrapper) initializePrototype(prototype *g.Object, vm *g.Runtime) {
 	prototype.Set("stopPropagation", wrapCallback(w.ctx, w.stopPropagation))
 	prototype.Set("preventDefault", wrapCallback(w.ctx, w.preventDefault))

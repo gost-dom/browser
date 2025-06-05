@@ -94,6 +94,9 @@ func (d ESConstructorData) OperationCallbackInfos() iter.Seq[ESOperation] {
 }
 
 func (d ESConstructorData) Name() string { return d.Spec.TypeName }
+func (d ESConstructorData) Extends() string {
+	return d.IdlInterface.Inheritance
+}
 
 func (d ESConstructorData) WrappedType() g.Generator {
 	if override := d.Spec.OverrideWrappedType; override != nil {

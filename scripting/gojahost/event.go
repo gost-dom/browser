@@ -16,14 +16,6 @@ func toBoolean(value g.Value) bool {
 	return value != nil && value.ToBoolean()
 }
 
-type eventWrapper struct {
-	baseInstanceWrapper[*event.Event]
-}
-
-func newEventWrapper(instance *GojaContext) wrapper {
-	return &eventWrapper{newBaseInstanceWrapper[*event.Event](instance)}
-}
-
 func (w eventWrapper) constructor(call g.ConstructorCall, r *g.Runtime) *g.Object {
 	arg1 := call.Argument(0).String()
 	init := event.CustomEventInit{}

@@ -12,6 +12,20 @@ func init() {
 	registerClass("Element", "Node", newElementV8Wrapper)
 }
 
+type elementV8Wrapper[T any] struct {
+	handleReffedObject[dom.Element, T]
+	parentNode               *parentNodeV8Wrapper[T]
+	nonDocumentTypeChildNode *nonDocumentTypeChildNodeV8Wrapper[T]
+}
+
+func newElementV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *elementV8Wrapper[T] {
+	return &elementV8Wrapper[T]{
+		newHandleReffedObject[dom.Element, T](scriptHost),
+		newParentNodeV8Wrapper(scriptHost),
+		newNonDocumentTypeChildNodeV8Wrapper(scriptHost),
+	}
+}
+
 func (wrapper elementV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)

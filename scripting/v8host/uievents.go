@@ -49,10 +49,10 @@ type pointerEventV8Wrapper[T any] struct {
 	mouseEventV8Wrapper[T]
 }
 
-func newMouseEventV8Wrapper(host jsScriptEngine) mouseEventV8Wrapper[jsTypeParam] {
-	return mouseEventV8Wrapper[jsTypeParam]{*newUIEventV8Wrapper(host)}
+func newMouseEventV8Wrapper[T any](host js.ScriptEngine[T]) mouseEventV8Wrapper[T] {
+	return mouseEventV8Wrapper[T]{*newUIEventV8Wrapper(host)}
 }
 
-func newPointerEventV8Wrapper(host jsScriptEngine) pointerEventV8Wrapper[jsTypeParam] {
-	return pointerEventV8Wrapper[jsTypeParam]{newMouseEventV8Wrapper(host)}
+func newPointerEventV8Wrapper[T any](host js.ScriptEngine[T]) pointerEventV8Wrapper[T] {
+	return pointerEventV8Wrapper[T]{newMouseEventV8Wrapper(host)}
 }

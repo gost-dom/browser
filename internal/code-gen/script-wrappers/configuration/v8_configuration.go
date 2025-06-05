@@ -18,7 +18,7 @@ func CreateV8Specs() WebIdlConfigurations {
 	xhr := xhrModule.Type("XMLHttpRequest")
 
 	// TODO: Just need to support non-node objects
-	xhr.SkipWrapper = true
+	// xhr.SkipWrapper = true
 
 	xhr.MarkMembersAsNotImplemented(
 		"readyState",
@@ -126,7 +126,7 @@ func configureDOMSpecs(domSpecs *WebIdlConfiguration) {
 	parentNode.Method("replaceChildren").Argument("nodes").Decoder = "w.decodeNodeOrText"
 
 	domElement := domSpecs.Type("Element")
-	domElement.SkipWrapper = true
+	// domElement.SkipWrapper = true
 	domElement.RunCustomCode = true
 	domElement.Method("classList").SetCustomImplementation()
 
