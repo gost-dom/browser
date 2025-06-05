@@ -9,12 +9,12 @@ import (
 	v8 "github.com/gost-dom/v8go"
 )
 
-func (l domTokenListV8Wrapper) CustomInitializer(class jsClass) {
+func (l domTokenListV8Wrapper[T]) CustomInitializer(class js.Class[T]) {
 	it := newIterator(l.toString_)
 	it.installPrototype(class)
 }
 
-func (l domTokenListV8Wrapper) toggle(args jsCallbackContext) (jsValue, error) {
+func (l domTokenListV8Wrapper[T]) toggle(args js.CallbackContext[T]) (js.Value[T], error) {
 	instance, errInstance := js.As[dom.DOMTokenList](args.Instance())
 	token, err0 := consumeArgument(args, "toggle", nil, l.decodeString)
 	if err := errors.Join(err0, errInstance); err != nil {
@@ -37,14 +37,14 @@ func (l domTokenListV8Wrapper) toggle(args jsCallbackContext) (jsValue, error) {
 	return args.ValueFactory().NewBoolean(instance.Toggle(token)), nil
 }
 
-func (e htmlTemplateElementV8Wrapper) CreateInstance(
+func (e htmlTemplateElementV8Wrapper[T]) CreateInstance(
 	ctx *V8ScriptContext,
 	this *v8.Object,
 ) (*v8.Value, error) {
 	return nil, errors.New("TODO")
 }
 
-func (w domTokenListV8Wrapper) remove(cbCtx jsCallbackContext) (jsValue, error) {
+func (w domTokenListV8Wrapper[T]) remove(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.remove")
 	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if errInst != nil {

@@ -3,6 +3,7 @@ package v8gen
 import (
 	"github.com/dave/jennifer/jen"
 
+	"github.com/gost-dom/code-gen/packagenames"
 	g "github.com/gost-dom/generators"
 )
 
@@ -15,9 +16,11 @@ var (
 	v8Value                   = g.NewTypePackage("Value", v8).Pointer()
 	v8ReadOnly                = g.Raw(jen.Qual(v8, "ReadOnly"))
 	v8None                    = g.Raw(jen.Qual(v8, "None"))
-	v8CbCtx                   = g.NewType("jsCallbackContext")
-	v8Class                   = g.NewType("jsClass")
-	scriptHostPtr             = g.NewType("jsScriptEngine")
+
+	v8CbCtx       = g.NewTypePackage("CallbackContext", packagenames.JS).TypeParam(g.Id("T"))
+	v8Class       = g.NewTypePackage("Class", packagenames.JS).TypeParam(g.Id("T"))
+	jsValue       = g.NewTypePackage("Value", packagenames.JS).TypeParam(g.Id("T"))
+	scriptHostPtr = g.NewType("jsScriptEngine")
 	// scriptHostPtr             = g.NewType("V8ScriptHost").Pointer()
 )
 

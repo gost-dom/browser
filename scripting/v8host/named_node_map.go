@@ -5,9 +5,9 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w namedNodeMapV8Wrapper) CustomInitializer(class jsClass) {
+func (w namedNodeMapV8Wrapper[T]) CustomInitializer(class js.Class[T]) {
 	class.CreateIndexedHandler(
-		func(cbCtx js.GetterCallbackContext[jsTypeParam, int]) (jsValue, error) {
+		func(cbCtx js.GetterCallbackContext[T, int]) (js.Value[T], error) {
 			instance, err := js.As[dom.NamedNodeMap](cbCtx.Instance())
 			if err != nil {
 				return nil, err

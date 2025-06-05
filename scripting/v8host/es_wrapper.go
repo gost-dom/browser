@@ -106,14 +106,14 @@ func (w converters[T]) decodeNodeOrText(
 	return w.decodeNode(cbCtx, val)
 }
 
-func (w converters[T]) toNull(cbCtx jsCallbackContext) (jsValue, error) {
+func (w converters[T]) toNull(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return cbCtx.ValueFactory().Null(), nil
 }
 
 func (w converters[T]) toNullableString_(
-	cbCtx jsCallbackContext,
+	cbCtx js.CallbackContext[T],
 	str *string,
-) (jsValue, error) {
+) (js.Value[T], error) {
 	if str == nil {
 		return w.toNull(cbCtx)
 	}
@@ -121,45 +121,45 @@ func (w converters[T]) toNullableString_(
 }
 
 func (w converters[T]) toNillableString_(
-	cbCtx jsCallbackContext,
+	cbCtx js.CallbackContext[T],
 	str string,
 	hasVal bool,
-) (jsValue, error) {
+) (js.Value[T], error) {
 	if !hasVal {
 		return w.toNull(cbCtx)
 	}
 	return w.toString_(cbCtx, str)
 }
 
-func (w converters[T]) toUnsignedLong(cbCtx jsCallbackContext, val int) (jsValue, error) {
+func (w converters[T]) toUnsignedLong(cbCtx js.CallbackContext[T], val int) (js.Value[T], error) {
 	return cbCtx.ValueFactory().NewUint32(uint32(val)), nil
 }
 
-func (w converters[T]) toUnsignedShort(cbCtx jsCallbackContext, val int) (jsValue, error) {
+func (w converters[T]) toUnsignedShort(cbCtx js.CallbackContext[T], val int) (js.Value[T], error) {
 	// TODO: This should be uint16 - but v8go doesn't support uint16
 	return cbCtx.ValueFactory().NewUint32(uint32(val)), nil
 }
 
-func (w converters[T]) toLong(cbCtx jsCallbackContext, val int) (jsValue, error) {
+func (w converters[T]) toLong(cbCtx js.CallbackContext[T], val int) (js.Value[T], error) {
 	return cbCtx.ValueFactory().NewInt64(int64(val)), nil
 }
 
-func (w converters[T]) toAny(cbCtx jsCallbackContext, val string) (jsValue, error) {
+func (w converters[T]) toAny(cbCtx js.CallbackContext[T], val string) (js.Value[T], error) {
 	return w.toString_(cbCtx, val)
 }
 
-func (w converters[T]) toString_(cbCtx jsCallbackContext, val string) (jsValue, error) {
+func (w converters[T]) toString_(cbCtx js.CallbackContext[T], val string) (js.Value[T], error) {
 	return cbCtx.ValueFactory().NewString(val), nil
 }
 
-func (w converters[T]) toBoolean(cbCtx jsCallbackContext, val bool) (jsValue, error) {
+func (w converters[T]) toBoolean(cbCtx js.CallbackContext[T], val bool) (js.Value[T], error) {
 	return cbCtx.ValueFactory().NewBoolean(val), nil
 }
 
 func (w converters[T]) toJSWrapper(
-	cbCtx jsCallbackContext,
+	cbCtx js.CallbackContext[T],
 	val entity.ObjectIder,
-) (jsValue, error) {
+) (js.Value[T], error) {
 	return encodeEntity(cbCtx, val)
 }
 
@@ -179,7 +179,10 @@ func newHandleReffedObject[T, U any](
 	}
 }
 
-func (o handleReffedObject[T, U]) store(value any, cbCtx jsCallbackContext) (jsValue, error) {
+func (o handleReffedObject[T, U]) store(
+	value any,
+	cbCtx js.CallbackContext[U],
+) (js.Value[U], error) {
 	this := cbCtx.This()
 	if e, ok := value.(entity.ObjectIder); ok {
 		cbCtx.Scope().SetValue(e, this)

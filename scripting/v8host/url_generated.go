@@ -13,11 +13,11 @@ func init() {
 	registerClass("URL", "", newURLV8Wrapper)
 }
 
-func (wrapper urlV8Wrapper) Initialize(jsClass jsClass) {
+func (wrapper urlV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w urlV8Wrapper) installPrototype(jsClass jsClass) {
+func (w urlV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("toJSON", w.toJSON)
 	jsClass.CreatePrototypeAttribute("href", w.href, w.setHref)
 	jsClass.CreatePrototypeMethod("toString", w.href)
@@ -34,7 +34,7 @@ func (w urlV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("hash", w.hash, w.setHash)
 }
 
-func (w urlV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.Constructor")
 	url, errArg1 := consumeArgument(cbCtx, "url", nil, w.decodeString)
 	if errArg1 != nil {
@@ -50,7 +50,7 @@ func (w urlV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
 	return w.CreateInstance(cbCtx, url)
 }
 
-func (w urlV8Wrapper) toJSON(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlV8Wrapper[T]) toJSON(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.toJSON")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
@@ -63,7 +63,7 @@ func (w urlV8Wrapper) toJSON(cbCtx jsCallbackContext) (jsValue, error) {
 	return w.toString_(cbCtx, result)
 }
 
-func (w urlV8Wrapper) href(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlV8Wrapper[T]) href(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.href")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
@@ -73,12 +73,12 @@ func (w urlV8Wrapper) href(cbCtx jsCallbackContext) (jsValue, error) {
 	return w.toString_(cbCtx, result)
 }
 
-func (w urlV8Wrapper) setHref(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlV8Wrapper[T]) setHref(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.setHref")
 	return cbCtx.ReturnWithError(errors.New("URL.setHref: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w urlV8Wrapper) origin(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlV8Wrapper[T]) origin(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.origin")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
@@ -88,7 +88,7 @@ func (w urlV8Wrapper) origin(cbCtx jsCallbackContext) (jsValue, error) {
 	return w.toString_(cbCtx, result)
 }
 
-func (w urlV8Wrapper) protocol(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlV8Wrapper[T]) protocol(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.protocol")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
@@ -98,32 +98,32 @@ func (w urlV8Wrapper) protocol(cbCtx jsCallbackContext) (jsValue, error) {
 	return w.toString_(cbCtx, result)
 }
 
-func (w urlV8Wrapper) setProtocol(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlV8Wrapper[T]) setProtocol(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.setProtocol")
 	return cbCtx.ReturnWithError(errors.New("URL.setProtocol: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w urlV8Wrapper) username(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlV8Wrapper[T]) username(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.username")
 	return cbCtx.ReturnWithError(errors.New("URL.username: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w urlV8Wrapper) setUsername(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlV8Wrapper[T]) setUsername(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.setUsername")
 	return cbCtx.ReturnWithError(errors.New("URL.setUsername: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w urlV8Wrapper) password(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlV8Wrapper[T]) password(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.password")
 	return cbCtx.ReturnWithError(errors.New("URL.password: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w urlV8Wrapper) setPassword(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlV8Wrapper[T]) setPassword(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.setPassword")
 	return cbCtx.ReturnWithError(errors.New("URL.setPassword: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w urlV8Wrapper) host(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlV8Wrapper[T]) host(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.host")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
@@ -133,12 +133,12 @@ func (w urlV8Wrapper) host(cbCtx jsCallbackContext) (jsValue, error) {
 	return w.toString_(cbCtx, result)
 }
 
-func (w urlV8Wrapper) setHost(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlV8Wrapper[T]) setHost(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.setHost")
 	return cbCtx.ReturnWithError(errors.New("URL.setHost: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w urlV8Wrapper) hostname(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlV8Wrapper[T]) hostname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.hostname")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
@@ -148,12 +148,12 @@ func (w urlV8Wrapper) hostname(cbCtx jsCallbackContext) (jsValue, error) {
 	return w.toString_(cbCtx, result)
 }
 
-func (w urlV8Wrapper) setHostname(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlV8Wrapper[T]) setHostname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.setHostname")
 	return cbCtx.ReturnWithError(errors.New("URL.setHostname: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w urlV8Wrapper) port(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlV8Wrapper[T]) port(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.port")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
@@ -163,12 +163,12 @@ func (w urlV8Wrapper) port(cbCtx jsCallbackContext) (jsValue, error) {
 	return w.toString_(cbCtx, result)
 }
 
-func (w urlV8Wrapper) setPort(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlV8Wrapper[T]) setPort(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.setPort")
 	return cbCtx.ReturnWithError(errors.New("URL.setPort: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w urlV8Wrapper) pathname(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlV8Wrapper[T]) pathname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.pathname")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
@@ -178,12 +178,12 @@ func (w urlV8Wrapper) pathname(cbCtx jsCallbackContext) (jsValue, error) {
 	return w.toString_(cbCtx, result)
 }
 
-func (w urlV8Wrapper) setPathname(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlV8Wrapper[T]) setPathname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.setPathname")
 	return cbCtx.ReturnWithError(errors.New("URL.setPathname: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w urlV8Wrapper) search(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlV8Wrapper[T]) search(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.search")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
@@ -193,17 +193,17 @@ func (w urlV8Wrapper) search(cbCtx jsCallbackContext) (jsValue, error) {
 	return w.toString_(cbCtx, result)
 }
 
-func (w urlV8Wrapper) setSearch(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlV8Wrapper[T]) setSearch(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.setSearch")
 	return cbCtx.ReturnWithError(errors.New("URL.setSearch: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w urlV8Wrapper) searchParams(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlV8Wrapper[T]) searchParams(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.searchParams")
 	return cbCtx.ReturnWithError(errors.New("URL.searchParams: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-func (w urlV8Wrapper) hash(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlV8Wrapper[T]) hash(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.hash")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
@@ -213,7 +213,7 @@ func (w urlV8Wrapper) hash(cbCtx jsCallbackContext) (jsValue, error) {
 	return w.toString_(cbCtx, result)
 }
 
-func (w urlV8Wrapper) setHash(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlV8Wrapper[T]) setHash(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.setHash")
 	return cbCtx.ReturnWithError(errors.New("URL.setHash: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
@@ -222,20 +222,20 @@ func init() {
 	registerClass("URLSearchParams", "", newURLSearchParamsV8Wrapper)
 }
 
-type urlSearchParamsV8Wrapper struct {
-	handleReffedObject[urlinterfaces.URLSearchParams, jsTypeParam]
+type urlSearchParamsV8Wrapper[T any] struct {
+	handleReffedObject[urlinterfaces.URLSearchParams, T]
 }
 
-func newURLSearchParamsV8Wrapper(scriptHost jsScriptEngine) *urlSearchParamsV8Wrapper {
-	return &urlSearchParamsV8Wrapper{newHandleReffedObject[urlinterfaces.URLSearchParams, jsTypeParam](scriptHost)}
+func newURLSearchParamsV8Wrapper(scriptHost jsScriptEngine) *urlSearchParamsV8Wrapper[jsTypeParam] {
+	return &urlSearchParamsV8Wrapper[jsTypeParam]{newHandleReffedObject[urlinterfaces.URLSearchParams, jsTypeParam](scriptHost)}
 }
 
-func (wrapper urlSearchParamsV8Wrapper) Initialize(jsClass jsClass) {
+func (wrapper urlSearchParamsV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)
 }
 
-func (w urlSearchParamsV8Wrapper) installPrototype(jsClass jsClass) {
+func (w urlSearchParamsV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("append", w.append)
 	jsClass.CreatePrototypeMethod("delete", w.delete)
 	jsClass.CreatePrototypeMethod("get", w.get)
@@ -247,7 +247,7 @@ func (w urlSearchParamsV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("size", w.size, nil)
 }
 
-func (w urlSearchParamsV8Wrapper) append(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlSearchParamsV8Wrapper[T]) append(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URLSearchParams.append")
 	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if errInst != nil {
@@ -263,7 +263,7 @@ func (w urlSearchParamsV8Wrapper) append(cbCtx jsCallbackContext) (jsValue, erro
 	return nil, nil
 }
 
-func (w urlSearchParamsV8Wrapper) delete(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlSearchParamsV8Wrapper[T]) delete(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URLSearchParams.delete")
 	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if errInst != nil {
@@ -285,7 +285,7 @@ func (w urlSearchParamsV8Wrapper) delete(cbCtx jsCallbackContext) (jsValue, erro
 	return nil, nil
 }
 
-func (w urlSearchParamsV8Wrapper) get(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlSearchParamsV8Wrapper[T]) get(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URLSearchParams.get")
 	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if errInst != nil {
@@ -299,7 +299,7 @@ func (w urlSearchParamsV8Wrapper) get(cbCtx jsCallbackContext) (jsValue, error) 
 	return w.toNillableString_(cbCtx, result, hasValue)
 }
 
-func (w urlSearchParamsV8Wrapper) getAll(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlSearchParamsV8Wrapper[T]) getAll(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URLSearchParams.getAll")
 	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if errInst != nil {
@@ -313,7 +313,7 @@ func (w urlSearchParamsV8Wrapper) getAll(cbCtx jsCallbackContext) (jsValue, erro
 	return w.toSequenceString_(cbCtx, result)
 }
 
-func (w urlSearchParamsV8Wrapper) has(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlSearchParamsV8Wrapper[T]) has(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URLSearchParams.has")
 	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if errInst != nil {
@@ -335,7 +335,7 @@ func (w urlSearchParamsV8Wrapper) has(cbCtx jsCallbackContext) (jsValue, error) 
 	return w.toBoolean(cbCtx, result)
 }
 
-func (w urlSearchParamsV8Wrapper) set(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlSearchParamsV8Wrapper[T]) set(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URLSearchParams.set")
 	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if errInst != nil {
@@ -351,7 +351,7 @@ func (w urlSearchParamsV8Wrapper) set(cbCtx jsCallbackContext) (jsValue, error) 
 	return nil, nil
 }
 
-func (w urlSearchParamsV8Wrapper) sort(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlSearchParamsV8Wrapper[T]) sort(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URLSearchParams.sort")
 	instance, err := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if err != nil {
@@ -361,7 +361,7 @@ func (w urlSearchParamsV8Wrapper) sort(cbCtx jsCallbackContext) (jsValue, error)
 	return nil, nil
 }
 
-func (w urlSearchParamsV8Wrapper) toString(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlSearchParamsV8Wrapper[T]) toString(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URLSearchParams.toString")
 	instance, err := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if err != nil {
@@ -371,7 +371,7 @@ func (w urlSearchParamsV8Wrapper) toString(cbCtx jsCallbackContext) (jsValue, er
 	return w.toString_(cbCtx, result)
 }
 
-func (w urlSearchParamsV8Wrapper) size(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlSearchParamsV8Wrapper[T]) size(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URLSearchParams.size")
 	instance, err := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if err != nil {

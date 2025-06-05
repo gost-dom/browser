@@ -325,6 +325,6 @@ func (host *V8ScriptHost) CreateClass(
 	return result
 }
 
-func UnhandledError(scope js.Scope[jsTypeParam], err error) {
+func UnhandledError[T any](scope js.Scope[T], err error) {
 	scope.Window().DispatchEvent(event.NewErrorEvent(err))
 }

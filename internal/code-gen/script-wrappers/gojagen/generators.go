@@ -269,6 +269,14 @@ func (g GojaTargetGenerators) WrapperStructType(interfaceName string) generators
 	return generators.NewType(fmt.Sprintf("%sWrapper", LowerCaseFirstLetter(interfaceName)))
 }
 
+func (g GojaTargetGenerators) WrapperStructTypeDef(interfaceName string) generators.Type {
+	return generators.NewType(fmt.Sprintf("%sWrapper", LowerCaseFirstLetter(interfaceName)))
+}
+
+func (g GojaTargetGenerators) WrapperStructTypeRetDef(interfaceName string) generators.Type {
+	return generators.NewType(fmt.Sprintf("%sWrapper", LowerCaseFirstLetter(interfaceName)))
+}
+
 func (g GojaTargetGenerators) WrapperStructConstructorName(interfaceName string) string {
 	return fmt.Sprintf("new%sWrapper", interfaceName)
 }

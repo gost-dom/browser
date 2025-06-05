@@ -6,15 +6,15 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w *nodeListV8Wrapper) CustomInitializer(class jsClass) {
+func (w *nodeListV8Wrapper[T]) CustomInitializer(class js.Class[T]) {
 	nodeListIterator := newIterator(
-		func(ctx jsCallbackContext, instance dom.Node) (jsValue, error) {
+		func(ctx js.CallbackContext[T], instance dom.Node) (js.Value[T], error) {
 			return encodeEntity(ctx, instance)
 		})
 	nodeListIterator.installPrototype(class)
 
 	class.CreateIndexedHandler(
-		func(info js.GetterCallbackContext[jsTypeParam, int]) (jsValue, error) {
+		func(info js.GetterCallbackContext[T, int]) (js.Value[T], error) {
 			instance := info.This().NativeValue()
 			if nodemap, ok := instance.(dom.NodeList); ok {
 				index := int(info.Key())

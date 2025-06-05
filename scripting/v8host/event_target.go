@@ -7,18 +7,18 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type v8EventListener struct {
+type v8EventListener[T any] struct {
 	// TODO: Replace with "scope" - as we keep on to this for longer than the
 	// callback
-	ctx jsCallbackContext
-	val jsFunction
+	ctx js.CallbackContext[T]
+	val js.Function[T]
 }
 
-func newV8EventListener(ctx jsCallbackContext, val jsFunction) event.EventHandler {
-	return v8EventListener{ctx, val}
+func newV8EventListener[T any](ctx js.CallbackContext[T], val js.Function[T]) event.EventHandler {
+	return v8EventListener[T]{ctx, val}
 }
 
-func (l v8EventListener) HandleEvent(e *event.Event) error {
+func (l v8EventListener[T]) HandleEvent(e *event.Event) error {
 	f := l.val
 	event, err := encodeEntity(l.ctx, e)
 	if err == nil {
@@ -30,20 +30,20 @@ func (l v8EventListener) HandleEvent(e *event.Event) error {
 	return err
 }
 
-func (l v8EventListener) Equals(other event.EventHandler) bool {
-	x, ok := other.(v8EventListener)
+func (l v8EventListener[T]) Equals(other event.EventHandler) bool {
+	x, ok := other.(v8EventListener[T])
 	return ok && x.val.StrictEquals(l.val)
 }
 
-func (w eventTargetV8Wrapper) CreateInstance(cbCtx jsCallbackContext) (jsValue, error) {
+func (w eventTargetV8Wrapper[T]) CreateInstance(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	t := event.NewEventTarget()
 	cbCtx.This().SetNativeValue(t)
 	return nil, nil
 }
 
-func (w eventTargetV8Wrapper) decodeEventListener(
-	cbCtx jsCallbackContext,
-	val jsValue,
+func (w eventTargetV8Wrapper[T]) decodeEventListener(
+	cbCtx js.CallbackContext[T],
+	val js.Value[T],
 ) (event.EventHandler, error) {
 	if fn, ok := val.AsFunction(); ok {
 		return newV8EventListener(cbCtx, fn), nil
@@ -52,13 +52,13 @@ func (w eventTargetV8Wrapper) decodeEventListener(
 	}
 }
 
-func (w eventTargetV8Wrapper) defaultEventListenerOptions() []event.EventListenerOption {
+func (w eventTargetV8Wrapper[T]) defaultEventListenerOptions() []event.EventListenerOption {
 	return nil
 }
 
-func (w eventTargetV8Wrapper) decodeEventListenerOptions(
-	cbCtx jsCallbackContext,
-	val jsValue,
+func (w eventTargetV8Wrapper[T]) decodeEventListenerOptions(
+	cbCtx js.CallbackContext[T],
+	val js.Value[T],
 ) ([]event.EventListenerOption, error) {
 	var options []func(*event.EventListener)
 	if val.IsBoolean() && val.Boolean() {
@@ -75,9 +75,9 @@ func (w eventTargetV8Wrapper) decodeEventListenerOptions(
 	return options, nil
 }
 
-func (w eventTargetV8Wrapper) decodeEvent(
-	cbCtx jsCallbackContext,
-	val jsValue,
+func (w eventTargetV8Wrapper[T]) decodeEvent(
+	cbCtx js.CallbackContext[T],
+	val js.Value[T],
 ) (*event.Event, error) {
 	obj, err := js.AssertObjectArg(cbCtx, val)
 	if err == nil {

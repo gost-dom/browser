@@ -12,11 +12,11 @@ func init() {
 	registerClass("Event", "", newEventV8Wrapper)
 }
 
-func (wrapper eventV8Wrapper) Initialize(jsClass jsClass) {
+func (wrapper eventV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w eventV8Wrapper) installPrototype(jsClass jsClass) {
+func (w eventV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("stopPropagation", w.stopPropagation)
 	jsClass.CreatePrototypeMethod("preventDefault", w.preventDefault)
 	jsClass.CreatePrototypeAttribute("type", w.type_, nil)
@@ -28,7 +28,7 @@ func (w eventV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("defaultPrevented", w.defaultPrevented, nil)
 }
 
-func (w eventV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+func (w eventV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Event.Constructor")
 	type_, errArg1 := consumeArgument(cbCtx, "type", nil, w.decodeString)
 	eventInitDict, errArg2 := consumeArgument(cbCtx, "eventInitDict", w.defaultEventInit, w.decodeEventInit)
@@ -39,7 +39,7 @@ func (w eventV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
 	return w.CreateInstance(cbCtx, type_, eventInitDict)
 }
 
-func (w eventV8Wrapper) stopPropagation(cbCtx jsCallbackContext) (jsValue, error) {
+func (w eventV8Wrapper[T]) stopPropagation(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Event.stopPropagation")
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
@@ -49,7 +49,7 @@ func (w eventV8Wrapper) stopPropagation(cbCtx jsCallbackContext) (jsValue, error
 	return nil, nil
 }
 
-func (w eventV8Wrapper) preventDefault(cbCtx jsCallbackContext) (jsValue, error) {
+func (w eventV8Wrapper[T]) preventDefault(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Event.preventDefault")
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
@@ -59,7 +59,7 @@ func (w eventV8Wrapper) preventDefault(cbCtx jsCallbackContext) (jsValue, error)
 	return nil, nil
 }
 
-func (w eventV8Wrapper) type_(cbCtx jsCallbackContext) (jsValue, error) {
+func (w eventV8Wrapper[T]) type_(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Event.type_")
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
@@ -69,7 +69,7 @@ func (w eventV8Wrapper) type_(cbCtx jsCallbackContext) (jsValue, error) {
 	return w.toString_(cbCtx, result)
 }
 
-func (w eventV8Wrapper) target(cbCtx jsCallbackContext) (jsValue, error) {
+func (w eventV8Wrapper[T]) target(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Event.target")
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
@@ -79,7 +79,7 @@ func (w eventV8Wrapper) target(cbCtx jsCallbackContext) (jsValue, error) {
 	return w.toEventTarget(cbCtx, result)
 }
 
-func (w eventV8Wrapper) currentTarget(cbCtx jsCallbackContext) (jsValue, error) {
+func (w eventV8Wrapper[T]) currentTarget(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Event.currentTarget")
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
@@ -89,7 +89,7 @@ func (w eventV8Wrapper) currentTarget(cbCtx jsCallbackContext) (jsValue, error) 
 	return w.toEventTarget(cbCtx, result)
 }
 
-func (w eventV8Wrapper) bubbles(cbCtx jsCallbackContext) (jsValue, error) {
+func (w eventV8Wrapper[T]) bubbles(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Event.bubbles")
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
@@ -99,7 +99,7 @@ func (w eventV8Wrapper) bubbles(cbCtx jsCallbackContext) (jsValue, error) {
 	return w.toBoolean(cbCtx, result)
 }
 
-func (w eventV8Wrapper) cancelable(cbCtx jsCallbackContext) (jsValue, error) {
+func (w eventV8Wrapper[T]) cancelable(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Event.cancelable")
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
@@ -109,7 +109,7 @@ func (w eventV8Wrapper) cancelable(cbCtx jsCallbackContext) (jsValue, error) {
 	return w.toBoolean(cbCtx, result)
 }
 
-func (w eventV8Wrapper) defaultPrevented(cbCtx jsCallbackContext) (jsValue, error) {
+func (w eventV8Wrapper[T]) defaultPrevented(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Event.defaultPrevented")
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {

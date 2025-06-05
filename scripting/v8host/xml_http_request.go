@@ -11,13 +11,13 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type xmlHttpRequestV8Wrapper struct {
-	handleReffedObject[XmlHttpRequest, jsTypeParam]
+type xmlHttpRequestV8Wrapper[T any] struct {
+	handleReffedObject[XmlHttpRequest, T]
 }
 
-func (xhr xmlHttpRequestV8Wrapper) decodeDocument(
-	cbCtx jsCallbackContext,
-	val jsValue,
+func (xhr xmlHttpRequestV8Wrapper[T]) decodeDocument(
+	cbCtx js.CallbackContext[T],
+	val js.Value[T],
 ) (io.Reader, error) {
 	if val.IsNull() {
 		return nil, nil
@@ -25,9 +25,9 @@ func (xhr xmlHttpRequestV8Wrapper) decodeDocument(
 	return nil, errors.New("Not supported yet")
 }
 
-func (xhr xmlHttpRequestV8Wrapper) decodeXMLHttpRequestBodyInit(
-	cbCtx jsCallbackContext,
-	val jsValue,
+func (xhr xmlHttpRequestV8Wrapper[T]) decodeXMLHttpRequestBodyInit(
+	cbCtx js.CallbackContext[T],
+	val js.Value[T],
 ) (io.Reader, error) {
 	if val == nil {
 		return nil, nil
@@ -46,13 +46,13 @@ func (xhr xmlHttpRequestV8Wrapper) decodeXMLHttpRequestBodyInit(
 	return nil, errors.New("XMLHTTPRequest only accepts FormData body yet")
 }
 
-func newXMLHttpRequestV8Wrapper(host jsScriptEngine) xmlHttpRequestV8Wrapper {
-	return xmlHttpRequestV8Wrapper{newHandleReffedObject[XmlHttpRequest](host)}
+func newXMLHttpRequestV8Wrapper(host jsScriptEngine) xmlHttpRequestV8Wrapper[jsTypeParam] {
+	return xmlHttpRequestV8Wrapper[jsTypeParam]{newHandleReffedObject[XmlHttpRequest](host)}
 }
 
-func (xhr xmlHttpRequestV8Wrapper) CreateInstance(
-	cbCtx jsCallbackContext,
-) (jsValue, error) {
+func (xhr xmlHttpRequestV8Wrapper[T]) CreateInstance(
+	cbCtx js.CallbackContext[T],
+) (js.Value[T], error) {
 	this := cbCtx.This()
 	result := NewXmlHttpRequest(cbCtx.Scope().Window(), cbCtx.Scope().Clock())
 	result.SetCatchAllHandler(event.NewEventHandlerFunc(func(event *event.Event) error {
@@ -70,7 +70,7 @@ func (xhr xmlHttpRequestV8Wrapper) CreateInstance(
 	return xhr.store(result, cbCtx)
 }
 
-func (xhr xmlHttpRequestV8Wrapper) open(cbCtx jsCallbackContext) (jsValue, error) {
+func (xhr xmlHttpRequestV8Wrapper[T]) open(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	instance, errInstance := js.As[XmlHttpRequest](cbCtx.Instance())
 	method, err0 := consumeArgument(cbCtx, "method", nil, xhr.decodeString)
 	url, err1 := consumeArgument(cbCtx, "url", nil, xhr.decodeString)
@@ -88,6 +88,6 @@ func (xhr xmlHttpRequestV8Wrapper) open(cbCtx jsCallbackContext) (jsValue, error
 	return nil, nil
 }
 
-func (xhr xmlHttpRequestV8Wrapper) upload(cbCtx jsCallbackContext) (jsValue, error) {
+func (xhr xmlHttpRequestV8Wrapper[T]) upload(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return cbCtx.This(), nil
 }

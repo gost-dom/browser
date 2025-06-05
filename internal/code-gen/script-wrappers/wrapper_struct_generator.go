@@ -28,7 +28,7 @@ func (g WrapperStructGenerator) TypeGenerator() Generator {
 
 	idlInterfaceName := g.Data.Name()
 	includes := g.Data.Includes()
-	wrapperStruct := gen.NewStruct(structGens.WrapperStructType(idlInterfaceName))
+	wrapperStruct := gen.NewStruct(structGens.WrapperStructTypeDef(idlInterfaceName))
 	wrapperStruct.Embed(structGens.EmbeddedType(g.Data.WrappedType()))
 
 	for _, i := range includes {
@@ -83,7 +83,7 @@ func (g WrapperStructGenerator) Body() Generator {
 	fieldInitializers[0] = embedConstructorName.Call(structGens.HostArg())
 	fieldInitializers = addLinesBetweenElements(fieldInitializers)
 
-	wrapperType := structGens.WrapperStructType(idlInterfaceName)
+	wrapperType := structGens.WrapperStructTypeRetDef(idlInterfaceName)
 	return generators.Return(wrapperType.CreateInstance(fieldInitializers...).Reference())
 }
 

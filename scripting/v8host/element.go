@@ -7,26 +7,28 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type elementV8Wrapper struct {
-	handleReffedObject[dom.Element, jsTypeParam]
-	parentNode               *parentNodeV8Wrapper
-	nonDocumentTypeChildNode *nonDocumentTypeChildNodeV8Wrapper
+type elementV8Wrapper[T any] struct {
+	handleReffedObject[dom.Element, T]
+	parentNode               *parentNodeV8Wrapper[T]
+	nonDocumentTypeChildNode *nonDocumentTypeChildNodeV8Wrapper[T]
 }
 
-func newElementV8Wrapper(host jsScriptEngine) *elementV8Wrapper {
-	return &elementV8Wrapper{
+func newElementV8Wrapper(host jsScriptEngine) *elementV8Wrapper[jsTypeParam] {
+	return &elementV8Wrapper[jsTypeParam]{
 		newHandleReffedObject[dom.Element](host),
 		newParentNodeV8Wrapper(host),
 		newNonDocumentTypeChildNodeV8Wrapper(host),
 	}
 }
 
-func (e *elementV8Wrapper) CustomInitializer(class js.Class[jsTypeParam]) {
+func (e *elementV8Wrapper[T]) CustomInitializer(class js.Class[T]) {
 	class.CreatePrototypeMethod("insertAdjacentHTML", e.insertAdjacentHTML)
 	class.CreatePrototypeAttribute("outerHTML", e.outerHTML, nil)
 }
 
-func (e *elementV8Wrapper) insertAdjacentHTML(cbCtx jsCallbackContext) (val jsValue, err error) {
+func (e *elementV8Wrapper[T]) insertAdjacentHTML(
+	cbCtx js.CallbackContext[T],
+) (val js.Value[T], err error) {
 	element, e0 := js.As[dom.Element](cbCtx.Instance())
 	position, e1 := consumeArgument(cbCtx, "position", nil, decodeString)
 	html, e2 := consumeArgument(cbCtx, "html", nil, decodeString)
@@ -37,7 +39,7 @@ func (e *elementV8Wrapper) insertAdjacentHTML(cbCtx jsCallbackContext) (val jsVa
 	return nil, err
 }
 
-func (e *elementV8Wrapper) outerHTML(cbCtx jsCallbackContext) (jsValue, error) {
+func (e *elementV8Wrapper[T]) outerHTML(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	if element, err := js.As[dom.Element](cbCtx.Instance()); err == nil {
 		return e.toString_(cbCtx, element.OuterHTML())
 	} else {
@@ -45,7 +47,7 @@ func (e *elementV8Wrapper) outerHTML(cbCtx jsCallbackContext) (jsValue, error) {
 	}
 }
 
-func (e elementV8Wrapper) classList(cbCtx jsCallbackContext) (jsValue, error) {
+func (e elementV8Wrapper[T]) classList(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	instance, err := js.As[dom.Element](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -55,9 +57,9 @@ func (e elementV8Wrapper) classList(cbCtx jsCallbackContext) (jsValue, error) {
 	return tokenList.NewInstance(cl)
 }
 
-func (e *elementV8Wrapper) toNamedNodeMap(
-	cbCtx jsCallbackContext,
+func (e *elementV8Wrapper[T]) toNamedNodeMap(
+	cbCtx js.CallbackContext[T],
 	n dom.NamedNodeMap,
-) (jsValue, error) {
+) (js.Value[T], error) {
 	return e.toJSWrapper(cbCtx, n)
 }

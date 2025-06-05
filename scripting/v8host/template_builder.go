@@ -22,10 +22,10 @@ func (w unconstructableV8Wrapper[T]) Initialize(c jsClass) {}
 
 // parseSetterArg parses a single argument and is intended for attribute
 // setters, where exactly one argument must be passed by v8.
-func parseSetterArg[T any](
-	ctx jsCallbackContext,
-	parsers ...func(jsCallbackContext, jsValue) (T, error),
-) (result T, err error) {
+func parseSetterArg[T, U any](
+	ctx js.CallbackContext[T],
+	parsers ...func(js.CallbackContext[T], js.Value[T]) (U, error),
+) (result U, err error) {
 	arg, ok := ctx.ConsumeArg()
 	if !ok {
 		err = errors.New("parseSetterArg: expected one argument. got none")
@@ -102,10 +102,10 @@ func consumeOptionalArg[T, U any](
 	return
 }
 
-func consumeRestArguments[T any](
-	args jsCallbackContext,
+func consumeRestArguments[T, U any](
+	args js.CallbackContext[U],
 	name string,
-	decoders ...func(jsCallbackContext, jsValue) (T, error),
+	decoders ...func(js.CallbackContext[U], js.Value[U]) (T, error),
 ) (results []T, err error) {
 	errs := make([]error, len(decoders))
 outer:

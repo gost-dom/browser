@@ -3,7 +3,7 @@ package v8host
 import js "github.com/gost-dom/browser/scripting/internal/js"
 
 type htmlDocumentV8Wrapper struct {
-	documentV8Wrapper
+	documentV8Wrapper[jsTypeParam]
 }
 
 func newHTMLDocumentV8Wrapper(host js.ScriptEngine[jsTypeParam]) htmlDocumentV8Wrapper {

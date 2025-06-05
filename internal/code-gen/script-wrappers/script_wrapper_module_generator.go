@@ -18,6 +18,8 @@ type Generator = generators.Generator
 // constructor.
 type PlatformWrapperStructGenerators interface {
 	WrapperStructType(interfaceName string) generators.Type
+	WrapperStructTypeDef(interfaceName string) generators.Type
+	WrapperStructTypeRetDef(interfaceName string) generators.Type
 	WrapperStructConstructorName(interfaceName string) string
 	WrapperStructConstructorRetType(interfaceName string) Generator
 	EmbeddedType(wrappedType Generator) Generator

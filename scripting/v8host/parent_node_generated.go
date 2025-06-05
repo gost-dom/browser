@@ -7,19 +7,19 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type parentNodeV8Wrapper struct {
-	handleReffedObject[dom.ParentNode, jsTypeParam]
+type parentNodeV8Wrapper[T any] struct {
+	handleReffedObject[dom.ParentNode, T]
 }
 
-func newParentNodeV8Wrapper(scriptHost jsScriptEngine) *parentNodeV8Wrapper {
-	return &parentNodeV8Wrapper{newHandleReffedObject[dom.ParentNode, jsTypeParam](scriptHost)}
+func newParentNodeV8Wrapper(scriptHost jsScriptEngine) *parentNodeV8Wrapper[jsTypeParam] {
+	return &parentNodeV8Wrapper[jsTypeParam]{newHandleReffedObject[dom.ParentNode, jsTypeParam](scriptHost)}
 }
 
-func (wrapper parentNodeV8Wrapper) Initialize(jsClass jsClass) {
+func (wrapper parentNodeV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w parentNodeV8Wrapper) installPrototype(jsClass jsClass) {
+func (w parentNodeV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("prepend", w.prepend)
 	jsClass.CreatePrototypeMethod("append", w.append)
 	jsClass.CreatePrototypeMethod("replaceChildren", w.replaceChildren)
@@ -30,12 +30,12 @@ func (w parentNodeV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("childElementCount", w.childElementCount, nil)
 }
 
-func (w parentNodeV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+func (w parentNodeV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: ParentNode.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w parentNodeV8Wrapper) prepend(cbCtx jsCallbackContext) (jsValue, error) {
+func (w parentNodeV8Wrapper[T]) prepend(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: ParentNode.prepend")
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
@@ -49,7 +49,7 @@ func (w parentNodeV8Wrapper) prepend(cbCtx jsCallbackContext) (jsValue, error) {
 	return nil, errCall
 }
 
-func (w parentNodeV8Wrapper) append(cbCtx jsCallbackContext) (jsValue, error) {
+func (w parentNodeV8Wrapper[T]) append(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: ParentNode.append")
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
@@ -63,7 +63,7 @@ func (w parentNodeV8Wrapper) append(cbCtx jsCallbackContext) (jsValue, error) {
 	return nil, errCall
 }
 
-func (w parentNodeV8Wrapper) replaceChildren(cbCtx jsCallbackContext) (jsValue, error) {
+func (w parentNodeV8Wrapper[T]) replaceChildren(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: ParentNode.replaceChildren")
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
@@ -77,7 +77,7 @@ func (w parentNodeV8Wrapper) replaceChildren(cbCtx jsCallbackContext) (jsValue, 
 	return nil, errCall
 }
 
-func (w parentNodeV8Wrapper) querySelector(cbCtx jsCallbackContext) (jsValue, error) {
+func (w parentNodeV8Wrapper[T]) querySelector(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: ParentNode.querySelector")
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
@@ -94,7 +94,7 @@ func (w parentNodeV8Wrapper) querySelector(cbCtx jsCallbackContext) (jsValue, er
 	return encodeEntity(cbCtx, result)
 }
 
-func (w parentNodeV8Wrapper) querySelectorAll(cbCtx jsCallbackContext) (jsValue, error) {
+func (w parentNodeV8Wrapper[T]) querySelectorAll(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: ParentNode.querySelectorAll")
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
@@ -111,7 +111,7 @@ func (w parentNodeV8Wrapper) querySelectorAll(cbCtx jsCallbackContext) (jsValue,
 	return encodeEntity(cbCtx, result)
 }
 
-func (w parentNodeV8Wrapper) firstElementChild(cbCtx jsCallbackContext) (jsValue, error) {
+func (w parentNodeV8Wrapper[T]) firstElementChild(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: ParentNode.firstElementChild")
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
@@ -121,7 +121,7 @@ func (w parentNodeV8Wrapper) firstElementChild(cbCtx jsCallbackContext) (jsValue
 	return encodeEntity(cbCtx, result)
 }
 
-func (w parentNodeV8Wrapper) lastElementChild(cbCtx jsCallbackContext) (jsValue, error) {
+func (w parentNodeV8Wrapper[T]) lastElementChild(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: ParentNode.lastElementChild")
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
@@ -131,7 +131,7 @@ func (w parentNodeV8Wrapper) lastElementChild(cbCtx jsCallbackContext) (jsValue,
 	return encodeEntity(cbCtx, result)
 }
 
-func (w parentNodeV8Wrapper) childElementCount(cbCtx jsCallbackContext) (jsValue, error) {
+func (w parentNodeV8Wrapper[T]) childElementCount(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: ParentNode.childElementCount")
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {

@@ -7,7 +7,7 @@ import (
 
 type documentFragmentV8Wrapper struct {
 	handleReffedObject[dom.DocumentFragment, jsTypeParam]
-	parentNode *parentNodeV8Wrapper
+	parentNode *parentNodeV8Wrapper[jsTypeParam]
 }
 
 func newDocumentFragmentV8Wrapper(host js.ScriptEngine[jsTypeParam]) documentFragmentV8Wrapper {

@@ -5,7 +5,7 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (n nodeV8Wrapper) textContent(cbCtx jsCallbackContext) (jsValue, error) {
+func (n nodeV8Wrapper[T]) textContent(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	i, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -15,7 +15,7 @@ func (n nodeV8Wrapper) textContent(cbCtx jsCallbackContext) (jsValue, error) {
 	return n.toString_(cbCtx, r)
 }
 
-func (n nodeV8Wrapper) setTextContent(cbCtx jsCallbackContext) (jsValue, error) {
+func (n nodeV8Wrapper[T]) setTextContent(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	i, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -25,7 +25,7 @@ func (n nodeV8Wrapper) setTextContent(cbCtx jsCallbackContext) (jsValue, error) 
 	return cbCtx.ReturnWithValue(nil)
 }
 
-func (n nodeV8Wrapper) nodeType(cbCtx jsCallbackContext) (jsValue, error) {
+func (n nodeV8Wrapper[T]) nodeType(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -33,17 +33,17 @@ func (n nodeV8Wrapper) nodeType(cbCtx jsCallbackContext) (jsValue, error) {
 	return n.toUnsignedShort(cbCtx, int(instance.NodeType()))
 }
 
-func (n nodeV8Wrapper) decodeGetRootNodeOptions(
-	cbCtx jsCallbackContext,
-	value jsValue,
+func (n nodeV8Wrapper[T]) decodeGetRootNodeOptions(
+	cbCtx js.CallbackContext[T],
+	value js.Value[T],
 ) (dom.GetRootNodeOptions, error) {
 	return dom.GetRootNodeOptions(value.Boolean()), nil
 }
 
-func (n nodeV8Wrapper) defaultGetRootNodeOptions() dom.GetRootNodeOptions {
+func (n nodeV8Wrapper[T]) defaultGetRootNodeOptions() dom.GetRootNodeOptions {
 	return false
 }
 
-func (w nodeV8Wrapper) defaultboolean() bool {
+func (w nodeV8Wrapper[T]) defaultboolean() bool {
 	return false
 }

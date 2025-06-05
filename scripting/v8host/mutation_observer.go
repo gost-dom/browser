@@ -5,14 +5,15 @@ import (
 	"fmt"
 
 	mutation "github.com/gost-dom/browser/internal/dom/mutation"
+	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type MutationCallback struct {
-	ctx      jsCallbackContext
-	function jsFunction
+type MutationCallback[T any] struct {
+	ctx      js.CallbackContext[T]
+	function js.Function[T]
 }
 
-func (cb MutationCallback) HandleMutation(recs []mutation.Record, obs *mutation.Observer) {
+func (cb MutationCallback[T]) HandleMutation(recs []mutation.Record, obs *mutation.Observer) {
 	v8Recs, _ := toSequenceMutationRecord(cb.ctx, recs)
 	scope := cb.ctx.Scope()
 	if _, err := cb.function.Call(scope.GlobalThis(), v8Recs); err != nil {
@@ -20,26 +21,26 @@ func (cb MutationCallback) HandleMutation(recs []mutation.Record, obs *mutation.
 	}
 }
 
-func (w mutationObserverV8Wrapper) CreateInstance(
-	cbCtx jsCallbackContext,
+func (w mutationObserverV8Wrapper[T]) CreateInstance(
+	cbCtx js.CallbackContext[T],
 	cb mutation.Callback,
-) (jsValue, error) {
+) (js.Value[T], error) {
 	return w.store(mutation.NewObserver(cbCtx.Scope().Clock(), cb), cbCtx)
 }
 
-func (w mutationObserverV8Wrapper) decodeMutationCallback(
-	cbCtx jsCallbackContext,
-	val jsValue,
+func (w mutationObserverV8Wrapper[T]) decodeMutationCallback(
+	cbCtx js.CallbackContext[T],
+	val js.Value[T],
 ) (mutation.Callback, error) {
 	if f, ok := val.AsFunction(); ok {
-		return MutationCallback{cbCtx, f}, nil
+		return MutationCallback[T]{cbCtx, f}, nil
 	}
 	return nil, cbCtx.ValueFactory().NewTypeError("Not a function")
 }
 
-func (w mutationObserverV8Wrapper) decodeObserveOption(
-	cbCtx jsCallbackContext,
-	val jsValue,
+func (w mutationObserverV8Wrapper[T]) decodeObserveOption(
+	cbCtx js.CallbackContext[T],
+	val js.Value[T],
 ) ([]mutation.ObserveOption, error) {
 	obj, ok := val.AsObject()
 	if !ok {
@@ -65,18 +66,18 @@ func (w mutationObserverV8Wrapper) decodeObserveOption(
 	return res, err
 }
 
-func (w mutationObserverV8Wrapper) toSequenceMutationRecord(
-	cbCtx jsCallbackContext,
+func (w mutationObserverV8Wrapper[T]) toSequenceMutationRecord(
+	cbCtx js.CallbackContext[T],
 	records []mutation.Record,
-) (jsValue, error) {
+) (js.Value[T], error) {
 	return toSequenceMutationRecord(cbCtx, records)
 }
 
-func toSequenceMutationRecord(
-	cbCtx jsCallbackContext,
+func toSequenceMutationRecord[T any](
+	cbCtx js.CallbackContext[T],
 	records []mutation.Record,
-) (jsValue, error) {
-	res := make([]jsValue, len(records))
+) (js.Value[T], error) {
+	res := make([]js.Value[T], len(records))
 	prototype := cbCtx.Scope().Constructor("MutationRecord")
 	for i, r := range records {
 		rec, err := prototype.NewInstance(&r)

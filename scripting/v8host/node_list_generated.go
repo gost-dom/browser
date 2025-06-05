@@ -11,30 +11,30 @@ func init() {
 	registerClass("NodeList", "", newNodeListV8Wrapper)
 }
 
-type nodeListV8Wrapper struct {
-	handleReffedObject[dom.NodeList, jsTypeParam]
+type nodeListV8Wrapper[T any] struct {
+	handleReffedObject[dom.NodeList, T]
 }
 
-func newNodeListV8Wrapper(scriptHost jsScriptEngine) *nodeListV8Wrapper {
-	return &nodeListV8Wrapper{newHandleReffedObject[dom.NodeList, jsTypeParam](scriptHost)}
+func newNodeListV8Wrapper(scriptHost jsScriptEngine) *nodeListV8Wrapper[jsTypeParam] {
+	return &nodeListV8Wrapper[jsTypeParam]{newHandleReffedObject[dom.NodeList, jsTypeParam](scriptHost)}
 }
 
-func (wrapper nodeListV8Wrapper) Initialize(jsClass jsClass) {
+func (wrapper nodeListV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)
 }
 
-func (w nodeListV8Wrapper) installPrototype(jsClass jsClass) {
+func (w nodeListV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("item", w.item)
 	jsClass.CreatePrototypeAttribute("length", w.length, nil)
 }
 
-func (w nodeListV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+func (w nodeListV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: NodeList.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w nodeListV8Wrapper) item(cbCtx jsCallbackContext) (jsValue, error) {
+func (w nodeListV8Wrapper[T]) item(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: NodeList.item")
 	instance, errInst := js.As[dom.NodeList](cbCtx.Instance())
 	if errInst != nil {
@@ -48,7 +48,7 @@ func (w nodeListV8Wrapper) item(cbCtx jsCallbackContext) (jsValue, error) {
 	return encodeEntity(cbCtx, result)
 }
 
-func (w nodeListV8Wrapper) length(cbCtx jsCallbackContext) (jsValue, error) {
+func (w nodeListV8Wrapper[T]) length(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: NodeList.length")
 	instance, err := js.As[dom.NodeList](cbCtx.Instance())
 	if err != nil {

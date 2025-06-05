@@ -11,8 +11,28 @@ import (
 
 type V8WrapperStructGenerators struct{}
 
+func (g V8WrapperStructGenerators) WrapperStructTypeDef(interfaceName string) generators.Type {
+	name := fmt.Sprintf("%sV8Wrapper", LowerCaseFirstLetter(interfaceName))
+	// return generators.NewType(name)
+	return generators.Type{
+		Generator: generators.Raw(jen.Id(name).Types(jen.Id("T").Any())),
+	}
+}
+
+func (g V8WrapperStructGenerators) WrapperStructTypeRetDef(interfaceName string) generators.Type {
+	name := fmt.Sprintf("%sV8Wrapper", LowerCaseFirstLetter(interfaceName))
+	// return generators.NewType(name)
+	return generators.Type{
+		Generator: generators.Raw(jen.Id(name).Types(jen.Id("jsTypeParam"))),
+	}
+}
+
 func (g V8WrapperStructGenerators) WrapperStructType(interfaceName string) generators.Type {
-	return generators.NewType(fmt.Sprintf("%sV8Wrapper", LowerCaseFirstLetter(interfaceName)))
+	name := fmt.Sprintf("%sV8Wrapper", LowerCaseFirstLetter(interfaceName))
+	// return generators.NewType(name)
+	return generators.Type{
+		Generator: generators.Raw(jen.Id(name).Types(jen.Id("T"))),
+	}
 }
 
 func (g V8WrapperStructGenerators) WrapperStructConstructorName(interfaceName string) string {
@@ -22,7 +42,10 @@ func (g V8WrapperStructGenerators) WrapperStructConstructorName(interfaceName st
 func (g V8WrapperStructGenerators) WrapperStructConstructorRetType(
 	idlInterfaceName string,
 ) g.Generator {
-	return g.WrapperStructType(idlInterfaceName).Pointer()
+	name := fmt.Sprintf("%sV8Wrapper", LowerCaseFirstLetter(idlInterfaceName))
+	return generators.Type{
+		Generator: generators.Raw(jen.Id(name).Types(jen.Id("jsTypeParam"))),
+	}.Pointer()
 }
 
 func (gen V8WrapperStructGenerators) EmbeddedType(wrappedType g.Generator) g.Generator {
@@ -30,7 +53,7 @@ func (gen V8WrapperStructGenerators) EmbeddedType(wrappedType g.Generator) g.Gen
 		generators.NewType("handleReffedObject").Generate().
 			Types(
 				wrappedType.Generate(),
-				jen.Id("jsTypeParam"),
+				jen.Id("T"),
 			))
 }
 
@@ -57,5 +80,5 @@ func (g V8WrapperStructGenerators) CallbackMethodArgs() generators.FunctionArgum
 }
 
 func (gen V8WrapperStructGenerators) CallbackMethodRetTypes() []generators.Generator {
-	return generators.List(g.NewType("jsValue"), g.NewType("error"))
+	return generators.List(jsValue, g.NewType("error"))
 }

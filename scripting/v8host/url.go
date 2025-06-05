@@ -7,25 +7,26 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/constants"
 	urlinterfaces "github.com/gost-dom/browser/internal/interfaces/url-interfaces"
+	js "github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/browser/url"
 )
 
-type urlV8Wrapper struct {
-	handleReffedObject[urlinterfaces.URL, jsTypeParam]
+type urlV8Wrapper[T any] struct {
+	handleReffedObject[urlinterfaces.URL, T]
 }
 
-func newURLV8Wrapper(host jsScriptEngine) urlV8Wrapper {
-	return urlV8Wrapper{newHandleReffedObject[urlinterfaces.URL](host)}
+func newURLV8Wrapper(host jsScriptEngine) urlV8Wrapper[jsTypeParam] {
+	return urlV8Wrapper[jsTypeParam]{newHandleReffedObject[urlinterfaces.URL](host)}
 }
 
 type handleDisposable cgo.Handle
 
 func (h handleDisposable) Dispose() { cgo.Handle(h).Delete() }
 
-func (w urlV8Wrapper) CreateInstance(
-	cbCtx jsCallbackContext,
+func (w urlV8Wrapper[T]) CreateInstance(
+	cbCtx js.CallbackContext[T],
 	u string,
-) (jsValue, error) {
+) (js.Value[T], error) {
 	value, err := url.NewUrl(u)
 	if err != nil {
 		return nil, err
@@ -34,11 +35,11 @@ func (w urlV8Wrapper) CreateInstance(
 	return nil, nil
 }
 
-func (w urlV8Wrapper) CreateInstanceBase(
-	cbCtx jsCallbackContext,
+func (w urlV8Wrapper[T]) CreateInstanceBase(
+	cbCtx js.CallbackContext[T],
 	u string,
 	base string,
-) (jsValue, error) {
+) (js.Value[T], error) {
 	value, err := url.NewUrlBase(u, base)
 	if err != nil {
 		return nil, err
@@ -47,7 +48,7 @@ func (w urlV8Wrapper) CreateInstanceBase(
 	return nil, nil
 }
 
-func (w urlSearchParamsV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+func (w urlSearchParamsV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	var err error
 	arg, ok := cbCtx.ConsumeArg()
 	var res url.URLSearchParams
@@ -87,11 +88,11 @@ func (w urlSearchParamsV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue,
 	return nil, nil
 }
 
-func (w urlSearchParamsV8Wrapper) toSequenceString_(
-	cbCtx jsCallbackContext,
+func (w urlSearchParamsV8Wrapper[T]) toSequenceString_(
+	cbCtx js.CallbackContext[T],
 	values []string,
-) (jsValue, error) {
-	vs := make([]jsValue, len(values))
+) (js.Value[T], error) {
+	vs := make([]js.Value[T], len(values))
 	fact := cbCtx.ValueFactory()
 	for i, v := range values {
 		vs[i] = fact.NewString(v)
@@ -99,7 +100,7 @@ func (w urlSearchParamsV8Wrapper) toSequenceString_(
 	return fact.NewArray(vs...), nil
 }
 
-func (w urlSearchParamsV8Wrapper) CustomInitializer(class jsClass) {
+func (w urlSearchParamsV8Wrapper[T]) CustomInitializer(class js.Class[T]) {
 	it := newIterator2(w.toString_, w.toString_)
 	it.installPrototype(class)
 }

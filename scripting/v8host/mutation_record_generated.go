@@ -11,19 +11,19 @@ func init() {
 	registerClass("MutationRecord", "", newMutationRecordV8Wrapper)
 }
 
-type mutationRecordV8Wrapper struct {
-	handleReffedObject[*dominterfaces.MutationRecord, jsTypeParam]
+type mutationRecordV8Wrapper[T any] struct {
+	handleReffedObject[*dominterfaces.MutationRecord, T]
 }
 
-func newMutationRecordV8Wrapper(scriptHost jsScriptEngine) *mutationRecordV8Wrapper {
-	return &mutationRecordV8Wrapper{newHandleReffedObject[*dominterfaces.MutationRecord, jsTypeParam](scriptHost)}
+func newMutationRecordV8Wrapper(scriptHost jsScriptEngine) *mutationRecordV8Wrapper[jsTypeParam] {
+	return &mutationRecordV8Wrapper[jsTypeParam]{newHandleReffedObject[*dominterfaces.MutationRecord, jsTypeParam](scriptHost)}
 }
 
-func (wrapper mutationRecordV8Wrapper) Initialize(jsClass jsClass) {
+func (wrapper mutationRecordV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w mutationRecordV8Wrapper) installPrototype(jsClass jsClass) {
+func (w mutationRecordV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("type", w.type_, nil)
 	jsClass.CreatePrototypeAttribute("target", w.target, nil)
 	jsClass.CreatePrototypeAttribute("addedNodes", w.addedNodes, nil)
@@ -35,12 +35,12 @@ func (w mutationRecordV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("oldValue", w.oldValue, nil)
 }
 
-func (w mutationRecordV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+func (w mutationRecordV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: MutationRecord.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w mutationRecordV8Wrapper) type_(cbCtx jsCallbackContext) (jsValue, error) {
+func (w mutationRecordV8Wrapper[T]) type_(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: MutationRecord.type_")
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
@@ -50,7 +50,7 @@ func (w mutationRecordV8Wrapper) type_(cbCtx jsCallbackContext) (jsValue, error)
 	return w.toString_(cbCtx, result)
 }
 
-func (w mutationRecordV8Wrapper) target(cbCtx jsCallbackContext) (jsValue, error) {
+func (w mutationRecordV8Wrapper[T]) target(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: MutationRecord.target")
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
@@ -60,7 +60,7 @@ func (w mutationRecordV8Wrapper) target(cbCtx jsCallbackContext) (jsValue, error
 	return encodeEntity(cbCtx, result)
 }
 
-func (w mutationRecordV8Wrapper) addedNodes(cbCtx jsCallbackContext) (jsValue, error) {
+func (w mutationRecordV8Wrapper[T]) addedNodes(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: MutationRecord.addedNodes")
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
@@ -70,7 +70,7 @@ func (w mutationRecordV8Wrapper) addedNodes(cbCtx jsCallbackContext) (jsValue, e
 	return encodeEntity(cbCtx, result)
 }
 
-func (w mutationRecordV8Wrapper) removedNodes(cbCtx jsCallbackContext) (jsValue, error) {
+func (w mutationRecordV8Wrapper[T]) removedNodes(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: MutationRecord.removedNodes")
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
@@ -80,7 +80,7 @@ func (w mutationRecordV8Wrapper) removedNodes(cbCtx jsCallbackContext) (jsValue,
 	return encodeEntity(cbCtx, result)
 }
 
-func (w mutationRecordV8Wrapper) previousSibling(cbCtx jsCallbackContext) (jsValue, error) {
+func (w mutationRecordV8Wrapper[T]) previousSibling(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: MutationRecord.previousSibling")
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
@@ -90,7 +90,7 @@ func (w mutationRecordV8Wrapper) previousSibling(cbCtx jsCallbackContext) (jsVal
 	return encodeEntity(cbCtx, result)
 }
 
-func (w mutationRecordV8Wrapper) nextSibling(cbCtx jsCallbackContext) (jsValue, error) {
+func (w mutationRecordV8Wrapper[T]) nextSibling(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: MutationRecord.nextSibling")
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
@@ -100,7 +100,7 @@ func (w mutationRecordV8Wrapper) nextSibling(cbCtx jsCallbackContext) (jsValue, 
 	return encodeEntity(cbCtx, result)
 }
 
-func (w mutationRecordV8Wrapper) attributeName(cbCtx jsCallbackContext) (jsValue, error) {
+func (w mutationRecordV8Wrapper[T]) attributeName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: MutationRecord.attributeName")
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
@@ -110,7 +110,7 @@ func (w mutationRecordV8Wrapper) attributeName(cbCtx jsCallbackContext) (jsValue
 	return w.toNullableString_(cbCtx, result)
 }
 
-func (w mutationRecordV8Wrapper) attributeNamespace(cbCtx jsCallbackContext) (jsValue, error) {
+func (w mutationRecordV8Wrapper[T]) attributeNamespace(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: MutationRecord.attributeNamespace")
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
@@ -120,7 +120,7 @@ func (w mutationRecordV8Wrapper) attributeNamespace(cbCtx jsCallbackContext) (js
 	return w.toNullableString_(cbCtx, result)
 }
 
-func (w mutationRecordV8Wrapper) oldValue(cbCtx jsCallbackContext) (jsValue, error) {
+func (w mutationRecordV8Wrapper[T]) oldValue(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: MutationRecord.oldValue")
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {

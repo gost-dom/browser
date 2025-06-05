@@ -42,14 +42,12 @@ func (gen V8TargetGenerators) CreatePrototypeInitializer(
 	naming := V8NamingStrategy{data}
 	receiver := g.NewValue(naming.Receiver())
 	builder := NewConstructorBuilder()
+	wrapperType := gen.WrapperStructGenerators().WrapperStructType(data.Name())
 	return g.FunctionDefinition{
-		Name: "installPrototype",
-		Receiver: g.FunctionArgument{
-			Name: receiver,
-			Type: g.Id(naming.PrototypeWrapperName()),
-		},
-		Args: g.Arg(builder.Class, v8Class),
-		Body: body,
+		Name:     "installPrototype",
+		Receiver: g.FunctionArgument{Name: receiver, Type: wrapperType},
+		Args:     g.Arg(builder.Class, v8Class),
+		Body:     body,
 	}
 }
 
