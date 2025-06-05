@@ -112,17 +112,16 @@ type class struct {
 // createGlobals returns an ordered list of constructors to be created in global
 // scope. They must be installed in "order", as base classes must be installed
 // before subclasses
-func createGlobals(host *V8ScriptHost) []globalInstall {
-	result := make([]globalInstall, 0)
-	var iter func(class classSpec) jsClass
+func createGlobals(host *V8ScriptHost) {
+	var iter func(class classSpec[jsTypeParam]) jsClass
 	uniqueNames := make(map[string]jsClass)
-	iter = func(class classSpec) jsClass {
+	iter = func(class classSpec[jsTypeParam]) jsClass {
 		if constructor, found := uniqueNames[class.name]; found {
 			return constructor
 		}
 		var superClassConstructor jsClass
 		if class.superClassName != "" {
-			superClassSpec, found := classes[class.superClassName]
+			superClassSpec, found := classRegistrations.classes[class.superClassName]
 			if !found {
 				panic(fmt.Sprintf(
 					"Missing super class spec. Class: %s. Super: %s",
@@ -133,14 +132,12 @@ func createGlobals(host *V8ScriptHost) []globalInstall {
 		}
 		constructor := class.factory(host, superClassConstructor)
 		uniqueNames[class.name] = constructor
-		result = append(result, globalInstall{class.name, constructor})
 		return constructor
 	}
-	for _, class := range classes {
+	for _, class := range classRegistrations.classes {
 		iter(class)
 	}
 	host.iterator = newV8Iterator(host)
-	return result
 }
 
 // consoleAPIMessageFunc represents a function that can receive javascript
@@ -168,48 +165,50 @@ func (host *V8ScriptHost) consoleAPIMessage(message v8go.ConsoleAPIMessage) {
 	}
 }
 
-type classSpec struct {
+type classSpec[T any] struct {
 	name           string
 	superClassName string
 	factory        jsConstructorFactory
 }
 
-var classes map[string]classSpec = make(map[string]classSpec)
+type ClassRegistrator[T any] struct {
+	classes map[string]classSpec[T]
+}
 
-var initializers []js.Configurator[jsTypeParam]
-
-func registerJSClass(
-	className string,
-	superClassName string,
-	constructorFactory jsConstructorFactory1,
+func (r ClassRegistrator[T]) Register(
+	className, superClassName string,
+	fact jsInitializerFactory[jsInitializer],
 ) {
-	spec := classSpec{
+	spec := classSpec[jsTypeParam]{
 		className, superClassName, func(host *V8ScriptHost, extends jsClass) jsClass {
-			res := constructorFactory(host)
-			if extends != nil {
-				res.ft.Inherit(extends.(v8Class).ft)
-			}
-			host.windowTemplate.Set(className, res.ft)
-			host.globals.namedGlobals[className] = res
+			wrapper := fact(host)
+			res := host.CreateClass(className, extends, wrapper.constructor).(v8Class)
+			wrapper.initialize(res)
 			return res
 		},
 	}
-	if _, ok := classes[className]; ok {
+	if _, ok := classRegistrations.classes[className]; ok {
 		panic("Same class added twice: " + className)
 	}
 	if superClassName == "" {
-		classes[className] = spec
+		classRegistrations.classes[className] = spec
 		return
 	}
-	parent, parentFound := classes[superClassName]
+	parent, parentFound := classRegistrations.classes[superClassName]
 	for parentFound {
 		if parent.superClassName == className {
 			panic("Recursive class parents" + className)
 		}
-		parent, parentFound = classes[parent.superClassName]
+		parent, parentFound = classRegistrations.classes[parent.superClassName]
 	}
-	classes[className] = spec
+	classRegistrations.classes[className] = spec
 }
+
+var classRegistrations = ClassRegistrator[jsTypeParam]{
+	classes: make(map[string]classSpec[jsTypeParam]),
+}
+
+var initializers []js.Configurator[jsTypeParam]
 
 type jsInitializer interface {
 	constructor(jsCallbackContext) (jsValue, error)
@@ -218,34 +217,20 @@ type jsInitializer interface {
 
 type jsInitializerFactory[T jsInitializer] = func(*V8ScriptHost) T
 
+func Register[T any, U jsInitializer, V jsInitializerFactory[U]](
+	reg ClassRegistrator[T],
+	className, superClassName string,
+	constructorFactory V) {
+	reg.Register(className, superClassName,
+		func(h *V8ScriptHost) jsInitializer { return constructorFactory(h) },
+	)
+}
+
 func registerClass[T jsInitializer, U jsInitializerFactory[T]](
-	className string,
-	superClassName string,
+	className, superClassName string,
 	constructorFactory U,
 ) {
-	spec := classSpec{
-		className, superClassName, func(host *V8ScriptHost, extends jsClass) jsClass {
-			wrapper := constructorFactory(host)
-			res := host.CreateClass(className, extends, wrapper.constructor).(v8Class)
-			wrapper.initialize(res)
-			return res
-		},
-	}
-	if _, ok := classes[className]; ok {
-		panic("Same class added twice: " + className)
-	}
-	if superClassName == "" {
-		classes[className] = spec
-		return
-	}
-	parent, parentFound := classes[superClassName]
-	for parentFound {
-		if parent.superClassName == className {
-			panic("Recursive class parents" + className)
-		}
-		parent, parentFound = classes[parent.superClassName]
-	}
-	classes[className] = spec
+	Register(classRegistrations, className, superClassName, constructorFactory)
 }
 
 func init() {
@@ -257,7 +242,7 @@ func init() {
 	registerClass("ShadowRoot", "DocumentFragment", newUnconstructableV8Wrapper)
 
 	for _, cls := range scripting.HtmlElements {
-		if _, found := classes[cls]; !found {
+		if _, found := classRegistrations.classes[cls]; !found {
 			registerClass(cls, "HTMLElement", newUnconstructableV8Wrapper)
 		}
 	}
@@ -286,10 +271,9 @@ func createHostInstance(config hostOptions) *V8ScriptHost {
 		host.iso.SetPromiseRejectedCallback(host.promiseRejected)
 		host.windowTemplate = v8go.NewObjectTemplate(host.iso)
 		host.globals = globals{make(map[string]v8Class)}
-		globalInstalls := createGlobals(host)
+		createGlobals(host)
 		host.windowTemplate.SetInternalFieldCount(1)
 		host.contexts = make(map[*v8go.Context]*V8ScriptContext)
-		var _ []globalInstall = globalInstalls
 		installEventLoopGlobals(host, host.windowTemplate)
 		for _, i := range initializers {
 			i.Configure(host)
