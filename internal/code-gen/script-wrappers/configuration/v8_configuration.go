@@ -170,6 +170,9 @@ func configureMutationObserver(domSpecs *WebIdlConfiguration) {
 func configureHTMLSpecs(htmlSpecs *WebIdlConfiguration) {
 	htmlSpecs.SetMultipleFiles(true)
 
+	location := htmlSpecs.Type("Location")
+	location.Method("ancestorOrigins").SetNotImplemented()
+
 	htmlTemplateElement := htmlSpecs.Type("HTMLTemplateElement")
 	htmlTemplateElement.Method("shadowRootMode").SetNotImplemented()
 	htmlTemplateElement.Method("shadowRootDelegatesFocus").SetNotImplemented()

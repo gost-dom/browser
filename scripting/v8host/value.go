@@ -169,6 +169,10 @@ func (o *v8Object) Get(name string) (jsValue, error) {
 	return newV8Value(o.ctx, res), nil
 }
 
+func (o *v8Object) Set(name string, val jsValue) error {
+	return o.Object.Set(name, val.Self().v8Value())
+}
+
 func callV8Function(f *v8go.Function, arg0 *v8go.Value, arg *v8go.Value) (*v8go.Value, error) {
 	return f.Call(arg0, arg)
 }

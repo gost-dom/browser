@@ -252,7 +252,6 @@ func registerClass[T jsInitializer, U jsInitializerFactory[T]](
 func init() {
 	registerClass("File", "", newCustomEventV8Wrapper)
 	registerClass("CustomEvent", "Event", newCustomEventV8Wrapper)
-	registerJSClass("Location", "", createLocationPrototype)
 	registerJSClass("XMLHttpRequestEventTarget", "EventTarget", createIllegalConstructor)
 
 	registerJSClass("HTMLDocument", "Document", createHTMLDocumentPrototype)
@@ -411,15 +410,22 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 		panic(err)
 	}
 	context.global = newV8Object(context, v8ctx.Global())
+	scope := v8Scope{context}
+	l, err := scope.Constructor("Location").NewInstance(scope, w.Location())
+	if err != nil {
+		panic(err)
+	}
+	context.Constructor("Location")
+	if err := context.global.Set("location", l); err != nil {
+		panic(fmt.Sprintf("error installing location: %v\n%s", err, constants.BUG_ISSUE_URL))
+	}
 	host.addContext(context)
 	host.inspector.ContextCreated(context.v8ctx)
-	if w != nil {
-		global := newV8Object(context, context.v8ctx.Global())
-		global.SetNativeValue(w)
-		context.addDisposer(global.(js.Disposable))
-		context.cacheEntity(global, w)
-	}
-	err := installPolyfills(context)
+	global := newV8Object(context, context.v8ctx.Global())
+	global.SetNativeValue(w)
+	context.addDisposer(global.(js.Disposable))
+	context.cacheEntity(global, w)
+	err = installPolyfills(context)
 	if err != nil {
 		// TODO: Handle
 		panic(
