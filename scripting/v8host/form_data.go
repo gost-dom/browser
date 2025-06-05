@@ -6,13 +6,12 @@ import (
 
 func (w formDataV8Wrapper) CustomInitializer(class jsClass) {
 	iterator := newIterator2(
-		w.scriptHost,
 		w.toString_,
 		func(ctx jsCallbackContext, v html.FormDataValue) (jsValue, error) {
 			return w.toString_(ctx, string(v))
 		},
 	)
-	iterator.installPrototype(class.(v8Class).ft)
+	iterator.installPrototype(class)
 }
 
 func (w formDataV8Wrapper) CreateInstance(cbCtx jsCallbackContext) (jsValue, error) {

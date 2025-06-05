@@ -7,7 +7,6 @@ import (
 	"slices"
 
 	"github.com/gost-dom/browser/scripting/internal/js"
-	v8 "github.com/gost-dom/v8go"
 )
 
 type iterator[T any] struct {
@@ -68,23 +67,18 @@ func (i iterator[T]) entries(cbCtx jsCallbackContext) (jsValue, error) {
 /* -------- iterator2 -------- */
 
 type iterator2[K, V any] struct {
-	host        *V8ScriptHost
 	keyLookup   entityLookup[K]
 	valueLookup entityLookup[V]
 }
 
 func newIterator2[K, V any](
-	host *V8ScriptHost,
 	keyLookup entityLookup[K],
 	valueLookup entityLookup[V],
 ) iterator2[K, V] {
 	// iso := host.iso
 	// TODO, once we have weak handles in v8, we can release the iterator when it
 	// goes out of scope.
-	iterator := iterator2[K, V]{
-		host,
-		keyLookup, valueLookup,
-	}
+	iterator := iterator2[K, V]{keyLookup, valueLookup}
 	return iterator
 }
 
@@ -115,39 +109,32 @@ func (i iterator2[K, V]) newIterator(
 	return cbCtx.ValueFactory().NewIterator(i.mapItems(cbCtx, items.All())), nil
 }
 
-func (i iterator2[K, V]) installPrototype(ft *v8.FunctionTemplate) {
-	iso := i.host.iso
-	getEntries := wrapV8Callback(i.host,
-		func(cbCtx jsCallbackContext) (jsValue, error) {
-			instance, err := js.As[iterable2[K, V]](cbCtx.Instance())
-			if err != nil {
-				return nil, err
-			}
-			return i.newIterator(cbCtx, instance)
-		})
-	prototypeTempl := ft.PrototypeTemplate()
-	prototypeTempl.Set("entries", getEntries)
-	prototypeTempl.SetSymbol(v8.SymbolIterator(iso), getEntries)
+func (i iterator2[K, V]) installPrototype(cls js.Class[jsTypeParam]) {
+	getEntries := func(cbCtx jsCallbackContext) (jsValue, error) {
+		instance, err := js.As[iterable2[K, V]](cbCtx.Instance())
+		if err != nil {
+			return nil, err
+		}
+		return i.newIterator(cbCtx, instance)
+	}
+	cls.CreatePrototypeMethod("entries", getEntries)
+	cls.CreateIteratorMethod(getEntries)
 	keys := newIterator(i.keyLookup)
 	values := newIterator(i.valueLookup)
-	prototypeTempl.Set("keys",
-		wrapV8Callback(i.host, func(cbCtx jsCallbackContext) (jsValue, error) {
-			instance, err := js.As[iterable2[K, V]](cbCtx.Instance())
-			if err != nil {
-				return nil, err
-			}
-			return keys.newIterator(cbCtx, pairKeys(instance.All()))
-		}),
-	)
-	prototypeTempl.Set("values",
-		wrapV8Callback(i.host, func(cbCtx jsCallbackContext) (jsValue, error) {
-			instance, err := js.As[iterable2[K, V]](cbCtx.Instance())
-			if err != nil {
-				return nil, err
-			}
-			return values.newIterator(cbCtx, pairValues(instance.All()))
-		}),
-	)
+	cls.CreatePrototypeMethod("keys", func(cbCtx jsCallbackContext) (jsValue, error) {
+		instance, err := js.As[iterable2[K, V]](cbCtx.Instance())
+		if err != nil {
+			return nil, err
+		}
+		return keys.newIterator(cbCtx, pairKeys(instance.All()))
+	})
+	cls.CreatePrototypeMethod("values", func(cbCtx jsCallbackContext) (jsValue, error) {
+		instance, err := js.As[iterable2[K, V]](cbCtx.Instance())
+		if err != nil {
+			return nil, err
+		}
+		return values.newIterator(cbCtx, pairValues(instance.All()))
+	})
 }
 
 // pairKeys returns a sequences of the keys in a sequence of key/value pairs
