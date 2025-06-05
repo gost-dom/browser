@@ -7,8 +7,6 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/scripting/internal/js"
-
-	v8 "github.com/gost-dom/v8go"
 )
 
 type converters[T any] struct{}
@@ -179,12 +177,6 @@ func newHandleReffedObject[T any](host *V8ScriptHost) handleReffedObject[T, jsTy
 	}
 }
 
-func (o handleReffedObject[T, U]) getInstance(info callbackInfo) (T, error) {
-	return getWrappedInstance[T](info.This())
-}
-
-func (o handleReffedObject[T, U]) iso() *v8.Isolate { return o.scriptHost.iso }
-
 func (o handleReffedObject[T, U]) store(value any, cbCtx jsCallbackContext) (jsValue, error) {
 	this := cbCtx.This()
 	if e, ok := value.(entity.ObjectIder); ok {
@@ -193,19 +185,4 @@ func (o handleReffedObject[T, U]) store(value any, cbCtx jsCallbackContext) (jsV
 
 	this.SetNativeValue(value)
 	return this, nil
-}
-
-func getWrappedInstance[T any](object *v8.Object) (res T, err error) {
-	field := object.GetInternalField(0)
-	handle := field.ExternalHandle()
-	var ok bool
-	res, ok = handle.Value().(T)
-	if !ok {
-		err = errors.New("Not a valid type stored in the handle")
-	}
-	return
-}
-
-type callbackInfo interface {
-	This() *v8.Object
 }
