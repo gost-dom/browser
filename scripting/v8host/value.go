@@ -230,6 +230,11 @@ func newV8Class(host *V8ScriptHost, ft *v8go.FunctionTemplate) v8Class {
 	return v8Class{host, ft, ft.PrototypeTemplate(), ft.InstanceTemplate()}
 }
 
+func (c v8Class) CreateIteratorMethod(cb js.FunctionCallback[jsTypeParam]) {
+	v8cb := wrapV8Callback(c.host, cb)
+	it := v8go.SymbolIterator(c.host.iso)
+	c.proto.SetSymbol(it, v8cb, v8go.ReadOnly)
+}
 func (c v8Class) CreatePrototypeMethod(name string, cb js.FunctionCallback[jsTypeParam]) {
 	v8cb := wrapV8Callback(c.host, cb)
 	c.proto.Set(name, v8cb, v8go.ReadOnly)
@@ -253,4 +258,11 @@ func (c v8Class) CreateInstanceAttribute(
 	v8Getter := wrapV8Callback(c.host, getter)
 	v8Setter := wrapV8Callback(c.host, setter)
 	c.inst.SetAccessorProperty(name, v8Getter, v8Setter, v8go.None)
+}
+
+func (c v8Class) CreateIndexedHandler(getter js.HandlerGetterCallback[jsTypeParam, int]) {
+	c.inst.SetIndexedHandler(func(info *v8go.FunctionCallbackInfo) (*v8go.Value, error) {
+		res, err := getter(newIndexedGetterCallbackContext(c.host, info))
+		return toV8Value(res), err
+	})
 }

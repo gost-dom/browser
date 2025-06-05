@@ -10,8 +10,8 @@ import (
 )
 
 func (l domTokenListV8Wrapper) CustomInitializer(class jsClass) {
-	it := newIterator(l.scriptHost, l.toString_)
-	it.installPrototype(class.(v8Class).ft)
+	it := newIterator(l.toString_)
+	it.installPrototype(class)
 }
 
 func (l domTokenListV8Wrapper) toggle(args jsCallbackContext) (jsValue, error) {

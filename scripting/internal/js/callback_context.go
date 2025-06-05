@@ -95,7 +95,7 @@ type SetterCallbackContext[T, U any] interface {
 
 type FunctionCallback[T any] func(CallbackContext[T]) (Value[T], error)
 
-type HandlerGetterCallback[T, U any] func(GetterCallbackContext[T, U])
+type HandlerGetterCallback[T, U any] func(GetterCallbackContext[T, U]) (Value[T], error)
 
 // ValueFactory allows creating JavaScript values from Go values
 type ValueFactory[T any] interface {

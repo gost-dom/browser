@@ -2,36 +2,29 @@ package v8host
 
 import (
 	"github.com/gost-dom/browser/dom"
-	v8 "github.com/gost-dom/v8go"
+	"github.com/gost-dom/browser/scripting/internal/codec"
+	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
 func (w *nodeListV8Wrapper) CustomInitializer(class jsClass) {
-	host := w.scriptHost
-	ft := class.(v8Class).ft
-	nodeListIterator := newIterator(host,
+	nodeListIterator := newIterator(
 		func(ctx jsCallbackContext, instance dom.Node) (jsValue, error) {
 			return encodeEntity(ctx, instance)
 		})
-	nodeListIterator.installPrototype(ft)
+	nodeListIterator.installPrototype(class)
 
-	instanceTemplate := ft.InstanceTemplate()
-	instanceTemplate.SetIndexedHandler(
-		func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-			iso := w.iso()
-			ctx := host.mustGetContext(info.Context())
-			cbCtx := newCallbackContext(host, info)
-			instance, ok := ctx.getCachedNode(info.This())
-			nodemap, ok_2 := instance.(dom.NodeList)
-			if ok && ok_2 {
-				index := int(info.Index())
+	class.CreateIndexedHandler(
+		func(info js.GetterCallbackContext[jsTypeParam, int]) (jsValue, error) {
+			instance := info.This().NativeValue()
+			if nodemap, ok := instance.(dom.NodeList); ok {
+				index := int(info.Key())
 				item := nodemap.Item(index)
 				if item == nil {
-					return v8.Undefined(iso), nil
+					return nil, nil
 				}
-				v, err := encodeEntity(cbCtx, item)
-				return toV8Value(v), err
+				return codec.EncodeEntity(info, item)
 			}
-			return nil, v8.NewTypeError(iso, "dunno")
+			return nil, info.ValueFactory().NewTypeError("dunno")
 		},
 	)
 }

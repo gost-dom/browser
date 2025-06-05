@@ -47,8 +47,10 @@ type Object[T any] interface {
 // scope can be declared before creating a JavaScript execution context.
 type Class[T any] interface {
 	CreatePrototypeMethod(name string, cb FunctionCallback[T])
+	CreateIteratorMethod(cb FunctionCallback[T])
 	CreatePrototypeAttribute(name string, getter FunctionCallback[T], setter FunctionCallback[T])
 	CreateInstanceAttribute(name string, getter FunctionCallback[T], setter FunctionCallback[T])
+	CreateIndexedHandler(getter HandlerGetterCallback[T, int])
 }
 
 // Constructor represents a JavaScript "class" that wraps a Go object.

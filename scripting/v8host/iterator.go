@@ -11,14 +11,13 @@ import (
 )
 
 type iterator[T any] struct {
-	host         *V8ScriptHost
 	entityLookup entityLookup[T]
 }
 
 type entityLookup[T any] func(ctx jsCallbackContext, value T) (jsValue, error)
 
-func newIterator[T any](host *V8ScriptHost, entityLookup entityLookup[T]) iterator[T] {
-	return iterator[T]{host, entityLookup}
+func newIterator[T any](entityLookup entityLookup[T]) iterator[T] {
+	return iterator[T]{entityLookup}
 }
 
 type iterable[T any] interface {
@@ -49,11 +48,9 @@ func (i iterator[T]) newIterator(cbCtx jsCallbackContext, items iter.Seq[T]) (js
 	return cbCtx.ValueFactory().NewIterator(i.mapItems(cbCtx, items)), nil
 }
 
-func (i iterator[T]) installPrototype(ft *v8.FunctionTemplate) {
-	iso := i.host.iso
-	prototypeTempl := ft.PrototypeTemplate()
-	prototypeTempl.Set("entries", wrapV8Callback(i.host, i.entries))
-	prototypeTempl.SetSymbol(v8.SymbolIterator(iso), wrapV8Callback(i.host, i.entries))
+func (i iterator[T]) installPrototype(class jsClass) {
+	class.CreatePrototypeMethod("entries", i.entries)
+	class.CreateIteratorMethod(i.entries)
 }
 
 func (i iterator[T]) entries(cbCtx jsCallbackContext) (jsValue, error) {
@@ -131,8 +128,8 @@ func (i iterator2[K, V]) installPrototype(ft *v8.FunctionTemplate) {
 	prototypeTempl := ft.PrototypeTemplate()
 	prototypeTempl.Set("entries", getEntries)
 	prototypeTempl.SetSymbol(v8.SymbolIterator(iso), getEntries)
-	keys := newIterator(i.host, i.keyLookup)
-	values := newIterator(i.host, i.valueLookup)
+	keys := newIterator(i.keyLookup)
+	values := newIterator(i.valueLookup)
 	prototypeTempl.Set("keys",
 		wrapV8Callback(i.host, func(cbCtx jsCallbackContext) (jsValue, error) {
 			instance, err := js.As[iterable2[K, V]](cbCtx.Instance())
