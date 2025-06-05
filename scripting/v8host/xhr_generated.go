@@ -4,6 +4,7 @@ package v8host
 
 import (
 	"errors"
+	event "github.com/gost-dom/browser/dom/event"
 	html "github.com/gost-dom/browser/html"
 	html1 "github.com/gost-dom/browser/internal/html"
 	js "github.com/gost-dom/browser/scripting/internal/js"
@@ -398,4 +399,39 @@ func (w xmlHttpRequestV8Wrapper) responseText(cbCtx jsCallbackContext) (jsValue,
 func (w xmlHttpRequestV8Wrapper) responseXML(cbCtx jsCallbackContext) (jsValue, error) {
 	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.responseXML")
 	return cbCtx.ReturnWithError(errors.New("XMLHttpRequest.responseXML: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
+}
+
+func init() {
+	registerClass("XMLHttpRequestEventTarget", "EventTarget", newXMLHttpRequestEventTargetV8Wrapper)
+}
+
+type xmlHttpRequestEventTargetV8Wrapper struct {
+	handleReffedObject[event.EventTarget, jsTypeParam]
+}
+
+func newXMLHttpRequestEventTargetV8Wrapper(scriptHost *V8ScriptHost) *xmlHttpRequestEventTargetV8Wrapper {
+	return &xmlHttpRequestEventTargetV8Wrapper{newHandleReffedObject[event.EventTarget](scriptHost)}
+}
+
+func createXMLHttpRequestEventTargetPrototype(scriptHost *V8ScriptHost) jsClass {
+	wrapper := newXMLHttpRequestEventTargetV8Wrapper(scriptHost)
+	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
+
+	instanceTmpl := constructor.InstanceTemplate()
+	instanceTmpl.SetInternalFieldCount(1)
+
+	jsClass := newV8Class(scriptHost, constructor)
+	wrapper.installPrototype(jsClass)
+
+	return jsClass
+}
+func (wrapper xmlHttpRequestEventTargetV8Wrapper) initialize(jsClass jsClass) {
+	wrapper.installPrototype(jsClass)
+}
+
+func (w xmlHttpRequestEventTargetV8Wrapper) installPrototype(jsClass jsClass) {}
+
+func (w xmlHttpRequestEventTargetV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequestEventTarget.constructor")
+	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }

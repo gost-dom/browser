@@ -9,7 +9,14 @@ func CreateV8Specs() WebIdlConfigurations {
 	configureHTMLSpecs(specs.Module("html"))
 
 	xhrModule := specs.Module("xhr")
+	xhrEventTarget := xhrModule.Type("XMLHttpRequestEventTarget")
+	xhrEventTarget.OverrideWrappedType = &GoType{
+		Package: packagenames.Events,
+		Name:    "EventTarget",
+	}
+
 	xhr := xhrModule.Type("XMLHttpRequest")
+
 	// TODO: Just need to support non-node objects
 	xhr.SkipWrapper = true
 
