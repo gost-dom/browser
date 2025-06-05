@@ -7,6 +7,7 @@ import (
 	"github.com/dop251/goja"
 	g "github.com/dop251/goja"
 	"github.com/gost-dom/browser/internal/log"
+	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
 type callbackContext struct {
@@ -59,4 +60,8 @@ func (c *callbackContext) consumeValue() g.Value {
 	index := c.argIndex
 	c.argIndex++
 	return c.call.Argument(index)
+}
+
+func (c *callbackContext) Scope() js.Scope[jsTypeParam] {
+	return newGojaScope(c.ctx)
 }

@@ -1,5 +1,16 @@
 package js
 
+// Value represents a value in JavaScript. Referential equality cannot be used
+// to check if to Value instances represent the same value in JavaScript. Use
+// StrictEquals to check if two values are equal.
+//
+// A script engine can use the method Self to return internal values.
+//
+// The type parameter T is controlled by the actual script engine, permitting
+// retriving the internal value used by the engine without type assertions, but
+// more importantly, prevents bugs caused by misuse by client code. With the
+// type parameter, only values produced by a script engine can be supplied to
+// the engine, not any object that conforms to the interface.
 type Value[T any] interface {
 	Self() T
 
