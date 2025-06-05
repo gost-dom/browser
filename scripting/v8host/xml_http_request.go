@@ -46,7 +46,7 @@ func (xhr xmlHttpRequestV8Wrapper) decodeXMLHttpRequestBodyInit(
 	return nil, errors.New("XMLHTTPRequest only accepts FormData body yet")
 }
 
-func newXMLHttpRequestV8Wrapper(host *V8ScriptHost) xmlHttpRequestV8Wrapper {
+func newXMLHttpRequestV8Wrapper(host jsScriptEngine) xmlHttpRequestV8Wrapper {
 	return xmlHttpRequestV8Wrapper{newHandleReffedObject[XmlHttpRequest](host)}
 }
 

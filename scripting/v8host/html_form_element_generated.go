@@ -16,22 +16,10 @@ type htmlFormElementV8Wrapper struct {
 	handleReffedObject[html.HTMLFormElement, jsTypeParam]
 }
 
-func newHTMLFormElementV8Wrapper(scriptHost *V8ScriptHost) *htmlFormElementV8Wrapper {
+func newHTMLFormElementV8Wrapper(scriptHost jsScriptEngine) *htmlFormElementV8Wrapper {
 	return &htmlFormElementV8Wrapper{newHandleReffedObject[html.HTMLFormElement](scriptHost)}
 }
 
-func createHTMLFormElementPrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newHTMLFormElementV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	return jsClass
-}
 func (wrapper htmlFormElementV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }

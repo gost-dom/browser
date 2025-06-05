@@ -8,18 +8,6 @@ func init() {
 	registerClass("PointerEvent", "MouseEvent", newPointerEventV8Wrapper)
 }
 
-func createPointerEventPrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newPointerEventV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	return jsClass
-}
 func (wrapper pointerEventV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }

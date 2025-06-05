@@ -16,22 +16,10 @@ type eventTargetV8Wrapper struct {
 	handleReffedObject[event.EventTarget, jsTypeParam]
 }
 
-func newEventTargetV8Wrapper(scriptHost *V8ScriptHost) *eventTargetV8Wrapper {
+func newEventTargetV8Wrapper(scriptHost jsScriptEngine) *eventTargetV8Wrapper {
 	return &eventTargetV8Wrapper{newHandleReffedObject[event.EventTarget](scriptHost)}
 }
 
-func createEventTargetPrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newEventTargetV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	return jsClass
-}
 func (wrapper eventTargetV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }

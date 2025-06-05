@@ -16,22 +16,10 @@ type windowV8Wrapper struct {
 	handleReffedObject[html.Window, jsTypeParam]
 }
 
-func newWindowV8Wrapper(scriptHost *V8ScriptHost) *windowV8Wrapper {
+func newWindowV8Wrapper(scriptHost jsScriptEngine) *windowV8Wrapper {
 	return &windowV8Wrapper{newHandleReffedObject[html.Window](scriptHost)}
 }
 
-func createWindowPrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newWindowV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	return jsClass
-}
 func (wrapper windowV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }

@@ -16,22 +16,10 @@ type locationV8Wrapper struct {
 	handleReffedObject[html.Location, jsTypeParam]
 }
 
-func newLocationV8Wrapper(scriptHost *V8ScriptHost) *locationV8Wrapper {
+func newLocationV8Wrapper(scriptHost jsScriptEngine) *locationV8Wrapper {
 	return &locationV8Wrapper{newHandleReffedObject[html.Location](scriptHost)}
 }
 
-func createLocationPrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newLocationV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	return jsClass
-}
 func (wrapper locationV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }

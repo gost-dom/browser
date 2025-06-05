@@ -11,22 +11,10 @@ type nonDocumentTypeChildNodeV8Wrapper struct {
 	handleReffedObject[dom.NonDocumentTypeChildNode, jsTypeParam]
 }
 
-func newNonDocumentTypeChildNodeV8Wrapper(scriptHost *V8ScriptHost) *nonDocumentTypeChildNodeV8Wrapper {
+func newNonDocumentTypeChildNodeV8Wrapper(scriptHost jsScriptEngine) *nonDocumentTypeChildNodeV8Wrapper {
 	return &nonDocumentTypeChildNodeV8Wrapper{newHandleReffedObject[dom.NonDocumentTypeChildNode](scriptHost)}
 }
 
-func createNonDocumentTypeChildNodePrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newNonDocumentTypeChildNodeV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	return jsClass
-}
 func (wrapper nonDocumentTypeChildNodeV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }

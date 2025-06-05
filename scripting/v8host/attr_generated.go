@@ -4,7 +4,6 @@ package v8host
 
 import (
 	"errors"
-
 	dom "github.com/gost-dom/browser/dom"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -17,22 +16,10 @@ type attrV8Wrapper struct {
 	handleReffedObject[dom.Attr, jsTypeParam]
 }
 
-func newAttrV8Wrapper(scriptHost *V8ScriptHost) *attrV8Wrapper {
+func newAttrV8Wrapper(scriptHost jsScriptEngine) *attrV8Wrapper {
 	return &attrV8Wrapper{newHandleReffedObject[dom.Attr](scriptHost)}
 }
 
-func createAttrPrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newAttrV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	return jsClass
-}
 func (wrapper attrV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }

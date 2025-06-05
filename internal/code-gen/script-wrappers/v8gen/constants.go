@@ -17,7 +17,8 @@ var (
 	v8None                    = g.Raw(jen.Qual(v8, "None"))
 	v8CbCtx                   = g.NewType("jsCallbackContext")
 	v8Class                   = g.NewType("jsClass")
-	scriptHostPtr             = g.NewType("V8ScriptHost").Pointer()
+	scriptHostPtr             = g.NewType("jsScriptEngine")
+	// scriptHostPtr             = g.NewType("V8ScriptHost").Pointer()
 )
 
 // Provides helpers for functions that needs an iso as the first argument

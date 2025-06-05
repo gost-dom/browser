@@ -16,22 +16,10 @@ type historyV8Wrapper struct {
 	handleReffedObject[htmlinterfaces.History, jsTypeParam]
 }
 
-func newHistoryV8Wrapper(scriptHost *V8ScriptHost) *historyV8Wrapper {
+func newHistoryV8Wrapper(scriptHost jsScriptEngine) *historyV8Wrapper {
 	return &historyV8Wrapper{newHandleReffedObject[htmlinterfaces.History](scriptHost)}
 }
 
-func createHistoryPrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newHistoryV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	return jsClass
-}
 func (wrapper historyV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }

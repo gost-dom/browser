@@ -16,22 +16,10 @@ type htmlInputElementV8Wrapper struct {
 	handleReffedObject[html.HTMLInputElement, jsTypeParam]
 }
 
-func newHTMLInputElementV8Wrapper(scriptHost *V8ScriptHost) *htmlInputElementV8Wrapper {
+func newHTMLInputElementV8Wrapper(scriptHost jsScriptEngine) *htmlInputElementV8Wrapper {
 	return &htmlInputElementV8Wrapper{newHandleReffedObject[html.HTMLInputElement](scriptHost)}
 }
 
-func createHTMLInputElementPrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newHTMLInputElementV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	return jsClass
-}
 func (wrapper htmlInputElementV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }

@@ -16,25 +16,13 @@ type htmlElementV8Wrapper struct {
 	htmlOrSVGElement *htmlOrSVGElementV8Wrapper
 }
 
-func newHTMLElementV8Wrapper(scriptHost *V8ScriptHost) *htmlElementV8Wrapper {
+func newHTMLElementV8Wrapper(scriptHost jsScriptEngine) *htmlElementV8Wrapper {
 	return &htmlElementV8Wrapper{
 		newHandleReffedObject[html.HTMLElement](scriptHost),
 		newHTMLOrSVGElementV8Wrapper(scriptHost),
 	}
 }
 
-func createHTMLElementPrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newHTMLElementV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	return jsClass
-}
 func (wrapper htmlElementV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }

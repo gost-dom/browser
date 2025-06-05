@@ -13,7 +13,7 @@ type eventV8Wrapper struct {
 	handleReffedObject[*event.Event, jsTypeParam]
 }
 
-func newEventV8Wrapper(scriptHost *V8ScriptHost) *eventV8Wrapper {
+func newEventV8Wrapper(scriptHost jsScriptEngine) *eventV8Wrapper {
 	return &eventV8Wrapper{newHandleReffedObject[*event.Event](scriptHost)}
 }
 

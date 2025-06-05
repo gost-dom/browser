@@ -15,23 +15,10 @@ type nodeListV8Wrapper struct {
 	handleReffedObject[dom.NodeList, jsTypeParam]
 }
 
-func newNodeListV8Wrapper(scriptHost *V8ScriptHost) *nodeListV8Wrapper {
+func newNodeListV8Wrapper(scriptHost jsScriptEngine) *nodeListV8Wrapper {
 	return &nodeListV8Wrapper{newHandleReffedObject[dom.NodeList](scriptHost)}
 }
 
-func createNodeListPrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newNodeListV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	wrapper.CustomInitializer(jsClass)
-	return jsClass
-}
 func (wrapper nodeListV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)

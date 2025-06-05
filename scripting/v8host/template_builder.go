@@ -9,7 +9,9 @@ import (
 
 type unconstructableV8Wrapper[T any] struct{}
 
-func newUnconstructableV8Wrapper(host *V8ScriptHost) unconstructableV8Wrapper[jsTypeParam] {
+func newUnconstructableV8Wrapper(
+	host js.ScriptEngine[jsTypeParam],
+) unconstructableV8Wrapper[jsTypeParam] {
 	return unconstructableV8Wrapper[jsTypeParam]{}
 }
 

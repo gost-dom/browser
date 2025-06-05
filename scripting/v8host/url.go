@@ -14,7 +14,7 @@ type urlV8Wrapper struct {
 	handleReffedObject[urlinterfaces.URL, jsTypeParam]
 }
 
-func newURLV8Wrapper(host *V8ScriptHost) urlV8Wrapper {
+func newURLV8Wrapper(host jsScriptEngine) urlV8Wrapper {
 	return urlV8Wrapper{newHandleReffedObject[urlinterfaces.URL](host)}
 }
 

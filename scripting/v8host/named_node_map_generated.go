@@ -16,23 +16,10 @@ type namedNodeMapV8Wrapper struct {
 	handleReffedObject[dom.NamedNodeMap, jsTypeParam]
 }
 
-func newNamedNodeMapV8Wrapper(scriptHost *V8ScriptHost) *namedNodeMapV8Wrapper {
+func newNamedNodeMapV8Wrapper(scriptHost jsScriptEngine) *namedNodeMapV8Wrapper {
 	return &namedNodeMapV8Wrapper{newHandleReffedObject[dom.NamedNodeMap](scriptHost)}
 }
 
-func createNamedNodeMapPrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newNamedNodeMapV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	wrapper.CustomInitializer(jsClass)
-	return jsClass
-}
 func (wrapper namedNodeMapV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)

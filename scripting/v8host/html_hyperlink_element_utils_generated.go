@@ -12,22 +12,10 @@ type htmlHyperlinkElementUtilsV8Wrapper struct {
 	handleReffedObject[html.HTMLHyperlinkElementUtils, jsTypeParam]
 }
 
-func newHTMLHyperlinkElementUtilsV8Wrapper(scriptHost *V8ScriptHost) *htmlHyperlinkElementUtilsV8Wrapper {
+func newHTMLHyperlinkElementUtilsV8Wrapper(scriptHost jsScriptEngine) *htmlHyperlinkElementUtilsV8Wrapper {
 	return &htmlHyperlinkElementUtilsV8Wrapper{newHandleReffedObject[html.HTMLHyperlinkElementUtils](scriptHost)}
 }
 
-func createHTMLHyperlinkElementUtilsPrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newHTMLHyperlinkElementUtilsV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	return jsClass
-}
 func (wrapper htmlHyperlinkElementUtilsV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }

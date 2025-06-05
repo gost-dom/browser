@@ -17,25 +17,13 @@ type htmlAnchorElementV8Wrapper struct {
 	htmlHyperlinkElementUtils *htmlHyperlinkElementUtilsV8Wrapper
 }
 
-func newHTMLAnchorElementV8Wrapper(scriptHost *V8ScriptHost) *htmlAnchorElementV8Wrapper {
+func newHTMLAnchorElementV8Wrapper(scriptHost jsScriptEngine) *htmlAnchorElementV8Wrapper {
 	return &htmlAnchorElementV8Wrapper{
 		newHandleReffedObject[html.HTMLAnchorElement](scriptHost),
 		newHTMLHyperlinkElementUtilsV8Wrapper(scriptHost),
 	}
 }
 
-func createHTMLAnchorElementPrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newHTMLAnchorElementV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	return jsClass
-}
 func (wrapper htmlAnchorElementV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }

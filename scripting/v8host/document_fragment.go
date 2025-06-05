@@ -2,6 +2,7 @@ package v8host
 
 import (
 	"github.com/gost-dom/browser/dom"
+	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
 type documentFragmentV8Wrapper struct {
@@ -9,7 +10,7 @@ type documentFragmentV8Wrapper struct {
 	parentNode *parentNodeV8Wrapper
 }
 
-func newDocumentFragmentV8Wrapper(host *V8ScriptHost) documentFragmentV8Wrapper {
+func newDocumentFragmentV8Wrapper(host js.ScriptEngine[jsTypeParam]) documentFragmentV8Wrapper {
 	return documentFragmentV8Wrapper{
 		newHandleReffedObject[dom.DocumentFragment](host),
 		newParentNodeV8Wrapper(host),

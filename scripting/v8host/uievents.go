@@ -48,10 +48,10 @@ type pointerEventV8Wrapper struct {
 	mouseEventV8Wrapper
 }
 
-func newMouseEventV8Wrapper(host *V8ScriptHost) mouseEventV8Wrapper {
+func newMouseEventV8Wrapper(host jsScriptEngine) mouseEventV8Wrapper {
 	return mouseEventV8Wrapper{*newUIEventV8Wrapper(host)}
 }
 
-func newPointerEventV8Wrapper(host *V8ScriptHost) pointerEventV8Wrapper {
+func newPointerEventV8Wrapper(host jsScriptEngine) pointerEventV8Wrapper {
 	return pointerEventV8Wrapper{newMouseEventV8Wrapper(host)}
 }

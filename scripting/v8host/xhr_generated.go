@@ -18,23 +18,10 @@ type formDataV8Wrapper struct {
 	handleReffedObject[*html.FormData, jsTypeParam]
 }
 
-func newFormDataV8Wrapper(scriptHost *V8ScriptHost) *formDataV8Wrapper {
+func newFormDataV8Wrapper(scriptHost jsScriptEngine) *formDataV8Wrapper {
 	return &formDataV8Wrapper{newHandleReffedObject[*html.FormData](scriptHost)}
 }
 
-func createFormDataPrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newFormDataV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	wrapper.CustomInitializer(jsClass)
-	return jsClass
-}
 func (wrapper formDataV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)
@@ -160,18 +147,6 @@ func init() {
 	registerClass("XMLHttpRequest", "XMLHttpRequestEventTarget", newXMLHttpRequestV8Wrapper)
 }
 
-func createXMLHttpRequestPrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newXMLHttpRequestV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	return jsClass
-}
 func (wrapper xmlHttpRequestV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
@@ -409,22 +384,10 @@ type xmlHttpRequestEventTargetV8Wrapper struct {
 	handleReffedObject[event.EventTarget, jsTypeParam]
 }
 
-func newXMLHttpRequestEventTargetV8Wrapper(scriptHost *V8ScriptHost) *xmlHttpRequestEventTargetV8Wrapper {
+func newXMLHttpRequestEventTargetV8Wrapper(scriptHost jsScriptEngine) *xmlHttpRequestEventTargetV8Wrapper {
 	return &xmlHttpRequestEventTargetV8Wrapper{newHandleReffedObject[event.EventTarget](scriptHost)}
 }
 
-func createXMLHttpRequestEventTargetPrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newXMLHttpRequestEventTargetV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	return jsClass
-}
 func (wrapper xmlHttpRequestEventTargetV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }

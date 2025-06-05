@@ -1,10 +1,12 @@
 package v8host
 
+import js "github.com/gost-dom/browser/scripting/internal/js"
+
 type htmlDocumentV8Wrapper struct {
 	documentV8Wrapper
 }
 
-func newHTMLDocumentV8Wrapper(host *V8ScriptHost) htmlDocumentV8Wrapper {
+func newHTMLDocumentV8Wrapper(host js.ScriptEngine[jsTypeParam]) htmlDocumentV8Wrapper {
 	return htmlDocumentV8Wrapper{*newDocumentV8Wrapper(host)}
 }
 

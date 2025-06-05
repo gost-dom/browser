@@ -16,23 +16,10 @@ type domTokenListV8Wrapper struct {
 	handleReffedObject[dom.DOMTokenList, jsTypeParam]
 }
 
-func newDOMTokenListV8Wrapper(scriptHost *V8ScriptHost) *domTokenListV8Wrapper {
+func newDOMTokenListV8Wrapper(scriptHost jsScriptEngine) *domTokenListV8Wrapper {
 	return &domTokenListV8Wrapper{newHandleReffedObject[dom.DOMTokenList](scriptHost)}
 }
 
-func createDOMTokenListPrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newDOMTokenListV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	wrapper.CustomInitializer(jsClass)
-	return jsClass
-}
 func (wrapper domTokenListV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)

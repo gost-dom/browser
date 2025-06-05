@@ -17,26 +17,13 @@ type documentV8Wrapper struct {
 	parentNode *parentNodeV8Wrapper
 }
 
-func newDocumentV8Wrapper(scriptHost *V8ScriptHost) *documentV8Wrapper {
+func newDocumentV8Wrapper(scriptHost jsScriptEngine) *documentV8Wrapper {
 	return &documentV8Wrapper{
 		newHandleReffedObject[dom.Document](scriptHost),
 		newParentNodeV8Wrapper(scriptHost),
 	}
 }
 
-func createDocumentPrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newDocumentV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	wrapper.CustomInitializer(jsClass)
-	return jsClass
-}
 func (wrapper documentV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)

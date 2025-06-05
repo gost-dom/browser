@@ -12,18 +12,6 @@ func init() {
 	registerClass("Event", "", newEventV8Wrapper)
 }
 
-func createEventPrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newEventV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	return jsClass
-}
 func (wrapper eventV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }

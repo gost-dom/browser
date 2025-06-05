@@ -15,22 +15,10 @@ type mutationRecordV8Wrapper struct {
 	handleReffedObject[*dominterfaces.MutationRecord, jsTypeParam]
 }
 
-func newMutationRecordV8Wrapper(scriptHost *V8ScriptHost) *mutationRecordV8Wrapper {
+func newMutationRecordV8Wrapper(scriptHost jsScriptEngine) *mutationRecordV8Wrapper {
 	return &mutationRecordV8Wrapper{newHandleReffedObject[*dominterfaces.MutationRecord](scriptHost)}
 }
 
-func createMutationRecordPrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newMutationRecordV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	return jsClass
-}
 func (wrapper mutationRecordV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }

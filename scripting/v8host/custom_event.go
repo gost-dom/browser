@@ -13,7 +13,7 @@ type customEventV8Wrapper struct {
 	handleReffedObject[*event.Event, jsTypeParam]
 }
 
-func newCustomEventV8Wrapper(scriptHost *V8ScriptHost) *customEventV8Wrapper {
+func newCustomEventV8Wrapper(scriptHost js.ScriptEngine[jsTypeParam]) *customEventV8Wrapper {
 	return &customEventV8Wrapper{newHandleReffedObject[*event.Event](scriptHost)}
 }
 

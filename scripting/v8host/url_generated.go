@@ -13,18 +13,6 @@ func init() {
 	registerClass("URL", "", newURLV8Wrapper)
 }
 
-func createURLPrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newURLV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	return jsClass
-}
 func (wrapper urlV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
@@ -238,23 +226,10 @@ type urlSearchParamsV8Wrapper struct {
 	handleReffedObject[urlinterfaces.URLSearchParams, jsTypeParam]
 }
 
-func newURLSearchParamsV8Wrapper(scriptHost *V8ScriptHost) *urlSearchParamsV8Wrapper {
+func newURLSearchParamsV8Wrapper(scriptHost jsScriptEngine) *urlSearchParamsV8Wrapper {
 	return &urlSearchParamsV8Wrapper{newHandleReffedObject[urlinterfaces.URLSearchParams](scriptHost)}
 }
 
-func createURLSearchParamsPrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newURLSearchParamsV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	wrapper.CustomInitializer(jsClass)
-	return jsClass
-}
 func (wrapper urlSearchParamsV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)

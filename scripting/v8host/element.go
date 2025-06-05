@@ -13,7 +13,7 @@ type elementV8Wrapper struct {
 	nonDocumentTypeChildNode *nonDocumentTypeChildNodeV8Wrapper
 }
 
-func newElementV8Wrapper(host *V8ScriptHost) *elementV8Wrapper {
+func newElementV8Wrapper(host jsScriptEngine) *elementV8Wrapper {
 	return &elementV8Wrapper{
 		newHandleReffedObject[dom.Element](host),
 		newParentNodeV8Wrapper(host),

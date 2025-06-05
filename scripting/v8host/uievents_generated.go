@@ -11,18 +11,6 @@ func init() {
 	registerClass("MouseEvent", "UIEvent", newMouseEventV8Wrapper)
 }
 
-func createMouseEventPrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newMouseEventV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	return jsClass
-}
 func (wrapper mouseEventV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
@@ -102,22 +90,10 @@ type uIEventV8Wrapper struct {
 	handleReffedObject[uievents.UIEvent, jsTypeParam]
 }
 
-func newUIEventV8Wrapper(scriptHost *V8ScriptHost) *uIEventV8Wrapper {
+func newUIEventV8Wrapper(scriptHost jsScriptEngine) *uIEventV8Wrapper {
 	return &uIEventV8Wrapper{newHandleReffedObject[uievents.UIEvent](scriptHost)}
 }
 
-func createUIEventPrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newUIEventV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	return jsClass
-}
 func (wrapper uIEventV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }

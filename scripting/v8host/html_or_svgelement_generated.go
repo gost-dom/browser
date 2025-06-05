@@ -12,22 +12,10 @@ type htmlOrSVGElementV8Wrapper struct {
 	handleReffedObject[html.HTMLOrSVGElement, jsTypeParam]
 }
 
-func newHTMLOrSVGElementV8Wrapper(scriptHost *V8ScriptHost) *htmlOrSVGElementV8Wrapper {
+func newHTMLOrSVGElementV8Wrapper(scriptHost jsScriptEngine) *htmlOrSVGElementV8Wrapper {
 	return &htmlOrSVGElementV8Wrapper{newHandleReffedObject[html.HTMLOrSVGElement](scriptHost)}
 }
 
-func createHTMLOrSVGElementPrototype(scriptHost *V8ScriptHost) jsClass {
-	wrapper := newHTMLOrSVGElementV8Wrapper(scriptHost)
-	constructor := wrapV8Callback(scriptHost, wrapper.constructor)
-
-	instanceTmpl := constructor.InstanceTemplate()
-	instanceTmpl.SetInternalFieldCount(1)
-
-	jsClass := newV8Class(scriptHost, constructor)
-	wrapper.installPrototype(jsClass)
-
-	return jsClass
-}
 func (wrapper htmlOrSVGElementV8Wrapper) initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
