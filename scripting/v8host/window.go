@@ -20,5 +20,5 @@ func (w *windowV8Wrapper) history(cbCtx jsCallbackContext) (jsValue, error) {
 	if err != nil {
 		return nil, err
 	}
-	return cbCtx.Scope().Constructor("History").NewInstance(cbCtx.Scope(), win.History())
+	return cbCtx.Scope().Constructor("History").NewInstance(win.History())
 }

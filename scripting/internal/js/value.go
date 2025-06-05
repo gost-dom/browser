@@ -59,7 +59,7 @@ type Class[T any] interface {
 //
 // The class must previously have been configured using the [Class] interface.
 type Constructor[T any] interface {
-	NewInstance(cbCtx Scope[T], nativeValue any) (Object[T], error)
+	NewInstance(nativeValue any) (Object[T], error)
 }
 
 type Configurator[T any] interface{ Configure(ScriptEngine[T]) }

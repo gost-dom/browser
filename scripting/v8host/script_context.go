@@ -119,7 +119,7 @@ func (context *V8ScriptContext) initializeGlobals() error {
 		// return the same object as window.location (document.location looks up
 		// window.location)
 		scope := v8Scope{context}
-		l, err := scope.Constructor("Location").NewInstance(scope, win.Location())
+		l, err := scope.Constructor("Location").NewInstance(win.Location())
 		if err != nil {
 			return err
 		}

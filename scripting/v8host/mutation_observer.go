@@ -79,7 +79,7 @@ func toSequenceMutationRecord(
 	res := make([]jsValue, len(records))
 	prototype := cbCtx.Scope().Constructor("MutationRecord")
 	for i, r := range records {
-		rec, err := prototype.NewInstance(cbCtx.Scope(), &r)
+		rec, err := prototype.NewInstance(&r)
 		if err != nil {
 			return nil, fmt.Errorf("v8host: constructing mutation record: %w", err)
 		}

@@ -308,10 +308,7 @@ type v8Constructable struct {
 	ctor  v8Class
 }
 
-func (c v8Constructable) NewInstance(
-	scope js.Scope[jsTypeParam],
-	nativeValue any,
-) (jsObject, error) {
+func (c v8Constructable) NewInstance(nativeValue any) (jsObject, error) {
 	val, err := c.ctor.ft.InstanceTemplate().NewInstance(c.scope.v8ctx)
 	obj := newV8Object(c.scope.V8ScriptContext, val).(*v8Object)
 	if err == nil {
