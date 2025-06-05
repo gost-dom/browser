@@ -16,8 +16,8 @@ type nodeV8Wrapper[T any] struct {
 	handleReffedObject[dom.Node, T]
 }
 
-func newNodeV8Wrapper(scriptHost jsScriptEngine) *nodeV8Wrapper[jsTypeParam] {
-	return &nodeV8Wrapper[jsTypeParam]{newHandleReffedObject[dom.Node, jsTypeParam](scriptHost)}
+func newNodeV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *nodeV8Wrapper[T] {
+	return &nodeV8Wrapper[T]{newHandleReffedObject[dom.Node, T](scriptHost)}
 }
 
 func (wrapper nodeV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

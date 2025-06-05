@@ -18,8 +18,8 @@ type formDataV8Wrapper[T any] struct {
 	handleReffedObject[*html.FormData, T]
 }
 
-func newFormDataV8Wrapper(scriptHost jsScriptEngine) *formDataV8Wrapper[jsTypeParam] {
-	return &formDataV8Wrapper[jsTypeParam]{newHandleReffedObject[*html.FormData, jsTypeParam](scriptHost)}
+func newFormDataV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *formDataV8Wrapper[T] {
+	return &formDataV8Wrapper[T]{newHandleReffedObject[*html.FormData, T](scriptHost)}
 }
 
 func (wrapper formDataV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
@@ -384,8 +384,8 @@ type xmlHttpRequestEventTargetV8Wrapper[T any] struct {
 	handleReffedObject[event.EventTarget, T]
 }
 
-func newXMLHttpRequestEventTargetV8Wrapper(scriptHost jsScriptEngine) *xmlHttpRequestEventTargetV8Wrapper[jsTypeParam] {
-	return &xmlHttpRequestEventTargetV8Wrapper[jsTypeParam]{newHandleReffedObject[event.EventTarget, jsTypeParam](scriptHost)}
+func newXMLHttpRequestEventTargetV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *xmlHttpRequestEventTargetV8Wrapper[T] {
+	return &xmlHttpRequestEventTargetV8Wrapper[T]{newHandleReffedObject[event.EventTarget, T](scriptHost)}
 }
 
 func (wrapper xmlHttpRequestEventTargetV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

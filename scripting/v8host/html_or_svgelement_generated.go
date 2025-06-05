@@ -12,8 +12,8 @@ type htmlOrSVGElementV8Wrapper[T any] struct {
 	handleReffedObject[html.HTMLOrSVGElement, T]
 }
 
-func newHTMLOrSVGElementV8Wrapper(scriptHost jsScriptEngine) *htmlOrSVGElementV8Wrapper[jsTypeParam] {
-	return &htmlOrSVGElementV8Wrapper[jsTypeParam]{newHandleReffedObject[html.HTMLOrSVGElement, jsTypeParam](scriptHost)}
+func newHTMLOrSVGElementV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *htmlOrSVGElementV8Wrapper[T] {
+	return &htmlOrSVGElementV8Wrapper[T]{newHandleReffedObject[html.HTMLOrSVGElement, T](scriptHost)}
 }
 
 func (wrapper htmlOrSVGElementV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

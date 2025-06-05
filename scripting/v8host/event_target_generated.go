@@ -16,8 +16,8 @@ type eventTargetV8Wrapper[T any] struct {
 	handleReffedObject[event.EventTarget, T]
 }
 
-func newEventTargetV8Wrapper(scriptHost jsScriptEngine) *eventTargetV8Wrapper[jsTypeParam] {
-	return &eventTargetV8Wrapper[jsTypeParam]{newHandleReffedObject[event.EventTarget, jsTypeParam](scriptHost)}
+func newEventTargetV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *eventTargetV8Wrapper[T] {
+	return &eventTargetV8Wrapper[T]{newHandleReffedObject[event.EventTarget, T](scriptHost)}
 }
 
 func (wrapper eventTargetV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

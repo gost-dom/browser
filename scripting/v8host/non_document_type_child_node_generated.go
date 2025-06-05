@@ -11,8 +11,8 @@ type nonDocumentTypeChildNodeV8Wrapper[T any] struct {
 	handleReffedObject[dom.NonDocumentTypeChildNode, T]
 }
 
-func newNonDocumentTypeChildNodeV8Wrapper(scriptHost jsScriptEngine) *nonDocumentTypeChildNodeV8Wrapper[jsTypeParam] {
-	return &nonDocumentTypeChildNodeV8Wrapper[jsTypeParam]{newHandleReffedObject[dom.NonDocumentTypeChildNode, jsTypeParam](scriptHost)}
+func newNonDocumentTypeChildNodeV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *nonDocumentTypeChildNodeV8Wrapper[T] {
+	return &nonDocumentTypeChildNodeV8Wrapper[T]{newHandleReffedObject[dom.NonDocumentTypeChildNode, T](scriptHost)}
 }
 
 func (wrapper nonDocumentTypeChildNodeV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

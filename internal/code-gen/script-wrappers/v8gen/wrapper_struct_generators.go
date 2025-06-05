@@ -23,7 +23,7 @@ func (g V8WrapperStructGenerators) WrapperStructTypeRetDef(interfaceName string)
 	name := fmt.Sprintf("%sV8Wrapper", LowerCaseFirstLetter(interfaceName))
 	// return generators.NewType(name)
 	return generators.Type{
-		Generator: generators.Raw(jen.Id(name).Types(jen.Id("jsTypeParam"))),
+		Generator: generators.Raw(jen.Id(name).Types(jen.Id("T"))),
 	}
 }
 
@@ -44,7 +44,7 @@ func (g V8WrapperStructGenerators) WrapperStructConstructorRetType(
 ) g.Generator {
 	name := fmt.Sprintf("%sV8Wrapper", LowerCaseFirstLetter(idlInterfaceName))
 	return generators.Type{
-		Generator: generators.Raw(jen.Id(name).Types(jen.Id("jsTypeParam"))),
+		Generator: generators.Raw(jen.Id(name).Types(jen.Id("T"))),
 	}.Pointer()
 }
 
@@ -63,7 +63,7 @@ func (g V8WrapperStructGenerators) EmbeddedTypeConstructor(
 	return generators.ValueOf(generators.Raw(
 		generators.NewValue("newHandleReffedObject").
 			Generate().
-			Types(wrappedType.Generate(), jen.Id("jsTypeParam")),
+			Types(wrappedType.Generate(), jen.Id("T")),
 	))
 }
 

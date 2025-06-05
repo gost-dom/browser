@@ -20,7 +20,7 @@ var (
 	v8CbCtx       = g.NewTypePackage("CallbackContext", packagenames.JS).TypeParam(g.Id("T"))
 	v8Class       = g.NewTypePackage("Class", packagenames.JS).TypeParam(g.Id("T"))
 	jsValue       = g.NewTypePackage("Value", packagenames.JS).TypeParam(g.Id("T"))
-	scriptHostPtr = g.NewType("jsScriptEngine")
+	scriptHostPtr = g.NewTypePackage("ScriptEngine", packagenames.JS).TypeParam(g.Id("T"))
 	// scriptHostPtr             = g.NewType("V8ScriptHost").Pointer()
 )
 

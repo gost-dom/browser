@@ -16,8 +16,8 @@ type htmlInputElementV8Wrapper[T any] struct {
 	handleReffedObject[html.HTMLInputElement, T]
 }
 
-func newHTMLInputElementV8Wrapper(scriptHost jsScriptEngine) *htmlInputElementV8Wrapper[jsTypeParam] {
-	return &htmlInputElementV8Wrapper[jsTypeParam]{newHandleReffedObject[html.HTMLInputElement, jsTypeParam](scriptHost)}
+func newHTMLInputElementV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *htmlInputElementV8Wrapper[T] {
+	return &htmlInputElementV8Wrapper[T]{newHandleReffedObject[html.HTMLInputElement, T](scriptHost)}
 }
 
 func (wrapper htmlInputElementV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

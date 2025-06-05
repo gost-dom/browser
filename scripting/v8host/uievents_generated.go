@@ -91,8 +91,8 @@ type uIEventV8Wrapper[T any] struct {
 	handleReffedObject[uievents.UIEvent, T]
 }
 
-func newUIEventV8Wrapper(scriptHost jsScriptEngine) *uIEventV8Wrapper[jsTypeParam] {
-	return &uIEventV8Wrapper[jsTypeParam]{newHandleReffedObject[uievents.UIEvent, jsTypeParam](scriptHost)}
+func newUIEventV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *uIEventV8Wrapper[T] {
+	return &uIEventV8Wrapper[T]{newHandleReffedObject[uievents.UIEvent, T](scriptHost)}
 }
 
 func (wrapper uIEventV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

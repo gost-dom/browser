@@ -12,8 +12,8 @@ type htmlHyperlinkElementUtilsV8Wrapper[T any] struct {
 	handleReffedObject[html.HTMLHyperlinkElementUtils, T]
 }
 
-func newHTMLHyperlinkElementUtilsV8Wrapper(scriptHost jsScriptEngine) *htmlHyperlinkElementUtilsV8Wrapper[jsTypeParam] {
-	return &htmlHyperlinkElementUtilsV8Wrapper[jsTypeParam]{newHandleReffedObject[html.HTMLHyperlinkElementUtils, jsTypeParam](scriptHost)}
+func newHTMLHyperlinkElementUtilsV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *htmlHyperlinkElementUtilsV8Wrapper[T] {
+	return &htmlHyperlinkElementUtilsV8Wrapper[T]{newHandleReffedObject[html.HTMLHyperlinkElementUtils, T](scriptHost)}
 }
 
 func (wrapper htmlHyperlinkElementUtilsV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

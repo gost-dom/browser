@@ -16,8 +16,8 @@ type htmlTemplateElementV8Wrapper[T any] struct {
 	handleReffedObject[html.HTMLTemplateElement, T]
 }
 
-func newHTMLTemplateElementV8Wrapper(scriptHost jsScriptEngine) *htmlTemplateElementV8Wrapper[jsTypeParam] {
-	return &htmlTemplateElementV8Wrapper[jsTypeParam]{newHandleReffedObject[html.HTMLTemplateElement, jsTypeParam](scriptHost)}
+func newHTMLTemplateElementV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *htmlTemplateElementV8Wrapper[T] {
+	return &htmlTemplateElementV8Wrapper[T]{newHandleReffedObject[html.HTMLTemplateElement, T](scriptHost)}
 }
 
 func (wrapper htmlTemplateElementV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

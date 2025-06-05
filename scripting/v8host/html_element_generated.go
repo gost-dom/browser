@@ -16,9 +16,9 @@ type htmlElementV8Wrapper[T any] struct {
 	htmlOrSVGElement *htmlOrSVGElementV8Wrapper[T]
 }
 
-func newHTMLElementV8Wrapper(scriptHost jsScriptEngine) *htmlElementV8Wrapper[jsTypeParam] {
-	return &htmlElementV8Wrapper[jsTypeParam]{
-		newHandleReffedObject[html.HTMLElement, jsTypeParam](scriptHost),
+func newHTMLElementV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *htmlElementV8Wrapper[T] {
+	return &htmlElementV8Wrapper[T]{
+		newHandleReffedObject[html.HTMLElement, T](scriptHost),
 		newHTMLOrSVGElementV8Wrapper(scriptHost),
 	}
 }

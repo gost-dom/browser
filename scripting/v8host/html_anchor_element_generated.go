@@ -17,9 +17,9 @@ type htmlAnchorElementV8Wrapper[T any] struct {
 	htmlHyperlinkElementUtils *htmlHyperlinkElementUtilsV8Wrapper[T]
 }
 
-func newHTMLAnchorElementV8Wrapper(scriptHost jsScriptEngine) *htmlAnchorElementV8Wrapper[jsTypeParam] {
-	return &htmlAnchorElementV8Wrapper[jsTypeParam]{
-		newHandleReffedObject[html.HTMLAnchorElement, jsTypeParam](scriptHost),
+func newHTMLAnchorElementV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *htmlAnchorElementV8Wrapper[T] {
+	return &htmlAnchorElementV8Wrapper[T]{
+		newHandleReffedObject[html.HTMLAnchorElement, T](scriptHost),
 		newHTMLHyperlinkElementUtilsV8Wrapper(scriptHost),
 	}
 }

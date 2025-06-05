@@ -16,8 +16,8 @@ type mutationObserverV8Wrapper[T any] struct {
 	handleReffedObject[dominterfaces.MutationObserver, T]
 }
 
-func newMutationObserverV8Wrapper(scriptHost jsScriptEngine) *mutationObserverV8Wrapper[jsTypeParam] {
-	return &mutationObserverV8Wrapper[jsTypeParam]{newHandleReffedObject[dominterfaces.MutationObserver, jsTypeParam](scriptHost)}
+func newMutationObserverV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *mutationObserverV8Wrapper[T] {
+	return &mutationObserverV8Wrapper[T]{newHandleReffedObject[dominterfaces.MutationObserver, T](scriptHost)}
 }
 
 func (wrapper mutationObserverV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

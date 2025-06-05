@@ -17,9 +17,9 @@ type documentV8Wrapper[T any] struct {
 	parentNode *parentNodeV8Wrapper[T]
 }
 
-func newDocumentV8Wrapper(scriptHost jsScriptEngine) *documentV8Wrapper[jsTypeParam] {
-	return &documentV8Wrapper[jsTypeParam]{
-		newHandleReffedObject[dom.Document, jsTypeParam](scriptHost),
+func newDocumentV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *documentV8Wrapper[T] {
+	return &documentV8Wrapper[T]{
+		newHandleReffedObject[dom.Document, T](scriptHost),
 		newParentNodeV8Wrapper(scriptHost),
 	}
 }

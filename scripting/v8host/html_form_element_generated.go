@@ -16,8 +16,8 @@ type htmlFormElementV8Wrapper[T any] struct {
 	handleReffedObject[html.HTMLFormElement, T]
 }
 
-func newHTMLFormElementV8Wrapper(scriptHost jsScriptEngine) *htmlFormElementV8Wrapper[jsTypeParam] {
-	return &htmlFormElementV8Wrapper[jsTypeParam]{newHandleReffedObject[html.HTMLFormElement, jsTypeParam](scriptHost)}
+func newHTMLFormElementV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *htmlFormElementV8Wrapper[T] {
+	return &htmlFormElementV8Wrapper[T]{newHandleReffedObject[html.HTMLFormElement, T](scriptHost)}
 }
 
 func (wrapper htmlFormElementV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

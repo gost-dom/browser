@@ -31,6 +31,7 @@ type PlatformWrapperStructGenerators interface {
 }
 
 type TargetGenerators interface {
+	Name() string
 	Host(g.Generator) g.Generator
 	// CreateInitFunction generates an init function intended to register that a
 	// class should be created. This doesn't _create_ the class, as that

@@ -226,8 +226,8 @@ type urlSearchParamsV8Wrapper[T any] struct {
 	handleReffedObject[urlinterfaces.URLSearchParams, T]
 }
 
-func newURLSearchParamsV8Wrapper(scriptHost jsScriptEngine) *urlSearchParamsV8Wrapper[jsTypeParam] {
-	return &urlSearchParamsV8Wrapper[jsTypeParam]{newHandleReffedObject[urlinterfaces.URLSearchParams, jsTypeParam](scriptHost)}
+func newURLSearchParamsV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *urlSearchParamsV8Wrapper[T] {
+	return &urlSearchParamsV8Wrapper[T]{newHandleReffedObject[urlinterfaces.URLSearchParams, T](scriptHost)}
 }
 
 func (wrapper urlSearchParamsV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

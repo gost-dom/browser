@@ -33,6 +33,8 @@ func (s GojaNamingStrategy) ReceiverName() string {
 
 type GojaTargetGenerators struct{}
 
+func (g GojaTargetGenerators) Name() string { return "goja" }
+
 func (gen GojaTargetGenerators) ConstructorCallbackEnabled() bool { return false }
 
 func (gen GojaTargetGenerators) Host(receiver g.Generator) g.Generator {

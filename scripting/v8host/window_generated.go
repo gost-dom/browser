@@ -16,8 +16,8 @@ type windowV8Wrapper[T any] struct {
 	handleReffedObject[html.Window, T]
 }
 
-func newWindowV8Wrapper(scriptHost jsScriptEngine) *windowV8Wrapper[jsTypeParam] {
-	return &windowV8Wrapper[jsTypeParam]{newHandleReffedObject[html.Window, jsTypeParam](scriptHost)}
+func newWindowV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *windowV8Wrapper[T] {
+	return &windowV8Wrapper[T]{newHandleReffedObject[html.Window, T](scriptHost)}
 }
 
 func (wrapper windowV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

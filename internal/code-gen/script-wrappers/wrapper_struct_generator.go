@@ -48,12 +48,27 @@ func (g WrapperStructGenerator) ConstructorGenerator() Generator {
 	hostArg := structGens.HostArg()
 	hostType := structGens.HostType()
 
-	return gen.FunctionDefinition{
-		Name:     constructorName,
-		Args:     gen.Arg(hostArg, hostType),
-		RtnTypes: gen.List(structGens.WrapperStructConstructorRetType(idlInterfaceName)),
-		Body:     g.Body(),
+	if g.Platform.Name() == "goja" {
+		return gen.FunctionDefinition{
+			Name:     constructorName,
+			Args:     gen.Arg(hostArg, hostType),
+			RtnTypes: gen.List(structGens.WrapperStructConstructorRetType(idlInterfaceName)),
+			Body:     g.Body(),
+		}
+	} else {
+
+		return gen.Raw(
+			jen.Func().Id(constructorName).
+				Types(jen.Id("T").Any()).
+				Params(
+					hostArg.Generate().Add(hostType.Generate()),
+				).
+				Params(
+					structGens.WrapperStructConstructorRetType(idlInterfaceName).Generate(),
+				).
+				Block(g.Body().Generate()))
 	}
+
 }
 
 func addLinesBetweenElements(g []Generator) []Generator {
