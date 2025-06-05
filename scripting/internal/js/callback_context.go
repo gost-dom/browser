@@ -30,7 +30,6 @@ type Scope[T any] interface {
 	Clock() *clock.Clock
 	GetValue(entity.ObjectIder) (Value[T], bool)
 	SetValue(entity.ObjectIder, Value[T])
-	AddDisposable(Disposable)
 	Constructor(string) Constructor[T]
 }
 

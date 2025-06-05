@@ -277,10 +277,9 @@ type v8Scope struct {
 	*V8ScriptContext
 }
 
-func (s v8Scope) Window() html.Window           { return s.window }
-func (s v8Scope) GlobalThis() jsObject          { return s.global }
-func (s v8Scope) Clock() *clock.Clock           { return s.clock }
-func (s v8Scope) AddDisposable(d js.Disposable) { s.V8ScriptContext.addDisposer(d) }
+func (s v8Scope) Window() html.Window  { return s.window }
+func (s v8Scope) GlobalThis() jsObject { return s.global }
+func (s v8Scope) Clock() *clock.Clock  { return s.clock }
 
 func (c v8Scope) Constructor(name string) js.Constructor[jsTypeParam] {
 	return v8Constructable{c, c.getConstructor(name)}
