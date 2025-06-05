@@ -3,13 +3,7 @@ package v8host
 import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/scripting/internal/js"
-	v8 "github.com/gost-dom/v8go"
 )
-
-func installGlobals(windowTemplate *v8.ObjectTemplate, host *V8ScriptHost) {
-	// location := host.globals.namedGlobals["Location"]
-	// windowTemplate.Set("location", location.ft.InstanceTemplate())
-}
 
 func (w *windowV8Wrapper) window(cbCtx jsCallbackContext) (jsValue, error) {
 	return cbCtx.This(), nil

@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/gost-dom/browser/scripting/internal/js"
-	v8 "github.com/gost-dom/v8go"
 )
 
 type unconstructableV8Wrapper[T any] struct{}
@@ -18,133 +17,6 @@ func (w unconstructableV8Wrapper[T]) constructor(cb js.CallbackContext[T]) (js.V
 	return nil, cb.ValueFactory().NewTypeError("Illegal constructor")
 }
 func (w unconstructableV8Wrapper[T]) initialize(c jsClass) {}
-
-type constructorBuilder[T any] struct {
-	host           *V8ScriptHost
-	constructor    *v8.FunctionTemplate
-	instanceLookup func(*V8ScriptContext, *v8.Object) (T, error)
-}
-
-func createIllegalConstructor(host *V8ScriptHost) v8Class {
-	result := v8.NewFunctionTemplateWithError(
-		host.iso,
-		func(args *v8.FunctionCallbackInfo) (*v8.Value, error) {
-			return nil, v8.NewTypeError(host.iso, "Illegal Constructor")
-		},
-	)
-	result.InstanceTemplate().SetInternalFieldCount(1)
-	return newV8Class(host, result)
-}
-
-func (c constructorBuilder[T]) NewPrototypeBuilder() prototypeBuilder[T] {
-	if c.instanceLookup == nil {
-		panic("Cannot build prototype builder if instance lookup not specified")
-	}
-	return prototypeBuilder[T]{
-		host:   c.host,
-		proto:  c.constructor.PrototypeTemplate(),
-		lookup: c.instanceLookup,
-	}
-}
-
-type prototypeBuilder[T any] struct {
-	host   *V8ScriptHost
-	proto  *v8.ObjectTemplate
-	lookup func(*V8ScriptContext, *v8.Object) (T, error)
-}
-
-func (b constructorBuilder[T]) GetInstance(info *v8.FunctionCallbackInfo) (T, error) {
-	ctx := b.host.mustGetContext(info.Context())
-	return b.instanceLookup(ctx, info.This())
-}
-
-func (b prototypeBuilder[T]) GetInstance(info *v8.FunctionCallbackInfo) (T, error) {
-	ctx := b.host.mustGetContext(info.Context())
-	return b.lookup(ctx, info.This())
-}
-
-func (h prototypeBuilder[T]) CreateReadonlyProp2(
-	name string,
-	fn func(T, *V8ScriptContext) (*v8.Value, error),
-) {
-	h.proto.SetAccessorProperty(
-		name,
-		v8.NewFunctionTemplateWithError(
-			h.host.iso,
-			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-				ctx := h.host.mustGetContext(info.Context())
-				instance, err := h.GetInstance(info)
-				if err != nil {
-					return nil, err
-				}
-				return fn(instance, ctx)
-			},
-		),
-		nil,
-		v8.ReadOnly,
-	)
-}
-
-func (h prototypeBuilder[T]) CreateReadonlyProp(name string, fn func(T) string) {
-	h.proto.SetAccessorProperty(name,
-		v8.NewFunctionTemplateWithError(h.host.iso,
-			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-				instance, err := h.GetInstance(info)
-				if err != nil {
-					return nil, err
-				}
-				value := fn(instance)
-				return v8.NewValue(h.host.iso, value)
-			}), nil, v8.ReadOnly)
-}
-
-func (h prototypeBuilder[T]) CreateReadWriteProp(
-	name string,
-	get func(T) string,
-	set func(T, string),
-) {
-	h.proto.SetAccessorProperty(name,
-		v8.NewFunctionTemplateWithError(h.host.iso,
-			func(arg *v8.FunctionCallbackInfo) (*v8.Value, error) {
-				ctx := h.host.mustGetContext(arg.Context())
-				instance, err := h.lookup(ctx, arg.This())
-				if err != nil {
-					return nil, err
-				}
-				value := get(instance)
-				return v8.NewValue(h.host.iso, value)
-			}),
-		v8.NewFunctionTemplateWithError(h.host.iso,
-			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-				instance, err := h.GetInstance(info)
-				if err != nil {
-					return nil, err
-				}
-				newVal := info.Args()[0].String()
-				set(instance, newVal)
-				return nil, nil
-			}), v8.None)
-}
-
-func (h prototypeBuilder[T]) CreateFunction(
-	name string,
-	fn func(T, jsCallbackContext) (*v8.Value, error),
-) {
-	h.proto.Set(
-		name,
-		v8.NewFunctionTemplateWithError(
-			h.host.iso,
-			func(info *v8.FunctionCallbackInfo) (*v8.Value, error) {
-				instance, err := h.GetInstance(info)
-				if err != nil {
-					return nil, err
-				}
-				return fn(instance, newCallbackContext(h.host, info))
-			},
-		),
-		v8.ReadOnly,
-	)
-}
 
 // parseSetterArg parses a single argument and is intended for attribute
 // setters, where exactly one argument must be passed by v8.
@@ -246,6 +118,9 @@ outer:
 			}
 		}
 		err = errors.Join(errs...)
+		if err != nil {
+			err = fmt.Errorf("argument: %s: %w", name, err)
+		}
 		return
 	}
 	return
