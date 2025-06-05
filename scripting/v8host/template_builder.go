@@ -25,15 +25,6 @@ func createIllegalConstructor(host *V8ScriptHost) v8Class {
 	return newV8Class(host, result)
 }
 
-func newIllegalConstructorBuilder[T any](host *V8ScriptHost) constructorBuilder[T] {
-	constructor := createIllegalConstructor(host)
-
-	builder := constructorBuilder[T]{host: host,
-		constructor: constructor.ft,
-	}
-	return builder
-}
-
 func (c constructorBuilder[T]) NewPrototypeBuilder() prototypeBuilder[T] {
 	if c.instanceLookup == nil {
 		panic("Cannot build prototype builder if instance lookup not specified")

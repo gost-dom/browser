@@ -255,7 +255,6 @@ func init() {
 	registerClass("HTMLDocument", "Document", newHTMLDocumentV8Wrapper)
 	registerClass("DocumentFragment", "Node", newDocumentFragmentV8Wrapper)
 	registerJSClass("ShadowRoot", "DocumentFragment", createIllegalConstructor)
-	registerJSClass("Attr", "Node", createAttr)
 
 	for _, cls := range scripting.HtmlElements {
 		if _, found := classes[cls]; !found {

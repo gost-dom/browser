@@ -62,6 +62,9 @@ func CreateV8Specs() WebIdlConfigurations {
 func configureDOMSpecs(domSpecs *WebIdlConfiguration) {
 	configureMutationObserver(domSpecs)
 
+	attr := domSpecs.Type("Attr")
+	attr.MarkMembersAsIgnored("namespaceURI", "prefix", "specified")
+
 	eventTarget := domSpecs.Type("EventTarget")
 	addEventListenerOptions := eventTarget.Method("addEventListener").Argument("options")
 	addEventListenerOptions.SetDecoder("w.decodeEventListenerOptions")

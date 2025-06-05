@@ -3,26 +3,7 @@ package v8host
 import (
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/scripting/internal/js"
-
-	v8 "github.com/gost-dom/v8go"
 )
-
-func createAttr(host *V8ScriptHost) v8Class {
-	iso := host.iso
-	builder := newIllegalConstructorBuilder[dom.Attr](host)
-	builder.instanceLookup = func(ctx *V8ScriptContext, this *v8.Object) (dom.Attr, error) {
-		instance, ok := ctx.getCachedNode(this)
-		if e, e_ok := instance.(dom.Attr); e_ok && ok {
-			return e, nil
-		} else {
-			return nil, v8.NewTypeError(iso, "Not an instance of Attr")
-		}
-	}
-	proto := builder.NewPrototypeBuilder()
-	proto.CreateReadonlyProp("name", dom.Attr.Name)
-	proto.CreateReadWriteProp("value", dom.Attr.Value, dom.Attr.SetValue)
-	return newV8Class(host, builder.constructor)
-}
 
 func (w namedNodeMapV8Wrapper) CustomInitializer(class jsClass) {
 	class.(v8Class).ft.InstanceTemplate().SetIndexedHandler(
