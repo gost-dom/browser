@@ -9,7 +9,7 @@ type documentFragmentV8Wrapper struct {
 	parentNode *parentNodeV8Wrapper
 }
 
-func newDocumentFragmentV8Wrapper(host *V8ScriptHost) jsInitializer {
+func newDocumentFragmentV8Wrapper(host *V8ScriptHost) documentFragmentV8Wrapper {
 	return documentFragmentV8Wrapper{
 		newHandleReffedObject[dom.DocumentFragment](host),
 		newParentNodeV8Wrapper(host),

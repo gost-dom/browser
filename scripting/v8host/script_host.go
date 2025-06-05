@@ -177,12 +177,12 @@ type ClassRegistrator[T any] struct {
 
 func (r ClassRegistrator[T]) Register(
 	className, superClassName string,
-	fact jsInitializerFactory[jsInitializer],
+	fact jsInitializerFactory[jsTypeParam, jsInitializer[jsTypeParam]],
 ) {
 	spec := classSpec[jsTypeParam]{
-		className, superClassName, func(host *V8ScriptHost, extends jsClass) jsClass {
+		className, superClassName, func(host *V8ScriptHost, extends js.Class[jsTypeParam]) js.Class[jsTypeParam] {
 			wrapper := fact(host)
-			res := host.CreateClass(className, extends, wrapper.constructor).(v8Class)
+			res := host.CreateClass(className, extends, wrapper.constructor)
 			wrapper.initialize(res)
 			return res
 		},
@@ -210,23 +210,23 @@ var classRegistrations = ClassRegistrator[jsTypeParam]{
 
 var initializers []js.Configurator[jsTypeParam]
 
-type jsInitializer interface {
-	constructor(jsCallbackContext) (jsValue, error)
-	initialize(jsClass)
+type jsInitializer[T any] interface {
+	constructor(js.CallbackContext[T]) (js.Value[T], error)
+	initialize(js.Class[T])
 }
 
-type jsInitializerFactory[T jsInitializer] = func(*V8ScriptHost) T
+type jsInitializerFactory[T any, U jsInitializer[T]] = func(*V8ScriptHost) U
 
-func Register[T any, U jsInitializer, V jsInitializerFactory[U]](
+func Register[T any, U jsInitializer[jsTypeParam], V jsInitializerFactory[jsTypeParam, U]](
 	reg ClassRegistrator[T],
 	className, superClassName string,
 	constructorFactory V) {
 	reg.Register(className, superClassName,
-		func(h *V8ScriptHost) jsInitializer { return constructorFactory(h) },
+		func(h *V8ScriptHost) jsInitializer[jsTypeParam] { return constructorFactory(h) },
 	)
 }
 
-func registerClass[T jsInitializer, U jsInitializerFactory[T]](
+func registerClass[T jsInitializer[jsTypeParam], U jsInitializerFactory[jsTypeParam, T]](
 	className, superClassName string,
 	constructorFactory U,
 ) {
