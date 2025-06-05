@@ -252,7 +252,7 @@ func init() {
 	registerClass("File", "", newCustomEventV8Wrapper)
 	registerClass("CustomEvent", "Event", newCustomEventV8Wrapper)
 
-	registerJSClass("HTMLDocument", "Document", createHTMLDocumentPrototype)
+	registerClass("HTMLDocument", "Document", newHTMLDocumentV8Wrapper)
 	registerClass("DocumentFragment", "Node", newDocumentFragmentV8Wrapper)
 	registerJSClass("ShadowRoot", "DocumentFragment", createIllegalConstructor)
 	registerJSClass("Attr", "Node", createAttr)
