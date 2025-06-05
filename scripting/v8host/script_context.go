@@ -101,6 +101,45 @@ func lookupJSPrototype(entity entity.ObjectIder) string {
 	}
 }
 
+func (context *V8ScriptContext) initializeGlobals() error {
+	win := context.window
+	context.global = newV8Object(context, context.v8ctx.Global())
+	context.global.SetNativeValue(win)
+	{
+		// Install window.location as a "data property".
+		//
+		// A better solution could have been an accessor property that
+		// automatically retrieves a cached JS object for a Go value. This could
+		// have been configured on the template, and be consistent with how code
+		// gen works.
+		//
+		// Currently, Window.Location() returns a new value every time,
+		// preventing that solution, as the location is a [SameValue] object -
+		// and verified by tests. Furthermore, in JS, document.location must
+		// return the same object as window.location (document.location looks up
+		// window.location)
+		scope := v8Scope{context}
+		l, err := scope.Constructor("Location").NewInstance(scope, win.Location())
+		if err != nil {
+			return err
+		}
+		context.Constructor("Location")
+		if err := context.global.Set("location", l); err != nil {
+			return fmt.Errorf("error installing location: %v\n%s", err, constants.BUG_ISSUE_URL)
+		}
+	}
+	err := installPolyfills(context)
+	if err != nil {
+		return fmt.Errorf(
+			"Error installing polyfills: %v. Should not be possible on a passing build of Gost-DOM.\n%s",
+			err,
+			constants.BUG_ISSUE_URL,
+		)
+	}
+
+	return nil
+}
+
 // Constructor returns the V8 FunctionTemplate with the specified name.
 // Panics if the name is not one registered as a constructor. The name should
 // not originate from client code, only from this library, so it should be

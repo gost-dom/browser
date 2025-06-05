@@ -11,7 +11,6 @@ import (
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
-	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting"
@@ -370,7 +369,7 @@ func (host *V8ScriptHost) Close() {
 	host.inspector.Dispose()
 
 	if !pool.add(host) {
-		host.iso.Close()
+		host.iso.Dispose()
 	}
 }
 
@@ -409,33 +408,14 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 	if _, err := context.runScript("Object.setPrototypeOf(globalThis, globalThis.Window.prototype)"); err != nil {
 		panic(err)
 	}
-	context.global = newV8Object(context, v8ctx.Global())
-	scope := v8Scope{context}
-	l, err := scope.Constructor("Location").NewInstance(scope, w.Location())
-	if err != nil {
+	host.addContext(context)
+	if err := context.initializeGlobals(); err != nil {
 		panic(err)
 	}
-	context.Constructor("Location")
-	if err := context.global.Set("location", l); err != nil {
-		panic(fmt.Sprintf("error installing location: %v\n%s", err, constants.BUG_ISSUE_URL))
-	}
-	host.addContext(context)
 	host.inspector.ContextCreated(context.v8ctx)
 	global := newV8Object(context, context.v8ctx.Global())
-	global.SetNativeValue(w)
 	context.addDisposer(global.(js.Disposable))
 	context.cacheEntity(global, w)
-	err = installPolyfills(context)
-	if err != nil {
-		// TODO: Handle
-		panic(
-			fmt.Sprintf(
-				"Error installing polyfills. Should not be possible on a passing build of Gost-DOM.\n  Please file an issue if this is a release version of Gost-DOM: %s\n  Error: %v",
-				constants.BUG_ISSUE_URL,
-				err,
-			),
-		)
-	}
 
 	return context
 }
