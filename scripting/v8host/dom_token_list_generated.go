@@ -90,7 +90,7 @@ func (w domTokenListV8Wrapper) add(cbCtx jsCallbackContext) (jsValue, error) {
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	tokens, errArg1 := consumeRestArguments(cbCtx, "tokens", nil, w.decodeString)
+	tokens, errArg1 := consumeRestArguments(cbCtx, "tokens", w.decodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}

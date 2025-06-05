@@ -103,7 +103,6 @@ func consumeOptionalArg[T, U any](
 func consumeRestArguments[T any](
 	args jsCallbackContext,
 	name string,
-	defaultValue func() T,
 	decoders ...func(jsCallbackContext, jsValue) (T, error),
 ) (results []T, err error) {
 	errs := make([]error, len(decoders))

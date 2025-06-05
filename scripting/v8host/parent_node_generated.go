@@ -53,7 +53,7 @@ func (w parentNodeV8Wrapper) prepend(cbCtx jsCallbackContext) (jsValue, error) {
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	nodes, errArg1 := consumeRestArguments(cbCtx, "nodes", nil, w.decodeNodeOrText)
+	nodes, errArg1 := consumeRestArguments(cbCtx, "nodes", w.decodeNodeOrText)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -67,7 +67,7 @@ func (w parentNodeV8Wrapper) append(cbCtx jsCallbackContext) (jsValue, error) {
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	nodes, errArg1 := consumeRestArguments(cbCtx, "nodes", nil, w.decodeNodeOrText)
+	nodes, errArg1 := consumeRestArguments(cbCtx, "nodes", w.decodeNodeOrText)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -81,7 +81,7 @@ func (w parentNodeV8Wrapper) replaceChildren(cbCtx jsCallbackContext) (jsValue, 
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	nodes, errArg1 := consumeRestArguments(cbCtx, "nodes", nil, w.decodeNodeOrText)
+	nodes, errArg1 := consumeRestArguments(cbCtx, "nodes", w.decodeNodeOrText)
 	if errArg1 != nil {
 		return nil, errArg1
 	}

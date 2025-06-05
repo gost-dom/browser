@@ -125,7 +125,10 @@ func (gen V8CallbackGenerators) CtxOrOperationCallback(
 		err := g.Id(fmt.Sprintf("errArg%d", i+1))
 		reqArgs = append(reqArgs, reqArg)
 		errs = append(errs, err)
-		parseArgs := []g.Generator{cbCtx, g.Lit(a.Name), defaultValuer}
+		parseArgs := []g.Generator{cbCtx, g.Lit(a.Name)}
+		if !a.Variadic {
+			parseArgs = append(parseArgs, defaultValuer)
+		}
 		var dec = wrappers.DecodersForArg(receiver, a)
 		parseArgs = append(parseArgs, dec...)
 		if a.Variadic {
