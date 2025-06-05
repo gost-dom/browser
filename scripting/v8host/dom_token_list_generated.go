@@ -17,7 +17,7 @@ type domTokenListV8Wrapper struct {
 }
 
 func newDOMTokenListV8Wrapper(scriptHost jsScriptEngine) *domTokenListV8Wrapper {
-	return &domTokenListV8Wrapper{newHandleReffedObject[dom.DOMTokenList](scriptHost)}
+	return &domTokenListV8Wrapper{newHandleReffedObject[dom.DOMTokenList, jsTypeParam](scriptHost)}
 }
 
 func (wrapper domTokenListV8Wrapper) Initialize(jsClass jsClass) {

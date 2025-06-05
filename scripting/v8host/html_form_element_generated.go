@@ -17,7 +17,7 @@ type htmlFormElementV8Wrapper struct {
 }
 
 func newHTMLFormElementV8Wrapper(scriptHost jsScriptEngine) *htmlFormElementV8Wrapper {
-	return &htmlFormElementV8Wrapper{newHandleReffedObject[html.HTMLFormElement](scriptHost)}
+	return &htmlFormElementV8Wrapper{newHandleReffedObject[html.HTMLFormElement, jsTypeParam](scriptHost)}
 }
 
 func (wrapper htmlFormElementV8Wrapper) Initialize(jsClass jsClass) {

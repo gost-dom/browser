@@ -19,7 +19,7 @@ type documentV8Wrapper struct {
 
 func newDocumentV8Wrapper(scriptHost jsScriptEngine) *documentV8Wrapper {
 	return &documentV8Wrapper{
-		newHandleReffedObject[dom.Document](scriptHost),
+		newHandleReffedObject[dom.Document, jsTypeParam](scriptHost),
 		newParentNodeV8Wrapper(scriptHost),
 	}
 }

@@ -12,7 +12,7 @@ type nonDocumentTypeChildNodeV8Wrapper struct {
 }
 
 func newNonDocumentTypeChildNodeV8Wrapper(scriptHost jsScriptEngine) *nonDocumentTypeChildNodeV8Wrapper {
-	return &nonDocumentTypeChildNodeV8Wrapper{newHandleReffedObject[dom.NonDocumentTypeChildNode](scriptHost)}
+	return &nonDocumentTypeChildNodeV8Wrapper{newHandleReffedObject[dom.NonDocumentTypeChildNode, jsTypeParam](scriptHost)}
 }
 
 func (wrapper nonDocumentTypeChildNodeV8Wrapper) Initialize(jsClass jsClass) {

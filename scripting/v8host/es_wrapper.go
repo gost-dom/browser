@@ -171,10 +171,10 @@ type handleReffedObject[T, U any] struct {
 	converters[U]
 }
 
-func newHandleReffedObject[T any](
-	host js.ScriptEngine[jsTypeParam],
-) handleReffedObject[T, jsTypeParam] {
-	return handleReffedObject[T, jsTypeParam]{
+func newHandleReffedObject[T, U any](
+	host js.ScriptEngine[U],
+) handleReffedObject[T, U] {
+	return handleReffedObject[T, U]{
 		scriptHost: host,
 	}
 }

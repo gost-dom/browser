@@ -37,7 +37,11 @@ func (gen V8WrapperStructGenerators) EmbeddedType(wrappedType g.Generator) g.Gen
 func (g V8WrapperStructGenerators) EmbeddedTypeConstructor(
 	wrappedType g.Generator,
 ) generators.Value {
-	return generators.NewValue("newHandleReffedObject").TypeParam(wrappedType)
+	return generators.ValueOf(generators.Raw(
+		generators.NewValue("newHandleReffedObject").
+			Generate().
+			Types(wrappedType.Generate(), jen.Id("jsTypeParam")),
+	))
 }
 
 func (g V8WrapperStructGenerators) HostArg() g.Generator {

@@ -12,7 +12,7 @@ type parentNodeV8Wrapper struct {
 }
 
 func newParentNodeV8Wrapper(scriptHost jsScriptEngine) *parentNodeV8Wrapper {
-	return &parentNodeV8Wrapper{newHandleReffedObject[dom.ParentNode](scriptHost)}
+	return &parentNodeV8Wrapper{newHandleReffedObject[dom.ParentNode, jsTypeParam](scriptHost)}
 }
 
 func (wrapper parentNodeV8Wrapper) Initialize(jsClass jsClass) {

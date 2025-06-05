@@ -13,7 +13,7 @@ type htmlHyperlinkElementUtilsV8Wrapper struct {
 }
 
 func newHTMLHyperlinkElementUtilsV8Wrapper(scriptHost jsScriptEngine) *htmlHyperlinkElementUtilsV8Wrapper {
-	return &htmlHyperlinkElementUtilsV8Wrapper{newHandleReffedObject[html.HTMLHyperlinkElementUtils](scriptHost)}
+	return &htmlHyperlinkElementUtilsV8Wrapper{newHandleReffedObject[html.HTMLHyperlinkElementUtils, jsTypeParam](scriptHost)}
 }
 
 func (wrapper htmlHyperlinkElementUtilsV8Wrapper) Initialize(jsClass jsClass) {

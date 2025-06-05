@@ -17,7 +17,7 @@ type nodeV8Wrapper struct {
 }
 
 func newNodeV8Wrapper(scriptHost jsScriptEngine) *nodeV8Wrapper {
-	return &nodeV8Wrapper{newHandleReffedObject[dom.Node](scriptHost)}
+	return &nodeV8Wrapper{newHandleReffedObject[dom.Node, jsTypeParam](scriptHost)}
 }
 
 func (wrapper nodeV8Wrapper) Initialize(jsClass jsClass) {

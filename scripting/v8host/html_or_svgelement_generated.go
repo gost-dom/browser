@@ -13,7 +13,7 @@ type htmlOrSVGElementV8Wrapper struct {
 }
 
 func newHTMLOrSVGElementV8Wrapper(scriptHost jsScriptEngine) *htmlOrSVGElementV8Wrapper {
-	return &htmlOrSVGElementV8Wrapper{newHandleReffedObject[html.HTMLOrSVGElement](scriptHost)}
+	return &htmlOrSVGElementV8Wrapper{newHandleReffedObject[html.HTMLOrSVGElement, jsTypeParam](scriptHost)}
 }
 
 func (wrapper htmlOrSVGElementV8Wrapper) Initialize(jsClass jsClass) {

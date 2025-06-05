@@ -17,7 +17,7 @@ type windowV8Wrapper struct {
 }
 
 func newWindowV8Wrapper(scriptHost jsScriptEngine) *windowV8Wrapper {
-	return &windowV8Wrapper{newHandleReffedObject[html.Window](scriptHost)}
+	return &windowV8Wrapper{newHandleReffedObject[html.Window, jsTypeParam](scriptHost)}
 }
 
 func (wrapper windowV8Wrapper) Initialize(jsClass jsClass) {

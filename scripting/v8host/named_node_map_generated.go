@@ -17,7 +17,7 @@ type namedNodeMapV8Wrapper struct {
 }
 
 func newNamedNodeMapV8Wrapper(scriptHost jsScriptEngine) *namedNodeMapV8Wrapper {
-	return &namedNodeMapV8Wrapper{newHandleReffedObject[dom.NamedNodeMap](scriptHost)}
+	return &namedNodeMapV8Wrapper{newHandleReffedObject[dom.NamedNodeMap, jsTypeParam](scriptHost)}
 }
 
 func (wrapper namedNodeMapV8Wrapper) Initialize(jsClass jsClass) {

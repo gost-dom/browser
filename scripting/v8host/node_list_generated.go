@@ -16,7 +16,7 @@ type nodeListV8Wrapper struct {
 }
 
 func newNodeListV8Wrapper(scriptHost jsScriptEngine) *nodeListV8Wrapper {
-	return &nodeListV8Wrapper{newHandleReffedObject[dom.NodeList](scriptHost)}
+	return &nodeListV8Wrapper{newHandleReffedObject[dom.NodeList, jsTypeParam](scriptHost)}
 }
 
 func (wrapper nodeListV8Wrapper) Initialize(jsClass jsClass) {

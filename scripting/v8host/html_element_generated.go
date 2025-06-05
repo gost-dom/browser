@@ -18,7 +18,7 @@ type htmlElementV8Wrapper struct {
 
 func newHTMLElementV8Wrapper(scriptHost jsScriptEngine) *htmlElementV8Wrapper {
 	return &htmlElementV8Wrapper{
-		newHandleReffedObject[html.HTMLElement](scriptHost),
+		newHandleReffedObject[html.HTMLElement, jsTypeParam](scriptHost),
 		newHTMLOrSVGElementV8Wrapper(scriptHost),
 	}
 }

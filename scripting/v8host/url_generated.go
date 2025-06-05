@@ -227,7 +227,7 @@ type urlSearchParamsV8Wrapper struct {
 }
 
 func newURLSearchParamsV8Wrapper(scriptHost jsScriptEngine) *urlSearchParamsV8Wrapper {
-	return &urlSearchParamsV8Wrapper{newHandleReffedObject[urlinterfaces.URLSearchParams](scriptHost)}
+	return &urlSearchParamsV8Wrapper{newHandleReffedObject[urlinterfaces.URLSearchParams, jsTypeParam](scriptHost)}
 }
 
 func (wrapper urlSearchParamsV8Wrapper) Initialize(jsClass jsClass) {

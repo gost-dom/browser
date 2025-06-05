@@ -19,7 +19,7 @@ type htmlAnchorElementV8Wrapper struct {
 
 func newHTMLAnchorElementV8Wrapper(scriptHost jsScriptEngine) *htmlAnchorElementV8Wrapper {
 	return &htmlAnchorElementV8Wrapper{
-		newHandleReffedObject[html.HTMLAnchorElement](scriptHost),
+		newHandleReffedObject[html.HTMLAnchorElement, jsTypeParam](scriptHost),
 		newHTMLHyperlinkElementUtilsV8Wrapper(scriptHost),
 	}
 }

@@ -17,7 +17,7 @@ type htmlTemplateElementV8Wrapper struct {
 }
 
 func newHTMLTemplateElementV8Wrapper(scriptHost jsScriptEngine) *htmlTemplateElementV8Wrapper {
-	return &htmlTemplateElementV8Wrapper{newHandleReffedObject[html.HTMLTemplateElement](scriptHost)}
+	return &htmlTemplateElementV8Wrapper{newHandleReffedObject[html.HTMLTemplateElement, jsTypeParam](scriptHost)}
 }
 
 func (wrapper htmlTemplateElementV8Wrapper) Initialize(jsClass jsClass) {

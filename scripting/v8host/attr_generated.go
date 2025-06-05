@@ -17,7 +17,7 @@ type attrV8Wrapper struct {
 }
 
 func newAttrV8Wrapper(scriptHost jsScriptEngine) *attrV8Wrapper {
-	return &attrV8Wrapper{newHandleReffedObject[dom.Attr](scriptHost)}
+	return &attrV8Wrapper{newHandleReffedObject[dom.Attr, jsTypeParam](scriptHost)}
 }
 
 func (wrapper attrV8Wrapper) Initialize(jsClass jsClass) {

@@ -17,7 +17,7 @@ type locationV8Wrapper struct {
 }
 
 func newLocationV8Wrapper(scriptHost jsScriptEngine) *locationV8Wrapper {
-	return &locationV8Wrapper{newHandleReffedObject[html.Location](scriptHost)}
+	return &locationV8Wrapper{newHandleReffedObject[html.Location, jsTypeParam](scriptHost)}
 }
 
 func (wrapper locationV8Wrapper) Initialize(jsClass jsClass) {
