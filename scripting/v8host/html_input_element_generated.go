@@ -20,7 +20,7 @@ func newHTMLInputElementV8Wrapper(scriptHost jsScriptEngine) *htmlInputElementV8
 	return &htmlInputElementV8Wrapper{newHandleReffedObject[html.HTMLInputElement](scriptHost)}
 }
 
-func (wrapper htmlInputElementV8Wrapper) initialize(jsClass jsClass) {
+func (wrapper htmlInputElementV8Wrapper) Initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
@@ -29,8 +29,8 @@ func (w htmlInputElementV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("type", w.type_, w.setType)
 }
 
-func (w htmlInputElementV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLInputElement.constructor")
+func (w htmlInputElementV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: HTMLInputElement.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

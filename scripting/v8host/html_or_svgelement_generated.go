@@ -16,7 +16,7 @@ func newHTMLOrSVGElementV8Wrapper(scriptHost jsScriptEngine) *htmlOrSVGElementV8
 	return &htmlOrSVGElementV8Wrapper{newHandleReffedObject[html.HTMLOrSVGElement](scriptHost)}
 }
 
-func (wrapper htmlOrSVGElementV8Wrapper) initialize(jsClass jsClass) {
+func (wrapper htmlOrSVGElementV8Wrapper) Initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
@@ -29,8 +29,8 @@ func (w htmlOrSVGElementV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("tabIndex", w.tabIndex, w.setTabIndex)
 }
 
-func (w htmlOrSVGElementV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLOrSVGElement.constructor")
+func (w htmlOrSVGElementV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: HTMLOrSVGElement.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

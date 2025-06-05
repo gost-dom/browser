@@ -17,11 +17,11 @@ func newDocumentFragmentV8Wrapper(host js.ScriptEngine[jsTypeParam]) documentFra
 	}
 }
 
-func (w documentFragmentV8Wrapper) constructor(ctx jsCallbackContext) (jsValue, error) {
+func (w documentFragmentV8Wrapper) Constructor(ctx jsCallbackContext) (jsValue, error) {
 	result := dom.NewDocumentFragment(ctx.Scope().Window().Document())
 	return w.store(result, ctx)
 }
 
-func (w documentFragmentV8Wrapper) initialize(class jsClass) {
+func (w documentFragmentV8Wrapper) Initialize(class jsClass) {
 	w.parentNode.installPrototype(class)
 }

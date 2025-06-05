@@ -12,7 +12,7 @@ func init() {
 	registerClass("Event", "", newEventV8Wrapper)
 }
 
-func (wrapper eventV8Wrapper) initialize(jsClass jsClass) {
+func (wrapper eventV8Wrapper) Initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
@@ -28,8 +28,8 @@ func (w eventV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("defaultPrevented", w.defaultPrevented, nil)
 }
 
-func (w eventV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: Event.constructor")
+func (w eventV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: Event.Constructor")
 	type_, errArg1 := consumeArgument(cbCtx, "type", nil, w.decodeString)
 	eventInitDict, errArg2 := consumeArgument(cbCtx, "eventInitDict", w.defaultEventInit, w.decodeEventInit)
 	err := errors.Join(errArg1, errArg2)

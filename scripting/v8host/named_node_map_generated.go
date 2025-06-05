@@ -20,7 +20,7 @@ func newNamedNodeMapV8Wrapper(scriptHost jsScriptEngine) *namedNodeMapV8Wrapper 
 	return &namedNodeMapV8Wrapper{newHandleReffedObject[dom.NamedNodeMap](scriptHost)}
 }
 
-func (wrapper namedNodeMapV8Wrapper) initialize(jsClass jsClass) {
+func (wrapper namedNodeMapV8Wrapper) Initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)
 }
@@ -36,8 +36,8 @@ func (w namedNodeMapV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("length", w.length, nil)
 }
 
-func (w namedNodeMapV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: NamedNodeMap.constructor")
+func (w namedNodeMapV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: NamedNodeMap.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

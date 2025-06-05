@@ -15,7 +15,7 @@ func newNonDocumentTypeChildNodeV8Wrapper(scriptHost jsScriptEngine) *nonDocumen
 	return &nonDocumentTypeChildNodeV8Wrapper{newHandleReffedObject[dom.NonDocumentTypeChildNode](scriptHost)}
 }
 
-func (wrapper nonDocumentTypeChildNodeV8Wrapper) initialize(jsClass jsClass) {
+func (wrapper nonDocumentTypeChildNodeV8Wrapper) Initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
@@ -24,8 +24,8 @@ func (w nonDocumentTypeChildNodeV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("nextElementSibling", w.nextElementSibling, nil)
 }
 
-func (w nonDocumentTypeChildNodeV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: NonDocumentTypeChildNode.constructor")
+func (w nonDocumentTypeChildNodeV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: NonDocumentTypeChildNode.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

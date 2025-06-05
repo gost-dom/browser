@@ -19,7 +19,7 @@ func newNodeListV8Wrapper(scriptHost jsScriptEngine) *nodeListV8Wrapper {
 	return &nodeListV8Wrapper{newHandleReffedObject[dom.NodeList](scriptHost)}
 }
 
-func (wrapper nodeListV8Wrapper) initialize(jsClass jsClass) {
+func (wrapper nodeListV8Wrapper) Initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)
 }
@@ -29,8 +29,8 @@ func (w nodeListV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("length", w.length, nil)
 }
 
-func (w nodeListV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: NodeList.constructor")
+func (w nodeListV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: NodeList.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

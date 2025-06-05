@@ -15,7 +15,7 @@ func newParentNodeV8Wrapper(scriptHost jsScriptEngine) *parentNodeV8Wrapper {
 	return &parentNodeV8Wrapper{newHandleReffedObject[dom.ParentNode](scriptHost)}
 }
 
-func (wrapper parentNodeV8Wrapper) initialize(jsClass jsClass) {
+func (wrapper parentNodeV8Wrapper) Initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
@@ -30,8 +30,8 @@ func (w parentNodeV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("childElementCount", w.childElementCount, nil)
 }
 
-func (w parentNodeV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: ParentNode.constructor")
+func (w parentNodeV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: ParentNode.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

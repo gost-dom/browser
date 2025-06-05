@@ -22,7 +22,7 @@ func newFormDataV8Wrapper(scriptHost jsScriptEngine) *formDataV8Wrapper {
 	return &formDataV8Wrapper{newHandleReffedObject[*html.FormData](scriptHost)}
 }
 
-func (wrapper formDataV8Wrapper) initialize(jsClass jsClass) {
+func (wrapper formDataV8Wrapper) Initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)
 }
@@ -36,8 +36,8 @@ func (w formDataV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeMethod("set", w.set)
 }
 
-func (w formDataV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: FormData.constructor")
+func (w formDataV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: FormData.Constructor")
 	form, found, errArg := consumeOptionalArg(cbCtx, "form", w.decodeHTMLFormElement)
 	if found {
 		if errArg != nil {
@@ -147,7 +147,7 @@ func init() {
 	registerClass("XMLHttpRequest", "XMLHttpRequestEventTarget", newXMLHttpRequestV8Wrapper)
 }
 
-func (wrapper xmlHttpRequestV8Wrapper) initialize(jsClass jsClass) {
+func (wrapper xmlHttpRequestV8Wrapper) Initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
@@ -172,8 +172,8 @@ func (w xmlHttpRequestV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("responseXML", w.responseXML, nil)
 }
 
-func (w xmlHttpRequestV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.constructor")
+func (w xmlHttpRequestV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.Constructor")
 	return w.CreateInstance(cbCtx)
 }
 
@@ -388,13 +388,13 @@ func newXMLHttpRequestEventTargetV8Wrapper(scriptHost jsScriptEngine) *xmlHttpRe
 	return &xmlHttpRequestEventTargetV8Wrapper{newHandleReffedObject[event.EventTarget](scriptHost)}
 }
 
-func (wrapper xmlHttpRequestEventTargetV8Wrapper) initialize(jsClass jsClass) {
+func (wrapper xmlHttpRequestEventTargetV8Wrapper) Initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
 func (w xmlHttpRequestEventTargetV8Wrapper) installPrototype(jsClass jsClass) {}
 
-func (w xmlHttpRequestEventTargetV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequestEventTarget.constructor")
+func (w xmlHttpRequestEventTargetV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequestEventTarget.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }

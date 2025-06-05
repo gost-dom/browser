@@ -20,7 +20,7 @@ func newAttrV8Wrapper(scriptHost jsScriptEngine) *attrV8Wrapper {
 	return &attrV8Wrapper{newHandleReffedObject[dom.Attr](scriptHost)}
 }
 
-func (wrapper attrV8Wrapper) initialize(jsClass jsClass) {
+func (wrapper attrV8Wrapper) Initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
@@ -31,8 +31,8 @@ func (w attrV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("ownerElement", w.ownerElement, nil)
 }
 
-func (w attrV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: Attr.constructor")
+func (w attrV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: Attr.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

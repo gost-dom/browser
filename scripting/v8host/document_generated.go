@@ -24,7 +24,7 @@ func newDocumentV8Wrapper(scriptHost jsScriptEngine) *documentV8Wrapper {
 	}
 }
 
-func (wrapper documentV8Wrapper) initialize(jsClass jsClass) {
+func (wrapper documentV8Wrapper) Initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)
 }
@@ -61,8 +61,8 @@ func (w documentV8Wrapper) installPrototype(jsClass jsClass) {
 	w.parentNode.installPrototype(jsClass)
 }
 
-func (w documentV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: Document.constructor")
+func (w documentV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: Document.Constructor")
 	return w.CreateInstance(cbCtx)
 }
 

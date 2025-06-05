@@ -12,7 +12,7 @@ func init() {
 	registerClass("Element", "Node", newElementV8Wrapper)
 }
 
-func (wrapper elementV8Wrapper) initialize(jsClass jsClass) {
+func (wrapper elementV8Wrapper) Initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)
 }
@@ -55,8 +55,8 @@ func (w elementV8Wrapper) installPrototype(jsClass jsClass) {
 	w.nonDocumentTypeChildNode.installPrototype(jsClass)
 }
 
-func (w elementV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: Element.constructor")
+func (w elementV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: Element.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

@@ -20,7 +20,7 @@ func newMutationObserverV8Wrapper(scriptHost jsScriptEngine) *mutationObserverV8
 	return &mutationObserverV8Wrapper{newHandleReffedObject[dominterfaces.MutationObserver](scriptHost)}
 }
 
-func (wrapper mutationObserverV8Wrapper) initialize(jsClass jsClass) {
+func (wrapper mutationObserverV8Wrapper) Initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
@@ -30,8 +30,8 @@ func (w mutationObserverV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeMethod("takeRecords", w.takeRecords)
 }
 
-func (w mutationObserverV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: MutationObserver.constructor")
+func (w mutationObserverV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: MutationObserver.Constructor")
 	callback, errArg1 := consumeArgument(cbCtx, "callback", nil, w.decodeMutationCallback)
 	if errArg1 != nil {
 		return nil, errArg1

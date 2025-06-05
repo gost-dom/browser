@@ -15,5 +15,5 @@ func (w htmlDocumentV8Wrapper) constructor(c jsCallbackContext) (jsValue, error)
 }
 
 func (w htmlDocumentV8Wrapper) initialize(c jsClass) {
-	w.documentV8Wrapper.initialize(c)
+	w.documentV8Wrapper.Initialize(c)
 }

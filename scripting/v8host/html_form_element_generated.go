@@ -20,7 +20,7 @@ func newHTMLFormElementV8Wrapper(scriptHost jsScriptEngine) *htmlFormElementV8Wr
 	return &htmlFormElementV8Wrapper{newHandleReffedObject[html.HTMLFormElement](scriptHost)}
 }
 
-func (wrapper htmlFormElementV8Wrapper) initialize(jsClass jsClass) {
+func (wrapper htmlFormElementV8Wrapper) Initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
@@ -43,8 +43,8 @@ func (w htmlFormElementV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("length", w.length, nil)
 }
 
-func (w htmlFormElementV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLFormElement.constructor")
+func (w htmlFormElementV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: HTMLFormElement.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

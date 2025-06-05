@@ -177,8 +177,8 @@ func (r ClassRegistrator[T]) Register(
 	spec := classSpec[T]{
 		className, superClassName, func(host js.ScriptEngine[T], extends js.Class[T]) js.Class[T] {
 			wrapper := fact(host)
-			res := host.CreateClass(className, extends, wrapper.constructor)
-			wrapper.initialize(res)
+			res := host.CreateClass(className, extends, wrapper.Constructor)
+			wrapper.Initialize(res)
 			return res
 		},
 	}
@@ -206,8 +206,8 @@ var classRegistrations = ClassRegistrator[jsTypeParam]{
 var initializers []js.Configurator[jsTypeParam]
 
 type jsInitializer[T any] interface {
-	constructor(js.CallbackContext[T]) (js.Value[T], error)
-	initialize(js.Class[T])
+	Constructor(js.CallbackContext[T]) (js.Value[T], error)
+	Initialize(js.Class[T])
 }
 
 type jsInitializerFactory[T any, U jsInitializer[T]] = func(js.ScriptEngine[T]) U

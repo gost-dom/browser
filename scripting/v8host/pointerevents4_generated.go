@@ -8,7 +8,7 @@ func init() {
 	registerClass("PointerEvent", "MouseEvent", newPointerEventV8Wrapper)
 }
 
-func (wrapper pointerEventV8Wrapper) initialize(jsClass jsClass) {
+func (wrapper pointerEventV8Wrapper) Initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
@@ -19,8 +19,8 @@ func (w pointerEventV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("tangentialPressure", w.tangentialPressure, nil)
 }
 
-func (w pointerEventV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: PointerEvent.constructor")
+func (w pointerEventV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: PointerEvent.Constructor")
 	type_, errArg1 := consumeArgument(cbCtx, "type", nil, w.decodeString)
 	if errArg1 != nil {
 		return nil, errArg1

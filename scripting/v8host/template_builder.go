@@ -15,10 +15,10 @@ func newUnconstructableV8Wrapper(
 	return unconstructableV8Wrapper[jsTypeParam]{}
 }
 
-func (w unconstructableV8Wrapper[T]) constructor(cb js.CallbackContext[T]) (js.Value[T], error) {
+func (w unconstructableV8Wrapper[T]) Constructor(cb js.CallbackContext[T]) (js.Value[T], error) {
 	return nil, cb.ValueFactory().NewTypeError("Illegal constructor")
 }
-func (w unconstructableV8Wrapper[T]) initialize(c jsClass) {}
+func (w unconstructableV8Wrapper[T]) Initialize(c jsClass) {}
 
 // parseSetterArg parses a single argument and is intended for attribute
 // setters, where exactly one argument must be passed by v8.

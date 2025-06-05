@@ -13,7 +13,7 @@ func init() {
 	registerClass("URL", "", newURLV8Wrapper)
 }
 
-func (wrapper urlV8Wrapper) initialize(jsClass jsClass) {
+func (wrapper urlV8Wrapper) Initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
@@ -34,8 +34,8 @@ func (w urlV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("hash", w.hash, w.setHash)
 }
 
-func (w urlV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.constructor")
+func (w urlV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: URL.Constructor")
 	url, errArg1 := consumeArgument(cbCtx, "url", nil, w.decodeString)
 	if errArg1 != nil {
 		return nil, errArg1
@@ -230,7 +230,7 @@ func newURLSearchParamsV8Wrapper(scriptHost jsScriptEngine) *urlSearchParamsV8Wr
 	return &urlSearchParamsV8Wrapper{newHandleReffedObject[urlinterfaces.URLSearchParams](scriptHost)}
 }
 
-func (wrapper urlSearchParamsV8Wrapper) initialize(jsClass jsClass) {
+func (wrapper urlSearchParamsV8Wrapper) Initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)
 }

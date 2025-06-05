@@ -20,7 +20,7 @@ func newWindowV8Wrapper(scriptHost jsScriptEngine) *windowV8Wrapper {
 	return &windowV8Wrapper{newHandleReffedObject[html.Window](scriptHost)}
 }
 
-func (wrapper windowV8Wrapper) initialize(jsClass jsClass) {
+func (wrapper windowV8Wrapper) Initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
@@ -59,8 +59,8 @@ func (w windowV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("originAgentCluster", w.originAgentCluster, nil)
 }
 
-func (w windowV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: Window.constructor")
+func (w windowV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: Window.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

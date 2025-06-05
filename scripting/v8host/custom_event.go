@@ -17,7 +17,7 @@ func newCustomEventV8Wrapper(scriptHost js.ScriptEngine[jsTypeParam]) *customEve
 	return &customEventV8Wrapper{newHandleReffedObject[*event.Event](scriptHost)}
 }
 
-func (w customEventV8Wrapper) constructor(info jsCallbackContext) (jsValue, error) {
+func (w customEventV8Wrapper) Constructor(info jsCallbackContext) (jsValue, error) {
 	arg, ok := info.ConsumeArg()
 	if !ok {
 		return info.ReturnWithTypeError("Must have at least one constructor argument")
@@ -43,7 +43,7 @@ func (w customEventV8Wrapper) constructor(info jsCallbackContext) (jsValue, erro
 	return nil, nil
 }
 
-func (w customEventV8Wrapper) initialize(class jsClass) {
+func (w customEventV8Wrapper) Initialize(class jsClass) {
 	class.CreatePrototypeAttribute("detail", w.detail, nil)
 }
 

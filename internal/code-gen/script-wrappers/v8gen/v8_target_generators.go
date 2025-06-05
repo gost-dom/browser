@@ -161,7 +161,7 @@ func (gen V8TargetGenerators) CreateHostInitializer(data ESConstructorData) g.Ge
 		// 	Body:     CreateV8ConstructorBody(data),
 		// },
 		g.FunctionDefinition{
-			Name:     "initialize", // prototypeFactoryFunctionName(data),
+			Name:     "Initialize", // prototypeFactoryFunctionName(data),
 			Receiver: g.FunctionArgument{Name: g.Id("wrapper"), Type: wrapperType},
 			Args:     g.Arg(g.Id("jsClass"), v8Class),
 			Body:     CreateV8ClassInitializerBody(data),

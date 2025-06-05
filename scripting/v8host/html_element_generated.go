@@ -23,7 +23,7 @@ func newHTMLElementV8Wrapper(scriptHost jsScriptEngine) *htmlElementV8Wrapper {
 	}
 }
 
-func (wrapper htmlElementV8Wrapper) initialize(jsClass jsClass) {
+func (wrapper htmlElementV8Wrapper) Initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
@@ -32,8 +32,8 @@ func (w htmlElementV8Wrapper) installPrototype(jsClass jsClass) {
 	w.htmlOrSVGElement.installPrototype(jsClass)
 }
 
-func (w htmlElementV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLElement.constructor")
+func (w htmlElementV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: HTMLElement.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

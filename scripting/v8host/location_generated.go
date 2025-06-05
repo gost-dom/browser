@@ -20,7 +20,7 @@ func newLocationV8Wrapper(scriptHost jsScriptEngine) *locationV8Wrapper {
 	return &locationV8Wrapper{newHandleReffedObject[html.Location](scriptHost)}
 }
 
-func (wrapper locationV8Wrapper) initialize(jsClass jsClass) {
+func (wrapper locationV8Wrapper) Initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
@@ -41,8 +41,8 @@ func (w locationV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("ancestorOrigins", w.ancestorOrigins, nil)
 }
 
-func (w locationV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: Location.constructor")
+func (w locationV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: Location.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

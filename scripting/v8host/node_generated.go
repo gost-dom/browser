@@ -20,7 +20,7 @@ func newNodeV8Wrapper(scriptHost jsScriptEngine) *nodeV8Wrapper {
 	return &nodeV8Wrapper{newHandleReffedObject[dom.Node](scriptHost)}
 }
 
-func (wrapper nodeV8Wrapper) initialize(jsClass jsClass) {
+func (wrapper nodeV8Wrapper) Initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
@@ -44,8 +44,8 @@ func (w nodeV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("textContent", w.textContent, w.setTextContent)
 }
 
-func (w nodeV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: Node.constructor")
+func (w nodeV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: Node.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

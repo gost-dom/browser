@@ -20,7 +20,7 @@ func newDOMTokenListV8Wrapper(scriptHost jsScriptEngine) *domTokenListV8Wrapper 
 	return &domTokenListV8Wrapper{newHandleReffedObject[dom.DOMTokenList](scriptHost)}
 }
 
-func (wrapper domTokenListV8Wrapper) initialize(jsClass jsClass) {
+func (wrapper domTokenListV8Wrapper) Initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)
 }
@@ -38,8 +38,8 @@ func (w domTokenListV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeMethod("toString", w.value)
 }
 
-func (w domTokenListV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.constructor")
+func (w domTokenListV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

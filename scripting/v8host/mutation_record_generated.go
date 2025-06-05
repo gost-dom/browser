@@ -19,7 +19,7 @@ func newMutationRecordV8Wrapper(scriptHost jsScriptEngine) *mutationRecordV8Wrap
 	return &mutationRecordV8Wrapper{newHandleReffedObject[*dominterfaces.MutationRecord](scriptHost)}
 }
 
-func (wrapper mutationRecordV8Wrapper) initialize(jsClass jsClass) {
+func (wrapper mutationRecordV8Wrapper) Initialize(jsClass jsClass) {
 	wrapper.installPrototype(jsClass)
 }
 
@@ -35,8 +35,8 @@ func (w mutationRecordV8Wrapper) installPrototype(jsClass jsClass) {
 	jsClass.CreatePrototypeAttribute("oldValue", w.oldValue, nil)
 }
 
-func (w mutationRecordV8Wrapper) constructor(cbCtx jsCallbackContext) (jsValue, error) {
-	cbCtx.Logger().Debug("V8 Function call: MutationRecord.constructor")
+func (w mutationRecordV8Wrapper) Constructor(cbCtx jsCallbackContext) (jsValue, error) {
+	cbCtx.Logger().Debug("V8 Function call: MutationRecord.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
