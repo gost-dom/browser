@@ -154,14 +154,6 @@ func (w converters[T]) toString_(cbCtx jsCallbackContext, val string) (jsValue, 
 	return cbCtx.ValueFactory().NewString(val), nil
 }
 
-func (w converters[T]) toDOMStringList(cbCts jsCallbackContext, val []string) (jsValue, error) {
-	res := make([]jsValue, len(val))
-	for i, s := range val {
-		res[i] = cbCts.ValueFactory().NewString(s)
-	}
-	return cbCts.ValueFactory().NewArray(res...), nil
-}
-
 func (w converters[T]) toBoolean(cbCtx jsCallbackContext, val bool) (jsValue, error) {
 	return cbCtx.ValueFactory().NewBoolean(val), nil
 }

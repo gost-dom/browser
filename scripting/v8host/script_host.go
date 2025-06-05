@@ -254,11 +254,11 @@ func init() {
 
 	registerClass("HTMLDocument", "Document", newHTMLDocumentV8Wrapper)
 	registerClass("DocumentFragment", "Node", newDocumentFragmentV8Wrapper)
-	registerJSClass("ShadowRoot", "DocumentFragment", createIllegalConstructor)
+	registerClass("ShadowRoot", "DocumentFragment", newUnconstructableV8Wrapper)
 
 	for _, cls := range scripting.HtmlElements {
 		if _, found := classes[cls]; !found {
-			registerJSClass(cls, "HTMLElement", createIllegalConstructor)
+			registerClass(cls, "HTMLElement", newUnconstructableV8Wrapper)
 		}
 	}
 }

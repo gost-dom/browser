@@ -8,6 +8,17 @@ import (
 	v8 "github.com/gost-dom/v8go"
 )
 
+type unconstructableV8Wrapper[T any] struct{}
+
+func newUnconstructableV8Wrapper(host *V8ScriptHost) unconstructableV8Wrapper[jsTypeParam] {
+	return unconstructableV8Wrapper[jsTypeParam]{}
+}
+
+func (w unconstructableV8Wrapper[T]) constructor(cb js.CallbackContext[T]) (js.Value[T], error) {
+	return nil, cb.ValueFactory().NewTypeError("Illegal constructor")
+}
+func (w unconstructableV8Wrapper[T]) initialize(c jsClass) {}
+
 type constructorBuilder[T any] struct {
 	host           *V8ScriptHost
 	constructor    *v8.FunctionTemplate
