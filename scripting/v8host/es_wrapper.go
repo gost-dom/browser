@@ -96,16 +96,6 @@ func (w converters[T]) decodeHTMLFormElement(
 
 func (c converters[T]) defaultHTMLElement() html.HTMLElement { return nil }
 
-func (w converters[T]) decodeNodeOrText(
-	cbCtx js.CallbackContext[T],
-	val js.Value[T],
-) (dom.Node, error) {
-	if val.IsString() {
-		return cbCtx.Scope().Window().Document().CreateTextNode(val.String()), nil
-	}
-	return w.decodeNode(cbCtx, val)
-}
-
 func (w converters[T]) toNull(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return cbCtx.ValueFactory().Null(), nil
 }

@@ -57,3 +57,13 @@ func (w domTokenListV8Wrapper[T]) remove(cbCtx js.CallbackContext[T]) (js.Value[
 	instance.Remove(tokens)
 	return nil, nil
 }
+
+func (w parentNodeV8Wrapper[T]) decodeNodeOrText(
+	cbCtx js.CallbackContext[T],
+	val js.Value[T],
+) (dom.Node, error) {
+	if val.IsString() {
+		return cbCtx.Scope().Window().Document().CreateTextNode(val.String()), nil
+	}
+	return w.decodeNode(cbCtx, val)
+}
