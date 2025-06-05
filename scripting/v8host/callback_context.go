@@ -242,22 +242,6 @@ func wrapV8CallbackFn(
 	}
 }
 
-func wrapV8IndexedGetterCallbackFn(
-	host *V8ScriptHost,
-	callback indexedGetterCallback,
-) v8go.FunctionCallbackWithError {
-	return func(info *v8go.FunctionCallbackInfo) (res *v8go.Value, err error) {
-		defer func() {
-			if r := recover(); r != nil {
-				err = fmt.Errorf("PANIC in callback: %v\n%s", r, debug.Stack())
-			}
-		}()
-		cbCtx := newIndexedGetterCallbackContext(host, info)
-		result, err := callback(cbCtx)
-		return toV8Value(result), err
-	}
-}
-
 /* -------- Decoders -------- */
 
 func decodeInt32(cbCtx jsCallbackContext, val jsValue) (int32, error) {
