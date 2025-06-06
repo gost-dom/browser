@@ -5,10 +5,14 @@ import (
 
 	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/internal"
+	"github.com/gost-dom/code-gen/packagenames"
 	wrappers "github.com/gost-dom/code-gen/script-wrappers"
 	"github.com/gost-dom/code-gen/script-wrappers/model"
 	g "github.com/gost-dom/generators"
 )
+
+var ConsumeArgument = g.NewValuePackage("ConsumeArgument", packagenames.JS)
+var ConsumeRestArguments = g.NewValuePackage("ConsumeRestArguments", packagenames.JS)
 
 // V8CallbackGenerators produces code for a function callback, i.e., when a
 // JavaScript function with native code is called. This includes
@@ -134,12 +138,12 @@ func (gen V8CallbackGenerators) CtxOrOperationCallback(
 		if a.Variadic {
 			stmts.Append(
 				g.AssignMany(g.List(arg, err),
-					g.NewValue("consumeRestArguments").Call(parseArgs...)),
+					ConsumeRestArguments.Call(parseArgs...)),
 			)
 		} else {
 			stmts.Append(
 				g.AssignMany(g.List(arg, err),
-					g.NewValue("consumeArgument").Call(parseArgs...)),
+					ConsumeArgument.Call(parseArgs...)),
 			)
 		}
 	}

@@ -27,7 +27,7 @@ func (w mutationObserverV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
 
 func (w mutationObserverV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: MutationObserver.Constructor")
-	callback, errArg1 := consumeArgument(cbCtx, "callback", nil, w.decodeMutationCallback)
+	callback, errArg1 := js.ConsumeArgument(cbCtx, "callback", nil, w.decodeMutationCallback)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -40,8 +40,8 @@ func (w mutationObserverV8Wrapper[T]) observe(cbCtx js.CallbackContext[T]) (js.V
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	target, errArg1 := consumeArgument(cbCtx, "target", nil, codec.DecodeNode)
-	options, errArg2 := consumeArgument(cbCtx, "options", nil, w.decodeObserveOption)
+	target, errArg1 := js.ConsumeArgument(cbCtx, "target", nil, codec.DecodeNode)
+	options, errArg2 := js.ConsumeArgument(cbCtx, "options", nil, w.decodeObserveOption)
 	err := errors.Join(errArg1, errArg2)
 	if err != nil {
 		return nil, err

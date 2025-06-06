@@ -21,7 +21,7 @@ func (w pointerEventV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
 
 func (w pointerEventV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: PointerEvent.Constructor")
-	type_, errArg1 := consumeArgument(cbCtx, "type", nil, codec.DecodeString)
+	type_, errArg1 := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}

@@ -24,7 +24,7 @@ func (w domTokenListV8Wrapper[T]) toString_(
 
 func (l domTokenListV8Wrapper[T]) toggle(args js.CallbackContext[T]) (js.Value[T], error) {
 	instance, errInstance := js.As[dom.DOMTokenList](args.Instance())
-	token, err0 := consumeArgument(args, "toggle", nil, codec.DecodeString)
+	token, err0 := js.ConsumeArgument(args, "toggle", nil, codec.DecodeString)
 	if err := errors.Join(err0, errInstance); err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func (w domTokenListV8Wrapper[T]) remove(cbCtx js.CallbackContext[T]) (js.Value[
 	if errInst != nil {
 		return nil, errInst
 	}
-	tokens, errArg1 := consumeArgument(cbCtx, "tokens", nil, codec.DecodeString)
+	tokens, errArg1 := js.ConsumeArgument(cbCtx, "tokens", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}

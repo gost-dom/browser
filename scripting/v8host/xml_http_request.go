@@ -23,7 +23,7 @@ func (xhr xmlHttpRequestV8Wrapper[T]) decodeDocument(
 }
 
 func (xhr xmlHttpRequestV8Wrapper[T]) decodeXMLHttpRequestBodyInit(
-	cbCtx js.CallbackContext[T],
+	_ js.CallbackContext[T],
 	val js.Value[T],
 ) (io.Reader, error) {
 	if val == nil {
@@ -65,8 +65,8 @@ func (xhr xmlHttpRequestV8Wrapper[T]) CreateInstance(
 
 func (xhr xmlHttpRequestV8Wrapper[T]) open(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	instance, errInstance := js.As[XmlHttpRequest](cbCtx.Instance())
-	method, err0 := consumeArgument(cbCtx, "method", nil, codec.DecodeString)
-	url, err1 := consumeArgument(cbCtx, "url", nil, codec.DecodeString)
+	method, err0 := js.ConsumeArgument(cbCtx, "method", nil, codec.DecodeString)
+	url, err1 := js.ConsumeArgument(cbCtx, "url", nil, codec.DecodeString)
 	if err := errors.Join(err0, err1, errInstance); err != nil {
 		return nil, err
 	}

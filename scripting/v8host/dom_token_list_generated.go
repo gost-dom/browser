@@ -44,7 +44,7 @@ func (w domTokenListV8Wrapper[T]) item(cbCtx js.CallbackContext[T]) (js.Value[T]
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	index, errArg1 := consumeArgument(cbCtx, "index", nil, codec.DecodeInt)
+	index, errArg1 := js.ConsumeArgument(cbCtx, "index", nil, codec.DecodeInt)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -58,7 +58,7 @@ func (w domTokenListV8Wrapper[T]) contains(cbCtx js.CallbackContext[T]) (js.Valu
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	token, errArg1 := consumeArgument(cbCtx, "token", nil, codec.DecodeString)
+	token, errArg1 := js.ConsumeArgument(cbCtx, "token", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -72,7 +72,7 @@ func (w domTokenListV8Wrapper[T]) add(cbCtx js.CallbackContext[T]) (js.Value[T],
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	tokens, errArg1 := consumeRestArguments(cbCtx, "tokens", codec.DecodeString)
+	tokens, errArg1 := js.ConsumeRestArguments(cbCtx, "tokens", codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -86,8 +86,8 @@ func (w domTokenListV8Wrapper[T]) replace(cbCtx js.CallbackContext[T]) (js.Value
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	token, errArg1 := consumeArgument(cbCtx, "token", nil, codec.DecodeString)
-	newToken, errArg2 := consumeArgument(cbCtx, "newToken", nil, codec.DecodeString)
+	token, errArg1 := js.ConsumeArgument(cbCtx, "token", nil, codec.DecodeString)
+	newToken, errArg2 := js.ConsumeArgument(cbCtx, "newToken", nil, codec.DecodeString)
 	err := errors.Join(errArg1, errArg2)
 	if err != nil {
 		return nil, err

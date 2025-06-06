@@ -40,7 +40,7 @@ func (w parentNodeV8Wrapper[T]) prepend(cbCtx js.CallbackContext[T]) (js.Value[T
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	nodes, errArg1 := consumeRestArguments(cbCtx, "nodes", w.decodeNodeOrText)
+	nodes, errArg1 := js.ConsumeRestArguments(cbCtx, "nodes", w.decodeNodeOrText)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -54,7 +54,7 @@ func (w parentNodeV8Wrapper[T]) append(cbCtx js.CallbackContext[T]) (js.Value[T]
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	nodes, errArg1 := consumeRestArguments(cbCtx, "nodes", w.decodeNodeOrText)
+	nodes, errArg1 := js.ConsumeRestArguments(cbCtx, "nodes", w.decodeNodeOrText)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -68,7 +68,7 @@ func (w parentNodeV8Wrapper[T]) replaceChildren(cbCtx js.CallbackContext[T]) (js
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	nodes, errArg1 := consumeRestArguments(cbCtx, "nodes", w.decodeNodeOrText)
+	nodes, errArg1 := js.ConsumeRestArguments(cbCtx, "nodes", w.decodeNodeOrText)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -82,7 +82,7 @@ func (w parentNodeV8Wrapper[T]) querySelector(cbCtx js.CallbackContext[T]) (js.V
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	selectors, errArg1 := consumeArgument(cbCtx, "selectors", nil, codec.DecodeString)
+	selectors, errArg1 := js.ConsumeArgument(cbCtx, "selectors", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -99,7 +99,7 @@ func (w parentNodeV8Wrapper[T]) querySelectorAll(cbCtx js.CallbackContext[T]) (j
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	selectors, errArg1 := consumeArgument(cbCtx, "selectors", nil, codec.DecodeString)
+	selectors, errArg1 := js.ConsumeArgument(cbCtx, "selectors", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}

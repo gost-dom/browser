@@ -55,8 +55,8 @@ func (w formDataV8Wrapper[T]) append(cbCtx js.CallbackContext[T]) (js.Value[T], 
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	name, errArg1 := consumeArgument(cbCtx, "name", nil, codec.DecodeString)
-	value, errArg2 := consumeArgument(cbCtx, "value", nil, w.decodeFormDataValue)
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
+	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, w.decodeFormDataValue)
 	err := errors.Join(errArg1, errArg2)
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func (w formDataV8Wrapper[T]) delete(cbCtx js.CallbackContext[T]) (js.Value[T], 
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	name, errArg1 := consumeArgument(cbCtx, "name", nil, codec.DecodeString)
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -85,7 +85,7 @@ func (w formDataV8Wrapper[T]) get(cbCtx js.CallbackContext[T]) (js.Value[T], err
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	name, errArg1 := consumeArgument(cbCtx, "name", nil, codec.DecodeString)
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -99,7 +99,7 @@ func (w formDataV8Wrapper[T]) getAll(cbCtx js.CallbackContext[T]) (js.Value[T], 
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	name, errArg1 := consumeArgument(cbCtx, "name", nil, codec.DecodeString)
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -113,7 +113,7 @@ func (w formDataV8Wrapper[T]) has(cbCtx js.CallbackContext[T]) (js.Value[T], err
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	name, errArg1 := consumeArgument(cbCtx, "name", nil, codec.DecodeString)
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -127,8 +127,8 @@ func (w formDataV8Wrapper[T]) set(cbCtx js.CallbackContext[T]) (js.Value[T], err
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	name, errArg1 := consumeArgument(cbCtx, "name", nil, codec.DecodeString)
-	value, errArg2 := consumeArgument(cbCtx, "value", nil, w.decodeFormDataValue)
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
+	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, w.decodeFormDataValue)
 	err := errors.Join(errArg1, errArg2)
 	if err != nil {
 		return nil, err
@@ -179,8 +179,8 @@ func (w xmlHttpRequestV8Wrapper[T]) setRequestHeader(cbCtx js.CallbackContext[T]
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	name, errArg1 := consumeArgument(cbCtx, "name", nil, codec.DecodeString)
-	value, errArg2 := consumeArgument(cbCtx, "value", nil, codec.DecodeString)
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
+	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, codec.DecodeString)
 	err := errors.Join(errArg1, errArg2)
 	if err != nil {
 		return nil, err
@@ -223,7 +223,7 @@ func (w xmlHttpRequestV8Wrapper[T]) getResponseHeader(cbCtx js.CallbackContext[T
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	name, errArg1 := consumeArgument(cbCtx, "name", nil, codec.DecodeString)
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -250,7 +250,7 @@ func (w xmlHttpRequestV8Wrapper[T]) overrideMimeType(cbCtx js.CallbackContext[T]
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	mime, errArg1 := consumeArgument(cbCtx, "mime", nil, codec.DecodeString)
+	mime, errArg1 := js.ConsumeArgument(cbCtx, "mime", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}

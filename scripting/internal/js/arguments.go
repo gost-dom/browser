@@ -40,3 +40,28 @@ func ConsumeArgument[T, U any](
 		return
 	}
 }
+
+func ConsumeRestArguments[T, U any](
+	args CallbackContext[U],
+	name string,
+	decoders ...func(CallbackContext[U], Value[U]) (T, error),
+) (results []T, err error) {
+	errs := make([]error, len(decoders))
+outer:
+	for arg, ok := args.ConsumeArg(); ok; arg, ok = args.ConsumeArg() {
+		for i, parser := range decoders {
+			var result T
+			result, errs[i] = parser(args, arg)
+			if errs[i] == nil {
+				results = append(results, result)
+				continue outer
+			}
+		}
+		err = errors.Join(errs...)
+		if err != nil {
+			err = fmt.Errorf("argument: %s: %w", name, err)
+		}
+		return
+	}
+	return
+}

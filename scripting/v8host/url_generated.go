@@ -33,7 +33,7 @@ func (w urlV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
 
 func (w urlV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.Constructor")
-	url, errArg1 := consumeArgument(cbCtx, "url", nil, codec.DecodeString)
+	url, errArg1 := js.ConsumeArgument(cbCtx, "url", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -244,8 +244,8 @@ func (w urlSearchParamsV8Wrapper[T]) append(cbCtx js.CallbackContext[T]) (js.Val
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	name, errArg1 := consumeArgument(cbCtx, "name", nil, codec.DecodeString)
-	value, errArg2 := consumeArgument(cbCtx, "value", nil, codec.DecodeString)
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
+	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, codec.DecodeString)
 	err := errors.Join(errArg1, errArg2)
 	if err != nil {
 		return nil, err
@@ -260,7 +260,7 @@ func (w urlSearchParamsV8Wrapper[T]) delete(cbCtx js.CallbackContext[T]) (js.Val
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	name, errArg1 := consumeArgument(cbCtx, "name", nil, codec.DecodeString)
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -282,7 +282,7 @@ func (w urlSearchParamsV8Wrapper[T]) get(cbCtx js.CallbackContext[T]) (js.Value[
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	name, errArg1 := consumeArgument(cbCtx, "name", nil, codec.DecodeString)
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -296,7 +296,7 @@ func (w urlSearchParamsV8Wrapper[T]) getAll(cbCtx js.CallbackContext[T]) (js.Val
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	name, errArg1 := consumeArgument(cbCtx, "name", nil, codec.DecodeString)
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -310,7 +310,7 @@ func (w urlSearchParamsV8Wrapper[T]) has(cbCtx js.CallbackContext[T]) (js.Value[
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	name, errArg1 := consumeArgument(cbCtx, "name", nil, codec.DecodeString)
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -332,8 +332,8 @@ func (w urlSearchParamsV8Wrapper[T]) set(cbCtx js.CallbackContext[T]) (js.Value[
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	name, errArg1 := consumeArgument(cbCtx, "name", nil, codec.DecodeString)
-	value, errArg2 := consumeArgument(cbCtx, "value", nil, codec.DecodeString)
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
+	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, codec.DecodeString)
 	err := errors.Join(errArg1, errArg2)
 	if err != nil {
 		return nil, err

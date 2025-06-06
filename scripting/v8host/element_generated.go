@@ -85,7 +85,7 @@ func (w elementV8Wrapper[T]) getAttribute(cbCtx js.CallbackContext[T]) (js.Value
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	qualifiedName, errArg1 := consumeArgument(cbCtx, "qualifiedName", nil, codec.DecodeString)
+	qualifiedName, errArg1 := js.ConsumeArgument(cbCtx, "qualifiedName", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -104,8 +104,8 @@ func (w elementV8Wrapper[T]) setAttribute(cbCtx js.CallbackContext[T]) (js.Value
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	qualifiedName, errArg1 := consumeArgument(cbCtx, "qualifiedName", nil, codec.DecodeString)
-	value, errArg2 := consumeArgument(cbCtx, "value", nil, codec.DecodeString)
+	qualifiedName, errArg1 := js.ConsumeArgument(cbCtx, "qualifiedName", nil, codec.DecodeString)
+	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, codec.DecodeString)
 	err := errors.Join(errArg1, errArg2)
 	if err != nil {
 		return nil, err
@@ -125,7 +125,7 @@ func (w elementV8Wrapper[T]) removeAttribute(cbCtx js.CallbackContext[T]) (js.Va
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	qualifiedName, errArg1 := consumeArgument(cbCtx, "qualifiedName", nil, codec.DecodeString)
+	qualifiedName, errArg1 := js.ConsumeArgument(cbCtx, "qualifiedName", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -149,7 +149,7 @@ func (w elementV8Wrapper[T]) hasAttribute(cbCtx js.CallbackContext[T]) (js.Value
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	qualifiedName, errArg1 := consumeArgument(cbCtx, "qualifiedName", nil, codec.DecodeString)
+	qualifiedName, errArg1 := js.ConsumeArgument(cbCtx, "qualifiedName", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -198,7 +198,7 @@ func (w elementV8Wrapper[T]) matches(cbCtx js.CallbackContext[T]) (js.Value[T], 
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	selectors, errArg1 := consumeArgument(cbCtx, "selectors", nil, codec.DecodeString)
+	selectors, errArg1 := js.ConsumeArgument(cbCtx, "selectors", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}

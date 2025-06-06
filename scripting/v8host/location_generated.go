@@ -47,7 +47,7 @@ func (w locationV8Wrapper[T]) assign(cbCtx js.CallbackContext[T]) (js.Value[T], 
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	url, errArg1 := consumeArgument(cbCtx, "url", nil, codec.DecodeString)
+	url, errArg1 := js.ConsumeArgument(cbCtx, "url", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -61,7 +61,7 @@ func (w locationV8Wrapper[T]) replace(cbCtx js.CallbackContext[T]) (js.Value[T],
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	url, errArg1 := consumeArgument(cbCtx, "url", nil, codec.DecodeString)
+	url, errArg1 := js.ConsumeArgument(cbCtx, "url", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}

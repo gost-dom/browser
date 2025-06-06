@@ -148,7 +148,7 @@ func ReadArguments(
 		}
 		parseArgs = append(parseArgs, dec...)
 		statements.Append(g.AssignMany(g.List(argName, errName),
-			g.NewValue("consumeArgument").Call(parseArgs...)))
+			ConsumeArgument.Call(parseArgs...)))
 	}
 	res.Generator = statements
 	return

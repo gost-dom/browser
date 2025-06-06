@@ -42,7 +42,7 @@ func (w namedNodeMapV8Wrapper[T]) item(cbCtx js.CallbackContext[T]) (js.Value[T]
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	index, errArg1 := consumeArgument(cbCtx, "index", nil, codec.DecodeInt)
+	index, errArg1 := js.ConsumeArgument(cbCtx, "index", nil, codec.DecodeInt)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
