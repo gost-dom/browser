@@ -5,6 +5,7 @@ package v8host
 import (
 	"errors"
 	html "github.com/gost-dom/browser/html"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -115,7 +116,7 @@ func (w windowV8Wrapper[T]) document(cbCtx js.CallbackContext[T]) (js.Value[T], 
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Document()
-	return encodeEntity(cbCtx, result)
+	return codec.EncodeEntity(cbCtx, result)
 }
 
 func (w windowV8Wrapper[T]) name(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

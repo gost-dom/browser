@@ -9,10 +9,15 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/scripting"
+	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
 type baseInstanceWrapper[T any] struct {
 	ctx *GojaContext
+}
+
+func (w baseInstanceWrapper[T]) toGojaVal(v g.Value) (js.Value[jsTypeParam], error) {
+	return newGojaValue(w.ctx, v), nil
 }
 
 func (w baseInstanceWrapper[T]) vm() *goja.Runtime {
@@ -108,12 +113,18 @@ func (w baseInstanceWrapper[T]) toJSWrapper(e entity.ObjectIder) g.Value {
 	return w.ctx.toNode(e)
 }
 
-func (w baseInstanceWrapper[T]) toBoolean(_ *callbackContext, b bool) g.Value {
-	return w.ctx.vm.ToValue(b)
+func (w baseInstanceWrapper[T]) toBoolean(
+	_ *callbackContext,
+	b bool,
+) (js.Value[jsTypeParam], error) {
+	return w.toGojaVal(w.ctx.vm.ToValue(b))
 }
 
-func (w baseInstanceWrapper[T]) toString_(_ *callbackContext, val string) g.Value {
-	return w.ctx.vm.ToValue(val)
+func (w baseInstanceWrapper[T]) toString_(
+	_ *callbackContext,
+	val string,
+) (js.Value[jsTypeParam], error) {
+	return newGojaValue(w.ctx, w.ctx.vm.ToValue(val)), nil
 }
 
 func (w baseInstanceWrapper[T]) toUnsignedShort(i int) g.Value {

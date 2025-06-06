@@ -4,6 +4,7 @@ package v8host
 
 import (
 	dom "github.com/gost-dom/browser/dom"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -34,7 +35,7 @@ func (w nonDocumentTypeChildNodeV8Wrapper[T]) previousElementSibling(cbCtx js.Ca
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.PreviousElementSibling()
-	return encodeEntity(cbCtx, result)
+	return codec.EncodeEntity(cbCtx, result)
 }
 
 func (w nonDocumentTypeChildNodeV8Wrapper[T]) nextElementSibling(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -44,5 +45,5 @@ func (w nonDocumentTypeChildNodeV8Wrapper[T]) nextElementSibling(cbCtx js.Callba
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.NextElementSibling()
-	return encodeEntity(cbCtx, result)
+	return codec.EncodeEntity(cbCtx, result)
 }

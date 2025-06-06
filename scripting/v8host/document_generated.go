@@ -86,7 +86,7 @@ func (w documentV8Wrapper[T]) createDocumentFragment(cbCtx js.CallbackContext[T]
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.CreateDocumentFragment()
-	return encodeEntity(cbCtx, result)
+	return codec.EncodeEntity(cbCtx, result)
 }
 
 func (w documentV8Wrapper[T]) createCDATASection(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -105,7 +105,7 @@ func (w documentV8Wrapper[T]) createComment(cbCtx js.CallbackContext[T]) (js.Val
 		return nil, errArg1
 	}
 	result := instance.CreateComment(data)
-	return encodeEntity(cbCtx, result)
+	return codec.EncodeEntity(cbCtx, result)
 }
 
 func (w documentV8Wrapper[T]) createProcessingInstruction(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -134,7 +134,7 @@ func (w documentV8Wrapper[T]) createAttribute(cbCtx js.CallbackContext[T]) (js.V
 		return nil, errArg1
 	}
 	result := instance.CreateAttribute(localName)
-	return encodeEntity(cbCtx, result)
+	return codec.EncodeEntity(cbCtx, result)
 }
 
 func (w documentV8Wrapper[T]) createAttributeNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -214,5 +214,5 @@ func (w documentV8Wrapper[T]) documentElement(cbCtx js.CallbackContext[T]) (js.V
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.DocumentElement()
-	return encodeEntity(cbCtx, result)
+	return codec.EncodeEntity(cbCtx, result)
 }

@@ -46,12 +46,15 @@ func newCustomEventWrapper(instance *GojaContext) wrapper {
 	return customEventWrapper{eventWrapper{newBaseInstanceWrapper[*event.Event](instance)}}
 }
 
-func (w eventWrapper) toEventTarget(_ *callbackContext, t event.EventTarget) g.Value {
+func (w eventWrapper) toEventTarget(
+	_ *callbackContext,
+	t event.EventTarget,
+) (js.Value[jsTypeParam], error) {
 	if t == nil {
-		return nil
+		return nil, nil
 	}
 	if ider, ok := t.(entity.ObjectIder); ok {
-		return w.toJSWrapper(ider)
+		return w.toGojaVal(w.toJSWrapper(ider))
 	}
 	panic("TODO: Handle instances of non-entity events")
 }

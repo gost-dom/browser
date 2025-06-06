@@ -5,6 +5,7 @@ package v8host
 import (
 	"errors"
 	html "github.com/gost-dom/browser/html"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -38,7 +39,7 @@ func (w htmlTemplateElementV8Wrapper[T]) content(cbCtx js.CallbackContext[T]) (j
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Content()
-	return encodeEntity(cbCtx, result)
+	return codec.EncodeEntity(cbCtx, result)
 }
 
 func (w htmlTemplateElementV8Wrapper[T]) shadowRootMode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

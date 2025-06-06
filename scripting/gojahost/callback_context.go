@@ -31,6 +31,10 @@ func (ctx *callbackContext) Argument(index int) g.Value {
 	return ctx.call.Argument(index)
 }
 
+func (c *callbackContext) This() js.Object[jsTypeParam] {
+	return newGojaObject(c.ctx, c.call.This.ToObject(c.ctx.vm))
+}
+
 func (ctx *callbackContext) Instance() (any, error) {
 	instance := ctx.call.This.(*g.Object).GetSymbol(ctx.ctx.wrappedGoObj)
 	if instance == nil {
@@ -41,6 +45,14 @@ func (ctx *callbackContext) Instance() (any, error) {
 }
 
 func (ctx *callbackContext) ReturnWithValue(val goja.Value) goja.Value { return val }
+
+func (ctx *callbackContext) ReturnWithValueErr(val js.Value[jsTypeParam], err error) goja.Value {
+	if err != nil {
+		panic(err)
+	}
+	return val.Self().value
+}
+
 func (ctx *callbackContext) ReturnWithTypeError(msg string) goja.Value {
 	panic(ctx.ctx.vm.NewTypeError(msg))
 }
@@ -64,4 +76,8 @@ func (c *callbackContext) consumeValue() g.Value {
 
 func (c *callbackContext) Scope() js.Scope[jsTypeParam] {
 	return newGojaScope(c.ctx)
+}
+
+func (c *callbackContext) ValueFactory() js.ValueFactory[jsTypeParam] {
+	return newGojaValueFactory(c.ctx)
 }

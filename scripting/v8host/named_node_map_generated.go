@@ -47,7 +47,7 @@ func (w namedNodeMapV8Wrapper[T]) item(cbCtx js.CallbackContext[T]) (js.Value[T]
 		return nil, errArg1
 	}
 	result := instance.Item(index)
-	return encodeEntity(cbCtx, result)
+	return codec.EncodeEntity(cbCtx, result)
 }
 
 func (w namedNodeMapV8Wrapper[T]) getNamedItem(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

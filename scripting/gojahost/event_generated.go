@@ -59,7 +59,7 @@ func (w eventWrapper) type_(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.Type
-	return cbCtx.ReturnWithValue(w.toString_(cbCtx, result))
+	return cbCtx.ReturnWithValueErr(w.toString_(cbCtx, result))
 }
 
 func (w eventWrapper) target(cbCtx *callbackContext) g.Value {
@@ -69,7 +69,7 @@ func (w eventWrapper) target(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.Target
-	return cbCtx.ReturnWithValue(w.toEventTarget(cbCtx, result))
+	return cbCtx.ReturnWithValueErr(w.toEventTarget(cbCtx, result))
 }
 
 func (w eventWrapper) currentTarget(cbCtx *callbackContext) g.Value {
@@ -79,7 +79,7 @@ func (w eventWrapper) currentTarget(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.CurrentTarget
-	return cbCtx.ReturnWithValue(w.toEventTarget(cbCtx, result))
+	return cbCtx.ReturnWithValueErr(w.toEventTarget(cbCtx, result))
 }
 
 func (w eventWrapper) bubbles(cbCtx *callbackContext) g.Value {
@@ -89,7 +89,7 @@ func (w eventWrapper) bubbles(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.Bubbles
-	return cbCtx.ReturnWithValue(w.toBoolean(cbCtx, result))
+	return cbCtx.ReturnWithValueErr(w.toBoolean(cbCtx, result))
 }
 
 func (w eventWrapper) cancelable(cbCtx *callbackContext) g.Value {
@@ -99,7 +99,7 @@ func (w eventWrapper) cancelable(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.Cancelable
-	return cbCtx.ReturnWithValue(w.toBoolean(cbCtx, result))
+	return cbCtx.ReturnWithValueErr(w.toBoolean(cbCtx, result))
 }
 
 func (w eventWrapper) defaultPrevented(cbCtx *callbackContext) g.Value {
@@ -109,5 +109,5 @@ func (w eventWrapper) defaultPrevented(cbCtx *callbackContext) g.Value {
 		return cbCtx.ReturnWithError(instErr)
 	}
 	result := instance.DefaultPrevented
-	return cbCtx.ReturnWithValue(w.toBoolean(cbCtx, result))
+	return cbCtx.ReturnWithValueErr(w.toBoolean(cbCtx, result))
 }

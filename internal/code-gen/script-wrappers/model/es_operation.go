@@ -17,6 +17,7 @@ var encodeNillableString = g.NewValuePackage("EncodeNillableString", packagename
 var encodeNullableString = g.NewValuePackage("EncodeNullableString", packagenames.Codec)
 var encodeInt = g.NewValuePackage("EncodeInt", packagenames.Codec)
 var encodeBoolean = g.NewValuePackage("EncodeBoolean", packagenames.Codec)
+var encodeEntity = g.NewValuePackage("EncodeEntity", packagenames.Codec)
 
 type ESOperation struct {
 	Name                 string
@@ -102,7 +103,7 @@ func (o ESOperation) Encoder(
 	data ESConstructorData,
 ) internal.BoundFunction {
 	if o.EncodeAsSimpleJSLookup() {
-		return internal.BindValues(g.NewValue("encodeEntity"), cbCtx)
+		return internal.BindValues(encodeEntity, cbCtx)
 	}
 	if e := o.MethodCustomization.Encoder; e != "" {
 		return internal.BindValues(receiver.Field(e))

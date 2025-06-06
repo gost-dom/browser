@@ -52,7 +52,7 @@ func (w mutationRecordV8Wrapper[T]) target(cbCtx js.CallbackContext[T]) (js.Valu
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Target
-	return encodeEntity(cbCtx, result)
+	return codec.EncodeEntity(cbCtx, result)
 }
 
 func (w mutationRecordV8Wrapper[T]) addedNodes(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -62,7 +62,7 @@ func (w mutationRecordV8Wrapper[T]) addedNodes(cbCtx js.CallbackContext[T]) (js.
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.AddedNodes
-	return encodeEntity(cbCtx, result)
+	return codec.EncodeEntity(cbCtx, result)
 }
 
 func (w mutationRecordV8Wrapper[T]) removedNodes(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -72,7 +72,7 @@ func (w mutationRecordV8Wrapper[T]) removedNodes(cbCtx js.CallbackContext[T]) (j
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.RemovedNodes
-	return encodeEntity(cbCtx, result)
+	return codec.EncodeEntity(cbCtx, result)
 }
 
 func (w mutationRecordV8Wrapper[T]) previousSibling(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -82,7 +82,7 @@ func (w mutationRecordV8Wrapper[T]) previousSibling(cbCtx js.CallbackContext[T])
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.PreviousSibling
-	return encodeEntity(cbCtx, result)
+	return codec.EncodeEntity(cbCtx, result)
 }
 
 func (w mutationRecordV8Wrapper[T]) nextSibling(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -92,7 +92,7 @@ func (w mutationRecordV8Wrapper[T]) nextSibling(cbCtx js.CallbackContext[T]) (js
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.NextSibling
-	return encodeEntity(cbCtx, result)
+	return codec.EncodeEntity(cbCtx, result)
 }
 
 func (w mutationRecordV8Wrapper[T]) attributeName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

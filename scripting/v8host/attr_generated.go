@@ -80,5 +80,5 @@ func (w attrV8Wrapper[T]) ownerElement(cbCtx js.CallbackContext[T]) (js.Value[T]
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.OwnerElement()
-	return encodeEntity(cbCtx, result)
+	return codec.EncodeEntity(cbCtx, result)
 }

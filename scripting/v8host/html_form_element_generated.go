@@ -198,7 +198,7 @@ func (w htmlFormElementV8Wrapper[T]) elements(cbCtx js.CallbackContext[T]) (js.V
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Elements()
-	return encodeEntity(cbCtx, result)
+	return codec.EncodeEntity(cbCtx, result)
 }
 
 func (w htmlFormElementV8Wrapper[T]) length(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

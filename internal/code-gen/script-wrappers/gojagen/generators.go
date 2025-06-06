@@ -246,7 +246,7 @@ func (gen GojaTargetGenerators) ConvertResult(
 			)
 		}
 		list.Append(
-			g.Return(cbCtx.ReturnWithValue(converter.Call(op.RetValues(data)...))),
+			g.Return(cbCtx.ReturnWithValueErr(converter.Call(op.RetValues(data)...))),
 		)
 	} else {
 		if op.GetHasError() {

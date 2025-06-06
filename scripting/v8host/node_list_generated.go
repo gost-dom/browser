@@ -40,7 +40,7 @@ func (w nodeListV8Wrapper[T]) item(cbCtx js.CallbackContext[T]) (js.Value[T], er
 		return nil, errArg1
 	}
 	result := instance.Item(index)
-	return encodeEntity(cbCtx, result)
+	return codec.EncodeEntity(cbCtx, result)
 }
 
 func (w nodeListV8Wrapper[T]) length(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

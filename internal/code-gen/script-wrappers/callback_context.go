@@ -33,6 +33,9 @@ func (c CallbackContext) ReturnWithTypeError(msg string) g.Generator {
 func (c CallbackContext) ReturnWithValue(val g.Generator) g.Generator {
 	return c.Field("ReturnWithValue").Call(val)
 }
+func (c CallbackContext) ReturnWithValueErr(val g.Generator) g.Generator {
+	return c.Field("ReturnWithValueErr").Call(val)
+}
 
 func (c CallbackContext) ReturnWithError(val g.Generator) g.Generator {
 	return c.Field("ReturnWithError").Call(val)

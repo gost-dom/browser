@@ -36,6 +36,10 @@ func (s gojaScope) SetValue(e entity.ObjectIder, v js.Value[jsTypeParam]) {
 	s.ctx.cachedNodes[e.ObjectId()] = v.Self().value
 }
 
+func (s gojaScope) ValueFactory() js.ValueFactory[jsTypeParam] {
+	return newGojaValueFactory(s.ctx)
+}
+
 type gojaConstructor struct {
 	ctx       *GojaContext
 	prototype *goja.Object
