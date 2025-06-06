@@ -136,13 +136,12 @@ func ReadArguments(
 		var dec = wrappers.DecodersForArg(receiver, arg)
 
 		defaultName, hasDefault := arg.DefaultValueInGo()
-		zeroValueResolver := g.Id("zeroValue")
 		nullable := arg.IdlArg.Type.Nullable
 		parseArgs := []g.Generator{cbCtx, g.Lit(arg.Name)}
 		if hasDefault {
 			parseArgs = append(parseArgs, g.NewValue(naming.Receiver()).Field(defaultName))
 		} else if nullable {
-			parseArgs = append(parseArgs, zeroValueResolver)
+			parseArgs = append(parseArgs, ZeroValue)
 		} else {
 			parseArgs = append(parseArgs, g.Nil)
 		}

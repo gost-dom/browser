@@ -11,6 +11,7 @@ import (
 	g "github.com/gost-dom/generators"
 )
 
+var ZeroValue = g.NewValuePackage("ZeroValue", packagenames.Codec)
 var ConsumeArgument = g.NewValuePackage("ConsumeArgument", packagenames.JS)
 var ConsumeOptionalArg = g.NewValuePackage("ConsumeOptionalArg", packagenames.JS)
 var ConsumeRestArguments = g.NewValuePackage("ConsumeRestArguments", packagenames.JS)
@@ -206,14 +207,13 @@ func (gen V8CallbackGenerators) AttributeGetterCallback(
 func (gen V8CallbackGenerators) DefaultValuer(a model.ESOperationArgument) (g.Generator, bool) {
 	switch a.IdlArg.Type.Name {
 	case "EventInit", "HTMLElement":
-		return g.Id("zeroValue"), true
+		return ZeroValue, true
 	}
 	defaultName, hasDefault := a.DefaultValueInGo()
-	zeroValueResolver := g.Id("zeroValue")
 	if hasDefault && defaultName != "" {
 		return gen.Receiver.Field(defaultName), hasDefault
 	} else if a.NullableInIDL() {
-		return zeroValueResolver, hasDefault
+		return ZeroValue, hasDefault
 	} else {
 		return g.Nil, hasDefault
 	}

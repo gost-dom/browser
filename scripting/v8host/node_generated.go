@@ -78,7 +78,7 @@ func (w nodeV8Wrapper[T]) isSameNode(cbCtx js.CallbackContext[T]) (js.Value[T], 
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	otherNode, errArg1 := js.ConsumeArgument(cbCtx, "otherNode", zeroValue, codec.DecodeNode)
+	otherNode, errArg1 := js.ConsumeArgument(cbCtx, "otherNode", codec.ZeroValue, codec.DecodeNode)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -92,7 +92,7 @@ func (w nodeV8Wrapper[T]) contains(cbCtx js.CallbackContext[T]) (js.Value[T], er
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	other, errArg1 := js.ConsumeArgument(cbCtx, "other", zeroValue, codec.DecodeNode)
+	other, errArg1 := js.ConsumeArgument(cbCtx, "other", codec.ZeroValue, codec.DecodeNode)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -107,7 +107,7 @@ func (w nodeV8Wrapper[T]) insertBefore(cbCtx js.CallbackContext[T]) (js.Value[T]
 		return cbCtx.ReturnWithError(errInst)
 	}
 	node, errArg1 := js.ConsumeArgument(cbCtx, "node", nil, codec.DecodeNode)
-	child, errArg2 := js.ConsumeArgument(cbCtx, "child", zeroValue, codec.DecodeNode)
+	child, errArg2 := js.ConsumeArgument(cbCtx, "child", codec.ZeroValue, codec.DecodeNode)
 	err := errors.Join(errArg1, errArg2)
 	if err != nil {
 		return nil, err

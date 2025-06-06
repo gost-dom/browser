@@ -59,7 +59,7 @@ func (w htmlFormElementV8Wrapper[T]) requestSubmit(cbCtx js.CallbackContext[T]) 
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	submitter, errArg1 := js.ConsumeArgument(cbCtx, "submitter", zeroValue, codec.DecodeHTMLElement)
+	submitter, errArg1 := js.ConsumeArgument(cbCtx, "submitter", codec.ZeroValue, codec.DecodeHTMLElement)
 	if errArg1 != nil {
 		return nil, errArg1
 	}

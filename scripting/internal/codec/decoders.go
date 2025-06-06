@@ -8,6 +8,8 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
+func ZeroValue[T any]() (res T) { return }
+
 func DecodeString[T any](cbCtx js.CallbackContext[T], val js.Value[T]) (string, error) {
 	return val.String(), nil
 }

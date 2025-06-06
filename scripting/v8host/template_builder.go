@@ -16,5 +16,3 @@ func (w unconstructableV8Wrapper[T]) Constructor(cb js.CallbackContext[T]) (js.V
 	return nil, cb.ValueFactory().NewTypeError("Illegal constructor")
 }
 func (w unconstructableV8Wrapper[T]) Initialize(c jsClass) {}
-
-func zeroValue[T any]() (res T) { return }
