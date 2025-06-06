@@ -15,8 +15,8 @@ func initDOMParser[T any](ft js.Class[T]) {
 }
 func domParserParseFromString[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	window := cbCtx.Scope().Window()
-	html, err0 := js.ConsumeArgument(cbCtx, "html", nil, js.DecodeString)
-	contentType, err1 := js.ConsumeArgument(cbCtx, "contentType", nil, js.DecodeString)
+	html, err0 := js.ConsumeArgument(cbCtx, "html", nil, codec.DecodeString)
+	contentType, err1 := js.ConsumeArgument(cbCtx, "contentType", nil, codec.DecodeString)
 	if err := errors.Join(err0, err1); err != nil {
 		return nil, err
 	}

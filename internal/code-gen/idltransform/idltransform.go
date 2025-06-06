@@ -57,6 +57,14 @@ func (t IdlType) IsInt() bool {
 	return false
 }
 
+func (t IdlType) IsBoolean() bool {
+	switch t.Name {
+	case "boolean":
+		return true
+	}
+	return false
+}
+
 // Nillable determins if values of the type can be nil. This is useful for
 // return values, such as `element.GetAttribute()`, where the DOM specifies a
 // null return value if the value is not found, but the more idiomatic Go

@@ -5,6 +5,7 @@ package v8host
 import (
 	"errors"
 	dom "github.com/gost-dom/browser/dom"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -103,7 +104,7 @@ func (w documentV8Wrapper[T]) createComment(cbCtx js.CallbackContext[T]) (js.Val
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	data, errArg1 := consumeArgument(cbCtx, "data", nil, w.decodeString)
+	data, errArg1 := consumeArgument(cbCtx, "data", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -132,7 +133,7 @@ func (w documentV8Wrapper[T]) createAttribute(cbCtx js.CallbackContext[T]) (js.V
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	localName, errArg1 := consumeArgument(cbCtx, "localName", nil, w.decodeString)
+	localName, errArg1 := consumeArgument(cbCtx, "localName", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}

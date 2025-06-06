@@ -4,6 +4,7 @@ package v8host
 
 import (
 	dom "github.com/gost-dom/browser/dom"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -83,7 +84,7 @@ func (w parentNodeV8Wrapper[T]) querySelector(cbCtx js.CallbackContext[T]) (js.V
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	selectors, errArg1 := consumeArgument(cbCtx, "selectors", nil, w.decodeString)
+	selectors, errArg1 := consumeArgument(cbCtx, "selectors", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -100,7 +101,7 @@ func (w parentNodeV8Wrapper[T]) querySelectorAll(cbCtx js.CallbackContext[T]) (j
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	selectors, errArg1 := consumeArgument(cbCtx, "selectors", nil, w.decodeString)
+	selectors, errArg1 := consumeArgument(cbCtx, "selectors", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}

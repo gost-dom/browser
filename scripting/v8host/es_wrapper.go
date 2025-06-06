@@ -3,7 +3,6 @@ package v8host
 import (
 	"errors"
 
-	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/scripting/internal/js"
@@ -37,61 +36,6 @@ func (w converters[T]) decodeEventInit(
 		cancelable: cancelable.Boolean(),
 	}
 	return init, nil
-}
-
-func (w converters[T]) decodeString(_ js.CallbackContext[T], val js.Value[T]) (string, error) {
-	return val.String(), nil
-}
-
-func (w converters[T]) decodeBoolean(_ js.CallbackContext[T], val js.Value[T]) (bool, error) {
-	return val.Boolean(), nil
-}
-
-func (w converters[T]) decodeLong(_ js.CallbackContext[T], val js.Value[T]) (int, error) {
-	return int(val.Int32()), nil
-}
-
-func (w converters[T]) decodeUnsignedLong(_ js.CallbackContext[T], val js.Value[T]) (int, error) {
-	return int(val.Uint32()), nil
-}
-
-func (w converters[T]) decodeNode(ctx js.CallbackContext[T], val js.Value[T]) (dom.Node, error) {
-	if obj, ok := val.AsObject(); ok {
-		if node, ok := obj.NativeValue().(dom.Node); ok {
-			return node, nil
-		}
-	}
-	return nil, ctx.ValueFactory().NewTypeError("Value is not a node")
-}
-
-func (w converters[T]) decodeHTMLElement(
-	cbCtx js.CallbackContext[T],
-	val js.Value[T],
-) (html.HTMLElement, error) {
-	if o, ok := val.AsObject(); ok {
-		if node, ok := o.NativeValue().(html.HTMLElement); ok {
-			return node, nil
-		}
-	}
-	return nil, cbCtx.ValueFactory().NewTypeError("Must be a node")
-}
-
-func (w converters[T]) decodeHTMLFormElement(
-	cbCtx js.CallbackContext[T],
-	val js.Value[T],
-) (html.HTMLFormElement, error) {
-	var (
-		res html.HTMLFormElement
-		ok  bool
-	)
-	node, err := w.decodeNode(cbCtx, val)
-	if err == nil {
-		res, ok = node.(html.HTMLFormElement)
-		if !ok {
-			err = cbCtx.ValueFactory().NewTypeError("Not a form")
-		}
-	}
-	return res, err
 }
 
 func (c converters[T]) defaultHTMLElement() html.HTMLElement { return nil }

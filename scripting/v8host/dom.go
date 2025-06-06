@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/gost-dom/browser/dom"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
 
 	v8 "github.com/gost-dom/v8go"
@@ -16,12 +17,12 @@ func (l domTokenListV8Wrapper[T]) CustomInitializer(class js.Class[T]) {
 
 func (l domTokenListV8Wrapper[T]) toggle(args js.CallbackContext[T]) (js.Value[T], error) {
 	instance, errInstance := js.As[dom.DOMTokenList](args.Instance())
-	token, err0 := consumeArgument(args, "toggle", nil, l.decodeString)
+	token, err0 := consumeArgument(args, "toggle", nil, codec.DecodeString)
 	if err := errors.Join(err0, errInstance); err != nil {
 		return nil, err
 	}
 
-	force, found, err1 := consumeOptionalArg(args, "force", l.decodeBoolean)
+	force, found, err1 := consumeOptionalArg(args, "force", codec.DecodeBoolean)
 	if found {
 		if err1 != nil {
 			return nil, err1
@@ -50,7 +51,7 @@ func (w domTokenListV8Wrapper[T]) remove(cbCtx js.CallbackContext[T]) (js.Value[
 	if errInst != nil {
 		return nil, errInst
 	}
-	tokens, errArg1 := consumeArgument(cbCtx, "tokens", nil, w.decodeString)
+	tokens, errArg1 := consumeArgument(cbCtx, "tokens", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -65,5 +66,5 @@ func (w parentNodeV8Wrapper[T]) decodeNodeOrText(
 	if val.IsString() {
 		return cbCtx.Scope().Window().Document().CreateTextNode(val.String()), nil
 	}
-	return w.decodeNode(cbCtx, val)
+	return codec.DecodeNode(cbCtx, val)
 }

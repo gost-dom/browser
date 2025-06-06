@@ -8,6 +8,7 @@ import (
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/internal/html"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -64,12 +65,12 @@ func (xhr xmlHttpRequestV8Wrapper[T]) CreateInstance(
 
 func (xhr xmlHttpRequestV8Wrapper[T]) open(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	instance, errInstance := js.As[XmlHttpRequest](cbCtx.Instance())
-	method, err0 := consumeArgument(cbCtx, "method", nil, xhr.decodeString)
-	url, err1 := consumeArgument(cbCtx, "url", nil, xhr.decodeString)
+	method, err0 := consumeArgument(cbCtx, "method", nil, codec.DecodeString)
+	url, err1 := consumeArgument(cbCtx, "url", nil, codec.DecodeString)
 	if err := errors.Join(err0, err1, errInstance); err != nil {
 		return nil, err
 	}
-	if async, found, err2 := consumeOptionalArg(cbCtx, "async", xhr.decodeBoolean); found {
+	if async, found, err2 := consumeOptionalArg(cbCtx, "async", codec.DecodeBoolean); found {
 		if err2 != nil {
 			return nil, err2
 		}

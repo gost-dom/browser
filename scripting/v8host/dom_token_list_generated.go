@@ -5,6 +5,7 @@ package v8host
 import (
 	"errors"
 	dom "github.com/gost-dom/browser/dom"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -45,7 +46,7 @@ func (w domTokenListV8Wrapper[T]) item(cbCtx js.CallbackContext[T]) (js.Value[T]
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	index, errArg1 := consumeArgument(cbCtx, "index", nil, w.decodeUnsignedLong)
+	index, errArg1 := consumeArgument(cbCtx, "index", nil, codec.DecodeInt)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -59,7 +60,7 @@ func (w domTokenListV8Wrapper[T]) contains(cbCtx js.CallbackContext[T]) (js.Valu
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	token, errArg1 := consumeArgument(cbCtx, "token", nil, w.decodeString)
+	token, errArg1 := consumeArgument(cbCtx, "token", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -73,7 +74,7 @@ func (w domTokenListV8Wrapper[T]) add(cbCtx js.CallbackContext[T]) (js.Value[T],
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	tokens, errArg1 := consumeRestArguments(cbCtx, "tokens", w.decodeString)
+	tokens, errArg1 := consumeRestArguments(cbCtx, "tokens", codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -87,8 +88,8 @@ func (w domTokenListV8Wrapper[T]) replace(cbCtx js.CallbackContext[T]) (js.Value
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	token, errArg1 := consumeArgument(cbCtx, "token", nil, w.decodeString)
-	newToken, errArg2 := consumeArgument(cbCtx, "newToken", nil, w.decodeString)
+	token, errArg1 := consumeArgument(cbCtx, "token", nil, codec.DecodeString)
+	newToken, errArg2 := consumeArgument(cbCtx, "newToken", nil, codec.DecodeString)
 	err := errors.Join(errArg1, errArg2)
 	if err != nil {
 		return nil, err
@@ -125,7 +126,7 @@ func (w domTokenListV8Wrapper[T]) value(cbCtx js.CallbackContext[T]) (js.Value[T
 func (w domTokenListV8Wrapper[T]) setValue(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.setValue")
 	instance, err0 := js.As[dom.DOMTokenList](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx, w.decodeString)
+	val, err1 := parseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return cbCtx.ReturnWithError(err)

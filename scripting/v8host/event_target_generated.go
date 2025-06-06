@@ -5,6 +5,7 @@ package v8host
 import (
 	"errors"
 	event "github.com/gost-dom/browser/dom/event"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -37,7 +38,7 @@ func (w eventTargetV8Wrapper[T]) addEventListener(cbCtx js.CallbackContext[T]) (
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	type_, errArg1 := consumeArgument(cbCtx, "type", nil, w.decodeString)
+	type_, errArg1 := consumeArgument(cbCtx, "type", nil, codec.DecodeString)
 	callback, errArg2 := consumeArgument(cbCtx, "callback", zeroValue, w.decodeEventListener)
 	options, errArg3 := consumeArgument(cbCtx, "options", w.defaultEventListenerOptions, w.decodeEventListenerOptions)
 	err := errors.Join(errArg1, errArg2, errArg3)
@@ -54,7 +55,7 @@ func (w eventTargetV8Wrapper[T]) removeEventListener(cbCtx js.CallbackContext[T]
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	type_, errArg1 := consumeArgument(cbCtx, "type", nil, w.decodeString)
+	type_, errArg1 := consumeArgument(cbCtx, "type", nil, codec.DecodeString)
 	callback, errArg2 := consumeArgument(cbCtx, "callback", zeroValue, w.decodeEventListener)
 	options, errArg3 := consumeArgument(cbCtx, "options", w.defaultEventListenerOptions, w.decodeEventListenerOptions)
 	err := errors.Join(errArg1, errArg2, errArg3)

@@ -5,6 +5,7 @@ package v8host
 import (
 	"errors"
 	dom "github.com/gost-dom/browser/dom"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -86,7 +87,7 @@ func (w elementV8Wrapper[T]) getAttribute(cbCtx js.CallbackContext[T]) (js.Value
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	qualifiedName, errArg1 := consumeArgument(cbCtx, "qualifiedName", nil, w.decodeString)
+	qualifiedName, errArg1 := consumeArgument(cbCtx, "qualifiedName", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -105,8 +106,8 @@ func (w elementV8Wrapper[T]) setAttribute(cbCtx js.CallbackContext[T]) (js.Value
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	qualifiedName, errArg1 := consumeArgument(cbCtx, "qualifiedName", nil, w.decodeString)
-	value, errArg2 := consumeArgument(cbCtx, "value", nil, w.decodeString)
+	qualifiedName, errArg1 := consumeArgument(cbCtx, "qualifiedName", nil, codec.DecodeString)
+	value, errArg2 := consumeArgument(cbCtx, "value", nil, codec.DecodeString)
 	err := errors.Join(errArg1, errArg2)
 	if err != nil {
 		return nil, err
@@ -126,7 +127,7 @@ func (w elementV8Wrapper[T]) removeAttribute(cbCtx js.CallbackContext[T]) (js.Va
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	qualifiedName, errArg1 := consumeArgument(cbCtx, "qualifiedName", nil, w.decodeString)
+	qualifiedName, errArg1 := consumeArgument(cbCtx, "qualifiedName", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -150,7 +151,7 @@ func (w elementV8Wrapper[T]) hasAttribute(cbCtx js.CallbackContext[T]) (js.Value
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	qualifiedName, errArg1 := consumeArgument(cbCtx, "qualifiedName", nil, w.decodeString)
+	qualifiedName, errArg1 := consumeArgument(cbCtx, "qualifiedName", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -199,7 +200,7 @@ func (w elementV8Wrapper[T]) matches(cbCtx js.CallbackContext[T]) (js.Value[T], 
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	selectors, errArg1 := consumeArgument(cbCtx, "selectors", nil, w.decodeString)
+	selectors, errArg1 := consumeArgument(cbCtx, "selectors", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -273,7 +274,7 @@ func (w elementV8Wrapper[T]) id(cbCtx js.CallbackContext[T]) (js.Value[T], error
 func (w elementV8Wrapper[T]) setID(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.setID")
 	instance, err0 := js.As[dom.Element](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx, w.decodeString)
+	val, err1 := parseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return cbCtx.ReturnWithError(err)

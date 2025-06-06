@@ -5,6 +5,7 @@ package v8host
 import (
 	"errors"
 	dom "github.com/gost-dom/browser/dom"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -43,7 +44,7 @@ func (w namedNodeMapV8Wrapper[T]) item(cbCtx js.CallbackContext[T]) (js.Value[T]
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	index, errArg1 := consumeArgument(cbCtx, "index", nil, w.decodeUnsignedLong)
+	index, errArg1 := consumeArgument(cbCtx, "index", nil, codec.DecodeInt)
 	if errArg1 != nil {
 		return nil, errArg1
 	}

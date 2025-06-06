@@ -5,6 +5,7 @@ package v8host
 import (
 	"errors"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -41,7 +42,7 @@ func (w mutationObserverV8Wrapper[T]) observe(cbCtx js.CallbackContext[T]) (js.V
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	target, errArg1 := consumeArgument(cbCtx, "target", nil, w.decodeNode)
+	target, errArg1 := consumeArgument(cbCtx, "target", nil, codec.DecodeNode)
 	options, errArg2 := consumeArgument(cbCtx, "options", nil, w.decodeObserveOption)
 	err := errors.Join(errArg1, errArg2)
 	if err != nil {

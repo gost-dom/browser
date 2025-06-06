@@ -5,6 +5,7 @@ package v8host
 import (
 	"errors"
 	event "github.com/gost-dom/browser/dom/event"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -34,7 +35,7 @@ func (w eventV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
 
 func (w eventV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Event.Constructor")
-	type_, errArg1 := consumeArgument(cbCtx, "type", nil, w.decodeString)
+	type_, errArg1 := consumeArgument(cbCtx, "type", nil, codec.DecodeString)
 	eventInitDict, errArg2 := consumeArgument(cbCtx, "eventInitDict", w.defaultEventInit, w.decodeEventInit)
 	err := errors.Join(errArg1, errArg2)
 	if err != nil {

@@ -1,6 +1,8 @@
 package v8gen
 
 import (
+	"fmt"
+
 	wrappers "github.com/gost-dom/code-gen/script-wrappers"
 	. "github.com/gost-dom/code-gen/script-wrappers/model"
 	"github.com/gost-dom/code-gen/stdgen"
@@ -104,6 +106,10 @@ func (gen V8TargetGenerators) CreateAttributeSetter(
 		val      = g.Id("val")
 		instance = g.NewValue("instance")
 	)
+
+	if op.Name == "setAutofocus" {
+		fmt.Printf("CREATE SETTER: %s - %s\n\t%+v\n", data.Name(), op.Name, op.Arguments[0])
+	}
 
 	naming := V8NamingStrategy{data}
 	receiver := WrapperInstance{g.NewValue(naming.Receiver())}

@@ -5,6 +5,7 @@ package v8host
 import (
 	"errors"
 	html "github.com/gost-dom/browser/html"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -60,7 +61,7 @@ func (w htmlFormElementV8Wrapper[T]) requestSubmit(cbCtx js.CallbackContext[T]) 
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	submitter, errArg1 := consumeArgument(cbCtx, "submitter", w.defaultHTMLElement, w.decodeHTMLElement)
+	submitter, errArg1 := consumeArgument(cbCtx, "submitter", w.defaultHTMLElement, codec.DecodeHTMLElement)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -106,7 +107,7 @@ func (w htmlFormElementV8Wrapper[T]) action(cbCtx js.CallbackContext[T]) (js.Val
 func (w htmlFormElementV8Wrapper[T]) setAction(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: HTMLFormElement.setAction")
 	instance, err0 := js.As[html.HTMLFormElement](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx, w.decodeString)
+	val, err1 := parseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -158,7 +159,7 @@ func (w htmlFormElementV8Wrapper[T]) method(cbCtx js.CallbackContext[T]) (js.Val
 func (w htmlFormElementV8Wrapper[T]) setMethod(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: HTMLFormElement.setMethod")
 	instance, err0 := js.As[html.HTMLFormElement](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx, w.decodeString)
+	val, err1 := parseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return cbCtx.ReturnWithError(err)

@@ -8,7 +8,3 @@ func AssertObjectArg[T any](cbCtx CallbackContext[T], v Value[T]) (Object[T], er
 	}
 	return nil, cbCtx.ValueFactory().NewTypeError("Value must be an object")
 }
-
-func DecodeString[T any](cbCtx CallbackContext[T], val Value[T]) (string, error) {
-	return val.String(), nil
-}

@@ -2,6 +2,7 @@ package v8host
 
 import (
 	"github.com/gost-dom/browser/html"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -41,7 +42,7 @@ func (w formDataV8Wrapper[T]) CreateInstanceFormSubmitter(
 }
 
 func (w formDataV8Wrapper[T]) decodeFormDataValue(
-	cbCtx js.CallbackContext[T],
+	_ js.CallbackContext[T],
 	val js.Value[T],
 ) (html.FormDataValue, error) {
 	return html.FormDataValue(val.String()), nil
@@ -63,4 +64,22 @@ func (w formDataV8Wrapper[T]) toSequenceFormDataEntryValue(
 		vals[i] = cbCtx.ValueFactory().NewString(string(d))
 	}
 	return cbCtx.ValueFactory().NewArray(vals...), nil
+}
+
+func (w formDataV8Wrapper[T]) decodeHTMLFormElement(
+	cbCtx js.CallbackContext[T],
+	val js.Value[T],
+) (html.HTMLFormElement, error) {
+	var (
+		res html.HTMLFormElement
+		ok  bool
+	)
+	node, err := codec.DecodeNode(cbCtx, val)
+	if err == nil {
+		res, ok = node.(html.HTMLFormElement)
+		if !ok {
+			err = cbCtx.ValueFactory().NewTypeError("Not a form")
+		}
+	}
+	return res, err
 }

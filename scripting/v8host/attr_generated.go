@@ -5,6 +5,7 @@ package v8host
 import (
 	"errors"
 	dom "github.com/gost-dom/browser/dom"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -65,7 +66,7 @@ func (w attrV8Wrapper[T]) value(cbCtx js.CallbackContext[T]) (js.Value[T], error
 func (w attrV8Wrapper[T]) setValue(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Attr.setValue")
 	instance, err0 := js.As[dom.Attr](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx, w.decodeString)
+	val, err1 := parseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return cbCtx.ReturnWithError(err)

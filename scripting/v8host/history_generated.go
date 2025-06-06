@@ -5,6 +5,7 @@ package v8host
 import (
 	"errors"
 	htmlinterfaces "github.com/gost-dom/browser/internal/interfaces/html-interfaces"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -41,7 +42,7 @@ func (w historyV8Wrapper[T]) go_(cbCtx js.CallbackContext[T]) (js.Value[T], erro
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	delta, errArg1 := consumeArgument(cbCtx, "delta", w.defaultDelta, w.decodeLong)
+	delta, errArg1 := consumeArgument(cbCtx, "delta", w.defaultDelta, codec.DecodeInt)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -77,7 +78,7 @@ func (w historyV8Wrapper[T]) pushState(cbCtx js.CallbackContext[T]) (js.Value[T]
 	}
 	data, errArg1 := consumeArgument(cbCtx, "data", nil, w.decodeHistoryState)
 	cbCtx.ConsumeArg()
-	url, errArg3 := consumeArgument(cbCtx, "url", w.defaultUrl, w.decodeString)
+	url, errArg3 := consumeArgument(cbCtx, "url", w.defaultUrl, codec.DecodeString)
 	err := errors.Join(errArg1, errArg3)
 	if err != nil {
 		return nil, err
@@ -94,7 +95,7 @@ func (w historyV8Wrapper[T]) replaceState(cbCtx js.CallbackContext[T]) (js.Value
 	}
 	data, errArg1 := consumeArgument(cbCtx, "data", nil, w.decodeHistoryState)
 	cbCtx.ConsumeArg()
-	url, errArg3 := consumeArgument(cbCtx, "url", w.defaultUrl, w.decodeString)
+	url, errArg3 := consumeArgument(cbCtx, "url", w.defaultUrl, codec.DecodeString)
 	err := errors.Join(errArg1, errArg3)
 	if err != nil {
 		return nil, err
