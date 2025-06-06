@@ -42,7 +42,7 @@ func (w htmlAnchorElementV8Wrapper[T]) target(cbCtx js.CallbackContext[T]) (js.V
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Target()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w htmlAnchorElementV8Wrapper[T]) setTarget(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

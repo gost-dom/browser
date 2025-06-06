@@ -38,7 +38,7 @@ func (w htmlInputElementV8Wrapper[T]) checkValidity(cbCtx js.CallbackContext[T])
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.CheckValidity()
-	return w.toBoolean(cbCtx, result)
+	return codec.EncodeBoolean(cbCtx, result)
 }
 
 func (w htmlInputElementV8Wrapper[T]) type_(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -48,7 +48,7 @@ func (w htmlInputElementV8Wrapper[T]) type_(cbCtx js.CallbackContext[T]) (js.Val
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Type()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w htmlInputElementV8Wrapper[T]) setType(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

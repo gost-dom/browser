@@ -6,10 +6,17 @@ import (
 	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/idltransform"
 	"github.com/gost-dom/code-gen/internal"
+	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/code-gen/script-wrappers/configuration"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )
+
+var encodeString = g.NewValuePackage("EncodeString", packagenames.Codec)
+var encodeNillableString = g.NewValuePackage("EncodeNillableString", packagenames.Codec)
+var encodeNullableString = g.NewValuePackage("EncodeNullableString", packagenames.Codec)
+var encodeInt = g.NewValuePackage("EncodeInt", packagenames.Codec)
+var encodeBoolean = g.NewValuePackage("EncodeBoolean", packagenames.Codec)
 
 type ESOperation struct {
 	Name                 string
@@ -89,6 +96,7 @@ func (o ESOperation) EncodeAsSimpleJSLookup() bool {
 }
 
 func (o ESOperation) Encoder(
+	v8 bool,
 	receiver g.Value,
 	cbCtx g.Generator,
 	data ESConstructorData,
@@ -100,13 +108,32 @@ func (o ESOperation) Encoder(
 		return internal.BindValues(receiver.Field(e))
 	}
 	t := o.RetType
+	idlType := idltransform.IdlType(t)
+	if v8 {
+		switch {
+		case idlType.IsInt():
+			return internal.BindValues(encodeInt, cbCtx)
+		case idlType.IsBoolean():
+			return internal.BindValues(encodeBoolean, cbCtx)
+		case idlType.IsString():
+			if t.Nullable {
+				if data.CustomRule.OutputType == customrules.OutputTypeStruct {
+					return internal.BindValues(encodeNullableString, cbCtx)
+				} else {
+					return internal.BindValues(encodeNillableString, cbCtx)
+				}
+			} else {
+				return internal.BindValues(encodeString, cbCtx)
+			}
+		}
+	}
 	var boundArgs []g.Generator
 	converter := "to"
 	if t.Kind == idl.KindSequence {
 		converter += "Sequence"
 		t = *t.TypeParam
 	}
-	if t.Nullable && !idltransform.IdlType(t).Nillable() {
+	if t.Nullable && !idlType.Nillable() {
 		if data.CustomRule.OutputType == customrules.OutputTypeStruct {
 			converter += "Nullable"
 		} else {

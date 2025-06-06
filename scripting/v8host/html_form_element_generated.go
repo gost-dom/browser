@@ -61,7 +61,7 @@ func (w htmlFormElementV8Wrapper[T]) requestSubmit(cbCtx js.CallbackContext[T]) 
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	submitter, errArg1 := consumeArgument(cbCtx, "submitter", w.defaultHTMLElement, codec.DecodeHTMLElement)
+	submitter, errArg1 := consumeArgument(cbCtx, "submitter", zeroValue, codec.DecodeHTMLElement)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -101,7 +101,7 @@ func (w htmlFormElementV8Wrapper[T]) action(cbCtx js.CallbackContext[T]) (js.Val
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Action()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w htmlFormElementV8Wrapper[T]) setAction(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -153,7 +153,7 @@ func (w htmlFormElementV8Wrapper[T]) method(cbCtx js.CallbackContext[T]) (js.Val
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Method()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w htmlFormElementV8Wrapper[T]) setMethod(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

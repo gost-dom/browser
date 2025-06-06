@@ -40,7 +40,7 @@ func (w attrV8Wrapper[T]) localName(cbCtx js.CallbackContext[T]) (js.Value[T], e
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.LocalName()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w attrV8Wrapper[T]) name(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -50,7 +50,7 @@ func (w attrV8Wrapper[T]) name(cbCtx js.CallbackContext[T]) (js.Value[T], error)
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Name()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w attrV8Wrapper[T]) value(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -60,7 +60,7 @@ func (w attrV8Wrapper[T]) value(cbCtx js.CallbackContext[T]) (js.Value[T], error
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Value()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w attrV8Wrapper[T]) setValue(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

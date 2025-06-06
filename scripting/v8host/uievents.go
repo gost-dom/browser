@@ -2,20 +2,21 @@ package v8host
 
 import (
 	"github.com/gost-dom/browser/internal/uievents"
+	"github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
 func (w uIEventV8Wrapper[T]) decodeMouseEventInit(
 	cbCtx js.CallbackContext[T],
 	v js.Value[T],
-) (eventInitWrapper, error) {
+) (codec.EventInit, error) {
 	return w.decodeUIEventInit(cbCtx, v)
 }
 
 func (w uIEventV8Wrapper[T]) decodePointerEventInit(
 	cbCtx js.CallbackContext[T],
 	v js.Value[T],
-) (eventInitWrapper, error) {
+) (codec.EventInit, error) {
 	return w.decodeMouseEventInit(cbCtx, v)
 }
 
@@ -31,14 +32,14 @@ func (w uIEventV8Wrapper[T]) CreateInstanceEventInitDict(
 	type_ string,
 	options ...interface{}) (js.Value[T], error) {
 	e := uievents.NewUIEvent(type_)
-	return w.store(e, cbCtx)
+	return storeNewValue(e, cbCtx)
 }
 
 func (w uIEventV8Wrapper[T]) decodeUIEventInit(
 	cbCtx js.CallbackContext[T],
 	v js.Value[T],
-) (eventInitWrapper, error) {
-	return w.decodeEventInit(cbCtx, v)
+) (codec.EventInit, error) {
+	return codec.DecodeEventInit(cbCtx, v)
 }
 
 type mouseEventV8Wrapper[T any] struct {

@@ -139,5 +139,5 @@ func (w parentNodeV8Wrapper[T]) childElementCount(cbCtx js.CallbackContext[T]) (
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.ChildElementCount()
-	return w.toUnsignedLong(cbCtx, result)
+	return codec.EncodeInt(cbCtx, result)
 }

@@ -4,6 +4,7 @@ package v8host
 
 import (
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -43,7 +44,7 @@ func (w mutationRecordV8Wrapper[T]) type_(cbCtx js.CallbackContext[T]) (js.Value
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Type
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w mutationRecordV8Wrapper[T]) target(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -103,7 +104,7 @@ func (w mutationRecordV8Wrapper[T]) attributeName(cbCtx js.CallbackContext[T]) (
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.AttributeName
-	return w.toNullableString_(cbCtx, result)
+	return codec.EncodeNullableString(cbCtx, result)
 }
 
 func (w mutationRecordV8Wrapper[T]) attributeNamespace(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -113,7 +114,7 @@ func (w mutationRecordV8Wrapper[T]) attributeNamespace(cbCtx js.CallbackContext[
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.AttributeNamespace
-	return w.toNullableString_(cbCtx, result)
+	return codec.EncodeNullableString(cbCtx, result)
 }
 
 func (w mutationRecordV8Wrapper[T]) oldValue(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -123,5 +124,5 @@ func (w mutationRecordV8Wrapper[T]) oldValue(cbCtx js.CallbackContext[T]) (js.Va
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.OldValue
-	return w.toNullableString_(cbCtx, result)
+	return codec.EncodeNullableString(cbCtx, result)
 }

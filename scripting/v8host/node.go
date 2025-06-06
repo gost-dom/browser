@@ -2,6 +2,7 @@ package v8host
 
 import (
 	"github.com/gost-dom/browser/dom"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -30,11 +31,11 @@ func (n nodeV8Wrapper[T]) nodeType(cbCtx js.CallbackContext[T]) (js.Value[T], er
 	if err != nil {
 		return nil, err
 	}
-	return n.toUnsignedShort(cbCtx, int(instance.NodeType()))
+	return codec.EncodeInt(cbCtx, int(instance.NodeType()))
 }
 
 func (n nodeV8Wrapper[T]) decodeGetRootNodeOptions(
-	cbCtx js.CallbackContext[T],
+	_ js.CallbackContext[T],
 	value js.Value[T],
 ) (dom.GetRootNodeOptions, error) {
 	return dom.GetRootNodeOptions(value.Boolean()), nil

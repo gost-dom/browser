@@ -48,7 +48,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper[T]) href(cbCtx js.CallbackContext[T])
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Href()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper[T]) setHref(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -70,7 +70,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper[T]) origin(cbCtx js.CallbackContext[T
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Origin()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper[T]) protocol(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -80,7 +80,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper[T]) protocol(cbCtx js.CallbackContext
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Protocol()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper[T]) setProtocol(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -102,7 +102,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper[T]) username(cbCtx js.CallbackContext
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Username()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper[T]) setUsername(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -124,7 +124,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper[T]) password(cbCtx js.CallbackContext
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Password()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper[T]) setPassword(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -146,7 +146,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper[T]) host(cbCtx js.CallbackContext[T])
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Host()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper[T]) setHost(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -168,7 +168,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper[T]) hostname(cbCtx js.CallbackContext
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Hostname()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper[T]) setHostname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -190,7 +190,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper[T]) port(cbCtx js.CallbackContext[T])
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Port()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper[T]) setPort(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -212,7 +212,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper[T]) pathname(cbCtx js.CallbackContext
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Pathname()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper[T]) setPathname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -234,7 +234,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper[T]) search(cbCtx js.CallbackContext[T
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Search()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper[T]) setSearch(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -256,7 +256,7 @@ func (w htmlHyperlinkElementUtilsV8Wrapper[T]) hash(cbCtx js.CallbackContext[T])
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Hash()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w htmlHyperlinkElementUtilsV8Wrapper[T]) setHash(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

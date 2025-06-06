@@ -51,7 +51,7 @@ func (w domTokenListV8Wrapper[T]) item(cbCtx js.CallbackContext[T]) (js.Value[T]
 		return nil, errArg1
 	}
 	result, hasValue := instance.Item(index)
-	return w.toNillableString_(cbCtx, result, hasValue)
+	return codec.EncodeNillableString(cbCtx, result, hasValue)
 }
 
 func (w domTokenListV8Wrapper[T]) contains(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -65,7 +65,7 @@ func (w domTokenListV8Wrapper[T]) contains(cbCtx js.CallbackContext[T]) (js.Valu
 		return nil, errArg1
 	}
 	result := instance.Contains(token)
-	return w.toBoolean(cbCtx, result)
+	return codec.EncodeBoolean(cbCtx, result)
 }
 
 func (w domTokenListV8Wrapper[T]) add(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -95,7 +95,7 @@ func (w domTokenListV8Wrapper[T]) replace(cbCtx js.CallbackContext[T]) (js.Value
 		return nil, err
 	}
 	result := instance.Replace(token, newToken)
-	return w.toBoolean(cbCtx, result)
+	return codec.EncodeBoolean(cbCtx, result)
 }
 
 func (w domTokenListV8Wrapper[T]) supports(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -110,7 +110,7 @@ func (w domTokenListV8Wrapper[T]) length(cbCtx js.CallbackContext[T]) (js.Value[
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Length()
-	return w.toUnsignedLong(cbCtx, result)
+	return codec.EncodeInt(cbCtx, result)
 }
 
 func (w domTokenListV8Wrapper[T]) value(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -120,7 +120,7 @@ func (w domTokenListV8Wrapper[T]) value(cbCtx js.CallbackContext[T]) (js.Value[T
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Value()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w domTokenListV8Wrapper[T]) setValue(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

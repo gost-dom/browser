@@ -60,7 +60,7 @@ func (xhr xmlHttpRequestV8Wrapper[T]) CreateInstance(
 		}
 		return nil
 	}))
-	return xhr.store(result, cbCtx)
+	return storeNewValue(result, cbCtx)
 }
 
 func (xhr xmlHttpRequestV8Wrapper[T]) open(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -83,4 +83,11 @@ func (xhr xmlHttpRequestV8Wrapper[T]) open(cbCtx js.CallbackContext[T]) (js.Valu
 
 func (xhr xmlHttpRequestV8Wrapper[T]) upload(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return cbCtx.This(), nil
+}
+
+func (w xmlHttpRequestV8Wrapper[T]) toAny(
+	cbCtx js.CallbackContext[T],
+	val string,
+) (js.Value[T], error) {
+	return w.toString_(cbCtx, val)
 }

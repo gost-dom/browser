@@ -57,7 +57,7 @@ func (w urlV8Wrapper[T]) toJSON(cbCtx js.CallbackContext[T]) (js.Value[T], error
 	if errCall != nil {
 		return nil, errCall
 	}
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w urlV8Wrapper[T]) href(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -67,7 +67,7 @@ func (w urlV8Wrapper[T]) href(cbCtx js.CallbackContext[T]) (js.Value[T], error) 
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Href()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w urlV8Wrapper[T]) setHref(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -82,7 +82,7 @@ func (w urlV8Wrapper[T]) origin(cbCtx js.CallbackContext[T]) (js.Value[T], error
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Origin()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w urlV8Wrapper[T]) protocol(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -92,7 +92,7 @@ func (w urlV8Wrapper[T]) protocol(cbCtx js.CallbackContext[T]) (js.Value[T], err
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Protocol()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w urlV8Wrapper[T]) setProtocol(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -127,7 +127,7 @@ func (w urlV8Wrapper[T]) host(cbCtx js.CallbackContext[T]) (js.Value[T], error) 
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Host()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w urlV8Wrapper[T]) setHost(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -142,7 +142,7 @@ func (w urlV8Wrapper[T]) hostname(cbCtx js.CallbackContext[T]) (js.Value[T], err
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Hostname()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w urlV8Wrapper[T]) setHostname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -157,7 +157,7 @@ func (w urlV8Wrapper[T]) port(cbCtx js.CallbackContext[T]) (js.Value[T], error) 
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Port()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w urlV8Wrapper[T]) setPort(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -172,7 +172,7 @@ func (w urlV8Wrapper[T]) pathname(cbCtx js.CallbackContext[T]) (js.Value[T], err
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Pathname()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w urlV8Wrapper[T]) setPathname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -187,7 +187,7 @@ func (w urlV8Wrapper[T]) search(cbCtx js.CallbackContext[T]) (js.Value[T], error
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Search()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w urlV8Wrapper[T]) setSearch(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -207,7 +207,7 @@ func (w urlV8Wrapper[T]) hash(cbCtx js.CallbackContext[T]) (js.Value[T], error) 
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Hash()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w urlV8Wrapper[T]) setHash(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -289,7 +289,7 @@ func (w urlSearchParamsV8Wrapper[T]) get(cbCtx js.CallbackContext[T]) (js.Value[
 		return nil, errArg1
 	}
 	result, hasValue := instance.Get(name)
-	return w.toNillableString_(cbCtx, result, hasValue)
+	return codec.EncodeNillableString(cbCtx, result, hasValue)
 }
 
 func (w urlSearchParamsV8Wrapper[T]) getAll(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -322,10 +322,10 @@ func (w urlSearchParamsV8Wrapper[T]) has(cbCtx js.CallbackContext[T]) (js.Value[
 			return nil, errArg
 		}
 		result := instance.HasValue(name, value)
-		return w.toBoolean(cbCtx, result)
+		return codec.EncodeBoolean(cbCtx, result)
 	}
 	result := instance.Has(name)
-	return w.toBoolean(cbCtx, result)
+	return codec.EncodeBoolean(cbCtx, result)
 }
 
 func (w urlSearchParamsV8Wrapper[T]) set(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -361,7 +361,7 @@ func (w urlSearchParamsV8Wrapper[T]) toString(cbCtx js.CallbackContext[T]) (js.V
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.String()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w urlSearchParamsV8Wrapper[T]) size(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -371,5 +371,5 @@ func (w urlSearchParamsV8Wrapper[T]) size(cbCtx js.CallbackContext[T]) (js.Value
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Size()
-	return w.toUnsignedLong(cbCtx, result)
+	return codec.EncodeInt(cbCtx, result)
 }

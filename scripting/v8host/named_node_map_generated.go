@@ -89,5 +89,5 @@ func (w namedNodeMapV8Wrapper[T]) length(cbCtx js.CallbackContext[T]) (js.Value[
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Length()
-	return w.toUnsignedLong(cbCtx, result)
+	return codec.EncodeInt(cbCtx, result)
 }

@@ -121,7 +121,7 @@ func (w formDataV8Wrapper[T]) has(cbCtx js.CallbackContext[T]) (js.Value[T], err
 		return nil, errArg1
 	}
 	result := instance.Has(name)
-	return w.toBoolean(cbCtx, result)
+	return codec.EncodeBoolean(cbCtx, result)
 }
 
 func (w formDataV8Wrapper[T]) set(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -233,7 +233,7 @@ func (w xmlHttpRequestV8Wrapper[T]) getResponseHeader(cbCtx js.CallbackContext[T
 		return nil, errArg1
 	}
 	result, hasValue := instance.GetResponseHeader(name)
-	return w.toNillableString_(cbCtx, result, hasValue)
+	return codec.EncodeNillableString(cbCtx, result, hasValue)
 }
 
 func (w xmlHttpRequestV8Wrapper[T]) getAllResponseHeaders(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -246,7 +246,7 @@ func (w xmlHttpRequestV8Wrapper[T]) getAllResponseHeaders(cbCtx js.CallbackConte
 	if errCall != nil {
 		return nil, errCall
 	}
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w xmlHttpRequestV8Wrapper[T]) overrideMimeType(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -275,7 +275,7 @@ func (w xmlHttpRequestV8Wrapper[T]) timeout(cbCtx js.CallbackContext[T]) (js.Val
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Timeout()
-	return w.toUnsignedLong(cbCtx, result)
+	return codec.EncodeInt(cbCtx, result)
 }
 
 func (w xmlHttpRequestV8Wrapper[T]) setTimeout(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -297,7 +297,7 @@ func (w xmlHttpRequestV8Wrapper[T]) withCredentials(cbCtx js.CallbackContext[T])
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.WithCredentials()
-	return w.toBoolean(cbCtx, result)
+	return codec.EncodeBoolean(cbCtx, result)
 }
 
 func (w xmlHttpRequestV8Wrapper[T]) setWithCredentials(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -319,7 +319,7 @@ func (w xmlHttpRequestV8Wrapper[T]) responseURL(cbCtx js.CallbackContext[T]) (js
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.ResponseURL()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w xmlHttpRequestV8Wrapper[T]) status(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -329,7 +329,7 @@ func (w xmlHttpRequestV8Wrapper[T]) status(cbCtx js.CallbackContext[T]) (js.Valu
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Status()
-	return w.toUnsignedShort(cbCtx, result)
+	return codec.EncodeInt(cbCtx, result)
 }
 
 func (w xmlHttpRequestV8Wrapper[T]) statusText(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -339,7 +339,7 @@ func (w xmlHttpRequestV8Wrapper[T]) statusText(cbCtx js.CallbackContext[T]) (js.
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.StatusText()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w xmlHttpRequestV8Wrapper[T]) responseType(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -369,7 +369,7 @@ func (w xmlHttpRequestV8Wrapper[T]) responseText(cbCtx js.CallbackContext[T]) (j
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.ResponseText()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w xmlHttpRequestV8Wrapper[T]) responseXML(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

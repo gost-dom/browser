@@ -92,7 +92,7 @@ func (w elementV8Wrapper[T]) getAttribute(cbCtx js.CallbackContext[T]) (js.Value
 		return nil, errArg1
 	}
 	result, hasValue := instance.GetAttribute(qualifiedName)
-	return w.toNillableString_(cbCtx, result, hasValue)
+	return codec.EncodeNillableString(cbCtx, result, hasValue)
 }
 
 func (w elementV8Wrapper[T]) getAttributeNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -156,7 +156,7 @@ func (w elementV8Wrapper[T]) hasAttribute(cbCtx js.CallbackContext[T]) (js.Value
 		return nil, errArg1
 	}
 	result := instance.HasAttribute(qualifiedName)
-	return w.toBoolean(cbCtx, result)
+	return codec.EncodeBoolean(cbCtx, result)
 }
 
 func (w elementV8Wrapper[T]) hasAttributeNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -208,7 +208,7 @@ func (w elementV8Wrapper[T]) matches(cbCtx js.CallbackContext[T]) (js.Value[T], 
 	if errCall != nil {
 		return nil, errCall
 	}
-	return w.toBoolean(cbCtx, result)
+	return codec.EncodeBoolean(cbCtx, result)
 }
 
 func (w elementV8Wrapper[T]) getElementsByTagName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -258,7 +258,7 @@ func (w elementV8Wrapper[T]) tagName(cbCtx js.CallbackContext[T]) (js.Value[T], 
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.TagName()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w elementV8Wrapper[T]) id(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -268,7 +268,7 @@ func (w elementV8Wrapper[T]) id(cbCtx js.CallbackContext[T]) (js.Value[T], error
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.ID()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w elementV8Wrapper[T]) setID(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

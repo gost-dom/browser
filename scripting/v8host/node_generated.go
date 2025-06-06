@@ -85,7 +85,7 @@ func (w nodeV8Wrapper[T]) isSameNode(cbCtx js.CallbackContext[T]) (js.Value[T], 
 		return nil, errArg1
 	}
 	result := instance.IsSameNode(otherNode)
-	return w.toBoolean(cbCtx, result)
+	return codec.EncodeBoolean(cbCtx, result)
 }
 
 func (w nodeV8Wrapper[T]) contains(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -99,7 +99,7 @@ func (w nodeV8Wrapper[T]) contains(cbCtx js.CallbackContext[T]) (js.Value[T], er
 		return nil, errArg1
 	}
 	result := instance.Contains(other)
-	return w.toBoolean(cbCtx, result)
+	return codec.EncodeBoolean(cbCtx, result)
 }
 
 func (w nodeV8Wrapper[T]) insertBefore(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -162,7 +162,7 @@ func (w nodeV8Wrapper[T]) nodeName(cbCtx js.CallbackContext[T]) (js.Value[T], er
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.NodeName()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w nodeV8Wrapper[T]) isConnected(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -172,7 +172,7 @@ func (w nodeV8Wrapper[T]) isConnected(cbCtx js.CallbackContext[T]) (js.Value[T],
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.IsConnected()
-	return w.toBoolean(cbCtx, result)
+	return codec.EncodeBoolean(cbCtx, result)
 }
 
 func (w nodeV8Wrapper[T]) ownerDocument(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

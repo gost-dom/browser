@@ -65,7 +65,6 @@ func main() {
 		exitOnError(htmlelements.CreateImplementationPackage(*packageName))
 		os.Exit(0)
 	case "eventTypes":
-		fmt.Println("FOOBAR")
 		if packageName == nil {
 			panic("Missing package spec")
 		}

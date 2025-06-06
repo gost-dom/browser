@@ -31,7 +31,7 @@ func (w urlV8Wrapper[T]) CreateInstance(
 	if err != nil {
 		return nil, err
 	}
-	w.store(value, cbCtx)
+	storeNewValue(value, cbCtx)
 	return nil, nil
 }
 
@@ -44,7 +44,7 @@ func (w urlV8Wrapper[T]) CreateInstanceBase(
 	if err != nil {
 		return nil, err
 	}
-	w.store(value, cbCtx)
+	storeNewValue(value, cbCtx)
 	return nil, nil
 }
 
@@ -84,7 +84,7 @@ func (w urlSearchParamsV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (j
 			)
 		}
 	}
-	w.store(&res, cbCtx)
+	storeNewValue(&res, cbCtx)
 	return nil, nil
 }
 

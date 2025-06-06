@@ -111,7 +111,7 @@ func (w historyV8Wrapper[T]) length(cbCtx js.CallbackContext[T]) (js.Value[T], e
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Length()
-	return w.toUnsignedLong(cbCtx, result)
+	return codec.EncodeInt(cbCtx, result)
 }
 
 func (w historyV8Wrapper[T]) state(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

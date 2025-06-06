@@ -15,6 +15,13 @@ func (l domTokenListV8Wrapper[T]) CustomInitializer(class js.Class[T]) {
 	it.installPrototype(class)
 }
 
+func (w domTokenListV8Wrapper[T]) toString_(
+	cbCtx js.CallbackContext[T],
+	val string,
+) (js.Value[T], error) {
+	return cbCtx.ValueFactory().NewString(val), nil
+}
+
 func (l domTokenListV8Wrapper[T]) toggle(args js.CallbackContext[T]) (js.Value[T], error) {
 	instance, errInstance := js.As[dom.DOMTokenList](args.Instance())
 	token, err0 := consumeArgument(args, "toggle", nil, codec.DecodeString)

@@ -6,20 +6,17 @@ import (
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/internal/entity"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
-
-func (w eventV8Wrapper[T]) defaultEventInit() eventInitWrapper {
-	return eventInitWrapper{}
-}
 
 func (w eventV8Wrapper[T]) CreateInstance(
 	cbCtx js.CallbackContext[T],
 	type_ string,
-	o eventInitWrapper,
+	o codec.EventInit,
 ) (js.Value[T], error) {
-	e := &event.Event{Type: type_, Bubbles: o.bubbles, Cancelable: o.cancelable, Data: o.init}
-	return w.store(e, cbCtx)
+	e := &event.Event{Type: type_, Bubbles: o.Bubbles, Cancelable: o.Cancelable, Data: o.Init}
+	return storeNewValue(e, cbCtx)
 }
 
 func (w eventV8Wrapper[T]) toEventTarget(
@@ -30,7 +27,7 @@ func (w eventV8Wrapper[T]) toEventTarget(
 		return cbCtx.ReturnWithValue(cbCtx.ValueFactory().Null())
 	}
 	if entity, ok := e.(entity.ObjectIder); ok {
-		return w.toJSWrapper(cbCtx, entity)
+		return codec.EncodeEntity(cbCtx, entity)
 	}
 	return cbCtx.ReturnWithTypeError(fmt.Sprintf(
 		"encode EventTarget: Not an antity. %s",
@@ -43,5 +40,5 @@ func (w eventV8Wrapper[T]) eventPhase(cbCtx js.CallbackContext[T]) (js.Value[T],
 	if err != nil {
 		return nil, err
 	}
-	return w.toUnsignedShort(cbCtx, int(instance.EventPhase))
+	return codec.EncodeInt(cbCtx, int(instance.EventPhase))
 }

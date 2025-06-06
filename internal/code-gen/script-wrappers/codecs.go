@@ -46,7 +46,7 @@ func DecodersForArg(receiver g.Generator, arg model.ESOperationArgument) []g.Gen
 			return g.List(decodeInt)
 		}
 		switch arg.GoTypeName() {
-		case "Node", "HTMLElement":
+		case "Node", "HTMLElement", "EventInit":
 			return g.List(decode(arg.GoTypeName()))
 		}
 		convertNames = []string{fmt.Sprintf("decode%s", model.IdlNameToGoName(arg.GoTypeName()))}

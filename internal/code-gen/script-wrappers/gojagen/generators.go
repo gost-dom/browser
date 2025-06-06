@@ -231,7 +231,7 @@ func (gen GojaTargetGenerators) ConvertResult(
 ) g.Generator {
 	list := g.StatementList()
 	if op.HasResult() {
-		converter := op.Encoder(receiver, cbCtx, data)
+		converter := op.Encoder(false, receiver, cbCtx, data)
 		if op.GetHasError() {
 			list.Append(
 				g.AssignMany(g.List(

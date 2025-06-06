@@ -36,7 +36,7 @@ func (w eventV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
 func (w eventV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Event.Constructor")
 	type_, errArg1 := consumeArgument(cbCtx, "type", nil, codec.DecodeString)
-	eventInitDict, errArg2 := consumeArgument(cbCtx, "eventInitDict", w.defaultEventInit, w.decodeEventInit)
+	eventInitDict, errArg2 := consumeArgument(cbCtx, "eventInitDict", zeroValue, codec.DecodeEventInit)
 	err := errors.Join(errArg1, errArg2)
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func (w eventV8Wrapper[T]) type_(cbCtx js.CallbackContext[T]) (js.Value[T], erro
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Type
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w eventV8Wrapper[T]) target(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -101,7 +101,7 @@ func (w eventV8Wrapper[T]) bubbles(cbCtx js.CallbackContext[T]) (js.Value[T], er
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Bubbles
-	return w.toBoolean(cbCtx, result)
+	return codec.EncodeBoolean(cbCtx, result)
 }
 
 func (w eventV8Wrapper[T]) cancelable(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -111,7 +111,7 @@ func (w eventV8Wrapper[T]) cancelable(cbCtx js.CallbackContext[T]) (js.Value[T],
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Cancelable
-	return w.toBoolean(cbCtx, result)
+	return codec.EncodeBoolean(cbCtx, result)
 }
 
 func (w eventV8Wrapper[T]) defaultPrevented(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -121,5 +121,5 @@ func (w eventV8Wrapper[T]) defaultPrevented(cbCtx js.CallbackContext[T]) (js.Val
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.DefaultPrevented
-	return w.toBoolean(cbCtx, result)
+	return codec.EncodeBoolean(cbCtx, result)
 }

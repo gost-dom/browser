@@ -51,7 +51,7 @@ func (t IdlType) IsString() bool {
 
 func (t IdlType) IsInt() bool {
 	switch t.Name {
-	case "unsigned long", "long":
+	case "unsigned long", "long", "unsigned short", "short":
 		return true
 	}
 	return false

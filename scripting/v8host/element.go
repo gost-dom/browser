@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/gost-dom/browser/dom"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -27,7 +28,7 @@ func (e *elementV8Wrapper[T]) insertAdjacentHTML(
 
 func (e *elementV8Wrapper[T]) outerHTML(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	if element, err := js.As[dom.Element](cbCtx.Instance()); err == nil {
-		return e.toString_(cbCtx, element.OuterHTML())
+		return codec.EncodeString(cbCtx, element.OuterHTML())
 	} else {
 		return nil, err
 	}
@@ -47,5 +48,6 @@ func (e *elementV8Wrapper[T]) toNamedNodeMap(
 	cbCtx js.CallbackContext[T],
 	n dom.NamedNodeMap,
 ) (js.Value[T], error) {
-	return e.toJSWrapper(cbCtx, n)
+
+	return codec.EncodeEntity(cbCtx, n)
 }

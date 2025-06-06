@@ -77,5 +77,5 @@ func (w eventTargetV8Wrapper[T]) dispatchEvent(cbCtx js.CallbackContext[T]) (js.
 		return nil, errArg1
 	}
 	result := instance.DispatchEvent(event)
-	return w.toBoolean(cbCtx, result)
+	return codec.EncodeBoolean(cbCtx, result)
 }

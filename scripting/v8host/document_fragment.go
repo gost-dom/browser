@@ -19,7 +19,7 @@ func newDocumentFragmentV8Wrapper(host js.ScriptEngine[jsTypeParam]) documentFra
 
 func (w documentFragmentV8Wrapper) Constructor(ctx jsCallbackContext) (jsValue, error) {
 	result := dom.NewDocumentFragment(ctx.Scope().Window().Document())
-	return w.store(result, ctx)
+	return storeNewValue(result, ctx)
 }
 
 func (w documentFragmentV8Wrapper) Initialize(class jsClass) {

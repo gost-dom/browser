@@ -303,9 +303,7 @@ var types = map[string][]eventSources{
 
 func CreateEventGenerators(packageName string) error {
 	for _, source := range types[packageName] {
-		fmt.Println("- Type: ", source.api)
 		for _, e := range source.names {
-			fmt.Println("  - Name: ", e)
 			var f *jen.File
 			filename := fmt.Sprintf("%s_events_generated.go", strings.ToLower(e))
 			writer, err := os.Create(filename)

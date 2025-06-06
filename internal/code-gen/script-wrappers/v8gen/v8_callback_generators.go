@@ -189,6 +189,7 @@ func (gen V8CallbackGenerators) AttributeGetterCallback(
 	return g.StatementList(
 		gen.assignInstance(cbCtx),
 		wrappers.ReturnValueGenerator{
+			V8:       true,
 			Data:     gen.Data,
 			Op:       gen.Op,
 			Ctx:      cbCtx,
@@ -198,6 +199,10 @@ func (gen V8CallbackGenerators) AttributeGetterCallback(
 }
 
 func (gen V8CallbackGenerators) DefaultValuer(a model.ESOperationArgument) (g.Generator, bool) {
+	switch a.IdlArg.Type.Name {
+	case "EventInit", "HTMLElement":
+		return g.Id("zeroValue"), true
+	}
 	defaultName, hasDefault := a.DefaultValueInGo()
 	zeroValueResolver := g.Id("zeroValue")
 	if hasDefault && defaultName != "" {
@@ -214,6 +219,7 @@ func (gen V8CallbackGenerators) transformResult(
 	result g.Generator,
 ) g.Generator {
 	return wrappers.ReturnValueGenerator{
+		V8:       true,
 		Data:     gen.Data,
 		Op:       gen.Op,
 		Ctx:      cbCtx,

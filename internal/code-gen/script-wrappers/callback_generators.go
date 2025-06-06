@@ -10,6 +10,7 @@ type ReturnValueGenerator struct {
 	Op       model.ESOperation
 	Ctx      CallbackContext
 	Receiver g.Generator
+	V8       bool
 }
 
 func (gen ReturnValueGenerator) Transform(call g.Generator) g.Generator {
@@ -45,17 +46,18 @@ func (gen ReturnValueGenerator) Transform(call g.Generator) g.Generator {
 	}
 
 	if gen.Op.HasResult() {
-		stmts.Append(g.Return(gen.encodeReturnValue(gen.Ctx, res)))
+		stmts.Append(g.Return(gen.encodeReturnValue(gen.V8, gen.Ctx, res)))
 	}
 
 	return stmts
 }
 
 func (gen ReturnValueGenerator) encodeReturnValue(
+	v8 bool,
 	cbCtx CallbackContext,
 	val []g.Generator,
 ) g.Generator {
-	encoder := gen.Op.Encoder(g.ValueOf(gen.Receiver), cbCtx, gen.Data)
+	encoder := gen.Op.Encoder(v8, g.ValueOf(gen.Receiver), cbCtx, gen.Data)
 	return encoder.Call(val...)
 }
 

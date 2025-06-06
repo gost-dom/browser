@@ -1,6 +1,8 @@
 package codec
 
 import (
+	"errors"
+
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/scripting/internal/js"
@@ -37,4 +39,32 @@ func DecodeHTMLElement[T any](
 		}
 	}
 	return nil, ctx.ValueFactory().NewTypeError("Value is not a node")
+}
+
+type EventInit struct {
+	Bubbles    bool
+	Cancelable bool
+	Init       any
+}
+
+func DecodeEventInit[T any](
+	_ js.CallbackContext[T],
+	val js.Value[T],
+) (EventInit, error) {
+	options, ok := val.AsObject()
+	if !ok {
+		return EventInit{}, errors.New("Not an event init object")
+	}
+
+	bubbles, err1 := options.Get("bubbles")
+	cancelable, err2 := options.Get("cancelable")
+	err := errors.Join(err1, err2)
+	if err != nil {
+		return EventInit{}, err
+	}
+	init := EventInit{
+		Bubbles:    bubbles.Boolean(),
+		Cancelable: cancelable.Boolean(),
+	}
+	return init, nil
 }

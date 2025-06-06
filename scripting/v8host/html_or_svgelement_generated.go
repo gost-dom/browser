@@ -57,7 +57,7 @@ func (w htmlOrSVGElementV8Wrapper[T]) nonce(cbCtx js.CallbackContext[T]) (js.Val
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Nonce()
-	return w.toString_(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w htmlOrSVGElementV8Wrapper[T]) setNonce(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -79,7 +79,7 @@ func (w htmlOrSVGElementV8Wrapper[T]) autofocus(cbCtx js.CallbackContext[T]) (js
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.Autofocus()
-	return w.toBoolean(cbCtx, result)
+	return codec.EncodeBoolean(cbCtx, result)
 }
 
 func (w htmlOrSVGElementV8Wrapper[T]) setAutofocus(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -101,7 +101,7 @@ func (w htmlOrSVGElementV8Wrapper[T]) tabIndex(cbCtx js.CallbackContext[T]) (js.
 		return cbCtx.ReturnWithError(err)
 	}
 	result := instance.TabIndex()
-	return w.toLong(cbCtx, result)
+	return codec.EncodeInt(cbCtx, result)
 }
 
 func (w htmlOrSVGElementV8Wrapper[T]) setTabIndex(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
