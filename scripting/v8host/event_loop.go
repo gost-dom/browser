@@ -19,7 +19,7 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 				clock := cbCtx.Scope().Clock()
 				clock.AddSafeMicrotask(func() {
 					if _, err := f.Call(cbCtx.Scope().GlobalThis()); err != nil {
-						UnhandledError(cbCtx.Scope(), err)
+						js.UnhandledError(cbCtx.Scope(), err)
 					}
 				})
 			}
@@ -39,7 +39,7 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 			handle := clock.AddSafeTask(
 				func() {
 					if _, err := f.Call(cbCtx.Scope().GlobalThis()); err != nil {
-						UnhandledError(cbCtx.Scope(), err)
+						js.UnhandledError(cbCtx.Scope(), err)
 					}
 				},
 				time.Duration(delay)*time.Millisecond,
@@ -69,7 +69,7 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 			handle := cbCtx.Scope().Clock().SetInterval(
 				func() {
 					if _, err := f.Call(cbCtx.Scope().GlobalThis()); err != nil {
-						UnhandledError(cbCtx.Scope(), err)
+						js.UnhandledError(cbCtx.Scope(), err)
 					}
 				},
 				time.Duration(delay)*time.Millisecond,

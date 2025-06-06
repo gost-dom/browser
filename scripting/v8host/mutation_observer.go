@@ -17,7 +17,7 @@ func (cb MutationCallback[T]) HandleMutation(recs []mutation.Record, obs *mutati
 	v8Recs, _ := toSequenceMutationRecord(cb.ctx, recs)
 	scope := cb.ctx.Scope()
 	if _, err := cb.function.Call(scope.GlobalThis(), v8Recs); err != nil {
-		UnhandledError(scope, err)
+		js.UnhandledError(scope, err)
 	}
 }
 

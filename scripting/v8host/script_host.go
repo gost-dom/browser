@@ -8,7 +8,6 @@ import (
 	"slices"
 	"sync"
 
-	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/entity"
@@ -214,7 +213,7 @@ func (host *V8ScriptHost) promiseRejected(msg v8go.PromiseRejectMessage) {
 	}
 
 	log.Error(host.logger, "Rejected promise", log.ErrAttr(err))
-	UnhandledError(&v8Scope{host, ctx}, err)
+	js.UnhandledError(&v8Scope{host, ctx}, err)
 }
 
 func (host *V8ScriptHost) Logger() log.Logger {
@@ -324,8 +323,4 @@ func (host *V8ScriptHost) CreateClass(
 	host.windowTemplate.Set(name, ft)
 	host.globals.namedGlobals[name] = result
 	return result
-}
-
-func UnhandledError[T any](scope js.Scope[T], err error) {
-	scope.Window().DispatchEvent(event.NewErrorEvent(err))
 }
