@@ -61,7 +61,7 @@ func (w htmlOrSVGElementV8Wrapper[T]) nonce(cbCtx js.CallbackContext[T]) (js.Val
 func (w htmlOrSVGElementV8Wrapper[T]) setNonce(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: HTMLOrSVGElement.setNonce")
 	instance, err0 := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx, codec.DecodeString)
+	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -83,7 +83,7 @@ func (w htmlOrSVGElementV8Wrapper[T]) autofocus(cbCtx js.CallbackContext[T]) (js
 func (w htmlOrSVGElementV8Wrapper[T]) setAutofocus(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: HTMLOrSVGElement.setAutofocus")
 	instance, err0 := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx, codec.DecodeBoolean)
+	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeBoolean)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -105,7 +105,7 @@ func (w htmlOrSVGElementV8Wrapper[T]) tabIndex(cbCtx js.CallbackContext[T]) (js.
 func (w htmlOrSVGElementV8Wrapper[T]) setTabIndex(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: HTMLOrSVGElement.setTabIndex")
 	instance, err0 := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx, codec.DecodeInt)
+	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeInt)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return cbCtx.ReturnWithError(err)

@@ -272,7 +272,7 @@ func (w elementV8Wrapper[T]) id(cbCtx js.CallbackContext[T]) (js.Value[T], error
 func (w elementV8Wrapper[T]) setID(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.setID")
 	instance, err0 := js.As[dom.Element](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx, codec.DecodeString)
+	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return cbCtx.ReturnWithError(err)

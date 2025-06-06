@@ -276,7 +276,7 @@ func (w xmlHttpRequestV8Wrapper[T]) timeout(cbCtx js.CallbackContext[T]) (js.Val
 func (w xmlHttpRequestV8Wrapper[T]) setTimeout(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.setTimeout")
 	instance, err0 := js.As[html1.XMLHttpRequest](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx, codec.DecodeInt)
+	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeInt)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -298,7 +298,7 @@ func (w xmlHttpRequestV8Wrapper[T]) withCredentials(cbCtx js.CallbackContext[T])
 func (w xmlHttpRequestV8Wrapper[T]) setWithCredentials(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.setWithCredentials")
 	instance, err0 := js.As[html1.XMLHttpRequest](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx, codec.DecodeBoolean)
+	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeBoolean)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return cbCtx.ReturnWithError(err)

@@ -124,7 +124,7 @@ func (w domTokenListV8Wrapper[T]) value(cbCtx js.CallbackContext[T]) (js.Value[T
 func (w domTokenListV8Wrapper[T]) setValue(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.setValue")
 	instance, err0 := js.As[dom.DOMTokenList](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx, codec.DecodeString)
+	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return cbCtx.ReturnWithError(err)

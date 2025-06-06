@@ -1,11 +1,14 @@
 package v8gen
 
 import (
+	"github.com/gost-dom/code-gen/packagenames"
 	wrappers "github.com/gost-dom/code-gen/script-wrappers"
 	. "github.com/gost-dom/code-gen/script-wrappers/model"
 	"github.com/gost-dom/code-gen/stdgen"
 	g "github.com/gost-dom/generators"
 )
+
+var parseSetterArg = g.NewValuePackage("ParseSetterArg", packagenames.JS)
 
 type V8TargetGenerators struct{}
 
@@ -112,7 +115,7 @@ func (gen V8TargetGenerators) CreateAttributeSetter(
 		[]g.Generator{cbCtx},
 		wrappers.DecodersForArg(receiver, op.Arguments[0])...,
 	)
-	parsedArg := g.NewValue("parseSetterArg").Call(args...)
+	parsedArg := parseSetterArg.Call(args...)
 
 	return g.StatementList(
 		g.AssignMany(

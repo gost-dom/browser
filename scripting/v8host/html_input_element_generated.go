@@ -52,7 +52,7 @@ func (w htmlInputElementV8Wrapper[T]) type_(cbCtx js.CallbackContext[T]) (js.Val
 func (w htmlInputElementV8Wrapper[T]) setType(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: HTMLInputElement.setType")
 	instance, err0 := js.As[html.HTMLInputElement](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx, codec.DecodeString)
+	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return cbCtx.ReturnWithError(err)

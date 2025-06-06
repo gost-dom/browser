@@ -105,7 +105,7 @@ func (w htmlFormElementV8Wrapper[T]) action(cbCtx js.CallbackContext[T]) (js.Val
 func (w htmlFormElementV8Wrapper[T]) setAction(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: HTMLFormElement.setAction")
 	instance, err0 := js.As[html.HTMLFormElement](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx, codec.DecodeString)
+	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
@@ -157,7 +157,7 @@ func (w htmlFormElementV8Wrapper[T]) method(cbCtx js.CallbackContext[T]) (js.Val
 func (w htmlFormElementV8Wrapper[T]) setMethod(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: HTMLFormElement.setMethod")
 	instance, err0 := js.As[html.HTMLFormElement](cbCtx.Instance())
-	val, err1 := parseSetterArg(cbCtx, codec.DecodeString)
+	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
