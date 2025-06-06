@@ -65,3 +65,25 @@ outer:
 	}
 	return
 }
+
+func ConsumeOptionalArg[T, U any](
+	cbCtx CallbackContext[T],
+	name string,
+	decoders ...func(CallbackContext[T], Value[T]) (U, error),
+) (result U, found bool, err error) {
+	value, _ := cbCtx.ConsumeArg()
+	if value == nil {
+		return
+	}
+	found = true
+	errs := make([]error, len(decoders))
+	for i, parser := range decoders {
+		result, errs[i] = parser(cbCtx, value)
+		if errs[i] == nil {
+			return
+		}
+	}
+	// TODO: This should eventually become a TypeError in JS
+	err = fmt.Errorf("tryParseArg: %s: %w", name, errors.Join(errs...))
+	return
+}

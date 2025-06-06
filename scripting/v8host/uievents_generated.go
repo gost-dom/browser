@@ -29,7 +29,7 @@ func (w mouseEventV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Val
 	if errArg1 != nil {
 		return nil, errArg1
 	}
-	eventInitDict, found, errArg := consumeOptionalArg(cbCtx, "eventInitDict", w.decodeMouseEventInit)
+	eventInitDict, found, errArg := js.ConsumeOptionalArg(cbCtx, "eventInitDict", w.decodeMouseEventInit)
 	if found {
 		if errArg != nil {
 			return nil, errArg
@@ -100,7 +100,7 @@ func (w uIEventV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[
 	if errArg1 != nil {
 		return nil, errArg1
 	}
-	eventInitDict, found, errArg := consumeOptionalArg(cbCtx, "eventInitDict", w.decodeUIEventInit)
+	eventInitDict, found, errArg := js.ConsumeOptionalArg(cbCtx, "eventInitDict", w.decodeUIEventInit)
 	if found {
 		if errArg != nil {
 			return nil, errArg

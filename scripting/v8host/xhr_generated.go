@@ -32,14 +32,14 @@ func (w formDataV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
 
 func (w formDataV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: FormData.Constructor")
-	form, found, errArg := consumeOptionalArg(cbCtx, "form", w.decodeHTMLFormElement)
+	form, found, errArg := js.ConsumeOptionalArg(cbCtx, "form", w.decodeHTMLFormElement)
 	if found {
 		if errArg != nil {
 			return nil, errArg
 		}
 		return w.CreateInstanceForm(cbCtx, form)
 	}
-	submitter, found, errArg := consumeOptionalArg(cbCtx, "submitter", codec.DecodeHTMLElement)
+	submitter, found, errArg := js.ConsumeOptionalArg(cbCtx, "submitter", codec.DecodeHTMLElement)
 	if found {
 		if errArg != nil {
 			return nil, errArg
@@ -195,7 +195,7 @@ func (w xmlHttpRequestV8Wrapper[T]) send(cbCtx js.CallbackContext[T]) (js.Value[
 	if errInst != nil {
 		return cbCtx.ReturnWithError(errInst)
 	}
-	body, found, errArg := consumeOptionalArg(cbCtx, "body", w.decodeDocument, w.decodeXMLHttpRequestBodyInit)
+	body, found, errArg := js.ConsumeOptionalArg(cbCtx, "body", w.decodeDocument, w.decodeXMLHttpRequestBodyInit)
 	if found {
 		if errArg != nil {
 			return nil, errArg

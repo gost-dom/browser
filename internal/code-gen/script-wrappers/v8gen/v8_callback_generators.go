@@ -12,6 +12,7 @@ import (
 )
 
 var ConsumeArgument = g.NewValuePackage("ConsumeArgument", packagenames.JS)
+var ConsumeOptionalArg = g.NewValuePackage("ConsumeOptionalArg", packagenames.JS)
 var ConsumeRestArguments = g.NewValuePackage("ConsumeRestArguments", packagenames.JS)
 
 // V8CallbackGenerators produces code for a function callback, i.e., when a
@@ -164,7 +165,7 @@ func (gen V8CallbackGenerators) CtxOrOperationCallback(
 		optArgsBlock.Append(
 			g.AssignMany(
 				g.List(arg, found, err),
-				g.NewValue("consumeOptionalArg").Call(parseArgs...),
+				ConsumeOptionalArg.Call(parseArgs...),
 			),
 			g.IfStmt{
 				Condition: found,

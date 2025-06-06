@@ -25,7 +25,7 @@ func (w pointerEventV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.V
 	if errArg1 != nil {
 		return nil, errArg1
 	}
-	eventInitDict, found, errArg := consumeOptionalArg(cbCtx, "eventInitDict", w.decodePointerEventInit)
+	eventInitDict, found, errArg := js.ConsumeOptionalArg(cbCtx, "eventInitDict", w.decodePointerEventInit)
 	if found {
 		if errArg != nil {
 			return nil, errArg

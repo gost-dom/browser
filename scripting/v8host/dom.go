@@ -26,7 +26,7 @@ func (l domTokenListV8Wrapper[T]) toggle(args js.CallbackContext[T]) (js.Value[T
 		return nil, err
 	}
 
-	force, found, err1 := consumeOptionalArg(args, "force", codec.DecodeBoolean)
+	force, found, err1 := js.ConsumeOptionalArg(args, "force", codec.DecodeBoolean)
 	if found {
 		if err1 != nil {
 			return nil, err1

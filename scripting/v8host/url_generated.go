@@ -37,7 +37,7 @@ func (w urlV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], 
 	if errArg1 != nil {
 		return nil, errArg1
 	}
-	base, found, errArg := consumeOptionalArg(cbCtx, "base", codec.DecodeString)
+	base, found, errArg := js.ConsumeOptionalArg(cbCtx, "base", codec.DecodeString)
 	if found {
 		if errArg != nil {
 			return nil, errArg
@@ -264,7 +264,7 @@ func (w urlSearchParamsV8Wrapper[T]) delete(cbCtx js.CallbackContext[T]) (js.Val
 	if errArg1 != nil {
 		return nil, errArg1
 	}
-	value, found, errArg := consumeOptionalArg(cbCtx, "value", codec.DecodeString)
+	value, found, errArg := js.ConsumeOptionalArg(cbCtx, "value", codec.DecodeString)
 	if found {
 		if errArg != nil {
 			return nil, errArg
@@ -314,7 +314,7 @@ func (w urlSearchParamsV8Wrapper[T]) has(cbCtx js.CallbackContext[T]) (js.Value[
 	if errArg1 != nil {
 		return nil, errArg1
 	}
-	value, found, errArg := consumeOptionalArg(cbCtx, "value", codec.DecodeString)
+	value, found, errArg := js.ConsumeOptionalArg(cbCtx, "value", codec.DecodeString)
 	if found {
 		if errArg != nil {
 			return nil, errArg

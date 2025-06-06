@@ -70,7 +70,7 @@ func (xhr xmlHttpRequestV8Wrapper[T]) open(cbCtx js.CallbackContext[T]) (js.Valu
 	if err := errors.Join(err0, err1, errInstance); err != nil {
 		return nil, err
 	}
-	if async, found, err2 := consumeOptionalArg(cbCtx, "async", codec.DecodeBoolean); found {
+	if async, found, err2 := js.ConsumeOptionalArg(cbCtx, "async", codec.DecodeBoolean); found {
 		if err2 != nil {
 			return nil, err2
 		}
