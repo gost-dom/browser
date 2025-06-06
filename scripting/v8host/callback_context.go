@@ -45,7 +45,9 @@ func (h *v8CallbackContext) ScriptCtx() *V8ScriptContext {
 
 func (c *v8CallbackContext) Scope() js.Scope[jsTypeParam] { return v8Scope{c.ScriptCtx()} }
 
-func (c *v8CallbackContext) ValueFactory() jsValueFactory { return v8ValueFactory{c.host, c} }
+func (c *v8CallbackContext) ValueFactory() jsValueFactory {
+	return v8ValueFactory{c.host, c.ScriptCtx()}
+}
 
 func (h *v8CallbackContext) ReturnWithValue(val jsValue) (jsValue, error) {
 	return val, nil
@@ -124,7 +126,7 @@ func (h *v8CallbackContext) ConsumeArg() (jsValue, bool) {
 
 type v8ValueFactory struct {
 	host *V8ScriptHost
-	ctx  *v8CallbackContext
+	ctx  *V8ScriptContext
 }
 
 func (f v8ValueFactory) iso() *v8go.Isolate { return f.host.iso }
@@ -137,7 +139,7 @@ func (f v8ValueFactory) NewInt64(val int64) jsValue   { return f.newV8Value(val)
 func (f v8ValueFactory) NewBoolean(val bool) jsValue  { return f.newV8Value(val) }
 
 func (f v8ValueFactory) JSONStringify(val jsValue) string {
-	r, err := v8.JSONStringify(f.ctx.v8ctx(), toV8Value(val))
+	r, err := v8.JSONStringify(f.ctx.v8ctx, toV8Value(val))
 	if err != nil {
 		panic(fmt.Sprintf("JSONStringify: unexpected error: %v. %s", err, constants.BUG_ISSUE_URL))
 	}
@@ -145,21 +147,21 @@ func (f v8ValueFactory) JSONStringify(val jsValue) string {
 }
 
 func (f v8ValueFactory) JSONParse(val string) (jsValue, error) {
-	v, err := v8.JSONParse(f.ctx.v8ctx(), val)
-	return newV8Value(f.ctx.ScriptCtx(), v), err
+	v, err := v8.JSONParse(f.ctx.v8ctx, val)
+	return newV8Value(f.ctx, v), err
 
 }
 
 func (f v8ValueFactory) NewArray(values ...jsValue) jsValue {
 	// Total hack, v8go doesn't expose Array values, so we polyfill the engine
 	var err error
-	arrayOf, err := f.ctx.v8ctx().RunScript("Array.of", "gost-polyfills-array")
+	arrayOf, err := f.ctx.v8ctx.RunScript("Array.of", "gost-polyfills-array")
 	if err != nil {
 		panic(err)
 	}
-	arrVal := newV8Value(f.ctx.ScriptCtx(), arrayOf)
+	arrVal := newV8Value(f.ctx, arrayOf)
 	if fn, ok := arrVal.AsFunction(); ok {
-		res, err := fn.Call(f.ctx.ScriptCtx().global, values...)
+		res, err := fn.Call(f.ctx.global, values...)
 		if err != nil {
 			panic(err)
 		}
@@ -172,7 +174,7 @@ func (f v8ValueFactory) NewArray(values ...jsValue) jsValue {
 func (f v8ValueFactory) NewIterator(
 	i iter.Seq2[js.Value[jsTypeParam], error],
 ) js.Value[jsTypeParam] {
-	return f.host.iterator.newIterator(f.ctx, i)
+	return f.host.iterator.newIterator(v8Scope{f.ctx}, i)
 }
 
 func (f v8ValueFactory) NewTypeError(msg string) error {
@@ -196,11 +198,11 @@ func (f v8ValueFactory) newV8Value(val any) jsValue {
 			),
 		)
 	}
-	return newV8Value(f.ctx.ScriptCtx(), res)
+	return newV8Value(f.ctx, res)
 }
 
 func (f v8ValueFactory) toVal(val *v8go.Value) jsValue {
-	return newV8Value(f.ctx.ScriptCtx(), val)
+	return newV8Value(f.ctx, val)
 }
 
 type internalCallback = func(js.CallbackContext[jsTypeParam]) (jsValue, error)

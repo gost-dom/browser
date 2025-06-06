@@ -39,7 +39,8 @@ func (i v8Iterator) cloneIterator(cbCtx jsCallbackContext) (jsValue, error) {
 	if err != nil {
 		return cbCtx.ReturnWithError(err)
 	}
-	return i.newIterator(cbCtx, instance.items), nil
+
+	return i.newIterator(cbCtx.Scope().(v8Scope), instance.items), nil
 }
 
 type jsIteratorInstance struct {
@@ -50,7 +51,7 @@ type jsIteratorInstance struct {
 }
 
 func (i v8Iterator) newIterator(
-	cbCtx jsCallbackContext,
+	scope v8Scope,
 	items iter.Seq2[jsValue, error],
 ) jsValue {
 	seq := items
@@ -61,12 +62,11 @@ func (i v8Iterator) newIterator(
 		next:  next,
 		stop:  stop,
 	}
-	ctx := cbCtx.(*v8CallbackContext)
-	res, err := i.ot.NewInstance(ctx.v8ctx())
+	res, err := i.ot.NewInstance(scope.v8ctx)
 	if err != nil {
 		panic(fmt.Sprintf("Could not create iterator instance. %s", constants.BUG_ISSUE_URL))
 	}
-	obj := newV8Object(ctx.ScriptCtx(), res)
+	obj := newV8Object(scope.V8ScriptContext, res)
 	obj.SetNativeValue(iterator)
 	return obj
 }
