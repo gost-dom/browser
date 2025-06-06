@@ -227,15 +227,6 @@ func wrapV8Callback(
 	)
 }
 
-/* -------- Decoders -------- */
-
-func newTypeError(
-	cbCtx jsCallbackContext,
-	msg string,
-) error {
-	return cbCtx.ValueFactory().NewTypeError(msg)
-}
-
 /* -------- v8Scope -------- */
 
 type v8Scope struct {
