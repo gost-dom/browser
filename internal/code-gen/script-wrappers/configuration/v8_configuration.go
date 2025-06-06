@@ -1,14 +1,43 @@
 package configuration
 
-import "github.com/gost-dom/code-gen/packagenames"
+import (
+	"fmt"
+
+	"github.com/gost-dom/code-gen/packagenames"
+)
+
+func CreateV8SpecsForSpec(spec string) WebIdlConfigurations {
+	specs := CreateSpecs()
+
+	switch spec {
+	case "dom":
+		configureDOMSpecs(specs.Module("dom"))
+		ConfigureDOMSpecs(&specs)
+		ConfigureEventSpecs(&specs)
+	case "html":
+		configureHTMLSpecs(specs.Module("html"))
+		ConfigureHTMLSpecs(&specs)
+	case "xhr":
+		configureXHRSpecs(specs.Module("xhr"))
+	case "url":
+		configureURLSpecs(specs.Module("url"))
+	default:
+		panic(fmt.Sprintf("bad spec: %s", spec))
+	}
+
+	return specs
+}
 
 func CreateV8Specs() WebIdlConfigurations {
 	specs := CreateSpecs()
 
-	configureDOMSpecs(specs.Module("dom"))
-	configureHTMLSpecs(specs.Module("html"))
+	// configureDOMSpecs(specs.Module("dom"))
+	// configureHTMLSpecs(specs.Module("html"))
+	// configureXHRSpecs(specs.Module("xhr"))
+	return specs
+}
 
-	xhrModule := specs.Module("xhr")
+func configureXHRSpecs(xhrModule *WebIdlConfiguration) {
 	xhrEventTarget := xhrModule.Type("XMLHttpRequestEventTarget")
 	xhrEventTarget.OverrideWrappedType = &GoType{
 		Package: packagenames.Events,
@@ -31,8 +60,9 @@ func CreateV8Specs() WebIdlConfigurations {
 
 	formData := xhrModule.Type("FormData")
 	formData.RunCustomCode = true
+}
 
-	urlSpecs := specs.Module("url")
+func configureURLSpecs(urlSpecs *WebIdlConfiguration) {
 	urlSearchParams := urlSpecs.Type("URLSearchParams")
 	urlSearchParams.SkipConstructor = true
 	urlSearchParams.RunCustomCode = true
@@ -56,7 +86,6 @@ func CreateV8Specs() WebIdlConfigurations {
 		"setSearch",
 	)
 
-	return specs
 }
 
 func configureDOMSpecs(domSpecs *WebIdlConfiguration) {

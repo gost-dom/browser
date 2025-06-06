@@ -8,6 +8,10 @@ import (
 
 func NewGojaWrapperModuleGenerator() wrappers.ScriptWrapperModulesGenerator {
 	specs := configuration.CreateSpecs()
+	configuration.ConfigureDOMSpecs(&specs)
+	configuration.ConfigureEventSpecs(&specs)
+	configuration.ConfigureHTMLSpecs(&specs)
+
 	dom := specs.Module("dom")
 	domNode := dom.Type("Node")
 	domNode.Method("childNodes").SetNotImplemented()

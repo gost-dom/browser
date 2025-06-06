@@ -5,9 +5,9 @@ package configuration
 func CreateSpecs() WebIdlConfigurations {
 	specs := NewWrapperGeneratorsSpec()
 
-	ConfigureDOMSpecs(&specs)
-	ConfigureHTMLSpecs(&specs)
-	ConfigureEventSpecs(&specs)
+	// ConfigureDOMSpecs(&specs)
+	// ConfigureHTMLSpecs(&specs)
+	// ConfigureEventSpecs(&specs)
 
 	return specs
 }

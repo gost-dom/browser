@@ -96,6 +96,7 @@ func (gen ScriptWrapperModulesGenerator) writeModules(
 	errs := make([]error, len(specs))
 	i := 0
 	for _, spec := range specs {
+		fmt.Println("Generate module", spec.Name)
 		if spec.MultipleFiles {
 			errs[i] = gen.writeModuleTypes(spec)
 		} else {

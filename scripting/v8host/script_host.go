@@ -13,6 +13,9 @@ import (
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting"
+	"github.com/gost-dom/browser/scripting/internal"
+	jsdom "github.com/gost-dom/browser/scripting/internal/dom"
+	jshtml "github.com/gost-dom/browser/scripting/internal/html"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
 )
@@ -143,10 +146,10 @@ func init() {
 	registerClass("File", "", newCustomEventV8Wrapper)
 	registerClass("CustomEvent", "Event", newCustomEventV8Wrapper)
 
-	registerClass("HTMLDocument", "Document", newHTMLDocumentV8Wrapper)
-	registerClass("DocumentFragment", "Node", newDocumentFragmentV8Wrapper)
+	registerClass("HTMLDocument", "Document", jshtml.NewHTMLDocumentV8Wrapper)
+	registerClass("DocumentFragment", "Node", jsdom.NewDocumentFragmentV8Wrapper)
 	registerClass("ShadowRoot", "DocumentFragment", newUnconstructableV8Wrapper)
-	Bootstrap(classRegistrations)
+	internal.Bootstrap(classRegistrations)
 
 	for _, cls := range scripting.HtmlElements {
 		if !classRegistrations.HasClass(cls) && cls != "HTMLElement" {

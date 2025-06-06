@@ -1,0 +1,56 @@
+// This file is generated. Do not edit.
+
+package dom
+
+import (
+	"errors"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
+	js "github.com/gost-dom/browser/scripting/internal/js"
+)
+
+func (wrapper PointerEventV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
+	wrapper.installPrototype(jsClass)
+}
+
+func (w PointerEventV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
+	jsClass.CreatePrototypeAttribute("width", w.width, nil)
+	jsClass.CreatePrototypeAttribute("height", w.height, nil)
+	jsClass.CreatePrototypeAttribute("pressure", w.pressure, nil)
+	jsClass.CreatePrototypeAttribute("tangentialPressure", w.tangentialPressure, nil)
+}
+
+func (w PointerEventV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	cbCtx.Logger().Debug("V8 Function call: PointerEvent.Constructor")
+	type_, errArg1 := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	eventInitDict, found, errArg := js.ConsumeOptionalArg(cbCtx, "eventInitDict", w.decodePointerEventInit)
+	if found {
+		if errArg != nil {
+			return nil, errArg
+		}
+		return w.CreateInstanceEventInitDict(cbCtx, type_, eventInitDict)
+	}
+	return w.CreateInstance(cbCtx, type_)
+}
+
+func (w PointerEventV8Wrapper[T]) width(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	cbCtx.Logger().Debug("V8 Function call: PointerEvent.width")
+	return cbCtx.ReturnWithError(errors.New("PointerEvent.width: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
+}
+
+func (w PointerEventV8Wrapper[T]) height(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	cbCtx.Logger().Debug("V8 Function call: PointerEvent.height")
+	return cbCtx.ReturnWithError(errors.New("PointerEvent.height: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
+}
+
+func (w PointerEventV8Wrapper[T]) pressure(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	cbCtx.Logger().Debug("V8 Function call: PointerEvent.pressure")
+	return cbCtx.ReturnWithError(errors.New("PointerEvent.pressure: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
+}
+
+func (w PointerEventV8Wrapper[T]) tangentialPressure(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	cbCtx.Logger().Debug("V8 Function call: PointerEvent.tangentialPressure")
+	return cbCtx.ReturnWithError(errors.New("PointerEvent.tangentialPressure: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
+}

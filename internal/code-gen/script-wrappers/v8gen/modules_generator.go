@@ -15,3 +15,13 @@ func NewScriptWrapperModulesGenerator() wrappers.ScriptWrapperModulesGenerator {
 		TargetGenerators: V8TargetGenerators{},
 	}
 }
+
+func NewScriptWrapperModulesGeneratorForSpec(spec string) wrappers.ScriptWrapperModulesGenerator {
+	specs := configuration.CreateV8SpecsForSpec(spec)
+
+	return wrappers.ScriptWrapperModulesGenerator{
+		Specs:            specs,
+		PackagePath:      packagenames.ScriptPackageName(spec),
+		TargetGenerators: V8TargetGenerators{},
+	}
+}

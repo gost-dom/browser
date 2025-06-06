@@ -14,7 +14,7 @@ import (
 	"github.com/gost-dom/webref/idl"
 )
 
-func Write(specs configuration.WebIdlConfigurations) error {
+func Write(api string, specs configuration.WebIdlConfigurations) error {
 	statements := g.StatementList()
 	registrator := g.Id("reg")
 	s := slices.Collect(maps.Values(specs))
@@ -36,7 +36,7 @@ func Write(specs configuration.WebIdlConfigurations) error {
 					registrator,
 					g.Lit(typeInfo.Name()),
 					g.Lit(typeInfo.Extends()),
-					g.Id(fmt.Sprintf("new%sV8Wrapper", typeInfo.Name())),
+					g.Id(fmt.Sprintf("New%sV8Wrapper", typeInfo.Name())),
 				))
 		}
 	}
@@ -51,10 +51,10 @@ func Write(specs configuration.WebIdlConfigurations) error {
 		return err
 	}
 
-	return writeGenerator(writer, packagenames.V8host, bootstrap)
+	return writeGenerator(writer, packagenames.ScriptPackageName(api), bootstrap)
 }
 
-func GenerateRegisterFunctions() error {
-	specs := configuration.CreateV8Specs()
-	return Write(specs)
+func GenerateRegisterFunctions(spec string) error {
+	specs := configuration.CreateV8SpecsForSpec(spec)
+	return Write(spec, specs)
 }

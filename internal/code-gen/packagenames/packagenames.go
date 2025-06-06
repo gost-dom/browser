@@ -13,8 +13,10 @@ const (
 	Dom            = BASE_PKG + "/dom"
 	Events         = Dom + "/event"
 	Html           = BASE_PKG + "/html"
+	Scripting      = BASE_PKG + "/scripting"
 	V8host         = BASE_PKG + "/scripting/v8host"
 	Gojahost       = BASE_PKG + "/scripting/gojahost"
+	JSDom          = BASE_PKG + "/scripting/internal/dom"
 	Log            = BASE_PKG + "/internal/log"
 	UIEvents       = BASE_PKG + "/internal/uievents"
 	DomInterfaces  = BASE_PKG + "/internal/interfaces/dom-interfaces"
@@ -27,6 +29,10 @@ const (
 	V8go           = "github.com/gost-dom/v8go"
 	Goja           = "github.com/dop251/goja"
 )
+
+func ScriptPackageName(api string) string {
+	return Scripting + "/internal/" + api
+}
 
 var names = map[string]string{
 	"dom":            Dom,

@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/dave/jennifer/jen"
-	. "github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/generators"
 	g "github.com/gost-dom/generators"
 )
@@ -12,7 +11,7 @@ import (
 type V8WrapperStructGenerators struct{}
 
 func (g V8WrapperStructGenerators) WrapperStructTypeDef(interfaceName string) generators.Type {
-	name := fmt.Sprintf("%sV8Wrapper", LowerCaseFirstLetter(interfaceName))
+	name := fmt.Sprintf("%sV8Wrapper", interfaceName)
 	// return generators.NewType(name)
 	return generators.Type{
 		Generator: generators.Raw(jen.Id(name).Types(jen.Id("T").Any())),
@@ -20,7 +19,7 @@ func (g V8WrapperStructGenerators) WrapperStructTypeDef(interfaceName string) ge
 }
 
 func (g V8WrapperStructGenerators) WrapperStructTypeRetDef(interfaceName string) generators.Type {
-	name := fmt.Sprintf("%sV8Wrapper", LowerCaseFirstLetter(interfaceName))
+	name := fmt.Sprintf("%sV8Wrapper", interfaceName)
 	// return generators.NewType(name)
 	return generators.Type{
 		Generator: generators.Raw(jen.Id(name).Types(jen.Id("T"))),
@@ -28,7 +27,7 @@ func (g V8WrapperStructGenerators) WrapperStructTypeRetDef(interfaceName string)
 }
 
 func (g V8WrapperStructGenerators) WrapperStructType(interfaceName string) generators.Type {
-	name := fmt.Sprintf("%sV8Wrapper", LowerCaseFirstLetter(interfaceName))
+	name := fmt.Sprintf("%sV8Wrapper", interfaceName)
 	// return generators.NewType(name)
 	return generators.Type{
 		Generator: generators.Raw(jen.Id(name).Types(jen.Id("T"))),
@@ -36,13 +35,13 @@ func (g V8WrapperStructGenerators) WrapperStructType(interfaceName string) gener
 }
 
 func (g V8WrapperStructGenerators) WrapperStructConstructorName(interfaceName string) string {
-	return fmt.Sprintf("new%sV8Wrapper", interfaceName)
+	return fmt.Sprintf("New%sV8Wrapper", interfaceName)
 }
 
 func (g V8WrapperStructGenerators) WrapperStructConstructorRetType(
 	idlInterfaceName string,
 ) g.Generator {
-	name := fmt.Sprintf("%sV8Wrapper", LowerCaseFirstLetter(idlInterfaceName))
+	name := fmt.Sprintf("%sV8Wrapper", idlInterfaceName)
 	return generators.Type{
 		Generator: generators.Raw(jen.Id(name).Types(jen.Id("T"))),
 	}.Pointer()

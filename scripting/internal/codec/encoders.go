@@ -72,3 +72,15 @@ func EncodeNillableString[T any](
 func EncodeNull[T any](cbCtx js.CallbackScope[T]) (js.Value[T], error) {
 	return cbCtx.ValueFactory().Null(), nil
 }
+
+// EncodeConstrucedValue is a simple helper for JS constructor callbacks to
+// store the constructed Go value in the JavaScript object, and possibly cache
+// it with the script context.
+func EncodeConstrucedValue[T any](cbCtx js.CallbackScope[T], val any) (js.Value[T], error) {
+	// TODO: Figure out if this function should survive
+	cbCtx.This().SetNativeValue(val)
+	if e, ok := val.(entity.ObjectIder); ok {
+		cbCtx.Scope().SetValue(e, cbCtx.This())
+	}
+	return nil, nil
+}
