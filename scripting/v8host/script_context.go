@@ -118,7 +118,7 @@ func (context *V8ScriptContext) initializeGlobals() error {
 		// and verified by tests. Furthermore, in JS, document.location must
 		// return the same object as window.location (document.location looks up
 		// window.location)
-		scope := v8Scope{context}
+		scope := v8Scope{context.host, context}
 		l, err := scope.Constructor("Location").NewInstance(win.Location())
 		if err != nil {
 			return err

@@ -9,8 +9,12 @@ import (
 // a wrapper already has been created, that wrapper is returned; otherwise a new
 // object is created with the correct prototype configured.
 func EncodeEntity[T any](cbCtx js.CallbackScope[T], e entity.ObjectIder) (js.Value[T], error) {
-	fact := cbCtx.ValueFactory()
-	scope := cbCtx.Scope()
+	return EncodeEntityScoped(cbCtx.Scope(), e)
+}
+
+// TODO: Embed scope in CallbackScope, so only one function is necessary
+func EncodeEntityScoped[T any](scope js.Scope[T], e entity.ObjectIder) (js.Value[T], error) {
+	fact := scope.ValueFactory()
 
 	if e == nil {
 		return fact.Null(), nil
@@ -21,7 +25,7 @@ func EncodeEntity[T any](cbCtx js.CallbackScope[T], e entity.ObjectIder) (js.Val
 	}
 
 	prototypeName := LookupJSPrototype(e)
-	prototype := cbCtx.Scope().Constructor(prototypeName)
+	prototype := scope.Constructor(prototypeName)
 	value, err := prototype.NewInstance(e)
 	if err == nil {
 		scope.SetValue(e, value)
@@ -34,6 +38,11 @@ func EncodeBoolean[T any](cbCtx js.CallbackScope[T], b bool) (js.Value[T], error
 }
 func EncodeInt[T any](cbCtx js.CallbackScope[T], i int) (js.Value[T], error) {
 	return cbCtx.ValueFactory().NewInt32(int32(i)), nil
+}
+
+// TODO: Embed scope in CallbackScope, so only one function is necessary
+func EncodeStringScoped[T any](cbCtx js.Scope[T], s string) (js.Value[T], error) {
+	return cbCtx.ValueFactory().NewString(s), nil
 }
 
 func EncodeString[T any](cbCtx js.CallbackScope[T], s string) (js.Value[T], error) {

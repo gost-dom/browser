@@ -31,6 +31,8 @@ type Scope[T any] interface {
 	GetValue(entity.ObjectIder) (Value[T], bool)
 	SetValue(entity.ObjectIder, Value[T])
 	Constructor(string) Constructor[T]
+
+	ValueFactory() ValueFactory[T]
 }
 
 type ArgumentConsumer[T any] interface {

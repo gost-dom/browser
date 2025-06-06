@@ -13,7 +13,7 @@ type iterator[T, U any] struct {
 	entityLookup entityLookup[T, U]
 }
 
-type entityLookup[T, U any] func(ctx js.CallbackScope[U], value T) (js.Value[U], error)
+type entityLookup[T, U any] func(ctx js.Scope[U], value T) (js.Value[U], error)
 
 func newIterator[T, U any](entityLookup entityLookup[T, U]) iterator[T, U] {
 	return iterator[T, U]{entityLookup}
@@ -27,19 +27,19 @@ type sliceIter[T any] interface {
 }
 
 func (i iterator[T, U]) newIteratorOfSlice(
-	cbCtx js.CallbackContext[U],
+	cbCtx js.Scope[U],
 	items []T,
 ) (js.Value[U], error) {
 	return i.newIterator(cbCtx, slices.Values(items))
 }
 
 func (i iterator[T, U]) mapItems(
-	cbCtx js.CallbackContext[U],
+	scope js.Scope[U],
 	items iter.Seq[T],
 ) iter.Seq2[js.Value[U], error] {
 	return func(yield func(js.Value[U], error) bool) {
 		for item := range items {
-			if !yield(i.entityLookup(cbCtx, item)) {
+			if !yield(i.entityLookup(scope, item)) {
 				return
 			}
 		}
@@ -47,7 +47,7 @@ func (i iterator[T, U]) mapItems(
 }
 
 func (i iterator[T, U]) newIterator(
-	cbCtx js.CallbackContext[U],
+	cbCtx js.Scope[U],
 	items iter.Seq[T],
 ) (js.Value[U], error) {
 	return cbCtx.ValueFactory().NewIterator(i.mapItems(cbCtx, items)), nil
@@ -61,11 +61,11 @@ func (i iterator[T, U]) installPrototype(class js.Class[U]) {
 func (i iterator[T, U]) entries(cbCtx js.CallbackContext[U]) (js.Value[U], error) {
 	instance, err1 := js.As[iterable[T]](cbCtx.Instance())
 	if err1 == nil {
-		return i.newIterator(cbCtx, instance.All())
+		return i.newIterator(cbCtx.Scope(), instance.All())
 	}
 	sliceIter, err2 := js.As[sliceIter[T]](cbCtx.Instance())
 	if err2 == nil {
-		return i.newIteratorOfSlice(cbCtx, sliceIter.All())
+		return i.newIteratorOfSlice(cbCtx.Scope(), sliceIter.All())
 	}
 	return nil, fmt.Errorf("iterator.getEntries: %w", errors.Join(err1, err2))
 }
@@ -97,8 +97,8 @@ func (i iterator2[K, V, U]) mapItems(
 	items iter.Seq2[K, V]) iter.Seq2[js.Value[U], error] {
 	return func(yield func(js.Value[U], error) bool) {
 		for k, v := range items {
-			kk, err1 := i.keyLookup(cbCtx, k)
-			vv, err2 := i.valueLookup(cbCtx, v)
+			kk, err1 := i.keyLookup(cbCtx.Scope(), k)
+			vv, err2 := i.valueLookup(cbCtx.Scope(), v)
 			err := errors.Join(err1, err2)
 			res := cbCtx.ValueFactory().NewArray(kk, vv) // Safe to call on nil jsValues
 			if !yield(res, err) {
@@ -132,14 +132,14 @@ func (i iterator2[K, V, U]) installPrototype(cls js.Class[U]) {
 		if err != nil {
 			return nil, err
 		}
-		return keys.newIterator(cbCtx, pairKeys(instance.All()))
+		return keys.newIterator(cbCtx.Scope(), pairKeys(instance.All()))
 	})
 	cls.CreatePrototypeMethod("values", func(cbCtx js.CallbackContext[U]) (js.Value[U], error) {
 		instance, err := js.As[iterable2[K, V]](cbCtx.Instance())
 		if err != nil {
 			return nil, err
 		}
-		return values.newIterator(cbCtx, pairValues(instance.All()))
+		return values.newIterator(cbCtx.Scope(), pairValues(instance.All()))
 	})
 }
 

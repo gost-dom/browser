@@ -15,10 +15,7 @@ func (l domTokenListV8Wrapper[T]) CustomInitializer(class js.Class[T]) {
 	it.installPrototype(class)
 }
 
-func (w domTokenListV8Wrapper[T]) toString_(
-	cbCtx js.CallbackScope[T],
-	val string,
-) (js.Value[T], error) {
+func (w domTokenListV8Wrapper[T]) toString_(cbCtx js.Scope[T], val string) (js.Value[T], error) {
 	return cbCtx.ValueFactory().NewString(val), nil
 }
 

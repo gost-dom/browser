@@ -8,8 +8,8 @@ import (
 
 func (w *nodeListV8Wrapper[T]) CustomInitializer(class js.Class[T]) {
 	nodeListIterator := newIterator(
-		func(ctx js.CallbackScope[T], instance dom.Node) (js.Value[T], error) {
-			return encodeEntity(ctx, instance)
+		func(ctx js.Scope[T], instance dom.Node) (js.Value[T], error) {
+			return codec.EncodeEntityScoped(ctx, instance)
 		})
 	nodeListIterator.installPrototype(class)
 

@@ -43,7 +43,7 @@ func (h *v8CallbackContext) ScriptCtx() *V8ScriptContext {
 	return h.host.mustGetContext(h.v8Info.Context())
 }
 
-func (c *v8CallbackContext) Scope() js.Scope[jsTypeParam] { return v8Scope{c.ScriptCtx()} }
+func (c *v8CallbackContext) Scope() js.Scope[jsTypeParam] { return v8Scope{c.host, c.ScriptCtx()} }
 
 func (c *v8CallbackContext) ValueFactory() jsValueFactory {
 	return v8ValueFactory{c.host, c.ScriptCtx()}
@@ -174,7 +174,7 @@ func (f v8ValueFactory) NewArray(values ...jsValue) jsValue {
 func (f v8ValueFactory) NewIterator(
 	i iter.Seq2[js.Value[jsTypeParam], error],
 ) js.Value[jsTypeParam] {
-	return f.host.iterator.newIterator(v8Scope{f.ctx}, i)
+	return f.host.iterator.newIterator(v8Scope{f.host, f.ctx}, i)
 }
 
 func (f v8ValueFactory) NewTypeError(msg string) error {
@@ -232,12 +232,17 @@ func wrapV8Callback(
 /* -------- v8Scope -------- */
 
 type v8Scope struct {
+	host *V8ScriptHost
 	*V8ScriptContext
 }
 
 func (s v8Scope) Window() html.Window  { return s.window }
 func (s v8Scope) GlobalThis() jsObject { return s.global }
 func (s v8Scope) Clock() *clock.Clock  { return s.clock }
+
+func (s v8Scope) ValueFactory() js.ValueFactory[jsTypeParam] {
+	return v8ValueFactory{host: s.host, ctx: s.V8ScriptContext}
+}
 
 func (c v8Scope) Constructor(name string) js.Constructor[jsTypeParam] {
 	return v8Constructable{c, c.getConstructor(name)}
