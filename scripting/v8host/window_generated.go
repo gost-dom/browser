@@ -8,12 +8,10 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type windowV8Wrapper[T any] struct {
-	handleReffedObject[html.Window, T]
-}
+type windowV8Wrapper[T any] struct{}
 
 func newWindowV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *windowV8Wrapper[T] {
-	return &windowV8Wrapper[T]{newHandleReffedObject[html.Window, T](scriptHost)}
+	return &windowV8Wrapper[T]{}
 }
 
 func (wrapper windowV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

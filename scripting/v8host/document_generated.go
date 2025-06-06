@@ -10,15 +10,11 @@ import (
 )
 
 type documentV8Wrapper[T any] struct {
-	handleReffedObject[dom.Document, T]
 	parentNode *parentNodeV8Wrapper[T]
 }
 
 func newDocumentV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *documentV8Wrapper[T] {
-	return &documentV8Wrapper[T]{
-		newHandleReffedObject[dom.Document, T](scriptHost),
-		newParentNodeV8Wrapper(scriptHost),
-	}
+	return &documentV8Wrapper[T]{newParentNodeV8Wrapper(scriptHost)}
 }
 
 func (wrapper documentV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

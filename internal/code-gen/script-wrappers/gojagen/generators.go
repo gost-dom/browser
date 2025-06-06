@@ -291,7 +291,7 @@ func (g GojaTargetGenerators) EmbeddedType(wrappedType g.Generator) g.Generator 
 	return generators.NewType("baseInstanceWrapper").TypeParam(wrappedType)
 }
 
-func (g GojaTargetGenerators) EmbeddedTypeConstructor(wrappedType g.Generator) g.Value {
+func (g GojaTargetGenerators) EmbeddedTypeConstructor(wrappedType g.Generator) g.Generator {
 	return generators.NewValue("newBaseInstanceWrapper").TypeParam(wrappedType)
 }
 

@@ -4,7 +4,6 @@ package v8host
 
 import (
 	"errors"
-	uievents "github.com/gost-dom/browser/internal/uievents"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -80,12 +79,10 @@ func (w mouseEventV8Wrapper[T]) relatedTarget(cbCtx js.CallbackContext[T]) (js.V
 	return cbCtx.ReturnWithError(errors.New("MouseEvent.relatedTarget: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-type uIEventV8Wrapper[T any] struct {
-	handleReffedObject[uievents.UIEvent, T]
-}
+type uIEventV8Wrapper[T any] struct{}
 
 func newUIEventV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *uIEventV8Wrapper[T] {
-	return &uIEventV8Wrapper[T]{newHandleReffedObject[uievents.UIEvent, T](scriptHost)}
+	return &uIEventV8Wrapper[T]{}
 }
 
 func (wrapper uIEventV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

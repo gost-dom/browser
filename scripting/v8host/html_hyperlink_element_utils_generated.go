@@ -9,12 +9,10 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type htmlHyperlinkElementUtilsV8Wrapper[T any] struct {
-	handleReffedObject[html.HTMLHyperlinkElementUtils, T]
-}
+type htmlHyperlinkElementUtilsV8Wrapper[T any] struct{}
 
 func newHTMLHyperlinkElementUtilsV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *htmlHyperlinkElementUtilsV8Wrapper[T] {
-	return &htmlHyperlinkElementUtilsV8Wrapper[T]{newHandleReffedObject[html.HTMLHyperlinkElementUtils, T](scriptHost)}
+	return &htmlHyperlinkElementUtilsV8Wrapper[T]{}
 }
 
 func (wrapper htmlHyperlinkElementUtilsV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

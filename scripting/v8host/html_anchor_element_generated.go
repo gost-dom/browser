@@ -10,15 +10,11 @@ import (
 )
 
 type htmlAnchorElementV8Wrapper[T any] struct {
-	handleReffedObject[html.HTMLAnchorElement, T]
 	htmlHyperlinkElementUtils *htmlHyperlinkElementUtilsV8Wrapper[T]
 }
 
 func newHTMLAnchorElementV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *htmlAnchorElementV8Wrapper[T] {
-	return &htmlAnchorElementV8Wrapper[T]{
-		newHandleReffedObject[html.HTMLAnchorElement, T](scriptHost),
-		newHTMLHyperlinkElementUtilsV8Wrapper(scriptHost),
-	}
+	return &htmlAnchorElementV8Wrapper[T]{newHTMLHyperlinkElementUtilsV8Wrapper(scriptHost)}
 }
 
 func (wrapper htmlAnchorElementV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

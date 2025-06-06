@@ -4,19 +4,16 @@ package v8host
 
 import (
 	"errors"
-	event "github.com/gost-dom/browser/dom/event"
 	html "github.com/gost-dom/browser/html"
 	html1 "github.com/gost-dom/browser/internal/html"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type formDataV8Wrapper[T any] struct {
-	handleReffedObject[*html.FormData, T]
-}
+type formDataV8Wrapper[T any] struct{}
 
 func newFormDataV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *formDataV8Wrapper[T] {
-	return &formDataV8Wrapper[T]{newHandleReffedObject[*html.FormData, T](scriptHost)}
+	return &formDataV8Wrapper[T]{}
 }
 
 func (wrapper formDataV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
@@ -140,12 +137,10 @@ func (w formDataV8Wrapper[T]) set(cbCtx js.CallbackContext[T]) (js.Value[T], err
 	return nil, nil
 }
 
-type xmlHttpRequestV8Wrapper[T any] struct {
-	handleReffedObject[html1.XMLHttpRequest, T]
-}
+type xmlHttpRequestV8Wrapper[T any] struct{}
 
 func newXMLHttpRequestV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *xmlHttpRequestV8Wrapper[T] {
-	return &xmlHttpRequestV8Wrapper[T]{newHandleReffedObject[html1.XMLHttpRequest, T](scriptHost)}
+	return &xmlHttpRequestV8Wrapper[T]{}
 }
 
 func (wrapper xmlHttpRequestV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
@@ -377,12 +372,10 @@ func (w xmlHttpRequestV8Wrapper[T]) responseXML(cbCtx js.CallbackContext[T]) (js
 	return cbCtx.ReturnWithError(errors.New("XMLHttpRequest.responseXML: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-type xmlHttpRequestEventTargetV8Wrapper[T any] struct {
-	handleReffedObject[event.EventTarget, T]
-}
+type xmlHttpRequestEventTargetV8Wrapper[T any] struct{}
 
 func newXMLHttpRequestEventTargetV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *xmlHttpRequestEventTargetV8Wrapper[T] {
-	return &xmlHttpRequestEventTargetV8Wrapper[T]{newHandleReffedObject[event.EventTarget, T](scriptHost)}
+	return &xmlHttpRequestEventTargetV8Wrapper[T]{}
 }
 
 func (wrapper xmlHttpRequestEventTargetV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

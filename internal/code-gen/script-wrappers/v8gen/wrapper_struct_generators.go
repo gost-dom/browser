@@ -49,22 +49,24 @@ func (g V8WrapperStructGenerators) WrapperStructConstructorRetType(
 }
 
 func (gen V8WrapperStructGenerators) EmbeddedType(wrappedType g.Generator) g.Generator {
-	return g.Raw(
-		generators.NewType("handleReffedObject").Generate().
-			Types(
-				wrappedType.Generate(),
-				jen.Id("T"),
-			))
+	return g.Noop
+	// return g.Raw(
+	// 	generators.NewType("handleReffedObject").Generate().
+	// 		Types(
+	// 			wrappedType.Generate(),
+	// 			jen.Id("T"),
+	// 		))
 }
 
-func (g V8WrapperStructGenerators) EmbeddedTypeConstructor(
+func (gen V8WrapperStructGenerators) EmbeddedTypeConstructor(
 	wrappedType g.Generator,
-) generators.Value {
-	return generators.ValueOf(generators.Raw(
-		generators.NewValue("newHandleReffedObject").
-			Generate().
-			Types(wrappedType.Generate(), jen.Id("T")),
-	))
+) g.Generator {
+	return nil
+	// return generators.ValueOf(generators.Raw(
+	// 	generators.NewValue("newHandleReffedObject").
+	// 		Generate().
+	// 		Types(wrappedType.Generate(), jen.Id("T")),
+	// ))
 }
 
 func (g V8WrapperStructGenerators) HostArg() g.Generator {

@@ -8,12 +8,10 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type mutationRecordV8Wrapper[T any] struct {
-	handleReffedObject[*dominterfaces.MutationRecord, T]
-}
+type mutationRecordV8Wrapper[T any] struct{}
 
 func newMutationRecordV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *mutationRecordV8Wrapper[T] {
-	return &mutationRecordV8Wrapper[T]{newHandleReffedObject[*dominterfaces.MutationRecord, T](scriptHost)}
+	return &mutationRecordV8Wrapper[T]{}
 }
 
 func (wrapper mutationRecordV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

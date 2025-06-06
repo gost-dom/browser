@@ -9,12 +9,10 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type htmlFormElementV8Wrapper[T any] struct {
-	handleReffedObject[html.HTMLFormElement, T]
-}
+type htmlFormElementV8Wrapper[T any] struct{}
 
 func newHTMLFormElementV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *htmlFormElementV8Wrapper[T] {
-	return &htmlFormElementV8Wrapper[T]{newHandleReffedObject[html.HTMLFormElement, T](scriptHost)}
+	return &htmlFormElementV8Wrapper[T]{}
 }
 
 func (wrapper htmlFormElementV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

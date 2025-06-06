@@ -8,12 +8,10 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type htmlTemplateElementV8Wrapper[T any] struct {
-	handleReffedObject[html.HTMLTemplateElement, T]
-}
+type htmlTemplateElementV8Wrapper[T any] struct{}
 
 func newHTMLTemplateElementV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *htmlTemplateElementV8Wrapper[T] {
-	return &htmlTemplateElementV8Wrapper[T]{newHandleReffedObject[html.HTMLTemplateElement, T](scriptHost)}
+	return &htmlTemplateElementV8Wrapper[T]{}
 }
 
 func (wrapper htmlTemplateElementV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

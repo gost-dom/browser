@@ -7,12 +7,10 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type nonDocumentTypeChildNodeV8Wrapper[T any] struct {
-	handleReffedObject[dom.NonDocumentTypeChildNode, T]
-}
+type nonDocumentTypeChildNodeV8Wrapper[T any] struct{}
 
 func newNonDocumentTypeChildNodeV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *nonDocumentTypeChildNodeV8Wrapper[T] {
-	return &nonDocumentTypeChildNodeV8Wrapper[T]{newHandleReffedObject[dom.NonDocumentTypeChildNode, T](scriptHost)}
+	return &nonDocumentTypeChildNodeV8Wrapper[T]{}
 }
 
 func (wrapper nonDocumentTypeChildNodeV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

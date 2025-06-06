@@ -9,12 +9,10 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type historyV8Wrapper[T any] struct {
-	handleReffedObject[htmlinterfaces.History, T]
-}
+type historyV8Wrapper[T any] struct{}
 
 func newHistoryV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *historyV8Wrapper[T] {
-	return &historyV8Wrapper[T]{newHandleReffedObject[htmlinterfaces.History, T](scriptHost)}
+	return &historyV8Wrapper[T]{}
 }
 
 func (wrapper historyV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

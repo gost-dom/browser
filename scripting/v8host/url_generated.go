@@ -215,12 +215,10 @@ func (w urlV8Wrapper[T]) setHash(cbCtx js.CallbackContext[T]) (js.Value[T], erro
 	return cbCtx.ReturnWithError(errors.New("URL.setHash: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
 }
 
-type urlSearchParamsV8Wrapper[T any] struct {
-	handleReffedObject[urlinterfaces.URLSearchParams, T]
-}
+type urlSearchParamsV8Wrapper[T any] struct{}
 
 func newURLSearchParamsV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *urlSearchParamsV8Wrapper[T] {
-	return &urlSearchParamsV8Wrapper[T]{newHandleReffedObject[urlinterfaces.URLSearchParams, T](scriptHost)}
+	return &urlSearchParamsV8Wrapper[T]{}
 }
 
 func (wrapper urlSearchParamsV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

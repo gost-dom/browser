@@ -8,15 +8,11 @@ import (
 )
 
 type htmlElementV8Wrapper[T any] struct {
-	handleReffedObject[html.HTMLElement, T]
 	htmlOrSVGElement *htmlOrSVGElementV8Wrapper[T]
 }
 
 func newHTMLElementV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *htmlElementV8Wrapper[T] {
-	return &htmlElementV8Wrapper[T]{
-		newHandleReffedObject[html.HTMLElement, T](scriptHost),
-		newHTMLOrSVGElementV8Wrapper(scriptHost),
-	}
+	return &htmlElementV8Wrapper[T]{newHTMLOrSVGElementV8Wrapper(scriptHost)}
 }
 
 func (wrapper htmlElementV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

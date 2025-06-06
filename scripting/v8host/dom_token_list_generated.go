@@ -9,12 +9,10 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type domTokenListV8Wrapper[T any] struct {
-	handleReffedObject[dom.DOMTokenList, T]
-}
+type domTokenListV8Wrapper[T any] struct{}
 
 func newDOMTokenListV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *domTokenListV8Wrapper[T] {
-	return &domTokenListV8Wrapper[T]{newHandleReffedObject[dom.DOMTokenList, T](scriptHost)}
+	return &domTokenListV8Wrapper[T]{}
 }
 
 func (wrapper domTokenListV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

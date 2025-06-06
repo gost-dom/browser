@@ -9,12 +9,10 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type htmlInputElementV8Wrapper[T any] struct {
-	handleReffedObject[html.HTMLInputElement, T]
-}
+type htmlInputElementV8Wrapper[T any] struct{}
 
 func newHTMLInputElementV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *htmlInputElementV8Wrapper[T] {
-	return &htmlInputElementV8Wrapper[T]{newHandleReffedObject[html.HTMLInputElement, T](scriptHost)}
+	return &htmlInputElementV8Wrapper[T]{}
 }
 
 func (wrapper htmlInputElementV8Wrapper[T]) Initialize(jsClass js.Class[T]) {

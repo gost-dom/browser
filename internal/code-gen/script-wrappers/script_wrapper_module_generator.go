@@ -23,7 +23,7 @@ type PlatformWrapperStructGenerators interface {
 	WrapperStructConstructorName(interfaceName string) string
 	WrapperStructConstructorRetType(interfaceName string) Generator
 	EmbeddedType(wrappedType Generator) Generator
-	EmbeddedTypeConstructor(wrappedType Generator) generators.Value
+	EmbeddedTypeConstructor(wrappedType Generator) Generator
 	CallbackMethodArgs() generators.FunctionArgumentList
 	CallbackMethodRetTypes() []generators.Generator
 	HostArg() Generator

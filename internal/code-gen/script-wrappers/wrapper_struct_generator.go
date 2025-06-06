@@ -90,12 +90,20 @@ func (g WrapperStructGenerator) Body() Generator {
 	innerType := g.Data.WrappedType()
 	embedConstructorName := structGens.EmbeddedTypeConstructor(innerType)
 	includes := g.Data.Includes()
-	fieldInitializers := make([]Generator, len(includes)+1)
-	for idx, i := range includes {
-		includeConstructorName := structGens.WrapperStructConstructorName(i.Name)
-		fieldInitializers[idx+1] = generators.NewValue(includeConstructorName).Call(scriptHost)
+	fieldInitializers := make([]Generator, 0)
+	if embedConstructorName != nil {
+		fieldInitializers = append(
+			fieldInitializers,
+			generators.ValueOf(embedConstructorName).Call(structGens.HostArg()),
+		)
 	}
-	fieldInitializers[0] = embedConstructorName.Call(structGens.HostArg())
+	for _, i := range includes {
+		includeConstructorName := structGens.WrapperStructConstructorName(i.Name)
+		fieldInitializers = append(
+			fieldInitializers,
+			generators.NewValue(includeConstructorName).Call(scriptHost),
+		)
+	}
 	fieldInitializers = addLinesBetweenElements(fieldInitializers)
 
 	wrapperType := structGens.WrapperStructTypeRetDef(idlInterfaceName)
