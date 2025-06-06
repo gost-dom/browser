@@ -74,7 +74,7 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 				},
 				time.Duration(delay)*time.Millisecond,
 			)
-			return encodeUint32(cbCtx, uint32(handle))
+			return codec.EncodeInt(cbCtx, int(handle))
 		}),
 	)
 	globalObjectTemplate.Set(

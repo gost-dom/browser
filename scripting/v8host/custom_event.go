@@ -10,11 +10,10 @@ import (
 )
 
 type customEventV8Wrapper struct {
-	handleReffedObject[*event.Event, jsTypeParam]
 }
 
 func newCustomEventV8Wrapper(scriptHost js.ScriptEngine[jsTypeParam]) *customEventV8Wrapper {
-	return &customEventV8Wrapper{newHandleReffedObject[*event.Event](scriptHost)}
+	return &customEventV8Wrapper{}
 }
 
 func (w customEventV8Wrapper) Constructor(info jsCallbackContext) (jsValue, error) {

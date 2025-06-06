@@ -12,7 +12,6 @@ type V8WrapperStructGenerators struct{}
 
 func (g V8WrapperStructGenerators) WrapperStructTypeDef(interfaceName string) generators.Type {
 	name := fmt.Sprintf("%sV8Wrapper", interfaceName)
-	// return generators.NewType(name)
 	return generators.Type{
 		Generator: generators.Raw(jen.Id(name).Types(jen.Id("T").Any())),
 	}
@@ -20,7 +19,6 @@ func (g V8WrapperStructGenerators) WrapperStructTypeDef(interfaceName string) ge
 
 func (g V8WrapperStructGenerators) WrapperStructTypeRetDef(interfaceName string) generators.Type {
 	name := fmt.Sprintf("%sV8Wrapper", interfaceName)
-	// return generators.NewType(name)
 	return generators.Type{
 		Generator: generators.Raw(jen.Id(name).Types(jen.Id("T"))),
 	}
@@ -28,7 +26,6 @@ func (g V8WrapperStructGenerators) WrapperStructTypeRetDef(interfaceName string)
 
 func (g V8WrapperStructGenerators) WrapperStructType(interfaceName string) generators.Type {
 	name := fmt.Sprintf("%sV8Wrapper", interfaceName)
-	// return generators.NewType(name)
 	return generators.Type{
 		Generator: generators.Raw(jen.Id(name).Types(jen.Id("T"))),
 	}
@@ -49,23 +46,12 @@ func (g V8WrapperStructGenerators) WrapperStructConstructorRetType(
 
 func (gen V8WrapperStructGenerators) EmbeddedType(wrappedType g.Generator) g.Generator {
 	return g.Noop
-	// return g.Raw(
-	// 	generators.NewType("handleReffedObject").Generate().
-	// 		Types(
-	// 			wrappedType.Generate(),
-	// 			jen.Id("T"),
-	// 		))
 }
 
 func (gen V8WrapperStructGenerators) EmbeddedTypeConstructor(
 	wrappedType g.Generator,
 ) g.Generator {
 	return nil
-	// return generators.ValueOf(generators.Raw(
-	// 	generators.NewValue("newHandleReffedObject").
-	// 		Generate().
-	// 		Types(wrappedType.Generate(), jen.Id("T")),
-	// ))
 }
 
 func (g V8WrapperStructGenerators) HostArg() g.Generator {
