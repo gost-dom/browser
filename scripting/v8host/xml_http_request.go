@@ -89,5 +89,5 @@ func (w xmlHttpRequestV8Wrapper[T]) toAny(
 	cbCtx js.CallbackContext[T],
 	val string,
 ) (js.Value[T], error) {
-	return w.toString_(cbCtx, val)
+	return codec.EncodeString(cbCtx, val)
 }

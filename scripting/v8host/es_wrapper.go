@@ -13,13 +13,6 @@ type eventInitWrapper struct {
 	init       any
 }
 
-func (w converters[T]) toString_(
-	cbCtx js.CallbackContext[T],
-	val string,
-) (js.Value[T], error) {
-	return cbCtx.ValueFactory().NewString(val), nil
-}
-
 // handleReffedObject serves as a helper for building v8 wrapping code around go objects.
 // Generated code assumes that a wrapper type is used with specific helper
 // methods implemented.

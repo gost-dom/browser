@@ -8,9 +8,9 @@ import (
 
 func (w formDataV8Wrapper[T]) CustomInitializer(class js.Class[T]) {
 	iterator := newIterator2(
-		w.toString_,
-		func(ctx js.CallbackContext[T], v html.FormDataValue) (js.Value[T], error) {
-			return w.toString_(ctx, string(v))
+		codec.EncodeString,
+		func(ctx js.CallbackScope[T], v html.FormDataValue) (js.Value[T], error) {
+			return codec.EncodeString(ctx, string(v))
 		},
 	)
 	iterator.installPrototype(class)
@@ -52,7 +52,7 @@ func (w formDataV8Wrapper[T]) toFormDataEntryValue(
 	cbCtx js.CallbackContext[T],
 	val html.FormDataValue,
 ) (js.Value[T], error) {
-	return w.toString_(cbCtx, string(val))
+	return codec.EncodeString(cbCtx, string(val))
 }
 
 func (w formDataV8Wrapper[T]) toSequenceFormDataEntryValue(

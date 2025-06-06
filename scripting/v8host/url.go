@@ -7,6 +7,7 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/constants"
 	urlinterfaces "github.com/gost-dom/browser/internal/interfaces/url-interfaces"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/browser/url"
 )
@@ -101,6 +102,6 @@ func (w urlSearchParamsV8Wrapper[T]) toSequenceString_(
 }
 
 func (w urlSearchParamsV8Wrapper[T]) CustomInitializer(class js.Class[T]) {
-	it := newIterator2(w.toString_, w.toString_)
+	it := newIterator2(codec.EncodeString[T], codec.EncodeString[T])
 	it.installPrototype(class)
 }

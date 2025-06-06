@@ -13,7 +13,7 @@ func (n nodeV8Wrapper[T]) textContent(cbCtx js.CallbackContext[T]) (js.Value[T],
 	}
 
 	r := i.TextContent()
-	return n.toString_(cbCtx, r)
+	return codec.EncodeString(cbCtx, r)
 }
 
 func (n nodeV8Wrapper[T]) setTextContent(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

@@ -13,7 +13,7 @@ type iterator[T, U any] struct {
 	entityLookup entityLookup[T, U]
 }
 
-type entityLookup[T, U any] func(ctx js.CallbackContext[U], value T) (js.Value[U], error)
+type entityLookup[T, U any] func(ctx js.CallbackScope[U], value T) (js.Value[U], error)
 
 func newIterator[T, U any](entityLookup entityLookup[T, U]) iterator[T, U] {
 	return iterator[T, U]{entityLookup}
