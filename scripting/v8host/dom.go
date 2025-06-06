@@ -11,8 +11,8 @@ import (
 )
 
 func (l domTokenListV8Wrapper[T]) CustomInitializer(class js.Class[T]) {
-	it := newIterator(l.toString_)
-	it.installPrototype(class)
+	it := js.NewIterator(l.toString_)
+	it.InstallPrototype(class)
 }
 
 func (w domTokenListV8Wrapper[T]) toString_(cbCtx js.Scope[T], val string) (js.Value[T], error) {

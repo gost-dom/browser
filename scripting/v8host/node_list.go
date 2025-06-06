@@ -7,11 +7,11 @@ import (
 )
 
 func (w *nodeListV8Wrapper[T]) CustomInitializer(class js.Class[T]) {
-	nodeListIterator := newIterator(
+	nodeListIterator := js.NewIterator(
 		func(ctx js.Scope[T], instance dom.Node) (js.Value[T], error) {
 			return codec.EncodeEntityScoped(ctx, instance)
 		})
-	nodeListIterator.installPrototype(class)
+	nodeListIterator.InstallPrototype(class)
 
 	class.CreateIndexedHandler(
 		func(info js.GetterCallbackContext[T, int]) (js.Value[T], error) {

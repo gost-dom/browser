@@ -102,6 +102,6 @@ func (w urlSearchParamsV8Wrapper[T]) toSequenceString_(
 }
 
 func (w urlSearchParamsV8Wrapper[T]) CustomInitializer(class js.Class[T]) {
-	it := newIterator2(codec.EncodeStringScoped[T], codec.EncodeStringScoped[T])
-	it.installPrototype(class)
+	it := js.NewIterator2(codec.EncodeStringScoped[T], codec.EncodeStringScoped[T])
+	it.InstallPrototype(class)
 }

@@ -7,13 +7,13 @@ import (
 )
 
 func (w formDataV8Wrapper[T]) CustomInitializer(class js.Class[T]) {
-	iterator := newIterator2(
+	iterator := js.NewIterator2(
 		codec.EncodeStringScoped,
 		func(ctx js.Scope[T], v html.FormDataValue) (js.Value[T], error) {
 			return codec.EncodeStringScoped(ctx, string(v))
 		},
 	)
-	iterator.installPrototype(class)
+	iterator.InstallPrototype(class)
 }
 
 func (w formDataV8Wrapper[T]) CreateInstance(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
