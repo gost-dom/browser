@@ -68,3 +68,10 @@ func DecodeEventInit[T any](
 	}
 	return init, nil
 }
+
+func DecodeFunction[T any](cbCtx js.CallbackContext[T], val js.Value[T]) (js.Function[T], error) {
+	if f, ok := val.AsFunction(); ok {
+		return f, nil
+	}
+	return nil, cbCtx.ValueFactory().NewTypeError("Must be a function")
+}

@@ -17,8 +17,8 @@ func (e *elementV8Wrapper[T]) insertAdjacentHTML(
 	cbCtx js.CallbackContext[T],
 ) (val js.Value[T], err error) {
 	element, e0 := js.As[dom.Element](cbCtx.Instance())
-	position, e1 := js.ConsumeArgument(cbCtx, "position", nil, decodeString)
-	html, e2 := js.ConsumeArgument(cbCtx, "html", nil, decodeString)
+	position, e1 := js.ConsumeArgument(cbCtx, "position", nil, codec.DecodeString)
+	html, e2 := js.ConsumeArgument(cbCtx, "html", nil, codec.DecodeString)
 	err = errors.Join(e0, e1, e2)
 	if err == nil {
 		err = element.InsertAdjacentHTML(position, html)

@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/gost-dom/browser/dom"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -28,7 +29,7 @@ func (w *documentV8Wrapper[T]) CreateInstance(cbCtx js.CallbackContext[T]) (js.V
 
 func (w *documentV8Wrapper[T]) getElementById(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	instance, err0 := js.As[dom.Document](cbCtx.Instance())
-	id, err1 := js.ConsumeArgument(cbCtx, "id", nil, decodeString)
+	id, err1 := js.ConsumeArgument(cbCtx, "id", nil, codec.DecodeString)
 	if err := errors.Join(err0, err1); err != nil {
 		return nil, err
 	}
@@ -53,7 +54,7 @@ func (w *documentV8Wrapper[T]) body(cbCtx js.CallbackContext[T]) (js.Value[T], e
 
 func (w *documentV8Wrapper[T]) createElement(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	var name string
-	name, err1 := js.ConsumeArgument(cbCtx, "name", nil, decodeString)
+	name, err1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
 	instance, err2 := js.As[dom.Document](cbCtx.Instance())
 	err := errors.Join(err1, err2)
 	if err != nil {
@@ -63,7 +64,7 @@ func (w *documentV8Wrapper[T]) createElement(cbCtx js.CallbackContext[T]) (js.Va
 }
 
 func (w *documentV8Wrapper[T]) createTextNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	data, err1 := js.ConsumeArgument(cbCtx, "data", nil, decodeString)
+	data, err1 := js.ConsumeArgument(cbCtx, "data", nil, codec.DecodeString)
 	instance, err2 := js.As[dom.Document](cbCtx.Instance())
 	err := errors.Join(err1, err2)
 	if err != nil {
