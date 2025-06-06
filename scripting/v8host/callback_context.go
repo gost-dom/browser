@@ -53,18 +53,6 @@ func (h *v8CallbackContext) ReturnWithValue(val jsValue) (jsValue, error) {
 	return val, nil
 }
 
-func (h *v8CallbackContext) ReturnWithJSValue(val jsValue) (jsValue, error) {
-	return val, nil
-}
-
-func (h *v8CallbackContext) ReturnWithValueErr(val jsValue, err error) (jsValue, error) {
-	return val, err
-}
-
-func (h *v8CallbackContext) ReturnWithJSValueErr(val jsValue, err error) (jsValue, error) {
-	return val, err
-}
-
 func (h *v8CallbackContext) ReturnWithError(err error) (jsValue, error) {
 	return nil, err
 }
@@ -80,37 +68,13 @@ func (h *v8CallbackContext) Instance() (any, error) {
 	return h.v8Info.This().GetInternalField(0).ExternalHandle().Value(), nil
 }
 
-// consumeValue works like [argumentHelper.consumeArg], but returns undefined
-// instead of nil if the value doesn't exist.
-func (h *v8CallbackContext) consumeValue() jsValue {
-	if arg, _ := h.ConsumeArg(); arg != nil {
-		return arg
-	}
-	return &v8Value{h.ScriptCtx(), v8.Undefined(h.iso())}
-}
-
 func (c *v8CallbackContext) Logger() *slog.Logger {
 	return c.host.Logger()
 }
 
-func (h *v8CallbackContext) consumeString() (string, error) {
-	arg, _ := h.ConsumeArg()
-	if arg == nil {
-		return "", ErrWrongNoOfArguments
-	}
-	return arg.String(), nil
-}
-
-func (h *v8CallbackContext) assertIndex(index int) {
-	if index != h.currentIndex {
-		panic(fmt.Sprintf("Bad index: %v (expected %v)", index, h.currentIndex))
-	}
-	h.currentIndex++
-}
-
 func (h *v8CallbackContext) ConsumeArg() (jsValue, bool) {
 	index := h.currentIndex
-	h.assertIndex(index)
+	h.currentIndex++
 	args := h.v8Info.Args()
 	if len(args) <= index {
 		return nil, false
@@ -130,7 +94,7 @@ type v8ValueFactory struct {
 }
 
 func (f v8ValueFactory) iso() *v8go.Isolate { return f.host.iso }
-func (f v8ValueFactory) Null() jsValue      { return f.toVal(v8go.Null(f.iso())) }
+func (f v8ValueFactory) Null() jsValue      { return newV8Value(f.ctx, v8go.Null(f.iso())) }
 
 func (f v8ValueFactory) NewString(val string) jsValue { return f.newV8Value(val) }
 func (f v8ValueFactory) NewInt32(val int32) jsValue   { return f.newV8Value(val) }
@@ -200,12 +164,6 @@ func (f v8ValueFactory) newV8Value(val any) jsValue {
 	}
 	return newV8Value(f.ctx, res)
 }
-
-func (f v8ValueFactory) toVal(val *v8go.Value) jsValue {
-	return newV8Value(f.ctx, val)
-}
-
-type internalCallback = func(js.CallbackContext[jsTypeParam]) (jsValue, error)
 
 func wrapV8Callback(
 	host *V8ScriptHost,
