@@ -9,7 +9,6 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/uievents"
-	"github.com/gost-dom/browser/scripting"
 )
 
 func LookupJSPrototype(entity entity.ObjectIder) string {
@@ -28,7 +27,7 @@ func LookupJSPrototype(entity entity.ObjectIder) string {
 			return "Event"
 		}
 	case dom.Element:
-		if constructor, ok := scripting.HtmlElements[strings.ToLower(n.TagName())]; ok {
+		if constructor, ok := HtmlElements[strings.ToLower(n.TagName())]; ok {
 			return constructor
 		} else {
 			return "Element"

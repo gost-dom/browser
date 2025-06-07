@@ -8,7 +8,7 @@ import (
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/entity"
-	"github.com/gost-dom/browser/scripting"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -85,7 +85,7 @@ func (c *GojaContext) getPrototype(e entity.ObjectIder) function {
 	case dom.Document:
 		return c.globals["Document"]
 	case dom.Element:
-		className, found := scripting.HtmlElements[strings.ToLower(v.TagName())]
+		className, found := codec.HtmlElements[strings.ToLower(v.TagName())]
 		if found {
 			return c.globals[className]
 		}

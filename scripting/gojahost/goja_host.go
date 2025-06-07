@@ -8,7 +8,7 @@ import (
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
-	"github.com/gost-dom/browser/scripting"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 
 	"github.com/dop251/goja"
 )
@@ -58,7 +58,7 @@ func init() {
 	installClass("Element", "Node", newElementWrapper)
 	installClass("HTMLElement", "Element", newGenericElementWrapper)
 
-	for _, cls := range scripting.HtmlElements {
+	for _, cls := range codec.HtmlElements {
 		if _, found := globals[cls]; !found {
 			installClass(cls, "HTMLElement", newGenericElementWrapper)
 		}

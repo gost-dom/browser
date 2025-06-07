@@ -12,7 +12,6 @@ import (
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
-	"github.com/gost-dom/browser/scripting"
 	"github.com/gost-dom/browser/scripting/internal"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
@@ -144,14 +143,7 @@ func init() {
 	registerClass("File", "", newCustomEventV8Wrapper)
 	registerClass("CustomEvent", "Event", newCustomEventV8Wrapper)
 
-	registerClass("ShadowRoot", "DocumentFragment", newUnconstructableV8Wrapper)
 	internal.Bootstrap(classRegistrations)
-
-	for _, cls := range scripting.HtmlElements {
-		if !classRegistrations.HasClass(cls) && cls != "HTMLElement" {
-			registerClass(cls, "HTMLElement", newUnconstructableV8Wrapper)
-		}
-	}
 }
 
 func createHostInstance(config hostOptions) *V8ScriptHost {

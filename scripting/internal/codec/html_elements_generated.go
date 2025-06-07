@@ -1,6 +1,6 @@
 // This file is generated. Do not edit.
 
-package scripting
+package codec
 
 var HtmlElements = map[string]string {
 	"html": "HTMLHtmlElement",

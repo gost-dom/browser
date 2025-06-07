@@ -7,9 +7,9 @@ import (
 	"github.com/gost-dom/webref/elements"
 )
 
-func WriteHeader(b *builder) {
+func WriteHeader(b *builder, pkg string) {
 	b.Printf("// This file is generated. Do not edit.\n\n")
-	b.Printf("package scripting\n\n")
+	b.Printf("package %s\n\n", pkg)
 }
 
 type builder struct {
@@ -21,8 +21,8 @@ func newBuilder(w io.Writer) *builder {
 	return &builder{w, 0}
 }
 
-func (b builder) Printf(format string, args ...interface{}) {
-	for i := 0; i < b.indentLvl; i++ {
+func (b builder) Printf(format string, args ...any) {
+	for range b.indentLvl {
 		fmt.Fprint(b.Writer, "\t")
 	}
 	fmt.Fprintf(b.Writer, format, args...)
@@ -53,7 +53,7 @@ func generateHtmlElements(writer io.Writer) error {
 	e, err := elements.Load("html")
 	if err == nil {
 		file := newBuilder(writer)
-		WriteHeader(file)
+		WriteHeader(file, "codec")
 		fmt.Fprint(file, "var HtmlElements = map[string]string {\n")
 		file.indent()
 		defer file.unIndentF("}\n")

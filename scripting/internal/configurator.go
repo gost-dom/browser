@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/dom"
 	"github.com/gost-dom/browser/scripting/internal/html"
 	"github.com/gost-dom/browser/scripting/internal/js"
@@ -24,4 +25,11 @@ func Bootstrap[T any](reg js.ClassBuilder[T]) {
 	//
 	// See also: https://developer.mozilla.org/en-US/docs/Web/API/HTMLDocument
 	js.RegisterClass(reg, "HTMLDocument", "Document", html.NewHTMLDocumentV8Wrapper)
+
+	js.RegisterClass(reg, "ShadowRoot", "DocumentFragment", NewUnconstructableV8Wrapper)
+	for _, cls := range codec.HtmlElements {
+		if !reg.HasClass(cls) && cls != "HTMLElement" {
+			js.RegisterClass(reg, cls, "HTMLElement", NewUnconstructableV8Wrapper)
+		}
+	}
 }
