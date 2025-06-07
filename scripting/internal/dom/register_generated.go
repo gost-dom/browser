@@ -8,6 +8,7 @@ func Bootstrap[T any](reg js.ClassBuilder[T]) {
 	js.RegisterClass(reg, "Attr", "Node", NewAttrV8Wrapper)
 	js.RegisterClass(reg, "DOMTokenList", "", NewDOMTokenListV8Wrapper)
 	js.RegisterClass(reg, "Document", "Node", NewDocumentV8Wrapper)
+	js.RegisterClass(reg, "DocumentFragment", "Node", NewDocumentFragmentV8Wrapper)
 	js.RegisterClass(reg, "Element", "Node", NewElementV8Wrapper)
 	js.RegisterClass(reg, "Event", "", NewEventV8Wrapper)
 	js.RegisterClass(reg, "EventTarget", "", NewEventTargetV8Wrapper)

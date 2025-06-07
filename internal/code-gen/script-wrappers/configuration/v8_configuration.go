@@ -91,6 +91,9 @@ func configureURLSpecs(urlSpecs *WebIdlConfiguration) {
 func configureDOMSpecs(domSpecs *WebIdlConfiguration) {
 	configureMutationObserver(domSpecs)
 
+	docFrag := domSpecs.Type("DocumentFragment")
+	docFrag.SkipConstructor = true
+
 	attr := domSpecs.Type("Attr")
 	attr.MarkMembersAsIgnored("namespaceURI", "prefix", "specified")
 
