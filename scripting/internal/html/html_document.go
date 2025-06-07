@@ -16,7 +16,3 @@ func NewHTMLDocumentV8Wrapper[T any](host js.ScriptEngine[T]) HTMLDocumentV8Wrap
 func (w HTMLDocumentV8Wrapper[T]) Constructor(c js.CallbackContext[T]) (js.Value[T], error) {
 	return nil, c.ValueFactory().NewTypeError("illegal constructor")
 }
-
-func (w HTMLDocumentV8Wrapper[T]) Initialize(c js.Class[T]) {
-	w.DocumentV8Wrapper.Initialize(c)
-}
