@@ -140,9 +140,6 @@ func registerClass[T js.Initializer[jsTypeParam], U js.InitializerFactory[jsType
 }
 
 func init() {
-	registerClass("File", "", newCustomEventV8Wrapper)
-	registerClass("CustomEvent", "Event", newCustomEventV8Wrapper)
-
 	internal.Bootstrap(classRegistrations)
 }
 
