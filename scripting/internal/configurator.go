@@ -17,4 +17,11 @@ func Bootstrap[T any](reg js.ClassBuilder[T]) {
 	html.Bootstrap(reg)
 	xhr.Bootstrap(reg)
 	url.Bootstrap(reg)
+
+	// HTMLDocument exists as a separate class for historical reasons, but it
+	// can be treated merely as an alias for Document. In Firefox, there is an
+	// inheritance relationship between the two, which is modelled here.
+	//
+	// See also: https://developer.mozilla.org/en-US/docs/Web/API/HTMLDocument
+	js.RegisterClass(reg, "HTMLDocument", "Document", html.NewHTMLDocumentV8Wrapper)
 }

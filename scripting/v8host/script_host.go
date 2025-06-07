@@ -14,7 +14,6 @@ import (
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting"
 	"github.com/gost-dom/browser/scripting/internal"
-	jshtml "github.com/gost-dom/browser/scripting/internal/html"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
 )
@@ -145,7 +144,6 @@ func init() {
 	registerClass("File", "", newCustomEventV8Wrapper)
 	registerClass("CustomEvent", "Event", newCustomEventV8Wrapper)
 
-	registerClass("HTMLDocument", "Document", jshtml.NewHTMLDocumentV8Wrapper)
 	registerClass("ShadowRoot", "DocumentFragment", newUnconstructableV8Wrapper)
 	internal.Bootstrap(classRegistrations)
 

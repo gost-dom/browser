@@ -17,7 +17,7 @@ func createData(
 ) ESConstructorData {
 	idlName, ok := spec.GetType(interfaceConfig.TypeName)
 	if !ok {
-		panic("Missing type")
+		panic(fmt.Sprintf("cannot find type: %s", interfaceConfig.TypeName))
 	}
 	idlInterface := idlName.IdlInterface
 	if idlInterface.Name != interfaceConfig.TypeName {
