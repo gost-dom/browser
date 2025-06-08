@@ -1,4 +1,4 @@
-package v8host
+package html
 
 import (
 	"errors"
@@ -7,13 +7,16 @@ import (
 	"github.com/gost-dom/browser/internal/clock"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
-	v8 "github.com/gost-dom/v8go"
 )
 
-func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.ObjectTemplate) {
-	globalObjectTemplate.Set(
+func Initialize[T any](host js.ScriptEngine[T]) {
+	installEventLoopGlobals(host)
+}
+
+func installEventLoopGlobals[T any](host js.ScriptEngine[T]) {
+	host.CreateFunction(
 		"queueMicrotask",
-		wrapV8Callback(host, func(cbCtx jsCallbackContext) (jsValue, error) {
+		func(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 			f, err := js.ConsumeArgument(cbCtx, "callback", nil, codec.DecodeFunction)
 			if err == nil {
 				clock := cbCtx.Scope().Clock()
@@ -24,11 +27,10 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 				})
 			}
 			return nil, err
-		}),
-	)
-	globalObjectTemplate.Set(
+		})
+	host.CreateFunction(
 		"setTimeout",
-		wrapV8Callback(host, func(cbCtx jsCallbackContext) (jsValue, error) {
+		func(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 			f, err1 := js.ConsumeArgument(cbCtx, "callback", nil, codec.DecodeFunction)
 			delay, err2 := js.ConsumeArgument(cbCtx, "delay", nil, codec.DecodeInt)
 			err := errors.Join(err1, err2)
@@ -45,21 +47,19 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 				time.Duration(delay)*time.Millisecond,
 			)
 			return cbCtx.ValueFactory().NewUint32(uint32(handle)), nil
-		}),
-	)
-	globalObjectTemplate.Set(
+		})
+	host.CreateFunction(
 		"clearTimeout",
-		wrapV8Callback(host, func(cbCtx jsCallbackContext) (jsValue, error) {
+		func(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 			handle, err := js.ConsumeArgument(cbCtx, "handle", nil, codec.DecodeInt)
 			if err == nil {
 				cbCtx.Scope().Clock().Cancel(clock.TaskHandle(handle))
 			}
 			return nil, nil
-		}),
-	)
-	globalObjectTemplate.Set(
+		})
+	host.CreateFunction(
 		"setInterval",
-		wrapV8Callback(host, func(cbCtx jsCallbackContext) (jsValue, error) {
+		func(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 			f, err1 := js.ConsumeArgument(cbCtx, "callback", nil, codec.DecodeFunction)
 			delay, err2 := js.ConsumeArgument(cbCtx, "delay", nil, codec.DecodeInt)
 			err := errors.Join(err1, err2)
@@ -75,16 +75,14 @@ func installEventLoopGlobals(host *V8ScriptHost, globalObjectTemplate *v8.Object
 				time.Duration(delay)*time.Millisecond,
 			)
 			return codec.EncodeInt(cbCtx, int(handle))
-		}),
-	)
-	globalObjectTemplate.Set(
+		})
+	host.CreateFunction(
 		"clearInterval",
-		wrapV8Callback(host, func(cbCtx jsCallbackContext) (jsValue, error) {
+		func(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 			handle, err := js.ConsumeArgument(cbCtx, "handle", nil, codec.DecodeInt)
 			if err == nil {
 				cbCtx.Scope().Clock().Cancel(clock.TaskHandle(handle))
 			}
 			return nil, err
-		}),
-	)
+		})
 }

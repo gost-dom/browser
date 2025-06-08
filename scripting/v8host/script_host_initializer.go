@@ -2,6 +2,7 @@ package v8host
 
 import (
 	"github.com/gost-dom/browser/scripting/internal"
+	"github.com/gost-dom/browser/scripting/internal/html"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -11,4 +12,7 @@ func (c ScriptEngineConfigurer) Register(configurer js.Configurator[jsTypeParam]
 	initializers = append(initializers, configurer)
 }
 
-func init() { js.Register(ScriptEngineConfigurer{}, internal.Configure) }
+func init() {
+	js.Register(ScriptEngineConfigurer{}, internal.Configure)
+	js.Register(ScriptEngineConfigurer{}, html.Initialize)
+}

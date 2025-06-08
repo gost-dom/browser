@@ -132,13 +132,6 @@ var classRegistrations = js.NewClassBuilder[jsTypeParam]()
 
 var initializers []js.Configurator[jsTypeParam]
 
-func registerClass[T js.Initializer[jsTypeParam], U js.InitializerFactory[jsTypeParam, T]](
-	className, superClassName string,
-	constructorFactory U,
-) {
-	js.RegisterClass(classRegistrations, className, superClassName, constructorFactory)
-}
-
 func init() {
 	internal.Bootstrap(classRegistrations)
 }
@@ -170,7 +163,6 @@ func createHostInstance(config hostOptions) *V8ScriptHost {
 		host.iterator = newV8Iterator(host)
 		host.windowTemplate.SetInternalFieldCount(1)
 		host.contexts = make(map[*v8go.Context]*V8ScriptContext)
-		installEventLoopGlobals(host, host.windowTemplate)
 		for _, i := range initializers {
 			i.Configure(host)
 		}
@@ -311,4 +303,12 @@ func (host *V8ScriptHost) CreateClass(
 	host.windowTemplate.Set(name, ft)
 	host.globals.namedGlobals[name] = result
 	return result
+}
+
+func (host *V8ScriptHost) CreateFunction(
+	name string,
+	callback js.FunctionCallback[jsTypeParam],
+) {
+	ft := wrapV8Callback(host, callback)
+	host.windowTemplate.Set(name, ft)
 }
