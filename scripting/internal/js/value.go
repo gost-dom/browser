@@ -80,6 +80,6 @@ type ConfigurerFunc[T any] func(ScriptEngine[T])
 
 func (f ConfigurerFunc[T]) Configure(e ScriptEngine[T]) { f(e) }
 
-func Register[T any](fact ScriptEngineFactory[T], conf ConfigurerFunc[T]) {
-	fact.Register(conf)
+func AddConfigurator[T any](fact ScriptEngineFactory[T], conf ConfigurerFunc[T]) {
+	fact.AddConfigurator(conf)
 }

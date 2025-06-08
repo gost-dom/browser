@@ -12,7 +12,6 @@ import (
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
-	"github.com/gost-dom/browser/scripting/internal"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
 )
@@ -128,14 +127,6 @@ func (host *V8ScriptHost) consoleAPIMessage(message v8go.ConsoleAPIMessage) {
 	}
 }
 
-var classRegistrations = js.NewClassBuilder[jsTypeParam]()
-
-var initializers []js.Configurator[jsTypeParam]
-
-func init() {
-	internal.Bootstrap(classRegistrations)
-}
-
 func createHostInstance(config hostOptions) *V8ScriptHost {
 	var host *V8ScriptHost
 	res, hostReused := pool.tryGet()
@@ -145,28 +136,28 @@ func createHostInstance(config hostOptions) *V8ScriptHost {
 		host.disposed = false
 		host.logger = config.logger
 	} else {
-		host = &V8ScriptHost{
-			mu:     new(sync.Mutex),
-			iso:    v8go.NewIsolate(),
-			logger: config.logger,
-		}
+		host = factory.createHost(config)
+		// host = &V8ScriptHost{
+		// 	mu:       new(sync.Mutex),
+		// 	iso:      v8go.NewIsolate(),
+		// 	logger:   config.logger,
+		// 	globals:  globals{make(map[string]v8Class)},
+		// 	contexts: make(map[*v8go.Context]*V8ScriptContext),
+		// }
 	}
+
+	// if !hostReused {
+	// 	host.iso.SetPromiseRejectedCallback(host.promiseRejected)
+	// 	host.windowTemplate = v8go.NewObjectTemplate(host.iso)
+	// 	host.iterator = newV8Iterator(host)
+	// 	host.windowTemplate.SetInternalFieldCount(1)
+	// 	for _, i := range factory.initializers {
+	// 		i.Configure(host)
+	// 	}
+	// }
 
 	host.inspectorClient = v8go.NewInspectorClient(consoleAPIMessageFunc(host.consoleAPIMessage))
 	host.inspector = v8go.NewInspector(host.iso, host.inspectorClient)
-
-	if !hostReused {
-		host.iso.SetPromiseRejectedCallback(host.promiseRejected)
-		host.windowTemplate = v8go.NewObjectTemplate(host.iso)
-		host.globals = globals{make(map[string]v8Class)}
-		classRegistrations.CreateGlobals(host)
-		host.iterator = newV8Iterator(host)
-		host.windowTemplate.SetInternalFieldCount(1)
-		host.contexts = make(map[*v8go.Context]*V8ScriptContext)
-		for _, i := range initializers {
-			i.Configure(host)
-		}
-	}
 	return host
 }
 
