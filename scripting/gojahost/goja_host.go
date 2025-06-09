@@ -1,14 +1,12 @@
 package gojahost
 
 import (
-	"fmt"
 	"reflect"
 	"strings"
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
-	codec "github.com/gost-dom/browser/scripting/internal/codec"
 
 	"github.com/dop251/goja"
 )
@@ -50,19 +48,19 @@ func installClass(name string, superClassName string, wrapper createWrapper) {
 }
 
 func init() {
-	installClass("EventTarget", "", newEventTargetWrapper)
-	installClass("Window", "Node", newWindowWrapper)
-	installClass("Document", "Node", newDocumentWrapper)
-	installClass("HTMLDocument", "Document", newHTMLDocumentWrapper)
-	installClass("CustomEvent", "Event", newCustomEventWrapper)
-	installClass("Element", "Node", newElementWrapper)
-	installClass("HTMLElement", "Element", newGenericElementWrapper)
-
-	for _, cls := range codec.HtmlElements {
-		if _, found := globals[cls]; !found {
-			installClass(cls, "HTMLElement", newGenericElementWrapper)
-		}
-	}
+	// installClass("EventTarget", "", newEventTargetWrapper)
+	// installClass("Window", "Node", newWindowWrapper)
+	// installClass("Document", "Node", newDocumentWrapper)
+	// installClass("HTMLDocument", "Document", newHTMLDocumentWrapper)
+	// installClass("CustomEvent", "Event", newCustomEventWrapper)
+	// installClass("Element", "Node", newElementWrapper)
+	// installClass("HTMLElement", "Element", newGenericElementWrapper)
+	//
+	// for _, cls := range codec.HtmlElements {
+	// 	if _, found := globals[cls]; !found {
+	// 		installClass(cls, "HTMLElement", newGenericElementWrapper)
+	// 	}
+	// }
 }
 
 type function struct {
@@ -95,47 +93,48 @@ func (_ propertyNameMapper) MethodName(t reflect.Type, m reflect.Method) string 
 	}
 }
 
-func (d *GojaContext) installGlobals(classes classMap) {
-	d.globals = make(map[string]function)
-	var assertGlobal func(class) function
-	assertGlobal = func(class class) function {
-		name := class.name
-		wrapper := class.wrapper(d)
-		if constructor, alreadyInstalled := d.globals[name]; alreadyInstalled {
-			return constructor
-		}
-		constructor := d.vm.ToValue(wrapper.constructor).(*goja.Object)
-		constructor.DefineDataProperty(
-			"name",
-			d.vm.ToValue(name),
-			goja.FLAG_NOT_SET,
-			goja.FLAG_NOT_SET,
-			goja.FLAG_NOT_SET,
-		)
-		prototype := constructor.Get("prototype").(*goja.Object)
-		result := function{constructor, prototype, wrapper}
-		d.vm.Set(name, constructor)
-		d.globals[name] = result
-
-		if super := class.superClassName; super != "" {
-			if superclass, found := classes[super]; found {
-				superPrototype := assertGlobal(superclass).Prototype
-				prototype.SetPrototype(superPrototype)
-			} else {
-				panic(fmt.Sprintf("Superclass not installed for %s. Superclass: %s", name, super))
-			}
-		}
-
-		if initializer, ok := wrapper.(wrapperPrototypeInitializer); ok {
-			initializer.initializePrototype(prototype, d.vm)
-		}
-
-		return result
-	}
-	for _, class := range classes {
-		assertGlobal(class)
-	}
-}
+// func (d *GojaContext) installGlobals(classes classMap) {
+// 	d.globals = make(map[string]function)
+// 	d.classes = make(map[string]*gojaClass)
+// 	var assertGlobal func(class) function
+// 	assertGlobal = func(class class) function {
+// 		name := class.name
+// 		wrapper := class.wrapper(d)
+// 		if constructor, alreadyInstalled := d.globals[name]; alreadyInstalled {
+// 			return constructor
+// 		}
+// 		constructor := d.vm.ToValue(wrapper.constructor).(*goja.Object)
+// 		constructor.DefineDataProperty(
+// 			"name",
+// 			d.vm.ToValue(name),
+// 			goja.FLAG_NOT_SET,
+// 			goja.FLAG_NOT_SET,
+// 			goja.FLAG_NOT_SET,
+// 		)
+// 		prototype := constructor.Get("prototype").(*goja.Object)
+// 		result := function{constructor, prototype, wrapper}
+// 		d.vm.Set(name, constructor)
+// 		d.globals[name] = result
+//
+// 		if super := class.superClassName; super != "" {
+// 			if superclass, found := classes[super]; found {
+// 				superPrototype := assertGlobal(superclass).Prototype
+// 				prototype.SetPrototype(superPrototype)
+// 			} else {
+// 				panic(fmt.Sprintf("Superclass not installed for %s. Superclass: %s", name, super))
+// 			}
+// 		}
+//
+// 		if initializer, ok := wrapper.(wrapperPrototypeInitializer); ok {
+// 			initializer.initializePrototype(prototype, d.vm)
+// 		}
+//
+// 		return result
+// 	}
+// 	for _, class := range classes {
+// 		assertGlobal(class)
+// 	}
+// }
 
 func (d *gojaScriptHost) NewContext(window html.Window) html.ScriptContext {
 	vm := goja.New()
@@ -146,8 +145,13 @@ func (d *gojaScriptHost) NewContext(window html.Window) html.ScriptContext {
 		window:       window,
 		wrappedGoObj: goja.NewSymbol(internal_symbol_name),
 		cachedNodes:  make(map[int32]goja.Value),
+		// globals:      make(map[string]function),
+		classes: make(map[string]*gojaClass),
 	}
-	result.installGlobals(globals)
+	for _, i := range factory.initializers {
+		i.Configure(result)
+	}
+	// factory.result.installGlobals(globals)
 
 	globalThis := vm.GlobalObject()
 	globalThis.DefineDataPropertySymbol(
@@ -166,7 +170,7 @@ func (d *gojaScriptHost) NewContext(window html.Window) html.ScriptContext {
 	globalThis.DefineAccessorProperty("location", vm.ToValue(func(c *goja.FunctionCall) goja.Value {
 		return location
 	}), nil, goja.FLAG_FALSE, goja.FLAG_TRUE)
-	globalThis.SetPrototype(result.globals["Window"].Prototype)
+	globalThis.SetPrototype(result.classes["Window"].prototype)
 
 	return result
 }

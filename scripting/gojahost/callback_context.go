@@ -11,32 +11,34 @@ import (
 )
 
 type callbackContext struct {
-	ctx      *GojaContext
-	call     goja.FunctionCall
+	ctx *GojaContext
+	// call     goja.FunctionCall
+	this     *goja.Object
+	args     []goja.Value
 	argIndex int
 }
 
 func newArgumentHelper(ctx *GojaContext, c goja.FunctionCall) *callbackContext {
-	return &callbackContext{ctx, c, 0}
+	return &callbackContext{ctx, c.This.ToObject(ctx.vm), c.Arguments, 0}
 }
 
 func (ctx *callbackContext) Logger() *slog.Logger {
-	if l := ctx.ctx.window.Logger(); l != nil {
+	if l := ctx.ctx.logger(); l != nil {
 		return l
 	}
 	return log.Default()
 }
 
 func (ctx *callbackContext) Argument(index int) g.Value {
-	return ctx.call.Argument(index)
+	return ctx.args[index]
 }
 
 func (c *callbackContext) This() js.Object[jsTypeParam] {
-	return newGojaObject(c.ctx, c.call.This.ToObject(c.ctx.vm))
+	return newGojaObject(c.ctx, c.this)
 }
 
 func (ctx *callbackContext) Instance() (any, error) {
-	instance := ctx.call.This.(*g.Object).GetSymbol(ctx.ctx.wrappedGoObj)
+	instance := ctx.this.GetSymbol(ctx.ctx.wrappedGoObj)
 	if instance == nil {
 		// TODO: Should be a TypeError
 		return nil, errors.New("No embedded value")
@@ -53,25 +55,29 @@ func (ctx *callbackContext) ReturnWithValueErr(val js.Value[jsTypeParam], err er
 	return val.Self().value
 }
 
-func (ctx *callbackContext) ReturnWithTypeError(msg string) goja.Value {
-	panic(ctx.ctx.vm.NewTypeError(msg))
-}
 func (ctx *callbackContext) ReturnWithError(err error) goja.Value {
 	panic(err)
 }
 
 type callbackFunction = func(*callbackContext) goja.Value
 
+func wrapJSCallback(ctx *GojaContext, cb js.FunctionCallback[jsTypeParam]) goja.Value {
+	return ctx.vm.ToValue(func(c goja.FunctionCall) goja.Value {
+		res, err := cb(newArgumentHelper(ctx, c))
+		if err != nil {
+			panic(err)
+		}
+		if res == nil {
+			return goja.Undefined()
+		}
+		return res.Self().value
+	})
+}
+
 func wrapCallback(ctx *GojaContext, cb callbackFunction) goja.Value {
 	return ctx.vm.ToValue(func(c goja.FunctionCall) goja.Value {
 		return cb(newArgumentHelper(ctx, c))
 	})
-}
-
-func (c *callbackContext) consumeValue() g.Value {
-	index := c.argIndex
-	c.argIndex++
-	return c.call.Argument(index)
 }
 
 func (c *callbackContext) Scope() js.Scope[jsTypeParam] {
@@ -80,4 +86,17 @@ func (c *callbackContext) Scope() js.Scope[jsTypeParam] {
 
 func (c *callbackContext) ValueFactory() js.ValueFactory[jsTypeParam] {
 	return newGojaValueFactory(c.ctx)
+}
+
+func (c *callbackContext) ConsumeArg() (js.Value[jsTypeParam], bool) {
+	index := c.argIndex
+	c.argIndex++
+	if index >= len(c.args) {
+		return nil, false
+	}
+	return newGojaValue(c.ctx, c.args[index]), true
+}
+
+func (c *callbackContext) ReturnWithTypeError(msg string) (js.Value[jsTypeParam], error) {
+	return nil, c.ValueFactory().NewTypeError(msg)
 }

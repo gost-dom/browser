@@ -1,11 +1,6 @@
 package gojahost
 
-import (
-	g "github.com/dop251/goja"
-	"github.com/gost-dom/browser/dom"
-	"github.com/gost-dom/browser/scripting/internal/js"
-)
-
+/*
 func (w nodeWrapper) constructor(call g.ConstructorCall, r *g.Runtime) *g.Object {
 	panic(r.NewTypeError("Illegal Constructor"))
 }
@@ -71,3 +66,4 @@ func (w nodeWrapper) toNodeList(l dom.NodeList) g.Value {
 	w.storeInternal(l, result)
 	return result
 }
+*/

@@ -22,8 +22,8 @@ func (s gojaScope) GlobalThis() js.Object[jsTypeParam] { return s.global }
 
 func (s gojaScope) Clock() *clock.Clock { return s.ctx.clock }
 func (s gojaScope) Constructor(name string) js.Constructor[jsTypeParam] {
-	if f, ok := s.ctx.globals[name]; ok {
-		return gojaConstructor{s.ctx, f.Prototype}
+	if class, ok := s.ctx.classes[name]; ok {
+		return class
 	}
 	return nil
 }
@@ -42,11 +42,6 @@ func (s gojaScope) ValueFactory() js.ValueFactory[jsTypeParam] {
 
 type gojaConstructor struct {
 	ctx       *GojaContext
+	class     *gojaClass
 	prototype *goja.Object
-}
-
-func (c gojaConstructor) NewInstance(native any) (js.Object[jsTypeParam], error) {
-	obj := c.ctx.vm.CreateObject(c.prototype)
-	c.ctx.storeInternal(native, obj)
-	return newGojaObject(c.ctx, obj), nil
 }

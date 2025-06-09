@@ -40,25 +40,19 @@ func main() {
 	flag.Parse()
 	switch *generatorType {
 	case "goja":
-		fmt.Println("Generate 'goja'")
 		gen := gojagen.NewGojaWrapperModuleGenerator()
 		exitOnError(gen.GenerateScriptWrappers())
-		fmt.Println("Generate 'goja' done")
 		os.Exit(0)
 		return
 	case "scripting":
-		fmt.Println("Generate 'scripting'")
 		gen := v8gen.NewScriptWrapperModulesGenerator()
 		exitOnError(gen.GenerateScriptWrappers())
-		fmt.Println("Generate 'scripting' done")
 		os.Exit(0)
 		return
 	case "script":
-		fmt.Println("Generate 'script!'")
 		gen := v8gen.NewScriptWrapperModulesGeneratorForSpec(*packageName)
 		exitOnError(gen.GenerateScriptWrappers())
 		exitOnError(wrappers.GenerateRegisterFunctions(*packageName))
-		fmt.Println("Generate 'script!' done")
 		os.Exit(0)
 		return
 	case "htmlelements":
@@ -84,7 +78,6 @@ func main() {
 	}
 
 	if *outputFile == "" || *generatorType == "" {
-		fmt.Println("Internal code generator from IDL definitions")
 		flag.PrintDefaults()
 		os.Exit(1)
 	}

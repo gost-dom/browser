@@ -33,7 +33,7 @@ func (w NodeListV8Wrapper[T]) item(cbCtx js.CallbackContext[T]) (js.Value[T], er
 	cbCtx.Logger().Debug("V8 Function call: NodeList.item")
 	instance, errInst := js.As[dom.NodeList](cbCtx.Instance())
 	if errInst != nil {
-		return cbCtx.ReturnWithError(errInst)
+		return nil, errInst
 	}
 	index, errArg1 := js.ConsumeArgument(cbCtx, "index", nil, codec.DecodeInt)
 	if errArg1 != nil {
@@ -47,7 +47,7 @@ func (w NodeListV8Wrapper[T]) length(cbCtx js.CallbackContext[T]) (js.Value[T], 
 	cbCtx.Logger().Debug("V8 Function call: NodeList.length")
 	instance, err := js.As[dom.NodeList](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.Length()
 	return codec.EncodeInt(cbCtx, result)

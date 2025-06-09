@@ -37,7 +37,7 @@ func newV8Iterator(host *V8ScriptHost) v8Iterator {
 func (i v8Iterator) cloneIterator(cbCtx jsCallbackContext) (jsValue, error) {
 	instance, err := js.As[*jsIteratorInstance](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 
 	return i.newIterator(cbCtx.Scope().(v8Scope), instance.items), nil

@@ -126,10 +126,11 @@ func (gen V8TargetGenerators) CreateAttributeSetter(
 
 		wrappers.IfAnyError(
 			[]g.Generator{err, err1},
-			wrappers.ReturnTransform(wrappers.TransformerFunc(cbCtx.ReturnWithError)),
+			wrappers.TransformerFunc(returnNilCommaErr),
+			// wrappers.ReturnTransform(wrappers.TransformerFunc(cbCtx.ReturnWithError)),
 		),
 		set(instance, val),
-		g.Return(cbCtx.ReturnWithValue(g.Nil)),
+		g.Return(g.Nil, g.Nil),
 	)
 }
 

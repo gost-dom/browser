@@ -42,7 +42,7 @@ func (w DOMTokenListV8Wrapper[T]) item(cbCtx js.CallbackContext[T]) (js.Value[T]
 	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.item")
 	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if errInst != nil {
-		return cbCtx.ReturnWithError(errInst)
+		return nil, errInst
 	}
 	index, errArg1 := js.ConsumeArgument(cbCtx, "index", nil, codec.DecodeInt)
 	if errArg1 != nil {
@@ -56,7 +56,7 @@ func (w DOMTokenListV8Wrapper[T]) contains(cbCtx js.CallbackContext[T]) (js.Valu
 	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.contains")
 	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if errInst != nil {
-		return cbCtx.ReturnWithError(errInst)
+		return nil, errInst
 	}
 	token, errArg1 := js.ConsumeArgument(cbCtx, "token", nil, codec.DecodeString)
 	if errArg1 != nil {
@@ -70,7 +70,7 @@ func (w DOMTokenListV8Wrapper[T]) add(cbCtx js.CallbackContext[T]) (js.Value[T],
 	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.add")
 	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if errInst != nil {
-		return cbCtx.ReturnWithError(errInst)
+		return nil, errInst
 	}
 	tokens, errArg1 := js.ConsumeRestArguments(cbCtx, "tokens", codec.DecodeString)
 	if errArg1 != nil {
@@ -84,7 +84,7 @@ func (w DOMTokenListV8Wrapper[T]) replace(cbCtx js.CallbackContext[T]) (js.Value
 	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.replace")
 	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if errInst != nil {
-		return cbCtx.ReturnWithError(errInst)
+		return nil, errInst
 	}
 	token, errArg1 := js.ConsumeArgument(cbCtx, "token", nil, codec.DecodeString)
 	newToken, errArg2 := js.ConsumeArgument(cbCtx, "newToken", nil, codec.DecodeString)
@@ -98,14 +98,14 @@ func (w DOMTokenListV8Wrapper[T]) replace(cbCtx js.CallbackContext[T]) (js.Value
 
 func (w DOMTokenListV8Wrapper[T]) supports(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.supports")
-	return cbCtx.ReturnWithError(errors.New("DOMTokenList.supports: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
+	return nil, errors.New("DOMTokenList.supports: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w DOMTokenListV8Wrapper[T]) length(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.length")
 	instance, err := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.Length()
 	return codec.EncodeInt(cbCtx, result)
@@ -115,7 +115,7 @@ func (w DOMTokenListV8Wrapper[T]) value(cbCtx js.CallbackContext[T]) (js.Value[T
 	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.value")
 	instance, err := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.Value()
 	return codec.EncodeString(cbCtx, result)
@@ -127,8 +127,8 @@ func (w DOMTokenListV8Wrapper[T]) setValue(cbCtx js.CallbackContext[T]) (js.Valu
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	instance.SetValue(val)
-	return cbCtx.ReturnWithValue(nil)
+	return nil, nil
 }

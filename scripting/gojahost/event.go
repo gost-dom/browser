@@ -1,11 +1,6 @@
 package gojahost
 
-import (
-	g "github.com/dop251/goja"
-	"github.com/gost-dom/browser/dom/event"
-	"github.com/gost-dom/browser/internal/entity"
-	"github.com/gost-dom/browser/scripting/internal/js"
-)
+/*
 
 type gojaEvent[T event.Event] struct {
 	Value *g.Object
@@ -58,3 +53,4 @@ func (w eventWrapper) toEventTarget(
 	}
 	panic("TODO: Handle instances of non-entity events")
 }
+*/

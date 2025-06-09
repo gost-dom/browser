@@ -262,9 +262,7 @@ func (c MethodCallback) ReturnNotImplementedError(cbCtx CallbackContext) g.Gener
 		c.data.Name(), name, packagenames.ISSUE_URL,
 	)
 	// return c.platform.ReturnErrMsg(g.Lit(errMsg))
-	return g.Return(
-		cbCtx.ReturnWithError(
-			g.NewValuePackage("New", "errors").Call(g.Lit(errMsg))))
+	return g.Return(g.Nil, g.NewValuePackage("New", "errors").Call(g.Lit(errMsg)))
 }
 
 func (c MethodCallback) LogCall(cbCtx g.Generator) g.Generator {

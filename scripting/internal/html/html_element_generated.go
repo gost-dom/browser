@@ -33,7 +33,7 @@ func (w HTMLElementV8Wrapper[T]) click(cbCtx js.CallbackContext[T]) (js.Value[T]
 	cbCtx.Logger().Debug("V8 Function call: HTMLElement.click")
 	instance, err := js.As[html.HTMLElement](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	instance.Click()
 	return nil, nil

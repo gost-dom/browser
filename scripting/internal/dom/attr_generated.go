@@ -35,7 +35,7 @@ func (w AttrV8Wrapper[T]) localName(cbCtx js.CallbackContext[T]) (js.Value[T], e
 	cbCtx.Logger().Debug("V8 Function call: Attr.localName")
 	instance, err := js.As[dom.Attr](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.LocalName()
 	return codec.EncodeString(cbCtx, result)
@@ -45,7 +45,7 @@ func (w AttrV8Wrapper[T]) name(cbCtx js.CallbackContext[T]) (js.Value[T], error)
 	cbCtx.Logger().Debug("V8 Function call: Attr.name")
 	instance, err := js.As[dom.Attr](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.Name()
 	return codec.EncodeString(cbCtx, result)
@@ -55,7 +55,7 @@ func (w AttrV8Wrapper[T]) value(cbCtx js.CallbackContext[T]) (js.Value[T], error
 	cbCtx.Logger().Debug("V8 Function call: Attr.value")
 	instance, err := js.As[dom.Attr](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.Value()
 	return codec.EncodeString(cbCtx, result)
@@ -67,17 +67,17 @@ func (w AttrV8Wrapper[T]) setValue(cbCtx js.CallbackContext[T]) (js.Value[T], er
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	instance.SetValue(val)
-	return cbCtx.ReturnWithValue(nil)
+	return nil, nil
 }
 
 func (w AttrV8Wrapper[T]) ownerElement(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Attr.ownerElement")
 	instance, err := js.As[dom.Attr](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.OwnerElement()
 	return codec.EncodeEntity(cbCtx, result)

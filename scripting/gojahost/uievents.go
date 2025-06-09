@@ -1,10 +1,6 @@
 package gojahost
 
-import (
-	"github.com/dop251/goja"
-	"github.com/gost-dom/browser/internal/uievents"
-)
-
+/*
 func (w uIEventWrapper) constructor(
 	c goja.ConstructorCall, vm *goja.Runtime,
 ) *goja.Object {
@@ -27,3 +23,4 @@ func newMouseEventWrapper(instance *GojaContext) wrapper {
 func newPointerEventWrapper(instance *GojaContext) wrapper {
 	return &pointerEventWrapper{mouseEventWrapper{createUIEventWrapper(instance)}}
 }
+*/

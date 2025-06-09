@@ -23,7 +23,7 @@ func (n NodeV8Wrapper[T]) setTextContent(cbCtx js.CallbackContext[T]) (js.Value[
 	}
 	arg, _ := cbCtx.ConsumeArg()
 	i.SetTextContent(arg.String())
-	return cbCtx.ReturnWithValue(nil)
+	return nil, nil
 }
 
 func (n NodeV8Wrapper[T]) nodeType(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

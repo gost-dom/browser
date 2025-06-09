@@ -46,7 +46,7 @@ func (w EventV8Wrapper[T]) stopPropagation(cbCtx js.CallbackContext[T]) (js.Valu
 	cbCtx.Logger().Debug("V8 Function call: Event.stopPropagation")
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	instance.StopPropagation()
 	return nil, nil
@@ -56,7 +56,7 @@ func (w EventV8Wrapper[T]) preventDefault(cbCtx js.CallbackContext[T]) (js.Value
 	cbCtx.Logger().Debug("V8 Function call: Event.preventDefault")
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	instance.PreventDefault()
 	return nil, nil
@@ -66,7 +66,7 @@ func (w EventV8Wrapper[T]) type_(cbCtx js.CallbackContext[T]) (js.Value[T], erro
 	cbCtx.Logger().Debug("V8 Function call: Event.type_")
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.Type
 	return codec.EncodeString(cbCtx, result)
@@ -76,7 +76,7 @@ func (w EventV8Wrapper[T]) target(cbCtx js.CallbackContext[T]) (js.Value[T], err
 	cbCtx.Logger().Debug("V8 Function call: Event.target")
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.Target
 	return w.toEventTarget(cbCtx, result)
@@ -86,7 +86,7 @@ func (w EventV8Wrapper[T]) currentTarget(cbCtx js.CallbackContext[T]) (js.Value[
 	cbCtx.Logger().Debug("V8 Function call: Event.currentTarget")
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.CurrentTarget
 	return w.toEventTarget(cbCtx, result)
@@ -96,7 +96,7 @@ func (w EventV8Wrapper[T]) bubbles(cbCtx js.CallbackContext[T]) (js.Value[T], er
 	cbCtx.Logger().Debug("V8 Function call: Event.bubbles")
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.Bubbles
 	return codec.EncodeBoolean(cbCtx, result)
@@ -106,7 +106,7 @@ func (w EventV8Wrapper[T]) cancelable(cbCtx js.CallbackContext[T]) (js.Value[T],
 	cbCtx.Logger().Debug("V8 Function call: Event.cancelable")
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.Cancelable
 	return codec.EncodeBoolean(cbCtx, result)
@@ -116,7 +116,7 @@ func (w EventV8Wrapper[T]) defaultPrevented(cbCtx js.CallbackContext[T]) (js.Val
 	cbCtx.Logger().Debug("V8 Function call: Event.defaultPrevented")
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.DefaultPrevented
 	return codec.EncodeBoolean(cbCtx, result)

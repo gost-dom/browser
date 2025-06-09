@@ -45,7 +45,7 @@ func (w LocationV8Wrapper[T]) assign(cbCtx js.CallbackContext[T]) (js.Value[T], 
 	cbCtx.Logger().Debug("V8 Function call: Location.assign")
 	instance, errInst := js.As[html.Location](cbCtx.Instance())
 	if errInst != nil {
-		return cbCtx.ReturnWithError(errInst)
+		return nil, errInst
 	}
 	url, errArg1 := js.ConsumeArgument(cbCtx, "url", nil, codec.DecodeString)
 	if errArg1 != nil {
@@ -59,7 +59,7 @@ func (w LocationV8Wrapper[T]) replace(cbCtx js.CallbackContext[T]) (js.Value[T],
 	cbCtx.Logger().Debug("V8 Function call: Location.replace")
 	instance, errInst := js.As[html.Location](cbCtx.Instance())
 	if errInst != nil {
-		return cbCtx.ReturnWithError(errInst)
+		return nil, errInst
 	}
 	url, errArg1 := js.ConsumeArgument(cbCtx, "url", nil, codec.DecodeString)
 	if errArg1 != nil {
@@ -73,7 +73,7 @@ func (w LocationV8Wrapper[T]) reload(cbCtx js.CallbackContext[T]) (js.Value[T], 
 	cbCtx.Logger().Debug("V8 Function call: Location.reload")
 	instance, err := js.As[html.Location](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	errCall := instance.Reload()
 	return nil, errCall
@@ -83,7 +83,7 @@ func (w LocationV8Wrapper[T]) href(cbCtx js.CallbackContext[T]) (js.Value[T], er
 	cbCtx.Logger().Debug("V8 Function call: Location.href")
 	instance, err := js.As[html.Location](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.Href()
 	return codec.EncodeString(cbCtx, result)
@@ -95,17 +95,17 @@ func (w LocationV8Wrapper[T]) setHref(cbCtx js.CallbackContext[T]) (js.Value[T],
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	instance.SetHref(val)
-	return cbCtx.ReturnWithValue(nil)
+	return nil, nil
 }
 
 func (w LocationV8Wrapper[T]) origin(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Location.origin")
 	instance, err := js.As[html.Location](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.Origin()
 	return codec.EncodeString(cbCtx, result)
@@ -115,7 +115,7 @@ func (w LocationV8Wrapper[T]) protocol(cbCtx js.CallbackContext[T]) (js.Value[T]
 	cbCtx.Logger().Debug("V8 Function call: Location.protocol")
 	instance, err := js.As[html.Location](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.Protocol()
 	return codec.EncodeString(cbCtx, result)
@@ -127,17 +127,17 @@ func (w LocationV8Wrapper[T]) setProtocol(cbCtx js.CallbackContext[T]) (js.Value
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	instance.SetProtocol(val)
-	return cbCtx.ReturnWithValue(nil)
+	return nil, nil
 }
 
 func (w LocationV8Wrapper[T]) host(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Location.host")
 	instance, err := js.As[html.Location](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.Host()
 	return codec.EncodeString(cbCtx, result)
@@ -149,17 +149,17 @@ func (w LocationV8Wrapper[T]) setHost(cbCtx js.CallbackContext[T]) (js.Value[T],
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	instance.SetHost(val)
-	return cbCtx.ReturnWithValue(nil)
+	return nil, nil
 }
 
 func (w LocationV8Wrapper[T]) hostname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Location.hostname")
 	instance, err := js.As[html.Location](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.Hostname()
 	return codec.EncodeString(cbCtx, result)
@@ -171,17 +171,17 @@ func (w LocationV8Wrapper[T]) setHostname(cbCtx js.CallbackContext[T]) (js.Value
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	instance.SetHostname(val)
-	return cbCtx.ReturnWithValue(nil)
+	return nil, nil
 }
 
 func (w LocationV8Wrapper[T]) port(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Location.port")
 	instance, err := js.As[html.Location](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.Port()
 	return codec.EncodeString(cbCtx, result)
@@ -193,17 +193,17 @@ func (w LocationV8Wrapper[T]) setPort(cbCtx js.CallbackContext[T]) (js.Value[T],
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	instance.SetPort(val)
-	return cbCtx.ReturnWithValue(nil)
+	return nil, nil
 }
 
 func (w LocationV8Wrapper[T]) pathname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Location.pathname")
 	instance, err := js.As[html.Location](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.Pathname()
 	return codec.EncodeString(cbCtx, result)
@@ -215,17 +215,17 @@ func (w LocationV8Wrapper[T]) setPathname(cbCtx js.CallbackContext[T]) (js.Value
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	instance.SetPathname(val)
-	return cbCtx.ReturnWithValue(nil)
+	return nil, nil
 }
 
 func (w LocationV8Wrapper[T]) search(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Location.search")
 	instance, err := js.As[html.Location](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.Search()
 	return codec.EncodeString(cbCtx, result)
@@ -237,17 +237,17 @@ func (w LocationV8Wrapper[T]) setSearch(cbCtx js.CallbackContext[T]) (js.Value[T
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	instance.SetSearch(val)
-	return cbCtx.ReturnWithValue(nil)
+	return nil, nil
 }
 
 func (w LocationV8Wrapper[T]) hash(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Location.hash")
 	instance, err := js.As[html.Location](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.Hash()
 	return codec.EncodeString(cbCtx, result)
@@ -259,13 +259,13 @@ func (w LocationV8Wrapper[T]) setHash(cbCtx js.CallbackContext[T]) (js.Value[T],
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	instance.SetHash(val)
-	return cbCtx.ReturnWithValue(nil)
+	return nil, nil
 }
 
 func (w LocationV8Wrapper[T]) ancestorOrigins(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Location.ancestorOrigins")
-	return cbCtx.ReturnWithError(errors.New("Location.ancestorOrigins: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues"))
+	return nil, errors.New("Location.ancestorOrigins: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

@@ -34,7 +34,7 @@ func (w EventTargetV8Wrapper[T]) addEventListener(cbCtx js.CallbackContext[T]) (
 	cbCtx.Logger().Debug("V8 Function call: EventTarget.addEventListener")
 	instance, errInst := js.As[event.EventTarget](cbCtx.Instance())
 	if errInst != nil {
-		return cbCtx.ReturnWithError(errInst)
+		return nil, errInst
 	}
 	type_, errArg1 := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
 	callback, errArg2 := js.ConsumeArgument(cbCtx, "callback", codec.ZeroValue, w.decodeEventListener)
@@ -51,7 +51,7 @@ func (w EventTargetV8Wrapper[T]) removeEventListener(cbCtx js.CallbackContext[T]
 	cbCtx.Logger().Debug("V8 Function call: EventTarget.removeEventListener")
 	instance, errInst := js.As[event.EventTarget](cbCtx.Instance())
 	if errInst != nil {
-		return cbCtx.ReturnWithError(errInst)
+		return nil, errInst
 	}
 	type_, errArg1 := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
 	callback, errArg2 := js.ConsumeArgument(cbCtx, "callback", codec.ZeroValue, w.decodeEventListener)
@@ -68,7 +68,7 @@ func (w EventTargetV8Wrapper[T]) dispatchEvent(cbCtx js.CallbackContext[T]) (js.
 	cbCtx.Logger().Debug("V8 Function call: EventTarget.dispatchEvent")
 	instance, errInst := js.As[event.EventTarget](cbCtx.Instance())
 	if errInst != nil {
-		return cbCtx.ReturnWithError(errInst)
+		return nil, errInst
 	}
 	event, errArg1 := js.ConsumeArgument(cbCtx, "event", nil, w.decodeEvent)
 	if errArg1 != nil {

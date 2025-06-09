@@ -48,7 +48,7 @@ func (w NodeV8Wrapper[T]) getRootNode(cbCtx js.CallbackContext[T]) (js.Value[T],
 	cbCtx.Logger().Debug("V8 Function call: Node.getRootNode")
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
-		return cbCtx.ReturnWithError(errInst)
+		return nil, errInst
 	}
 	options, errArg1 := js.ConsumeArgument(cbCtx, "options", w.defaultGetRootNodeOptions, w.decodeGetRootNodeOptions)
 	if errArg1 != nil {
@@ -62,7 +62,7 @@ func (w NodeV8Wrapper[T]) cloneNode(cbCtx js.CallbackContext[T]) (js.Value[T], e
 	cbCtx.Logger().Debug("V8 Function call: Node.cloneNode")
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
-		return cbCtx.ReturnWithError(errInst)
+		return nil, errInst
 	}
 	subtree, errArg1 := js.ConsumeArgument(cbCtx, "subtree", w.defaultboolean, codec.DecodeBoolean)
 	if errArg1 != nil {
@@ -76,7 +76,7 @@ func (w NodeV8Wrapper[T]) isSameNode(cbCtx js.CallbackContext[T]) (js.Value[T], 
 	cbCtx.Logger().Debug("V8 Function call: Node.isSameNode")
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
-		return cbCtx.ReturnWithError(errInst)
+		return nil, errInst
 	}
 	otherNode, errArg1 := js.ConsumeArgument(cbCtx, "otherNode", codec.ZeroValue, codec.DecodeNode)
 	if errArg1 != nil {
@@ -90,7 +90,7 @@ func (w NodeV8Wrapper[T]) contains(cbCtx js.CallbackContext[T]) (js.Value[T], er
 	cbCtx.Logger().Debug("V8 Function call: Node.contains")
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
-		return cbCtx.ReturnWithError(errInst)
+		return nil, errInst
 	}
 	other, errArg1 := js.ConsumeArgument(cbCtx, "other", codec.ZeroValue, codec.DecodeNode)
 	if errArg1 != nil {
@@ -104,7 +104,7 @@ func (w NodeV8Wrapper[T]) insertBefore(cbCtx js.CallbackContext[T]) (js.Value[T]
 	cbCtx.Logger().Debug("V8 Function call: Node.insertBefore")
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
-		return cbCtx.ReturnWithError(errInst)
+		return nil, errInst
 	}
 	node, errArg1 := js.ConsumeArgument(cbCtx, "node", nil, codec.DecodeNode)
 	child, errArg2 := js.ConsumeArgument(cbCtx, "child", codec.ZeroValue, codec.DecodeNode)
@@ -123,7 +123,7 @@ func (w NodeV8Wrapper[T]) appendChild(cbCtx js.CallbackContext[T]) (js.Value[T],
 	cbCtx.Logger().Debug("V8 Function call: Node.appendChild")
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
-		return cbCtx.ReturnWithError(errInst)
+		return nil, errInst
 	}
 	node, errArg1 := js.ConsumeArgument(cbCtx, "node", nil, codec.DecodeNode)
 	if errArg1 != nil {
@@ -140,7 +140,7 @@ func (w NodeV8Wrapper[T]) removeChild(cbCtx js.CallbackContext[T]) (js.Value[T],
 	cbCtx.Logger().Debug("V8 Function call: Node.removeChild")
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
-		return cbCtx.ReturnWithError(errInst)
+		return nil, errInst
 	}
 	child, errArg1 := js.ConsumeArgument(cbCtx, "child", nil, codec.DecodeNode)
 	if errArg1 != nil {
@@ -157,7 +157,7 @@ func (w NodeV8Wrapper[T]) nodeName(cbCtx js.CallbackContext[T]) (js.Value[T], er
 	cbCtx.Logger().Debug("V8 Function call: Node.nodeName")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.NodeName()
 	return codec.EncodeString(cbCtx, result)
@@ -167,7 +167,7 @@ func (w NodeV8Wrapper[T]) isConnected(cbCtx js.CallbackContext[T]) (js.Value[T],
 	cbCtx.Logger().Debug("V8 Function call: Node.isConnected")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.IsConnected()
 	return codec.EncodeBoolean(cbCtx, result)
@@ -177,7 +177,7 @@ func (w NodeV8Wrapper[T]) ownerDocument(cbCtx js.CallbackContext[T]) (js.Value[T
 	cbCtx.Logger().Debug("V8 Function call: Node.ownerDocument")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.OwnerDocument()
 	return codec.EncodeEntity(cbCtx, result)
@@ -187,7 +187,7 @@ func (w NodeV8Wrapper[T]) parentElement(cbCtx js.CallbackContext[T]) (js.Value[T
 	cbCtx.Logger().Debug("V8 Function call: Node.parentElement")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.ParentElement()
 	return codec.EncodeEntity(cbCtx, result)
@@ -197,7 +197,7 @@ func (w NodeV8Wrapper[T]) childNodes(cbCtx js.CallbackContext[T]) (js.Value[T], 
 	cbCtx.Logger().Debug("V8 Function call: Node.childNodes")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.ChildNodes()
 	return codec.EncodeEntity(cbCtx, result)
@@ -207,7 +207,7 @@ func (w NodeV8Wrapper[T]) firstChild(cbCtx js.CallbackContext[T]) (js.Value[T], 
 	cbCtx.Logger().Debug("V8 Function call: Node.firstChild")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.FirstChild()
 	return codec.EncodeEntity(cbCtx, result)
@@ -217,7 +217,7 @@ func (w NodeV8Wrapper[T]) previousSibling(cbCtx js.CallbackContext[T]) (js.Value
 	cbCtx.Logger().Debug("V8 Function call: Node.previousSibling")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.PreviousSibling()
 	return codec.EncodeEntity(cbCtx, result)
@@ -227,7 +227,7 @@ func (w NodeV8Wrapper[T]) nextSibling(cbCtx js.CallbackContext[T]) (js.Value[T],
 	cbCtx.Logger().Debug("V8 Function call: Node.nextSibling")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.NextSibling()
 	return codec.EncodeEntity(cbCtx, result)

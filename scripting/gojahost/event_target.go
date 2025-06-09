@@ -2,7 +2,6 @@ package gojahost
 
 import (
 	"github.com/gost-dom/browser/dom/event"
-	"github.com/gost-dom/browser/internal/uievents"
 
 	"github.com/dop251/goja"
 )
@@ -30,23 +29,24 @@ func newGojaEventListener(r *GojaContext, v goja.Value) event.EventHandler {
 }
 
 func (h *gojaEventListener) HandleEvent(e *event.Event) error {
-	customEvent := h.instance.globals["Event"]
-	switch e.Data.(type) {
-	case uievents.PointerEventInit:
-		customEvent = h.instance.globals["PointerEvent"]
-	case uievents.MouseEventInit:
-		customEvent = h.instance.globals["MouseEvent"]
-	case uievents.UIEventInit:
-		customEvent = h.instance.globals["UIEvent"]
-	case event.CustomEventInit:
-		customEvent = h.instance.globals["CustomEvent"]
-	default:
-		customEvent = h.instance.globals["Event"]
-	}
-	obj := h.instance.vm.CreateObject(customEvent.Prototype)
-	customEvent.Wrapper.storeInternal(e, obj)
-	_, err := h.f(obj, obj)
-	return err
+	panic("Not implemented")
+	// customEvent := h.instance.globals["Event"]
+	// switch e.Data.(type) {
+	// case uievents.PointerEventInit:
+	// 	customEvent = h.instance.globals["PointerEvent"]
+	// case uievents.MouseEventInit:
+	// 	customEvent = h.instance.globals["MouseEvent"]
+	// case uievents.UIEventInit:
+	// 	customEvent = h.instance.globals["UIEvent"]
+	// case event.CustomEventInit:
+	// 	customEvent = h.instance.globals["CustomEvent"]
+	// default:
+	// 	customEvent = h.instance.globals["Event"]
+	// }
+	// obj := h.instance.vm.CreateObject(customEvent.Prototype)
+	// customEvent.Wrapper.storeInternal(e, obj)
+	// _, err := h.f(obj, obj)
+	// return err
 }
 
 func (h *gojaEventListener) Equals(e event.EventHandler) bool {

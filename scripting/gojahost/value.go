@@ -20,7 +20,10 @@ func newGojaValue(ctx *GojaContext, v goja.Value) js.Value[jsTypeParam] {
 	return gojaValue{ctx, v}
 }
 
-func (v gojaValue) AsFunction() (js.Function[jsTypeParam], bool) { panic("TODO") }
+func (v gojaValue) AsFunction() (js.Function[jsTypeParam], bool) {
+	f, ok := goja.AssertFunction(v.value)
+	return gojaFunction{v, f}, ok
+}
 
 func (v gojaValue) AsObject() (js.Object[jsTypeParam], bool) {
 	if o := v.value.ToObject(v.ctx.vm); o != nil {
@@ -62,7 +65,11 @@ func newGojaObject(c *GojaContext, o *goja.Object) js.Object[jsTypeParam] {
 }
 
 func (o gojaObject) Get(key string) (js.Value[jsTypeParam], error) {
-	return newGojaValue(o.ctx, o.obj.Get(key)), nil
+	v := o.obj.Get(key)
+	if v == nil {
+		v = goja.Undefined()
+	}
+	return newGojaValue(o.ctx, v), nil
 }
 
 func (o gojaObject) Set(key string, v js.Value[jsTypeParam]) error {
@@ -88,4 +95,21 @@ func (o gojaObject) SetNativeValue(value any) {
 		goja.FLAG_FALSE, // Configurable
 		goja.FLAG_FALSE, // Enumerable
 	)
+}
+
+type gojaFunction struct {
+	gojaValue
+	f goja.Callable
+}
+
+func (f gojaFunction) Call(
+	this js.Object[jsTypeParam],
+	args ...js.Value[jsTypeParam],
+) (js.Value[jsTypeParam], error) {
+	v := make([]goja.Value, len(args))
+	for i, a := range args {
+		v[i] = a.Self().value
+	}
+	res, err := f.f(this.Self().value, v...)
+	return newGojaValue(f.ctx, res), err
 }

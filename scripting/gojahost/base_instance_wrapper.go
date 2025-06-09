@@ -1,12 +1,9 @@
 package gojahost
 
 import (
-	"strings"
-
 	"github.com/dop251/goja"
 	g "github.com/dop251/goja"
 	"github.com/gost-dom/browser/dom"
-	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/entity"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
@@ -78,35 +75,43 @@ func (w baseInstanceWrapper[T]) decodeboolean(v g.Value) bool {
 	return v.ToBoolean()
 }
 
-func (c *GojaContext) getPrototype(e entity.ObjectIder) function {
-	switch v := e.(type) {
-	case html.HTMLDocument:
-		return c.globals["HTMLDocument"]
-	case dom.Document:
-		return c.globals["Document"]
-	case dom.Element:
-		className, found := codec.HtmlElements[strings.ToLower(v.TagName())]
-		if found {
-			return c.globals[className]
-		}
-		return c.globals["Element"]
-	case dom.Node:
-		return c.globals["Node"]
-	}
-	panic("Prototype lookup not defined")
-}
+// func (c *GojaContext) getPrototype(e entity.ObjectIder) function {
+// 	prototype := codec.LookupJSPrototype(e)
+// 	// switch v := e.(type) {
+// 	// case html.HTMLDocument:
+// 	// 	return c.globals["HTMLDocument"]
+// 	// case dom.Document:
+// 	// 	return c.globals["Document"]
+// 	// case dom.Element:
+// 	// 	className, found := codec.HtmlElements[strings.ToLower(v.TagName())]
+// 	// 	if found {
+// 	// 		return c.globals[className]
+// 	// 	}
+// 	// 	return c.globals["Element"]
+// 	// case dom.Node:
+// 	// 	return c.globals["Node"]
+// 	// }
+// 	// panic("Prototype lookup not defined")
+// }
 
 func (c *GojaContext) toNode(e entity.ObjectIder) g.Value {
 	if o, ok := c.cachedNodes[e.ObjectId()]; ok {
 		return o
 	}
-	data := c.getPrototype(e)
-	obj := c.vm.CreateObject(data.Prototype)
-	c.storeInternal(e, obj)
-	if initializer, ok := data.Wrapper.(instanceInitializer); ok {
-		initializer.initObject(obj)
+	prototype := codec.LookupJSPrototype(e)
+	class := c.classes[prototype]
+	val, err := class.NewInstance(e)
+	if err != nil {
+		panic(err)
 	}
-	return obj
+	return val.Self().value
+	// data := c.getPrototype(e)
+	// obj := c.vm.CreateObject(data.Prototype)
+	// c.storeInternal(e, obj)
+	// if initializer, ok := data.Wrapper.(instanceInitializer); ok {
+	// 	initializer.initObject(obj)
+	// }
+	// return obj
 }
 
 func (w baseInstanceWrapper[T]) toJSWrapper(e entity.ObjectIder) g.Value {

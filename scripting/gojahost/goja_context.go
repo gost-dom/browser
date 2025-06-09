@@ -3,18 +3,21 @@ package gojahost
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
+	"github.com/gost-dom/browser/scripting/internal/js"
 
 	"github.com/dop251/goja"
 )
 
 type GojaContext struct {
-	vm           *goja.Runtime
-	clock        *clock.Clock
-	window       html.Window
-	globals      map[string]function
+	vm     *goja.Runtime
+	clock  *clock.Clock
+	window html.Window
+	// globals      map[string]function
+	classes      map[string]*gojaClass
 	wrappedGoObj *goja.Symbol
 	cachedNodes  map[int32]goja.Value
 }
@@ -22,6 +25,13 @@ type GojaContext struct {
 func (c *GojaContext) Clock() html.Clock { return c.clock }
 
 func (i *GojaContext) Close() {}
+
+func (i *GojaContext) logger() *slog.Logger {
+	if i.window == nil {
+		return nil
+	}
+	return i.window.Logger()
+}
 
 func (i *GojaContext) run(str string) (goja.Value, error) {
 	res, err := i.vm.RunString(str)
@@ -91,13 +101,139 @@ func (i *GojaContext) Export(value any) (res any, err error) {
 }
 
 func (m *GojaContext) createLocationInstance() *goja.Object {
-	location := m.vm.CreateObject(m.globals["Location"].Prototype)
-	location.DefineDataPropertySymbol(
-		m.wrappedGoObj,
-		m.vm.ToValue(m.window.Location()),
-		goja.FLAG_FALSE,
-		goja.FLAG_FALSE,
-		goja.FLAG_FALSE,
+	// panic("Not implemented")
+	location, err := m.classes["Location"].NewInstance(m.window.Location())
+	if err != nil {
+		panic(err)
+	}
+	return location.(gojaObject).obj
+}
+
+func (c *GojaContext) CreateFunction(name string, cb js.FunctionCallback[jsTypeParam]) {
+	c.vm.Set(name, wrapJSCallback(c, cb))
+}
+
+func (c *GojaContext) CreateClass(
+	name string, extends js.Class[jsTypeParam],
+	cb js.FunctionCallback[jsTypeParam],
+) js.Class[jsTypeParam] {
+	class := &gojaClass{ctx: c, cb: cb, instanceAttrs: make(map[string]attributeHandler)}
+	constructor := c.vm.ToValue(class.callback).(*goja.Object)
+	constructor.DefineDataProperty(
+		"name",
+		c.vm.ToValue(name),
+		goja.FLAG_NOT_SET,
+		goja.FLAG_NOT_SET,
+		goja.FLAG_NOT_SET,
 	)
-	return location
+	class.prototype = constructor.Get("prototype").(*goja.Object)
+	c.vm.Set(name, constructor)
+	c.classes[name] = class
+
+	if extends != nil {
+		if superclass, ok := extends.(*gojaClass); ok {
+			class.prototype.SetPrototype(superclass.prototype)
+		} else {
+			panic(fmt.Sprintf("Superclass not installed for %s. extends: %+v", name, extends))
+		}
+	}
+
+	return class
+}
+
+type gojaFunctionCallback = func(call goja.FunctionCall, r *goja.Runtime) *goja.Object
+
+func (class *gojaClass) callback(call goja.ConstructorCall, r *goja.Runtime) *goja.Object {
+	class.installInstance(call.This)
+	class.cb(newGojaCallbackContext(class.ctx, call))
+	return nil
+}
+
+func (class *gojaClass) installInstance(this *goja.Object) {
+	for _, v := range class.instanceAttrs {
+		v.install(this)
+	}
+}
+
+type gojaIndexedHandler struct {
+	cb js.HandlerGetterCallback[jsTypeParam, int]
+}
+
+type attributeHandler struct {
+	ctx    *GojaContext
+	name   string
+	getter js.FunctionCallback[jsTypeParam]
+	setter js.FunctionCallback[jsTypeParam]
+}
+
+type gojaClass struct {
+	ctx            *GojaContext
+	cb             js.FunctionCallback[jsTypeParam]
+	prototype      *goja.Object
+	indexedHandler *gojaIndexedHandler
+	instanceAttrs  map[string]attributeHandler
+}
+
+func (c *gojaClass) CreateIndexedHandler(cb js.HandlerGetterCallback[jsTypeParam, int]) {
+	c.indexedHandler = &gojaIndexedHandler{cb}
+}
+
+func (c *gojaClass) CreateInstanceAttribute(
+	name string,
+	getter js.FunctionCallback[jsTypeParam],
+	setter js.FunctionCallback[jsTypeParam],
+) {
+	c.instanceAttrs[name] = attributeHandler{c.ctx, name, getter, setter}
+}
+
+func (c gojaClass) CreatePrototypeMethod(
+	name string,
+	cb js.FunctionCallback[jsTypeParam],
+) {
+	if err := c.prototype.Set(name, wrapJSCallback(c.ctx, cb)); err != nil {
+		panic(err)
+	}
+}
+
+func (h attributeHandler) install(object *goja.Object) {
+	var g, s goja.Value
+	if h.getter != nil {
+		g = wrapJSCallback(h.ctx, h.getter)
+	}
+	if h.setter != nil {
+		s = wrapJSCallback(h.ctx, h.setter)
+	}
+	object.DefineAccessorProperty(h.name, g, s,
+		goja.FLAG_TRUE, // configurable
+		goja.FLAG_TRUE, // enumerable
+	)
+}
+
+func (c gojaClass) CreatePrototypeAttribute(
+	name string,
+	getter js.FunctionCallback[jsTypeParam],
+	setter js.FunctionCallback[jsTypeParam],
+) {
+	attr := attributeHandler{c.ctx, name, getter, setter}
+	attr.install(c.prototype)
+}
+
+func (c gojaClass) CreateIteratorMethod(cb js.FunctionCallback[jsTypeParam]) {
+	c.prototype.SetSymbol(goja.SymIterator, wrapJSCallback(c.ctx, cb))
+}
+
+func (c *gojaClass) NewInstance(native any) (js.Object[jsTypeParam], error) {
+	obj := c.ctx.vm.CreateObject(c.prototype)
+	c.installInstance(obj)
+	c.ctx.storeInternal(native, obj)
+	return newGojaObject(c.ctx, obj), nil
+}
+
+type gojaCallbackContext struct{}
+
+func newGojaCallbackContext(
+	ctx *GojaContext,
+	call goja.ConstructorCall,
+) *callbackContext {
+	return &callbackContext{ctx, call.This, call.Arguments, 0}
 }

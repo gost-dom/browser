@@ -24,7 +24,7 @@ func (w EventV8Wrapper[T]) toEventTarget(
 	e event.EventTarget,
 ) (js.Value[T], error) {
 	if e == nil {
-		return cbCtx.ReturnWithValue(cbCtx.ValueFactory().Null())
+		return cbCtx.ValueFactory().Null(), nil
 	}
 	if entity, ok := e.(entity.ObjectIder); ok {
 		return codec.EncodeEntity(cbCtx, entity)

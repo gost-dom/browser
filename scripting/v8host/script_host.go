@@ -137,24 +137,7 @@ func createHostInstance(config hostOptions) *V8ScriptHost {
 		host.logger = config.logger
 	} else {
 		host = factory.createHost(config)
-		// host = &V8ScriptHost{
-		// 	mu:       new(sync.Mutex),
-		// 	iso:      v8go.NewIsolate(),
-		// 	logger:   config.logger,
-		// 	globals:  globals{make(map[string]v8Class)},
-		// 	contexts: make(map[*v8go.Context]*V8ScriptContext),
-		// }
 	}
-
-	// if !hostReused {
-	// 	host.iso.SetPromiseRejectedCallback(host.promiseRejected)
-	// 	host.windowTemplate = v8go.NewObjectTemplate(host.iso)
-	// 	host.iterator = newV8Iterator(host)
-	// 	host.windowTemplate.SetInternalFieldCount(1)
-	// 	for _, i := range factory.initializers {
-	// 		i.Configure(host)
-	// 	}
-	// }
 
 	host.inspectorClient = v8go.NewInspectorClient(consoleAPIMessageFunc(host.consoleAPIMessage))
 	host.inspector = v8go.NewInspector(host.iso, host.inspectorClient)

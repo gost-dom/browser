@@ -167,7 +167,7 @@ func (gen GojaTargetGenerators) getInstance(
 			wrappers.As.TypeParam(data.WrappedType()).Call(cbCtx.GetInstance()),
 		),
 		wrappers.IfError(err, wrappers.TransformerFunc(func(err g.Generator) g.Generator {
-			return g.Return(cbCtx.ReturnWithError(err))
+			return g.Return(g.Nil, err)
 		})),
 	)
 }
@@ -257,7 +257,7 @@ func (gen GojaTargetGenerators) ConvertResult(
 
 		} else {
 			list.Append(evaluate)
-			list.Append(g.Return(cbCtx.ReturnWithValue(g.Nil)))
+			list.Append(g.Return(g.Nil, g.Nil))
 		}
 	}
 	return list

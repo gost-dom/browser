@@ -53,7 +53,8 @@ func (gen V8CallbackGenerators) assignInstance(cbCtx wrappers.CallbackContext) g
 
 		wrappers.IfError(
 			err,
-			wrappers.ReturnTransform(wrappers.TransformerFunc(cbCtx.ReturnWithError)),
+			wrappers.TransformerFunc(returnNilCommaErr),
+			//wrappers.ReturnTransform(wrappers.TransformerFunc(cbCtx.ReturnWithError)),
 		),
 	)
 }

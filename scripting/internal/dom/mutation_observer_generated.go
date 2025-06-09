@@ -38,7 +38,7 @@ func (w MutationObserverV8Wrapper[T]) observe(cbCtx js.CallbackContext[T]) (js.V
 	cbCtx.Logger().Debug("V8 Function call: MutationObserver.observe")
 	instance, errInst := js.As[dominterfaces.MutationObserver](cbCtx.Instance())
 	if errInst != nil {
-		return cbCtx.ReturnWithError(errInst)
+		return nil, errInst
 	}
 	target, errArg1 := js.ConsumeArgument(cbCtx, "target", nil, codec.DecodeNode)
 	options, errArg2 := js.ConsumeArgument(cbCtx, "options", nil, w.decodeObserveOption)
@@ -54,7 +54,7 @@ func (w MutationObserverV8Wrapper[T]) disconnect(cbCtx js.CallbackContext[T]) (j
 	cbCtx.Logger().Debug("V8 Function call: MutationObserver.disconnect")
 	instance, err := js.As[dominterfaces.MutationObserver](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	instance.Disconnect()
 	return nil, nil
@@ -64,7 +64,7 @@ func (w MutationObserverV8Wrapper[T]) takeRecords(cbCtx js.CallbackContext[T]) (
 	cbCtx.Logger().Debug("V8 Function call: MutationObserver.takeRecords")
 	instance, err := js.As[dominterfaces.MutationObserver](cbCtx.Instance())
 	if err != nil {
-		return cbCtx.ReturnWithError(err)
+		return nil, err
 	}
 	result := instance.TakeRecords()
 	return w.toSequenceMutationRecord(cbCtx, result)
