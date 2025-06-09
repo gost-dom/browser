@@ -5,16 +5,19 @@ import (
 
 	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/scripting/configuration"
-	. "github.com/gost-dom/code-gen/scripting/model"
+	"github.com/gost-dom/code-gen/scripting/model"
 	"github.com/gost-dom/code-gen/stdgen"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )
 
+// createData combines the specific configuration with the corresponding web IDL
+// specification, containins information about the intention about _what_ to
+// generate, which methods, etc.
 func createData(
 	spec idl.Spec,
 	interfaceConfig *configuration.WebIDLConfig,
-) ESConstructorData {
+) model.ESConstructorData {
 	idlName, ok := spec.GetType(interfaceConfig.TypeName)
 	if !ok {
 		panic(fmt.Sprintf("cannot find type: %s", interfaceConfig.TypeName))
@@ -25,7 +28,7 @@ func createData(
 	}
 	specRules := customrules.GetSpecRules(interfaceConfig.DomSpec.Name)
 	intfRules := specRules[interfaceConfig.TypeName]
-	return ESConstructorData{
+	return model.ESConstructorData{
 		Spec:          interfaceConfig,
 		CustomRule:    intfRules,
 		RunCustomCode: interfaceConfig.RunCustomCode,
@@ -40,7 +43,7 @@ func CreateConstructor(
 	idlInterface idl.Interface,
 	intfRule customrules.InterfaceRule,
 	interfaceConfig *configuration.WebIDLConfig,
-	idlName idl.TypeSpec) *ESOperation {
+	idlName idl.TypeSpec) *model.ESOperation {
 	if c, ok := idlName.Constructor(); ok {
 		c.Name = "constructor"
 		// TODO: Fix for constructor overloads
@@ -63,7 +66,7 @@ func CreateInstanceMethods(
 	idlInterface idl.Interface,
 	intfRule customrules.InterfaceRule,
 	interfaceConfig *configuration.WebIDLConfig,
-	idlName idl.TypeSpec) (result []ESOperation) {
+	idlName idl.TypeSpec) (result []model.ESOperation) {
 	// TODO: Handle overloads, e.g. of XHR.open
 	visited := make(map[string]bool)
 	for _, operation := range idlInterface.Operations {
@@ -84,7 +87,7 @@ func CreateAttributes(
 	intfRules customrules.InterfaceRule,
 	interfaceConfig *configuration.WebIDLConfig,
 	idlName idl.TypeSpec,
-) (res []ESAttribute) {
+) (res []model.ESAttribute) {
 	for attribute := range idlName.IdlInterface.AllAttributes(interfaceConfig.IncludeIncludes) {
 		methodCustomization := interfaceConfig.GetMethodCustomization(attribute.Name)
 		customRule := intfRules.Attributes[attribute.Name]
@@ -92,14 +95,14 @@ func CreateAttributes(
 			continue
 		}
 		var (
-			getter *ESOperation
-			setter *ESOperation
+			getter *model.ESOperation
+			setter *model.ESOperation
 		)
 		attrType := attribute.Type
 		if customRule.OverrideType != nil {
 			attrType = customRule.OverrideType.IdlType()
 		}
-		getter = &ESOperation{
+		getter = &model.ESOperation{
 			Name:                 attribute.Name,
 			NotImplemented:       methodCustomization.NotImplemented,
 			CustomImplementation: methodCustomization.CustomImplementation,
@@ -107,17 +110,17 @@ func CreateAttributes(
 			MethodCustomization:  methodCustomization,
 		}
 		if !attribute.Readonly {
-			setter = new(ESOperation)
+			setter = new(model.ESOperation)
 			*setter = *getter
-			setter.Name = fmt.Sprintf("set%s", IdlNameToGoName(getter.Name))
+			setter.Name = fmt.Sprintf("set%s", model.IdlNameToGoName(getter.Name))
 			methodCustomization := interfaceConfig.GetMethodCustomization(setter.Name)
 			setter.NotImplemented = setter.NotImplemented || methodCustomization.NotImplemented
 			setter.CustomImplementation = setter.CustomImplementation ||
 				methodCustomization.CustomImplementation
 			setter.RetType = IdlTypeUndefined
-			setter.Arguments = []ESOperationArgument{{
+			setter.Arguments = []model.ESOperationArgument{{
 				Name: "val",
-				Type: IdlNameToGoName(attribute.Type.Name),
+				Type: model.IdlNameToGoName(attribute.Type.Name),
 				IdlArg: idl.Argument{
 					Name: "val",
 					Type: attrType,
@@ -130,7 +133,7 @@ func CreateAttributes(
 		getter.NotImplemented = getterCustomization.NotImplemented || getter.NotImplemented
 		getter.CustomImplementation = getterCustomization.CustomImplementation ||
 			getter.CustomImplementation
-		res = append(res, ESAttribute{
+		res = append(res, model.ESAttribute{
 			Name:   attribute.Name,
 			Spec:   attribute,
 			Getter: getter,
@@ -144,11 +147,11 @@ func createOperation(
 	intfRules customrules.InterfaceRule,
 	typeSpec *configuration.WebIDLConfig,
 	stringifier bool,
-) ESOperation {
+) model.ESOperation {
 	opRules := intfRules.Operations[idlOperation.Name]
 	methodCustomization := typeSpec.GetMethodCustomization(idlOperation.Name)
 
-	op := ESOperation{
+	op := model.ESOperation{
 		Name:                 idlOperation.Name,
 		Spec:                 idlOperation,
 		NotImplemented:       methodCustomization.NotImplemented,
@@ -156,7 +159,7 @@ func createOperation(
 		RetType:              idlOperation.ReturnType,
 		MethodCustomization:  methodCustomization,
 		HasError:             opRules.HasError,
-		Arguments:            []ESOperationArgument{},
+		Arguments:            []model.ESOperationArgument{},
 	}
 	if stringifier {
 		op.Name = "toString"
@@ -166,7 +169,7 @@ func createOperation(
 		if arg := methodCustomization.Argument(idlArg.Name); arg != nil {
 			esArgumentSpec = *arg
 		}
-		esArg := ESOperationArgument{
+		esArg := model.ESOperationArgument{
 			Name:         idlArg.Name,
 			IdlArg:       idlArg,
 			Optional:     idlArg.Optional && !esArgumentSpec.Required,

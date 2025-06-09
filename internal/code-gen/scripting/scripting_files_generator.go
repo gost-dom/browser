@@ -13,7 +13,6 @@ import (
 	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/code-gen/scripting/configuration"
-	. "github.com/gost-dom/code-gen/scripting/model"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )
@@ -21,28 +20,11 @@ import (
 func writeGenerator(writer io.Writer, packagePath string, generator g.Generator) error {
 	file := jen.NewFilePath(packagePath)
 	file.HeaderComment("This file is generated. Do not edit.")
-	file.ImportAlias(packagenames.V8go, "v8")
-	file.ImportAlias(packagenames.Goja, "g")
 	file.Add(generator.Generate())
 	return file.Render(writer)
 }
 
-type ScriptWrapperModulesGenerator struct {
-	Specs            configuration.WebIdlConfigurations
-	PackagePath      string
-	TargetGenerators TargetGenerators
-}
-
-func (gen ScriptWrapperModulesGenerator) createPrototypeGenerator(
-	typeGenerationInformation ESConstructorData,
-) g.Generator {
-	return PrototypeWrapperGenerator{
-		Platform: gen.TargetGenerators,
-		Data:     typeGenerationInformation,
-	}
-}
-
-func (gen ScriptWrapperModulesGenerator) writeModuleTypes(spec *configuration.WebAPIConfig) error {
+func writePackageFiles(packagePath string, spec *configuration.WebAPIConfig) error {
 	data, err := idl.Load(spec.Name)
 	if err != nil {
 		return err
@@ -54,8 +36,12 @@ func (gen ScriptWrapperModulesGenerator) writeModuleTypes(spec *configuration.We
 		if writer, err := os.Create(outputFileName); err != nil {
 			errs[i] = err
 		} else {
+			defer writer.Close()
 			typeGenerationInformation := createData(data, specType)
-			errs[i] = writeGenerator(writer, gen.PackagePath, gen.createPrototypeGenerator(typeGenerationInformation))
+			gen := PrototypeWrapperGenerator{
+				Data: typeGenerationInformation,
+			}
+			errs[i] = writeGenerator(writer, packagePath, gen)
 		}
 	}
 	return errors.Join(errs...)
@@ -70,12 +56,12 @@ func typeNameToFileName(name string) string {
 	return strings.ToLower(snake)
 }
 
-func (gen ScriptWrapperModulesGenerator) GenerateScriptWrappers() error {
-	specs := slices.Collect(maps.Values(gen.Specs))
+func CreateJavaScriptMappings(webAPI string) error {
+	specs := slices.Collect(maps.Values(configuration.CreateV8SpecsForSpec(webAPI)))
 	errs := make([]error, len(specs))
 	for i, spec := range specs {
 		fmt.Println("Generate module", spec.Name)
-		errs[i] = gen.writeModuleTypes(spec)
+		errs[i] = writePackageFiles(packagenames.ScriptPackageName(webAPI), spec)
 	}
 	return errors.Join(errs...)
 }

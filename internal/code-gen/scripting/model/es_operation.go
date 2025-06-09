@@ -97,7 +97,6 @@ func (o ESOperation) EncodeAsSimpleJSLookup() bool {
 }
 
 func (o ESOperation) Encoder(
-	v8 bool,
 	receiver g.Value,
 	cbCtx g.Generator,
 	data ESConstructorData,
@@ -110,22 +109,20 @@ func (o ESOperation) Encoder(
 	}
 	t := o.RetType
 	idlType := idltransform.IdlType(t)
-	if v8 {
-		switch {
-		case idlType.IsInt():
-			return internal.BindValues(encodeInt, cbCtx)
-		case idlType.IsBoolean():
-			return internal.BindValues(encodeBoolean, cbCtx)
-		case idlType.IsString():
-			if t.Nullable {
-				if data.CustomRule.OutputType == customrules.OutputTypeStruct {
-					return internal.BindValues(encodeNullableString, cbCtx)
-				} else {
-					return internal.BindValues(encodeNillableString, cbCtx)
-				}
+	switch {
+	case idlType.IsInt():
+		return internal.BindValues(encodeInt, cbCtx)
+	case idlType.IsBoolean():
+		return internal.BindValues(encodeBoolean, cbCtx)
+	case idlType.IsString():
+		if t.Nullable {
+			if data.CustomRule.OutputType == customrules.OutputTypeStruct {
+				return internal.BindValues(encodeNullableString, cbCtx)
 			} else {
-				return internal.BindValues(encodeString, cbCtx)
+				return internal.BindValues(encodeNillableString, cbCtx)
 			}
+		} else {
+			return internal.BindValues(encodeString, cbCtx)
 		}
 	}
 	var boundArgs []g.Generator

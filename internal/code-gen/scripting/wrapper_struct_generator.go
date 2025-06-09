@@ -1,74 +1,89 @@
 package scripting
 
 import (
+	"fmt"
+
 	"github.com/dave/jennifer/jen"
 	. "github.com/gost-dom/code-gen/internal"
-	. "github.com/gost-dom/code-gen/scripting/model"
+	"github.com/gost-dom/code-gen/scripting/model"
 	"github.com/gost-dom/generators"
+	g "github.com/gost-dom/generators"
 	gen "github.com/gost-dom/generators"
 )
 
 var scriptHost = gen.NewValue("scriptHost")
 
-type WrapperStructGenerator struct {
-	Platform TargetGenerators
-	Data     ESConstructorData
+type WrapperStruct struct {
+	Data model.ESConstructorData
 }
 
-func (g WrapperStructGenerator) Generate() *jen.Statement {
+func (s WrapperStruct) WrapperStructConstructorName(name string) string {
+	return fmt.Sprintf("New%s", s.typeNameForType(name))
+}
+
+func (g WrapperStruct) TypeDef() gen.Generator {
 	return gen.StatementList(
 		g.TypeGenerator(),
 		g.ConstructorGenerator(),
-		gen.Line,
-	).Generate()
+	)
 }
 
-func (g WrapperStructGenerator) TypeGenerator() Generator {
-	structGens := g.Platform.WrapperStructGenerators()
+func (g WrapperStruct) IdlName() string { return g.Data.Name() }
 
-	idlInterfaceName := g.Data.Name()
+func (gen WrapperStruct) typeNameForType(name string) string {
+	return fmt.Sprintf("%sV8Wrapper", name)
+}
+
+func (gen WrapperStruct) generatedTypeName() string {
+	return gen.typeNameForType(gen.IdlName())
+}
+
+func (g WrapperStruct) WrapperStructTypeForName(name string) generators.Type {
+	return generators.Type{
+		Generator: generators.Raw(jen.Id(g.typeNameForType(name)).Types(jen.Id("T"))),
+	}
+}
+
+func (g WrapperStruct) WrapperStructType() generators.Type {
+	return g.WrapperStructTypeForName(g.IdlName())
+}
+
+func (g WrapperStruct) TypeGenerator() Generator {
 	includes := g.Data.Includes()
-	wrapperStruct := gen.NewStruct(structGens.WrapperStructTypeDef(idlInterfaceName))
-	wrapperStruct.Embed(structGens.EmbeddedType(g.Data.WrappedType()))
+	wrapperStruct := gen.NewStruct(
+		generators.Raw(jen.Id(g.generatedTypeName()).Types(jen.Id("T").Any())),
+	)
 
 	for _, i := range includes {
 		wrapperStruct.Field(
 			gen.Id(LowerCaseFirstLetter(i.Name)),
-			structGens.WrapperStructType(i.Name).Pointer(),
+			generators.Raw(jen.Op("*").Add(g.WrapperStructTypeForName(i.Name).Generate())),
 		)
 	}
 	return wrapperStruct
 }
 
-func (g WrapperStructGenerator) ConstructorGenerator() Generator {
-	structGens := g.Platform.WrapperStructGenerators()
+func (wrapper WrapperStruct) ConstructorGenerator() Generator {
+	idlInterfaceName := wrapper.Data.Name()
+	constructorName := wrapper.WrapperStructConstructorName(idlInterfaceName)
+	hostArg := g.Id("scriptHost")
 
-	idlInterfaceName := g.Data.Name()
-	constructorName := structGens.WrapperStructConstructorName(idlInterfaceName)
-	hostArg := structGens.HostArg()
-	hostType := structGens.HostType()
+	return gen.Raw(
+		jen.Func().Id(constructorName).
+			Types(jen.Id("T").Any()).
+			Params(
+				hostArg.Generate().Add(scriptEngine.Generate()),
+			).
+			Params(
+				wrapper.WrapperStructType().Pointer().Generate(),
+			).
+			Block(wrapper.Body().Generate()))
+}
 
-	if g.Platform.Name() == "goja" {
-		return gen.FunctionDefinition{
-			Name:     constructorName,
-			Args:     gen.Arg(hostArg, hostType),
-			RtnTypes: gen.List(structGens.WrapperStructConstructorRetType(idlInterfaceName)),
-			Body:     g.Body(),
-		}
-	} else {
-
-		return gen.Raw(
-			jen.Func().Id(constructorName).
-				Types(jen.Id("T").Any()).
-				Params(
-					hostArg.Generate().Add(hostType.Generate()),
-				).
-				Params(
-					structGens.WrapperStructConstructorRetType(idlInterfaceName).Generate(),
-				).
-				Block(g.Body().Generate()))
+func (s WrapperStruct) WrapperStructTypeRetDef() g.Type {
+	return generators.Type{
+		Generator: generators.Raw(jen.Id(s.generatedTypeName()).Types(jen.Id("T"))),
 	}
-
 }
 
 func addLinesBetweenElements(g []Generator) []Generator {
@@ -83,22 +98,11 @@ func addLinesBetweenElements(g []Generator) []Generator {
 	return g
 }
 
-func (g WrapperStructGenerator) Body() Generator {
-	structGens := g.Platform.WrapperStructGenerators()
-	idlInterfaceName := g.Data.Name()
-
-	innerType := g.Data.WrappedType()
-	embedConstructorName := structGens.EmbeddedTypeConstructor(innerType)
+func (g WrapperStruct) Body() Generator {
 	includes := g.Data.Includes()
 	fieldInitializers := make([]Generator, 0)
-	if embedConstructorName != nil {
-		fieldInitializers = append(
-			fieldInitializers,
-			generators.ValueOf(embedConstructorName).Call(structGens.HostArg()),
-		)
-	}
 	for _, i := range includes {
-		includeConstructorName := structGens.WrapperStructConstructorName(i.Name)
+		includeConstructorName := g.WrapperStructConstructorName(i.Name)
 		fieldInitializers = append(
 			fieldInitializers,
 			generators.NewValue(includeConstructorName).Call(scriptHost),
@@ -106,8 +110,12 @@ func (g WrapperStructGenerator) Body() Generator {
 	}
 	fieldInitializers = addLinesBetweenElements(fieldInitializers)
 
-	wrapperType := structGens.WrapperStructTypeRetDef(idlInterfaceName)
+	wrapperType := g.WrapperStructTypeRetDef()
 	return generators.Return(wrapperType.CreateInstance(fieldInitializers...).Reference())
 }
 
-func (g WrapperStructGenerator) PlatformInfoArg() Generator { return generators.Id("info") }
+func (g WrapperStruct) PlatformInfoArg() Generator { return generators.Id("info") }
+
+func (s WrapperStruct) Callbacks() CallbackGenerators {
+	return CallbackGenerators{s}
+}
