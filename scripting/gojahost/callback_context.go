@@ -74,12 +74,6 @@ func wrapJSCallback(ctx *GojaContext, cb js.FunctionCallback[jsTypeParam]) goja.
 	})
 }
 
-func wrapCallback(ctx *GojaContext, cb callbackFunction) goja.Value {
-	return ctx.vm.ToValue(func(c goja.FunctionCall) goja.Value {
-		return cb(newArgumentHelper(ctx, c))
-	})
-}
-
 func (c *callbackContext) Scope() js.Scope[jsTypeParam] {
 	return newGojaScope(c.ctx)
 }

@@ -12,6 +12,7 @@ func CreateV8SpecsForSpec(spec string) WebIdlConfigurations {
 	switch spec {
 	case "dom":
 		ConfigureDOMSpecs(&specs)
+	case "uievents":
 		ConfigureEventSpecs(&specs)
 	case "html":
 		ConfigureHTMLSpecs(&specs)

@@ -19,7 +19,4 @@ func Bootstrap[T any](reg js.ClassBuilder[T]) {
 	js.RegisterClass(reg, "NodeList", "", NewNodeListV8Wrapper)
 	js.RegisterClass(reg, "NonDocumentTypeChildNode", "", NewNonDocumentTypeChildNodeV8Wrapper)
 	js.RegisterClass(reg, "ParentNode", "", NewParentNodeV8Wrapper)
-	js.RegisterClass(reg, "PointerEvent", "MouseEvent", NewPointerEventV8Wrapper)
-	js.RegisterClass(reg, "MouseEvent", "UIEvent", NewMouseEventV8Wrapper)
-	js.RegisterClass(reg, "UIEvent", "Event", NewUIEventV8Wrapper)
 }

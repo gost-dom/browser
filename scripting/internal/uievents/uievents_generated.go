@@ -1,6 +1,6 @@
 // This file is generated. Do not edit.
 
-package dom
+package uievents
 
 import (
 	"errors"

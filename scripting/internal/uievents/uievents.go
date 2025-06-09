@@ -1,4 +1,4 @@
-package dom
+package uievents
 
 import (
 	"github.com/gost-dom/browser/internal/uievents"
