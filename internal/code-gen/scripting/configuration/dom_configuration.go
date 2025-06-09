@@ -2,7 +2,6 @@ package configuration
 
 func ConfigureDOMSpecs(specs *WebIdlConfigurations) {
 	domSpecs := specs.Module("dom")
-	domSpecs.SetMultipleFiles(true)
 	configureDOMNode(domSpecs)
 	configureDOMEvent(domSpecs)
 }

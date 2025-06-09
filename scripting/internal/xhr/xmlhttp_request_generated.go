@@ -4,138 +4,10 @@ package xhr
 
 import (
 	"errors"
-	html "github.com/gost-dom/browser/html"
-	html1 "github.com/gost-dom/browser/internal/html"
+	html "github.com/gost-dom/browser/internal/html"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
-
-type FormDataV8Wrapper[T any] struct{}
-
-func NewFormDataV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *FormDataV8Wrapper[T] {
-	return &FormDataV8Wrapper[T]{}
-}
-
-func (wrapper FormDataV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-	wrapper.CustomInitializer(jsClass)
-}
-
-func (w FormDataV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("append", w.append)
-	jsClass.CreatePrototypeMethod("delete", w.delete)
-	jsClass.CreatePrototypeMethod("get", w.get)
-	jsClass.CreatePrototypeMethod("getAll", w.getAll)
-	jsClass.CreatePrototypeMethod("has", w.has)
-	jsClass.CreatePrototypeMethod("set", w.set)
-}
-
-func (w FormDataV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: FormData.Constructor")
-	form, found, errArg := js.ConsumeOptionalArg(cbCtx, "form", w.decodeHTMLFormElement)
-	if found {
-		if errArg != nil {
-			return nil, errArg
-		}
-		return w.CreateInstanceForm(cbCtx, form)
-	}
-	submitter, found, errArg := js.ConsumeOptionalArg(cbCtx, "submitter", codec.DecodeHTMLElement)
-	if found {
-		if errArg != nil {
-			return nil, errArg
-		}
-		return w.CreateInstanceFormSubmitter(cbCtx, form, submitter)
-	}
-	return w.CreateInstance(cbCtx)
-}
-
-func (w FormDataV8Wrapper[T]) append(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: FormData.append")
-	instance, errInst := js.As[*html.FormData](cbCtx.Instance())
-	if errInst != nil {
-		return nil, errInst
-	}
-	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
-	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, w.decodeFormDataValue)
-	err := errors.Join(errArg1, errArg2)
-	if err != nil {
-		return nil, err
-	}
-	instance.Append(name, value)
-	return nil, nil
-}
-
-func (w FormDataV8Wrapper[T]) delete(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: FormData.delete")
-	instance, errInst := js.As[*html.FormData](cbCtx.Instance())
-	if errInst != nil {
-		return nil, errInst
-	}
-	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
-	if errArg1 != nil {
-		return nil, errArg1
-	}
-	instance.Delete(name)
-	return nil, nil
-}
-
-func (w FormDataV8Wrapper[T]) get(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: FormData.get")
-	instance, errInst := js.As[*html.FormData](cbCtx.Instance())
-	if errInst != nil {
-		return nil, errInst
-	}
-	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
-	if errArg1 != nil {
-		return nil, errArg1
-	}
-	result := instance.Get(name)
-	return w.toFormDataEntryValue(cbCtx, result)
-}
-
-func (w FormDataV8Wrapper[T]) getAll(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: FormData.getAll")
-	instance, errInst := js.As[*html.FormData](cbCtx.Instance())
-	if errInst != nil {
-		return nil, errInst
-	}
-	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
-	if errArg1 != nil {
-		return nil, errArg1
-	}
-	result := instance.GetAll(name)
-	return w.toSequenceFormDataEntryValue(cbCtx, result)
-}
-
-func (w FormDataV8Wrapper[T]) has(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: FormData.has")
-	instance, errInst := js.As[*html.FormData](cbCtx.Instance())
-	if errInst != nil {
-		return nil, errInst
-	}
-	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
-	if errArg1 != nil {
-		return nil, errArg1
-	}
-	result := instance.Has(name)
-	return codec.EncodeBoolean(cbCtx, result)
-}
-
-func (w FormDataV8Wrapper[T]) set(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: FormData.set")
-	instance, errInst := js.As[*html.FormData](cbCtx.Instance())
-	if errInst != nil {
-		return nil, errInst
-	}
-	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
-	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, w.decodeFormDataValue)
-	err := errors.Join(errArg1, errArg2)
-	if err != nil {
-		return nil, err
-	}
-	instance.Set(name, value)
-	return nil, nil
-}
 
 type XMLHttpRequestV8Wrapper[T any] struct{}
 
@@ -175,7 +47,7 @@ func (w XMLHttpRequestV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js
 
 func (w XMLHttpRequestV8Wrapper[T]) setRequestHeader(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.setRequestHeader")
-	instance, errInst := js.As[html1.XMLHttpRequest](cbCtx.Instance())
+	instance, errInst := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
 	}
@@ -191,7 +63,7 @@ func (w XMLHttpRequestV8Wrapper[T]) setRequestHeader(cbCtx js.CallbackContext[T]
 
 func (w XMLHttpRequestV8Wrapper[T]) send(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.send")
-	instance, errInst := js.As[html1.XMLHttpRequest](cbCtx.Instance())
+	instance, errInst := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
 	}
@@ -209,7 +81,7 @@ func (w XMLHttpRequestV8Wrapper[T]) send(cbCtx js.CallbackContext[T]) (js.Value[
 
 func (w XMLHttpRequestV8Wrapper[T]) abort(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.abort")
-	instance, err := js.As[html1.XMLHttpRequest](cbCtx.Instance())
+	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -219,7 +91,7 @@ func (w XMLHttpRequestV8Wrapper[T]) abort(cbCtx js.CallbackContext[T]) (js.Value
 
 func (w XMLHttpRequestV8Wrapper[T]) getResponseHeader(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.getResponseHeader")
-	instance, errInst := js.As[html1.XMLHttpRequest](cbCtx.Instance())
+	instance, errInst := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
 	}
@@ -233,7 +105,7 @@ func (w XMLHttpRequestV8Wrapper[T]) getResponseHeader(cbCtx js.CallbackContext[T
 
 func (w XMLHttpRequestV8Wrapper[T]) getAllResponseHeaders(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.getAllResponseHeaders")
-	instance, err := js.As[html1.XMLHttpRequest](cbCtx.Instance())
+	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -246,7 +118,7 @@ func (w XMLHttpRequestV8Wrapper[T]) getAllResponseHeaders(cbCtx js.CallbackConte
 
 func (w XMLHttpRequestV8Wrapper[T]) overrideMimeType(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.overrideMimeType")
-	instance, errInst := js.As[html1.XMLHttpRequest](cbCtx.Instance())
+	instance, errInst := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
 	}
@@ -265,7 +137,7 @@ func (w XMLHttpRequestV8Wrapper[T]) readyState(cbCtx js.CallbackContext[T]) (js.
 
 func (w XMLHttpRequestV8Wrapper[T]) timeout(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.timeout")
-	instance, err := js.As[html1.XMLHttpRequest](cbCtx.Instance())
+	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -275,7 +147,7 @@ func (w XMLHttpRequestV8Wrapper[T]) timeout(cbCtx js.CallbackContext[T]) (js.Val
 
 func (w XMLHttpRequestV8Wrapper[T]) setTimeout(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.setTimeout")
-	instance, err0 := js.As[html1.XMLHttpRequest](cbCtx.Instance())
+	instance, err0 := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeInt)
 	err := errors.Join(err0, err1)
 	if err != nil {
@@ -287,7 +159,7 @@ func (w XMLHttpRequestV8Wrapper[T]) setTimeout(cbCtx js.CallbackContext[T]) (js.
 
 func (w XMLHttpRequestV8Wrapper[T]) withCredentials(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.withCredentials")
-	instance, err := js.As[html1.XMLHttpRequest](cbCtx.Instance())
+	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -297,7 +169,7 @@ func (w XMLHttpRequestV8Wrapper[T]) withCredentials(cbCtx js.CallbackContext[T])
 
 func (w XMLHttpRequestV8Wrapper[T]) setWithCredentials(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.setWithCredentials")
-	instance, err0 := js.As[html1.XMLHttpRequest](cbCtx.Instance())
+	instance, err0 := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeBoolean)
 	err := errors.Join(err0, err1)
 	if err != nil {
@@ -309,7 +181,7 @@ func (w XMLHttpRequestV8Wrapper[T]) setWithCredentials(cbCtx js.CallbackContext[
 
 func (w XMLHttpRequestV8Wrapper[T]) responseURL(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.responseURL")
-	instance, err := js.As[html1.XMLHttpRequest](cbCtx.Instance())
+	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -319,7 +191,7 @@ func (w XMLHttpRequestV8Wrapper[T]) responseURL(cbCtx js.CallbackContext[T]) (js
 
 func (w XMLHttpRequestV8Wrapper[T]) status(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.status")
-	instance, err := js.As[html1.XMLHttpRequest](cbCtx.Instance())
+	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -329,7 +201,7 @@ func (w XMLHttpRequestV8Wrapper[T]) status(cbCtx js.CallbackContext[T]) (js.Valu
 
 func (w XMLHttpRequestV8Wrapper[T]) statusText(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.statusText")
-	instance, err := js.As[html1.XMLHttpRequest](cbCtx.Instance())
+	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -349,7 +221,7 @@ func (w XMLHttpRequestV8Wrapper[T]) setResponseType(cbCtx js.CallbackContext[T])
 
 func (w XMLHttpRequestV8Wrapper[T]) response(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.response")
-	instance, err := js.As[html1.XMLHttpRequest](cbCtx.Instance())
+	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -359,7 +231,7 @@ func (w XMLHttpRequestV8Wrapper[T]) response(cbCtx js.CallbackContext[T]) (js.Va
 
 func (w XMLHttpRequestV8Wrapper[T]) responseText(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.responseText")
-	instance, err := js.As[html1.XMLHttpRequest](cbCtx.Instance())
+	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -370,21 +242,4 @@ func (w XMLHttpRequestV8Wrapper[T]) responseText(cbCtx js.CallbackContext[T]) (j
 func (w XMLHttpRequestV8Wrapper[T]) responseXML(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequest.responseXML")
 	return nil, errors.New("XMLHttpRequest.responseXML: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
-}
-
-type XMLHttpRequestEventTargetV8Wrapper[T any] struct{}
-
-func NewXMLHttpRequestEventTargetV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *XMLHttpRequestEventTargetV8Wrapper[T] {
-	return &XMLHttpRequestEventTargetV8Wrapper[T]{}
-}
-
-func (wrapper XMLHttpRequestEventTargetV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w XMLHttpRequestEventTargetV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {}
-
-func (w XMLHttpRequestEventTargetV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequestEventTarget.Constructor")
-	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }

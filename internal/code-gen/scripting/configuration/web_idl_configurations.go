@@ -34,9 +34,3 @@ func (s *WebIdlConfiguration) Type(typeName string) *IdlInterfaceConfiguration {
 	s.Interfaces[typeName] = result
 	return result
 }
-
-func (spec *WebIdlConfiguration) SetMultipleFiles(value bool) { spec.MultipleFiles = value }
-
-func (spec WebIdlConfiguration) UseMultipleFiles() bool {
-	return spec.MultipleFiles == true
-}

@@ -5,7 +5,6 @@ import "github.com/gost-dom/code-gen/packagenames"
 func ConfigureHTMLSpecs(specs *WebIdlConfigurations) {
 	htmlSpecs := specs.Module("html")
 
-	htmlSpecs.SetMultipleFiles(true)
 	configureHTMLTemplateElement(htmlSpecs)
 	configureHTMLElement(htmlSpecs)
 	configureHTMLFormElement(htmlSpecs)

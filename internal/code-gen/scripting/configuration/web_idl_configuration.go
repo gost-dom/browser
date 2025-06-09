@@ -8,9 +8,6 @@ import (
 type WebIdlConfiguration struct {
 	// Name is the name of the specification, corresponds to the file name.
 	Name string
-	// MultipleFiles indicate if one, or multiple files should be generated for
-	// a specification
-	MultipleFiles bool
 	// Interfaces defines the names of the specified interfaces for which to
 	// generate specifications
 	Interfaces map[string]*IdlInterfaceConfiguration

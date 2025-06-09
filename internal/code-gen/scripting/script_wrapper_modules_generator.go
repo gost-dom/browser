@@ -97,26 +97,10 @@ func (gen ScriptWrapperModulesGenerator) writeModules(
 	i := 0
 	for _, spec := range specs {
 		fmt.Println("Generate module", spec.Name)
-		if spec.MultipleFiles {
-			errs[i] = gen.writeModuleTypes(spec)
-		} else {
-			errs[i] = gen.writeModuleSingleFile(spec)
-		}
+		errs[i] = gen.writeModuleTypes(spec)
 		i++
 	}
 	return errors.Join(errs...)
-}
-
-func (gen ScriptWrapperModulesGenerator) writeModuleSingleFile(
-	spec *configuration.WebIdlConfiguration,
-) error {
-	outputFileName := fmt.Sprintf("%s_generated.go", spec.Name)
-	if writer, err := os.Create(outputFileName); err != nil {
-		return err
-	} else {
-		defer writer.Close()
-		return gen.writeModule(writer, spec)
-	}
 }
 
 func (gen ScriptWrapperModulesGenerator) GenerateScriptWrappers() error {
