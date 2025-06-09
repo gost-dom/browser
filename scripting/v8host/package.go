@@ -1,5 +1,3 @@
-//go:generate ../../internal/code-gen/code-gen -g scripting
-
 // The v8host packages provides functionality to execute client-side scripts in
 // gost-dom. The engine uses v8, and requires cgo.
 //

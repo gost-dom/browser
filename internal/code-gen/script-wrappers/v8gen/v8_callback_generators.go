@@ -51,11 +51,7 @@ func (gen V8CallbackGenerators) assignInstance(cbCtx wrappers.CallbackContext) g
 			wrappers.As.TypeParam(gen.Data.WrappedType()).Call(cbCtx.GetInstance()),
 		),
 
-		wrappers.IfError(
-			err,
-			wrappers.TransformerFunc(returnNilCommaErr),
-			//wrappers.ReturnTransform(wrappers.TransformerFunc(cbCtx.ReturnWithError)),
-		),
+		wrappers.IfError(err, wrappers.TransformerFunc(returnNilCommaErr)),
 	)
 }
 

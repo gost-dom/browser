@@ -33,9 +33,6 @@ func DecodersForArg(receiver g.Generator, arg model.ESOperationArgument) []g.Gen
 			convertNames[i] = fmt.Sprintf("decode%s", model.IdlNameToGoName(t.Name))
 		}
 	} else {
-		// if arg.CustomRule.OverridesType() {
-		// 	converters = []string{a.CustomRule.Type.Name}
-		// }
 		switch {
 		case arg.CustomRule.OverridesType():
 		case arg.IsString():

@@ -261,16 +261,12 @@ func (c MethodCallback) ReturnNotImplementedError(cbCtx CallbackContext) g.Gener
 		"%s.%s: Not implemented. Create an issue: %s",
 		c.data.Name(), name, packagenames.ISSUE_URL,
 	)
-	// return c.platform.ReturnErrMsg(g.Lit(errMsg))
 	return g.Return(g.Nil, g.NewValuePackage("New", "errors").Call(g.Lit(errMsg)))
 }
 
 func (c MethodCallback) LogCall(cbCtx g.Generator) g.Generator {
 	return g.ValueOf(cbCtx).Field("Logger").Call().Field("Debug").Call(
 		g.Lit(fmt.Sprintf("V8 Function call: %s.%s", c.data.Name(), c.name)))
-	// return stdgen.LogDebug(
-	// 	g.ValueOf(c.receiver).Field("logger").Call(c.platform.PlatformInfoArg()),
-	// 	g.Lit(fmt.Sprintf("V8 Function call: %s.%s", c.data.Name(), c.name)))
 }
 
 type MethodCallbackBody struct {

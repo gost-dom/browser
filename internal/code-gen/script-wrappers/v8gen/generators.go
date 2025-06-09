@@ -24,10 +24,6 @@ func (s V8NamingStrategy) PrototypeWrapperName() string {
 	return LowerCaseFirstLetter(s.PrototypeWrapperBaseName())
 }
 
-func prototypeFactoryFunctionName(data ESConstructorData) string {
-	return fmt.Sprintf("create%sPrototype", data.IdlInterface.Name)
-}
-
 func CreateV8ConstructorBody(data ESConstructorData) g.Generator {
 	naming := V8NamingStrategy{data}
 	builder := NewConstructorBuilder()
