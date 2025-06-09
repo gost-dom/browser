@@ -127,7 +127,6 @@ func (gen V8TargetGenerators) CreateAttributeSetter(
 		wrappers.IfAnyError(
 			[]g.Generator{err, err1},
 			wrappers.TransformerFunc(returnNilCommaErr),
-			// wrappers.ReturnTransform(wrappers.TransformerFunc(cbCtx.ReturnWithError)),
 		),
 		set(instance, val),
 		g.Return(g.Nil, g.Nil),
@@ -150,12 +149,6 @@ func (gen V8TargetGenerators) CreateMethodCallbackBody(
 func (gen V8TargetGenerators) CreateHostInitializer(data ESConstructorData) g.Generator {
 	wrapperType := gen.WrapperStructGenerators().WrapperStructType(data.Name())
 	return g.StatementList(
-		// g.FunctionDefinition{
-		// 	Name:     prototypeFactoryFunctionName(data),
-		// 	Args:     g.Arg(scriptHost, scriptHostPtr),
-		// 	RtnTypes: g.List(v8Class),
-		// 	Body:     CreateV8ConstructorBody(data),
-		// },
 		g.FunctionDefinition{
 			Name:     "Initialize", // prototypeFactoryFunctionName(data),
 			Receiver: g.FunctionArgument{Name: g.Id("wrapper"), Type: wrapperType},

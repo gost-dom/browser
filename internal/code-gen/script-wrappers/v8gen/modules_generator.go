@@ -6,16 +6,6 @@ import (
 	"github.com/gost-dom/code-gen/script-wrappers/configuration"
 )
 
-func NewScriptWrapperModulesGenerator() wrappers.ScriptWrapperModulesGenerator {
-	specs := configuration.CreateV8Specs()
-
-	return wrappers.ScriptWrapperModulesGenerator{
-		Specs:            specs,
-		PackagePath:      packagenames.V8host,
-		TargetGenerators: V8TargetGenerators{},
-	}
-}
-
 func NewScriptWrapperModulesGeneratorForSpec(spec string) wrappers.ScriptWrapperModulesGenerator {
 	specs := configuration.CreateV8SpecsForSpec(spec)
 
