@@ -11,7 +11,7 @@ import (
 )
 
 type ESConstructorData struct {
-	Spec          *configuration.IdlInterfaceConfiguration
+	Spec          *configuration.WebIDLConfig
 	CustomRule    customrules.InterfaceRule
 	IdlInterface  idl.Interface
 	Operations    []ESOperation

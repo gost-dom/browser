@@ -20,7 +20,7 @@ func Write(api string, specs configuration.WebIdlConfigurations) error {
 	s := slices.Collect(maps.Values(specs))
 	slices.SortFunc(
 		s,
-		func(x, y *configuration.WebIdlConfiguration) int { return cmp.Compare(x.Name, y.Name) },
+		func(x, y *configuration.WebAPIConfig) int { return cmp.Compare(x.Name, y.Name) },
 	)
 	for _, spec := range s {
 		data, err := idl.Load(spec.Name)

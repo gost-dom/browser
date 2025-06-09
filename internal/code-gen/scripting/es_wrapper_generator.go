@@ -4,16 +4,16 @@ import (
 	"fmt"
 
 	"github.com/gost-dom/code-gen/customrules"
-	"github.com/gost-dom/code-gen/stdgen"
 	"github.com/gost-dom/code-gen/scripting/configuration"
 	. "github.com/gost-dom/code-gen/scripting/model"
+	"github.com/gost-dom/code-gen/stdgen"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )
 
 func createData(
 	spec idl.Spec,
-	interfaceConfig *configuration.IdlInterfaceConfiguration,
+	interfaceConfig *configuration.WebIDLConfig,
 ) ESConstructorData {
 	idlName, ok := spec.GetType(interfaceConfig.TypeName)
 	if !ok {
@@ -39,7 +39,7 @@ func createData(
 func CreateConstructor(
 	idlInterface idl.Interface,
 	intfRule customrules.InterfaceRule,
-	interfaceConfig *configuration.IdlInterfaceConfiguration,
+	interfaceConfig *configuration.WebIDLConfig,
 	idlName idl.TypeSpec) *ESOperation {
 	if c, ok := idlName.Constructor(); ok {
 		c.Name = "constructor"
@@ -62,7 +62,7 @@ func CreateConstructor(
 func CreateInstanceMethods(
 	idlInterface idl.Interface,
 	intfRule customrules.InterfaceRule,
-	interfaceConfig *configuration.IdlInterfaceConfiguration,
+	interfaceConfig *configuration.WebIDLConfig,
 	idlName idl.TypeSpec) (result []ESOperation) {
 	// TODO: Handle overloads, e.g. of XHR.open
 	visited := make(map[string]bool)
@@ -82,7 +82,7 @@ func CreateInstanceMethods(
 func CreateAttributes(
 	idlInterface idl.Interface,
 	intfRules customrules.InterfaceRule,
-	interfaceConfig *configuration.IdlInterfaceConfiguration,
+	interfaceConfig *configuration.WebIDLConfig,
 	idlName idl.TypeSpec,
 ) (res []ESAttribute) {
 	for attribute := range idlName.IdlInterface.AllAttributes(interfaceConfig.IncludeIncludes) {
@@ -142,7 +142,7 @@ func CreateAttributes(
 func createOperation(
 	idlOperation idl.Operation,
 	intfRules customrules.InterfaceRule,
-	typeSpec *configuration.IdlInterfaceConfiguration,
+	typeSpec *configuration.WebIDLConfig,
 	stringifier bool,
 ) ESOperation {
 	opRules := intfRules.Operations[idlOperation.Name]

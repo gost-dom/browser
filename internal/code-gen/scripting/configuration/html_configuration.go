@@ -44,7 +44,7 @@ func ConfigureHTMLSpecs(specs *WebIdlConfigurations) {
 	anchor.Method("text").Ignore()
 }
 
-func configureWindow(htmlSpecs *WebIdlConfiguration) {
+func configureWindow(htmlSpecs *WebAPIConfig) {
 	window := htmlSpecs.Type("Window")
 	window.Method("window").SetCustomImplementation()
 	window.Method("location").Ignore()
@@ -83,7 +83,7 @@ func configureWindow(htmlSpecs *WebIdlConfiguration) {
 	window.Method("length").SetNotImplemented()
 }
 
-func configureHTMLInputElement(htmlSpecs *WebIdlConfiguration) {
+func configureHTMLInputElement(htmlSpecs *WebAPIConfig) {
 	input := htmlSpecs.Type("HTMLInputElement")
 	input.Method("select").Ignore()
 	input.Method("stepUp").Ignore()
@@ -145,7 +145,7 @@ func configureHTMLInputElement(htmlSpecs *WebIdlConfiguration) {
 
 }
 
-func configureHTMLFormElement(htmlSpecs *WebIdlConfiguration) {
+func configureHTMLFormElement(htmlSpecs *WebAPIConfig) {
 	form := htmlSpecs.Type("HTMLFormElement")
 	form.Method("requestSubmit").Argument("submitter").SetHasDefault()
 	form.Method("reset").SetNotImplemented()
@@ -163,7 +163,7 @@ func configureHTMLFormElement(htmlSpecs *WebIdlConfiguration) {
 	form.Method("noValidate").Ignore()
 }
 
-func configureHTMLElement(htmlSpecs *WebIdlConfiguration) {
+func configureHTMLElement(htmlSpecs *WebAPIConfig) {
 	htmlElement := htmlSpecs.Type("HTMLElement")
 	htmlElement.Method("hidden").Ignore()
 	htmlElement.Method("attachInternals").Ignore()
@@ -187,7 +187,7 @@ func configureHTMLElement(htmlSpecs *WebIdlConfiguration) {
 	htmlElement.Method("popover").Ignore()
 }
 
-func configureHTMLTemplateElement(htmlSpecs *WebIdlConfiguration) {
+func configureHTMLTemplateElement(htmlSpecs *WebAPIConfig) {
 	htmlTemplateElement := htmlSpecs.Type("HTMLTemplateElement")
 	htmlTemplateElement.Method("shadowRootMode").SetNotImplemented()
 	htmlTemplateElement.Method("shadowRootDelegatesFocus").SetNotImplemented()

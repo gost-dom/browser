@@ -16,13 +16,13 @@ type GoType struct {
 	Pointer bool
 }
 
-// IdlInterfaceConfiguration contains information about how to generate
-// prototype objects for an interface in the IDL.
+// WebIDLConfig contains information about how to generate JavaScript mappings
+// for a named item in the web IDL specification.
 //
-// All classes will be generated using a set of defaults. Data in this structure
-// will allow deviating from the defaults.
-type IdlInterfaceConfiguration struct {
-	DomSpec       *WebIdlConfiguration
+// All bindings will be generated using a set of defaults. Data in this
+// structure will allow deviating from the defaults.
+type WebIDLConfig struct {
+	DomSpec       *WebAPIConfig
 	TypeName      string
 	RunCustomCode bool
 	// SkipWrapper suppresses the generation of the "wrapper type". This is used
@@ -34,36 +34,35 @@ type IdlInterfaceConfiguration struct {
 	IncludeIncludes     bool
 	Customization       map[string]*ESMethodWrapper
 	OverrideWrappedType *GoType
-	Strategy            CodeGenStrategy
 }
 
-func (w *IdlInterfaceConfiguration) ensureMap() {
+func (w *WebIDLConfig) ensureMap() {
 	if w.Customization == nil {
 		w.Customization = make(map[string]*ESMethodWrapper)
 	}
 }
 
-func (w *IdlInterfaceConfiguration) MarkMembersAsNotImplemented(names ...string) {
+func (w *WebIDLConfig) MarkMembersAsNotImplemented(names ...string) {
 	w.ensureMap()
 	for _, name := range names {
 		w.Customization[name] = &ESMethodWrapper{NotImplemented: true}
 	}
 }
-func (w *IdlInterfaceConfiguration) MarkMembersAsIgnored(names ...string) {
+func (w *WebIDLConfig) MarkMembersAsIgnored(names ...string) {
 	w.ensureMap()
 	for _, name := range names {
 		w.Customization[name] = &ESMethodWrapper{Ignored: true}
 	}
 }
 
-func (w *IdlInterfaceConfiguration) GetMethodCustomization(name string) (result ESMethodWrapper) {
+func (w *WebIDLConfig) GetMethodCustomization(name string) (result ESMethodWrapper) {
 	if val, ok := w.Customization[name]; ok {
 		result = *val
 	}
 	return
 }
 
-func (w *IdlInterfaceConfiguration) Method(name string) (result *ESMethodWrapper) {
+func (w *WebIDLConfig) Method(name string) (result *ESMethodWrapper) {
 	w.ensureMap()
 	var ok bool
 	if result, ok = w.Customization[name]; !ok {

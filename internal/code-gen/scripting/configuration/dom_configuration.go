@@ -6,7 +6,7 @@ func ConfigureDOMSpecs(specs *WebIdlConfigurations) {
 	configureDOMEvent(domSpecs)
 }
 
-func configureDOMNode(domSpecs *WebIdlConfiguration) {
+func configureDOMNode(domSpecs *WebAPIConfig) {
 	configureMutationObserver(domSpecs)
 
 	docFrag := domSpecs.Type("DocumentFragment")
@@ -140,7 +140,7 @@ func configureDOMNode(domSpecs *WebIdlConfiguration) {
 	domNode.Method("nodeValue").Ignore()
 }
 
-func configureDOMEvent(domSpecs *WebIdlConfiguration) {
+func configureDOMEvent(domSpecs *WebAPIConfig) {
 	event := domSpecs.Type("Event")
 	// event.SkipWrapper = true
 	event.Method("eventPhase").SetCustomImplementation()
@@ -156,7 +156,7 @@ func configureDOMEvent(domSpecs *WebIdlConfiguration) {
 	event.Method("srcElement").Ignore()
 }
 
-func configureMutationObserver(domSpecs *WebIdlConfiguration) {
+func configureMutationObserver(domSpecs *WebAPIConfig) {
 	domSpecs.Type("MutationObserver")
 	domSpecs.Type("MutationRecord")
 }

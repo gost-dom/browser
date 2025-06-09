@@ -27,7 +27,7 @@ func CreateV8SpecsForSpec(spec string) WebIdlConfigurations {
 	return specs
 }
 
-func configureXHRSpecs(xhrModule *WebIdlConfiguration) {
+func configureXHRSpecs(xhrModule *WebAPIConfig) {
 	xhrEventTarget := xhrModule.Type("XMLHttpRequestEventTarget")
 	xhrEventTarget.OverrideWrappedType = &GoType{
 		Package: packagenames.Events,
@@ -52,7 +52,7 @@ func configureXHRSpecs(xhrModule *WebIdlConfiguration) {
 	formData.RunCustomCode = true
 }
 
-func configureURLSpecs(urlSpecs *WebIdlConfiguration) {
+func configureURLSpecs(urlSpecs *WebAPIConfig) {
 	urlSearchParams := urlSpecs.Type("URLSearchParams")
 	urlSearchParams.SkipConstructor = true
 	urlSearchParams.RunCustomCode = true

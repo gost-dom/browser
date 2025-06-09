@@ -4,8 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"maps"
 	"os"
 	"regexp"
+	"slices"
 	"strings"
 
 	"github.com/dave/jennifer/jen"
@@ -31,23 +33,6 @@ type ScriptWrapperModulesGenerator struct {
 	TargetGenerators TargetGenerators
 }
 
-func (gen ScriptWrapperModulesGenerator) writeModule(
-	writer io.Writer,
-	spec *configuration.WebIdlConfiguration,
-) error {
-	data, err := idl.Load(spec.Name)
-	if err != nil {
-		return err
-	}
-	generators := g.StatementList()
-	for _, specType := range spec.GetTypesSorted() {
-		typeGenerationInformation := createData(data, specType)
-		generators.Append(gen.createPrototypeGenerator(typeGenerationInformation))
-		generators.Append(g.Line)
-	}
-	return writeGenerator(writer, gen.PackagePath, generators)
-}
-
 func (gen ScriptWrapperModulesGenerator) createPrototypeGenerator(
 	typeGenerationInformation ESConstructorData,
 ) g.Generator {
@@ -57,14 +42,11 @@ func (gen ScriptWrapperModulesGenerator) createPrototypeGenerator(
 	}
 }
 
-func (gen ScriptWrapperModulesGenerator) writeModuleTypes(
-	spec *configuration.WebIdlConfiguration,
-) error {
+func (gen ScriptWrapperModulesGenerator) writeModuleTypes(spec *configuration.WebAPIConfig) error {
 	data, err := idl.Load(spec.Name)
 	if err != nil {
 		return err
 	}
-	// generators := g.StatementList()
 	types := spec.GetTypesSorted()
 	errs := make([]error, len(types))
 	for i, specType := range types {
@@ -82,27 +64,18 @@ func (gen ScriptWrapperModulesGenerator) writeModuleTypes(
 var matchKnownWord = regexp.MustCompile("(HTML|URL|DOM)([A-Z][a-z]+)")
 var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")
 
-// var matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")
-
 func typeNameToFileName(name string) string {
 	snake := matchKnownWord.ReplaceAllString(name, "${1}_${2}")
 	snake = matchAllCap.ReplaceAllString(snake, "${1}_${2}")
 	return strings.ToLower(snake)
 }
 
-func (gen ScriptWrapperModulesGenerator) writeModules(
-	specs configuration.WebIdlConfigurations,
-) error {
+func (gen ScriptWrapperModulesGenerator) GenerateScriptWrappers() error {
+	specs := slices.Collect(maps.Values(gen.Specs))
 	errs := make([]error, len(specs))
-	i := 0
-	for _, spec := range specs {
+	for i, spec := range specs {
 		fmt.Println("Generate module", spec.Name)
 		errs[i] = gen.writeModuleTypes(spec)
-		i++
 	}
 	return errors.Join(errs...)
-}
-
-func (gen ScriptWrapperModulesGenerator) GenerateScriptWrappers() error {
-	return gen.writeModules(gen.Specs)
 }
