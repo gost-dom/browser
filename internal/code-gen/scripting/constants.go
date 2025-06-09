@@ -1,4 +1,4 @@
-package wrappers
+package scripting
 
 import (
 	"github.com/gost-dom/code-gen/packagenames"

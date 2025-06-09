@@ -2,8 +2,8 @@ package v8gen
 
 import (
 	"github.com/dave/jennifer/jen"
-	"github.com/gost-dom/code-gen/script-wrappers/model"
-	. "github.com/gost-dom/code-gen/script-wrappers/model"
+	"github.com/gost-dom/code-gen/scripting/model"
+	. "github.com/gost-dom/code-gen/scripting/model"
 	g "github.com/gost-dom/generators"
 )
 

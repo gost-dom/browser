@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	. "github.com/gost-dom/code-gen/internal"
-	wrappers "github.com/gost-dom/code-gen/script-wrappers"
-	. "github.com/gost-dom/code-gen/script-wrappers/model"
+	"github.com/gost-dom/code-gen/scripting"
+	. "github.com/gost-dom/code-gen/scripting/model"
 	g "github.com/gost-dom/generators"
 
 	"github.com/dave/jennifer/jen"
@@ -66,7 +66,7 @@ func CreateV8ClassInitializerBody(data ESConstructorData) g.Generator {
 
 func CreateV8ConstructorWrapperBody(
 	data ESConstructorData,
-	cbCtx wrappers.CallbackContext,
+	cbCtx scripting.CallbackContext,
 ) g.Generator {
 	op := *data.Constructor
 	naming := V8NamingStrategy{data}
@@ -80,7 +80,7 @@ func CreateV8ConstructorWrapperBody(
 
 func CreateV8IllegalConstructorBody(
 	data ESConstructorData,
-	cbCtx wrappers.CallbackContext,
+	cbCtx scripting.CallbackContext,
 ) g.Generator {
 	return g.Return(cbCtx.ReturnWithTypeError("Illegal Constructor"))
 }
@@ -108,7 +108,7 @@ func (r V8ReadArguments) Generate() *jen.Statement {
 func ReadArguments(
 	data ESConstructorData,
 	op ESOperation,
-	cbCtx wrappers.CallbackContext,
+	cbCtx scripting.CallbackContext,
 ) (res V8ReadArguments) {
 	naming := V8NamingStrategy{data}
 	argCount := len(op.Arguments)
@@ -116,7 +116,7 @@ func ReadArguments(
 	statements := g.StatementList()
 	receiver := g.NewValue(naming.Receiver())
 	for i, arg := range op.Arguments {
-		argName := g.Id(wrappers.SanitizeVarName(arg.Name))
+		argName := g.Id(scripting.SanitizeVarName(arg.Name))
 		errName := g.Id(fmt.Sprintf("err%d", i+1))
 		if arg.Ignore {
 			statements.Append(g.NewValue("ignoreArgument").Call(cbCtx))
@@ -129,7 +129,7 @@ func ReadArguments(
 			Index:    i,
 		})
 
-		var dec = wrappers.DecodersForArg(receiver, arg)
+		var dec = scripting.DecodersForArg(receiver, arg)
 
 		defaultName, hasDefault := arg.DefaultValueInGo()
 		nullable := arg.IdlArg.Type.Nullable

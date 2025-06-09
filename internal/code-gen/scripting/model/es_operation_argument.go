@@ -5,7 +5,7 @@ import (
 
 	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/idltransform"
-	"github.com/gost-dom/code-gen/script-wrappers/configuration"
+	"github.com/gost-dom/code-gen/scripting/configuration"
 	"github.com/gost-dom/webref/idl"
 )
 

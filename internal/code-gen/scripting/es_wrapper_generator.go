@@ -1,12 +1,12 @@
-package wrappers
+package scripting
 
 import (
 	"fmt"
 
 	"github.com/gost-dom/code-gen/customrules"
-	"github.com/gost-dom/code-gen/script-wrappers/configuration"
-	. "github.com/gost-dom/code-gen/script-wrappers/model"
 	"github.com/gost-dom/code-gen/stdgen"
+	"github.com/gost-dom/code-gen/scripting/configuration"
+	. "github.com/gost-dom/code-gen/scripting/model"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )

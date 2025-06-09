@@ -1,4 +1,4 @@
-package wrappers
+package scripting
 
 import g "github.com/gost-dom/generators"
 

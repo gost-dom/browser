@@ -6,8 +6,8 @@ import (
 	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/code-gen/packagenames"
-	wrappers "github.com/gost-dom/code-gen/script-wrappers"
-	"github.com/gost-dom/code-gen/script-wrappers/model"
+	"github.com/gost-dom/code-gen/scripting"
+	"github.com/gost-dom/code-gen/scripting/model"
 	g "github.com/gost-dom/generators"
 )
 
@@ -43,20 +43,20 @@ func (gen V8CallbackGenerators) errInst() g.Value {
 	}
 }
 
-func (gen V8CallbackGenerators) assignInstance(cbCtx wrappers.CallbackContext) g.Generator {
+func (gen V8CallbackGenerators) assignInstance(cbCtx scripting.CallbackContext) g.Generator {
 	err := gen.errInst()
 	return g.StatementList(
 		g.AssignMany(
 			g.List(gen.instance(), err),
-			wrappers.As.TypeParam(gen.Data.WrappedType()).Call(cbCtx.GetInstance()),
+			scripting.As.TypeParam(gen.Data.WrappedType()).Call(cbCtx.GetInstance()),
 		),
 
-		wrappers.IfError(err, wrappers.TransformerFunc(returnNilCommaErr)),
+		scripting.IfError(err, scripting.TransformerFunc(returnNilCommaErr)),
 	)
 }
 
 func (gen V8CallbackGenerators) OperationCallback(
-	cbCtx wrappers.CallbackContext,
+	cbCtx scripting.CallbackContext,
 ) g.Generator {
 	return g.StatementList(
 		gen.assignInstance(cbCtx),
@@ -64,12 +64,12 @@ func (gen V8CallbackGenerators) OperationCallback(
 	)
 }
 
-func (gen V8CallbackGenerators) ConstructorCallback(cbCtx wrappers.CallbackContext) g.Generator {
+func (gen V8CallbackGenerators) ConstructorCallback(cbCtx scripting.CallbackContext) g.Generator {
 	return gen.CtxOrOperationCallback(cbCtx, gen.NativeConstructorCall)
 }
 
 func (gen V8CallbackGenerators) NativeConstructorCall(
-	cbCtx wrappers.CallbackContext,
+	cbCtx scripting.CallbackContext,
 	methodPostFix string,
 	args []g.Generator,
 ) g.Generator {
@@ -83,7 +83,7 @@ func (gen V8CallbackGenerators) NativeConstructorCall(
 }
 
 func (gen V8CallbackGenerators) nativeFunctionCall(
-	cbCtx wrappers.CallbackContext,
+	cbCtx scripting.CallbackContext,
 	methodPostFix string,
 	args []g.Generator,
 ) g.Generator {
@@ -93,8 +93,8 @@ func (gen V8CallbackGenerators) nativeFunctionCall(
 }
 
 func (gen V8CallbackGenerators) CtxOrOperationCallback(
-	cbCtx wrappers.CallbackContext,
-	callNativeFunc func(cbCtx wrappers.CallbackContext, methodPostFix string, args []g.Generator) g.Generator,
+	cbCtx scripting.CallbackContext,
+	callNativeFunc func(cbCtx scripting.CallbackContext, methodPostFix string, args []g.Generator) g.Generator,
 ) g.Generator {
 	op := gen.Op
 	receiver := gen.Receiver
@@ -120,7 +120,7 @@ func (gen V8CallbackGenerators) CtxOrOperationCallback(
 			stmts.Append(cbCtx.ConsumeArg())
 			continue
 		}
-		arg := g.Id(wrappers.SanitizeVarName(a.Name))
+		arg := g.Id(scripting.SanitizeVarName(a.Name))
 		reqArg := arg
 		if a.VariadicInGo() {
 			reqArg = g.Raw(jen.Id(a.Name).Op("..."))
@@ -132,7 +132,7 @@ func (gen V8CallbackGenerators) CtxOrOperationCallback(
 		if !a.Variadic {
 			parseArgs = append(parseArgs, defaultValuer)
 		}
-		var dec = wrappers.DecodersForArg(receiver, a)
+		var dec = scripting.DecodersForArg(receiver, a)
 		parseArgs = append(parseArgs, dec...)
 		if a.Variadic {
 			stmts.Append(
@@ -153,12 +153,12 @@ func (gen V8CallbackGenerators) CtxOrOperationCallback(
 		innerBlock := g.StatementList()
 		methodPostfix = methodPostfix + internal.UpperCaseFirstLetter(a.Name)
 
-		arg := g.Id(wrappers.SanitizeVarName(a.Name))
+		arg := g.Id(scripting.SanitizeVarName(a.Name))
 		found := g.Id("found")
 		err := g.Id("errArg")
 		optArgs = append(optArgs, arg)
 		parseArgs := []g.Generator{cbCtx, g.Lit(a.Name)}
-		decoders := wrappers.DecodersForArg(receiver, a)
+		decoders := scripting.DecodersForArg(receiver, a)
 		parseArgs = append(parseArgs, decoders...)
 		optArgsBlock.Append(
 			g.AssignMany(
@@ -168,7 +168,7 @@ func (gen V8CallbackGenerators) CtxOrOperationCallback(
 			g.IfStmt{
 				Condition: found,
 				Block: g.StatementList(
-					wrappers.IfErrorF(err, returnNilCommaErr),
+					scripting.IfErrorF(err, returnNilCommaErr),
 					innerBlock,
 					callNativeFunc(cbCtx, methodPostfix, append(reqArgs, optArgs...)),
 				),
@@ -177,7 +177,7 @@ func (gen V8CallbackGenerators) CtxOrOperationCallback(
 	}
 
 	stmts.Append(
-		wrappers.IfAnyErrorF(errs, returnNilCommaErr),
+		scripting.IfAnyErrorF(errs, returnNilCommaErr),
 		optArgsBlock,
 		callNativeFunc(cbCtx, "", reqArgs),
 	)
@@ -186,12 +186,12 @@ func (gen V8CallbackGenerators) CtxOrOperationCallback(
 }
 
 func (gen V8CallbackGenerators) AttributeGetterCallback(
-	cbCtx wrappers.CallbackContext,
-	eval wrappers.Transformer,
+	cbCtx scripting.CallbackContext,
+	eval scripting.Transformer,
 ) g.Generator {
 	return g.StatementList(
 		gen.assignInstance(cbCtx),
-		wrappers.ReturnValueGenerator{
+		scripting.ReturnValueGenerator{
 			V8:       true,
 			Data:     gen.Data,
 			Op:       gen.Op,
@@ -217,10 +217,10 @@ func (gen V8CallbackGenerators) DefaultValuer(a model.ESOperationArgument) (g.Ge
 }
 
 func (gen V8CallbackGenerators) transformResult(
-	cbCtx wrappers.CallbackContext,
+	cbCtx scripting.CallbackContext,
 	result g.Generator,
 ) g.Generator {
-	return wrappers.ReturnValueGenerator{
+	return scripting.ReturnValueGenerator{
 		V8:       true,
 		Data:     gen.Data,
 		Op:       gen.Op,

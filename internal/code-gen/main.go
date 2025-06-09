@@ -11,8 +11,8 @@ import (
 
 	"github.com/gost-dom/code-gen/events"
 	htmlelements "github.com/gost-dom/code-gen/html-elements"
-	wrappers "github.com/gost-dom/code-gen/script-wrappers"
-	"github.com/gost-dom/code-gen/script-wrappers/v8gen"
+	"github.com/gost-dom/code-gen/scripting"
+	"github.com/gost-dom/code-gen/scripting/v8gen"
 )
 
 func getWriter(output string) io.Writer {
@@ -41,7 +41,7 @@ func main() {
 	case "script":
 		gen := v8gen.NewScriptWrapperModulesGeneratorForSpec(*packageName)
 		exitOnError(gen.GenerateScriptWrappers())
-		exitOnError(wrappers.GenerateRegisterFunctions(*packageName))
+		exitOnError(scripting.GenerateRegisterFunctions(*packageName))
 		os.Exit(0)
 		return
 	case "htmlelements":

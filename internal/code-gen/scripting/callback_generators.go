@@ -1,7 +1,7 @@
-package wrappers
+package scripting
 
 import (
-	"github.com/gost-dom/code-gen/script-wrappers/model"
+	"github.com/gost-dom/code-gen/scripting/model"
 	g "github.com/gost-dom/generators"
 )
 

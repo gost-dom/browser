@@ -1,4 +1,4 @@
-package wrappers
+package scripting
 
 import (
 	"errors"
@@ -10,8 +10,8 @@ import (
 
 	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/packagenames"
-	"github.com/gost-dom/code-gen/script-wrappers/configuration"
-	. "github.com/gost-dom/code-gen/script-wrappers/model"
+	"github.com/gost-dom/code-gen/scripting/configuration"
+	. "github.com/gost-dom/code-gen/scripting/model"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )

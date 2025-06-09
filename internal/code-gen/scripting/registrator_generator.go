@@ -1,4 +1,4 @@
-package wrappers
+package scripting
 
 import (
 	"cmp"
@@ -9,7 +9,7 @@ import (
 
 	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/packagenames"
-	"github.com/gost-dom/code-gen/script-wrappers/configuration"
+	"github.com/gost-dom/code-gen/scripting/configuration"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )
