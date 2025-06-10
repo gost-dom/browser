@@ -1,23 +1,16 @@
-package v8host_test
+package scripttests
 
 import (
-	"testing"
-
-	"github.com/gost-dom/browser/internal/test/scripttests"
-	"github.com/gost-dom/browser/internal/testing/gosttest"
-	"github.com/gost-dom/browser/scripting/v8host"
-	. "github.com/onsi/gomega"
-	"github.com/stretchr/testify/suite"
+	"github.com/gost-dom/browser/html"
+	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 )
 
 type NodeTestSuite struct {
-	*scripttests.ScriptHostSuite
+	ScriptHostSuite
 }
 
-func TestNode(t *testing.T) {
-	t.Parallel()
-	v8host.New(v8host.WithLogger(gosttest.NewTestLogger(t)))
-	suite.Run(t, &NodeTestSuite{ScriptHostSuite: scripttests.NewScriptHostSuite(host)})
+func NewNodeTestSuite(h html.ScriptHost) *NodeTestSuite {
+	return &NodeTestSuite{ScriptHostSuite: ScriptHostSuite{scriptHost: h}}
 }
 
 func (s *NodeTestSuite) TestInsertBefore() {
@@ -61,7 +54,7 @@ func (s *NodeTestSuite) TestRemoveChild() {
 		const parent = document.getElementById('parent-1')
 		parent.removeChild(child)
 	`)).To(Succeed())
-	Expect(
+	s.Expect(
 		s.Window.Document().GetElementById("parent-1").ChildNodes().Length(),
 	).To(Equal(0))
 }
