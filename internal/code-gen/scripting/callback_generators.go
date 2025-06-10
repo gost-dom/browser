@@ -54,8 +54,8 @@ func (cb CallbackMethods) MethodCallback(op model.ESOperation) g.Generator {
 	)
 }
 
-func (cb CallbackMethods) OpCallbackGenerators(op model.ESOperation) OpCallbackGenerators {
-	return OpCallbackGenerators{cb, op}
+func (cb CallbackMethods) OpCallbackGenerators(op model.ESOperation) OpCallbackMethods {
+	return OpCallbackMethods{cb, op}
 }
 
 func (cb CallbackMethods) AttributeGetter(attr model.ESAttribute) g.Generator {

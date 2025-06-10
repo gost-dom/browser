@@ -9,21 +9,21 @@ import (
 	g "github.com/gost-dom/generators"
 )
 
-// CtorOrOperationCallback is used to generate both web IDL interface
-// constructor and operation callbacks.
+// OpCallbackMethods is used to generate both web IDL interface constructor and
+// operation callbacks.
 //
 // Common to both is that they can accept a long list of arguments, some can be
 // optional or variadic.
-type OpCallbackGenerators struct {
+type OpCallbackMethods struct {
 	CallbackMethods
 	Op model.ESOperation
 }
 
-func (gen OpCallbackGenerators) ConstructorCallbackBody() g.Generator {
+func (gen OpCallbackMethods) ConstructorCallbackBody() g.Generator {
 	return gen.CtorOrOperationCallback(gen.NativeConstructorCall)
 }
 
-func (gen OpCallbackGenerators) NativeConstructorCall(
+func (gen OpCallbackMethods) NativeConstructorCall(
 	op model.ESOperation,
 	methodPostFix string,
 	args []g.Generator,
@@ -35,7 +35,7 @@ func (gen OpCallbackGenerators) NativeConstructorCall(
 	)
 }
 
-func (b OpCallbackGenerators) MethodCallbackBody() g.Generator {
+func (b OpCallbackMethods) MethodCallbackBody() g.Generator {
 	return g.StatementList(
 		g.StatementList(
 			b.assignInstance(b.Op.Arguments),
@@ -44,7 +44,7 @@ func (b OpCallbackGenerators) MethodCallbackBody() g.Generator {
 	)
 }
 
-func (gen OpCallbackGenerators) NativeMethodCall(
+func (gen OpCallbackMethods) NativeMethodCall(
 	op model.ESOperation,
 	methodPostFix string,
 	args []g.Generator,
@@ -59,7 +59,7 @@ func (gen OpCallbackGenerators) NativeMethodCall(
 	}.Transform(eval)
 }
 
-func (gen OpCallbackGenerators) CtorOrOperationCallback(
+func (gen OpCallbackMethods) CtorOrOperationCallback(
 	callNativeFunc func(op model.ESOperation, methodPostFix string, args []g.Generator) g.Generator,
 ) g.Generator {
 
@@ -149,7 +149,7 @@ func (gen OpCallbackGenerators) CtorOrOperationCallback(
 	return stmts
 }
 
-func (gen OpCallbackGenerators) DefaultValuer(a model.ESOperationArgument) (g.Generator, bool) {
+func (gen OpCallbackMethods) DefaultValuer(a model.ESOperationArgument) (g.Generator, bool) {
 	switch a.IdlArg.Type.Name {
 	case "EventInit", "HTMLElement":
 		return zeroValue, true
