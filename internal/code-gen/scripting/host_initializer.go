@@ -17,7 +17,7 @@ func (i HostInitializer) Generate() *jen.Statement {
 	receiver := g.NewValue("wrapper")
 	return g.StatementList(
 		g.FunctionDefinition{
-			Name:     "Initialize", // prototypeFactoryFunctionName(data),
+			Name:     "Initialize",
 			Receiver: g.FunctionArgument{Name: receiver, Type: i.WrapperStructType()},
 			Args:     g.Arg(classArg, jsClass),
 			Body:     i.body(receiver, classArg),

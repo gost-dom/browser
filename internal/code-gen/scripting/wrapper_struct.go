@@ -15,7 +15,8 @@ type WrapperStruct struct {
 	Data model.ESConstructorData
 }
 
-func (ws WrapperStruct) TypeDef() g.Generator {
+// TypeDefinition renders the actual struct type definition
+func (ws WrapperStruct) TypeDefinition() g.Generator {
 	return g.StatementList(
 		ws.TypeGenerator(),
 		ws.ConstructorGenerator(),

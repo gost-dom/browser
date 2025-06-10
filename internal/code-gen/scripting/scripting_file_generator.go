@@ -6,17 +6,17 @@ import (
 	g "github.com/gost-dom/generators"
 )
 
-// PrototypeWrapperGenerator generates code to create a JavaScript prototype
-// that wraps an internal Go type.
-type PrototypeWrapperGenerator struct {
+// ScriptingFileGenerator generates the content for a single file providing
+// JavaScript <-> Go mapping code
+type ScriptingFileGenerator struct {
 	Data ESConstructorData
 }
 
-func (gen PrototypeWrapperGenerator) Generate() *jen.Statement {
+func (gen ScriptingFileGenerator) Generate() *jen.Statement {
 	wrapper := WrapperStruct(gen)
 
 	return g.StatementList(
-		renderIf(!gen.Data.Spec.SkipWrapper, wrapper.TypeDef()),
+		renderIf(!gen.Data.Spec.SkipWrapper, wrapper.TypeDefinition()),
 		g.Line,
 		HostInitializer{wrapper},
 		g.Line,
@@ -28,7 +28,7 @@ func (gen PrototypeWrapperGenerator) Generate() *jen.Statement {
 	).Generate()
 }
 
-func (gen PrototypeWrapperGenerator) OperationCallbacks() g.Generator {
+func (gen ScriptingFileGenerator) OperationCallbacks() g.Generator {
 	wrapper := WrapperStruct(gen)
 	list := g.StatementList()
 	for op := range gen.Data.OperationCallbackInfos() {
@@ -40,7 +40,7 @@ func (gen PrototypeWrapperGenerator) OperationCallbacks() g.Generator {
 	return list
 }
 
-func (gen PrototypeWrapperGenerator) AttributeCallbacks() g.Generator {
+func (gen ScriptingFileGenerator) AttributeCallbacks() g.Generator {
 	list := g.StatementList()
 	wrapper := WrapperStruct(gen)
 	callbacks := wrapper.Callbacks()
