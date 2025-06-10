@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"iter"
 
+	"github.com/dop251/goja"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -65,7 +66,46 @@ func (f gojaValueFactory) NewTypeError(v string) error {
 }
 
 func (f gojaValueFactory) NewIterator(
-	iter.Seq2[js.Value[jsTypeParam], error],
+	items iter.Seq2[js.Value[jsTypeParam], error],
 ) js.Value[jsTypeParam] {
-	panic("NewIterator not implemented")
+	next, stop := iter.Pull2(items)
+	iter := &gojaIteratorInstance{next: next, stop: stop}
+	gojaObj := f.vm.NewObject()
+	obj := newGojaObject(f.GojaContext, gojaObj)
+	obj.SetNativeValue(iter)
+
+	gojaObj.Set(
+		"next",
+		wrapJSCallback(
+			f.GojaContext,
+			func(cbCtx js.CallbackContext[jsTypeParam]) (js.Value[jsTypeParam], error) {
+				instance, ok := (cbCtx.This().NativeValue()).(*gojaIteratorInstance)
+				if !ok {
+					return cbCtx.ReturnWithTypeError("Not an iterator instance")
+				}
+				res := f.vm.NewObject()
+				item, err, ok := instance.next()
+				res.Set("done", instance.vm.ToValue(!ok))
+				if !ok {
+					instance.stop()
+				} else {
+					if err == nil {
+						res.Set("value", item.Self().value)
+					}
+				}
+				return newGojaObject(f.GojaContext, res), err
+			},
+		),
+	)
+	gojaObj.SetSymbol(
+		goja.SymIterator,
+		wrapJSCallback(
+			f.GojaContext,
+			func(cbCtx js.CallbackContext[jsTypeParam]) (js.Value[jsTypeParam], error) {
+				return f.NewIterator(items), nil
+			},
+		),
+	)
+
+	return obj
 }
