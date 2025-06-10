@@ -6,7 +6,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w ParentNodeV8Wrapper[T]) decodeNodeOrText(
+func (w ParentNode[T]) decodeNodeOrText(
 	cbCtx js.CallbackContext[T],
 	val js.Value[T],
 ) (dom.Node, error) {

@@ -6,7 +6,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w FormDataV8Wrapper[T]) CustomInitializer(class js.Class[T]) {
+func (w FormData[T]) CustomInitializer(class js.Class[T]) {
 	iterator := js.NewIterator2(
 		codec.EncodeStringScoped,
 		func(ctx js.Scope[T], v html.FormDataValue) (js.Value[T], error) {
@@ -16,12 +16,12 @@ func (w FormDataV8Wrapper[T]) CustomInitializer(class js.Class[T]) {
 	iterator.InstallPrototype(class)
 }
 
-func (w FormDataV8Wrapper[T]) CreateInstance(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w FormData[T]) CreateInstance(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	value := html.NewFormData()
 	return codec.EncodeConstrucedValue(cbCtx, value)
 }
 
-func (w FormDataV8Wrapper[T]) CreateInstanceForm(
+func (w FormData[T]) CreateInstanceForm(
 	cbCtx js.CallbackContext[T],
 	form html.HTMLFormElement,
 ) (js.Value[T], error) {
@@ -29,7 +29,7 @@ func (w FormDataV8Wrapper[T]) CreateInstanceForm(
 	return codec.EncodeConstrucedValue(cbCtx, value)
 }
 
-func (w FormDataV8Wrapper[T]) CreateInstanceFormSubmitter(
+func (w FormData[T]) CreateInstanceFormSubmitter(
 	cbCtx js.CallbackContext[T],
 	form html.HTMLFormElement,
 	submitter html.HTMLElement,
@@ -41,21 +41,21 @@ func (w FormDataV8Wrapper[T]) CreateInstanceFormSubmitter(
 	return codec.EncodeConstrucedValue(cbCtx, value)
 }
 
-func (w FormDataV8Wrapper[T]) decodeFormDataValue(
+func (w FormData[T]) decodeFormDataValue(
 	_ js.CallbackContext[T],
 	val js.Value[T],
 ) (html.FormDataValue, error) {
 	return html.FormDataValue(val.String()), nil
 }
 
-func (w FormDataV8Wrapper[T]) toFormDataEntryValue(
+func (w FormData[T]) toFormDataEntryValue(
 	cbCtx js.CallbackContext[T],
 	val html.FormDataValue,
 ) (js.Value[T], error) {
 	return codec.EncodeString(cbCtx, string(val))
 }
 
-func (w FormDataV8Wrapper[T]) toSequenceFormDataEntryValue(
+func (w FormData[T]) toSequenceFormDataEntryValue(
 	cbCtx js.CallbackContext[T],
 	data []html.FormDataValue,
 ) (js.Value[T], error) {
@@ -66,7 +66,7 @@ func (w FormDataV8Wrapper[T]) toSequenceFormDataEntryValue(
 	return cbCtx.ValueFactory().NewArray(vals...), nil
 }
 
-func (w FormDataV8Wrapper[T]) decodeHTMLFormElement(
+func (w FormData[T]) decodeHTMLFormElement(
 	cbCtx js.CallbackContext[T],
 	val js.Value[T],
 ) (html.HTMLFormElement, error) {

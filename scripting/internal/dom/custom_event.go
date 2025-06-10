@@ -9,13 +9,13 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type customEventV8Wrapper[T any] struct{}
+type customEvent[T any] struct{}
 
-func NewCustomEventV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *customEventV8Wrapper[T] {
-	return &customEventV8Wrapper[T]{}
+func NewCustomEvent[T any](scriptHost js.ScriptEngine[T]) *customEvent[T] {
+	return &customEvent[T]{}
 }
 
-func (w customEventV8Wrapper[T]) Constructor(info js.CallbackContext[T]) (js.Value[T], error) {
+func (w customEvent[T]) Constructor(info js.CallbackContext[T]) (js.Value[T], error) {
 	arg, ok := info.ConsumeArg()
 	if !ok {
 		return info.ReturnWithTypeError("Must have at least one constructor argument")
@@ -42,11 +42,11 @@ func (w customEventV8Wrapper[T]) Constructor(info js.CallbackContext[T]) (js.Val
 	return nil, nil
 }
 
-func (w customEventV8Wrapper[T]) Initialize(class js.Class[T]) {
+func (w customEvent[T]) Initialize(class js.Class[T]) {
 	class.CreatePrototypeAttribute("detail", w.detail, nil)
 }
 
-func (w customEventV8Wrapper[T]) detail(info js.CallbackContext[T]) (js.Value[T], error) {
+func (w customEvent[T]) detail(info js.CallbackContext[T]) (js.Value[T], error) {
 	instance, err := js.As[*event.Event](info.Instance())
 	if err != nil {
 		return nil, err

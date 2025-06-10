@@ -21,20 +21,20 @@ func Bootstrap[T any](reg js.ClassBuilder[T]) {
 	url.Bootstrap(reg)
 	uievents.Bootstrap(reg)
 
-	js.RegisterClass(reg, "File", "", dom.NewEventV8Wrapper)
-	js.RegisterClass(reg, "CustomEvent", "Event", dom.NewCustomEventV8Wrapper)
+	js.RegisterClass(reg, "File", "", dom.NewEvent)
+	js.RegisterClass(reg, "CustomEvent", "Event", dom.NewCustomEvent)
 
 	// HTMLDocument exists as a separate class for historical reasons, but it
 	// can be treated merely as an alias for Document. In Firefox, there is an
 	// inheritance relationship between the two, which is modelled here.
 	//
 	// See also: https://developer.mozilla.org/en-US/docs/Web/API/HTMLDocument
-	js.RegisterClass(reg, "HTMLDocument", "Document", html.NewHTMLDocumentV8Wrapper)
+	js.RegisterClass(reg, "HTMLDocument", "Document", html.NewHTMLDocument)
 
-	js.RegisterClass(reg, "ShadowRoot", "DocumentFragment", NewUnconstructableV8Wrapper)
+	js.RegisterClass(reg, "ShadowRoot", "DocumentFragment", NewUnconstructable)
 	for _, cls := range codec.HtmlElements {
 		if !reg.HasClass(cls) && cls != "HTMLElement" {
-			js.RegisterClass(reg, cls, "HTMLElement", NewUnconstructableV8Wrapper)
+			js.RegisterClass(reg, cls, "HTMLElement", NewUnconstructable)
 		}
 	}
 }

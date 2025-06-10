@@ -7,12 +7,12 @@ import (
 
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
-	. "github.com/gost-dom/browser/internal/html"
+	inthtml "github.com/gost-dom/browser/internal/html"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (xhr XMLHttpRequestV8Wrapper[T]) decodeDocument(
+func (xhr XMLHttpRequest[T]) decodeDocument(
 	_ js.CallbackContext[T],
 	val js.Value[T],
 ) (io.Reader, error) {
@@ -22,7 +22,7 @@ func (xhr XMLHttpRequestV8Wrapper[T]) decodeDocument(
 	return nil, errors.New("Not supported yet")
 }
 
-func (xhr XMLHttpRequestV8Wrapper[T]) decodeXMLHttpRequestBodyInit(
+func (xhr XMLHttpRequest[T]) decodeXMLHttpRequestBodyInit(
 	_ js.CallbackContext[T],
 	val js.Value[T],
 ) (io.Reader, error) {
@@ -43,11 +43,11 @@ func (xhr XMLHttpRequestV8Wrapper[T]) decodeXMLHttpRequestBodyInit(
 	return nil, errors.New("XMLHTTPRequest only accepts FormData body yet")
 }
 
-func (xhr XMLHttpRequestV8Wrapper[T]) CreateInstance(
+func (xhr XMLHttpRequest[T]) CreateInstance(
 	cbCtx js.CallbackContext[T],
 ) (js.Value[T], error) {
 	this := cbCtx.This()
-	result := NewXmlHttpRequest(cbCtx.Scope().Window(), cbCtx.Scope().Clock())
+	result := inthtml.NewXmlHttpRequest(cbCtx.Scope().Window(), cbCtx.Scope().Clock())
 	result.SetCatchAllHandler(event.NewEventHandlerFunc(func(event *event.Event) error {
 		prop := "on" + event.Type
 		handler, err := this.Get(prop)
@@ -63,8 +63,8 @@ func (xhr XMLHttpRequestV8Wrapper[T]) CreateInstance(
 	return codec.EncodeConstrucedValue(cbCtx, result)
 }
 
-func (xhr XMLHttpRequestV8Wrapper[T]) open(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	instance, errInstance := js.As[XmlHttpRequest](cbCtx.Instance())
+func (xhr XMLHttpRequest[T]) open(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	instance, errInstance := js.As[inthtml.XmlHttpRequest](cbCtx.Instance())
 	method, err0 := js.ConsumeArgument(cbCtx, "method", nil, codec.DecodeString)
 	url, err1 := js.ConsumeArgument(cbCtx, "url", nil, codec.DecodeString)
 	if err := errors.Join(err0, err1, errInstance); err != nil {
@@ -74,18 +74,18 @@ func (xhr XMLHttpRequestV8Wrapper[T]) open(cbCtx js.CallbackContext[T]) (js.Valu
 		if err2 != nil {
 			return nil, err2
 		}
-		instance.Open(method, url, RequestOptionAsync(async))
+		instance.Open(method, url, inthtml.RequestOptionAsync(async))
 		return nil, nil
 	}
 	instance.Open(method, url)
 	return nil, nil
 }
 
-func (xhr XMLHttpRequestV8Wrapper[T]) upload(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (xhr XMLHttpRequest[T]) upload(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return cbCtx.This(), nil
 }
 
-func (w XMLHttpRequestV8Wrapper[T]) toAny(
+func (w XMLHttpRequest[T]) toAny(
 	cbCtx js.CallbackContext[T],
 	val string,
 ) (js.Value[T], error) {

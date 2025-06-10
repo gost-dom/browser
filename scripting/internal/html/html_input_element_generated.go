@@ -9,27 +9,27 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type HTMLInputElementV8Wrapper[T any] struct{}
+type HTMLInputElement[T any] struct{}
 
-func NewHTMLInputElementV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *HTMLInputElementV8Wrapper[T] {
-	return &HTMLInputElementV8Wrapper[T]{}
+func NewHTMLInputElement[T any](scriptHost js.ScriptEngine[T]) *HTMLInputElement[T] {
+	return &HTMLInputElement[T]{}
 }
 
-func (wrapper HTMLInputElementV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
+func (wrapper HTMLInputElement[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w HTMLInputElementV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
+func (w HTMLInputElement[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("checkValidity", w.checkValidity)
 	jsClass.CreatePrototypeAttribute("type", w.type_, w.setType)
 }
 
-func (w HTMLInputElementV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w HTMLInputElement[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: HTMLInputElement.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w HTMLInputElementV8Wrapper[T]) checkValidity(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w HTMLInputElement[T]) checkValidity(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: HTMLInputElement.checkValidity")
 	instance, err := js.As[html.HTMLInputElement](cbCtx.Instance())
 	if err != nil {
@@ -39,7 +39,7 @@ func (w HTMLInputElementV8Wrapper[T]) checkValidity(cbCtx js.CallbackContext[T])
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w HTMLInputElementV8Wrapper[T]) type_(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w HTMLInputElement[T]) type_(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: HTMLInputElement.type_")
 	instance, err := js.As[html.HTMLInputElement](cbCtx.Instance())
 	if err != nil {
@@ -49,7 +49,7 @@ func (w HTMLInputElementV8Wrapper[T]) type_(cbCtx js.CallbackContext[T]) (js.Val
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w HTMLInputElementV8Wrapper[T]) setType(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w HTMLInputElement[T]) setType(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: HTMLInputElement.setType")
 	instance, err0 := js.As[html.HTMLInputElement](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)

@@ -9,18 +9,18 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type DOMTokenListV8Wrapper[T any] struct{}
+type DOMTokenList[T any] struct{}
 
-func NewDOMTokenListV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *DOMTokenListV8Wrapper[T] {
-	return &DOMTokenListV8Wrapper[T]{}
+func NewDOMTokenList[T any](scriptHost js.ScriptEngine[T]) *DOMTokenList[T] {
+	return &DOMTokenList[T]{}
 }
 
-func (wrapper DOMTokenListV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
+func (wrapper DOMTokenList[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)
 }
 
-func (w DOMTokenListV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
+func (w DOMTokenList[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("item", w.item)
 	jsClass.CreatePrototypeMethod("contains", w.contains)
 	jsClass.CreatePrototypeMethod("add", w.add)
@@ -33,12 +33,12 @@ func (w DOMTokenListV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("toString", w.value)
 }
 
-func (w DOMTokenListV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w DOMTokenList[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w DOMTokenListV8Wrapper[T]) item(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w DOMTokenList[T]) item(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.item")
 	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if errInst != nil {
@@ -52,7 +52,7 @@ func (w DOMTokenListV8Wrapper[T]) item(cbCtx js.CallbackContext[T]) (js.Value[T]
 	return codec.EncodeNillableString(cbCtx, result, hasValue)
 }
 
-func (w DOMTokenListV8Wrapper[T]) contains(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w DOMTokenList[T]) contains(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.contains")
 	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if errInst != nil {
@@ -66,7 +66,7 @@ func (w DOMTokenListV8Wrapper[T]) contains(cbCtx js.CallbackContext[T]) (js.Valu
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w DOMTokenListV8Wrapper[T]) add(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w DOMTokenList[T]) add(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.add")
 	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if errInst != nil {
@@ -80,7 +80,7 @@ func (w DOMTokenListV8Wrapper[T]) add(cbCtx js.CallbackContext[T]) (js.Value[T],
 	return nil, errCall
 }
 
-func (w DOMTokenListV8Wrapper[T]) replace(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w DOMTokenList[T]) replace(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.replace")
 	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if errInst != nil {
@@ -96,12 +96,12 @@ func (w DOMTokenListV8Wrapper[T]) replace(cbCtx js.CallbackContext[T]) (js.Value
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w DOMTokenListV8Wrapper[T]) supports(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w DOMTokenList[T]) supports(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.supports")
 	return nil, errors.New("DOMTokenList.supports: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w DOMTokenListV8Wrapper[T]) length(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w DOMTokenList[T]) length(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.length")
 	instance, err := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if err != nil {
@@ -111,7 +111,7 @@ func (w DOMTokenListV8Wrapper[T]) length(cbCtx js.CallbackContext[T]) (js.Value[
 	return codec.EncodeInt(cbCtx, result)
 }
 
-func (w DOMTokenListV8Wrapper[T]) value(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w DOMTokenList[T]) value(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.value")
 	instance, err := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if err != nil {
@@ -121,7 +121,7 @@ func (w DOMTokenListV8Wrapper[T]) value(cbCtx js.CallbackContext[T]) (js.Value[T
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w DOMTokenListV8Wrapper[T]) setValue(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w DOMTokenList[T]) setValue(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.setValue")
 	instance, err0 := js.As[dom.DOMTokenList](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)

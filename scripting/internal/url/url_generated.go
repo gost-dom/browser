@@ -9,11 +9,11 @@ import (
 	url "github.com/gost-dom/browser/url"
 )
 
-func (wrapper URLV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
+func (wrapper URL[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w URLV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
+func (w URL[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("toJSON", w.toJSON)
 	jsClass.CreatePrototypeAttribute("href", w.href, w.setHref)
 	jsClass.CreatePrototypeMethod("toString", w.href)
@@ -30,7 +30,7 @@ func (w URLV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("hash", w.hash, w.setHash)
 }
 
-func (w URLV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w URL[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.Constructor")
 	url, errArg1 := js.ConsumeArgument(cbCtx, "url", nil, codec.DecodeString)
 	if errArg1 != nil {
@@ -46,7 +46,7 @@ func (w URLV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], 
 	return w.CreateInstance(cbCtx, url)
 }
 
-func (w URLV8Wrapper[T]) toJSON(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w URL[T]) toJSON(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.toJSON")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
@@ -59,7 +59,7 @@ func (w URLV8Wrapper[T]) toJSON(cbCtx js.CallbackContext[T]) (js.Value[T], error
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w URLV8Wrapper[T]) href(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w URL[T]) href(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.href")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
@@ -69,12 +69,12 @@ func (w URLV8Wrapper[T]) href(cbCtx js.CallbackContext[T]) (js.Value[T], error) 
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w URLV8Wrapper[T]) setHref(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w URL[T]) setHref(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.setHref")
 	return nil, errors.New("URL.setHref: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w URLV8Wrapper[T]) origin(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w URL[T]) origin(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.origin")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
@@ -84,7 +84,7 @@ func (w URLV8Wrapper[T]) origin(cbCtx js.CallbackContext[T]) (js.Value[T], error
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w URLV8Wrapper[T]) protocol(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w URL[T]) protocol(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.protocol")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
@@ -94,32 +94,32 @@ func (w URLV8Wrapper[T]) protocol(cbCtx js.CallbackContext[T]) (js.Value[T], err
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w URLV8Wrapper[T]) setProtocol(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w URL[T]) setProtocol(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.setProtocol")
 	return nil, errors.New("URL.setProtocol: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w URLV8Wrapper[T]) username(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w URL[T]) username(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.username")
 	return nil, errors.New("URL.username: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w URLV8Wrapper[T]) setUsername(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w URL[T]) setUsername(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.setUsername")
 	return nil, errors.New("URL.setUsername: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w URLV8Wrapper[T]) password(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w URL[T]) password(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.password")
 	return nil, errors.New("URL.password: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w URLV8Wrapper[T]) setPassword(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w URL[T]) setPassword(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.setPassword")
 	return nil, errors.New("URL.setPassword: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w URLV8Wrapper[T]) host(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w URL[T]) host(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.host")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
@@ -129,12 +129,12 @@ func (w URLV8Wrapper[T]) host(cbCtx js.CallbackContext[T]) (js.Value[T], error) 
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w URLV8Wrapper[T]) setHost(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w URL[T]) setHost(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.setHost")
 	return nil, errors.New("URL.setHost: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w URLV8Wrapper[T]) hostname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w URL[T]) hostname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.hostname")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
@@ -144,12 +144,12 @@ func (w URLV8Wrapper[T]) hostname(cbCtx js.CallbackContext[T]) (js.Value[T], err
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w URLV8Wrapper[T]) setHostname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w URL[T]) setHostname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.setHostname")
 	return nil, errors.New("URL.setHostname: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w URLV8Wrapper[T]) port(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w URL[T]) port(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.port")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
@@ -159,12 +159,12 @@ func (w URLV8Wrapper[T]) port(cbCtx js.CallbackContext[T]) (js.Value[T], error) 
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w URLV8Wrapper[T]) setPort(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w URL[T]) setPort(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.setPort")
 	return nil, errors.New("URL.setPort: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w URLV8Wrapper[T]) pathname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w URL[T]) pathname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.pathname")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
@@ -174,12 +174,12 @@ func (w URLV8Wrapper[T]) pathname(cbCtx js.CallbackContext[T]) (js.Value[T], err
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w URLV8Wrapper[T]) setPathname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w URL[T]) setPathname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.setPathname")
 	return nil, errors.New("URL.setPathname: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w URLV8Wrapper[T]) search(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w URL[T]) search(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.search")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
@@ -189,17 +189,17 @@ func (w URLV8Wrapper[T]) search(cbCtx js.CallbackContext[T]) (js.Value[T], error
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w URLV8Wrapper[T]) setSearch(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w URL[T]) setSearch(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.setSearch")
 	return nil, errors.New("URL.setSearch: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w URLV8Wrapper[T]) searchParams(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w URL[T]) searchParams(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.searchParams")
 	return nil, errors.New("URL.searchParams: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w URLV8Wrapper[T]) hash(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w URL[T]) hash(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.hash")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
@@ -209,7 +209,7 @@ func (w URLV8Wrapper[T]) hash(cbCtx js.CallbackContext[T]) (js.Value[T], error) 
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w URLV8Wrapper[T]) setHash(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w URL[T]) setHash(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: URL.setHash")
 	return nil, errors.New("URL.setHash: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

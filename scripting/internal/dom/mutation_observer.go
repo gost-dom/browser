@@ -22,14 +22,14 @@ func (cb MutationCallback[T]) HandleMutation(recs []mutation.Record, obs *mutati
 	}
 }
 
-func (w MutationObserverV8Wrapper[T]) CreateInstance(
+func (w MutationObserver[T]) CreateInstance(
 	cbCtx js.CallbackContext[T],
 	cb mutation.Callback,
 ) (js.Value[T], error) {
 	return codec.EncodeConstrucedValue(cbCtx, mutation.NewObserver(cbCtx.Scope().Clock(), cb))
 }
 
-func (w MutationObserverV8Wrapper[T]) decodeMutationCallback(
+func (w MutationObserver[T]) decodeMutationCallback(
 	cbCtx js.CallbackContext[T],
 	val js.Value[T],
 ) (mutation.Callback, error) {
@@ -39,7 +39,7 @@ func (w MutationObserverV8Wrapper[T]) decodeMutationCallback(
 	return nil, cbCtx.ValueFactory().NewTypeError("Not a function")
 }
 
-func (w MutationObserverV8Wrapper[T]) decodeObserveOption(
+func (w MutationObserver[T]) decodeObserveOption(
 	cbCtx js.CallbackContext[T],
 	val js.Value[T],
 ) ([]mutation.ObserveOption, error) {
@@ -67,7 +67,7 @@ func (w MutationObserverV8Wrapper[T]) decodeObserveOption(
 	return res, err
 }
 
-func (w MutationObserverV8Wrapper[T]) toSequenceMutationRecord(
+func (w MutationObserver[T]) toSequenceMutationRecord(
 	cbCtx js.CallbackContext[T],
 	records []mutation.Record,
 ) (js.Value[T], error) {

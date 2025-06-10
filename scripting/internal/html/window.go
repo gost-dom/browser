@@ -5,11 +5,11 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w *WindowV8Wrapper[T]) window(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w *Window[T]) window(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return cbCtx.This(), nil
 }
 
-func (w *WindowV8Wrapper[T]) history(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w *Window[T]) history(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	win, err := js.As[html.Window](cbCtx.Instance())
 	if err != nil {
 		return nil, err

@@ -8,12 +8,12 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (e *ElementV8Wrapper[T]) CustomInitializer(class js.Class[T]) {
+func (e *Element[T]) CustomInitializer(class js.Class[T]) {
 	class.CreatePrototypeMethod("insertAdjacentHTML", e.insertAdjacentHTML)
 	class.CreatePrototypeAttribute("outerHTML", e.outerHTML, nil)
 }
 
-func (e *ElementV8Wrapper[T]) insertAdjacentHTML(
+func (e *Element[T]) insertAdjacentHTML(
 	cbCtx js.CallbackContext[T],
 ) (val js.Value[T], err error) {
 	element, e0 := js.As[dom.Element](cbCtx.Instance())
@@ -26,7 +26,7 @@ func (e *ElementV8Wrapper[T]) insertAdjacentHTML(
 	return nil, err
 }
 
-func (e *ElementV8Wrapper[T]) outerHTML(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (e *Element[T]) outerHTML(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	if element, err := js.As[dom.Element](cbCtx.Instance()); err == nil {
 		return codec.EncodeString(cbCtx, element.OuterHTML())
 	} else {
@@ -34,7 +34,7 @@ func (e *ElementV8Wrapper[T]) outerHTML(cbCtx js.CallbackContext[T]) (js.Value[T
 	}
 }
 
-func (e ElementV8Wrapper[T]) classList(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (e Element[T]) classList(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	instance, err := js.As[dom.Element](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -44,7 +44,7 @@ func (e ElementV8Wrapper[T]) classList(cbCtx js.CallbackContext[T]) (js.Value[T]
 	return tokenList.NewInstance(cl)
 }
 
-func (e *ElementV8Wrapper[T]) toNamedNodeMap(
+func (e *Element[T]) toNamedNodeMap(
 	cbCtx js.CallbackContext[T],
 	n dom.NamedNodeMap,
 ) (js.Value[T], error) {

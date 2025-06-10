@@ -9,29 +9,29 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type HTMLAnchorElementV8Wrapper[T any] struct {
-	htmlHyperlinkElementUtils *HTMLHyperlinkElementUtilsV8Wrapper[T]
+type HTMLAnchorElement[T any] struct {
+	htmlHyperlinkElementUtils *HTMLHyperlinkElementUtils[T]
 }
 
-func NewHTMLAnchorElementV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *HTMLAnchorElementV8Wrapper[T] {
-	return &HTMLAnchorElementV8Wrapper[T]{NewHTMLHyperlinkElementUtilsV8Wrapper(scriptHost)}
+func NewHTMLAnchorElement[T any](scriptHost js.ScriptEngine[T]) *HTMLAnchorElement[T] {
+	return &HTMLAnchorElement[T]{NewHTMLHyperlinkElementUtils(scriptHost)}
 }
 
-func (wrapper HTMLAnchorElementV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
+func (wrapper HTMLAnchorElement[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w HTMLAnchorElementV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
+func (w HTMLAnchorElement[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("target", w.target, w.setTarget)
 	w.htmlHyperlinkElementUtils.installPrototype(jsClass)
 }
 
-func (w HTMLAnchorElementV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w HTMLAnchorElement[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: HTMLAnchorElement.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w HTMLAnchorElementV8Wrapper[T]) target(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w HTMLAnchorElement[T]) target(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: HTMLAnchorElement.target")
 	instance, err := js.As[html.HTMLAnchorElement](cbCtx.Instance())
 	if err != nil {
@@ -41,7 +41,7 @@ func (w HTMLAnchorElementV8Wrapper[T]) target(cbCtx js.CallbackContext[T]) (js.V
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w HTMLAnchorElementV8Wrapper[T]) setTarget(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w HTMLAnchorElement[T]) setTarget(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: HTMLAnchorElement.setTarget")
 	instance, err0 := js.As[html.HTMLAnchorElement](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)

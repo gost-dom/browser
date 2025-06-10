@@ -9,23 +9,23 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type MutationObserverV8Wrapper[T any] struct{}
+type MutationObserver[T any] struct{}
 
-func NewMutationObserverV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *MutationObserverV8Wrapper[T] {
-	return &MutationObserverV8Wrapper[T]{}
+func NewMutationObserver[T any](scriptHost js.ScriptEngine[T]) *MutationObserver[T] {
+	return &MutationObserver[T]{}
 }
 
-func (wrapper MutationObserverV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
+func (wrapper MutationObserver[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w MutationObserverV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
+func (w MutationObserver[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("observe", w.observe)
 	jsClass.CreatePrototypeMethod("disconnect", w.disconnect)
 	jsClass.CreatePrototypeMethod("takeRecords", w.takeRecords)
 }
 
-func (w MutationObserverV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w MutationObserver[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: MutationObserver.Constructor")
 	callback, errArg1 := js.ConsumeArgument(cbCtx, "callback", nil, w.decodeMutationCallback)
 	if errArg1 != nil {
@@ -34,7 +34,7 @@ func (w MutationObserverV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (
 	return w.CreateInstance(cbCtx, callback)
 }
 
-func (w MutationObserverV8Wrapper[T]) observe(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w MutationObserver[T]) observe(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: MutationObserver.observe")
 	instance, errInst := js.As[dominterfaces.MutationObserver](cbCtx.Instance())
 	if errInst != nil {
@@ -50,7 +50,7 @@ func (w MutationObserverV8Wrapper[T]) observe(cbCtx js.CallbackContext[T]) (js.V
 	return nil, errCall
 }
 
-func (w MutationObserverV8Wrapper[T]) disconnect(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w MutationObserver[T]) disconnect(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: MutationObserver.disconnect")
 	instance, err := js.As[dominterfaces.MutationObserver](cbCtx.Instance())
 	if err != nil {
@@ -60,7 +60,7 @@ func (w MutationObserverV8Wrapper[T]) disconnect(cbCtx js.CallbackContext[T]) (j
 	return nil, nil
 }
 
-func (w MutationObserverV8Wrapper[T]) takeRecords(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w MutationObserver[T]) takeRecords(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: MutationObserver.takeRecords")
 	instance, err := js.As[dominterfaces.MutationObserver](cbCtx.Instance())
 	if err != nil {

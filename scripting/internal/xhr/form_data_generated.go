@@ -9,18 +9,18 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type FormDataV8Wrapper[T any] struct{}
+type FormData[T any] struct{}
 
-func NewFormDataV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *FormDataV8Wrapper[T] {
-	return &FormDataV8Wrapper[T]{}
+func NewFormData[T any](scriptHost js.ScriptEngine[T]) *FormData[T] {
+	return &FormData[T]{}
 }
 
-func (wrapper FormDataV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
+func (wrapper FormData[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)
 }
 
-func (w FormDataV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
+func (w FormData[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("append", w.append)
 	jsClass.CreatePrototypeMethod("delete", w.delete)
 	jsClass.CreatePrototypeMethod("get", w.get)
@@ -29,7 +29,7 @@ func (w FormDataV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("set", w.set)
 }
 
-func (w FormDataV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w FormData[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: FormData.Constructor")
 	form, found, errArg := js.ConsumeOptionalArg(cbCtx, "form", w.decodeHTMLFormElement)
 	if found {
@@ -48,7 +48,7 @@ func (w FormDataV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value
 	return w.CreateInstance(cbCtx)
 }
 
-func (w FormDataV8Wrapper[T]) append(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w FormData[T]) append(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: FormData.append")
 	instance, errInst := js.As[*html.FormData](cbCtx.Instance())
 	if errInst != nil {
@@ -64,7 +64,7 @@ func (w FormDataV8Wrapper[T]) append(cbCtx js.CallbackContext[T]) (js.Value[T], 
 	return nil, nil
 }
 
-func (w FormDataV8Wrapper[T]) delete(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w FormData[T]) delete(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: FormData.delete")
 	instance, errInst := js.As[*html.FormData](cbCtx.Instance())
 	if errInst != nil {
@@ -78,7 +78,7 @@ func (w FormDataV8Wrapper[T]) delete(cbCtx js.CallbackContext[T]) (js.Value[T], 
 	return nil, nil
 }
 
-func (w FormDataV8Wrapper[T]) get(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w FormData[T]) get(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: FormData.get")
 	instance, errInst := js.As[*html.FormData](cbCtx.Instance())
 	if errInst != nil {
@@ -92,7 +92,7 @@ func (w FormDataV8Wrapper[T]) get(cbCtx js.CallbackContext[T]) (js.Value[T], err
 	return w.toFormDataEntryValue(cbCtx, result)
 }
 
-func (w FormDataV8Wrapper[T]) getAll(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w FormData[T]) getAll(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: FormData.getAll")
 	instance, errInst := js.As[*html.FormData](cbCtx.Instance())
 	if errInst != nil {
@@ -106,7 +106,7 @@ func (w FormDataV8Wrapper[T]) getAll(cbCtx js.CallbackContext[T]) (js.Value[T], 
 	return w.toSequenceFormDataEntryValue(cbCtx, result)
 }
 
-func (w FormDataV8Wrapper[T]) has(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w FormData[T]) has(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: FormData.has")
 	instance, errInst := js.As[*html.FormData](cbCtx.Instance())
 	if errInst != nil {
@@ -120,7 +120,7 @@ func (w FormDataV8Wrapper[T]) has(cbCtx js.CallbackContext[T]) (js.Value[T], err
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w FormDataV8Wrapper[T]) set(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w FormData[T]) set(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: FormData.set")
 	instance, errInst := js.As[*html.FormData](cbCtx.Instance())
 	if errInst != nil {

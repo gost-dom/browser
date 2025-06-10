@@ -11,18 +11,18 @@ import (
 	"github.com/gost-dom/browser/url"
 )
 
-type URLV8Wrapper[T any] struct {
+type URL[T any] struct {
 }
 
-func NewURLV8Wrapper[T any](host js.ScriptEngine[T]) URLV8Wrapper[T] {
-	return URLV8Wrapper[T]{}
+func NewURL[T any](host js.ScriptEngine[T]) URL[T] {
+	return URL[T]{}
 }
 
 type handleDisposable cgo.Handle
 
 func (h handleDisposable) Dispose() { cgo.Handle(h).Delete() }
 
-func (w URLV8Wrapper[T]) CreateInstance(
+func (w URL[T]) CreateInstance(
 	cbCtx js.CallbackContext[T],
 	u string,
 ) (js.Value[T], error) {
@@ -33,7 +33,7 @@ func (w URLV8Wrapper[T]) CreateInstance(
 	return codec.EncodeConstrucedValue(cbCtx, value)
 }
 
-func (w URLV8Wrapper[T]) CreateInstanceBase(
+func (w URL[T]) CreateInstanceBase(
 	cbCtx js.CallbackContext[T],
 	u string,
 	base string,
@@ -45,7 +45,7 @@ func (w URLV8Wrapper[T]) CreateInstanceBase(
 	return codec.EncodeConstrucedValue(cbCtx, value)
 }
 
-func (w URLSearchParamsV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w URLSearchParams[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	var err error
 	arg, ok := cbCtx.ConsumeArg()
 	var res url.URLSearchParams
@@ -84,7 +84,7 @@ func (w URLSearchParamsV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (j
 	return codec.EncodeConstrucedValue(cbCtx, &res)
 }
 
-func (w URLSearchParamsV8Wrapper[T]) toSequenceString_(
+func (w URLSearchParams[T]) toSequenceString_(
 	cbCtx js.CallbackContext[T],
 	values []string,
 ) (js.Value[T], error) {
@@ -96,7 +96,7 @@ func (w URLSearchParamsV8Wrapper[T]) toSequenceString_(
 	return fact.NewArray(vs...), nil
 }
 
-func (w URLSearchParamsV8Wrapper[T]) CustomInitializer(class js.Class[T]) {
+func (w URLSearchParams[T]) CustomInitializer(class js.Class[T]) {
 	it := js.NewIterator2(codec.EncodeStringScoped[T], codec.EncodeStringScoped[T])
 	it.InstallPrototype(class)
 }

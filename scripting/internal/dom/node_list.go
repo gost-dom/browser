@@ -6,7 +6,7 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w *NodeListV8Wrapper[T]) CustomInitializer(class js.Class[T]) {
+func (w *NodeList[T]) CustomInitializer(class js.Class[T]) {
 	nodeListIterator := js.NewIterator(
 		func(ctx js.Scope[T], instance dom.Node) (js.Value[T], error) {
 			return codec.EncodeEntityScoped(ctx, instance)

@@ -36,13 +36,13 @@ func (l v8EventListener[T]) Equals(other event.EventHandler) bool {
 	return ok && x.val.StrictEquals(l.val)
 }
 
-func (w EventTargetV8Wrapper[T]) CreateInstance(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w EventTarget[T]) CreateInstance(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	t := event.NewEventTarget()
 	cbCtx.This().SetNativeValue(t)
 	return nil, nil
 }
 
-func (w EventTargetV8Wrapper[T]) decodeEventListener(
+func (w EventTarget[T]) decodeEventListener(
 	cbCtx js.CallbackContext[T],
 	val js.Value[T],
 ) (event.EventHandler, error) {
@@ -53,11 +53,11 @@ func (w EventTargetV8Wrapper[T]) decodeEventListener(
 	}
 }
 
-func (w EventTargetV8Wrapper[T]) defaultEventListenerOptions() []event.EventListenerOption {
+func (w EventTarget[T]) defaultEventListenerOptions() []event.EventListenerOption {
 	return nil
 }
 
-func (w EventTargetV8Wrapper[T]) decodeEventListenerOptions(
+func (w EventTarget[T]) decodeEventListenerOptions(
 	cbCtx js.CallbackContext[T],
 	val js.Value[T],
 ) ([]event.EventListenerOption, error) {
@@ -76,7 +76,7 @@ func (w EventTargetV8Wrapper[T]) decodeEventListenerOptions(
 	return options, nil
 }
 
-func (w EventTargetV8Wrapper[T]) decodeEvent(
+func (w EventTarget[T]) decodeEvent(
 	cbCtx js.CallbackContext[T],
 	val js.Value[T],
 ) (*event.Event, error) {

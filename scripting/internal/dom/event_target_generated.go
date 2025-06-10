@@ -9,28 +9,28 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type EventTargetV8Wrapper[T any] struct{}
+type EventTarget[T any] struct{}
 
-func NewEventTargetV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *EventTargetV8Wrapper[T] {
-	return &EventTargetV8Wrapper[T]{}
+func NewEventTarget[T any](scriptHost js.ScriptEngine[T]) *EventTarget[T] {
+	return &EventTarget[T]{}
 }
 
-func (wrapper EventTargetV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
+func (wrapper EventTarget[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w EventTargetV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
+func (w EventTarget[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("addEventListener", w.addEventListener)
 	jsClass.CreatePrototypeMethod("removeEventListener", w.removeEventListener)
 	jsClass.CreatePrototypeMethod("dispatchEvent", w.dispatchEvent)
 }
 
-func (w EventTargetV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w EventTarget[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: EventTarget.Constructor")
 	return w.CreateInstance(cbCtx)
 }
 
-func (w EventTargetV8Wrapper[T]) addEventListener(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w EventTarget[T]) addEventListener(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: EventTarget.addEventListener")
 	instance, errInst := js.As[event.EventTarget](cbCtx.Instance())
 	if errInst != nil {
@@ -47,7 +47,7 @@ func (w EventTargetV8Wrapper[T]) addEventListener(cbCtx js.CallbackContext[T]) (
 	return nil, nil
 }
 
-func (w EventTargetV8Wrapper[T]) removeEventListener(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w EventTarget[T]) removeEventListener(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: EventTarget.removeEventListener")
 	instance, errInst := js.As[event.EventTarget](cbCtx.Instance())
 	if errInst != nil {
@@ -64,7 +64,7 @@ func (w EventTargetV8Wrapper[T]) removeEventListener(cbCtx js.CallbackContext[T]
 	return nil, nil
 }
 
-func (w EventTargetV8Wrapper[T]) dispatchEvent(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w EventTarget[T]) dispatchEvent(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: EventTarget.dispatchEvent")
 	instance, errInst := js.As[event.EventTarget](cbCtx.Instance())
 	if errInst != nil {

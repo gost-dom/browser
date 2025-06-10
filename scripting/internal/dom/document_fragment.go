@@ -6,7 +6,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w DocumentFragmentV8Wrapper[T]) Constructor(ctx js.CallbackContext[T]) (js.Value[T], error) {
+func (w DocumentFragment[T]) Constructor(ctx js.CallbackContext[T]) (js.Value[T], error) {
 	result := dom.NewDocumentFragment(ctx.Scope().Window().Document())
 	return codec.EncodeConstrucedValue(ctx, result)
 }

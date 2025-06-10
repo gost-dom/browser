@@ -8,28 +8,28 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type NodeListV8Wrapper[T any] struct{}
+type NodeList[T any] struct{}
 
-func NewNodeListV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *NodeListV8Wrapper[T] {
-	return &NodeListV8Wrapper[T]{}
+func NewNodeList[T any](scriptHost js.ScriptEngine[T]) *NodeList[T] {
+	return &NodeList[T]{}
 }
 
-func (wrapper NodeListV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
+func (wrapper NodeList[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)
 }
 
-func (w NodeListV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
+func (w NodeList[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("item", w.item)
 	jsClass.CreatePrototypeAttribute("length", w.length, nil)
 }
 
-func (w NodeListV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w NodeList[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: NodeList.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w NodeListV8Wrapper[T]) item(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w NodeList[T]) item(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: NodeList.item")
 	instance, errInst := js.As[dom.NodeList](cbCtx.Instance())
 	if errInst != nil {
@@ -43,7 +43,7 @@ func (w NodeListV8Wrapper[T]) item(cbCtx js.CallbackContext[T]) (js.Value[T], er
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w NodeListV8Wrapper[T]) length(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w NodeList[T]) length(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: NodeList.length")
 	instance, err := js.As[dom.NodeList](cbCtx.Instance())
 	if err != nil {

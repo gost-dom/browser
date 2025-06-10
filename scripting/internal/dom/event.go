@@ -10,7 +10,7 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w EventV8Wrapper[T]) CreateInstance(
+func (w Event[T]) CreateInstance(
 	cbCtx js.CallbackContext[T],
 	type_ string,
 	o codec.EventInit,
@@ -19,7 +19,7 @@ func (w EventV8Wrapper[T]) CreateInstance(
 	return codec.EncodeConstrucedValue(cbCtx, e)
 }
 
-func (w EventV8Wrapper[T]) toEventTarget(
+func (w Event[T]) toEventTarget(
 	cbCtx js.CallbackContext[T],
 	e event.EventTarget,
 ) (js.Value[T], error) {
@@ -35,7 +35,7 @@ func (w EventV8Wrapper[T]) toEventTarget(
 	)
 }
 
-func (w EventV8Wrapper[T]) eventPhase(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Event[T]) eventPhase(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err

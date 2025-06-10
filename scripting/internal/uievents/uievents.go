@@ -6,28 +6,28 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w UIEventV8Wrapper[T]) decodeMouseEventInit(
+func (w UIEvent[T]) decodeMouseEventInit(
 	cbCtx js.CallbackContext[T],
 	v js.Value[T],
 ) (codec.EventInit, error) {
 	return w.decodeUIEventInit(cbCtx, v)
 }
 
-func (w UIEventV8Wrapper[T]) decodePointerEventInit(
+func (w UIEvent[T]) decodePointerEventInit(
 	cbCtx js.CallbackContext[T],
 	v js.Value[T],
 ) (codec.EventInit, error) {
 	return w.decodeMouseEventInit(cbCtx, v)
 }
 
-func (w UIEventV8Wrapper[T]) CreateInstance(
+func (w UIEvent[T]) CreateInstance(
 	cbCtx js.CallbackContext[T],
 	type_ string,
 ) (js.Value[T], error) {
 	return w.CreateInstanceEventInitDict(cbCtx, type_)
 }
 
-func (w UIEventV8Wrapper[T]) CreateInstanceEventInitDict(
+func (w UIEvent[T]) CreateInstanceEventInitDict(
 	cbCtx js.CallbackContext[T],
 	type_ string,
 	options ...interface{}) (js.Value[T], error) {
@@ -35,25 +35,25 @@ func (w UIEventV8Wrapper[T]) CreateInstanceEventInitDict(
 	return codec.EncodeConstrucedValue(cbCtx, e)
 }
 
-func (w UIEventV8Wrapper[T]) decodeUIEventInit(
+func (w UIEvent[T]) decodeUIEventInit(
 	cbCtx js.CallbackContext[T],
 	v js.Value[T],
 ) (codec.EventInit, error) {
 	return codec.DecodeEventInit(cbCtx, v)
 }
 
-type MouseEventV8Wrapper[T any] struct {
-	UIEventV8Wrapper[T]
+type MouseEvent[T any] struct {
+	UIEvent[T]
 }
 
-type PointerEventV8Wrapper[T any] struct {
-	MouseEventV8Wrapper[T]
+type PointerEvent[T any] struct {
+	MouseEvent[T]
 }
 
-func NewMouseEventV8Wrapper[T any](host js.ScriptEngine[T]) MouseEventV8Wrapper[T] {
-	return MouseEventV8Wrapper[T]{*NewUIEventV8Wrapper(host)}
+func NewMouseEvent[T any](host js.ScriptEngine[T]) MouseEvent[T] {
+	return MouseEvent[T]{*NewUIEvent(host)}
 }
 
-func NewPointerEventV8Wrapper[T any](host js.ScriptEngine[T]) PointerEventV8Wrapper[T] {
-	return PointerEventV8Wrapper[T]{NewMouseEventV8Wrapper(host)}
+func NewPointerEvent[T any](host js.ScriptEngine[T]) PointerEvent[T] {
+	return PointerEvent[T]{NewMouseEvent(host)}
 }

@@ -9,24 +9,24 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type ElementV8Wrapper[T any] struct {
-	parentNode               *ParentNodeV8Wrapper[T]
-	nonDocumentTypeChildNode *NonDocumentTypeChildNodeV8Wrapper[T]
+type Element[T any] struct {
+	parentNode               *ParentNode[T]
+	nonDocumentTypeChildNode *NonDocumentTypeChildNode[T]
 }
 
-func NewElementV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *ElementV8Wrapper[T] {
-	return &ElementV8Wrapper[T]{
-		NewParentNodeV8Wrapper(scriptHost),
-		NewNonDocumentTypeChildNodeV8Wrapper(scriptHost),
+func NewElement[T any](scriptHost js.ScriptEngine[T]) *Element[T] {
+	return &Element[T]{
+		NewParentNode(scriptHost),
+		NewNonDocumentTypeChildNode(scriptHost),
 	}
 }
 
-func (wrapper ElementV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
+func (wrapper Element[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)
 }
 
-func (w ElementV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
+func (w Element[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("hasAttributes", w.hasAttributes)
 	jsClass.CreatePrototypeMethod("getAttributeNames", w.getAttributeNames)
 	jsClass.CreatePrototypeMethod("getAttribute", w.getAttribute)
@@ -64,22 +64,22 @@ func (w ElementV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
 	w.nonDocumentTypeChildNode.installPrototype(jsClass)
 }
 
-func (w ElementV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w ElementV8Wrapper[T]) hasAttributes(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) hasAttributes(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.hasAttributes")
 	return nil, errors.New("Element.hasAttributes: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ElementV8Wrapper[T]) getAttributeNames(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) getAttributeNames(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.getAttributeNames")
 	return nil, errors.New("Element.getAttributeNames: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ElementV8Wrapper[T]) getAttribute(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) getAttribute(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.getAttribute")
 	instance, errInst := js.As[dom.Element](cbCtx.Instance())
 	if errInst != nil {
@@ -93,12 +93,12 @@ func (w ElementV8Wrapper[T]) getAttribute(cbCtx js.CallbackContext[T]) (js.Value
 	return codec.EncodeNillableString(cbCtx, result, hasValue)
 }
 
-func (w ElementV8Wrapper[T]) getAttributeNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) getAttributeNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.getAttributeNS")
 	return nil, errors.New("Element.getAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ElementV8Wrapper[T]) setAttribute(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) setAttribute(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.setAttribute")
 	instance, errInst := js.As[dom.Element](cbCtx.Instance())
 	if errInst != nil {
@@ -114,12 +114,12 @@ func (w ElementV8Wrapper[T]) setAttribute(cbCtx js.CallbackContext[T]) (js.Value
 	return nil, nil
 }
 
-func (w ElementV8Wrapper[T]) setAttributeNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) setAttributeNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.setAttributeNS")
 	return nil, errors.New("Element.setAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ElementV8Wrapper[T]) removeAttribute(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) removeAttribute(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.removeAttribute")
 	instance, errInst := js.As[dom.Element](cbCtx.Instance())
 	if errInst != nil {
@@ -133,17 +133,17 @@ func (w ElementV8Wrapper[T]) removeAttribute(cbCtx js.CallbackContext[T]) (js.Va
 	return nil, nil
 }
 
-func (w ElementV8Wrapper[T]) removeAttributeNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) removeAttributeNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.removeAttributeNS")
 	return nil, errors.New("Element.removeAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ElementV8Wrapper[T]) toggleAttribute(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) toggleAttribute(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.toggleAttribute")
 	return nil, errors.New("Element.toggleAttribute: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ElementV8Wrapper[T]) hasAttribute(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) hasAttribute(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.hasAttribute")
 	instance, errInst := js.As[dom.Element](cbCtx.Instance())
 	if errInst != nil {
@@ -157,42 +157,42 @@ func (w ElementV8Wrapper[T]) hasAttribute(cbCtx js.CallbackContext[T]) (js.Value
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w ElementV8Wrapper[T]) hasAttributeNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) hasAttributeNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.hasAttributeNS")
 	return nil, errors.New("Element.hasAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ElementV8Wrapper[T]) getAttributeNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) getAttributeNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.getAttributeNode")
 	return nil, errors.New("Element.getAttributeNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ElementV8Wrapper[T]) getAttributeNodeNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) getAttributeNodeNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.getAttributeNodeNS")
 	return nil, errors.New("Element.getAttributeNodeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ElementV8Wrapper[T]) setAttributeNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) setAttributeNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.setAttributeNode")
 	return nil, errors.New("Element.setAttributeNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ElementV8Wrapper[T]) setAttributeNodeNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) setAttributeNodeNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.setAttributeNodeNS")
 	return nil, errors.New("Element.setAttributeNodeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ElementV8Wrapper[T]) removeAttributeNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) removeAttributeNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.removeAttributeNode")
 	return nil, errors.New("Element.removeAttributeNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ElementV8Wrapper[T]) attachShadow(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) attachShadow(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.attachShadow")
 	return nil, errors.New("Element.attachShadow: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ElementV8Wrapper[T]) matches(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) matches(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.matches")
 	instance, errInst := js.As[dom.Element](cbCtx.Instance())
 	if errInst != nil {
@@ -209,47 +209,47 @@ func (w ElementV8Wrapper[T]) matches(cbCtx js.CallbackContext[T]) (js.Value[T], 
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w ElementV8Wrapper[T]) getElementsByTagName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) getElementsByTagName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.getElementsByTagName")
 	return nil, errors.New("Element.getElementsByTagName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ElementV8Wrapper[T]) getElementsByTagNameNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) getElementsByTagNameNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.getElementsByTagNameNS")
 	return nil, errors.New("Element.getElementsByTagNameNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ElementV8Wrapper[T]) getElementsByClassName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) getElementsByClassName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.getElementsByClassName")
 	return nil, errors.New("Element.getElementsByClassName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ElementV8Wrapper[T]) insertAdjacentElement(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) insertAdjacentElement(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.insertAdjacentElement")
 	return nil, errors.New("Element.insertAdjacentElement: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ElementV8Wrapper[T]) insertAdjacentText(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) insertAdjacentText(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.insertAdjacentText")
 	return nil, errors.New("Element.insertAdjacentText: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ElementV8Wrapper[T]) namespaceURI(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) namespaceURI(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.namespaceURI")
 	return nil, errors.New("Element.namespaceURI: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ElementV8Wrapper[T]) prefix(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) prefix(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.prefix")
 	return nil, errors.New("Element.prefix: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ElementV8Wrapper[T]) localName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) localName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.localName")
 	return nil, errors.New("Element.localName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ElementV8Wrapper[T]) tagName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) tagName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.tagName")
 	instance, err := js.As[dom.Element](cbCtx.Instance())
 	if err != nil {
@@ -259,7 +259,7 @@ func (w ElementV8Wrapper[T]) tagName(cbCtx js.CallbackContext[T]) (js.Value[T], 
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w ElementV8Wrapper[T]) id(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) id(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.id")
 	instance, err := js.As[dom.Element](cbCtx.Instance())
 	if err != nil {
@@ -269,7 +269,7 @@ func (w ElementV8Wrapper[T]) id(cbCtx js.CallbackContext[T]) (js.Value[T], error
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w ElementV8Wrapper[T]) setID(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) setID(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.setID")
 	instance, err0 := js.As[dom.Element](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
@@ -281,27 +281,27 @@ func (w ElementV8Wrapper[T]) setID(cbCtx js.CallbackContext[T]) (js.Value[T], er
 	return nil, nil
 }
 
-func (w ElementV8Wrapper[T]) className(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) className(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.className")
 	return nil, errors.New("Element.className: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ElementV8Wrapper[T]) setClassName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) setClassName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.setClassName")
 	return nil, errors.New("Element.setClassName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ElementV8Wrapper[T]) slot(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) slot(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.slot")
 	return nil, errors.New("Element.slot: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ElementV8Wrapper[T]) setSlot(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) setSlot(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.setSlot")
 	return nil, errors.New("Element.setSlot: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ElementV8Wrapper[T]) attributes(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) attributes(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.attributes")
 	instance, err := js.As[dom.Element](cbCtx.Instance())
 	if err != nil {
@@ -311,7 +311,7 @@ func (w ElementV8Wrapper[T]) attributes(cbCtx js.CallbackContext[T]) (js.Value[T
 	return w.toNamedNodeMap(cbCtx, result)
 }
 
-func (w ElementV8Wrapper[T]) shadowRoot(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Element[T]) shadowRoot(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Element.shadowRoot")
 	return nil, errors.New("Element.shadowRoot: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

@@ -6,7 +6,7 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (e HTMLTemplateElementV8Wrapper[T]) CreateInstance(
+func (e HTMLTemplateElement[T]) CreateInstance(
 	ctx js.ScriptEngine[T],
 	this js.Object[T],
 ) (js.Value[T], error) {

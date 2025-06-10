@@ -9,20 +9,20 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type DocumentV8Wrapper[T any] struct {
-	parentNode *ParentNodeV8Wrapper[T]
+type Document[T any] struct {
+	parentNode *ParentNode[T]
 }
 
-func NewDocumentV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *DocumentV8Wrapper[T] {
-	return &DocumentV8Wrapper[T]{NewParentNodeV8Wrapper(scriptHost)}
+func NewDocument[T any](scriptHost js.ScriptEngine[T]) *Document[T] {
+	return &Document[T]{NewParentNode(scriptHost)}
 }
 
-func (wrapper DocumentV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
+func (wrapper Document[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
 	wrapper.CustomInitializer(jsClass)
 }
 
-func (w DocumentV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
+func (w Document[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("getElementsByTagName", w.getElementsByTagName)
 	jsClass.CreatePrototypeMethod("getElementsByTagNameNS", w.getElementsByTagNameNS)
 	jsClass.CreatePrototypeMethod("getElementsByClassName", w.getElementsByClassName)
@@ -54,32 +54,32 @@ func (w DocumentV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
 	w.parentNode.installPrototype(jsClass)
 }
 
-func (w DocumentV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.Constructor")
 	return w.CreateInstance(cbCtx)
 }
 
-func (w DocumentV8Wrapper[T]) getElementsByTagName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) getElementsByTagName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.getElementsByTagName")
 	return nil, errors.New("Document.getElementsByTagName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w DocumentV8Wrapper[T]) getElementsByTagNameNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) getElementsByTagNameNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.getElementsByTagNameNS")
 	return nil, errors.New("Document.getElementsByTagNameNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w DocumentV8Wrapper[T]) getElementsByClassName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) getElementsByClassName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.getElementsByClassName")
 	return nil, errors.New("Document.getElementsByClassName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w DocumentV8Wrapper[T]) createElementNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) createElementNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.createElementNS")
 	return nil, errors.New("Document.createElementNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w DocumentV8Wrapper[T]) createDocumentFragment(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) createDocumentFragment(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.createDocumentFragment")
 	instance, err := js.As[dom.Document](cbCtx.Instance())
 	if err != nil {
@@ -89,12 +89,12 @@ func (w DocumentV8Wrapper[T]) createDocumentFragment(cbCtx js.CallbackContext[T]
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w DocumentV8Wrapper[T]) createCDATASection(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) createCDATASection(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.createCDATASection")
 	return nil, errors.New("Document.createCDATASection: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w DocumentV8Wrapper[T]) createComment(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) createComment(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.createComment")
 	instance, errInst := js.As[dom.Document](cbCtx.Instance())
 	if errInst != nil {
@@ -108,22 +108,22 @@ func (w DocumentV8Wrapper[T]) createComment(cbCtx js.CallbackContext[T]) (js.Val
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w DocumentV8Wrapper[T]) createProcessingInstruction(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) createProcessingInstruction(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.createProcessingInstruction")
 	return nil, errors.New("Document.createProcessingInstruction: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w DocumentV8Wrapper[T]) importNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) importNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.importNode")
 	return nil, errors.New("Document.importNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w DocumentV8Wrapper[T]) adoptNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) adoptNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.adoptNode")
 	return nil, errors.New("Document.adoptNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w DocumentV8Wrapper[T]) createAttribute(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) createAttribute(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.createAttribute")
 	instance, errInst := js.As[dom.Document](cbCtx.Instance())
 	if errInst != nil {
@@ -137,77 +137,77 @@ func (w DocumentV8Wrapper[T]) createAttribute(cbCtx js.CallbackContext[T]) (js.V
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w DocumentV8Wrapper[T]) createAttributeNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) createAttributeNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.createAttributeNS")
 	return nil, errors.New("Document.createAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w DocumentV8Wrapper[T]) createEvent(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) createEvent(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.createEvent")
 	return nil, errors.New("Document.createEvent: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w DocumentV8Wrapper[T]) createRange(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) createRange(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.createRange")
 	return nil, errors.New("Document.createRange: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w DocumentV8Wrapper[T]) createNodeIterator(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) createNodeIterator(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.createNodeIterator")
 	return nil, errors.New("Document.createNodeIterator: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w DocumentV8Wrapper[T]) createTreeWalker(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) createTreeWalker(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.createTreeWalker")
 	return nil, errors.New("Document.createTreeWalker: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w DocumentV8Wrapper[T]) implementation(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) implementation(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.implementation")
 	return nil, errors.New("Document.implementation: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w DocumentV8Wrapper[T]) URL(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) URL(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.URL")
 	return nil, errors.New("Document.URL: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w DocumentV8Wrapper[T]) documentURI(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) documentURI(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.documentURI")
 	return nil, errors.New("Document.documentURI: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w DocumentV8Wrapper[T]) compatMode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) compatMode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.compatMode")
 	return nil, errors.New("Document.compatMode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w DocumentV8Wrapper[T]) characterSet(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) characterSet(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.characterSet")
 	return nil, errors.New("Document.characterSet: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w DocumentV8Wrapper[T]) charset(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) charset(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.charset")
 	return nil, errors.New("Document.charset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w DocumentV8Wrapper[T]) inputEncoding(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) inputEncoding(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.inputEncoding")
 	return nil, errors.New("Document.inputEncoding: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w DocumentV8Wrapper[T]) contentType(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) contentType(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.contentType")
 	return nil, errors.New("Document.contentType: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w DocumentV8Wrapper[T]) doctype(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) doctype(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.doctype")
 	return nil, errors.New("Document.doctype: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w DocumentV8Wrapper[T]) documentElement(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Document[T]) documentElement(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Document.documentElement")
 	instance, err := js.As[dom.Document](cbCtx.Instance())
 	if err != nil {

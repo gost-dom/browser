@@ -9,29 +9,29 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type AttrV8Wrapper[T any] struct{}
+type Attr[T any] struct{}
 
-func NewAttrV8Wrapper[T any](scriptHost js.ScriptEngine[T]) *AttrV8Wrapper[T] {
-	return &AttrV8Wrapper[T]{}
+func NewAttr[T any](scriptHost js.ScriptEngine[T]) *Attr[T] {
+	return &Attr[T]{}
 }
 
-func (wrapper AttrV8Wrapper[T]) Initialize(jsClass js.Class[T]) {
+func (wrapper Attr[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
 }
 
-func (w AttrV8Wrapper[T]) installPrototype(jsClass js.Class[T]) {
+func (w Attr[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("localName", w.localName, nil)
 	jsClass.CreatePrototypeAttribute("name", w.name, nil)
 	jsClass.CreatePrototypeAttribute("value", w.value, w.setValue)
 	jsClass.CreatePrototypeAttribute("ownerElement", w.ownerElement, nil)
 }
 
-func (w AttrV8Wrapper[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Attr[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Attr.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w AttrV8Wrapper[T]) localName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Attr[T]) localName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Attr.localName")
 	instance, err := js.As[dom.Attr](cbCtx.Instance())
 	if err != nil {
@@ -41,7 +41,7 @@ func (w AttrV8Wrapper[T]) localName(cbCtx js.CallbackContext[T]) (js.Value[T], e
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w AttrV8Wrapper[T]) name(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Attr[T]) name(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Attr.name")
 	instance, err := js.As[dom.Attr](cbCtx.Instance())
 	if err != nil {
@@ -51,7 +51,7 @@ func (w AttrV8Wrapper[T]) name(cbCtx js.CallbackContext[T]) (js.Value[T], error)
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w AttrV8Wrapper[T]) value(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Attr[T]) value(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Attr.value")
 	instance, err := js.As[dom.Attr](cbCtx.Instance())
 	if err != nil {
@@ -61,7 +61,7 @@ func (w AttrV8Wrapper[T]) value(cbCtx js.CallbackContext[T]) (js.Value[T], error
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w AttrV8Wrapper[T]) setValue(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Attr[T]) setValue(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Attr.setValue")
 	instance, err0 := js.As[dom.Attr](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
@@ -73,7 +73,7 @@ func (w AttrV8Wrapper[T]) setValue(cbCtx js.CallbackContext[T]) (js.Value[T], er
 	return nil, nil
 }
 
-func (w AttrV8Wrapper[T]) ownerElement(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w Attr[T]) ownerElement(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: Attr.ownerElement")
 	instance, err := js.As[dom.Attr](cbCtx.Instance())
 	if err != nil {

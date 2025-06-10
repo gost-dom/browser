@@ -5,14 +5,14 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type HTMLDocumentV8Wrapper[T any] struct {
-	dom.DocumentV8Wrapper[T]
+type HTMLDocument[T any] struct {
+	dom.Document[T]
 }
 
-func NewHTMLDocumentV8Wrapper[T any](host js.ScriptEngine[T]) HTMLDocumentV8Wrapper[T] {
-	return HTMLDocumentV8Wrapper[T]{*dom.NewDocumentV8Wrapper(host)}
+func NewHTMLDocument[T any](host js.ScriptEngine[T]) HTMLDocument[T] {
+	return HTMLDocument[T]{*dom.NewDocument(host)}
 }
 
-func (w HTMLDocumentV8Wrapper[T]) Constructor(c js.CallbackContext[T]) (js.Value[T], error) {
+func (w HTMLDocument[T]) Constructor(c js.CallbackContext[T]) (js.Value[T], error) {
 	return nil, c.ValueFactory().NewTypeError("illegal constructor")
 }
