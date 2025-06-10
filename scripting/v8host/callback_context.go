@@ -43,7 +43,7 @@ func (h *v8CallbackContext) ScriptCtx() *V8ScriptContext {
 	return h.host.mustGetContext(h.v8Info.Context())
 }
 
-func (c *v8CallbackContext) Scope() js.Scope[jsTypeParam] { return v8Scope{c.host, c.ScriptCtx()} }
+func (c *v8CallbackContext) Scope() js.Scope[jsTypeParam] { return newV8Scope(c.ScriptCtx()) }
 
 func (c *v8CallbackContext) ValueFactory() jsValueFactory {
 	return v8ValueFactory{c.host, c.ScriptCtx()}
@@ -194,6 +194,8 @@ type v8Scope struct {
 	*V8ScriptContext
 }
 
+func newV8Scope(ctx *V8ScriptContext) v8Scope { return v8Scope{ctx.host, ctx} }
+
 func (s v8Scope) Window() html.Window  { return s.window }
 func (s v8Scope) GlobalThis() jsObject { return s.global }
 func (s v8Scope) Clock() *clock.Clock  { return s.clock }
@@ -202,23 +204,24 @@ func (s v8Scope) ValueFactory() js.ValueFactory[jsTypeParam] {
 	return v8ValueFactory{host: s.host, ctx: s.V8ScriptContext}
 }
 
-func (c v8Scope) Constructor(name string) js.Constructor[jsTypeParam] {
-	return v8Constructable{c, c.getConstructor(name)}
-}
+//
+// func (c v8Scope) Constructor(name string) js.Constructor[jsTypeParam] {
+// 	return
+// }
 
 /* -------- v8Constructable -------- */
 
 type v8Constructable struct {
-	scope v8Scope
-	ctor  v8Class
+	ctx  *V8ScriptContext
+	ctor v8Class
 }
 
 func (c v8Constructable) NewInstance(nativeValue any) (jsObject, error) {
-	val, err := c.ctor.ft.InstanceTemplate().NewInstance(c.scope.v8ctx)
-	obj := newV8Object(c.scope.V8ScriptContext, val).(*v8Object)
+	val, err := c.ctor.ft.InstanceTemplate().NewInstance(c.ctx.v8ctx)
+	obj := newV8Object(c.ctx, val).(*v8Object)
 	if err == nil {
 		obj.SetNativeValue(nativeValue)
-		c.scope.V8ScriptContext.addDisposer(obj)
+		c.ctx.addDisposer(obj)
 	}
 	return obj, err
 }

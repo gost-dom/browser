@@ -73,12 +73,10 @@ func (context *V8ScriptContext) initializeGlobals() error {
 		// and verified by tests. Furthermore, in JS, document.location must
 		// return the same object as window.location (document.location looks up
 		// window.location)
-		scope := v8Scope{context.host, context}
-		l, err := scope.Constructor("Location").NewInstance(win.Location())
+		l, err := context.Constructor("Location").NewInstance(win.Location())
 		if err != nil {
 			return err
 		}
-		context.Constructor("Location")
 		if err := context.global.Set("location", l); err != nil {
 			return fmt.Errorf("error installing location: %v\n%s", err, constants.BUG_ISSUE_URL)
 		}
@@ -99,8 +97,8 @@ func (context *V8ScriptContext) initializeGlobals() error {
 // Panics if the name is not one registered as a constructor. The name should
 // not originate from client code, only from this library, so it should be
 // guaranteed that this function is only called with valid values.
-func (c *V8ScriptContext) Constructor(name string) v8Class {
-	return c.getConstructor(name)
+func (c *V8ScriptContext) Constructor(name string) js.Constructor[jsTypeParam] {
+	return v8Constructable{c, c.getConstructor(name)}
 }
 
 func (c *V8ScriptContext) getConstructor(name string) v8Class {
@@ -111,11 +109,6 @@ func (c *V8ScriptContext) getConstructor(name string) v8Class {
 	return prototype
 }
 
-func (c *V8ScriptContext) getCachedNode(this *v8.Object) (entity.ObjectIder, bool) {
-	h := this.GetInternalField(0).ExternalHandle()
-	r, ok := h.Value().(entity.ObjectIder)
-	return r, ok
-}
 func (ctx *V8ScriptContext) Clock() html.Clock { return ctx.clock }
 
 func (host *V8ScriptHost) addContext(ctx *V8ScriptContext) {
