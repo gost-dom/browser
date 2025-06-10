@@ -2,7 +2,6 @@ package scripting
 
 import (
 	"cmp"
-	"fmt"
 	"maps"
 	"os"
 	"slices"
@@ -28,7 +27,6 @@ func Write(api string, specs configuration.WebIdlConfigurations) error {
 			return err
 		}
 		types := spec.GetTypesSorted()
-		// errs := make([]error, len(types))
 		for _, specType := range types {
 			typeInfo := createData(data, specType)
 			statements.Append(
@@ -36,7 +34,7 @@ func Write(api string, specs configuration.WebIdlConfigurations) error {
 					registrator,
 					g.Lit(typeInfo.Name()),
 					g.Lit(typeInfo.Extends()),
-					g.Id(fmt.Sprintf("New%sV8Wrapper", typeInfo.Name())),
+					g.Id(ConstructorNameForInterface(typeInfo.Name())),
 				))
 		}
 	}

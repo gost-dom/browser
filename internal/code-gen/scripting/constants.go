@@ -1,6 +1,8 @@
 package scripting
 
 import (
+	"fmt"
+
 	"github.com/gost-dom/code-gen/packagenames"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
@@ -28,3 +30,12 @@ var (
 )
 
 var IdlTypeUndefined = idl.Type{Name: "undefined", Kind: idl.KindSimple}
+
+func TypeNameForInterface(name string) string {
+	return fmt.Sprintf("%sV8Wrapper", name)
+
+}
+
+func ConstructorNameForInterface(name string) string {
+	return fmt.Sprintf("New%s", TypeNameForInterface(name))
+}
