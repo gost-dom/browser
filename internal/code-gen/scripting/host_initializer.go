@@ -19,7 +19,7 @@ func (i HostInitializer) Generate() *jen.Statement {
 		g.FunctionDefinition{
 			Name:     "Initialize", // prototypeFactoryFunctionName(data),
 			Receiver: g.FunctionArgument{Name: receiver, Type: i.WrapperStructType()},
-			Args:     g.Arg(classArg, v8Class),
+			Args:     g.Arg(classArg, jsClass),
 			Body:     i.body(receiver, classArg),
 		}).Generate()
 }

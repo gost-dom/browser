@@ -3,11 +3,8 @@ package scripting
 import (
 	"github.com/dave/jennifer/jen"
 	. "github.com/gost-dom/code-gen/scripting/model"
-	"github.com/gost-dom/generators"
 	g "github.com/gost-dom/generators"
 )
-
-type Generator = generators.Generator
 
 // PrototypeWrapperGenerator generates code to create a JavaScript prototype
 // that wraps an internal Go type.
@@ -18,7 +15,7 @@ type PrototypeWrapperGenerator struct {
 func (gen PrototypeWrapperGenerator) Generate() *jen.Statement {
 	wrapper := WrapperStruct(gen)
 
-	return generators.StatementList(
+	return g.StatementList(
 		renderIf(!gen.Data.Spec.SkipWrapper, wrapper.TypeDef()),
 		g.Line,
 		HostInitializer{wrapper},
@@ -31,12 +28,12 @@ func (gen PrototypeWrapperGenerator) Generate() *jen.Statement {
 	).Generate()
 }
 
-func (gen PrototypeWrapperGenerator) OperationCallbacks() Generator {
+func (gen PrototypeWrapperGenerator) OperationCallbacks() g.Generator {
 	wrapper := WrapperStruct(gen)
-	list := generators.StatementList()
+	list := g.StatementList()
 	for op := range gen.Data.OperationCallbackInfos() {
 		list.Append(
-			generators.Line,
+			g.Line,
 			wrapper.Callbacks().MethodCallback(op),
 		)
 	}
@@ -50,20 +47,16 @@ func (gen PrototypeWrapperGenerator) AttributeCallbacks() g.Generator {
 	for _, attr := range gen.Data.Attributes {
 		if attr.Getter != nil && !attr.Getter.CustomImplementation {
 			list.Append(
-				generators.Line,
+				g.Line,
 				callbacks.AttributeGetter(attr),
 			)
 		}
 		if attr.Setter != nil && !attr.Setter.CustomImplementation {
 			list.Append(
-				generators.Line,
+				g.Line,
 				callbacks.AttributeSetter(attr),
 			)
 		}
 	}
 	return list
-}
-
-type CtxTransformer interface {
-	TransformCtx(CallbackContext) Generator
 }

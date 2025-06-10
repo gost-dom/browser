@@ -9,109 +9,106 @@ import (
 	g "github.com/gost-dom/generators"
 )
 
-type CallbackGenerators struct {
-	WrapperStruct
-}
+type CallbackMethods struct{ WrapperStruct }
 
-func (s CallbackGenerators) Receiver() g.Value      { return g.NewValue("w") }
-func (s CallbackGenerators) CbCtx() CallbackContext { return NewCallbackContext(g.Id("cbCtx")) }
+func (cb CallbackMethods) Receiver() g.Value      { return g.NewValue("w") }
+func (cb CallbackMethods) CbCtx() CallbackContext { return NewCallbackContext(g.Id("cbCtx")) }
 
-func (gen CallbackGenerators) CallbackFunction(name string, body g.Generator) g.Generator {
+func (cb CallbackMethods) CallbackFunction(name string, body g.Generator) g.Generator {
 	return g.FunctionDefinition{
 		Receiver: g.FunctionArgument{
-			Name: gen.Receiver(),
-			Type: gen.WrapperStructType(),
+			Name: cb.Receiver(),
+			Type: cb.WrapperStructType(),
 		},
 		Name:     name,
-		Args:     g.Arg(gen.CbCtx(), v8CbCtx),
-		RtnTypes: g.List(JSValue, g.NewType("error")),
+		Args:     g.Arg(cb.CbCtx(), jsCbCtx),
+		RtnTypes: g.List(jsValue, g.NewType("error")),
 		Body: g.StatementList(
-			gen.LogCall(name, gen.CbCtx()),
+			cb.LogCall(name, cb.CbCtx()),
 			body,
 		),
 	}
 }
 
-func (s CallbackGenerators) ConstructorCallback() g.Generator {
-	return s.CallbackFunction("Constructor", s.ConstructorCallbackBody())
+func (cb CallbackMethods) ConstructorCallback() g.Generator {
+	return cb.CallbackFunction("Constructor", cb.ConstructorCallbackBody())
 }
 
-func (s CallbackGenerators) ConstructorCallbackBody() g.Generator {
-	if !s.Data.AllowConstructor() {
-		return g.Return(s.CbCtx().IllegalConstructor())
+func (cb CallbackMethods) ConstructorCallbackBody() g.Generator {
+	if !cb.Data.AllowConstructor() {
+		return g.Return(cb.CbCtx().IllegalConstructor())
 	}
-	cons := *s.Data.Constructor
-	return s.OpCallbackGenerators(cons).ConstructorCallbackBody()
+	cons := *cb.Data.Constructor
+	return cb.OpCallbackGenerators(cons).ConstructorCallbackBody()
 }
 
-func (s CallbackGenerators) MethodCallback(op model.ESOperation) g.Generator {
+func (cb CallbackMethods) MethodCallback(op model.ESOperation) g.Generator {
 	cbCtx := NewCallbackContext(g.Id("cbCtx"))
 	name := op.CallbackMethodName()
-	return s.CallbackFunction(
+	return cb.CallbackFunction(
 		name,
 		renderIfElse(op.NotImplemented,
-			s.ReturnNotImplementedError(name, cbCtx),
-			s.OpCallbackGenerators(op).MethodCallbackBody(),
+			cb.ReturnNotImplementedError(name, cbCtx),
+			cb.OpCallbackGenerators(op).MethodCallbackBody(),
 		),
 	)
 }
 
-func (s CallbackGenerators) OpCallbackGenerators(op model.ESOperation) OpCallbackGenerators {
-	return OpCallbackGenerators{s, op}
+func (cb CallbackMethods) OpCallbackGenerators(op model.ESOperation) OpCallbackGenerators {
+	return OpCallbackGenerators{cb, op}
 }
 
-func (s CallbackGenerators) AttributeGetter(attr model.ESAttribute) g.Generator {
+func (cb CallbackMethods) AttributeGetter(attr model.ESAttribute) g.Generator {
 	cbCtx := NewCallbackContext(g.Id("cbCtx"))
 	op := attr.Getter
 	name := op.CallbackMethodName()
-	return s.CallbackFunction(name,
+	return cb.CallbackFunction(name,
 		renderIfElse(op.NotImplemented,
-			s.ReturnNotImplementedError(name, cbCtx),
-			s.AttributeGetterCallbackBody(attr),
+			cb.ReturnNotImplementedError(name, cbCtx),
+			cb.AttributeGetterCallbackBody(attr),
 		),
 	)
 }
-func (b CallbackGenerators) AttributeGetterCallbackBody(
+
+func (cb CallbackMethods) AttributeGetterCallbackBody(
 	attr model.ESAttribute,
-) Generator {
+) g.Generator {
 	statements := g.StatementList()
 	instance := g.NewValue("instance")
 	var call g.Generator
 	name := model.IdlNameToGoName(attr.Getter.Name)
 	field := g.ValueOf(instance).Field(name)
-	if b.Data.CustomRule.OutputType == customrules.OutputTypeStruct {
+	if cb.Data.CustomRule.OutputType == customrules.OutputTypeStruct {
 		call = field
 	} else {
 		call = field.Call()
 	}
 
 	statements.Append(
-		b.assignInstance(nil),
+		cb.assignInstance(nil),
 		ReturnValueGenerator{
-			Data:     b.Data,
+			Data:     cb.Data,
 			Op:       *attr.Getter,
-			Ctx:      b.CbCtx(),
-			Receiver: b.Receiver(),
+			Ctx:      cb.CbCtx(),
+			Receiver: cb.Receiver(),
 		}.Transform(call),
 	)
 	return statements
 }
 
-func (s CallbackGenerators) AttributeSetter(attr model.ESAttribute) g.Generator {
+func (cb CallbackMethods) AttributeSetter(attr model.ESAttribute) g.Generator {
 	cbCtx := NewCallbackContext(g.Id("cbCtx"))
 	op := attr.Setter
 	name := op.CallbackMethodName()
-	return s.CallbackFunction(name,
+	return cb.CallbackFunction(name,
 		renderIfElse(op.NotImplemented,
-			s.ReturnNotImplementedError(name, cbCtx),
-			s.AttributeSetterCallbackBody(attr),
+			cb.ReturnNotImplementedError(name, cbCtx),
+			cb.AttributeSetterCallbackBody(attr),
 		),
 	)
 }
 
-func (gen CallbackGenerators) AttributeSetterCallbackBody(
-	attr model.ESAttribute,
-) Generator {
+func (cb CallbackMethods) AttributeSetterCallbackBody(attr model.ESAttribute) g.Generator {
 	var (
 		err      = g.Id("err0")
 		err1     = g.Id("err1")
@@ -122,15 +119,15 @@ func (gen CallbackGenerators) AttributeSetterCallbackBody(
 	)
 
 	args := append(
-		[]g.Generator{gen.CbCtx()},
-		DecodersForArg(gen.Receiver(), attr.Setter.Arguments[0])...,
+		[]g.Generator{cb.CbCtx()},
+		DecodersForArg(cb.Receiver(), attr.Setter.Arguments[0])...,
 	)
-	parsedArg := parseSetterArg.Call(args...)
+	parsedArg := jsParseSetterArg.Call(args...)
 
 	return g.StatementList(
 		g.AssignMany(
 			g.List(instance, err),
-			As.TypeParam(gen.Data.WrappedType()).Call(gen.CbCtx().GetInstance()),
+			jsAs.TypeParam(cb.Data.WrappedType()).Call(cb.CbCtx().GetInstance()),
 		),
 		g.AssignMany(g.List(val, err1), parsedArg),
 
@@ -139,7 +136,7 @@ func (gen CallbackGenerators) AttributeSetterCallbackBody(
 			returnNilCommaErr,
 		),
 		renderIfElse(
-			gen.Data.CustomRule.OutputType == customrules.OutputTypeStruct,
+			cb.Data.CustomRule.OutputType == customrules.OutputTypeStruct,
 			g.Reassign(field, val),
 			field.Call(val),
 		),
@@ -147,41 +144,41 @@ func (gen CallbackGenerators) AttributeSetterCallbackBody(
 	)
 }
 
-func (c CallbackGenerators) ReturnNotImplementedError(
+func (cb CallbackMethods) ReturnNotImplementedError(
 	name string,
 	cbCtx CallbackContext,
 ) g.Generator {
 	errMsg := fmt.Sprintf(
 		"%s.%s: Not implemented. Create an issue: %s",
-		c.Data.Name(), name, packagenames.ISSUE_URL,
+		cb.Data.Name(), name, packagenames.ISSUE_URL,
 	)
 	return g.Return(g.Nil, g.NewValuePackage("New", "errors").Call(g.Lit(errMsg)))
 }
 
-func (c CallbackGenerators) LogCall(name string, cbCtx g.Generator) g.Generator {
+func (cb CallbackMethods) LogCall(name string, cbCtx g.Generator) g.Generator {
 	return g.ValueOf(cbCtx).Field("Logger").Call().Field("Debug").Call(
-		g.Lit(fmt.Sprintf("V8 Function call: %s.%s", c.Data.Name(), name)))
+		g.Lit(fmt.Sprintf("V8 Function call: %s.%s", cb.Data.Name(), name)))
 }
 
-func (gen CallbackGenerators) assignInstance(
+func (cb CallbackMethods) assignInstance(
 	args []model.ESOperationArgument,
 ) g.Generator {
-	err := gen.errInst(args)
+	err := cb.errInst(args)
 	return g.StatementList(
 		g.AssignMany(
-			g.List(gen.instance(), err),
-			As.TypeParam(gen.Data.WrappedType()).Call(gen.CbCtx().GetInstance()),
+			g.List(cb.instance(), err),
+			jsAs.TypeParam(cb.Data.WrappedType()).Call(cb.CbCtx().GetInstance()),
 		),
 
 		IfError(err, TransformerFunc(returnNilCommaErr)),
 	)
 }
 
-func (gen CallbackGenerators) instance() g.Value {
+func (cb CallbackMethods) instance() g.Value {
 	return g.NewValue("instance")
 }
 
-func (gen CallbackGenerators) errInst(args []model.ESOperationArgument) g.Value {
+func (cb CallbackMethods) errInst(args []model.ESOperationArgument) g.Value {
 	if len(args) == 0 {
 		return g.NewValue("err")
 	} else {

@@ -32,7 +32,7 @@ func Write(api string, specs configuration.WebIdlConfigurations) error {
 		for _, specType := range types {
 			typeInfo := createData(data, specType)
 			statements.Append(
-				JSRegister.Call(
+				jsRegisterClass.Call(
 					registrator,
 					g.Lit(typeInfo.Name()),
 					g.Lit(typeInfo.Extends()),
@@ -43,7 +43,7 @@ func Write(api string, specs configuration.WebIdlConfigurations) error {
 
 	bootstrap := g.Raw(jen.Func().Id("Bootstrap").Types(jen.Id("T").Any()).Params(
 		jen.Add(registrator.Generate()).
-			Add(JSClassBiulder.Generate()).Types(jen.Id("T")),
+			Add(jsClassBuilder.Generate()).Types(jen.Id("T")),
 	).Block(statements.Generate()))
 
 	writer, err := os.Create("register_generated.go")

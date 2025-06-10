@@ -15,7 +15,7 @@ import (
 // Common to both is that they can accept a long list of arguments, some can be
 // optional or variadic.
 type OpCallbackGenerators struct {
-	CallbackGenerators
+	CallbackMethods
 	Op model.ESOperation
 }
 
@@ -35,7 +35,7 @@ func (gen OpCallbackGenerators) NativeConstructorCall(
 	)
 }
 
-func (b OpCallbackGenerators) MethodCallbackBody() Generator {
+func (b OpCallbackGenerators) MethodCallbackBody() g.Generator {
 	return g.StatementList(
 		g.StatementList(
 			b.assignInstance(b.Op.Arguments),
@@ -101,12 +101,12 @@ func (gen OpCallbackGenerators) CtorOrOperationCallback(
 		if a.Variadic {
 			stmts.Append(
 				g.AssignMany(g.List(arg, err),
-					ConsumeRestArguments.Call(parseArgs...)),
+					jsConsumeRestArgs.Call(parseArgs...)),
 			)
 		} else {
 			stmts.Append(
 				g.AssignMany(g.List(arg, err),
-					ConsumeArgument.Call(parseArgs...)),
+					jsConsumeArg.Call(parseArgs...)),
 			)
 		}
 	}
@@ -127,7 +127,7 @@ func (gen OpCallbackGenerators) CtorOrOperationCallback(
 		optArgsBlock.Append(
 			g.AssignMany(
 				g.List(arg, found, err),
-				ConsumeOptionalArg.Call(parseArgs...),
+				jsConsumeOptionalArg.Call(parseArgs...),
 			),
 			g.IfStmt{
 				Condition: found,
@@ -152,13 +152,13 @@ func (gen OpCallbackGenerators) CtorOrOperationCallback(
 func (gen OpCallbackGenerators) DefaultValuer(a model.ESOperationArgument) (g.Generator, bool) {
 	switch a.IdlArg.Type.Name {
 	case "EventInit", "HTMLElement":
-		return ZeroValue, true
+		return zeroValue, true
 	}
 	defaultName, hasDefault := a.DefaultValueInGo()
 	if hasDefault && defaultName != "" {
 		return gen.Receiver().Field(defaultName), hasDefault
 	} else if a.NullableInIDL() {
-		return ZeroValue, hasDefault
+		return zeroValue, hasDefault
 	} else {
 		return g.Nil, hasDefault
 	}

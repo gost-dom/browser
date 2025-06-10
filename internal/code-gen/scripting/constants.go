@@ -7,23 +7,24 @@ import (
 )
 
 var (
-	IdlTypeUndefined = idl.Type{Name: "undefined", Kind: idl.KindSimple}
+	// Exported values from: scripting/internal/js
 
-	callbackContextType = g.NewTypePackage("CallbackContext", packagenames.JS)
-	callbackReturnType  = g.NewTypePackage("CallbackRVal", packagenames.JS)
-	As                  = g.NewTypePackage("As", packagenames.JS)
-	JSValue             = g.NewTypePackage("Value", packagenames.JS).TypeParam(g.Id("T"))
-	decoders            = g.NewValuePackage("Decoders", packagenames.JS)
-	JSRegister          = g.NewValuePackage("RegisterClass", packagenames.JS)
-	JSClassBiulder      = g.NewValuePackage("ClassBuilder", packagenames.JS)
+	jsParseSetterArg     = g.NewValuePackage("ParseSetterArg", packagenames.JS)
+	jsConsumeArg         = g.NewValuePackage("ConsumeArgument", packagenames.JS)
+	jsConsumeOptionalArg = g.NewValuePackage("ConsumeOptionalArg", packagenames.JS)
+	jsConsumeRestArgs    = g.NewValuePackage("ConsumeRestArguments", packagenames.JS)
 
-	v8Class = g.NewTypePackage("Class", packagenames.JS).TypeParam(g.Id("T"))
-	v8CbCtx = g.NewTypePackage("CallbackContext", packagenames.JS).TypeParam(g.Id("T"))
+	jsAs            = g.NewTypePackage("As", packagenames.JS)
+	jsValue         = g.NewTypePackage("Value", packagenames.JS).TypeParam(g.Id("T"))
+	jsClass         = g.NewTypePackage("Class", packagenames.JS).TypeParam(g.Id("T"))
+	jsCbCtx         = g.NewTypePackage("CallbackContext", packagenames.JS).TypeParam(g.Id("T"))
+	jsScriptEngine  = g.NewTypePackage("ScriptEngine", packagenames.JS).TypeParam(g.Id("T"))
+	jsRegisterClass = g.NewValuePackage("RegisterClass", packagenames.JS)
+	jsClassBuilder  = g.NewValuePackage("ClassBuilder", packagenames.JS)
 
-	scriptEngine         = g.NewTypePackage("ScriptEngine", packagenames.JS).TypeParam(g.Id("T"))
-	parseSetterArg       = g.NewValuePackage("ParseSetterArg", packagenames.JS)
-	ConsumeArgument      = g.NewValuePackage("ConsumeArgument", packagenames.JS)
-	ConsumeOptionalArg   = g.NewValuePackage("ConsumeOptionalArg", packagenames.JS)
-	ConsumeRestArguments = g.NewValuePackage("ConsumeRestArguments", packagenames.JS)
-	ZeroValue            = g.NewValuePackage("ZeroValue", packagenames.Codec)
+	// Exported values from: scripting/internal/codec
+
+	zeroValue = g.NewValuePackage("ZeroValue", packagenames.Codec)
 )
+
+var IdlTypeUndefined = idl.Type{Name: "undefined", Kind: idl.KindSimple}

@@ -4,9 +4,7 @@ import (
 	"github.com/dave/jennifer/jen"
 	. "github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/code-gen/scripting/model"
-	"github.com/gost-dom/generators"
 	g "github.com/gost-dom/generators"
-	gen "github.com/gost-dom/generators"
 )
 
 // PrototypeInitializer generates a function to initialize a JavaScript
@@ -23,15 +21,15 @@ func (i PrototypeInitializer) Generate() *jen.Statement {
 	return g.FunctionDefinition{
 		Name:     "installPrototype",
 		Receiver: g.FunctionArgument{Name: receiver, Type: wrapperType},
-		Args:     g.Arg(class, v8Class),
+		Args:     g.Arg(class, jsClass),
 		Body:     i.Body(receiver),
 	}.Generate()
 }
 
-func (g PrototypeInitializer) Body(receiver g.Value) generators.Generator {
-	return generators.StatementList(
-		g.CreatePrototypeInitializerBody(receiver),
-		g.MixinsGenerator(),
+func (i PrototypeInitializer) Body(receiver g.Value) g.Generator {
+	return g.StatementList(
+		i.CreatePrototypeInitializerBody(receiver),
+		i.MixinsGenerator(),
 	)
 }
 
@@ -45,18 +43,18 @@ func (i PrototypeInitializer) CreatePrototypeInitializerBody(
 	)
 }
 
-func (g PrototypeInitializer) MixinsGenerator() generators.Generator {
-	result := gen.StatementList()
-	for _, mixin := range g.Data.Includes() {
+func (i PrototypeInitializer) MixinsGenerator() g.Generator {
+	result := g.StatementList()
+	for _, mixin := range i.Data.Includes() {
 		wrapperName := LowerCaseFirstLetter(mixin.Name)
 		// Note: This excludes mixins not known in this spec.
 		// Could the mixing come from another spec, then this will skip
 		// something we may want.
 		// Not a problem yet ...
-		if _, included := g.Data.Spec.DomSpec.Interfaces[mixin.Name]; included {
+		if _, included := i.Data.Spec.DomSpec.Interfaces[mixin.Name]; included {
 			result.Append(
-				gen.NewValue("w").Field(wrapperName).Field("installPrototype").Call(
-					gen.Id("jsClass")),
+				g.NewValue("w").Field(wrapperName).Field("installPrototype").Call(
+					g.Id("jsClass")),
 			)
 		}
 	}
