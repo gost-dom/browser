@@ -310,19 +310,26 @@ func (s v8HandlerCallbackScope) Logger() *slog.Logger {
 	return s.host.Logger()
 }
 
-type v8GetterCallbackContext2[T any] struct {
+type v8KeyCallbackScope[T any] struct {
 	v8HandlerCallbackScope
 	key T
 }
 
-func (v v8GetterCallbackContext2[T]) Key() T { return v.key }
+func (v v8KeyCallbackScope[T]) Key() T { return v.key }
+
+type v8SetterCallbackContext[T any] struct {
+	v8KeyCallbackScope[T]
+	value jsValue
+}
+
+func (v v8SetterCallbackContext[T]) Value() jsValue { return v.value }
 
 func (w v8HandlerWrapper) NamedPropertyGet(
 	property *v8go.Value,
 	info v8go.PropertyCallbackInfo,
 ) (*v8go.Value, error) {
 	ctx := w.host.mustGetContext(info.Context())
-	result, err := w.callbacks.Getter(v8GetterCallbackContext2[jsValue]{
+	result, err := w.callbacks.Getter(v8KeyCallbackScope[jsValue]{
 		v8HandlerCallbackScope{w.host, info},
 		newV8Value(ctx, property),
 	})
@@ -335,11 +342,26 @@ func (w v8HandlerWrapper) NamedPropertyGet(
 	return nil, err
 }
 
-/*
-type NamedPropertySetter interface {
-	NamedPropertySet(property *Value, value *Value, info PropertyCallbackInfo) error
+func (w v8HandlerWrapper) NamedPropertySet(
+	property *v8go.Value,
+	value *v8go.Value,
+	info v8go.PropertyCallbackInfo,
+) error {
+	ctx := w.host.mustGetContext(info.Context())
+	err := w.callbacks.Setter(v8SetterCallbackContext[jsValue]{
+		v8KeyCallbackScope[jsValue]{
+			v8HandlerCallbackScope{w.host, info},
+			newV8Value(ctx, property),
+		},
+		newV8Value(ctx, value),
+	})
+	if err == js.NotIntercepted {
+		err = v8go.NotIntercepted
+	}
+	return err
 }
 
+/*
 type NamedPropertyQueryer interface {
 	NamedPropertyQuery(property *Value, info PropertyCallbackInfo) (int, error)
 }

@@ -24,4 +24,14 @@ func TestElementDataset(t *testing.T) {
 	g.Expect(win.Eval(`Object.keys(target.dataset)`)).
 		To(Equal([]any{"foo", "bar", "fooBar"}), "dataset keys")
 
+	win.MustRun(`
+		target.dataset.bar = "new bar";
+		target.dataset.barBaz = "bar baz";
+	`)
+
+	target := win.HTMLDocument().GetHTMLElementById("target")
+	v1, _ := target.GetAttribute("data-bar")
+	v2, _ := target.GetAttribute("data-bar-baz")
+	g.Expect(v1).To(Equal("new bar"), "Setting a new value")
+	g.Expect(v2).To(Equal("bar baz"), "Setting a value with camelcased name")
 }
