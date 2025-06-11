@@ -1,8 +1,6 @@
 package html
 
 import (
-	"fmt"
-
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -32,9 +30,9 @@ func (w DOMStringMap[T]) Constructor(info js.CallbackContext[T]) (js.Value[T], e
 }
 
 func (w DOMStringMap[T]) Initialize(class js.Class[T]) {
-	fmt.Println("INITIALIZE!!!")
 	class.CreateNamedHandler(
 		js.WithGetterCallback(w.NamedPropertyGet),
+		js.WithSetterCallback(w.NamedPropertySet),
 		js.WithEnumeratorCallback(w.NamedPropertyEnumerator),
 	)
 }
@@ -55,8 +53,21 @@ func (w DOMStringMap[T]) NamedPropertyGet(
 	return nil, nil
 }
 
+func (w DOMStringMap[T]) NamedPropertySet(
+	info js.SetterCallbackContext[T, js.Value[T]],
+) error {
+	instance, err := js.As[*html.DOMStringMap](info.Instance())
+	if err != nil {
+		return err
+	}
+	if !info.Key().IsString() { // Don't intercept symbol properties
+		return js.NotIntercepted
+	}
+	instance.Set(info.Key().String(), info.Value().String())
+	return nil
+}
+
 func (w DOMStringMap[T]) NamedPropertyEnumerator(info js.CallbackScope[T]) ([]js.Value[T], error) {
-	fmt.Println("ENUMERATOR!!!")
 	instance, err := js.As[*html.DOMStringMap](info.Instance())
 	if err != nil {
 		return nil, err
