@@ -341,7 +341,6 @@ func (w v8HandlerWrapper) NamedPropertyDelete(
 func (w v8HandlerWrapper) NamedPropertyEnumerator(
 	info v8go.PropertyCallbackInfo,
 ) (names []*v8go.Value, err error) {
-	w.host.Logger().Info("Named enumerator")
 	scope := v8CallbackScope{w.host, info}
 	result, err := w.callbacks.Enumerator(scope)
 	if err == nil {
@@ -355,7 +354,6 @@ func (w v8HandlerWrapper) NamedPropertyEnumerator(
 		err = v8go.NotIntercepted
 	}
 	return nil, err
-
 }
 
 /*
