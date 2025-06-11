@@ -1,6 +1,8 @@
 package html
 
 import (
+	"fmt"
+
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -29,6 +31,14 @@ func (w DOMStringMap[T]) Constructor(info js.CallbackContext[T]) (js.Value[T], e
 	return info.ReturnWithTypeError("Illegal Constructor")
 }
 
+func (w DOMStringMap[T]) Initialize(class js.Class[T]) {
+	fmt.Println("INITIALIZE!!!")
+	class.CreateNamedHandler(
+		js.WithGetterCallback(w.NamedPropertyGet),
+		js.WithEnumeratorCallback(w.NamedPropertyEnumerator),
+	)
+}
+
 func (w DOMStringMap[T]) NamedPropertyGet(
 	info js.GetterCallbackContext[T, js.Value[T]],
 ) (js.Value[T], error) {
@@ -45,9 +55,8 @@ func (w DOMStringMap[T]) NamedPropertyGet(
 	return nil, nil
 }
 
-func (w DOMStringMap[T]) NamedPropertyEnumerator(
-	info js.GetterCallbackContext[T, js.Value[T]],
-) ([]js.Value[T], error) {
+func (w DOMStringMap[T]) NamedPropertyEnumerator(info js.CallbackScope[T]) ([]js.Value[T], error) {
+	fmt.Println("ENUMERATOR!!!")
 	instance, err := js.As[*html.DOMStringMap](info.Instance())
 	if err != nil {
 		return nil, err

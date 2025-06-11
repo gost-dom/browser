@@ -3,6 +3,7 @@ package v8host
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 	"runtime/cgo"
 
 	"github.com/gost-dom/browser/internal/monads/result"
@@ -267,9 +268,113 @@ func (c v8Class) CreateIndexedHandler(getter js.HandlerGetterCallback[jsTypePara
 	})
 }
 
-func (c v8Class) CreateNamedHandler(getter js.HandlerGetterCallback[jsTypeParam, jsValue]) {
-	// c.inst.SetIndexedHandler(func(info *v8go.FunctionCallbackInfo) (*v8go.Value, error) {
-	// 	res, err := getter(newIndexedGetterCallbackContext(c.host, info))
-	// 	return toV8Value(res), err
-	// })
+func (c v8Class) CreateNamedHandler(opts ...js.NamedHandlerOption[jsTypeParam]) {
+	var oo js.NamedHandlerCallbacks[jsTypeParam]
+	for _, o := range opts {
+		o(&oo)
+	}
+	c.inst.SetNamedHandler(v8HandlerWrapper{c.host, oo})
 }
+
+type v8HandlerWrapper struct {
+	host      *V8ScriptHost
+	callbacks js.NamedHandlerCallbacks[jsTypeParam]
+}
+
+type v8HandlerCallbackScope struct {
+	host *V8ScriptHost
+	info v8go.PropertyCallbackInfo
+}
+
+func (s v8HandlerCallbackScope) ctx() *V8ScriptContext {
+	return s.host.mustGetContext(s.info.Context())
+}
+
+func (s v8HandlerCallbackScope) This() js.Object[jsTypeParam] {
+	return newV8Object(s.ctx(), s.info.This())
+}
+
+func (s v8HandlerCallbackScope) Instance() (any, error) {
+	if s.info.This().InternalFieldCount() < 1 {
+		return nil, v8go.NewTypeError(s.host.iso, "No internal instance")
+	}
+	return s.info.This().GetInternalField(0).ExternalHandle().Value(), nil
+}
+
+func (s v8HandlerCallbackScope) Scope() js.Scope[jsTypeParam] { return newV8Scope(s.ctx()) }
+func (s v8HandlerCallbackScope) ValueFactory() js.ValueFactory[jsTypeParam] {
+	return s.Scope().ValueFactory()
+}
+
+func (s v8HandlerCallbackScope) Logger() *slog.Logger {
+	return s.host.Logger()
+}
+
+type v8GetterCallbackContext2[T any] struct {
+	v8HandlerCallbackScope
+	key T
+}
+
+func (v v8GetterCallbackContext2[T]) Key() T { return v.key }
+
+func (w v8HandlerWrapper) NamedPropertyGet(
+	property *v8go.Value,
+	info v8go.PropertyCallbackInfo,
+) (*v8go.Value, error) {
+	ctx := w.host.mustGetContext(info.Context())
+	result, err := w.callbacks.Getter(v8GetterCallbackContext2[jsValue]{
+		v8HandlerCallbackScope{w.host, info},
+		newV8Value(ctx, property),
+	})
+	if err == nil && result != nil {
+		return result.Self().v8Value(), nil
+	}
+	if err == js.NotIntercepted {
+		err = v8go.NotIntercepted
+	}
+	return nil, err
+}
+
+/*
+type NamedPropertySetter interface {
+	NamedPropertySet(property *Value, value *Value, info PropertyCallbackInfo) error
+}
+
+type NamedPropertyQueryer interface {
+	NamedPropertyQuery(property *Value, info PropertyCallbackInfo) (int, error)
+}
+
+type NamedPropertyDeleter interface {
+	NamedPropertyDelete(property *Value, info PropertyCallbackInfo) (success bool, err error)
+}
+*/
+
+func (w v8HandlerWrapper) NamedPropertyEnumerator(
+	info v8go.PropertyCallbackInfo,
+) (names []*v8go.Value, err error) {
+	w.host.Logger().Info("Named enumerator")
+	scope := v8HandlerCallbackScope{w.host, info}
+	result, err := w.callbacks.Enumerator(scope)
+	if err == nil {
+		res := make([]*v8go.Value, len(result))
+		for i, r := range result {
+			res[i] = r.Self().v8Value()
+		}
+		return res, nil
+	}
+	if err == js.NotIntercepted {
+		err = v8go.NotIntercepted
+	}
+	return nil, err
+
+}
+
+/*
+type NamedPropertyDefinerer interface {
+	NamedPropertyDefiner(property *Value, desc *PropertyDescriptor, info PropertyCallbackInfo) error
+}
+
+type NamedPropertyDescriptorer interface {
+	NamedPropertyDescriptor(property *Value, info PropertyCallbackInfo) (*Value, error)
+}
+*/
