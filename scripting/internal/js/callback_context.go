@@ -99,6 +99,30 @@ type SetterCallbackContext[T, U any] interface {
 type FunctionCallback[T any] func(CallbackContext[T]) (Value[T], error)
 
 type HandlerGetterCallback[T, U any] func(GetterCallbackContext[T, U]) (Value[T], error)
+type HandlerSetterCallback[T, U any] func(SetterCallbackContext[T, U]) error
+type HandlerEnumeratorCallback[T, U any] func(CallbackScope[T]) ([]U, error)
+
+type HandlerCallbacks[Tjs, Tkey any] struct {
+	Getter     HandlerGetterCallback[Tjs, Tkey]
+	Setter     HandlerSetterCallback[Tjs, Tkey]
+	Enumerator HandlerEnumeratorCallback[Tjs, Tkey]
+}
+type NamedHandlerCallbacks[T any] = HandlerCallbacks[T, Value[T]]
+
+type HandlerOption[T, U any] = func(*HandlerCallbacks[T, U])
+type NamedHandlerOption[T any] = func(*HandlerCallbacks[T, Value[T]])
+
+func WithGetterCallback[T, U any](cb HandlerGetterCallback[T, U]) HandlerOption[T, U] {
+	return func(opt *HandlerCallbacks[T, U]) { opt.Getter = cb }
+}
+
+func WithSetterCallback[T, U any](cb HandlerSetterCallback[T, U]) HandlerOption[T, U] {
+	return func(opt *HandlerCallbacks[T, U]) { opt.Setter = cb }
+}
+
+func WithEnumeratorCallback[T, U any](cb HandlerEnumeratorCallback[T, U]) HandlerOption[T, U] {
+	return func(opt *HandlerCallbacks[T, U]) { opt.Enumerator = cb }
+}
 
 // ValueFactory allows creating JavaScript values from Go values
 type ValueFactory[T any] interface {

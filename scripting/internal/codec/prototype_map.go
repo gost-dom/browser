@@ -46,6 +46,8 @@ func LookupJSPrototype(entity entity.ObjectIder) string {
 		return "NodeList"
 	case dom.Node:
 		return "Node"
+	case *html.DOMStringMap:
+		return "DOMStringMap"
 	default:
 		panic(fmt.Sprintf("Cannot lookup node: %v", n))
 	}
