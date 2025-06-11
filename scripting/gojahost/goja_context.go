@@ -13,10 +13,9 @@ import (
 )
 
 type GojaContext struct {
-	vm     *goja.Runtime
-	clock  *clock.Clock
-	window html.Window
-	// globals      map[string]function
+	vm           *goja.Runtime
+	clock        *clock.Clock
+	window       html.Window
 	classes      map[string]*gojaClass
 	wrappedGoObj *goja.Symbol
 	cachedNodes  map[int32]goja.Value
@@ -101,7 +100,6 @@ func (i *GojaContext) Export(value any) (res any, err error) {
 }
 
 func (m *GojaContext) createLocationInstance() *goja.Object {
-	// panic("Not implemented")
 	location, err := m.classes["Location"].NewInstance(m.window.Location())
 	if err != nil {
 		panic(err)
@@ -140,8 +138,6 @@ func (c *GojaContext) CreateClass(
 
 	return class
 }
-
-type gojaFunctionCallback = func(call goja.FunctionCall, r *goja.Runtime) *goja.Object
 
 func (class *gojaClass) callback(call goja.ConstructorCall, r *goja.Runtime) *goja.Object {
 	class.installInstance(call.This)
@@ -234,8 +230,6 @@ func (c *gojaClass) NewInstance(native any) (js.Object[jsTypeParam], error) {
 	c.ctx.storeInternal(native, obj)
 	return newGojaObject(c.ctx, obj), nil
 }
-
-type gojaCallbackContext struct{}
 
 func newGojaCallbackContext(
 	ctx *GojaContext,

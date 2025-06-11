@@ -11,8 +11,7 @@ import (
 )
 
 type callbackContext struct {
-	ctx *GojaContext
-	// call     goja.FunctionCall
+	ctx      *GojaContext
 	this     *goja.Object
 	args     []goja.Value
 	argIndex int
@@ -58,8 +57,6 @@ func (ctx *callbackContext) ReturnWithValueErr(val js.Value[jsTypeParam], err er
 func (ctx *callbackContext) ReturnWithError(err error) goja.Value {
 	panic(err)
 }
-
-type callbackFunction = func(*callbackContext) goja.Value
 
 func wrapJSCallback(ctx *GojaContext, cb js.FunctionCallback[jsTypeParam]) goja.Value {
 	return ctx.vm.ToValue(func(c goja.FunctionCall) goja.Value {
