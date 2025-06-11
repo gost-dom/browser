@@ -34,4 +34,9 @@ func TestElementDataset(t *testing.T) {
 	v2, _ := target.GetAttribute("data-bar-baz")
 	g.Expect(v1).To(Equal("new bar"), "Setting a new value")
 	g.Expect(v2).To(Equal("bar baz"), "Setting a value with camelcased name")
+
+	win.MustRun(`delete target.dataset.bar`)
+	_, hasBar := target.GetAttribute("data-bar")
+	g.Expect(hasBar).To(BeFalse())
+
 }

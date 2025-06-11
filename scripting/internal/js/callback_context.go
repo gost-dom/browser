@@ -100,11 +100,13 @@ type FunctionCallback[T any] func(CallbackContext[T]) (Value[T], error)
 
 type HandlerGetterCallback[T, U any] func(GetterCallbackContext[T, U]) (Value[T], error)
 type HandlerSetterCallback[T, U any] func(SetterCallbackContext[T, U]) error
+type HandlerDeleterCallback[T, U any] func(GetterCallbackContext[T, U]) (bool, error)
 type HandlerEnumeratorCallback[T, U any] func(CallbackScope[T]) ([]U, error)
 
 type HandlerCallbacks[Tjs, Tkey any] struct {
 	Getter     HandlerGetterCallback[Tjs, Tkey]
 	Setter     HandlerSetterCallback[Tjs, Tkey]
+	Deleter    HandlerDeleterCallback[Tjs, Tkey]
 	Enumerator HandlerEnumeratorCallback[Tjs, Tkey]
 }
 type NamedHandlerCallbacks[T any] = HandlerCallbacks[T, Value[T]]
@@ -118,6 +120,10 @@ func WithGetterCallback[T, U any](cb HandlerGetterCallback[T, U]) HandlerOption[
 
 func WithSetterCallback[T, U any](cb HandlerSetterCallback[T, U]) HandlerOption[T, U] {
 	return func(opt *HandlerCallbacks[T, U]) { opt.Setter = cb }
+}
+
+func WithDeleterCallback[T, U any](cb HandlerDeleterCallback[T, U]) HandlerOption[T, U] {
+	return func(opt *HandlerCallbacks[T, U]) { opt.Deleter = cb }
 }
 
 func WithEnumeratorCallback[T, U any](cb HandlerEnumeratorCallback[T, U]) HandlerOption[T, U] {
