@@ -33,6 +33,7 @@ func (w DOMStringMap[T]) Initialize(class js.Class[T]) {
 	class.CreateNamedHandler(
 		js.WithGetterCallback(w.NamedPropertyGet),
 		js.WithSetterCallback(w.NamedPropertySet),
+		js.WithDeleterCallback(w.NamedPropertyDelete),
 		js.WithEnumeratorCallback(w.NamedPropertyEnumerator),
 	)
 }
@@ -65,6 +66,20 @@ func (w DOMStringMap[T]) NamedPropertySet(
 	}
 	instance.Set(info.Key().String(), info.Value().String())
 	return nil
+}
+
+func (w DOMStringMap[T]) NamedPropertyDelete(
+	info js.GetterCallbackContext[T, js.Value[T]],
+) (bool, error) {
+	instance, err := js.As[*html.DOMStringMap](info.Instance())
+	if err != nil {
+		return false, err
+	}
+	if !info.Key().IsString() { // Don't intercept symbol properties
+		return false, js.NotIntercepted
+	}
+	instance.Delete(info.Key().String())
+	return true, nil
 }
 
 func (w DOMStringMap[T]) NamedPropertyEnumerator(info js.CallbackScope[T]) ([]js.Value[T], error) {
