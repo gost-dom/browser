@@ -36,8 +36,7 @@ func newCallbackContext(host *V8ScriptHost, info *v8.FunctionCallbackInfo) jsCal
 func (h v8CallbackContext) This() jsObject {
 	return newV8Object(h.ScriptCtx(), h.v8Info.This())
 }
-func (h v8CallbackContext) iso() *v8.Isolate   { return h.ScriptCtx().host.iso }
-func (h v8CallbackContext) v8ctx() *v8.Context { return h.ScriptCtx().v8ctx }
+func (h v8CallbackContext) iso() *v8.Isolate { return h.ScriptCtx().host.iso }
 
 func (h *v8CallbackContext) ScriptCtx() *V8ScriptContext {
 	return h.host.mustGetContext(h.v8Info.Context())
