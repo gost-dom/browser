@@ -23,52 +23,59 @@ var (
 	ErrWrongNoOfArguments = errors.New("Not enough arguments passed")
 )
 
+type v8CallbackInfo interface {
+	Context() *v8go.Context
+	This() *v8go.Object
+}
+
+type v8CallbackScope struct {
+	host   *V8ScriptHost
+	v8Info v8CallbackInfo
+}
+
+func (h v8CallbackScope) This() jsObject {
+	return newV8Object(h.ScriptCtx(), h.v8Info.This())
+}
+func (h v8CallbackScope) iso() *v8.Isolate { return h.ScriptCtx().host.iso }
+
+func (h v8CallbackScope) ScriptCtx() *V8ScriptContext {
+	return h.host.mustGetContext(h.v8Info.Context())
+}
+
+func (c v8CallbackScope) Scope() js.Scope[jsTypeParam] { return newV8Scope(c.ScriptCtx()) }
+
+func (c v8CallbackScope) ValueFactory() jsValueFactory {
+	return v8ValueFactory{c.host, c.ScriptCtx()}
+}
+
+func (h v8CallbackScope) Instance() (any, error) {
+	if h.v8Info.This().InternalFieldCount() < 1 {
+		return nil, v8go.NewTypeError(h.iso(), "No internal instance")
+	}
+	return h.v8Info.This().GetInternalField(0).ExternalHandle().Value(), nil
+}
+
+func (c v8CallbackScope) Logger() *slog.Logger {
+	return c.host.Logger()
+}
+
 type v8CallbackContext struct {
+	v8CallbackScope
 	v8Info       *v8.FunctionCallbackInfo
 	host         *V8ScriptHost
 	currentIndex int
 }
 
 func newCallbackContext(host *V8ScriptHost, info *v8.FunctionCallbackInfo) jsCallbackContext {
-	return &v8CallbackContext{v8Info: info, host: host}
-}
-
-func (h v8CallbackContext) This() jsObject {
-	return newV8Object(h.ScriptCtx(), h.v8Info.This())
-}
-func (h v8CallbackContext) iso() *v8.Isolate { return h.ScriptCtx().host.iso }
-
-func (h *v8CallbackContext) ScriptCtx() *V8ScriptContext {
-	return h.host.mustGetContext(h.v8Info.Context())
-}
-
-func (c *v8CallbackContext) Scope() js.Scope[jsTypeParam] { return newV8Scope(c.ScriptCtx()) }
-
-func (c *v8CallbackContext) ValueFactory() jsValueFactory {
-	return v8ValueFactory{c.host, c.ScriptCtx()}
-}
-
-func (h *v8CallbackContext) ReturnWithValue(val jsValue) (jsValue, error) {
-	return val, nil
-}
-
-func (h *v8CallbackContext) ReturnWithError(err error) (jsValue, error) {
-	return nil, err
+	return &v8CallbackContext{
+		v8CallbackScope: v8CallbackScope{host, info},
+		v8Info:          info,
+		host:            host,
+	}
 }
 
 func (h *v8CallbackContext) ReturnWithTypeError(msg string) (jsValue, error) {
 	return nil, v8.NewTypeError(h.iso(), msg)
-}
-
-func (h *v8CallbackContext) Instance() (any, error) {
-	if h.v8Info.This().InternalFieldCount() < 1 {
-		return h.ReturnWithTypeError("No internal instance")
-	}
-	return h.v8Info.This().GetInternalField(0).ExternalHandle().Value(), nil
-}
-
-func (c *v8CallbackContext) Logger() *slog.Logger {
-	return c.host.Logger()
 }
 
 func (h *v8CallbackContext) ConsumeArg() (jsValue, bool) {
@@ -227,19 +234,24 @@ func (c v8Constructable) NewInstance(nativeValue any) (jsObject, error) {
 
 /* -------- v8IndexedHandlers -------- */
 
-type indexedGetterCallback = func(js.GetterCallbackContext[jsTypeParam, int]) (jsValue, error)
+// type indexedGetterCallback = func(js.GetterCallbackContext[jsTypeParam, int]) (jsValue, error)
 
 type v8GetterCallbackContext struct {
 	*v8CallbackContext
 }
 
-func newIndexedGetterCallbackContext(
-	host *V8ScriptHost,
-	info *v8.FunctionCallbackInfo,
-) js.GetterCallbackContext[jsTypeParam, int] {
-	return v8GetterCallbackContext{&v8CallbackContext{v8Info: info, host: host}}
-}
-
+// func newIndexedGetterCallbackContext(
+//
+//	host *V8ScriptHost,
+//	info *v8.FunctionCallbackInfo,
+//
+//	) js.GetterCallbackContext[jsTypeParam, int] {
+//		return &v8GetterCallbackContext{&v8CallbackContext{
+//			v8CallbackScope: v8CallbackScope{host, info},
+//			v8Info:          info,
+//			host:            host,
+//		}}
+//	}
 func (c v8GetterCallbackContext) Key() int {
 	return int(c.v8Info.Index())
 }
