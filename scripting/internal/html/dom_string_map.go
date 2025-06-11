@@ -39,46 +39,46 @@ func (w DOMStringMap[T]) Initialize(class js.Class[T]) {
 }
 
 func (w DOMStringMap[T]) NamedPropertyGet(
-	info js.GetterCallbackContext[T, js.Value[T]],
+	info js.CallbackScope[T], key js.Value[T],
 ) (js.Value[T], error) {
 	instance, err := js.As[*html.DOMStringMap](info.Instance())
 	if err != nil {
 		return nil, err
 	}
-	if !info.Key().IsString() { // Don't intercept symbol properties
+	if !key.IsString() { // Don't intercept symbol properties
 		return nil, js.NotIntercepted
 	}
-	if val, found := instance.Get(info.Key().String()); found {
+	if val, found := instance.Get(key.String()); found {
 		return info.ValueFactory().NewString(val), nil
 	}
 	return nil, nil
 }
 
 func (w DOMStringMap[T]) NamedPropertySet(
-	info js.SetterCallbackContext[T, js.Value[T]],
+	info js.CallbackScope[T], key, value js.Value[T],
 ) error {
 	instance, err := js.As[*html.DOMStringMap](info.Instance())
 	if err != nil {
 		return err
 	}
-	if !info.Key().IsString() { // Don't intercept symbol properties
+	if !key.IsString() { // Don't intercept symbol properties
 		return js.NotIntercepted
 	}
-	instance.Set(info.Key().String(), info.Value().String())
+	instance.Set(key.String(), value.String())
 	return nil
 }
 
 func (w DOMStringMap[T]) NamedPropertyDelete(
-	info js.GetterCallbackContext[T, js.Value[T]],
+	info js.CallbackScope[T], key js.Value[T],
 ) (bool, error) {
 	instance, err := js.As[*html.DOMStringMap](info.Instance())
 	if err != nil {
 		return false, err
 	}
-	if !info.Key().IsString() { // Don't intercept symbol properties
+	if !key.IsString() { // Don't intercept symbol properties
 		return false, js.NotIntercepted
 	}
-	instance.Delete(info.Key().String())
+	instance.Delete(key.String())
 	return true, nil
 }
 

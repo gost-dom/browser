@@ -14,10 +14,9 @@ func (w *NodeList[T]) CustomInitializer(class js.Class[T]) {
 	nodeListIterator.InstallPrototype(class)
 
 	class.CreateIndexedHandler(
-		func(info js.GetterCallbackContext[T, int]) (js.Value[T], error) {
+		func(info js.CallbackScope[T], index int) (js.Value[T], error) {
 			instance := info.This().NativeValue()
 			if nodemap, ok := instance.(dom.NodeList); ok {
-				index := int(info.Key())
 				item := nodemap.Item(index)
 				if item == nil {
 					return nil, nil

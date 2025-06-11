@@ -86,21 +86,11 @@ type CallbackContext[T any] interface {
 	ReturnWithTypeError(msg string) (Value[T], error)
 }
 
-type GetterCallbackContext[T, U any] interface {
-	CallbackScope[T]
-	Key() U
-}
-type SetterCallbackContext[T, U any] interface {
-	CallbackScope[T]
-	Key() U
-	Value() Value[T]
-}
-
 type FunctionCallback[T any] func(CallbackContext[T]) (Value[T], error)
 
-type HandlerGetterCallback[T, U any] func(GetterCallbackContext[T, U]) (Value[T], error)
-type HandlerSetterCallback[T, U any] func(SetterCallbackContext[T, U]) error
-type HandlerDeleterCallback[T, U any] func(GetterCallbackContext[T, U]) (bool, error)
+type HandlerGetterCallback[T, U any] func(scope CallbackScope[T], key U) (Value[T], error)
+type HandlerSetterCallback[T, U any] func(scope CallbackScope[T], key U, value Value[T]) error
+type HandlerDeleterCallback[T, U any] func(scope CallbackScope[T], key U) (bool, error)
 type HandlerEnumeratorCallback[T, U any] func(CallbackScope[T]) ([]U, error)
 
 type HandlerCallbacks[Tjs, Tkey any] struct {

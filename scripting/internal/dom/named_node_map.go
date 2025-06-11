@@ -8,13 +8,12 @@ import (
 
 func (w NamedNodeMap[T]) CustomInitializer(class js.Class[T]) {
 	class.CreateIndexedHandler(
-		func(cbCtx js.GetterCallbackContext[T, int]) (js.Value[T], error) {
+		func(cbCtx js.CallbackScope[T], key int) (js.Value[T], error) {
 			instance, err := js.As[dom.NamedNodeMap](cbCtx.Instance())
 			if err != nil {
 				return nil, err
 			}
-			index := int(cbCtx.Key())
-			item := instance.Item(index)
+			item := instance.Item(key)
 			if item == nil {
 				return nil, nil
 			}
