@@ -292,10 +292,7 @@ func (w v8HandlerWrapper) NamedPropertyGet(
 	if err == nil && result != nil {
 		return result.Self().v8Value(), nil
 	}
-	if err == js.NotIntercepted {
-		err = v8go.NotIntercepted
-	}
-	return nil, err
+	return nil, w.convertErr(err)
 }
 
 func (w v8HandlerWrapper) NamedPropertySet(
@@ -311,10 +308,7 @@ func (w v8HandlerWrapper) NamedPropertySet(
 		newV8Value(ctx, property),
 		newV8Value(ctx, value),
 	)
-	if err == js.NotIntercepted {
-		err = v8go.NotIntercepted
-	}
-	return err
+	return w.convertErr(err)
 }
 
 /*
@@ -332,10 +326,7 @@ func (w v8HandlerWrapper) NamedPropertyDelete(
 	}
 	ctx := w.host.mustGetContext(info.Context())
 	success, err = w.callbacks.Deleter(v8CallbackScope{w.host, info}, newV8Value(ctx, property))
-	if err == js.NotIntercepted {
-		err = v8go.NotIntercepted
-	}
-	return success, err
+	return success, w.convertErr(err)
 }
 
 func (w v8HandlerWrapper) NamedPropertyEnumerator(
@@ -353,8 +344,12 @@ func (w v8HandlerWrapper) NamedPropertyEnumerator(
 		}
 		return res, nil
 	}
+	return nil, w.convertErr(err)
+}
+
+func (w v8HandlerWrapper) convertErr(err error) error {
 	if err == js.NotIntercepted {
-		err = v8go.NotIntercepted
+		return v8go.NotIntercepted
 	}
-	return nil, err
+	return err
 }
