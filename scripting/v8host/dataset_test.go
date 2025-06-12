@@ -24,6 +24,9 @@ func TestElementDataset(t *testing.T) {
 	g.Expect(win.Eval(`Object.keys(target.dataset)`)).
 		To(Equal([]any{"foo", "bar", "fooBar"}), "dataset keys")
 
+	g.Expect(win.Eval("'bar' in target.dataset")).To(BeTrue(), "bar in dataset")
+	g.Expect(win.Eval("'notThere' in target.dataset")).To(BeFalse(), "notThere in dataset")
+
 	win.MustRun(`
 		target.dataset.bar = "new bar";
 		target.dataset.barBaz = "bar baz";

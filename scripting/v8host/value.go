@@ -284,6 +284,7 @@ func (w v8HandlerWrapper) NamedPropertyGet(
 	property *v8go.Value,
 	info v8go.PropertyCallbackInfo,
 ) (*v8go.Value, error) {
+	w.host.Logger().Debug("NamedPropertyGet", "property", property)
 	if w.callbacks.Getter == nil {
 		return nil, v8go.NotIntercepted
 	}
@@ -300,6 +301,7 @@ func (w v8HandlerWrapper) NamedPropertySet(
 	value *v8go.Value,
 	info v8go.PropertyCallbackInfo,
 ) error {
+	w.host.Logger().Debug("NamedPropertySet", "property", property, "value", value)
 	if w.callbacks.Setter == nil {
 		return v8go.NotIntercepted
 	}
@@ -311,16 +313,11 @@ func (w v8HandlerWrapper) NamedPropertySet(
 	return w.convertErr(err)
 }
 
-/*
-type NamedPropertyQueryer interface {
-	NamedPropertyQuery(property *Value, info PropertyCallbackInfo) (int, error)
-}
-*/
-
 func (w v8HandlerWrapper) NamedPropertyDelete(
 	property *v8go.Value,
 	info v8go.PropertyCallbackInfo,
 ) (success bool, err error) {
+	w.host.Logger().Debug("NamedPropertyDelete", "property", property)
 	if w.callbacks.Deleter == nil {
 		return false, v8go.NotIntercepted
 	}
@@ -332,6 +329,7 @@ func (w v8HandlerWrapper) NamedPropertyDelete(
 func (w v8HandlerWrapper) NamedPropertyEnumerator(
 	info v8go.PropertyCallbackInfo,
 ) (names []*v8go.Value, err error) {
+	w.host.Logger().Debug("NamedPropertyEnumerator")
 	if w.callbacks.Enumerator == nil {
 		return nil, v8go.NotIntercepted
 	}

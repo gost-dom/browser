@@ -51,7 +51,7 @@ func (w DOMStringMap[T]) NamedPropertyGet(
 	if val, found := instance.Get(key.String()); found {
 		return info.ValueFactory().NewString(val), nil
 	}
-	return nil, nil
+	return nil, js.NotIntercepted
 }
 
 func (w DOMStringMap[T]) NamedPropertySet(
