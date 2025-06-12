@@ -1,6 +1,21 @@
 # Changelog - Gost-DOM
 
 
+## [0.7.2](https://github.com/gost-dom/browser/compare/v0.7.1...v0.7.2) (2025-06-12)
+
+
+### Features
+
+* Add Document.CreateTextNode ([3852153](https://github.com/gost-dom/browser/commit/3852153445b82f4cb09ecbdce47cff8f728123e8))
+* Add DOMStringMap.Keys() ([df25db4](https://github.com/gost-dom/browser/commit/df25db46e0864e9fd980370e832b59d5bdbea4c2))
+* Add HTMLElement.dataset in JavaScript ([7348251](https://github.com/gost-dom/browser/commit/7348251000b1b3b06c2af4364526d974c83f48f6))
+* **goja:** Goja script host now supports iterators ([4a60fd1](https://github.com/gost-dom/browser/commit/4a60fd18441f88e77f6ff5dea35f5da9aa6412b9))
+
+
+### Bug Fixes
+
+* **v8:** element.insertAdjacentHTML returns undefined in JS ([ab19a9d](https://github.com/gost-dom/browser/commit/ab19a9d50eeb6c5b81915724807704fe3ed20cc5))
+
 ## [0.7.1](https://github.com/gost-dom/browser/compare/v0.7.0...v0.7.1) (2025-05-27)
 
 ## [0.7.0](https://github.com/gost-dom/browser/compare/v0.6.0...v0.7.0) (2025-05-27)
