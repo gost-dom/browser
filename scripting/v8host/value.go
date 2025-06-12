@@ -358,13 +358,3 @@ func (w v8HandlerWrapper) NamedPropertyEnumerator(
 	}
 	return nil, err
 }
-
-/*
-type NamedPropertyDefinerer interface {
-	NamedPropertyDefiner(property *Value, desc *PropertyDescriptor, info PropertyCallbackInfo) error
-}
-
-type NamedPropertyDescriptorer interface {
-	NamedPropertyDescriptor(property *Value, info PropertyCallbackInfo) (*Value, error)
-}
-*/
