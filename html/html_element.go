@@ -81,7 +81,7 @@ func (e *htmlElement) Focus() {
 	e.htmlDocument.setActiveElement(e.self)
 }
 
-func (e *htmlElement) Dataset() DOMStringMap { return e.dataset }
+func (e *htmlElement) Dataset() *DOMStringMap { return &e.dataset }
 
 func (e *htmlElement) TabIndex() int {
 	val, ok := e.GetAttribute("tabindex")

@@ -13,6 +13,8 @@ import (
 var ErrMissingArgument = errors.New("missing argument")
 var ErrNoInternalValue = errors.New("object does not have an internal instance")
 
+var NotIntercepted = errors.New("Not intercepted")
+
 // disposable represents a resource that needs cleanup when a context is closed.
 // E.g., cgo handles that need to be released.
 type Disposable interface{ Dispose() }
@@ -84,19 +86,39 @@ type CallbackContext[T any] interface {
 	ReturnWithTypeError(msg string) (Value[T], error)
 }
 
-type GetterCallbackContext[T, U any] interface {
-	CallbackScope[T]
-	Key() U
-}
-type SetterCallbackContext[T, U any] interface {
-	CallbackScope[T]
-	Key() U
-	Value() Value[T]
-}
-
 type FunctionCallback[T any] func(CallbackContext[T]) (Value[T], error)
 
-type HandlerGetterCallback[T, U any] func(GetterCallbackContext[T, U]) (Value[T], error)
+type HandlerGetterCallback[T, U any] func(scope CallbackScope[T], key U) (Value[T], error)
+type HandlerSetterCallback[T, U any] func(scope CallbackScope[T], key U, value Value[T]) error
+type HandlerDeleterCallback[T, U any] func(scope CallbackScope[T], key U) (bool, error)
+type HandlerEnumeratorCallback[T, U any] func(CallbackScope[T]) ([]U, error)
+
+type HandlerCallbacks[Tjs, Tkey any] struct {
+	Getter     HandlerGetterCallback[Tjs, Tkey]
+	Setter     HandlerSetterCallback[Tjs, Tkey]
+	Deleter    HandlerDeleterCallback[Tjs, Tkey]
+	Enumerator HandlerEnumeratorCallback[Tjs, Tkey]
+}
+type NamedHandlerCallbacks[T any] = HandlerCallbacks[T, Value[T]]
+
+type HandlerOption[T, U any] = func(*HandlerCallbacks[T, U])
+type NamedHandlerOption[T any] = func(*HandlerCallbacks[T, Value[T]])
+
+func WithGetterCallback[T, U any](cb HandlerGetterCallback[T, U]) HandlerOption[T, U] {
+	return func(opt *HandlerCallbacks[T, U]) { opt.Getter = cb }
+}
+
+func WithSetterCallback[T, U any](cb HandlerSetterCallback[T, U]) HandlerOption[T, U] {
+	return func(opt *HandlerCallbacks[T, U]) { opt.Setter = cb }
+}
+
+func WithDeleterCallback[T, U any](cb HandlerDeleterCallback[T, U]) HandlerOption[T, U] {
+	return func(opt *HandlerCallbacks[T, U]) { opt.Deleter = cb }
+}
+
+func WithEnumeratorCallback[T, U any](cb HandlerEnumeratorCallback[T, U]) HandlerOption[T, U] {
+	return func(opt *HandlerCallbacks[T, U]) { opt.Enumerator = cb }
+}
 
 // ValueFactory allows creating JavaScript values from Go values
 type ValueFactory[T any] interface {

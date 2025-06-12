@@ -178,6 +178,8 @@ func (c *gojaClass) CreateIndexedHandler(cb js.HandlerGetterCallback[jsTypeParam
 	c.indexedHandler = &gojaIndexedHandler{cb}
 }
 
+func (c *gojaClass) CreateNamedHandler(cb ...js.NamedHandlerOption[jsTypeParam]) {}
+
 func (c *gojaClass) CreateInstanceAttribute(
 	name string,
 	getter js.FunctionCallback[jsTypeParam],

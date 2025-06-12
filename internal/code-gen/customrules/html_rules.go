@@ -3,6 +3,7 @@ package customrules
 import "github.com/gost-dom/webref/idl"
 
 var htmlRules = SpecRules{
+	"DOMStringMap": {OutputType: OutputTypeStruct},
 	"Location": {Operations: OperationRules{
 		"assign":  {HasError: true},
 		"replace": {HasError: true},

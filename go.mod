@@ -6,7 +6,7 @@ require (
 	github.com/dop251/goja v0.0.0-20250531102226-cb187b08699c
 	github.com/gost-dom/css v0.1.0
 	github.com/gost-dom/fixture v0.1.0
-	github.com/gost-dom/v8go v0.0.0-20250603172601-d242e788efe3
+	github.com/gost-dom/v8go v0.0.0-20250611154133-52960d7a56be
 	github.com/onsi/ginkgo/v2 v2.23.4
 	github.com/onsi/gomega v1.37.0
 	github.com/stretchr/testify v1.10.0
@@ -22,6 +22,7 @@ require (
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/google/pprof v0.0.0-20250602020802-c6617b811d0e // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/tommie/v8go/deps/android_amd64 v0.0.0-20250521203357-c9a10f00f747 // indirect
 	github.com/tommie/v8go/deps/android_arm64 v0.0.0-20250521203357-c9a10f00f747 // indirect
 	github.com/tommie/v8go/deps/darwin_amd64 v0.0.0-20250521203357-c9a10f00f747 // indirect

@@ -262,7 +262,92 @@ func (c v8Class) CreateInstanceAttribute(
 
 func (c v8Class) CreateIndexedHandler(getter js.HandlerGetterCallback[jsTypeParam, int]) {
 	c.inst.SetIndexedHandler(func(info *v8go.FunctionCallbackInfo) (*v8go.Value, error) {
-		res, err := getter(newIndexedGetterCallbackContext(c.host, info))
+		res, err := getter(v8CallbackScope{c.host, info}, int(info.Index()))
 		return toV8Value(res), err
 	})
+}
+
+func (c v8Class) CreateNamedHandler(opts ...js.NamedHandlerOption[jsTypeParam]) {
+	var oo js.NamedHandlerCallbacks[jsTypeParam]
+	for _, o := range opts {
+		o(&oo)
+	}
+	c.inst.SetNamedHandler(v8HandlerWrapper{c.host, oo})
+}
+
+type v8HandlerWrapper struct {
+	host      *V8ScriptHost
+	callbacks js.NamedHandlerCallbacks[jsTypeParam]
+}
+
+func (w v8HandlerWrapper) NamedPropertyGet(
+	property *v8go.Value,
+	info v8go.PropertyCallbackInfo,
+) (*v8go.Value, error) {
+	w.host.Logger().Debug("NamedPropertyGet", "property", property)
+	if w.callbacks.Getter == nil {
+		return nil, v8go.NotIntercepted
+	}
+	ctx := w.host.mustGetContext(info.Context())
+	result, err := w.callbacks.Getter(v8CallbackScope{w.host, info}, newV8Value(ctx, property))
+	if err == nil && result != nil {
+		return result.Self().v8Value(), nil
+	}
+	return nil, w.convertErr(err)
+}
+
+func (w v8HandlerWrapper) NamedPropertySet(
+	property *v8go.Value,
+	value *v8go.Value,
+	info v8go.PropertyCallbackInfo,
+) error {
+	w.host.Logger().Debug("NamedPropertySet", "property", property, "value", value)
+	if w.callbacks.Setter == nil {
+		return v8go.NotIntercepted
+	}
+	ctx := w.host.mustGetContext(info.Context())
+	err := w.callbacks.Setter(v8CallbackScope{w.host, info},
+		newV8Value(ctx, property),
+		newV8Value(ctx, value),
+	)
+	return w.convertErr(err)
+}
+
+func (w v8HandlerWrapper) NamedPropertyDelete(
+	property *v8go.Value,
+	info v8go.PropertyCallbackInfo,
+) (success bool, err error) {
+	w.host.Logger().Debug("NamedPropertyDelete", "property", property)
+	if w.callbacks.Deleter == nil {
+		return false, v8go.NotIntercepted
+	}
+	ctx := w.host.mustGetContext(info.Context())
+	success, err = w.callbacks.Deleter(v8CallbackScope{w.host, info}, newV8Value(ctx, property))
+	return success, w.convertErr(err)
+}
+
+func (w v8HandlerWrapper) NamedPropertyEnumerator(
+	info v8go.PropertyCallbackInfo,
+) (names []*v8go.Value, err error) {
+	w.host.Logger().Debug("NamedPropertyEnumerator")
+	if w.callbacks.Enumerator == nil {
+		return nil, v8go.NotIntercepted
+	}
+	scope := v8CallbackScope{w.host, info}
+	result, err := w.callbacks.Enumerator(scope)
+	if err == nil {
+		res := make([]*v8go.Value, len(result))
+		for i, r := range result {
+			res[i] = r.Self().v8Value()
+		}
+		return res, nil
+	}
+	return nil, w.convertErr(err)
+}
+
+func (w v8HandlerWrapper) convertErr(err error) error {
+	if err == js.NotIntercepted {
+		return v8go.NotIntercepted
+	}
+	return err
 }

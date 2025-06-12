@@ -119,6 +119,7 @@ func (gen baseGenerator) GenerateInterface() g.Generator {
 	interfaces[0] = gen.idlType
 	copy(interfaces[1:], gen.idlType.Includes)
 	result := IdlInterface{
+		SpecName: gen.req.SpecName,
 		Name:     gen.idlType.Name,
 		Inherits: gen.idlType.InternalSpec.Inheritance,
 		Includes: includes,
