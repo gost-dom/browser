@@ -285,7 +285,7 @@ func (w v8HandlerWrapper) NamedPropertyGet(
 	info v8go.PropertyCallbackInfo,
 ) (*v8go.Value, error) {
 	if w.callbacks.Getter == nil {
-		return nil, js.NotIntercepted
+		return nil, v8go.NotIntercepted
 	}
 	ctx := w.host.mustGetContext(info.Context())
 	result, err := w.callbacks.Getter(v8CallbackScope{w.host, info}, newV8Value(ctx, property))
@@ -304,7 +304,7 @@ func (w v8HandlerWrapper) NamedPropertySet(
 	info v8go.PropertyCallbackInfo,
 ) error {
 	if w.callbacks.Setter == nil {
-		return js.NotIntercepted
+		return v8go.NotIntercepted
 	}
 	ctx := w.host.mustGetContext(info.Context())
 	err := w.callbacks.Setter(v8CallbackScope{w.host, info},
@@ -328,7 +328,7 @@ func (w v8HandlerWrapper) NamedPropertyDelete(
 	info v8go.PropertyCallbackInfo,
 ) (success bool, err error) {
 	if w.callbacks.Deleter == nil {
-		return false, js.NotIntercepted
+		return false, v8go.NotIntercepted
 	}
 	ctx := w.host.mustGetContext(info.Context())
 	success, err = w.callbacks.Deleter(v8CallbackScope{w.host, info}, newV8Value(ctx, property))
@@ -341,6 +341,9 @@ func (w v8HandlerWrapper) NamedPropertyDelete(
 func (w v8HandlerWrapper) NamedPropertyEnumerator(
 	info v8go.PropertyCallbackInfo,
 ) (names []*v8go.Value, err error) {
+	if w.callbacks.Enumerator == nil {
+		return nil, v8go.NotIntercepted
+	}
 	scope := v8CallbackScope{w.host, info}
 	result, err := w.callbacks.Enumerator(scope)
 	if err == nil {
