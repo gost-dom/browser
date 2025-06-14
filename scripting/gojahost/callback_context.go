@@ -10,39 +10,55 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type callbackContext struct {
-	ctx      *GojaContext
-	this     *goja.Object
-	args     []goja.Value
-	argIndex int
+type gojaCallbackScope struct {
+	ctx  *GojaContext
+	this *goja.Object
 }
 
-func newArgumentHelper(ctx *GojaContext, c goja.FunctionCall) *callbackContext {
-	return &callbackContext{ctx, c.This.ToObject(ctx.vm), c.Arguments, 0}
-}
-
-func (ctx *callbackContext) Logger() *slog.Logger {
-	if l := ctx.ctx.logger(); l != nil {
-		return l
-	}
-	return log.Default()
-}
-
-func (ctx *callbackContext) Argument(index int) g.Value {
-	return ctx.args[index]
-}
-
-func (c *callbackContext) This() js.Object[jsTypeParam] {
+func (c gojaCallbackScope) This() js.Object[jsTypeParam] {
 	return newGojaObject(c.ctx, c.this)
 }
 
-func (ctx *callbackContext) Instance() (any, error) {
+func (ctx gojaCallbackScope) Instance() (any, error) {
 	instance := ctx.this.GetSymbol(ctx.ctx.wrappedGoObj)
 	if instance == nil {
 		// TODO: Should be a TypeError
 		return nil, errors.New("No embedded value")
 	}
 	return instance.Export(), nil
+}
+
+func (ctx gojaCallbackScope) Logger() *slog.Logger {
+	if l := ctx.ctx.logger(); l != nil {
+		return l
+	}
+	return log.Default()
+}
+
+type callbackContext struct {
+	gojaCallbackScope
+	args     []goja.Value
+	argIndex int
+}
+
+func (c gojaCallbackScope) Scope() js.Scope[jsTypeParam] {
+	return newGojaScope(c.ctx)
+}
+
+func (c gojaCallbackScope) ValueFactory() js.ValueFactory[jsTypeParam] {
+	return newGojaValueFactory(c.ctx)
+}
+
+func newArgumentHelper(ctx *GojaContext, c goja.FunctionCall) *callbackContext {
+	return &callbackContext{
+		gojaCallbackScope{
+			ctx,
+			c.This.ToObject(ctx.vm),
+		}, c.Arguments, 0}
+}
+
+func (ctx *callbackContext) Argument(index int) g.Value {
+	return ctx.args[index]
 }
 
 func (ctx *callbackContext) ReturnWithValue(val goja.Value) goja.Value { return val }
@@ -69,14 +85,6 @@ func wrapJSCallback(ctx *GojaContext, cb js.FunctionCallback[jsTypeParam]) goja.
 		}
 		return res.Self().value
 	})
-}
-
-func (c *callbackContext) Scope() js.Scope[jsTypeParam] {
-	return newGojaScope(c.ctx)
-}
-
-func (c *callbackContext) ValueFactory() js.ValueFactory[jsTypeParam] {
-	return newGojaValueFactory(c.ctx)
 }
 
 func (c *callbackContext) ConsumeArg() (js.Value[jsTypeParam], bool) {

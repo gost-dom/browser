@@ -235,5 +235,8 @@ func newGojaCallbackContext(
 	ctx *GojaContext,
 	call goja.ConstructorCall,
 ) *callbackContext {
-	return &callbackContext{ctx, call.This, call.Arguments, 0}
+	return &callbackContext{
+		gojaCallbackScope{ctx,
+			call.This,
+		}, call.Arguments, 0}
 }
