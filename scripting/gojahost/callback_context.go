@@ -20,6 +20,7 @@ func (c gojaCallbackScope) This() js.Object[jsTypeParam] {
 }
 
 func (ctx gojaCallbackScope) Instance() (any, error) {
+	ctx.Logger().Debug("gojaCallbackScope.Instance()", "this", ctx.this)
 	instance := ctx.this.GetSymbol(ctx.ctx.wrappedGoObj)
 	if instance == nil {
 		// TODO: Should be a TypeError

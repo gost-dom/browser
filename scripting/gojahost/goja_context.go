@@ -249,19 +249,19 @@ func (c gojaClass) CreateIteratorMethod(cb js.FunctionCallback[jsTypeParam]) {
 }
 
 func (c *gojaClass) NewInstance(native any) (js.Object[jsTypeParam], error) {
-	if c.namedHandlerCallbacks != nil {
-		dynObj := gojaDynamicObject{
-			ctx: c.ctx,
-			cbs: *c.namedHandlerCallbacks,
-		}
-		obj := c.ctx.vm.NewDynamicObject(dynObj)
-		dynObj.this = obj
-		obj.SetPrototype(c.prototype)
-		return newGojaObject(c.ctx, obj), nil
-	}
 	obj := c.ctx.vm.CreateObject(c.prototype)
 	c.installInstance(obj)
 	c.ctx.storeInternal(native, obj)
+	if c.namedHandlerCallbacks != nil {
+		proto := obj
+		obj = c.ctx.vm.NewDynamicObject(&gojaDynamicObject{
+			ctx:   c.ctx,
+			cbs:   *c.namedHandlerCallbacks,
+			this:  obj,
+			scope: gojaCallbackScope{c.ctx, proto},
+		})
+		obj.SetPrototype(proto)
+	}
 	return newGojaObject(c.ctx, obj), nil
 }
 
@@ -283,10 +283,13 @@ type gojaDynamicObject struct {
 }
 
 func (o gojaDynamicObject) Get(key string) goja.Value {
+	o.scope.Logger().Info("O?", "o", fmt.Sprintf("O? %#v\n", o.scope.this))
 	if o.cbs.Getter == nil {
 		return nil
 	}
-	res, err := o.cbs.Getter(o.scope, o.scope.ValueFactory().NewString(key))
+	f := o.scope.ValueFactory()
+	s := f.NewString(key)
+	res, err := o.cbs.Getter(o.scope, s)
 	if err == js.NotIntercepted {
 		return nil
 	}

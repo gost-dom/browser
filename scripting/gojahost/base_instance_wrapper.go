@@ -5,6 +5,7 @@ import (
 	g "github.com/dop251/goja"
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/internal/entity"
+	"github.com/gost-dom/browser/internal/log"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -26,6 +27,10 @@ func newBaseInstanceWrapper[T any](instance *GojaContext) baseInstanceWrapper[T]
 }
 
 func (c *GojaContext) storeInternal(value any, obj *g.Object) {
+	log.Debug(c.logger(), "storeInternal",
+		"obj", obj,
+		"value", value,
+	)
 	obj.DefineDataPropertySymbol(
 		c.wrappedGoObj,
 		c.vm.ToValue(value),

@@ -24,5 +24,6 @@ func RunSuites(t *testing.T, h ScriptHostFactory) {
 	t.Run("Document", runSuite(NewDocumentSuite(h.New())))
 	t.Run("EventTarget", runSuite(NewEventTargetTestSuite(h.New())))
 	t.Run("ClassList", runSuite(NewClassListTestSuite(h.New())))
-	t.Run("ClassList", runSuite(NewNodeTestSuite(h.New())))
+	t.Run("Node", runSuite(NewNodeTestSuite(h.New())))
+	t.Run("ElementDataset", runSuite(NewDatasetSuite(h.New())))
 }
