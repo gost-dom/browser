@@ -5,15 +5,10 @@ import (
 	g "github.com/dop251/goja"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
-	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
 type baseInstanceWrapper[T any] struct {
 	ctx *GojaContext
-}
-
-func (w baseInstanceWrapper[T]) toGojaVal(v g.Value) (js.Value[jsTypeParam], error) {
-	return newGojaValue(w.ctx, v), nil
 }
 
 func (w baseInstanceWrapper[T]) vm() *goja.Runtime {
