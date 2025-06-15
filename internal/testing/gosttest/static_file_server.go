@@ -32,6 +32,10 @@ func StaticHTML(html string) StaticFile { return StaticFile{"text/html", html} }
 // type, "text/javascript".
 func StaticJS(js string) StaticFile { return StaticFile{"text/javascript", js} }
 
+// StaticJSON creates an [http.Handler] that serves static content with the MIME
+// type, "text/javascript".
+func StaticJSON(json string) StaticFile { return StaticFile{"application/json", json} }
+
 func (s StaticFileServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		w.WriteHeader(http.StatusMethodNotAllowed)
