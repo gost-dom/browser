@@ -32,23 +32,3 @@ func (c *GojaContext) storeInternal(value any, obj *g.Object) {
 		c.cachedNodes[e.ObjectId()] = obj
 	}
 }
-
-func (w baseInstanceWrapper[T]) storeInternal(value any, obj *g.Object) {
-	w.ctx.storeInternal(value, obj)
-}
-
-func getInstanceValue[T any](c *GojaContext, v g.Value) (T, bool) {
-	res, ok := v.(*g.Object).GetSymbol(c.wrappedGoObj).Export().(T)
-	return res, ok
-}
-
-func (w baseInstanceWrapper[T]) getInstance(c g.FunctionCall) T {
-	if c.This == nil {
-		panic("No this pointer")
-	}
-	if res, ok := getInstanceValue[T](w.ctx, c.This); ok {
-		return res
-	} else {
-		panic(w.ctx.vm.NewTypeError("Not an entity"))
-	}
-}
