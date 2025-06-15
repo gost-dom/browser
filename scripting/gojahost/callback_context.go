@@ -62,19 +62,6 @@ func (ctx *callbackContext) Argument(index int) g.Value {
 	return ctx.args[index]
 }
 
-func (ctx *callbackContext) ReturnWithValue(val goja.Value) goja.Value { return val }
-
-func (ctx *callbackContext) ReturnWithValueErr(val js.Value[jsTypeParam], err error) goja.Value {
-	if err != nil {
-		panic(err)
-	}
-	return val.Self().value
-}
-
-func (ctx *callbackContext) ReturnWithError(err error) goja.Value {
-	panic(err)
-}
-
 func wrapJSCallback(ctx *GojaContext, cb js.FunctionCallback[jsTypeParam]) goja.Value {
 	return ctx.vm.ToValue(func(c goja.FunctionCall) goja.Value {
 		res, err := cb(newArgumentHelper(ctx, c))
