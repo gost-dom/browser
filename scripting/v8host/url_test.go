@@ -4,11 +4,12 @@ import (
 	"testing"
 
 	urlinterfaces "github.com/gost-dom/browser/internal/interfaces/url-interfaces"
+	"github.com/gost-dom/browser/internal/testing/browsertest"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestURL(t *testing.T) {
-	win := initWindow(t)
+	win := browsertest.InitWindow(t)
 	assert.Equal(t, "http://example.com/foo/bar", win.MustEval(`
 		const u = new URL("foo/bar", "http://example.com");
 		u.href
@@ -16,7 +17,7 @@ func TestURL(t *testing.T) {
 }
 
 func TestURLSearchParamsFromIterable(t *testing.T) {
-	win := initWindow(t)
+	win := browsertest.InitWindow(t)
 	usp, ok := win.MustEval(`
 		{
 			const fd = new FormData()
@@ -46,7 +47,7 @@ func TestURLSearchParamsFromIterable(t *testing.T) {
 func TestURLSearchParams(t *testing.T) {
 	// This test reflect an implementation that doesn't follow the spec in that
 	// query params aren't returned in the order they are specified.
-	win := initWindow(t)
+	win := browsertest.InitWindow(t)
 	assert.Equal(t, "value", win.MustEval(`
 		{
 			const p = new URLSearchParams()

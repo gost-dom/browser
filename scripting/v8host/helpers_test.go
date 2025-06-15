@@ -2,13 +2,8 @@ package v8host_test
 
 import (
 	"fmt"
-	"net/http"
-	"testing"
 
-	"github.com/gost-dom/browser"
 	"github.com/gost-dom/browser/html"
-	"github.com/gost-dom/browser/internal/testing/gosttest"
-	"github.com/gost-dom/browser/internal/testing/htmltest"
 	. "github.com/onsi/ginkgo/v2"
 )
 
@@ -100,21 +95,4 @@ func LoadHTML(html string) CreateHook {
 
 func InitializeContextWithEmptyHtml() *TestScriptContext {
 	return InitializeContext(LoadHTML("<html></html>"))
-}
-
-// initBrowser creates a browser with the most useful options. This browser will
-// by default fail a test if an error is logged, meaning an uncaught JavaScript
-// error will result in a test error.
-func initBrowser(t testing.TB, handler http.Handler) *browser.Browser {
-	b := browser.New(
-		browser.WithHandler(handler),
-		browser.WithLogger(gosttest.NewTestLogger(t)),
-	)
-	t.Cleanup(b.Close)
-	return b
-}
-
-func initWindow(t testing.TB) htmltest.WindowHelper {
-	b := initBrowser(t, nil)
-	return htmltest.NewWindowHelper(t, b.NewWindow())
 }

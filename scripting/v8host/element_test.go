@@ -5,6 +5,7 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/internal/test/scripttests"
+	"github.com/gost-dom/browser/internal/testing/browsertest"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/scripting/v8host"
@@ -81,7 +82,7 @@ func (s *ElementTestSuite) TestQuerySelector() {
 
 func TestElementSiblings(t *testing.T) {
 	g := gomega.NewWithT(t)
-	win := initBrowser(t, nil).NewWindow()
+	win := browsertest.InitBrowser(t, nil).NewWindow()
 	win.LoadHTML(`
   	<body>
 		<div id="e-1"></div>

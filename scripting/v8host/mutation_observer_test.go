@@ -4,13 +4,14 @@ import (
 	"testing"
 
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/testing/browsertest"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/onsi/gomega"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestMutationObserver(t *testing.T) {
-	win := initBrowser(t, nil).NewWindow()
+	win := browsertest.InitBrowser(t, nil).NewWindow()
 	assert.NoError(t, win.LoadHTML(`<body>
 		<div id="parent"><div id="child"></div><div>
 	</body>`))
