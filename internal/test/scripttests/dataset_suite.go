@@ -16,10 +16,9 @@ func NewDatasetSuite(h html.ScriptHost) *DatasetSuite {
 func (s *DatasetSuite) TestIsAFunction() {
 	s.Expect(s.Eval(`typeof DOMStringMap`)).To(Equal("function"))
 
-	// Doesn't work for Goja
-	// s.Expect(s.Eval(
-	// 	"Object.getPrototypeOf(document.body.dataset) === DOMStringMap.prototype",
-	// )).To(BeTrue(), "dataset is a DOMStringMap")
+	s.Expect(s.Eval(
+		"Object.getPrototypeOf(document.body.dataset) === DOMStringMap.prototype",
+	)).To(BeTrue(), "dataset is a DOMStringMap")
 }
 
 func (s *DatasetSuite) TestDataset() {

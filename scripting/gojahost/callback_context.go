@@ -11,8 +11,9 @@ import (
 )
 
 type gojaCallbackScope struct {
-	ctx  *GojaContext
-	this *goja.Object
+	ctx      *GojaContext
+	this     *goja.Object
+	instance any
 }
 
 func (c gojaCallbackScope) This() js.Object[jsTypeParam] {
@@ -20,13 +21,11 @@ func (c gojaCallbackScope) This() js.Object[jsTypeParam] {
 }
 
 func (ctx gojaCallbackScope) Instance() (any, error) {
-	ctx.Logger().Debug("gojaCallbackScope.Instance()", "this", ctx.this)
-	instance := ctx.this.GetSymbol(ctx.ctx.wrappedGoObj)
-	if instance == nil {
+	if ctx.instance == nil {
 		// TODO: Should be a TypeError
 		return nil, errors.New("No embedded value")
 	}
-	return instance.Export(), nil
+	return ctx.instance, nil
 }
 
 func (ctx gojaCallbackScope) Logger() *slog.Logger {
@@ -51,11 +50,14 @@ func (c gojaCallbackScope) ValueFactory() js.ValueFactory[jsTypeParam] {
 }
 
 func newArgumentHelper(ctx *GojaContext, c goja.FunctionCall) *callbackContext {
+	this := c.This.ToObject(ctx.vm)
+	var instance any
+	if wrapped := this.GetSymbol(ctx.wrappedGoObj); wrapped != nil {
+		instance = wrapped.Export()
+	}
 	return &callbackContext{
-		gojaCallbackScope{
-			ctx,
-			c.This.ToObject(ctx.vm),
-		}, c.Arguments, 0}
+		gojaCallbackScope{ctx, this, instance},
+		c.Arguments, 0}
 }
 
 func (ctx *callbackContext) Argument(index int) g.Value {

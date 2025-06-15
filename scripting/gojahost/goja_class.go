@@ -80,7 +80,7 @@ func (c gojaClass) CreateIteratorMethod(cb js.FunctionCallback[jsTypeParam]) {
 func (c *gojaClass) NewInstance(native any) (js.Object[jsTypeParam], error) {
 	obj := c.ctx.vm.CreateObject(c.prototype)
 	c.ctx.storeInternal(native, obj)
-	c.installInstance(&obj)
+	c.installInstance(&obj, native)
 
 	return newGojaObject(c.ctx, obj), nil
 }
