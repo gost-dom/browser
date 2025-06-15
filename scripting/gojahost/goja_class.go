@@ -79,28 +79,9 @@ func (c gojaClass) CreateIteratorMethod(cb js.FunctionCallback[jsTypeParam]) {
 
 func (c *gojaClass) NewInstance(native any) (js.Object[jsTypeParam], error) {
 	obj := c.ctx.vm.CreateObject(c.prototype)
-	c.installInstance(obj)
 	c.ctx.storeInternal(native, obj)
-	if c.namedHandlerCallbacks != nil {
-		proto := obj
-		obj = c.ctx.vm.NewDynamicObject(&gojaDynamicObject{
-			ctx:   c.ctx,
-			cbs:   *c.namedHandlerCallbacks,
-			this:  obj,
-			scope: gojaCallbackScope{c.ctx, proto},
-		})
-		obj.SetPrototype(proto)
-	}
-	if c.indexedHandler != nil {
-		proto := obj
-		obj = c.ctx.vm.NewDynamicArray(&gojaDynamicArray{
-			ctx:   c.ctx,
-			cbs:   *c.indexedHandler,
-			this:  obj,
-			scope: gojaCallbackScope{c.ctx, proto},
-		})
-		obj.SetPrototype(proto)
-	}
+	c.installInstance(&obj)
+
 	return newGojaObject(c.ctx, obj), nil
 }
 

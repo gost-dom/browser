@@ -140,14 +140,42 @@ func (c *GojaContext) CreateClass(
 }
 
 func (class *gojaClass) callback(call goja.ConstructorCall, r *goja.Runtime) *goja.Object {
-	class.installInstance(call.This)
+	class.installInstance(&call.This)
 	class.cb(newGojaCallbackContext(class.ctx, call))
 	return nil
 }
 
-func (class *gojaClass) installInstance(this *goja.Object) {
+func (class *gojaClass) installInstance(this **goja.Object) {
 	for _, v := range class.instanceAttrs {
-		v.install(this)
+		v.install(*this)
+	}
+
+	// TODO: Fix prototype for named/indexed property handlers. Due to lack of
+	// support for internal values in goja, and because a "Dynamic Object"
+	// cannot have own symbol properties, an artificial prototype is inserted
+	// between the instance and the correct prototype, in order to be able to
+	// retrieve the internal instance.
+
+	if class.namedHandlerCallbacks != nil {
+		obj := *this
+		proto := *this
+		*this = class.ctx.vm.NewDynamicObject(&gojaDynamicObject{
+			ctx:   class.ctx,
+			cbs:   *class.namedHandlerCallbacks,
+			this:  obj,
+			scope: gojaCallbackScope{class.ctx, proto},
+		})
+		(*this).SetPrototype(proto)
+	}
+	if class.indexedHandler != nil {
+		proto := *this
+		*this = class.ctx.vm.NewDynamicArray(&gojaDynamicArray{
+			ctx:   class.ctx,
+			cbs:   *class.indexedHandler,
+			this:  *this,
+			scope: gojaCallbackScope{class.ctx, proto},
+		})
+		(*this).SetPrototype(proto)
 	}
 }
 
