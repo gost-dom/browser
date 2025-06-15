@@ -19,6 +19,7 @@ func (s *ScriptHostSuite) MustLoadHTML(html string) {
 
 func (s *ScriptHostSuite) SetupTest() {
 	s.Window = htmltest.NewWindowHelper(s.T(), html.NewWindow(html.WindowOptions{
+		Logger:     gosttest.NewTestLogger(s.T()),
 		ScriptHost: s.scriptHost,
 	}))
 }

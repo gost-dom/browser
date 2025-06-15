@@ -14,7 +14,7 @@ func (w *NodeList[T]) CustomInitializer(class js.Class[T]) {
 	nodeListIterator.InstallPrototype(class)
 
 	class.CreateIndexedHandler(
-		js.WithGetterCallback(
+		js.WithIndexedGetterCallback(
 			func(info js.CallbackScope[T], index int) (js.Value[T], error) {
 				instance := info.This().NativeValue()
 				if nodemap, ok := instance.(dom.NodeList); ok {
@@ -26,5 +26,15 @@ func (w *NodeList[T]) CustomInitializer(class js.Class[T]) {
 				}
 				return nil, info.ValueFactory().NewTypeError("dunno")
 			},
-		))
+		),
+		js.WithLengthCallback(
+			func(cbCtx js.CallbackScope[T]) (int, error) {
+				instance, err := js.As[dom.NodeList](cbCtx.Instance())
+				if err != nil {
+					return 0, err
+				}
+				return instance.Length(), nil
+			},
+		),
+	)
 }

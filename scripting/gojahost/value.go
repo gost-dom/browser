@@ -9,7 +9,15 @@ type gojaValue struct {
 	ctx   *GojaContext
 	value goja.Value
 }
+
 type jsTypeParam = gojaValue
+
+func toGojaValue(val js.Value[jsTypeParam]) goja.Value {
+	if val == nil {
+		return goja.Undefined()
+	}
+	return val.Self().value
+}
 
 // newGojaValue createa a js.Value[T] wrapping goja value v. This is safe to use
 // on nil values, returning nil if v is nil.

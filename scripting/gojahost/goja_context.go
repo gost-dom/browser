@@ -13,10 +13,9 @@ import (
 )
 
 type GojaContext struct {
-	vm     *goja.Runtime
-	clock  *clock.Clock
-	window html.Window
-	// globals      map[string]function
+	vm           *goja.Runtime
+	clock        *clock.Clock
+	window       html.Window
 	classes      map[string]*gojaClass
 	wrappedGoObj *goja.Symbol
 	cachedNodes  map[int32]goja.Value
@@ -101,7 +100,6 @@ func (i *GojaContext) Export(value any) (res any, err error) {
 }
 
 func (m *GojaContext) createLocationInstance() *goja.Object {
-	// panic("Not implemented")
 	location, err := m.classes["Location"].NewInstance(m.window.Location())
 	if err != nil {
 		panic(err)
@@ -141,17 +139,42 @@ func (c *GojaContext) CreateClass(
 	return class
 }
 
-type gojaFunctionCallback = func(call goja.FunctionCall, r *goja.Runtime) *goja.Object
-
 func (class *gojaClass) callback(call goja.ConstructorCall, r *goja.Runtime) *goja.Object {
-	class.installInstance(call.This)
+	class.installInstance(&call.This)
 	class.cb(newGojaCallbackContext(class.ctx, call))
 	return nil
 }
 
-func (class *gojaClass) installInstance(this *goja.Object) {
+func (class *gojaClass) installInstance(this **goja.Object) {
 	for _, v := range class.instanceAttrs {
-		v.install(this)
+		v.install(*this)
+	}
+
+	// TODO: Fix prototype for named/indexed property handlers. Due to lack of
+	// support for internal values in goja, and because a "Dynamic Object"
+	// cannot have own symbol properties, an artificial prototype is inserted
+	// between the instance and the correct prototype, in order to be able to
+	// retrieve the internal instance.
+	if class.namedHandlerCallbacks != nil {
+		obj := *this
+		proto := *this
+		*this = class.ctx.vm.NewDynamicObject(&gojaDynamicObject{
+			ctx:   class.ctx,
+			cbs:   *class.namedHandlerCallbacks,
+			this:  obj,
+			scope: gojaCallbackScope{class.ctx, proto},
+		})
+		(*this).SetPrototype(proto)
+	}
+	if class.indexedHandler != nil {
+		proto := *this
+		*this = class.ctx.vm.NewDynamicArray(&gojaDynamicArray{
+			ctx:   class.ctx,
+			cbs:   *class.indexedHandler,
+			this:  *this,
+			scope: gojaCallbackScope{class.ctx, proto},
+		})
+		(*this).SetPrototype(proto)
 	}
 }
 
@@ -164,41 +187,6 @@ type attributeHandler struct {
 	name   string
 	getter js.FunctionCallback[jsTypeParam]
 	setter js.FunctionCallback[jsTypeParam]
-}
-
-type gojaClass struct {
-	ctx            *GojaContext
-	cb             js.FunctionCallback[jsTypeParam]
-	prototype      *goja.Object
-	indexedHandler *gojaIndexedHandler
-	instanceAttrs  map[string]attributeHandler
-}
-
-func (c *gojaClass) CreateIndexedHandler(opts ...js.IndexedHandlerOption[jsTypeParam]) {
-	var oo js.IndexedHandlerCallbacks[jsTypeParam]
-	for _, o := range opts {
-		o(&oo)
-	}
-	c.indexedHandler = &gojaIndexedHandler{oo.Getter}
-}
-
-func (c *gojaClass) CreateNamedHandler(cb ...js.NamedHandlerOption[jsTypeParam]) {}
-
-func (c *gojaClass) CreateInstanceAttribute(
-	name string,
-	getter js.FunctionCallback[jsTypeParam],
-	setter js.FunctionCallback[jsTypeParam],
-) {
-	c.instanceAttrs[name] = attributeHandler{c.ctx, name, getter, setter}
-}
-
-func (c gojaClass) CreatePrototypeMethod(
-	name string,
-	cb js.FunctionCallback[jsTypeParam],
-) {
-	if err := c.prototype.Set(name, wrapJSCallback(c.ctx, cb)); err != nil {
-		panic(err)
-	}
 }
 
 func (h attributeHandler) install(object *goja.Object) {
@@ -215,31 +203,12 @@ func (h attributeHandler) install(object *goja.Object) {
 	)
 }
 
-func (c gojaClass) CreatePrototypeAttribute(
-	name string,
-	getter js.FunctionCallback[jsTypeParam],
-	setter js.FunctionCallback[jsTypeParam],
-) {
-	attr := attributeHandler{c.ctx, name, getter, setter}
-	attr.install(c.prototype)
-}
-
-func (c gojaClass) CreateIteratorMethod(cb js.FunctionCallback[jsTypeParam]) {
-	c.prototype.SetSymbol(goja.SymIterator, wrapJSCallback(c.ctx, cb))
-}
-
-func (c *gojaClass) NewInstance(native any) (js.Object[jsTypeParam], error) {
-	obj := c.ctx.vm.CreateObject(c.prototype)
-	c.installInstance(obj)
-	c.ctx.storeInternal(native, obj)
-	return newGojaObject(c.ctx, obj), nil
-}
-
-type gojaCallbackContext struct{}
-
 func newGojaCallbackContext(
 	ctx *GojaContext,
 	call goja.ConstructorCall,
 ) *callbackContext {
-	return &callbackContext{ctx, call.This, call.Arguments, 0}
+	return &callbackContext{
+		gojaCallbackScope{ctx,
+			call.This,
+		}, call.Arguments, 0}
 }

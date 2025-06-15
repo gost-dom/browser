@@ -93,6 +93,8 @@ type HandlerSetterCallback[T, U any] func(scope CallbackScope[T], key U, value V
 type HandlerDeleterCallback[T, U any] func(scope CallbackScope[T], key U) (bool, error)
 type HandlerEnumeratorCallback[T, U any] func(CallbackScope[T]) ([]U, error)
 
+type IndexLenCallback[T any] func(CallbackScope[T]) (int, error)
+
 type HandlerCallbacks[Tjs, Tkey any] struct {
 	Getter     HandlerGetterCallback[Tjs, Tkey]
 	Setter     HandlerSetterCallback[Tjs, Tkey]
@@ -101,11 +103,23 @@ type HandlerCallbacks[Tjs, Tkey any] struct {
 }
 
 type NamedHandlerCallbacks[T any] = HandlerCallbacks[T, Value[T]]
-type IndexedHandlerCallbacks[T any] = HandlerCallbacks[T, int]
+
+type IndexedHandlerCallbacks[T any] struct {
+	Getter HandlerGetterCallback[T, int]
+	Len    IndexLenCallback[T]
+}
 
 type HandlerOption[T, U any] = func(*HandlerCallbacks[T, U])
 type IndexedHandlerOption[T any] = func(*IndexedHandlerCallbacks[T])
 type NamedHandlerOption[T any] = func(*HandlerCallbacks[T, Value[T]])
+
+func WithLengthCallback[T any](cb IndexLenCallback[T]) IndexedHandlerOption[T] {
+	return func(opt *IndexedHandlerCallbacks[T]) { opt.Len = cb }
+}
+
+func WithIndexedGetterCallback[T any](cb HandlerGetterCallback[T, int]) IndexedHandlerOption[T] {
+	return func(opt *IndexedHandlerCallbacks[T]) { opt.Getter = cb }
+}
 
 func WithGetterCallback[T, U any](cb HandlerGetterCallback[T, U]) HandlerOption[T, U] {
 	return func(opt *HandlerCallbacks[T, U]) { opt.Getter = cb }
