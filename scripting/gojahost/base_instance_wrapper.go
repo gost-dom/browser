@@ -27,10 +27,7 @@ func newBaseInstanceWrapper[T any](instance *GojaContext) baseInstanceWrapper[T]
 }
 
 func (c *GojaContext) storeInternal(value any, obj *g.Object) {
-	log.Debug(c.logger(), "storeInternal",
-		"obj", obj,
-		"value", value,
-	)
+	log.Debug(c.logger(), "storeInternal")
 	obj.DefineDataPropertySymbol(
 		c.wrappedGoObj,
 		c.vm.ToValue(value),
@@ -41,7 +38,6 @@ func (c *GojaContext) storeInternal(value any, obj *g.Object) {
 	if e, ok := value.(entity.ObjectIder); ok {
 		c.cachedNodes[e.ObjectId()] = obj
 	}
-	// obj.SetSymbol(w.instance.wrappedGoObj, w.instance.vm.ToValue(value))
 }
 
 func (w baseInstanceWrapper[T]) storeInternal(value any, obj *g.Object) {
