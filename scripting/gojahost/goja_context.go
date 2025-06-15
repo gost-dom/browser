@@ -174,8 +174,12 @@ type gojaClass struct {
 	instanceAttrs  map[string]attributeHandler
 }
 
-func (c *gojaClass) CreateIndexedHandler(cb js.HandlerGetterCallback[jsTypeParam, int]) {
-	c.indexedHandler = &gojaIndexedHandler{cb}
+func (c *gojaClass) CreateIndexedHandler(opts ...js.IndexedHandlerOption[jsTypeParam]) {
+	var oo js.IndexedHandlerCallbacks[jsTypeParam]
+	for _, o := range opts {
+		o(&oo)
+	}
+	c.indexedHandler = &gojaIndexedHandler{oo.Getter}
 }
 
 func (c *gojaClass) CreateNamedHandler(cb ...js.NamedHandlerOption[jsTypeParam]) {}

@@ -260,9 +260,13 @@ func (c v8Class) CreateInstanceAttribute(
 	c.inst.SetAccessorProperty(name, v8Getter, v8Setter, v8go.None)
 }
 
-func (c v8Class) CreateIndexedHandler(getter js.HandlerGetterCallback[jsTypeParam, int]) {
+func (c v8Class) CreateIndexedHandler(opts ...js.IndexedHandlerOption[jsTypeParam]) {
+	var oo js.IndexedHandlerCallbacks[jsTypeParam]
+	for _, o := range opts {
+		o(&oo)
+	}
 	c.inst.SetIndexedHandler(func(info *v8go.FunctionCallbackInfo) (*v8go.Value, error) {
-		res, err := getter(v8CallbackScope{c.host, info}, int(info.Index()))
+		res, err := oo.Getter(v8CallbackScope{c.host, info}, int(info.Index()))
 		return toV8Value(res), err
 	})
 }

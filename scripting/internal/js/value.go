@@ -61,7 +61,7 @@ type Class[T any] interface {
 	CreateIteratorMethod(cb FunctionCallback[T])
 	CreatePrototypeAttribute(name string, getter FunctionCallback[T], setter FunctionCallback[T])
 	CreateInstanceAttribute(name string, getter FunctionCallback[T], setter FunctionCallback[T])
-	CreateIndexedHandler(getter HandlerGetterCallback[T, int])
+	CreateIndexedHandler(getter ...IndexedHandlerOption[T])
 	CreateNamedHandler(opts ...NamedHandlerOption[T])
 }
 

@@ -99,9 +99,12 @@ type HandlerCallbacks[Tjs, Tkey any] struct {
 	Deleter    HandlerDeleterCallback[Tjs, Tkey]
 	Enumerator HandlerEnumeratorCallback[Tjs, Tkey]
 }
+
 type NamedHandlerCallbacks[T any] = HandlerCallbacks[T, Value[T]]
+type IndexedHandlerCallbacks[T any] = HandlerCallbacks[T, int]
 
 type HandlerOption[T, U any] = func(*HandlerCallbacks[T, U])
+type IndexedHandlerOption[T any] = func(*IndexedHandlerCallbacks[T])
 type NamedHandlerOption[T any] = func(*HandlerCallbacks[T, Value[T]])
 
 func WithGetterCallback[T, U any](cb HandlerGetterCallback[T, U]) HandlerOption[T, U] {

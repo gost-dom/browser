@@ -14,16 +14,17 @@ func (w *NodeList[T]) CustomInitializer(class js.Class[T]) {
 	nodeListIterator.InstallPrototype(class)
 
 	class.CreateIndexedHandler(
-		func(info js.CallbackScope[T], index int) (js.Value[T], error) {
-			instance := info.This().NativeValue()
-			if nodemap, ok := instance.(dom.NodeList); ok {
-				item := nodemap.Item(index)
-				if item == nil {
-					return nil, nil
+		js.WithGetterCallback(
+			func(info js.CallbackScope[T], index int) (js.Value[T], error) {
+				instance := info.This().NativeValue()
+				if nodemap, ok := instance.(dom.NodeList); ok {
+					item := nodemap.Item(index)
+					if item == nil {
+						return nil, nil
+					}
+					return codec.EncodeEntity(info, item)
 				}
-				return codec.EncodeEntity(info, item)
-			}
-			return nil, info.ValueFactory().NewTypeError("dunno")
-		},
-	)
+				return nil, info.ValueFactory().NewTypeError("dunno")
+			},
+		))
 }
