@@ -155,7 +155,6 @@ func (class *gojaClass) installInstance(this **goja.Object) {
 	// cannot have own symbol properties, an artificial prototype is inserted
 	// between the instance and the correct prototype, in order to be able to
 	// retrieve the internal instance.
-
 	if class.namedHandlerCallbacks != nil {
 		obj := *this
 		proto := *this

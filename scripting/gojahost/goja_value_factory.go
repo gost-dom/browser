@@ -36,7 +36,7 @@ func (f gojaValueFactory) JSONStringify(v js.Value[jsTypeParam]) string {
 func (f gojaValueFactory) NewArray(v ...js.Value[jsTypeParam]) js.Value[jsTypeParam] {
 	arr := make([]any, len(v))
 	for i, val := range v {
-		arr[i] = val.Self().value
+		arr[i] = toGojaValue(val)
 	}
 	return newGojaObject(f.GojaContext, f.vm.NewArray(arr...))
 }

@@ -105,10 +105,7 @@ func (o gojaDynamicArray) Get(index int) goja.Value {
 	if err != nil {
 		panic(err)
 	}
-	if res == nil {
-		return goja.Undefined()
-	}
-	return res.Self().value
+	return toGojaValue(res)
 }
 
 func (o gojaDynamicArray) Set(index int, value goja.Value) bool {
@@ -155,7 +152,7 @@ func (o gojaDynamicObject) Get(key string) goja.Value {
 	if err != nil {
 		panic(err)
 	}
-	return res.Self().value
+	return toGojaValue(res)
 }
 
 func (o gojaDynamicObject) Delete(key string) (res bool) {

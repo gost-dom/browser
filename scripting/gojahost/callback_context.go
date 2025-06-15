@@ -68,10 +68,7 @@ func wrapJSCallback(ctx *GojaContext, cb js.FunctionCallback[jsTypeParam]) goja.
 		if err != nil {
 			panic(err)
 		}
-		if res == nil {
-			return goja.Undefined()
-		}
-		return res.Self().value
+		return toGojaValue(res)
 	})
 }
 
