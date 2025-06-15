@@ -10,7 +10,7 @@ type DatasetSuite struct {
 }
 
 func NewDatasetSuite(h html.ScriptHost) *DatasetSuite {
-	return &DatasetSuite{ScriptHostSuite: *NewScriptHostSuite(h)}
+	return &DatasetSuite{ScriptHostSuite: ScriptHostSuite{scriptHost: h}}
 }
 
 func (s *DatasetSuite) TestIsAFunction() {
