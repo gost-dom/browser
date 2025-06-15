@@ -33,6 +33,10 @@ func (s *DatasetSuite) TestDataset() {
 	s.Expect(
 		win.Eval(`Object.getPrototypeOf(target.dataset).constructor.name`)).
 		To(Equal("DOMStringMap"), "Dataset type")
+
+	// This test expect a specific ordering of keys, which Object.keys doesn't
+	// guarantee. However, dataset keys _should_ be iterated in the order they
+	// appear.
 	s.Expect(win.Eval(`Object.keys(target.dataset)`)).
 		To(Equal([]any{"foo", "bar", "fooBar"}), "dataset keys")
 
