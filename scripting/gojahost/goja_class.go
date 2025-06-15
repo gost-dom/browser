@@ -9,7 +9,7 @@ type gojaClass struct {
 	ctx            *GojaContext
 	cb             js.FunctionCallback[jsTypeParam]
 	prototype      *goja.Object
-	indexedHandler *gojaIndexedHandler
+	indexedHandler *js.IndexedHandlerCallbacks[jsTypeParam]
 	instanceAttrs  map[string]attributeHandler
 
 	namedHandlerCallbacks *js.NamedHandlerCallbacks[jsTypeParam]
@@ -33,7 +33,7 @@ func (c *gojaClass) CreateIndexedHandler(opts ...js.IndexedHandlerOption[jsTypeP
 	for _, o := range opts {
 		o(&oo)
 	}
-	c.indexedHandler = &gojaIndexedHandler{oo.Getter}
+	c.indexedHandler = &oo
 	c.assertValid()
 }
 
@@ -91,9 +91,69 @@ func (c *gojaClass) NewInstance(native any) (js.Object[jsTypeParam], error) {
 		})
 		obj.SetPrototype(proto)
 	}
+	if c.indexedHandler != nil {
+		proto := obj
+		obj = c.ctx.vm.NewDynamicArray(&gojaDynamicArray{
+			ctx:   c.ctx,
+			cbs:   *c.indexedHandler,
+			this:  obj,
+			scope: gojaCallbackScope{c.ctx, proto},
+		})
+		obj.SetPrototype(proto)
+	}
 	return newGojaObject(c.ctx, obj), nil
 }
 
+// gojaDynamicArray implements [goja.DynamicArray], serving as an indexed
+// property handler.
+type gojaDynamicArray struct {
+	ctx   *GojaContext
+	this  *goja.Object
+	scope gojaCallbackScope
+	cbs   js.IndexedHandlerCallbacks[jsTypeParam]
+}
+
+func (o gojaDynamicArray) Get(index int) goja.Value {
+	if o.cbs.Getter == nil {
+		return nil
+	}
+	res, err := o.cbs.Getter(o.scope, index)
+	if err == js.NotIntercepted {
+		return nil
+	}
+	if err != nil {
+		panic(err)
+	}
+	if res == nil {
+		return goja.Undefined()
+	}
+	return res.Self().value
+}
+
+func (o gojaDynamicArray) Set(index int, value goja.Value) bool {
+	panic("gojaDynamicArray.Set: not implemented")
+}
+
+func (o gojaDynamicArray) Len() int {
+	if o.cbs.Len == nil {
+		return 0
+	}
+	res, err := o.cbs.Len(o.scope)
+	if err == js.NotIntercepted {
+		return 0
+	}
+	if err != nil {
+		panic(err)
+	}
+	return res
+}
+
+func (o gojaDynamicArray) SetLen(int) bool {
+	panic("gojaDynamicArray.SetLen: not implemented")
+}
+
+// gojaDynamicObject implements [goja.DynamicObject], serving as a named
+// property handler.
 type gojaDynamicObject struct {
 	ctx   *GojaContext
 	this  *goja.Object
@@ -146,6 +206,9 @@ func (o gojaDynamicObject) Has(key string) (res bool) {
 }
 
 func (o gojaDynamicObject) Keys() []string {
+	if o.cbs.Enumerator == nil {
+		return nil
+	}
 	keys, err := o.cbs.Enumerator(o.scope)
 	if err == js.NotIntercepted {
 		return nil

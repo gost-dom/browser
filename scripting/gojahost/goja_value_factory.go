@@ -34,7 +34,11 @@ func (f gojaValueFactory) JSONStringify(v js.Value[jsTypeParam]) string {
 }
 
 func (f gojaValueFactory) NewArray(v ...js.Value[jsTypeParam]) js.Value[jsTypeParam] {
-	panic("NewArray not implemented")
+	arr := make([]any, len(v))
+	for i, val := range v {
+		arr[i] = val.Self().value
+	}
+	return newGojaObject(f.GojaContext, f.vm.NewArray(arr...))
 }
 
 func (f gojaValueFactory) NewBoolean(v bool) js.Value[jsTypeParam] {
@@ -42,7 +46,7 @@ func (f gojaValueFactory) NewBoolean(v bool) js.Value[jsTypeParam] {
 }
 
 func (f gojaValueFactory) Null() js.Value[jsTypeParam] {
-	panic("NewArray not implemented")
+	return newGojaValue(f.GojaContext, goja.Null())
 }
 
 func (f gojaValueFactory) NewUint32(v uint32) js.Value[jsTypeParam] {

@@ -8,7 +8,7 @@ import (
 
 func (w NamedNodeMap[T]) CustomInitializer(class js.Class[T]) {
 	class.CreateIndexedHandler(
-		js.WithGetterCallback(func(cbCtx js.CallbackScope[T], key int) (js.Value[T], error) {
+		js.WithIndexedGetterCallback(func(cbCtx js.CallbackScope[T], key int) (js.Value[T], error) {
 			instance, err := js.As[dom.NamedNodeMap](cbCtx.Instance())
 			if err != nil {
 				return nil, err
@@ -18,6 +18,13 @@ func (w NamedNodeMap[T]) CustomInitializer(class js.Class[T]) {
 				return nil, nil
 			}
 			return codec.EncodeEntity(cbCtx, item)
+		}),
+		js.WithLengthCallback(func(cbCtx js.CallbackScope[T]) (int, error) {
+			instance, err := js.As[dom.NamedNodeMap](cbCtx.Instance())
+			if err != nil {
+				return 0, err
+			}
+			return instance.Length(), nil
 		}),
 	)
 }
