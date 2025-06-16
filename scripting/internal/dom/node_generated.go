@@ -64,7 +64,7 @@ func (w Node[T]) cloneNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	if errInst != nil {
 		return nil, errInst
 	}
-	subtree, errArg1 := js.ConsumeArgument(cbCtx, "subtree", w.defaultboolean, codec.DecodeBoolean)
+	subtree, errArg1 := js.ConsumeArgument(cbCtx, "subtree", codec.ZeroValue, codec.DecodeBoolean)
 	if errArg1 != nil {
 		return nil, errArg1
 	}

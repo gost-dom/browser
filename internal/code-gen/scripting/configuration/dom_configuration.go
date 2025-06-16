@@ -123,7 +123,6 @@ func configureDOMNode(domSpecs *WebAPIConfig) {
 	domNode := domSpecs.Type("Node")
 	domNode.Method("nodeType").SetCustomImplementation()
 	domNode.Method("getRootNode").Argument("options").SetHasDefault()
-	domNode.Method("cloneNode").Argument("subtree").SetHasDefault()
 	domNode.Method("textContent").SetCustomImplementation()
 
 	domNode.Method("hasChildNodes").Ignore()
@@ -144,7 +143,6 @@ func configureDOMEvent(domSpecs *WebAPIConfig) {
 	event := domSpecs.Type("Event")
 	// event.SkipWrapper = true
 	event.Method("eventPhase").SetCustomImplementation()
-	event.Method("constructor").Argument("eventInitDict").SetHasDefault()
 	event.Method("initEvent").Ignore()
 	event.Method("composed").Ignore()
 	event.Method("composedPath").Ignore()
