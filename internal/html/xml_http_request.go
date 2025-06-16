@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/gost-dom/browser/dom/event"
@@ -38,12 +39,11 @@ type XmlHttpRequest interface {
 	Abort() error
 	Open(string, string, ...RequestOption)
 
-	// Deprecated: This just callse [XmlHttpRequest.SendBody] passing a nil body. This will
-	// eventually change to accept a body argument of type [io.Reader];
-	//
-	// For a smooth transition, chande all calls to this function to call
-	// [XmlHttpRequest.SendBody] passing nil.
-	Send() error
+	// The variadic argument is a temporary transition. The caller should pass
+	// exactly _one_ argument, passing nil if no body should be sent. Passing
+	// more than one argument will result in a panic
+	Send(body ...io.Reader) error
+	// Deprecated: Call Send instead.
 	SendBody(body io.Reader) error
 	Status() int
 	StatusText() string
@@ -141,8 +141,20 @@ func (req *xmlHttpRequest) send(body io.Reader) error {
 	return err
 }
 
-func (req *xmlHttpRequest) Send() error {
-	return req.SendBody(nil)
+func (req *xmlHttpRequest) Send(body ...io.Reader) error {
+	if len(body) == 0 {
+		fmt.Fprintf(
+			os.Stderr,
+			"Calling XMLHttpRequest.Send() with zero arguments. This will break in a future release. To send a request without a body, call Send(nil).",
+		)
+		return req.SendBody(nil)
+	}
+	if len(body) > 1 {
+		panic(
+			"Calling XMLHttpRequest.Send() with multiple body arguments. This should be called with exactly ONE argument",
+		)
+	}
+	return req.SendBody(body[0])
 }
 
 func (req *xmlHttpRequest) SendBody(body io.Reader) error {
