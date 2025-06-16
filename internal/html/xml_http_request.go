@@ -38,12 +38,8 @@ type XmlHttpRequest interface {
 	Abort() error
 	Open(string, string, ...RequestOption)
 
-	// Deprecated: This just callse [XmlHttpRequest.SendBody] passing a nil body. This will
-	// eventually change to accept a body argument of type [io.Reader];
-	//
-	// For a smooth transition, chande all calls to this function to call
-	// [XmlHttpRequest.SendBody] passing nil.
-	Send() error
+	Send(body io.Reader) error
+	// Deprecated: Call Send instead.
 	SendBody(body io.Reader) error
 	Status() int
 	StatusText() string
@@ -141,11 +137,7 @@ func (req *xmlHttpRequest) send(body io.Reader) error {
 	return err
 }
 
-func (req *xmlHttpRequest) Send() error {
-	return req.SendBody(nil)
-}
-
-func (req *xmlHttpRequest) SendBody(body io.Reader) error {
+func (req *xmlHttpRequest) Send(body io.Reader) error {
 	if body != nil {
 		// TODO: Set content type or not?
 		req.headers["Content-Type"] = []string{"application/x-www-form-urlencoded"}
@@ -158,6 +150,14 @@ func (req *xmlHttpRequest) SendBody(body io.Reader) error {
 		return nil
 	}
 	return req.send(body)
+}
+
+func (req *xmlHttpRequest) SendBody(body io.Reader) error {
+	log.Warn(
+		req.logger(),
+		"Using deprecated method XMLHttpRequest.SendBody(io.Reader). Use Send(io.Reader) instead",
+	)
+	return req.Send(body)
 }
 
 func (req *xmlHttpRequest) Status() int { return req.status }

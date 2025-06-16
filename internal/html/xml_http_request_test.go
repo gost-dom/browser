@@ -91,7 +91,7 @@ func (s *XMLHTTPRequestTestSuite) SetupTest() {
 func (s *XMLHTTPRequestTestSuite) TestSynchronousRequest() {
 	s.xhr.Open("GET", "/dummy", RequestOptionAsync(false))
 	s.Expect(s.xhr.Status()).To(Equal(0))
-	s.Expect(s.xhr.Send()).To(Succeed())
+	s.Expect(s.xhr.Send(nil)).To(Succeed())
 	// Verify request
 	s.Expect(s.actualMethod).To(Equal("GET"))
 	// Verify response
@@ -130,7 +130,7 @@ func (s *XMLHTTPRequestTestSuite) TestAsynchronousRequest() {
 			return nil
 		}),
 	)
-	s.Expect(s.xhr.Send()).To(Succeed())
+	s.Expect(s.xhr.Send(nil)).To(Succeed())
 	s.Expect(loadStarted).To(BeTrue(), "loadstart emitted")
 	s.Expect(s.xhr.Status()).To(Equal(0), "Response should not have been received yet")
 	s.Expect(loadEnded).To(BeFalse(), "loadend emitted")
@@ -164,7 +164,7 @@ func (s *XMLHTTPRequestTestSuite) TestFormdataEncoding() {
 func (s *XMLHTTPRequestTestSuite) TestRequestHeaders() {
 	s.xhr.SetRequestHeader("x-test", "42")
 	s.xhr.Open("GET", "/dummy", RequestOptionAsync(false))
-	s.Expect(s.xhr.Send()).To(Succeed())
+	s.Expect(s.xhr.Send(nil)).To(Succeed())
 	s.Expect(s.actualHeader.Get("x-test")).To(Equal("42"))
 }
 
@@ -174,7 +174,7 @@ func (s *XMLHTTPRequestTestSuite) TestResponseHeaders() {
 	s.responseHeader.Add("X-Test-2", "value2")
 	s.responseHeader.Add("Content-Type", "text/plain")
 	s.xhr.Open("GET", "/dummy", RequestOptionAsync(false))
-	s.xhr.Send()
+	s.xhr.Send(nil)
 	s.Expect(
 		s.xhr.GetAllResponseHeaders(),
 	).To(HaveLines("x-test-1: value1", "x-test-2: value2", "content-type: text/plain"))
@@ -191,7 +191,7 @@ func (s *XMLHTTPRequestTestSuite) TestSameResponseHeaderAddedTwice() {
 	s.responseHeader.Add("x-test-1", "value3")
 
 	s.xhr.Open("GET", "/dummy", RequestOptionAsync(false))
-	s.xhr.Send()
+	s.xhr.Send(nil)
 
 	s.Expect(
 		s.xhr.GetAllResponseHeaders(),
@@ -213,7 +213,7 @@ func (s *XMLHTTPRequestTestSuite) TestCookieVisibility() {
 	s.responseHeader.Add("Content-Type", "text/plain")
 
 	s.xhr.Open("GET", "/dummy", RequestOptionAsync(false))
-	s.xhr.Send()
+	s.xhr.Send(nil)
 
 	s.responseHeader = make(http.Header)
 	s.responseHeader.Add("set-cookie", "foobar-should-not-be-visible")
@@ -234,7 +234,7 @@ func TestXMLHTTPRequestRedirect(t *testing.T) {
 		clock.New(),
 	)
 	xhr.Open("GET", "https://example.com/redirect", RequestOptionAsync(false))
-	xhr.Send()
+	xhr.Send(nil)
 
 	assert.Equal(t, "https://example.com/redirected-url", xhr.ResponseURL())
 }
