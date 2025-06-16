@@ -23,10 +23,7 @@ func ConfigureHTMLSpecs(specs *WebIdlConfigurations) {
 		Name:    "History",
 		Package: packagenames.HTMLInterfaces,
 	}
-	history.Method("go").Argument("delta").HasDefaultValue("defaultDelta")
-	history.Method("pushState").Argument("url").HasDefaultValue("defaultUrl")
 	history.Method("pushState").Argument("unused").Ignore()
-	history.Method("replaceState").Argument("url").HasDefaultValue("defaultUrl")
 	history.Method("replaceState").Argument("unused").Ignore()
 	history.Method("scrollRestoration").Ignore()
 

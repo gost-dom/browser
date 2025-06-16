@@ -67,15 +67,11 @@ func (w XMLHttpRequest[T]) send(cbCtx js.CallbackContext[T]) (js.Value[T], error
 	if errInst != nil {
 		return nil, errInst
 	}
-	body, found, errArg := js.ConsumeOptionalArg(cbCtx, "body", w.decodeDocument, w.decodeXMLHttpRequestBodyInit)
-	if found {
-		if errArg != nil {
-			return nil, errArg
-		}
-		errCall := instance.SendBody(body)
-		return nil, errCall
+	body, errArg1 := js.ConsumeArgument(cbCtx, "body", codec.ZeroValue, w.decodeDocument, w.decodeXMLHttpRequestBodyInit)
+	if errArg1 != nil {
+		return nil, errArg1
 	}
-	errCall := instance.Send()
+	errCall := instance.Send(body)
 	return nil, errCall
 }
 

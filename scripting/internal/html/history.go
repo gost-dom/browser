@@ -6,9 +6,6 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w History[T]) defaultDelta() int  { return 0 }
-func (w History[T]) defaultUrl() string { return "" }
-
 func (w History[T]) decodeHistoryState(
 	cbCtx js.CallbackContext[T],
 	val js.Value[T],

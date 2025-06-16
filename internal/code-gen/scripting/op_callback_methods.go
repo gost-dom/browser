@@ -154,6 +154,18 @@ func (gen OpCallbackMethods) DefaultValuer(a model.ESOperationArgument) (g.Gener
 	case "EventInit", "HTMLElement":
 		return zeroValue, true
 	}
+
+	if d := a.IdlArg.Default; d != nil {
+		if d.Type == "null" {
+			return zeroValue, true
+		}
+		if d.Type == "number" && d.Value == "0" {
+			return zeroValue, true
+		}
+		if d.Type == "boolean" && d.Value == false {
+			return zeroValue, true
+		}
+	}
 	defaultName, hasDefault := a.DefaultValueInGo()
 	if hasDefault && defaultName != "" {
 		return gen.Receiver().Field(defaultName), hasDefault
