@@ -10,9 +10,17 @@ import (
 )
 
 type gojaCallbackScope struct {
-	ctx      *GojaContext
+	gojaScope
 	this     *goja.Object
 	instance any
+}
+
+func newCallbackScope(ctx *GojaContext, this *goja.Object, instance any) gojaCallbackScope {
+	return gojaCallbackScope{
+		gojaScope: gojaScope{ctx, newGojaObject(ctx, ctx.vm.GlobalObject())},
+		this:      this,
+		instance:  instance,
+	}
 }
 
 func (c gojaCallbackScope) This() js.Object[jsTypeParam] {
@@ -54,7 +62,7 @@ func newArgumentHelper(ctx *GojaContext, c goja.FunctionCall) *callbackContext {
 		instance = wrapped.Export()
 	}
 	return &callbackContext{
-		gojaCallbackScope{ctx, this, instance},
+		newCallbackScope(ctx, this, instance),
 		c.Arguments, 0}
 }
 

@@ -29,13 +29,18 @@ type v8CallbackInfo interface {
 }
 
 type v8CallbackScope struct {
-	host   *V8ScriptHost
+	v8Scope
 	v8Info v8CallbackInfo
+}
+
+func newV8CallbackScope(host *V8ScriptHost, info v8CallbackInfo) v8CallbackScope {
+	return v8CallbackScope{newV8Scope(host.mustGetContext(info.Context())), info}
 }
 
 func (h v8CallbackScope) This() jsObject {
 	return newV8Object(h.ScriptCtx(), h.v8Info.This())
 }
+
 func (h v8CallbackScope) iso() *v8.Isolate { return h.ScriptCtx().host.iso }
 
 func (h v8CallbackScope) ScriptCtx() *V8ScriptContext {
@@ -43,10 +48,6 @@ func (h v8CallbackScope) ScriptCtx() *V8ScriptContext {
 }
 
 func (c v8CallbackScope) Scope() js.Scope[jsTypeParam] { return newV8Scope(c.ScriptCtx()) }
-
-func (c v8CallbackScope) ValueFactory() jsValueFactory {
-	return v8ValueFactory{c.host, c.ScriptCtx()}
-}
 
 func (h v8CallbackScope) Instance() (any, error) {
 	if h.v8Info.This().InternalFieldCount() >= 1 {
@@ -71,7 +72,7 @@ type v8CallbackContext struct {
 
 func newCallbackContext(host *V8ScriptHost, info *v8.FunctionCallbackInfo) jsCallbackContext {
 	return &v8CallbackContext{
-		v8CallbackScope: v8CallbackScope{host, info},
+		v8CallbackScope: newV8CallbackScope(host, info),
 		v8Info:          info,
 		host:            host,
 	}

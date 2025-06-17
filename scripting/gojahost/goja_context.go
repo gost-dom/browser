@@ -159,7 +159,7 @@ func (class *gojaClass) installInstance(this **goja.Object, native any) {
 			ctx:   class.ctx,
 			cbs:   *class.namedHandlerCallbacks,
 			this:  obj,
-			scope: gojaCallbackScope{class.ctx, proto, native},
+			scope: newCallbackScope(class.ctx, proto, native),
 		})
 		(*this).SetPrototype(class.prototype)
 	}
@@ -174,7 +174,7 @@ func (class *gojaClass) installInstance(this **goja.Object, native any) {
 			ctx:   class.ctx,
 			cbs:   *class.indexedHandler,
 			this:  *this,
-			scope: gojaCallbackScope{class.ctx, proto, native},
+			scope: newCallbackScope(class.ctx, proto, native),
 		})
 		(*this).SetPrototype(proto)
 	}
@@ -210,7 +210,7 @@ func newGojaCallbackContext(
 	call goja.ConstructorCall,
 ) *callbackContext {
 	return &callbackContext{
-		gojaCallbackScope{ctx, call.This, nil},
+		newCallbackScope(ctx, call.This, nil),
 		call.Arguments, 0,
 	}
 }

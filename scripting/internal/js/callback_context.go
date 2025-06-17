@@ -55,6 +55,8 @@ type ArgumentConsumer[T any] interface {
 }
 
 type CallbackScope[T any] interface {
+	Scope[T]
+
 	// Instance returns the Go value that is wrapped by "this", with "this"
 	// referring the the JavaScript value of "this". If the object does not
 	// contain an internal Go value an [ErrNoInternalValue] error is returned.
