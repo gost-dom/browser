@@ -91,49 +91,56 @@ func (h *v8CallbackContext) ConsumeArg() (jsValue, bool) {
 	if arg.IsUndefined() {
 		return nil, true
 	}
-	return newV8Value(h.ScriptCtx(), arg), true
+	return h.toJSValue(arg), true
 }
 
-/* -------- v8ValueFactory -------- */
+/* -------- v8Scope -------- */
 
-type v8ValueFactory struct {
-	host *V8ScriptHost
-	ctx  *V8ScriptContext
+type v8Scope struct {
+	*V8ScriptContext
 }
 
-func (f v8ValueFactory) iso() *v8go.Isolate { return f.host.iso }
-func (f v8ValueFactory) Null() jsValue      { return newV8Value(f.ctx, v8go.Null(f.iso())) }
+func newV8Scope(ctx *V8ScriptContext) v8Scope {
+	return v8Scope{ctx}
+}
 
-func (f v8ValueFactory) NewString(val string) jsValue { return f.newV8Value(val) }
-func (f v8ValueFactory) NewInt32(val int32) jsValue   { return f.newV8Value(val) }
-func (f v8ValueFactory) NewUint32(val uint32) jsValue { return f.newV8Value(val) }
-func (f v8ValueFactory) NewInt64(val int64) jsValue   { return f.newV8Value(val) }
-func (f v8ValueFactory) NewBoolean(val bool) jsValue  { return f.newV8Value(val) }
+func (s v8Scope) Window() html.Window  { return s.window }
+func (s v8Scope) GlobalThis() jsObject { return s.global }
+func (s v8Scope) Clock() *clock.Clock  { return s.clock }
 
-func (f v8ValueFactory) JSONStringify(val jsValue) string {
-	r, err := v8.JSONStringify(f.ctx.v8ctx, toV8Value(val))
+func (f v8Scope) iso() *v8go.Isolate { return f.host.iso }
+func (f v8Scope) Null() jsValue      { return f.toJSValue(v8go.Null(f.iso())) }
+
+func (f v8Scope) NewString(val string) jsValue { return f.newV8Value(val) }
+func (f v8Scope) NewInt32(val int32) jsValue   { return f.newV8Value(val) }
+func (f v8Scope) NewUint32(val uint32) jsValue { return f.newV8Value(val) }
+func (f v8Scope) NewInt64(val int64) jsValue   { return f.newV8Value(val) }
+func (f v8Scope) NewBoolean(val bool) jsValue  { return f.newV8Value(val) }
+
+func (f v8Scope) JSONStringify(val jsValue) string {
+	r, err := v8.JSONStringify(f.v8ctx, toV8Value(val))
 	if err != nil {
 		panic(fmt.Sprintf("JSONStringify: unexpected error: %v. %s", err, constants.BUG_ISSUE_URL))
 	}
 	return r
 }
 
-func (f v8ValueFactory) JSONParse(val string) (jsValue, error) {
-	v, err := v8.JSONParse(f.ctx.v8ctx, val)
-	return newV8Value(f.ctx, v), err
+func (f v8Scope) JSONParse(val string) (jsValue, error) {
+	v, err := v8.JSONParse(f.v8ctx, val)
+	return f.toJSValue(v), err
 
 }
 
-func (f v8ValueFactory) NewArray(values ...jsValue) jsValue {
+func (f v8Scope) NewArray(values ...jsValue) jsValue {
 	// Total hack, v8go doesn't expose Array values, so we polyfill the engine
 	var err error
-	arrayOf, err := f.ctx.v8ctx.RunScript("Array.of", "gost-polyfills-array")
+	arrayOf, err := f.v8ctx.RunScript("Array.of", "gost-polyfills-array")
 	if err != nil {
 		panic(err)
 	}
-	arrVal := newV8Value(f.ctx, arrayOf)
+	arrVal := f.toJSValue(arrayOf)
 	if fn, ok := arrVal.AsFunction(); ok {
-		res, err := fn.Call(f.ctx.global, values...)
+		res, err := fn.Call(f.global, values...)
 		if err != nil {
 			panic(err)
 		}
@@ -143,19 +150,23 @@ func (f v8ValueFactory) NewArray(values ...jsValue) jsValue {
 	}
 }
 
-func (f v8ValueFactory) NewIterator(
+func (f v8Scope) NewIterator(
 	i iter.Seq2[js.Value[jsTypeParam], error],
 ) js.Value[jsTypeParam] {
-	return f.host.iterator.newIterator(newV8Scope(f.ctx), i)
+	return f.host.iterator.newIterator(newV8Scope(f.V8ScriptContext), i)
 }
 
-func (f v8ValueFactory) NewTypeError(msg string) error {
+func (f v8Scope) NewTypeError(msg string) error {
 	return v8go.NewTypeError(f.iso(), msg)
+}
+
+func (f v8Scope) toJSValue(val *v8go.Value) jsValue {
+	return newV8Value(f.V8ScriptContext, val)
 }
 
 // Creates a value in V8 from any value. This variant is hidden, as not all
 // types are valid, and for type safety reasons, only valid types are exposed.
-func (f v8ValueFactory) newV8Value(val any) jsValue {
+func (f v8Scope) newV8Value(val any) jsValue {
 	// I'm unsure _when_ this could fail. AFAIK, v8 could throw an error if there is
 	// currently an uncaught exception; but that scenario shouldn't occur from v8go.
 	//
@@ -170,7 +181,7 @@ func (f v8ValueFactory) newV8Value(val any) jsValue {
 			),
 		)
 	}
-	return newV8Value(f.ctx, res)
+	return f.toJSValue(res)
 }
 
 func wrapV8Callback(
@@ -194,25 +205,6 @@ func wrapV8Callback(
 		},
 	)
 }
-
-/* -------- v8Scope -------- */
-
-type v8Scope struct {
-	v8ValueFactory
-	host *V8ScriptHost
-	*V8ScriptContext
-}
-
-func newV8Scope(ctx *V8ScriptContext) v8Scope {
-	return v8Scope{
-		v8ValueFactory{host: ctx.host, ctx: ctx},
-		ctx.host, ctx,
-	}
-}
-
-func (s v8Scope) Window() html.Window  { return s.window }
-func (s v8Scope) GlobalThis() jsObject { return s.global }
-func (s v8Scope) Clock() *clock.Clock  { return s.clock }
 
 /* -------- v8Constructable -------- */
 
