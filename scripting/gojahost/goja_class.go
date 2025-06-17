@@ -143,8 +143,7 @@ func (o gojaDynamicObject) Get(key string) goja.Value {
 	if o.cbs.Getter == nil {
 		return nil
 	}
-	f := o.scope.ValueFactory()
-	s := f.NewString(key)
+	s := o.scope.NewString(key)
 	res, err := o.cbs.Getter(o.scope, s)
 	if err == js.NotIntercepted {
 		return nil
@@ -158,7 +157,7 @@ func (o gojaDynamicObject) Get(key string) goja.Value {
 func (o gojaDynamicObject) Delete(key string) (res bool) {
 	var err error
 	if o.cbs.Deleter != nil {
-		res, err = o.cbs.Deleter(o.scope, o.scope.ValueFactory().NewString(key))
+		res, err = o.cbs.Deleter(o.scope, o.scope.NewString(key))
 		if err == js.NotIntercepted {
 			return false
 		}
@@ -173,7 +172,7 @@ func (o gojaDynamicObject) Has(key string) (res bool) {
 	if o.cbs.Getter == nil {
 		panic("Must have a getter")
 	}
-	_, err := o.cbs.Getter(o.scope, o.scope.ValueFactory().NewString(key))
+	_, err := o.cbs.Getter(o.scope, o.scope.NewString(key))
 	if err == js.NotIntercepted {
 		return false
 	}
@@ -205,7 +204,7 @@ func (o gojaDynamicObject) Set(key string, val goja.Value) bool {
 	if o.cbs.Setter == nil {
 		return false
 	}
-	err := o.cbs.Setter(o.scope, o.scope.ValueFactory().NewString(key), newGojaValue(o.ctx, val))
+	err := o.cbs.Setter(o.scope, o.scope.NewString(key), newGojaValue(o.ctx, val))
 	if err == js.NotIntercepted {
 		return false
 	}
