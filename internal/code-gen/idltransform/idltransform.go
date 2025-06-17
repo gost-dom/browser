@@ -3,12 +3,35 @@ package idltransform
 import (
 	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/packagenames"
+	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )
 
 type IdlType idl.Type
 
+func packageName(name string) string {
+	switch name {
+	case "EventHandler", "EventTarget":
+		return packagenames.Events
+	case "DOMTokenList", "NodeList", "Node":
+		return packagenames.Dom
+	default:
+		return ""
+	}
+
+}
+
+func TypeGen(name string) g.Generator {
+	if pkg := packageName(name); pkg != "" {
+		return g.NewTypePackage(name, pkg)
+	}
+	return g.Id(name)
+}
+
 func (s IdlType) Generate() *jen.Statement {
+	if pkg := packageName(s.Name); pkg != "" {
+		return jen.Qual(pkg, s.Name)
+	}
 	switch s.Kind {
 	case idl.KindSequence:
 		return s.generateSequence()

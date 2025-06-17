@@ -33,7 +33,7 @@ func (i IdlInterface) Generate() *jen.Statement {
 		2*len(i.Attributes)+1, // Make room for getters and setters
 	)
 	if i.Inherits != "" {
-		fields = append(fields, g.Id(i.Inherits))
+		fields = append(fields, idltransform.TypeGen(i.Inherits))
 	}
 
 	for _, incl := range i.Includes {

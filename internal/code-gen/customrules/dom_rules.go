@@ -3,6 +3,9 @@ package customrules
 import "github.com/gost-dom/webref/idl"
 
 var domRules = SpecRules{
+	"AbortSignal": {Operations: OperationRules{
+		"throwIfAborted": {HasError: true},
+	}},
 	"Event": {OutputType: OutputTypeStruct},
 	"EventTarget": {Operations: OperationRules{
 		"addEventListener":    {Arguments: ArgumentRules{"options": {Variadic: true}}},
