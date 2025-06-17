@@ -14,7 +14,7 @@ func initDOMParser[T any](ft js.Class[T]) {
 	ft.CreatePrototypeMethod("parseFromString", domParserParseFromString)
 }
 func domParserParseFromString[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	window := cbCtx.Scope().Window()
+	window := cbCtx.Window()
 	html, err0 := js.ConsumeArgument(cbCtx, "html", nil, codec.DecodeString)
 	contentType, err1 := js.ConsumeArgument(cbCtx, "contentType", nil, codec.DecodeString)
 	if err := errors.Join(err0, err1); err != nil {

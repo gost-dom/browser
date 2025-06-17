@@ -24,10 +24,10 @@ func installEventLoopGlobals[T any](host js.ScriptEngine[T]) {
 		func(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 			f, err := js.ConsumeArgument(cbCtx, "callback", nil, codec.DecodeFunction)
 			if err == nil {
-				clock := cbCtx.Scope().Clock()
+				clock := cbCtx.Clock()
 				clock.AddSafeMicrotask(func() {
-					if _, err := f.Call(cbCtx.Scope().GlobalThis()); err != nil {
-						js.UnhandledError(cbCtx.Scope(), err)
+					if _, err := f.Call(cbCtx.GlobalThis()); err != nil {
+						js.UnhandledError(cbCtx, err)
 					}
 				})
 			}
@@ -42,11 +42,11 @@ func installEventLoopGlobals[T any](host js.ScriptEngine[T]) {
 			if err != nil {
 				return nil, err
 			}
-			clock := cbCtx.Scope().Clock()
+			clock := cbCtx.Clock()
 			handle := clock.AddSafeTask(
 				func() {
-					if _, err := f.Call(cbCtx.Scope().GlobalThis()); err != nil {
-						js.UnhandledError(cbCtx.Scope(), err)
+					if _, err := f.Call(cbCtx.GlobalThis()); err != nil {
+						js.UnhandledError(cbCtx, err)
 					}
 				},
 				time.Duration(delay)*time.Millisecond,
@@ -58,7 +58,7 @@ func installEventLoopGlobals[T any](host js.ScriptEngine[T]) {
 		func(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 			handle, err := js.ConsumeArgument(cbCtx, "handle", nil, codec.DecodeInt)
 			if err == nil {
-				cbCtx.Scope().Clock().Cancel(clock.TaskHandle(handle))
+				cbCtx.Clock().Cancel(clock.TaskHandle(handle))
 			}
 			return nil, nil
 		})
@@ -71,10 +71,10 @@ func installEventLoopGlobals[T any](host js.ScriptEngine[T]) {
 			if err != nil {
 				return nil, err
 			}
-			handle := cbCtx.Scope().Clock().SetInterval(
+			handle := cbCtx.Clock().SetInterval(
 				func() {
-					if _, err := f.Call(cbCtx.Scope().GlobalThis()); err != nil {
-						js.UnhandledError(cbCtx.Scope(), err)
+					if _, err := f.Call(cbCtx.GlobalThis()); err != nil {
+						js.UnhandledError(cbCtx, err)
 					}
 				},
 				time.Duration(delay)*time.Millisecond,
@@ -86,7 +86,7 @@ func installEventLoopGlobals[T any](host js.ScriptEngine[T]) {
 		func(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 			handle, err := js.ConsumeArgument(cbCtx, "handle", nil, codec.DecodeInt)
 			if err == nil {
-				cbCtx.Scope().Clock().Cancel(clock.TaskHandle(handle))
+				cbCtx.Clock().Cancel(clock.TaskHandle(handle))
 			}
 			return nil, err
 		})

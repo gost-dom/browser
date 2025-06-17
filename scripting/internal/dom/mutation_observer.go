@@ -16,9 +16,8 @@ type MutationCallback[T any] struct {
 
 func (cb MutationCallback[T]) HandleMutation(recs []mutation.Record, obs *mutation.Observer) {
 	v8Recs, _ := toSequenceMutationRecord(cb.ctx, recs)
-	scope := cb.ctx.Scope()
-	if _, err := cb.function.Call(scope.GlobalThis(), v8Recs); err != nil {
-		js.UnhandledError(scope, err)
+	if _, err := cb.function.Call(cb.ctx.GlobalThis(), v8Recs); err != nil {
+		js.UnhandledError(cb.ctx, err)
 	}
 }
 
@@ -26,7 +25,7 @@ func (w MutationObserver[T]) CreateInstance(
 	cbCtx js.CallbackContext[T],
 	cb mutation.Callback,
 ) (js.Value[T], error) {
-	return codec.EncodeConstrucedValue(cbCtx, mutation.NewObserver(cbCtx.Scope().Clock(), cb))
+	return codec.EncodeConstrucedValue(cbCtx, mutation.NewObserver(cbCtx.Clock(), cb))
 }
 
 func (w MutationObserver[T]) decodeMutationCallback(
@@ -79,7 +78,7 @@ func toSequenceMutationRecord[T any](
 	records []mutation.Record,
 ) (js.Value[T], error) {
 	res := make([]js.Value[T], len(records))
-	prototype := cbCtx.Scope().Constructor("MutationRecord")
+	prototype := cbCtx.Constructor("MutationRecord")
 	for i, r := range records {
 		rec, err := prototype.NewInstance(&r)
 		if err != nil {

@@ -47,10 +47,6 @@ type callbackContext struct {
 	argIndex int
 }
 
-func (c gojaCallbackScope) Scope() js.Scope[jsTypeParam] {
-	return newGojaScope(c.ctx)
-}
-
 func (c gojaCallbackScope) ValueFactory() js.ValueFactory[jsTypeParam] {
 	return newGojaValueFactory(c.ctx)
 }

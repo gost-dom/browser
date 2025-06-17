@@ -23,9 +23,9 @@ func (l v8EventListener[T]) HandleEvent(e *event.Event) error {
 	f := l.val
 	event, err := codec.EncodeEntity(l.ctx, e)
 	if err == nil {
-		global := l.ctx.Scope().GlobalThis()
+		global := l.ctx.GlobalThis()
 		_, err1 := f.Call(global, event)
-		err2 := l.ctx.Scope().Clock().Tick()
+		err2 := l.ctx.Clock().Tick()
 		err = errors.Join(err1, err2)
 	}
 	return err

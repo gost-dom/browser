@@ -69,11 +69,11 @@ func (i Iterator[T, U]) InstallPrototype(class Class[U]) {
 func (i Iterator[T, U]) entries(cbCtx CallbackContext[U]) (Value[U], error) {
 	instance, err1 := As[iterable[T]](cbCtx.Instance())
 	if err1 == nil {
-		return i.NewIterator(cbCtx.Scope(), instance.All())
+		return i.NewIterator(cbCtx, instance.All())
 	}
 	sliceIter, err2 := As[sliceIter[T]](cbCtx.Instance())
 	if err2 == nil {
-		return i.newIteratorOfSlice(cbCtx.Scope(), sliceIter.All())
+		return i.newIteratorOfSlice(cbCtx, sliceIter.All())
 	}
 	return nil, fmt.Errorf("iterator.getEntries: %w", errors.Join(err1, err2))
 }
@@ -107,8 +107,8 @@ func (i Iterator2[K, V, U]) mapItems(
 	items iter.Seq2[K, V]) iter.Seq2[Value[U], error] {
 	return func(yield func(Value[U], error) bool) {
 		for k, v := range items {
-			kk, err1 := i.keyLookup(cbCtx.Scope(), k)
-			vv, err2 := i.valueLookup(cbCtx.Scope(), v)
+			kk, err1 := i.keyLookup(cbCtx, k)
+			vv, err2 := i.valueLookup(cbCtx, v)
 			err := errors.Join(err1, err2)
 			res := cbCtx.ValueFactory().NewArray(kk, vv) // Safe to call on nil jsValues
 			if !yield(res, err) {
@@ -148,14 +148,14 @@ func (i Iterator2[K, V, U]) InstallPrototype(cls Class[U]) {
 		if err != nil {
 			return nil, err
 		}
-		return keys.NewIterator(cbCtx.Scope(), pairKeys(instance.All()))
+		return keys.NewIterator(cbCtx, pairKeys(instance.All()))
 	})
 	cls.CreatePrototypeMethod("values", func(cbCtx CallbackContext[U]) (Value[U], error) {
 		instance, err := As[iterable2[K, V]](cbCtx.Instance())
 		if err != nil {
 			return nil, err
 		}
-		return values.NewIterator(cbCtx.Scope(), pairValues(instance.All()))
+		return values.NewIterator(cbCtx, pairValues(instance.All()))
 	})
 }
 

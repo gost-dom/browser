@@ -13,7 +13,7 @@ func (w *Document[T]) CustomInitializer(class js.Class[T]) {
 	// tmpl := constructor.InstanceTemplate()
 	class.CreateInstanceAttribute("location",
 		func(ctx js.CallbackContext[T]) (js.Value[T], error) {
-			return ctx.Scope().GlobalThis().Get("location")
+			return ctx.GlobalThis().Get("location")
 		}, nil)
 	class.CreatePrototypeAttribute("head", w.head, nil)
 	class.CreatePrototypeAttribute("body", w.body, nil)
@@ -23,7 +23,7 @@ func (w *Document[T]) CustomInitializer(class js.Class[T]) {
 func (w *Document[T]) CreateInstance(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	res := dom.NewDocument(nil)
 	cbCtx.This().SetNativeValue(res)
-	cbCtx.Scope().SetValue(res, cbCtx.This())
+	cbCtx.SetValue(res, cbCtx.This())
 	return nil, nil
 }
 

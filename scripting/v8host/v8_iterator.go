@@ -40,7 +40,7 @@ func (i v8Iterator) cloneIterator(cbCtx jsCallbackContext) (jsValue, error) {
 		return nil, err
 	}
 
-	return i.newIterator(cbCtx.Scope().(v8Scope), instance.items), nil
+	return i.newIterator(cbCtx.(*v8CallbackContext).v8Scope, instance.items), nil
 }
 
 type jsIteratorInstance struct {

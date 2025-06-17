@@ -66,7 +66,6 @@ type CallbackScope[T any] interface {
 	// values.
 	ValueFactory() ValueFactory[T]
 
-	Scope() Scope[T]
 	Logger() *slog.Logger
 	This() Object[T]
 }

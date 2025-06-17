@@ -47,7 +47,7 @@ func (xhr XMLHttpRequest[T]) CreateInstance(
 	cbCtx js.CallbackContext[T],
 ) (js.Value[T], error) {
 	this := cbCtx.This()
-	result := inthtml.NewXmlHttpRequest(cbCtx.Scope().Window(), cbCtx.Scope().Clock())
+	result := inthtml.NewXmlHttpRequest(cbCtx.Window(), cbCtx.Clock())
 	result.SetCatchAllHandler(event.NewEventHandlerFunc(func(event *event.Event) error {
 		prop := "on" + event.Type
 		handler, err := this.Get(prop)

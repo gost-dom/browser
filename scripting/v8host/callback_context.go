@@ -47,8 +47,6 @@ func (h v8CallbackScope) ScriptCtx() *V8ScriptContext {
 	return h.host.mustGetContext(h.v8Info.Context())
 }
 
-func (c v8CallbackScope) Scope() js.Scope[jsTypeParam] { return newV8Scope(c.ScriptCtx()) }
-
 func (h v8CallbackScope) Instance() (any, error) {
 	if h.v8Info.This().InternalFieldCount() >= 1 {
 		handle := h.v8Info.This().GetInternalField(0).ExternalHandle()

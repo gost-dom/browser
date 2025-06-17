@@ -40,7 +40,7 @@ func (e Element[T]) classList(cbCtx js.CallbackContext[T]) (js.Value[T], error) 
 		return nil, err
 	}
 	cl := instance.ClassList()
-	tokenList := cbCtx.Scope().Constructor("DOMTokenList")
+	tokenList := cbCtx.Constructor("DOMTokenList")
 	return tokenList.NewInstance(cl)
 }
 

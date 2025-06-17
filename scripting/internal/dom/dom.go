@@ -11,7 +11,7 @@ func (w ParentNode[T]) decodeNodeOrText(
 	val js.Value[T],
 ) (dom.Node, error) {
 	if val.IsString() {
-		return cbCtx.Scope().Window().Document().CreateTextNode(val.String()), nil
+		return cbCtx.Window().Document().CreateTextNode(val.String()), nil
 	}
 	return codec.DecodeNode(cbCtx, val)
 }

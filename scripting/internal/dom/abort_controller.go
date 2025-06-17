@@ -28,5 +28,5 @@ func (w AbortController[T]) toAbortSignal(
 	if err != nil {
 		return nil, err
 	}
-	return cbCtx.Scope().Constructor("AbortSignal").NewInstance(instance.Signal())
+	return cbCtx.Constructor("AbortSignal").NewInstance(instance.Signal())
 }

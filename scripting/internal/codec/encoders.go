@@ -9,7 +9,7 @@ import (
 // a wrapper already has been created, that wrapper is returned; otherwise a new
 // object is created with the correct prototype configured.
 func EncodeEntity[T any](cbCtx js.CallbackScope[T], e entity.ObjectIder) (js.Value[T], error) {
-	return EncodeEntityScoped(cbCtx.Scope(), e)
+	return EncodeEntityScoped(cbCtx, e)
 }
 
 // TODO: Embed scope in CallbackScope, so only one function is necessary
@@ -80,7 +80,7 @@ func EncodeConstrucedValue[T any](cbCtx js.CallbackScope[T], val any) (js.Value[
 	// TODO: Figure out if this function should survive
 	cbCtx.This().SetNativeValue(val)
 	if e, ok := val.(entity.ObjectIder); ok {
-		cbCtx.Scope().SetValue(e, cbCtx.This())
+		cbCtx.SetValue(e, cbCtx.This())
 	}
 	return nil, nil
 }
