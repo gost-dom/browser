@@ -13,7 +13,7 @@ import (
 func NewStringAttribute(name string) IdlInterfaceAttribute {
 	return IdlInterfaceAttribute{
 		Name: name,
-		Type: idltransform.IdlType(idl.Type{Name: "DOMString"}),
+		Type: idltransform.NewIdlType(idl.Type{Name: "DOMString"}),
 	}
 }
 

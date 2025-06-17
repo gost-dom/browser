@@ -32,10 +32,18 @@ func GetPackageGeneratorSpecs(packageName string) (result GeneratorConfig, err e
 	return
 }
 
+func packageName(name string) string {
+	switch name {
+	case "dominterfaces":
+		return packagenames.DomInterfaces
+	}
+	return fmt.Sprintf("%s/%s", packagenames.BASE_PKG, name)
+
+}
+
 func CreatePackageGenerators(name string) (res []FileGeneratorSpec, err error) {
 	if config, err := GetPackageGeneratorSpecs(name); err == nil {
-		packageName := fmt.Sprintf("%s/%s", packagenames.BASE_PKG, name)
-		return createGenerators(config, packageName)
+		return createGenerators(config, packageName(name))
 	}
 	return
 }

@@ -14,8 +14,8 @@ var DOMBooleanType = idl.Type{Name: "boolean"}
 
 func TestIdlTypeGeneratesCorrespondingGoType(t *testing.T) {
 	g := gomega.NewWithT(t)
-	g.Expect(idltransform.IdlType(DOMStringType)).To(HaveRendered("string"))
-	g.Expect(idltransform.IdlType(DOMBooleanType)).To(HaveRendered("bool"))
+	g.Expect(idltransform.NewIdlType(DOMStringType)).To(HaveRendered("string"))
+	g.Expect(idltransform.NewIdlType(DOMBooleanType)).To(HaveRendered("bool"))
 }
 
 func TestIdlTypeGeneratesSequenceTypes(t *testing.T) {
@@ -24,5 +24,5 @@ func TestIdlTypeGeneratesSequenceTypes(t *testing.T) {
 		Kind:      idl.KindSequence,
 		TypeParam: &DOMStringType,
 	}
-	g.Expect(idltransform.IdlType(stringSequence)).To(HaveRendered("[]string"))
+	g.Expect(idltransform.NewIdlType(stringSequence)).To(HaveRendered("[]string"))
 }

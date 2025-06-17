@@ -24,6 +24,7 @@ type IdlInterface struct {
 	Operations     []IdlInterfaceOperation
 	Includes       []IdlInterfaceInclude
 	IterableTypes  []idltransform.IdlType
+	TargetPkg      string
 }
 
 func (i IdlInterface) Generate() *jen.Statement {
@@ -33,7 +34,7 @@ func (i IdlInterface) Generate() *jen.Statement {
 		2*len(i.Attributes)+1, // Make room for getters and setters
 	)
 	if i.Inherits != "" {
-		fields = append(fields, idltransform.TypeGen(i.Inherits))
+		fields = append(fields, idltransform.TypeGen(i.Inherits, i.TargetPkg))
 	}
 
 	for _, incl := range i.Includes {
@@ -126,11 +127,16 @@ type IdlInterfaceOperation struct {
 	Arguments    []IdlInterfaceOperationArgument
 	ReturnType   idltransform.IdlType
 	Rules        customrules.OperationRule
+	Target       string
 }
 
 func (o IdlInterfaceOperation) Stringifier() bool { return o.IdlOperation.Stringifier }
 func (o IdlInterfaceOperation) Name() string      { return o.IdlOperation.Name }
 func (o IdlInterfaceOperation) Static() bool      { return o.IdlOperation.Static }
+
+func (o IdlInterfaceOperation) newIdlType(t idl.Type) idltransform.IdlType {
+	return idltransform.IdlType{Type: t, TargetPackage: o.Target}
+}
 
 func (o IdlInterfaceOperation) Generate() *jen.Statement {
 	if o.Stringifier() && o.Name() == "" || o.Static() {
@@ -144,9 +150,9 @@ func (o IdlInterfaceOperation) Generate() *jen.Statement {
 		if a.Ignore() {
 			continue
 		}
-		var arg g.Generator = idltransform.IdlType(a.Type())
+		var arg g.Generator = o.newIdlType(a.Type())
 		if a.Rules.OverridesType() {
-			arg = idltransform.IdlType(a.Rules.Type)
+			arg = o.newIdlType(a.Rules.Type)
 		}
 		if a.Variadic() {
 			arg = g.Raw(jen.Op("...").Add(arg.Generate()))

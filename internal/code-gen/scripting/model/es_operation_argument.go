@@ -30,7 +30,7 @@ func (a ESOperationArgument) VariadicInGo() bool {
 }
 
 func (a ESOperationArgument) idlType() idltransform.IdlType {
-	return idltransform.IdlType(a.IdlArg.Type)
+	return idltransform.NewIdlType(a.IdlArg.Type)
 }
 
 func (a ESOperationArgument) IsString() bool  { return a.idlType().IsString() }

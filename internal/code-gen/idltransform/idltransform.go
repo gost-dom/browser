@@ -7,7 +7,16 @@ import (
 	"github.com/gost-dom/webref/idl"
 )
 
-type IdlType idl.Type
+// IdlType wraps an [idl.Type] value and can generate the proper type
+// specification. The TargetPackage field is used to avoid creating a qualified
+// type when generating code in the package the type is defined
+type IdlType struct {
+	idl.Type
+	TargetPackage string
+}
+
+// Creates a new IdlType that will always be qualified
+func NewIdlType(t idl.Type) IdlType { return IdlType{t, ""} }
 
 func InternalPackage(name string) string {
 	switch name {
@@ -23,15 +32,15 @@ func InternalPackage(name string) string {
 
 }
 
-func TypeGen(name string) g.Generator {
-	if pkg := InternalPackage(name); pkg != "" {
+func TypeGen(name, targetPkg string) g.Generator {
+	if pkg := InternalPackage(name); pkg != "" && pkg != targetPkg {
 		return g.NewTypePackage(name, pkg)
 	}
 	return g.Id(name)
 }
 
 func (s IdlType) Generate() *jen.Statement {
-	if pkg := InternalPackage(s.Name); pkg != "" {
+	if pkg := InternalPackage(s.Name); pkg != "" && pkg != s.TargetPackage {
 		return jen.Qual(pkg, s.Name)
 	}
 	switch s.Kind {
@@ -57,7 +66,10 @@ func (s IdlType) Generate() *jen.Statement {
 }
 
 // StructFieldType represents the type of a struct field
-type StructFieldType idl.Type
+type StructFieldType struct {
+	idl.Type
+	TargetPackage string
+}
 
 func (s StructFieldType) Generate() *jen.Statement {
 	if IdlType(s).IsString() && s.Nullable {
@@ -106,5 +118,5 @@ func (t IdlType) generateSequence() *jen.Statement {
 	if t.TypeParam == nil {
 		panic("IdlType.generateSequence: TypeParameter is nil for sequence type")
 	}
-	return jen.Op("[]").Add(IdlType(*t.TypeParam).Generate())
+	return jen.Op("[]").Add(IdlType{*t.TypeParam, t.TargetPackage}.Generate())
 }

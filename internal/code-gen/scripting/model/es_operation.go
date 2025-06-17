@@ -108,7 +108,7 @@ func (o ESOperation) Encoder(
 		return internal.BindValues(receiver.Field(e))
 	}
 	t := o.RetType
-	idlType := idltransform.IdlType(t)
+	idlType := idltransform.NewIdlType(t)
 	switch {
 	case idlType.IsInt():
 		return internal.BindValues(encodeInt, cbCtx)
@@ -150,7 +150,7 @@ func (o ESOperation) RetValues(data ESConstructorData) []g.Generator {
 	t := o.RetType
 	res := g.Id("result")
 	hasValue := g.Id("hasValue")
-	if t.Nullable && !idltransform.IdlType(t).Nillable() {
+	if t.Nullable && !idltransform.NewIdlType(t).Nillable() {
 		if data.CustomRule.OutputType == customrules.OutputTypeStruct {
 			return g.List(res)
 		} else {

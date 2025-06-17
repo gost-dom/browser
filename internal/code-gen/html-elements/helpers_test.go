@@ -24,7 +24,7 @@ func getFileGenerator(packageName, targetFile string) (generators.Generator, err
 	packageSpecs, _ := htmlelements.GetPackageGeneratorSpecs(packageName)
 	for outputFile, spec := range packageSpecs {
 		if outputFile == targetFile {
-			return htmlelements.CreateGenerator(spec)
+			return htmlelements.CreateGenerator(spec, packageName)
 		}
 	}
 	return nil, errors.New("Unknown package")
@@ -37,7 +37,7 @@ func getIdlInterfaceGenerator(
 	packageSpecs, _ := htmlelements.GetPackageGeneratorSpecs(packageName)
 	for _, v := range packageSpecs {
 		if v.InterfaceName == interfaceName {
-			g, err := htmlelements.CreateGenerator(v)
+			g, err := htmlelements.CreateGenerator(v, packageName)
 			return g, err
 		}
 	}

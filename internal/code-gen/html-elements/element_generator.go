@@ -50,16 +50,22 @@ type HTMLGeneratorReq struct {
 
 type baseGenerator struct {
 	req     HTMLGeneratorReq
+	target  string
 	idlType idl.Interface
 	type_   g.Type
 	rules   customrules.InterfaceRule
 }
 
-func CreateGenerator(req HTMLGeneratorReq) (baseGenerator, error) {
+func (g baseGenerator) newIdlType(t idl.Type) idltransform.IdlType {
+	return idltransform.IdlType{Type: t, TargetPackage: g.target}
+}
+
+func CreateGenerator(req HTMLGeneratorReq, target string) (baseGenerator, error) {
 	html, err := idl.Load(req.SpecName)
 	specRules := customrules.GetSpecRules(req.SpecName)
 	return baseGenerator{
 		req,
+		target,
 		html.Interfaces[req.InterfaceName],
 		g.NewType(toStructName(req.InterfaceName)),
 		specRules[req.InterfaceName],
@@ -103,7 +109,10 @@ func (gen baseGenerator) GenerateReadonlyStruct() g.Generator {
 			)
 		}
 		field := internal.UpperCaseFirstLetter(string(a.Name))
-		result.Field(g.Id(field), idltransform.StructFieldType(a.Type))
+		result.Field(
+			g.Id(field),
+			idltransform.StructFieldType(gen.newIdlType(a.Type)),
+		)
 	}
 	return result
 }
@@ -119,11 +128,12 @@ func (gen baseGenerator) GenerateInterface() g.Generator {
 	interfaces[0] = gen.idlType
 	copy(interfaces[1:], gen.idlType.Includes)
 	result := IdlInterface{
-		SpecName: gen.req.SpecName,
-		Name:     gen.idlType.Name,
-		Inherits: gen.idlType.InternalSpec.Inheritance,
-		Includes: includes,
-		Rules:    gen.rules,
+		SpecName:  gen.req.SpecName,
+		Name:      gen.idlType.Name,
+		Inherits:  gen.idlType.InternalSpec.Inheritance,
+		Includes:  includes,
+		Rules:     gen.rules,
+		TargetPkg: gen.target,
 	}
 
 	for idx, i := range gen.idlType.Includes {
@@ -144,7 +154,7 @@ func (gen baseGenerator) GenerateInterface() g.Generator {
 		}
 		attributes = append(attributes, IdlInterfaceAttribute{
 			Name:     a.Name,
-			Type:     idltransform.IdlType(attrType),
+			Type:     gen.newIdlType(attrType),
 			ReadOnly: a.Readonly,
 		})
 	}
@@ -171,11 +181,17 @@ func (gen baseGenerator) GenerateInterface() g.Generator {
 		}
 		operations = append(
 			operations,
-			IdlInterfaceOperation{o, arguments, idltransform.IdlType(o.ReturnType), operationRule},
+			IdlInterfaceOperation{
+				o,
+				arguments,
+				gen.newIdlType(o.ReturnType),
+				operationRule,
+				gen.target,
+			},
 		)
 	}
 	for i, t := range idlInterface.IterableTypes {
-		iterableTypes[i] = idltransform.IdlType(t)
+		iterableTypes[i] = gen.newIdlType(t)
 	}
 	result.Attributes = attributes
 	result.Operations = operations
@@ -280,7 +296,7 @@ func createGenerators(
 	errs := make([]error, len(config))
 	index := 0
 	for k, v := range config {
-		generator, err := CreateGenerator(v)
+		generator, err := CreateGenerator(v, packageName)
 		result[index] = FileGeneratorSpec{
 			k,
 			packageName,
