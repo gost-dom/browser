@@ -22,6 +22,7 @@ func Bootstrap[T any](reg js.ClassBuilder[T]) {
 	xhr.Bootstrap(reg)
 	url.Bootstrap(reg)
 	uievents.Bootstrap(reg)
+	fetch.Bootstrap(reg)
 
 	js.RegisterClass(reg, "File", "", dom.NewEvent)
 	js.RegisterClass(reg, "CustomEvent", "Event", dom.NewCustomEvent)

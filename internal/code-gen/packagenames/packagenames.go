@@ -18,6 +18,7 @@ const (
 	Gojahost       = BASE_PKG + "/scripting/gojahost"
 	JSDom          = BASE_PKG + "/scripting/internal/dom"
 	Log            = BASE_PKG + "/internal/log"
+	Fetch          = BASE_PKG + "/internal/fetch"
 	UIEvents       = BASE_PKG + "/internal/uievents"
 	DomInterfaces  = BASE_PKG + "/internal/interfaces/dom-interfaces"
 	URLInterfaces  = BASE_PKG + "/internal/interfaces/url-interfaces"

@@ -18,6 +18,8 @@ func CreateV8SpecsForSpec(spec string) WebIdlConfigurations {
 		configureXHRSpecs(specs.Module("xhr"))
 	case "url":
 		configureURLSpecs(specs.Module("url"))
+	case "fetch":
+		configureFetchSpecs(specs.Module("fetch"))
 	default:
 		panic(fmt.Sprintf("bad spec: %s", spec))
 	}

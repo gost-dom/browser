@@ -12,7 +12,9 @@ import (
 
 func TestFetch(t *testing.T) {
 	g := gomega.NewWithT(t)
-	b := browsertest.InitBrowser(t, gosttest.StaticFileServer{})
+	b := browsertest.InitBrowser(t, gosttest.StaticFileServer{
+		"/file.json": gosttest.StaticJSON(`{"foo": "Foo value", "bar": "Bar value"}`),
+	})
 	w := htmltest.NewWindowHelper(t, b.NewWindow())
 	g.Expect(w.Eval("typeof fetch")).To(Equal("function"))
 }

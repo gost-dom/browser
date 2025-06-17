@@ -1,6 +1,8 @@
 package scripttests
 
 import (
+	"log/slog"
+
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
@@ -21,6 +23,16 @@ func (s *ScriptHostSuite) SetupTest() {
 	s.Window = htmltest.NewWindowHelper(s.T(), html.NewWindow(html.WindowOptions{
 		Logger:     gosttest.NewTestLogger(s.T()),
 		ScriptHost: s.scriptHost,
+	}))
+}
+
+// NewWindowLocation replaces the window. The new window has the specified
+// location, but doesn't actually load the content.
+func (s *ScriptHostSuite) NewWindowLocation(location string) {
+	s.Window = htmltest.NewWindowHelper(s.T(), html.NewWindow(html.WindowOptions{
+		Logger:       gosttest.NewTestLogger(s.T(), gosttest.MinLogLevel(slog.LevelDebug)),
+		ScriptHost:   s.scriptHost,
+		BaseLocation: location,
 	}))
 }
 

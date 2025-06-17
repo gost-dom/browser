@@ -18,6 +18,8 @@ func (f Fetch) NewRequest(url string) Request {
 	}
 }
 
+type RequestOption func(*Request)
+
 type Request struct {
 	url string
 	bc  html.BrowsingContext
