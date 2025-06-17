@@ -6,16 +6,16 @@ func ConfigureDOMSpecs(specs *WebIdlConfigurations) {
 	configureDOMEvent(domSpecs)
 }
 
-func configureDOMNode(domSpecs *WebAPIConfig) {
-	configureMutationObserver(domSpecs)
+func configureDOMNode(specs *WebAPIConfig) {
+	configureMutationObserver(specs)
 
-	docFrag := domSpecs.Type("DocumentFragment")
+	docFrag := specs.Type("DocumentFragment")
 	docFrag.SkipConstructor = true
 
-	attr := domSpecs.Type("Attr")
+	attr := specs.Type("Attr")
 	attr.MarkMembersAsIgnored("namespaceURI", "prefix", "specified")
 
-	eventTarget := domSpecs.Type("EventTarget")
+	eventTarget := specs.Type("EventTarget")
 	addEventListenerOptions := eventTarget.Method("addEventListener").Argument("options")
 	addEventListenerOptions.SetDecoder("w.decodeEventListenerOptions")
 	addEventListenerOptions.HasDefault = true
@@ -25,7 +25,7 @@ func configureDOMNode(domSpecs *WebAPIConfig) {
 	removeEventListenerOptions.HasDefault = true
 	removeEventListenerOptions.DefaultValue = "defaultEventListenerOptions"
 
-	namedNodeMap := domSpecs.Type("NamedNodeMap")
+	namedNodeMap := specs.Type("NamedNodeMap")
 	namedNodeMap.MarkMembersAsNotImplemented(
 		"getNamedItem",
 		"setNamedItem",
@@ -36,8 +36,8 @@ func configureDOMNode(domSpecs *WebAPIConfig) {
 	)
 	namedNodeMap.RunCustomCode = true
 
-	domSpecs.Type("NonDocumentTypeChildNode")
-	document := domSpecs.Type("Document")
+	specs.Type("NonDocumentTypeChildNode")
+	document := specs.Type("Document")
 	document.RunCustomCode = true // Set instance properties
 	document.MarkMembersAsNotImplemented(
 		"createNodeIterator",
@@ -66,16 +66,16 @@ func configureDOMNode(domSpecs *WebAPIConfig) {
 	document.Method("createElement").SetCustomImplementation()
 	document.Method("createTextNode").SetCustomImplementation()
 
-	nodeList := domSpecs.Type("NodeList")
+	nodeList := specs.Type("NodeList")
 	nodeList.RunCustomCode = true
 
-	parentNode := domSpecs.Type("ParentNode")
+	parentNode := specs.Type("ParentNode")
 	parentNode.Method("children").Ignore()
 	parentNode.Method("append").Argument("nodes").Decoder = "w.decodeNodeOrText"
 	parentNode.Method("prepend").Argument("nodes").Decoder = "w.decodeNodeOrText"
 	parentNode.Method("replaceChildren").Argument("nodes").Decoder = "w.decodeNodeOrText"
 
-	domElement := domSpecs.Type("Element")
+	domElement := specs.Type("Element")
 	// domElement.SkipWrapper = true
 	domElement.RunCustomCode = true
 	domElement.Method("classList").SetCustomImplementation()
@@ -115,12 +115,12 @@ func configureDOMNode(domSpecs *WebAPIConfig) {
 		"closest",
 	)
 
-	domTokenList := domSpecs.Type("DOMTokenList")
+	domTokenList := specs.Type("DOMTokenList")
 	domTokenList.RunCustomCode = true
 	domTokenList.Method("toggle").SetCustomImplementation()
 	domTokenList.Method("remove").SetCustomImplementation()
 	domTokenList.Method("supports").SetNotImplemented()
-	domNode := domSpecs.Type("Node")
+	domNode := specs.Type("Node")
 	domNode.Method("nodeType").SetCustomImplementation()
 	domNode.Method("getRootNode").Argument("options").SetHasDefault()
 	domNode.Method("textContent").SetCustomImplementation()
