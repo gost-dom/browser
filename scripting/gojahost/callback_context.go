@@ -1,7 +1,6 @@
 package gojahost
 
 import (
-	"errors"
 	"log/slog"
 
 	"github.com/dop251/goja"
@@ -22,8 +21,7 @@ func (c gojaCallbackScope) This() js.Object[jsTypeParam] {
 
 func (ctx gojaCallbackScope) Instance() (any, error) {
 	if ctx.instance == nil {
-		// TODO: Should be a TypeError
-		return nil, errors.New("No embedded value")
+		panic(ctx.ctx.vm.NewTypeError("No embedded value"))
 	}
 	return ctx.instance, nil
 }

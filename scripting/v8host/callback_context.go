@@ -49,10 +49,13 @@ func (c v8CallbackScope) ValueFactory() jsValueFactory {
 }
 
 func (h v8CallbackScope) Instance() (any, error) {
-	if h.v8Info.This().InternalFieldCount() < 1 {
-		return nil, v8go.NewTypeError(h.iso(), "No internal instance")
+	if h.v8Info.This().InternalFieldCount() >= 1 {
+		handle := h.v8Info.This().GetInternalField(0).ExternalHandle()
+		if handle != 0 {
+			return handle.Value(), nil
+		}
 	}
-	return h.v8Info.This().GetInternalField(0).ExternalHandle().Value(), nil
+	return nil, v8go.NewTypeError(h.iso(), "No internal instance")
 }
 
 func (c v8CallbackScope) Logger() *slog.Logger {
