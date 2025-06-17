@@ -27,4 +27,5 @@ func RunSuites(t *testing.T, h ScriptHostFactory) {
 	t.Run("Node", runSuite(NewNodeTestSuite(h.New())))
 	t.Run("ElementDataset", runSuite(NewDatasetSuite(h.New())))
 	t.Run("NodeList", runSuite(NewNodeListSuite(h.New())))
+	t.Run("AbortController", runSuite(NewAbortControllerSuite(h.New())))
 }

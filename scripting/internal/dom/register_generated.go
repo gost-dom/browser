@@ -5,6 +5,7 @@ package dom
 import js "github.com/gost-dom/browser/scripting/internal/js"
 
 func Bootstrap[T any](reg js.ClassBuilder[T]) {
+	js.RegisterClass(reg, "AbortController", "", NewAbortController)
 	js.RegisterClass(reg, "Attr", "Node", NewAttr)
 	js.RegisterClass(reg, "DOMTokenList", "", NewDOMTokenList)
 	js.RegisterClass(reg, "Document", "Node", NewDocument)

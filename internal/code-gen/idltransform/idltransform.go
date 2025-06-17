@@ -9,8 +9,10 @@ import (
 
 type IdlType idl.Type
 
-func packageName(name string) string {
+func InternalPackage(name string) string {
 	switch name {
+	case "AbortController":
+		return packagenames.DomInterfaces
 	case "EventHandler", "EventTarget":
 		return packagenames.Events
 	case "DOMTokenList", "NodeList", "Node":
@@ -22,14 +24,14 @@ func packageName(name string) string {
 }
 
 func TypeGen(name string) g.Generator {
-	if pkg := packageName(name); pkg != "" {
+	if pkg := InternalPackage(name); pkg != "" {
 		return g.NewTypePackage(name, pkg)
 	}
 	return g.Id(name)
 }
 
 func (s IdlType) Generate() *jen.Statement {
-	if pkg := packageName(s.Name); pkg != "" {
+	if pkg := InternalPackage(s.Name); pkg != "" {
 		return jen.Qual(pkg, s.Name)
 	}
 	switch s.Kind {

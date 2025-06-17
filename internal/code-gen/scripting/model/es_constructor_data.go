@@ -4,6 +4,7 @@ import (
 	"iter"
 
 	"github.com/gost-dom/code-gen/customrules"
+	"github.com/gost-dom/code-gen/idltransform"
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/code-gen/scripting/configuration"
 	g "github.com/gost-dom/generators"
@@ -47,6 +48,9 @@ func (d ESConstructorData) Includes() []idl.Interface {
 }
 
 func (d ESConstructorData) GetInternalPackage() string {
+	if pkg := idltransform.InternalPackage(d.Name()); pkg != "" {
+		return pkg
+	}
 	switch d.Name() {
 	case "Event", "EventTarget":
 		return packagenames.Events

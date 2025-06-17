@@ -9,6 +9,9 @@ func ConfigureDOMSpecs(specs *WebIdlConfigurations) {
 func configureDOMNode(specs *WebAPIConfig) {
 	configureMutationObserver(specs)
 
+	abortCtrl := specs.Type("AbortController")
+	abortCtrl.MarkMembersAsNotImplemented("signal", "abort")
+
 	docFrag := specs.Type("DocumentFragment")
 	docFrag.SkipConstructor = true
 
