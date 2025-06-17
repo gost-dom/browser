@@ -54,7 +54,7 @@ func (i Iterator[T, U]) NewIterator(
 	cbCtx Scope[U],
 	items iter.Seq[T],
 ) (Value[U], error) {
-	return cbCtx.ValueFactory().NewIterator(i.mapItems(cbCtx, items)), nil
+	return cbCtx.NewIterator(i.mapItems(cbCtx, items)), nil
 }
 
 // Method InstallPrototype creates the following prototype methods:

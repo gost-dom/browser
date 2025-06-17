@@ -146,7 +146,7 @@ func (f v8ValueFactory) NewArray(values ...jsValue) jsValue {
 func (f v8ValueFactory) NewIterator(
 	i iter.Seq2[js.Value[jsTypeParam], error],
 ) js.Value[jsTypeParam] {
-	return f.host.iterator.newIterator(v8Scope{f.host, f.ctx}, i)
+	return f.host.iterator.newIterator(newV8Scope(f.ctx), i)
 }
 
 func (f v8ValueFactory) NewTypeError(msg string) error {
@@ -198,24 +198,21 @@ func wrapV8Callback(
 /* -------- v8Scope -------- */
 
 type v8Scope struct {
+	v8ValueFactory
 	host *V8ScriptHost
 	*V8ScriptContext
 }
 
-func newV8Scope(ctx *V8ScriptContext) v8Scope { return v8Scope{ctx.host, ctx} }
+func newV8Scope(ctx *V8ScriptContext) v8Scope {
+	return v8Scope{
+		v8ValueFactory{host: ctx.host, ctx: ctx},
+		ctx.host, ctx,
+	}
+}
 
 func (s v8Scope) Window() html.Window  { return s.window }
 func (s v8Scope) GlobalThis() jsObject { return s.global }
 func (s v8Scope) Clock() *clock.Clock  { return s.clock }
-
-func (s v8Scope) ValueFactory() js.ValueFactory[jsTypeParam] {
-	return v8ValueFactory{host: s.host, ctx: s.V8ScriptContext}
-}
-
-//
-// func (c v8Scope) Constructor(name string) js.Constructor[jsTypeParam] {
-// 	return
-// }
 
 /* -------- v8Constructable -------- */
 

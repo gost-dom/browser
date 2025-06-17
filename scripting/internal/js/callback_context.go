@@ -27,14 +27,14 @@ type Disposable interface{ Dispose() }
 // function as a callback argument, which Go code need to call at a later point
 // in time. E.g., when adding event listeners.
 type Scope[T any] interface {
+	ValueFactory[T]
+
 	Window() html.Window
 	GlobalThis() Object[T]
 	Clock() *clock.Clock
 	GetValue(entity.ObjectIder) (Value[T], bool)
 	SetValue(entity.ObjectIder, Value[T])
 	Constructor(string) Constructor[T]
-
-	ValueFactory() ValueFactory[T]
 }
 
 type ArgumentConsumer[T any] interface {

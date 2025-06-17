@@ -17,7 +17,7 @@ func (w DOMTokenList[T]) toString_(
 	cbCtx js.Scope[T],
 	val string,
 ) (js.Value[T], error) {
-	return cbCtx.ValueFactory().NewString(val), nil
+	return cbCtx.NewString(val), nil
 }
 
 func (l DOMTokenList[T]) toggle(args js.CallbackContext[T]) (js.Value[T], error) {

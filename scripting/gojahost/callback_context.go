@@ -17,7 +17,7 @@ type gojaCallbackScope struct {
 
 func newCallbackScope(ctx *GojaContext, this *goja.Object, instance any) gojaCallbackScope {
 	return gojaCallbackScope{
-		gojaScope: gojaScope{ctx, newGojaObject(ctx, ctx.vm.GlobalObject())},
+		gojaScope: newGojaScope(ctx),
 		this:      this,
 		instance:  instance,
 	}

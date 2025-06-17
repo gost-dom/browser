@@ -12,7 +12,7 @@ type gojaValueFactory struct {
 	*GojaContext
 }
 
-func newGojaValueFactory(c *GojaContext) js.ValueFactory[jsTypeParam] {
+func newGojaValueFactory(c *GojaContext) gojaValueFactory {
 	return gojaValueFactory{c}
 }
 

@@ -167,7 +167,7 @@ func (host *V8ScriptHost) promiseRejected(msg v8go.PromiseRejectMessage) {
 	}
 
 	log.Error(host.logger, "Rejected promise", log.ErrAttr(err))
-	js.UnhandledError(&v8Scope{host, ctx}, err)
+	js.UnhandledError(newV8Scope(ctx), err)
 }
 
 func (host *V8ScriptHost) Logger() log.Logger {

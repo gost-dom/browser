@@ -9,12 +9,16 @@ import (
 )
 
 type gojaScope struct {
+	gojaValueFactory
 	ctx    *GojaContext
 	global js.Object[jsTypeParam]
 }
 
-func newGojaScope(ctx *GojaContext) js.Scope[jsTypeParam] {
-	return gojaScope{ctx, newGojaObject(ctx, ctx.vm.GlobalObject())}
+func newGojaScope(ctx *GojaContext) gojaScope {
+	return gojaScope{
+		newGojaValueFactory(ctx),
+		ctx, newGojaObject(ctx, ctx.vm.GlobalObject()),
+	}
 }
 
 func (s gojaScope) Window() html.Window                { return s.ctx.window }
@@ -34,10 +38,6 @@ func (s gojaScope) GetValue(e entity.ObjectIder) (js.Value[jsTypeParam], bool) {
 }
 func (s gojaScope) SetValue(e entity.ObjectIder, v js.Value[jsTypeParam]) {
 	s.ctx.cachedNodes[e.ObjectId()] = v.Self().value
-}
-
-func (s gojaScope) ValueFactory() js.ValueFactory[jsTypeParam] {
-	return newGojaValueFactory(s.ctx)
 }
 
 type gojaConstructor struct {
