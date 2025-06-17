@@ -47,14 +47,16 @@ func (i IdlInterface) Generate() *jen.Statement {
 
 	for _, a := range i.Attributes {
 		getterName := UpperCaseFirstLetter(a.Name)
-		fields = append(fields, g.Raw(
-			jen.Id(getterName).Params().Params(a.GetterType(i.SpecName).Generate()),
-		))
+		fields = append(fields, InterfaceFunction{
+			Name:     getterName,
+			RetTypes: g.List(a.GetterType(i.SpecName)),
+		})
 		if !a.ReadOnly {
 			setterName := fmt.Sprintf("Set%s", getterName)
-			fields = append(fields, g.Raw(
-				jen.Id(setterName).Params(a.Type.Generate()),
-			))
+			fields = append(fields, InterfaceFunction{
+				Name: setterName,
+				Args: g.List(a.Type),
+			})
 		}
 	}
 	for _, o := range i.Operations {
@@ -163,10 +165,11 @@ func (o IdlInterfaceOperation) Generate() *jen.Statement {
 			nextArg := o.Arguments[i+1]
 			argRule := o.Rules.Arguments[nextArg.Name()]
 			if nextArg.Optional() && !argRule.ZeroAsDefault {
-				result.Append(g.Raw(
-					jen.Id(UpperCaseFirstLetter(name)).
-						Params(g.ToJenCodes(args)...).
-						Add(o.ReturnParams())))
+				result.Append(InterfaceFunction{
+					Name:     UpperCaseFirstLetter(name),
+					Args:     args,
+					RetTypes: o.ReturnParams(),
+				})
 				name = name + UpperCaseFirstLetter(nextArg.Name())
 			}
 		}
@@ -175,11 +178,11 @@ func (o IdlInterfaceOperation) Generate() *jen.Statement {
 	if opRules.DocComments != "" {
 		result.Append(g.Raw(jen.Comment(opRules.DocComments)))
 	}
-	result.Append(g.Raw(
-		jen.Id(UpperCaseFirstLetter(name)).
-			Params(g.ToJenCodes(args)...).
-			Add(o.ReturnParams()),
-	))
+	result.Append(InterfaceFunction{
+		Name:     UpperCaseFirstLetter(name),
+		Args:     args,
+		RetTypes: o.ReturnParams(),
+	})
 
 	return result.Generate()
 }
@@ -192,7 +195,7 @@ func (o IdlInterfaceOperation) HasError() bool {
 // The return values can include a bool for methods like GetAttribute, that
 // return (string, bool), indicating if the attribute was found. If hasError is
 // true, an error return type will be added as well.
-func (o IdlInterfaceOperation) ReturnParams() *jen.Statement {
+func (o IdlInterfaceOperation) ReturnParams() []g.Generator {
 	result := make([]g.Generator, 1, 3)
 	s := o.ReturnType
 	result[0] = s
@@ -202,7 +205,7 @@ func (o IdlInterfaceOperation) ReturnParams() *jen.Statement {
 	if o.HasError() {
 		result = append(result, g.Id("error"))
 	}
-	return jen.Params(g.ToJenCodes(result)...)
+	return result
 }
 
 /* -------- IdlInterfaceInclude -------- */
@@ -222,3 +225,16 @@ func (a IdlInterfaceOperationArgument) Variadic() bool {
 
 func (a IdlInterfaceOperationArgument) Optional() bool { return a.Argument.Optional && !a.Variadic() }
 func (a IdlInterfaceOperationArgument) Ignore() bool   { return a.Rules.Ignore }
+
+// InterfaceFunction renders a method in an interface definition.
+type InterfaceFunction struct {
+	Name     string
+	Args     []g.Generator
+	RetTypes []g.Generator
+}
+
+func (f InterfaceFunction) Generate() *jen.Statement {
+	return jen.Id(f.Name).
+		Params(g.ToJenCodes(f.Args)...).    // Arguments
+		Params(g.ToJenCodes(f.RetTypes)...) // Return values
+}
