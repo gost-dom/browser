@@ -27,12 +27,10 @@ func ConsumeArgument[T, U any](
 		return defaultValue(), nil
 	} else {
 		errs := make([]error, len(decoders))
-		if value != nil {
-			for i, parser := range decoders {
-				result, errs[i] = parser(args, value)
-				if errs[i] == nil {
-					return
-				}
+		for i, parser := range decoders {
+			result, errs[i] = parser(args, value)
+			if errs[i] == nil {
+				return
 			}
 		}
 		// TODO: This should eventually become a TypeError in JS
