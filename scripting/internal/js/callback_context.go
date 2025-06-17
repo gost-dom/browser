@@ -138,6 +138,7 @@ func WithEnumeratorCallback[T, U any](cb HandlerEnumeratorCallback[T, U]) Handle
 type ValueFactory[T any] interface {
 	Null() Value[T]
 
+	NewPromise() Promise[T]
 	NewString(string) Value[T]
 	NewBoolean(bool) Value[T]
 	NewUint32(uint32) Value[T]

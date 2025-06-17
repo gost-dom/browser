@@ -84,3 +84,10 @@ func (f ConfigurerFunc[T]) Configure(e ScriptEngine[T]) { f(e) }
 func AddConfigurator[T any](fact ScriptEngineFactory[T], conf ConfigurerFunc[T]) {
 	fact.AddConfigurator(conf)
 }
+
+// Promise represents a JavaScript promise that is controlled from Go-code.
+type Promise[T any] interface {
+	Value[T]
+	Resolve(Value[T])
+	Reject(Value[T])
+}

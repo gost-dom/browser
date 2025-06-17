@@ -100,6 +100,8 @@ func (f gojaScope) NewTypeError(v string) error {
 	panic(f.vm.NewTypeError(v))
 }
 
+func (c gojaScope) NewPromise() js.Promise[jsTypeParam] { return newGojaPromise(c.GojaContext) }
+
 func (f gojaScope) NewIterator(
 	items iter.Seq2[js.Value[jsTypeParam], error],
 ) js.Value[jsTypeParam] {
