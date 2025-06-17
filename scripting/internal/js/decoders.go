@@ -11,7 +11,7 @@ func AssertObjectArg[T any](cbCtx CallbackContext[T], v Value[T]) (Object[T], er
 	if obj, ok := v.AsObject(); ok {
 		return obj, nil
 	}
-	return nil, cbCtx.ValueFactory().NewTypeError("Value must be an object")
+	return nil, cbCtx.NewTypeError("Value must be an object")
 }
 
 // ParseSetterArg parses a single argument and is intended for attribute

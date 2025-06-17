@@ -24,7 +24,7 @@ func (w Event[T]) toEventTarget(
 	e event.EventTarget,
 ) (js.Value[T], error) {
 	if e == nil {
-		return cbCtx.ValueFactory().Null(), nil
+		return cbCtx.Null(), nil
 	}
 	if entity, ok := e.(entity.ObjectIder); ok {
 		return codec.EncodeEntity(cbCtx, entity)

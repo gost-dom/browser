@@ -49,7 +49,7 @@ func (w EventTarget[T]) decodeEventListener(
 	if fn, ok := val.AsFunction(); ok {
 		return newV8EventListener(cbCtx, fn), nil
 	} else {
-		return nil, cbCtx.ValueFactory().NewTypeError("Must be a function")
+		return nil, cbCtx.NewTypeError("Must be a function")
 	}
 }
 

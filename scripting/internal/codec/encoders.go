@@ -32,10 +32,10 @@ func EncodeEntityScoped[T any](scope js.Scope[T], e entity.ObjectIder) (js.Value
 }
 
 func EncodeBoolean[T any](cbCtx js.CallbackScope[T], b bool) (js.Value[T], error) {
-	return cbCtx.ValueFactory().NewBoolean(b), nil
+	return cbCtx.NewBoolean(b), nil
 }
 func EncodeInt[T any](cbCtx js.CallbackScope[T], i int) (js.Value[T], error) {
-	return cbCtx.ValueFactory().NewInt32(int32(i)), nil
+	return cbCtx.NewInt32(int32(i)), nil
 }
 
 // TODO: Embed scope in CallbackScope, so only one function is necessary
@@ -44,7 +44,7 @@ func EncodeStringScoped[T any](cbCtx js.Scope[T], s string) (js.Value[T], error)
 }
 
 func EncodeString[T any](cbCtx js.CallbackScope[T], s string) (js.Value[T], error) {
-	return cbCtx.ValueFactory().NewString(s), nil
+	return cbCtx.NewString(s), nil
 }
 
 func EncodeNullableString[T any](
@@ -52,7 +52,7 @@ func EncodeNullableString[T any](
 	s *string,
 ) (js.Value[T], error) {
 	if s != nil {
-		return cbCtx.ValueFactory().NewString(*s), nil
+		return cbCtx.NewString(*s), nil
 	}
 	return EncodeNull(cbCtx)
 }
@@ -62,13 +62,13 @@ func EncodeNillableString[T any](
 	hasValue bool,
 ) (js.Value[T], error) {
 	if hasValue {
-		return cbCtx.ValueFactory().NewString(s), nil
+		return cbCtx.NewString(s), nil
 	}
 	return EncodeNull(cbCtx)
 }
 
 func EncodeNull[T any](cbCtx js.CallbackScope[T]) (js.Value[T], error) {
-	return cbCtx.ValueFactory().Null(), nil
+	return cbCtx.Null(), nil
 }
 
 // EncodeConstrucedValue is a simple helper for JS constructor callbacks to

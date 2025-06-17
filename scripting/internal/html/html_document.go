@@ -14,5 +14,5 @@ func NewHTMLDocument[T any](host js.ScriptEngine[T]) HTMLDocument[T] {
 }
 
 func (w HTMLDocument[T]) Constructor(c js.CallbackContext[T]) (js.Value[T], error) {
-	return nil, c.ValueFactory().NewTypeError("illegal constructor")
+	return nil, c.NewTypeError("illegal constructor")
 }

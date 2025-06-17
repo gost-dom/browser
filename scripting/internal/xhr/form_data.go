@@ -61,9 +61,9 @@ func (w FormData[T]) toSequenceFormDataEntryValue(
 ) (js.Value[T], error) {
 	vals := make([]js.Value[T], len(data))
 	for i, d := range data {
-		vals[i] = cbCtx.ValueFactory().NewString(string(d))
+		vals[i] = cbCtx.NewString(string(d))
 	}
-	return cbCtx.ValueFactory().NewArray(vals...), nil
+	return cbCtx.NewArray(vals...), nil
 }
 
 func (w FormData[T]) decodeHTMLFormElement(
@@ -78,7 +78,7 @@ func (w FormData[T]) decodeHTMLFormElement(
 	if err == nil {
 		res, ok = node.(html.HTMLFormElement)
 		if !ok {
-			err = cbCtx.ValueFactory().NewTypeError("Not a form")
+			err = cbCtx.NewTypeError("Not a form")
 		}
 	}
 	return res, err

@@ -10,12 +10,12 @@ func (w History[T]) decodeHistoryState(
 	cbCtx js.CallbackContext[T],
 	val js.Value[T],
 ) (html.HistoryState, error) {
-	return html.HistoryState(cbCtx.ValueFactory().JSONStringify(val)), nil
+	return html.HistoryState(cbCtx.JSONStringify(val)), nil
 }
 
 func (w History[T]) toHistoryState(
 	cbCtx js.CallbackContext[T],
 	val htmlinterfaces.HistoryState,
 ) (js.Value[T], error) {
-	return cbCtx.ValueFactory().JSONParse(string(val))
+	return cbCtx.JSONParse(string(val))
 }

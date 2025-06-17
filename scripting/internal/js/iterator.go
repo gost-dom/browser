@@ -110,7 +110,7 @@ func (i Iterator2[K, V, U]) mapItems(
 			kk, err1 := i.keyLookup(cbCtx, k)
 			vv, err2 := i.valueLookup(cbCtx, v)
 			err := errors.Join(err1, err2)
-			res := cbCtx.ValueFactory().NewArray(kk, vv) // Safe to call on nil jsValues
+			res := cbCtx.NewArray(kk, vv) // Safe to call on nil jsValues
 			if !yield(res, err) {
 				return
 			}
@@ -122,7 +122,7 @@ func (i Iterator2[K, V, U]) newIterator(
 	cbCtx CallbackContext[U],
 	items iterable2[K, V],
 ) (Value[U], error) {
-	return cbCtx.ValueFactory().NewIterator(i.mapItems(cbCtx, items.All())), nil
+	return cbCtx.NewIterator(i.mapItems(cbCtx, items.All())), nil
 }
 
 // InstallPrototype creates the following prototype methods on cls.

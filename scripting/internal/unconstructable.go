@@ -11,6 +11,6 @@ func NewUnconstructable[T any](host js.ScriptEngine[T]) unconstructable[T] {
 }
 
 func (w unconstructable[T]) Constructor(cb js.CallbackContext[T]) (js.Value[T], error) {
-	return nil, cb.ValueFactory().NewTypeError("Illegal constructor")
+	return nil, cb.NewTypeError("Illegal constructor")
 }
 func (w unconstructable[T]) Initialize(c js.Class[T]) {}

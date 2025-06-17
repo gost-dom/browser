@@ -35,7 +35,7 @@ func (w MutationObserver[T]) decodeMutationCallback(
 	if f, ok := val.AsFunction(); ok {
 		return MutationCallback[T]{cbCtx, f}, nil
 	}
-	return nil, cbCtx.ValueFactory().NewTypeError("Not a function")
+	return nil, cbCtx.NewTypeError("Not a function")
 }
 
 func (w MutationObserver[T]) decodeObserveOption(
@@ -44,7 +44,7 @@ func (w MutationObserver[T]) decodeObserveOption(
 ) ([]mutation.ObserveOption, error) {
 	obj, ok := val.AsObject()
 	if !ok {
-		return nil, cbCtx.ValueFactory().NewTypeError("Obtions not an object")
+		return nil, cbCtx.NewTypeError("Obtions not an object")
 	}
 	var res []mutation.ObserveOption
 	ap := func(key string, o mutation.ObserveOption) {
@@ -86,5 +86,5 @@ func toSequenceMutationRecord[T any](
 		}
 		res[i] = rec
 	}
-	return cbCtx.ValueFactory().NewArray(res...), nil
+	return cbCtx.NewArray(res...), nil
 }

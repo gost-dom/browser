@@ -34,13 +34,13 @@ func (l DOMTokenList[T]) toggle(args js.CallbackContext[T]) (js.Value[T], error)
 		}
 		if force {
 			instance.Add(token)
-			return args.ValueFactory().NewBoolean(true), nil
+			return args.NewBoolean(true), nil
 		} else {
 			instance.Remove(token)
-			return args.ValueFactory().NewBoolean(false), nil
+			return args.NewBoolean(false), nil
 		}
 	}
-	return args.ValueFactory().NewBoolean(instance.Toggle(token)), nil
+	return args.NewBoolean(instance.Toggle(token)), nil
 }
 
 func (w DOMTokenList[T]) remove(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

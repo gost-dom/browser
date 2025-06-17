@@ -62,10 +62,6 @@ type CallbackScope[T any] interface {
 	// contain an internal Go value an [ErrNoInternalValue] error is returned.
 	Instance() (any, error)
 
-	// ValueFactory returns a "factory" that can be used to produce JavaScript
-	// values.
-	ValueFactory() ValueFactory[T]
-
 	Logger() *slog.Logger
 	This() Object[T]
 }

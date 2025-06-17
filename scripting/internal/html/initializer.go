@@ -51,7 +51,7 @@ func installEventLoopGlobals[T any](host js.ScriptEngine[T]) {
 				},
 				time.Duration(delay)*time.Millisecond,
 			)
-			return cbCtx.ValueFactory().NewUint32(uint32(handle)), nil
+			return cbCtx.NewUint32(uint32(handle)), nil
 		})
 	host.CreateFunction(
 		"clearTimeout",

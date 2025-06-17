@@ -49,7 +49,7 @@ func (w DOMStringMap[T]) NamedPropertyGet(
 		return nil, js.NotIntercepted
 	}
 	if val, found := instance.Get(key.String()); found {
-		return info.ValueFactory().NewString(val), nil
+		return info.NewString(val), nil
 	}
 	return nil, js.NotIntercepted
 }
@@ -89,9 +89,8 @@ func (w DOMStringMap[T]) NamedPropertyEnumerator(info js.CallbackScope[T]) ([]js
 	}
 	keys := instance.Keys()
 	retVal := make([]js.Value[T], len(keys))
-	fact := info.ValueFactory()
 	for i, key := range keys {
-		retVal[i] = fact.NewString(key)
+		retVal[i] = info.NewString(key)
 	}
 	return retVal, nil
 }

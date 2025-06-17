@@ -89,11 +89,10 @@ func (w URLSearchParams[T]) toSequenceString_(
 	values []string,
 ) (js.Value[T], error) {
 	vs := make([]js.Value[T], len(values))
-	fact := cbCtx.ValueFactory()
 	for i, v := range values {
-		vs[i] = fact.NewString(v)
+		vs[i] = cbCtx.NewString(v)
 	}
-	return fact.NewArray(vs...), nil
+	return cbCtx.NewArray(vs...), nil
 }
 
 func (w URLSearchParams[T]) CustomInitializer(class js.Class[T]) {

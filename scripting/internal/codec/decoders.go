@@ -28,7 +28,7 @@ func DecodeNode[T any](ctx js.CallbackContext[T], val js.Value[T]) (dom.Node, er
 			return node, nil
 		}
 	}
-	return nil, ctx.ValueFactory().NewTypeError("Value is not a node")
+	return nil, ctx.NewTypeError("Value is not a node")
 }
 
 func DecodeHTMLElement[T any](
@@ -40,7 +40,7 @@ func DecodeHTMLElement[T any](
 			return res, nil
 		}
 	}
-	return nil, ctx.ValueFactory().NewTypeError("Value is not a node")
+	return nil, ctx.NewTypeError("Value is not a node")
 }
 
 type EventInit struct {
@@ -75,5 +75,5 @@ func DecodeFunction[T any](cbCtx js.CallbackContext[T], val js.Value[T]) (js.Fun
 	if f, ok := val.AsFunction(); ok {
 		return f, nil
 	}
-	return nil, cbCtx.ValueFactory().NewTypeError("Must be a function")
+	return nil, cbCtx.NewTypeError("Must be a function")
 }

@@ -21,7 +21,7 @@ func domParserParseFromString[T any](cbCtx js.CallbackContext[T]) (js.Value[T], 
 		return nil, err
 	}
 	if contentType != "text/html" {
-		return nil, cbCtx.ValueFactory().NewTypeError(
+		return nil, cbCtx.NewTypeError(
 			"DOMParser.parseFromString only supports text/html yet",
 		)
 	}

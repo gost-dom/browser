@@ -24,7 +24,7 @@ func (w *NodeList[T]) CustomInitializer(class js.Class[T]) {
 					}
 					return codec.EncodeEntity(info, item)
 				}
-				return nil, info.ValueFactory().NewTypeError("dunno")
+				return nil, info.NewTypeError("dunno")
 			},
 		),
 		js.WithLengthCallback(
