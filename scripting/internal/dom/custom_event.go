@@ -31,7 +31,6 @@ func (w customEvent[T]) Constructor(info js.CallbackContext[T]) (js.Value[T], er
 			if err != nil {
 				return nil, err
 			}
-			fmt.Printf("!!BUBBLES: %#v\n", bubbles)
 			e.Bubbles = bubbles.Boolean()
 			e.Cancelable = cancelable.Boolean()
 			data.Detail = detail
