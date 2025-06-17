@@ -1,6 +1,8 @@
 package gojahost
 
-import "github.com/gost-dom/browser/scripting/internal/js"
+import (
+	"github.com/gost-dom/browser/scripting/internal/js"
+)
 
 type gojaPromise struct {
 	js.Value[jsTypeParam]
