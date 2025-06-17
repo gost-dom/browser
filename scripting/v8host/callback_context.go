@@ -222,27 +222,3 @@ func (c v8Constructable) NewInstance(nativeValue any) (jsObject, error) {
 	}
 	return obj, err
 }
-
-/* -------- v8IndexedHandlers -------- */
-
-// type indexedGetterCallback = func(js.GetterCallbackContext[jsTypeParam, int]) (jsValue, error)
-
-type v8GetterCallbackContext struct {
-	*v8CallbackContext
-}
-
-// func newIndexedGetterCallbackContext(
-//
-//	host *V8ScriptHost,
-//	info *v8.FunctionCallbackInfo,
-//
-//	) js.GetterCallbackContext[jsTypeParam, int] {
-//		return &v8GetterCallbackContext{&v8CallbackContext{
-//			v8CallbackScope: v8CallbackScope{host, info},
-//			v8Info:          info,
-//			host:            host,
-//		}}
-//	}
-func (c v8GetterCallbackContext) Key() int {
-	return int(c.v8Info.Index())
-}
