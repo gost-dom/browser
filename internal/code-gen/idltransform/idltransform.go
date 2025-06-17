@@ -20,7 +20,7 @@ func NewIdlType(t idl.Type) IdlType { return IdlType{t, ""} }
 
 func InternalPackage(name string) string {
 	switch name {
-	case "AbortController":
+	case "AbortController", "AbortSignal":
 		return packagenames.DomInterfaces
 	case "EventHandler", "EventTarget":
 		return packagenames.Events

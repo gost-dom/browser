@@ -4,6 +4,7 @@ package dom
 
 import (
 	"errors"
+	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -34,5 +35,10 @@ func (w AbortController[T]) abort(cbCtx js.CallbackContext[T]) (js.Value[T], err
 
 func (w AbortController[T]) signal(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: AbortController.signal")
-	return nil, errors.New("AbortController.signal: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	instance, err := js.As[dominterfaces.AbortController](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	result := instance.Signal()
+	return w.toAbortSignal(cbCtx, result)
 }

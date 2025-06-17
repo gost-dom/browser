@@ -10,7 +10,9 @@ func configureDOMNode(specs *WebAPIConfig) {
 	configureMutationObserver(specs)
 
 	abortCtrl := specs.Type("AbortController")
-	abortCtrl.MarkMembersAsNotImplemented("signal", "abort")
+	abortCtrl.MarkMembersAsNotImplemented("abort")
+	abortSignal := specs.Type("AbortSignal")
+	abortSignal.MarkMembersAsNotImplemented("reason")
 
 	docFrag := specs.Type("DocumentFragment")
 	docFrag.SkipConstructor = true
