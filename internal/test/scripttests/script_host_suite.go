@@ -2,8 +2,10 @@ package scripttests
 
 import (
 	"log/slog"
+	"net/http"
 
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/gosthttp"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
 )
@@ -36,9 +38,13 @@ func (s *ScriptHostSuite) NewWindowLocation(location string) {
 	}))
 }
 
-func (s *ScriptHostSuite) OpenWindow(location string) html.Window {
-	err := s.Window.Navigate(location)
-	s.Assert().NoError(err)
+func (s *ScriptHostSuite) OpenWindow(location string, h http.Handler) html.Window {
+	s.Window = htmltest.NewWindowHelper(s.T(), html.NewWindow(html.WindowOptions{
+		BaseLocation: location,
+		HttpClient:   gosthttp.NewHttpClientFromHandler(h),
+		Logger:       gosttest.NewTestLogger(s.T()),
+		ScriptHost:   s.scriptHost,
+	}))
 	return s.Window
 }
 

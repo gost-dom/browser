@@ -28,5 +28,5 @@ func RunSuites(t *testing.T, h ScriptHostFactory) {
 	t.Run("ElementDataset", runSuite(NewDatasetSuite(h.New())))
 	t.Run("NodeList", runSuite(NewNodeListSuite(h.New())))
 	t.Run("AbortController", runSuite(NewAbortControllerSuite(h.New())))
-	t.Run("Fetch", runSuite(NewFetchSuite(h.New())))
+	t.Run("Fetch", func(t *testing.T) { testFetch(t, h.New()) })
 }
