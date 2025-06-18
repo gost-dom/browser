@@ -94,7 +94,6 @@ func (d *gojaScriptHost) NewContext(window html.Window) html.ScriptContext {
 		goja.FLAG_FALSE,
 	)
 	globalThis.Set("window", globalThis)
-	newEventLoopWrapper(result).initializeWindows(globalThis, vm)
 	location := result.createLocationInstance()
 	globalThis.DefineAccessorProperty("location", vm.ToValue(func(c *goja.FunctionCall) goja.Value {
 		return location

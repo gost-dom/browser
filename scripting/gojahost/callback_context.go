@@ -48,9 +48,15 @@ type callbackContext struct {
 }
 
 func newArgumentHelper(ctx *GojaContext, c goja.FunctionCall) *callbackContext {
-	this := c.This.ToObject(ctx.vm)
+	// I would consider this a bug in goja. When calling a function in global
+	// scope, `this` is "undefined". It should have been `globalThis`.
+	callThis := c.This
+	if !callThis.ToBoolean() {
+		callThis = ctx.vm.GlobalObject()
+	}
+	this := callThis.ToObject(ctx.vm)
 	var instance any
-	if wrapped := this.GetSymbol(ctx.wrappedGoObj); wrapped != nil {
+	if wrapped := this.GetSymbol(ctx.wrappedGoObj); wrapped != nil && wrapped.ToBoolean() {
 		instance = wrapped.Export()
 	}
 	return &callbackContext{
