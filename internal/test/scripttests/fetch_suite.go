@@ -45,20 +45,18 @@ func initWindow(t *testing.T, host html.ScriptHost, h http.Handler) htmltest.Win
 func testFetch(t *testing.T, host html.ScriptHost) {
 	handler := gosttest.StaticFileServer{
 		"/index.html": gosttest.StaticHTML(`<body>dummy</body>`),
-		"data.json":   gosttest.StaticJSON(`{"foo": "Foo value"}`),
+		"/data.json":  gosttest.StaticJSON(`{"foo": "Foo value"}`),
 	}
 	t.Run("Fetch resource", func(t *testing.T) {
 		g := gomega.NewWithT(t)
 		win := initWindow(t, host, handler)
 		win.MustRun(`
-			let resolved;
-			let rejected;
-			const response = fetch("data.json")
-			response.then(r => { resolved = r }, r => { rejected = r });
+			(async () => {
+				const response = await fetch("data.json")
+				globalThis.got = response.status
+			})()
 		`)
-		g.Expect(
-			win.Eval("resolved && Object.getPrototypeOf(resolved) === Response.prototype"),
-		).To(BeTrue())
+		g.Expect(win.Eval("got")).To(BeEquivalentTo(200))
 	})
 
 	t.Run("404 for not found resource", func(t *testing.T) {
