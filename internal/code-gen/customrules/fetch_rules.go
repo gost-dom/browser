@@ -10,4 +10,5 @@ var fetchRules = SpecRules{
 			},
 		},
 	},
+	"Response": {OutputType: OutputTypeStruct},
 }

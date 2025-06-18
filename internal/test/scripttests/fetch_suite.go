@@ -1,6 +1,7 @@
 package scripttests
 
 import (
+	"net/http"
 	"testing"
 
 	"github.com/gost-dom/browser"
@@ -27,20 +28,48 @@ func (s *FetchSuite) TestRequestURL() {
 	`)).To(Equal("https://example.com/pages/page-2"))
 }
 
-func testFetch(t *testing.T, host html.ScriptHost) {
-	g := gomega.NewWithT(t)
+func (s *FetchSuite) TestPrototypes() {
+	s.Expect(s.Eval(`typeof fetch`)).To(Equal("function"), "fetch is a function")
+}
+
+func initWindow(t *testing.T, host html.ScriptHost, h http.Handler) htmltest.WindowHelper {
 	logger := gosttest.NewTestLogger(t)
+	b := htmltest.NewBrowserHelper(t, browser.New(
+		browser.WithLogger(logger),
+		browser.WithHandler(h),
+		browser.WithScriptHost(host),
+	))
+	return b.OpenWindow("https://example.com/index.html")
+}
+
+func testFetch(t *testing.T, host html.ScriptHost) {
 	handler := gosttest.StaticFileServer{
 		"/index.html": gosttest.StaticHTML(`<body>dummy</body>`),
 		"data.json":   gosttest.StaticJSON(`{"foo": "Foo value"}`),
 	}
-	b := browser.New(
-		browser.WithLogger(logger),
-		browser.WithHandler(handler),
-		browser.WithScriptHost(host),
-	)
-	win := htmltest.NewBrowserHelper(t, b).OpenWindow("https://example.com/index.html")
-	g.Expect(win.Eval(`typeof fetch`)).To(Equal("function"), "fetch is a function")
-	win.MustRun(`const response = fetch("data.json")`)
-	g.Expect(win.Eval(`typeof response.then`)).To(Equal("function"), "response is a promise")
+	t.Run("Fetch resource", func(t *testing.T) {
+		g := gomega.NewWithT(t)
+		win := initWindow(t, host, handler)
+		win.MustRun(`
+			let resolved;
+			let rejected;
+			const response = fetch("data.json")
+			response.then(r => { resolved = r }, r => { rejected = r });
+		`)
+		g.Expect(
+			win.Eval("resolved && Object.getPrototypeOf(resolved) === Response.prototype"),
+		).To(BeTrue())
+	})
+
+	t.Run("404 for not found resource", func(t *testing.T) {
+		g := gomega.NewWithT(t)
+		win := initWindow(t, host, handler)
+		win.MustRun(`
+			(async () => {
+				const response = await fetch("non-existing.json")
+				globalThis.got = response.status
+			})()
+		`)
+		g.Expect(win.Eval("got")).To(BeEquivalentTo(404))
+	})
 }

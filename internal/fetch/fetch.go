@@ -27,8 +27,10 @@ type Request struct {
 
 func (r Request) URL() string { return url.ParseURLBase(r.url, r.bc.LocationHREF()).Href() }
 
-type Response struct{}
+func (f Fetch) Fetch(req Request) *Response {
+	return &Response{Status: 404}
+}
 
-func (f Fetch) Fetch(req Request) Response {
-	return Response{}
+type Response struct {
+	Status int
 }

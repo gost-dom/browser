@@ -11,4 +11,11 @@ func configureFetchSpecs(specs *WebAPIConfig) {
 		"isReloadNavigation", "isHistoryNavigation", "signal",
 		"duplex",
 	)
+
+	res := specs.Type("Response")
+	res.OverrideWrappedType = &GoType{Package: packagenames.Fetch, Name: "Response", Pointer: true}
+	res.SkipConstructor = true
+	res.MarkMembersAsNotImplemented(
+		"body", "type", "clone", "url", "redirected", "ok", "statusText", "headers",
+	)
 }
