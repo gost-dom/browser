@@ -72,7 +72,7 @@ func wrapJSCallback(ctx *GojaContext, cb js.FunctionCallback[jsTypeParam]) goja.
 	return ctx.vm.ToValue(func(c goja.FunctionCall) goja.Value {
 		res, err := cb(newArgumentHelper(ctx, c))
 		if err != nil {
-			panic(err)
+			panic(ctx.vm.ToValue(err))
 		}
 		return toGojaValue(res)
 	})
