@@ -22,6 +22,6 @@ func (p gojaPromise) Resolve(value js.Value[jsTypeParam]) {
 	p.resolve(value.Self().value)
 }
 
-func (p gojaPromise) Reject(value js.Value[jsTypeParam]) {
-	p.reject(value.Self().value)
+func (p gojaPromise) Reject(err error) {
+	p.reject(p.Self().ctx.vm.NewGoError(err))
 }

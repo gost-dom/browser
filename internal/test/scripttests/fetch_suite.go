@@ -44,8 +44,9 @@ func initWindow(t *testing.T, host html.ScriptHost, h http.Handler) htmltest.Win
 
 func testFetch(t *testing.T, host html.ScriptHost) {
 	handler := gosttest.StaticFileServer{
-		"/index.html": gosttest.StaticHTML(`<body>dummy</body>`),
-		"/data.json":  gosttest.StaticJSON(`{"foo": "Foo value"}`),
+		"/index.html":    gosttest.StaticHTML(`<body>dummy</body>`),
+		"/data.json":     gosttest.StaticJSON(`{"foo": "Foo value"}`),
+		"/bad-data.json": gosttest.StaticJSON(`{"foo": "Foo value",`),
 	}
 
 	t.Run("Fetch resource", func(t *testing.T) {
@@ -62,6 +63,27 @@ func testFetch(t *testing.T, host html.ScriptHost) {
 		g.Expect(win.Eval("gotStatus")).To(BeEquivalentTo(200))
 		g.Expect(win.Eval("typeof js")).To(Equal("object"), "typeof js")
 		g.Expect(win.Eval("gotJson")).To(Equal(`{"foo":"Foo value"}`), "json value")
+	})
+
+	t.Run("Fetch invalid JSON", func(t *testing.T) {
+		g := gomega.NewWithT(t)
+		win := initWindow(t, host, handler)
+
+		win.MustRun(`
+			let code = 0
+			let resolved = null
+			let rejected = null
+			let resolvedAfterJson = false
+			fetch("bad-data.json")
+				.then(r => { code = r.status; return r })
+				.then(r => { return r.json().then(
+					r => { resolved = r }, 
+					r => { rejected = r })
+				})
+		`)
+		g.Expect(win.Eval("code")).To(BeEquivalentTo(200))
+		g.Expect(win.Eval("resolved")).To(BeNil(), "resolved")
+		g.Expect(win.Eval("!!rejected")).To(BeTrue())
 	})
 
 	t.Run("404 for not found resource", func(t *testing.T) {
