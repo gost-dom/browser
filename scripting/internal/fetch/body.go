@@ -14,15 +14,17 @@ func (w Body[T]) json(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) 
 	if err != nil {
 		return nil, err
 	}
-	b, err := io.ReadAll(instance)
-	if err != nil {
-		p.Reject(err)
-	} else {
-		if js, err := cbCtx.JSONParse(string(b)); err == nil {
-			p.Resolve(js)
-		} else {
+	go func() {
+		b, err := io.ReadAll(instance)
+		if err != nil {
 			p.Reject(err)
+		} else {
+			if js, err := cbCtx.JSONParse(string(b)); err == nil {
+				p.Resolve(js)
+			} else {
+				p.Reject(err)
+			}
 		}
-	}
+	}()
 	return
 }
