@@ -9,10 +9,12 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type Response[T any] struct{}
+type Response[T any] struct {
+	body *Body[T]
+}
 
 func NewResponse[T any](scriptHost js.ScriptEngine[T]) *Response[T] {
-	return &Response[T]{}
+	return &Response[T]{NewBody(scriptHost)}
 }
 
 func (wrapper Response[T]) Initialize(jsClass js.Class[T]) {
@@ -28,6 +30,7 @@ func (w Response[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("ok", w.ok, nil)
 	jsClass.CreatePrototypeAttribute("statusText", w.statusText, nil)
 	jsClass.CreatePrototypeAttribute("headers", w.headers, nil)
+	w.body.installPrototype(jsClass)
 }
 
 func (w Response[T]) clone(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

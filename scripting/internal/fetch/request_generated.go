@@ -9,10 +9,12 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type Request[T any] struct{}
+type Request[T any] struct {
+	body *Body[T]
+}
 
 func NewRequest[T any](scriptHost js.ScriptEngine[T]) *Request[T] {
-	return &Request[T]{}
+	return &Request[T]{NewBody(scriptHost)}
 }
 
 func (wrapper Request[T]) Initialize(jsClass js.Class[T]) {
@@ -37,6 +39,7 @@ func (w Request[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("isHistoryNavigation", w.isHistoryNavigation, nil)
 	jsClass.CreatePrototypeAttribute("signal", w.signal, nil)
 	jsClass.CreatePrototypeAttribute("duplex", w.duplex, nil)
+	w.body.installPrototype(jsClass)
 }
 
 func (w Request[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

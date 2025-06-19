@@ -1,6 +1,7 @@
 package gojahost
 
 import (
+	"errors"
 	"fmt"
 	"iter"
 
@@ -48,9 +49,16 @@ type gojaConstructor struct {
 }
 
 func (f gojaScope) JSONParse(s string) (js.Value[jsTypeParam], error) {
-	o := f.vm.NewObject()
-	err := o.UnmarshalJSON([]byte(s))
-	return newGojaObject(f.GojaContext, o), err
+	parse, err := f.vm.RunString("JSON.parse")
+	if err != nil {
+		return nil, err
+	}
+	fn, ok := goja.AssertFunction(parse)
+	if !ok {
+		return nil, errors.New("Goja error, retrieving JSON.parse")
+	}
+	res, err := fn(f.vm.GlobalObject(), f.vm.ToValue(s))
+	return newGojaValue(f.GojaContext, res), err
 }
 
 func (f gojaScope) JSONStringify(v js.Value[jsTypeParam]) string {

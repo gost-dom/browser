@@ -1,6 +1,7 @@
 package fetch
 
 import (
+	"io"
 	"net/http"
 
 	"github.com/gost-dom/browser/html"
@@ -40,10 +41,16 @@ func (f Fetch) Fetch(req Request) (*Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-	return &Response{Status: resp.StatusCode}, nil
+	return &Response{
+		Reader:       resp.Body,
+		Status:       resp.StatusCode,
+		httpResponse: resp,
+	}, nil
 }
 
 type Response struct {
+	io.Reader
 	Status int
+
+	httpResponse *http.Response
 }

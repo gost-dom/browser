@@ -18,4 +18,10 @@ func configureFetchSpecs(specs *WebAPIConfig) {
 	res.MarkMembersAsNotImplemented(
 		"body", "type", "clone", "url", "redirected", "ok", "statusText", "headers",
 	)
+
+	body := specs.Type("Body")
+	body.MarkMembersAsNotImplemented(
+		"arrayBuffer", "blob", "bytes", "formData", "text", "body", "bodyUsed",
+	)
+	body.Method("json").SetCustomImplementation()
 }
