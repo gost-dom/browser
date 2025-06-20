@@ -1,8 +1,8 @@
 package html
 
 import (
-	"bytes"
 	"io"
+	"strings"
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/internal/log"
@@ -40,9 +40,9 @@ func (e *htmlScriptElement) Connected() {
 			panic("Bad response")
 		}
 
-		buf := bytes.NewBuffer([]byte{})
-		buf.ReadFrom(resp.Body)
-		e.script = string(buf.Bytes())
+		var buf strings.Builder
+		io.Copy(&buf, resp.Body)
+		e.script = buf.String()
 
 		if _, deferScript := e.GetAttribute("defer"); deferScript {
 			window.deferScript(e)
