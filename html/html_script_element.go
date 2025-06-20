@@ -56,7 +56,7 @@ func (e *htmlScriptElement) Connected() {
 func (e *htmlScriptElement) run() {
 	if err := e.window().Run(e.script); err != nil {
 		// TODO: Dispatch "error" event
-		log.Error(e.Logger(), "Script error", "src", e.src)
+		log.Error(e.Logger(), "Script error", "src", e.src, log.ErrAttr(err))
 	}
 }
 
