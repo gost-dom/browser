@@ -1,31 +1,23 @@
 # gost-dom code generator
 
-This is part of the [Gost-DOM](https://github.com/gost-dom/browser) project.
+This directory is a separate Go module, used only internally in Gost-DOM to
+autogenerate code from web IDL specifications.
 
-This repository contains code to generate code for the code-gen browser based on
-web specifications.
+This has its own module file as it has no code shared at runtime with the main
+code. It also has different dependencies, e.g. this codebase uses tools for
+codegeneration, which is irrelevant in the main library; and has no use for V8.
 
-### Building the code generator.
+The types of generated code include:
 
-The code is generated from specifications from the
-[webref](https://github.com/w3c/webref) repository, which is added as a
-submodule to this project.
+- JavaScript bindings, converting JavaScript calls and arguments to a native Go
+  function call. This is by far the largest part of this generator
+- Mapping HTML element tag names to DOM interfaces, e.g. `<a>` maps the
+  `HTMLAnchorElement`.
+- Go interfaces representing IDL interfaces
 
-To build the code generator, you need to fetch the submodule and a _curated_ set
-of files.
+This part of the code is given somewhat less attention that the rest of the
+codebase. However, it is still a goal that the _generated_ code is nice and
+clean. 
 
-Prerequisites: Node.js and npm (or compatible alternatives)
-
-```sh
-$ git submodul update --init
-$ cd webref
-$ npm install # Or your favourite node package manager
-$ npm run curate
-```
-
-This build a set of files in the `curated/` subfolder.
-
-> [!NOTE]
->
-> The webref is in the process of being moved to a new self-contained repo, so
-> no custom steps are needed.
+There are far fewer tests - the primary feedback loop consists of inspeciting
+generated code. For refactoring, that generated code is unchanged.
