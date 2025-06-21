@@ -158,9 +158,4 @@ func (l *URL) SetPort(val string) {
 	}
 }
 func (l *URL) SetProtocol(val string) { l.url.Scheme = val }
-func (l *URL) SetSearch(val string) {
-	if strings.HasPrefix(val, "?") {
-		val = val[1:]
-	}
-	l.url.RawQuery = val
-}
+func (l *URL) SetSearch(val string)   { l.url.RawQuery = strings.TrimPrefix(val, "?") }

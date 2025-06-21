@@ -3,6 +3,7 @@
 package url
 
 import (
+	"errors"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 	url "github.com/gost-dom/browser/url"
@@ -190,7 +191,14 @@ func (w URL[T]) search(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 
 func (w URL[T]) setSearch(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: URL.setSearch")
-	return codec.EncodeCallbackErrorf(cbCtx, "URL.setSearch: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	instance, err0 := js.As[*url.URL](cbCtx.Instance())
+	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
+	err := errors.Join(err0, err1)
+	if err != nil {
+		return nil, err
+	}
+	instance.SetSearch(val)
+	return nil, nil
 }
 
 func (w URL[T]) searchParams(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
