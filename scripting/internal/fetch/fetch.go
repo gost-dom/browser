@@ -12,19 +12,12 @@ func Fetch[T any](info js.CallbackContext[T]) (js.Value[T], error) {
 		return nil, err
 	}
 	f := fetch.New(info.Window())
-	p := info.NewPromise()
-	go func() {
+	return codec.EncodePromise(info, func() (js.Value[T], error) {
 		r, err := f.Fetch(f.NewRequest(url))
 		if err != nil {
-			p.Reject(err)
-			return
+			return nil, err
 		}
-		resp, err := info.Constructor("Response").NewInstance(r)
-		if err != nil {
-			p.Reject(err)
-			return
-		}
-		p.Resolve(resp)
-	}()
-	return p, nil
+
+		return info.Constructor("Response").NewInstance(r)
+	})
 }

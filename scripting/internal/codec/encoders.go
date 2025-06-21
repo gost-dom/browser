@@ -82,3 +82,22 @@ func EncodeConstrucedValue[T any](cbCtx js.CallbackScope[T], val any) (js.Value[
 	}
 	return nil, nil
 }
+
+// EncodePromise returnes a JavaScript Promise that will settle with the result
+// of running function f. Function f must be safe to run concurrently, as it
+// will execute in a separate goroutine.
+func EncodePromise[T any](
+	c js.ValueFactory[T],
+	f func() (js.Value[T], error),
+) (js.Value[T], error) {
+	p := c.NewPromise()
+	go func() {
+		r, err := f()
+		if err == nil {
+			p.Resolve(r)
+		} else {
+			p.Reject(err)
+		}
+	}()
+	return p, nil
+}
