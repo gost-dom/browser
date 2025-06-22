@@ -1,6 +1,7 @@
 package clock_test
 
 import (
+	"context"
 	"errors"
 	"testing"
 	"time"
@@ -192,6 +193,48 @@ func (s *ClockTestSuite) TestRepeatingTasksGeneratePanicOnRunAdvance() {
 	c.AddSafeTask(task, 1*time.Millisecond)
 
 	s.Assert().Panics(func() { c.Advance(1000 * time.Millisecond) })
+}
+
+func (s *ClockTestSuite) TestProcessEvents() {
+	var count int
+
+	ctx, cancel := context.WithTimeout(s.T().Context(), time.Millisecond)
+	defer cancel()
+
+	c := clock.New()
+	e := c.BeginEvent()
+	go func() {
+		e.AddSafeEvent(func() {
+			count++
+		})
+	}()
+
+	s.Assert().Equal(0, count, "count before processEvents")
+	c.ProcessEvents(ctx)
+	s.Assert().Equal(1, count, "count before processEvents")
+}
+
+func (s *ClockTestSuite) TestProcessEventsUntil() {
+	var count int
+
+	ctx, cancel := context.WithTimeout(s.T().Context(), time.Millisecond)
+	defer cancel()
+
+	c := clock.New()
+	e1 := c.BeginEvent()
+	go func() {
+		e1.AddSafeEvent(func() { count++ })
+	}()
+	e2 := c.BeginEvent()
+	go func() {
+		e2.AddSafeEvent(func() { count++ })
+	}()
+
+	s.Assert().Equal(0, count, "count before ProcessEventsWhile")
+	c.ProcessEventsWhile(ctx, func() bool { return count == 0 })
+	s.Assert().Equal(1, count, "count after ProcessEventsWhile")
+	c.ProcessEvents(ctx)
+	s.Assert().Equal(2, count, "count before ProcessEvents")
 }
 
 func TestClock(t *testing.T) {
