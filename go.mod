@@ -1,6 +1,6 @@
 module github.com/gost-dom/browser
 
-go 1.23.6
+go 1.24
 
 require (
 	github.com/dop251/goja v0.0.0-20250531102226-cb187b08699c
