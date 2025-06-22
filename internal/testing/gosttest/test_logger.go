@@ -46,7 +46,9 @@ func MinLogLevel(lvl int) HandlerOption {
 
 func AllowErrors() HandlerOption { return func(h *TestingLogHandler) { h.AllowErrors = true } }
 
-func NewTestLogger(t testing.TB, opts ...func(*TestingLogHandler)) *slog.Logger {
+type TestLoggerOption = func(*TestingLogHandler)
+
+func NewTestLogger(t testing.TB, opts ...TestLoggerOption) *slog.Logger {
 	handler := TestingLogHandler{TB: t}
 	for _, o := range opts {
 		o(&handler)

@@ -4,10 +4,12 @@ package clock
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 	"slices"
 	"time"
 
 	"github.com/gost-dom/browser/internal/dom/mutation"
+	"github.com/gost-dom/browser/internal/log"
 )
 
 type TaskHandle uint32
@@ -64,7 +66,8 @@ type futureTask struct {
 //
 // The behaviour is configurable by the MaxLoopWithoutDecrement value.
 type Clock struct {
-	Time time.Time
+	Time   time.Time
+	Logger *slog.Logger
 	mutation.FlusherSet
 
 	// Sets the number of times a task is allowed to run without seeing a
@@ -103,6 +106,14 @@ func New(options ...NewClockOption) *Clock {
 		c.Time = time.Now()
 	}
 	return c
+}
+
+func (c *Clock) logger() *slog.Logger {
+	l := c.Logger
+	if l == nil {
+		l = log.Default()
+	}
+	return l.With("pkg", "log")
 }
 
 // runMicrotasksAndFlush runs first microtasks, e.g., tasks added using
@@ -207,6 +218,7 @@ func (c *Clock) Cancel(handle TaskHandle) {
 // JavaScript execution and should really be carried out by the javascript
 // engine.
 func (c *Clock) AddMicrotask(task TaskCallback) {
+	c.logger().Debug("Clock.AddMicrotask")
 	c.microtasks = append(c.microtasks, task)
 }
 
@@ -285,6 +297,8 @@ func (c *Clock) RunAll() error {
 
 // NewClockOption are used to initialize a new [Clock]
 type NewClockOption func(*Clock)
+
+func WithLogger(l *slog.Logger) NewClockOption { return func(c *Clock) { c.Logger = l } }
 
 // Initializes the clock's simulated time from a concrete [time.Time] value.
 func OfTime(t time.Time) NewClockOption {

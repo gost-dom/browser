@@ -243,7 +243,7 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 	// TODO: The possibility to use nil is primarily for testing support
 	context := &V8ScriptContext{
 		host:    host,
-		clock:   clock.New(),
+		clock:   clock.New(clock.WithLogger(w.Logger())),
 		v8ctx:   v8ctx,
 		window:  w,
 		v8nodes: make(map[entity.ObjectId]jsValue),
