@@ -127,7 +127,7 @@ func (c *Clock) logger() *slog.Logger {
 	if l == nil {
 		l = log.Default()
 	}
-	return l.With("pkg", "log")
+	return l.With("pkg", "gost-dom/clock")
 }
 
 // runMicrotasksAndFlush runs first microtasks, e.g., tasks added using
