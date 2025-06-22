@@ -12,8 +12,11 @@ func Fetch[T any](info js.CallbackContext[T]) (js.Value[T], error) {
 		return nil, err
 	}
 	f := fetch.New(info.Window())
+	info.Logger().Debug("js/fetch: create promise")
 	return codec.EncodePromise(info, func() (js.Value[T], error) {
+		info.Logger().Debug("js/fetch: waiting for response")
 		r, err := f.Fetch(f.NewRequest(url))
+		info.Logger().Debug("js/fetch: got response")
 		if err != nil {
 			return nil, err
 		}

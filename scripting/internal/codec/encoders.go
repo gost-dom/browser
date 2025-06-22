@@ -1,6 +1,8 @@
 package codec
 
 import (
+	"fmt"
+
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -86,18 +88,26 @@ func EncodeConstrucedValue[T any](cbCtx js.CallbackScope[T], val any) (js.Value[
 // EncodePromise returnes a JavaScript Promise that will settle with the result
 // of running function f. Function f must be safe to run concurrently, as it
 // will execute in a separate goroutine.
+//
+// The promise will not settile immediately after f finishes, but will be
+// deferred to run on the "main loop" that the embedder controls.
 func EncodePromise[T any](
-	c js.ValueFactory[T],
+	c js.Scope[T],
 	f func() (js.Value[T], error),
 ) (js.Value[T], error) {
 	p := c.NewPromise()
+	e := c.Clock().BeginEvent()
 	go func() {
 		r, err := f()
-		if err == nil {
-			p.Resolve(r)
-		} else {
-			p.Reject(err)
-		}
+		e.AddSafeEvent(func() {
+			if err == nil {
+				fmt.Println("Resolve")
+				p.Resolve(r)
+			} else {
+				fmt.Println("Reject")
+				p.Reject(err)
+			}
+		})
 	}()
 	return p, nil
 }
