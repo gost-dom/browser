@@ -202,9 +202,9 @@ func (s *ClockTestSuite) TestProcessEvents() {
 	defer cancel()
 
 	c := clock.New()
-	c.BeginEvent()
+	e := c.BeginEvent()
 	go func() {
-		c.AddSafeEvent(func() {
+		e.AddSafeEvent(func() {
 			count++
 		})
 	}()
@@ -221,13 +221,13 @@ func (s *ClockTestSuite) TestProcessEventsUntil() {
 	defer cancel()
 
 	c := clock.New()
-	c.BeginEvent()
+	e1 := c.BeginEvent()
 	go func() {
-		c.AddSafeEvent(func() { count++ })
+		e1.AddSafeEvent(func() { count++ })
 	}()
-	c.BeginEvent()
+	e2 := c.BeginEvent()
 	go func() {
-		c.AddSafeEvent(func() { count++ })
+		e2.AddSafeEvent(func() { count++ })
 	}()
 
 	s.Assert().Equal(0, count, "count before ProcessEventsWhile")

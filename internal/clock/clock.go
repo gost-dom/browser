@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log/slog"
 	"slices"
+	"sync/atomic"
 	"time"
 
 	"github.com/gost-dom/browser/internal/dom/mutation"
@@ -235,9 +236,43 @@ func (c *Clock) AddMicrotask(task TaskCallback) {
 	c.microtasks = append(c.microtasks, task)
 }
 
+// [EventLoopCallback] is used to add an event to the event loop. You must call
+// [Clock.BeginEvent] to get an instance, and each instance can only be used for
+// one callback. Passing multiple event loop callbacks to the same instance will
+// panic.
+type EventLoopCallback struct {
+	clock *Clock
+	used  atomic.Bool
+}
+
+// AddEvent allows a goroutine to add an event to be executed on the event loop
+// goroutine. This is safe to call from any goroutine.
+//
+// [EventLoopCallback.AddEvent]/[EventLoopCallback.AddSafeEvent] may only be
+// called once. Multiple calls will panic.
+func (c *EventLoopCallback) AddEvent(cb TaskCallback) {
+	prev := c.used.Swap(true)
+	if prev {
+		panic("gost-dom/clock: adding multiple callbacks from save BeginEvent() call")
+	}
+	c.clock.addEvent(cb)
+}
+
+// AddSafeEvent is like [Clock.addEvent], but with a simpler interface for
+// events that cannot fail with an error.
+//
+// [EventLoopCallback.AddEvent]/[EventLoopCallback.AddSafeEvent] may only be
+// called once. Multiple calls will panic.
+func (c *EventLoopCallback) AddSafeEvent(cb SafeTaskCallback) {
+	c.AddEvent(cb.toTask())
+}
+
 // BeginEvent tells the event loop that an event is expected to be added in the
 // future. This should be called on the event loop goroutine.
-func (c *Clock) BeginEvent() {
+//
+// BeginEvent returns an [EventLoopCallback] that the caller must use to pass the
+// event to the event loop.
+func (c *Clock) BeginEvent() *EventLoopCallback {
 	c.logger().Debug("Clock.BeginEvent")
 	c.pendingEvents++
 	if c.events == nil {
@@ -248,28 +283,12 @@ func (c *Clock) BeginEvent() {
 		}
 		c.events = make(chan TaskCallback, bufSize)
 	}
+	return &EventLoopCallback{clock: c}
 }
 
-// AddEvent allows a goroutine to add an event to be executed on the event loop
-// goroutine. Before calling AddEvent, the caller must call [Clock.BeginEvent],
-// letting the event loop know how many events are expected to arrive.
-//
-// AddEvent is the only function that is safe to be called from multiple
-// goroutines.
-func (c *Clock) AddEvent(task TaskCallback) {
-	c.logger().Debug("Clock.AddEvent", "this", c)
-	if c.pendingEvents == 0 {
-		panic("AddEvent: pending events is 0. You must call BeginEvent before calling AddEvent")
-	}
+func (c *Clock) addEvent(task TaskCallback) {
+	c.logger().Debug("Clock.AddEvent")
 	c.events <- task
-	c.logger().Debug("Clock.AddEvent: event pushed to channel")
-}
-
-// AddSafeEvent is like [Clock.AddEvent], but with a simpler interface for
-// events that cannot fail with an error. Like AddEvent, the caller must call
-// [Clock.BeginEvent] before calling this function.
-func (c *Clock) AddSafeEvent(task SafeTaskCallback) {
-	c.AddEvent(task.toTask())
 }
 
 // ProcessEvents processes all pending events.
@@ -310,11 +329,6 @@ func (c *Clock) ProcessEventsWhile(ctx context.Context, f func() bool) error {
 		select {
 		case event := <-c.events:
 			c.pendingEvents--
-			if c.pendingEvents < 0 {
-				panic(
-					"gost-dom/clock: Too many 'Events'. Every AddEvent/AddSafeEvent must be preceeded by a call to BeginEvent",
-				)
-			}
 			err := event()
 			c.logger().
 				Debug("clock.ProcessEvent: processed", "pendingCount", c.pendingEvents, log.ErrAttr(err))
