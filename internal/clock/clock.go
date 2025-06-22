@@ -253,7 +253,7 @@ type EventLoopCallback struct {
 func (c *EventLoopCallback) AddEvent(cb TaskCallback) {
 	prev := c.used.Swap(true)
 	if prev {
-		panic("gost-dom/clock: adding multiple callbacks from save BeginEvent() call")
+		panic("gost-dom/clock: adding multiple callbacks from same BeginEvent() call")
 	}
 	c.clock.addEvent(cb)
 }
