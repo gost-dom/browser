@@ -34,6 +34,8 @@ func (s *FetchSuite) TestRequestURL() {
 
 func (s *FetchSuite) TestPrototypes() {
 	s.Expect(s.Eval(`typeof fetch`)).To(Equal("function"), "fetch is a function")
+	s.Expect(s.Eval(`typeof Response`)).To(Equal("function"), "Response is a constructor")
+	s.Expect(s.Eval(`typeof Request`)).To(Equal("function"), "Request is a constructor")
 }
 
 type option struct {
@@ -113,6 +115,7 @@ func testFetchJSONAsync(t *testing.T, host html.ScriptHost) {
 	assert.NoError(t, win.Clock().ProcessEventsWhile(ctx, func() bool {
 		return win.MustEval("gotStatus") == nil
 	}))
+
 	g.Expect(win.Eval("gotStatus")).To(BeEquivalentTo(200), "status after fetch settles")
 	delayedHandler.Print(`{"foo": "Foo value"}`)
 	delayedHandler.Flush()
