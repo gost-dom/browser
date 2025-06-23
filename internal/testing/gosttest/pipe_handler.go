@@ -100,7 +100,7 @@ func (h *PipeHandler) Print(a ...any) {
 
 func (h *PipeHandler) Printf(format string, a ...any) {
 	h.addF("Printf", func(w http.ResponseWriter) {
-		if _, err := fmt.Fprintf(w, format, a...); err != nil && h.T != nil {
+		if _, err := fmt.Fprintf(w, format, a...); err != nil {
 			h.errorF("PipeHandler.Printf: %v", err)
 		}
 	})
