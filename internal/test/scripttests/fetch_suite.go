@@ -2,7 +2,6 @@ package scripttests
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"maps"
 	"net/http"
@@ -86,12 +85,8 @@ func testFetch(t *testing.T, host html.ScriptHost) {
 
 		g := gomega.NewWithT(t)
 		h2 := maps.Clone(handler)
-		fs := make(chan func(http.ResponseWriter))
-		h2["/slow-data.json"] = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			for f := range fs {
-				f(w)
-			}
-		})
+		delayedHandler := &gosttest.PipeHandler{}
+		h2["/slow-data.json"] = delayedHandler
 		win := initWindow(t, host, h2, WithMinLogLevel(slog.LevelDebug))
 		win.MustRun(`
 			let gotStatus
@@ -111,11 +106,9 @@ func testFetch(t *testing.T, host html.ScriptHost) {
 			})()
 		`)
 		g.Expect(win.Eval("gotStatus")).To(BeNil())
-		fs <- func(w http.ResponseWriter) {
-			w.WriteHeader(200)
-			fmt.Fprint(w, `{"foo": "Foo value"}`)
-			w.(http.Flusher).Flush()
-		}
+		delayedHandler.WriteHeader(200)
+		delayedHandler.Print(`{"foo": "Foo value"}`)
+		delayedHandler.Flush()
 		assert.NoError(t, win.Clock().ProcessEventsWhile(ctx, func() bool {
 			res, err := win.Eval("gotStatus")
 			if err != nil {
@@ -125,7 +118,7 @@ func testFetch(t *testing.T, host html.ScriptHost) {
 		}))
 		g.Expect(win.Eval("gotStatus")).To(BeEquivalentTo(200))
 		g.Expect(win.Eval("gotJson")).To(Equal("uninitialized"), "json before response closes")
-		close(fs)
+		delayedHandler.Close()
 		assert.NoError(t, win.Clock().ProcessEventsWhile(ctx, func() bool {
 			res, err := win.Eval("gotJson === 'uninitialized'")
 			if err != nil {
@@ -172,7 +165,6 @@ func testFetch(t *testing.T, host html.ScriptHost) {
 		`)
 		ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
 		defer cancel()
-		t.Log("test: Process events")
 		assert.NoError(t, win.Clock().ProcessEvents(ctx))
 		g.Expect(win.Eval("got")).To(BeEquivalentTo(404))
 	})
