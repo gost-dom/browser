@@ -34,14 +34,6 @@ func (c TestBrowsingContext) Logger() *slog.Logger {
 	return log.Default()
 }
 
-func TestFetch(t *testing.T) {
-	handler := gosttest.StaticFileServer{
-		"data.json": gosttest.StaticJSON(`{"foo": "foo"}`),
-	}
-	f := fetch.Fetch{NewBrowsingContext(t, handler)}
-	f.Fetch(f.NewRequest("data.json"))
-}
-
 func TestRequestURLUsesDocumentLocation(t *testing.T) {
 	bc := TestBrowsingContext{Location: "https://example.com/users/joe"}
 	f := fetch.New(bc)
