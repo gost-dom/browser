@@ -293,9 +293,7 @@ func (c *Clock) addEvent(task TaskCallback) {
 
 // ProcessEvents processes all pending events.
 func (c *Clock) ProcessEvents(ctx context.Context) error {
-	return c.ProcessEventsWhile(ctx, func() bool {
-		return c.pendingEvents > 0
-	})
+	return c.processEventsWhile(ctx, func() bool { return c.pendingEvents > 0 }, "ProcessEvents")
 }
 
 // ProcessEvents processes pending events as long as predicate p evaluates to
@@ -321,9 +319,13 @@ func (c *Clock) ProcessEvents(ctx context.Context) error {
 //		return statusIndicator.TextContent() == "RESPONSE"
 //	})
 func (c *Clock) ProcessEventsWhile(ctx context.Context, f func() bool) error {
+	return c.processEventsWhile(ctx, f, "ProcessEventsWhile")
+}
+
+func (c *Clock) processEventsWhile(ctx context.Context, f func() bool, name string) error {
 	errs := make([]error, 0, 1+c.pendingEvents*2)
 	errs = append(errs, c.RunAll()) // Run microtasks first
-	c.logger().Debug("Clock.ProcessEvents", "pendingCount", c.pendingEvents, "this", c)
+	c.logger().Debug("Clock.processEventsWhile", "pendingCount", c.pendingEvents, "this", c)
 	for f() {
 		c.logger().Debug("Clock.ProcessEvents: waiting")
 		select {
@@ -335,7 +337,7 @@ func (c *Clock) ProcessEventsWhile(ctx context.Context, f func() bool) error {
 			errs = append(errs, err)
 			errs = append(errs, c.RunAll())
 		case <-ctx.Done():
-			return errors.New("Clock.ProcessEvents: timeout waiting for event")
+			return fmt.Errorf("Clock.%s: timeout waiting for event", name)
 		}
 	}
 	return errors.Join(errs...)

@@ -3,6 +3,7 @@ package internal
 import (
 	"github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/dom"
+	"github.com/gost-dom/browser/scripting/internal/fetch"
 	"github.com/gost-dom/browser/scripting/internal/html"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/browser/scripting/internal/uievents"
@@ -12,6 +13,7 @@ import (
 
 func Configure[T any](host js.ScriptEngine[T]) {
 	dom.Configure(host)
+	fetch.Configure(host)
 }
 
 func Bootstrap[T any](reg js.ClassBuilder[T]) {
@@ -20,6 +22,7 @@ func Bootstrap[T any](reg js.ClassBuilder[T]) {
 	xhr.Bootstrap(reg)
 	url.Bootstrap(reg)
 	uievents.Bootstrap(reg)
+	fetch.Bootstrap(reg)
 
 	js.RegisterClass(reg, "File", "", dom.NewEvent)
 	js.RegisterClass(reg, "CustomEvent", "Event", dom.NewCustomEvent)

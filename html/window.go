@@ -1,6 +1,7 @@
 package html
 
 import (
+	"context"
 	"errors"
 	"io"
 	"log/slog"
@@ -24,8 +25,13 @@ type ScriptHost interface {
 }
 
 type Clock interface {
+	// Deprecated: Call ProcessEvents() instead
 	RunAll() error
 	Advance(time.Duration) error
+	// ProcessEvents ensures that all immediate functions as well as
+	// microtasks are executed
+	ProcessEvents(ctx context.Context) error
+	ProcessEventsWhile(ctx context.Context, f func() bool) error
 }
 
 // Describes a current browser context

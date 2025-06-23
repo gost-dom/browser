@@ -15,6 +15,7 @@ import (
 type browserConfig struct {
 	client http.Client
 	logger *slog.Logger
+	host   html.ScriptHost
 }
 
 type BrowserOption func(*browserConfig)
@@ -34,6 +35,10 @@ func WithLogger(l *slog.Logger) BrowserOption { return func(b *browserConfig) { 
 // higher risk features.
 func WithHandler(h http.Handler) BrowserOption {
 	return func(b *browserConfig) { b.client = NewHttpClientFromHandler(h) }
+}
+
+func WithScriptHost(host html.ScriptHost) BrowserOption {
+	return func(b *browserConfig) { b.host = host }
 }
 
 // Pretty stupid right now, but should _probably_ allow handling multiple
@@ -85,10 +90,13 @@ func New(options ...BrowserOption) *Browser {
 	for _, o := range options {
 		o(config)
 	}
+	if config.host == nil {
+		config.host = v8host.New(v8host.WithLogger(config.logger))
+	}
 	result := &Browser{
 		Client:     config.client,
 		Logger:     config.logger,
-		ScriptHost: v8host.New(v8host.WithLogger(config.logger)),
+		ScriptHost: config.host,
 	}
 	return result
 }

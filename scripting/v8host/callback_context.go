@@ -116,6 +116,9 @@ func (f v8Scope) NewInt32(val int32) jsValue   { return f.newV8Value(val) }
 func (f v8Scope) NewUint32(val uint32) jsValue { return f.newV8Value(val) }
 func (f v8Scope) NewInt64(val int64) jsValue   { return f.newV8Value(val) }
 func (f v8Scope) NewBoolean(val bool) jsValue  { return f.newV8Value(val) }
+func (s v8Scope) NewPromise() js.Promise[jsTypeParam] {
+	return newV8Promise(s.V8ScriptContext)
+}
 
 func (f v8Scope) JSONStringify(val jsValue) string {
 	r, err := v8.JSONStringify(f.v8ctx, toV8Value(val))
