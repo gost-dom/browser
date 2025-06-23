@@ -119,8 +119,14 @@ func (h *PipeHandler) addF(n string, f func(http.ResponseWriter)) {
 	}
 }
 
-// Close closes the "pipe", completing the HTTP response.
+// Close closes the "pipe", completing the HTTP response. Panics if already
+// closed.
 func (h *PipeHandler) Close() {
+	defer func() {
+		if err := recover(); err != nil {
+			panic(fmt.Sprintf("gost-dom/gosttest: PipeHandler.Close(): %v", err))
+		}
+	}()
 	h.ensureChannel()
 	close(h.fs)
 }
