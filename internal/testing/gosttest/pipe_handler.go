@@ -126,5 +126,9 @@ func (h *PipeHandler) Close() {
 }
 
 func (h *PipeHandler) Flush() {
-	h.addF("Flush", func(w http.ResponseWriter) { w.(http.Flusher).Flush() })
+	h.addF("Flush", func(w http.ResponseWriter) {
+		// While Flush() may return an error, we can't really use it for
+		// anything. If the buffer isn't flushed, it will cause a bug.
+		http.NewResponseController(w).Flush()
+	})
 }
