@@ -1,26 +1,24 @@
 package dom_test
 
 import (
+	"testing"
+
 	"github.com/gost-dom/browser/dom"
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
+	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
+	"github.com/onsi/gomega"
 )
 
-var _ = Describe("CommentNode", func() {
-	It("Should have the right node type", func() {
-		node := CreateHTMLDocument().CreateComment("dummy")
-		Expect(node.NodeType()).To(Equal(dom.NodeType(8)))
-	})
+func TestCommentNode(t *testing.T) {
+	g := gomega.NewWithT(t)
+	node := CreateHTMLDocument().CreateComment("dummy")
+	g.Expect(node.NodeType()).To(Equal(dom.NodeType(8)), "Comment node type")
 
-	It("Should return text and length", func() {
-		node := CreateHTMLDocument().CreateComment("A sequence of 27 characters")
-		Expect(node.Data()).To(Equal("A sequence of 27 characters"))
-		Expect(node.Length()).To(Equal(27))
-	})
+	node = CreateHTMLDocument().CreateComment("A sequence of 27 characters")
+	g.Expect(node.Data()).To(Equal("A sequence of 27 characters"))
+	g.Expect(node.Length()).To(Equal(27), "Length of 27 character string")
 
-	It("Should return the right length for weird characters", func() {
-		// This character counts for 1 character, but takes up multiple bytes
-		node := CreateHTMLDocument().CreateComment("𐀀")
-		Expect(node.Length()).To(Equal(1))
-	})
-})
+	node = CreateHTMLDocument().CreateComment("𐀀")
+	g.Expect(
+		node.Length(),
+	).To(Equal(1), "Length of single character requiring multiple bytes of encoding")
+}
