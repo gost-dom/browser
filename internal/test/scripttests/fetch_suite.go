@@ -100,10 +100,8 @@ func testFetchJSONAsync(t *testing.T, host html.ScriptHost) {
 			try {
 				const response = await fetch("slow-data.json")
 				gotStatus = response.status
-				// window.dispatchEvent(new CustomEvent("gost-response"))
 				globalThis.js = await response.json()
 				gotJson = JSON.stringify(js)
-				// window.dispatchEvent(new CustomEvent("gost-response"))
 			} catch (e) {
 				err = e
 			}

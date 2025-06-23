@@ -30,13 +30,6 @@ func (h TestRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
 		rw.CloseWriter()
 	}()
 	return rw.Response(), nil
-	// select {
-	// case <-time.After(time.Second):
-	// 	panic("Time out waiting for body to be ready")
-	// case <-rw.BodyReady:
-	// }
-	// rw.response.Request = req
-	// return rw.response, nil
 }
 
 // nullReader is just a reader with no content. When _sending_ an HTTP request,
