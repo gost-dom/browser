@@ -3,7 +3,6 @@ package scripttests
 import (
 	"context"
 	"log/slog"
-	"maps"
 	"net/http"
 	"testing"
 	"time"
@@ -73,72 +72,76 @@ func initWindow(
 func testFetch(t *testing.T, host html.ScriptHost) {
 	t.Parallel()
 
+	t.Run("Fetch resource async/await", func(t *testing.T) { testFetchJSONAsync(t, host) })
+	t.Run("Fetch invalid JSON", func(t *testing.T) { testFetchInvalidJSON(t, host) })
+	t.Run("404 for not found resource", func(t *testing.T) { testNotFound(t, host) })
+}
+
+func testFetchJSONAsync(t *testing.T, host html.ScriptHost) {
+	ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
+	defer cancel()
+
+	delayedHandler := &gosttest.PipeHandler{T: t, Ctx: ctx}
 	handler := gosttest.StaticFileServer{
-		"/index.html":    gosttest.StaticHTML(`<body>dummy</body>`),
-		"/data.json":     gosttest.StaticJSON(`{"foo": "Foo value"}`),
-		"/bad-data.json": gosttest.StaticJSON(`{"foo": "Foo value",`),
+		"/index.html":     gosttest.StaticHTML(`<body>dummy</body>`),
+		"/data.json":      gosttest.StaticJSON(`{"foo": "Foo value"}`),
+		"/slow-data.json": delayedHandler,
 	}
 
-	t.Run("Fetch resource", func(t *testing.T) {
-		ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
-		defer cancel()
-
-		g := gomega.NewWithT(t)
-		h2 := maps.Clone(handler)
-		delayedHandler := &gosttest.PipeHandler{}
-		h2["/slow-data.json"] = delayedHandler
-		win := initWindow(t, host, h2, WithMinLogLevel(slog.LevelDebug))
-		win.MustRun(`
-			let gotStatus
-			let gotJson = "uninitialized"
-			let err
-			(async () => {
-				try {
-					const response = await fetch("slow-data.json")
-					gotStatus = response.status
-					// window.dispatchEvent(new CustomEvent("gost-response"))
-					globalThis.js = await response.json()
-					gotJson = JSON.stringify(js)
-					// window.dispatchEvent(new CustomEvent("gost-response"))
-				} catch (e) {
-					err = e
-				}
-			})()
-		`)
-		g.Expect(win.Eval("gotStatus")).To(BeNil())
-		delayedHandler.WriteHeader(200)
-		delayedHandler.Print(`{"foo": "Foo value"}`)
-		delayedHandler.Flush()
-		assert.NoError(t, win.Clock().ProcessEventsWhile(ctx, func() bool {
-			res, err := win.Eval("gotStatus")
-			if err != nil {
-				t.Error(err)
+	g := gomega.NewWithT(t)
+	win := initWindow(t, host, handler, WithMinLogLevel(slog.LevelDebug))
+	win.MustRun(`
+		let gotStatus
+		let gotJson = "uninitialized"
+		let err
+		(async () => {
+			try {
+				const response = await fetch("slow-data.json")
+				gotStatus = response.status
+				// window.dispatchEvent(new CustomEvent("gost-response"))
+				globalThis.js = await response.json()
+				gotJson = JSON.stringify(js)
+				// window.dispatchEvent(new CustomEvent("gost-response"))
+			} catch (e) {
+				err = e
 			}
-			return res == nil
-		}))
-		g.Expect(win.Eval("gotStatus")).To(BeEquivalentTo(200))
-		g.Expect(win.Eval("gotJson")).To(Equal("uninitialized"), "json before response closes")
-		delayedHandler.Close()
-		assert.NoError(t, win.Clock().ProcessEventsWhile(ctx, func() bool {
-			res, err := win.Eval("gotJson === 'uninitialized'")
-			if err != nil {
-				t.Error("Error evaluating gotJson")
-				return false
-			}
-			return res.(bool)
-		}))
-		g.Expect(win.Eval("gotJson")).ToNot(Equal("uninitialized"), "json after response closes")
-		g.Expect(win.Eval("err")).To(BeNil())
-	})
+		})()
+	`)
+	g.Expect(win.Eval("gotStatus")).To(BeNil(), "status before fetch settles")
+	delayedHandler.WriteHeader(200)
 
-	t.Run("Fetch invalid JSON", func(t *testing.T) {
-		ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
-		defer cancel()
+	assert.NoError(t, win.Clock().ProcessEventsWhile(ctx, func() bool {
+		return win.MustEval("gotStatus") == nil
+	}))
+	g.Expect(win.Eval("gotStatus")).To(BeEquivalentTo(200), "status after fetch settles")
+	delayedHandler.Print(`{"foo": "Foo value"}`)
+	delayedHandler.Flush()
+	g.Expect(win.Eval("gotJson")).To(Equal("uninitialized"), "json before response closes")
+	delayedHandler.Close()
+	assert.NoError(t, win.Clock().ProcessEventsWhile(ctx, func() bool {
+		res, err := win.Eval("gotJson === 'uninitialized'")
+		if err != nil {
+			t.Error("Error evaluating gotJson")
+			return false
+		}
+		return res.(bool)
+	}))
+	g.Expect(win.Eval("gotJson")).ToNot(Equal("uninitialized"), "json after response closes")
+	g.Expect(win.Eval("err")).To(BeNil())
+}
 
-		g := gomega.NewWithT(t)
-		win := initWindow(t, host, handler)
+func testFetchInvalidJSON(t *testing.T, host html.ScriptHost) {
+	ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
+	defer cancel()
 
-		win.MustRun(`
+	handler := gosttest.StaticFileServer{
+		"/index.html":    gosttest.StaticHTML(`<body>dummy</body>`),
+		"/bad-data.json": gosttest.StaticJSON(`{"foo": "Foo value",`),
+	}
+	g := gomega.NewWithT(t)
+	win := initWindow(t, host, handler)
+
+	win.MustRun(`
 			let code = 0
 			let resolved = null
 			let rejected = null
@@ -150,22 +153,24 @@ func testFetch(t *testing.T, host html.ScriptHost) {
 					r => { rejected = r })
 				})
 		`)
-		assert.NoError(t, win.Clock().ProcessEvents(ctx))
-		g.Expect(win.Eval("code")).To(BeEquivalentTo(200))
-		g.Expect(win.Eval("resolved")).To(BeNil(), "resolved")
-		g.Expect(win.Eval("!!rejected")).To(BeTrue())
-	})
+	assert.NoError(t, win.Clock().ProcessEvents(ctx))
+	g.Expect(win.Eval("code")).To(BeEquivalentTo(200))
+	g.Expect(win.Eval("resolved")).To(BeNil(), "resolved")
+	g.Expect(win.Eval("!!rejected")).To(BeTrue())
+}
 
-	t.Run("404 for not found resource", func(t *testing.T) {
-		g := gomega.NewWithT(t)
-		win := initWindow(t, host, handler)
-		win.MustRun(`
+func testNotFound(t *testing.T, host html.ScriptHost) {
+	handler := gosttest.StaticFileServer{
+		"/index.html": gosttest.StaticHTML(`<body>dummy</body>`),
+	}
+	g := gomega.NewWithT(t)
+	win := initWindow(t, host, handler)
+	win.MustRun(`
 			fetch("non-existing.json")
 				.then(response => { globalThis.got = response.status })
 		`)
-		ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
-		defer cancel()
-		assert.NoError(t, win.Clock().ProcessEvents(ctx))
-		g.Expect(win.Eval("got")).To(BeEquivalentTo(404))
-	})
+	ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
+	defer cancel()
+	assert.NoError(t, win.Clock().ProcessEvents(ctx))
+	g.Expect(win.Eval("got")).To(BeEquivalentTo(404))
 }
