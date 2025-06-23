@@ -45,6 +45,16 @@ func (i *GojaContext) Run(str string) error {
 
 func (i *GojaContext) Eval(str string) (res any, err error) {
 	if gojaVal, err := i.run(str); err == nil {
+		if goja.IsNull(gojaVal) || goja.IsUndefined(gojaVal) {
+			return nil, nil
+		}
+		if obj := gojaVal.ToObject(i.vm); obj != nil {
+			if v := obj.GetSymbol(i.wrappedGoObj); v != nil {
+				if e := v.Export(); e != nil {
+					return e, nil
+				}
+			}
+		}
 		return gojaVal.Export(), nil
 	} else {
 		return nil, err
