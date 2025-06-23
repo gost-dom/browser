@@ -1,7 +1,11 @@
 package fetch
 
-import "github.com/gost-dom/browser/scripting/internal/js"
+import (
+	"fmt"
+
+	"github.com/gost-dom/browser/scripting/internal/js"
+)
 
 func (wrapper Response[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	return nil, nil
+	return nil, fmt.Errorf("gost-dom/fetch: Response constructor not implemented")
 }
