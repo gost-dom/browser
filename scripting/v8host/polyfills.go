@@ -11,7 +11,6 @@ var xpath []byte
 func installPolyfills(context *V8ScriptContext) error {
 	installer := (*installer)(context)
 	errs := []error{
-		installer.polyfillAnchor(),
 		context.Run(string(xpath)),
 		context.Run(`
 				const { XPathExpression, XPathResult } = window;
@@ -31,13 +30,6 @@ type installer V8ScriptContext
 
 func (i *installer) run(script string) error {
 	return (*V8ScriptContext)(i).Run(script)
-}
-
-func (i *installer) polyfillAnchor() error {
-	// TODO: This should eventually be generated
-	return i.run(`
-		HTMLAnchorElement.prototype.toString = function() { return this.href }
-	`)
 }
 
 func (i *installer) polyfillNode() error {
