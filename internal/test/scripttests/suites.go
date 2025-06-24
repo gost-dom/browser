@@ -22,6 +22,7 @@ func RunSuites(t *testing.T, h ScriptHostFactory) {
 	t.Run("XMLHttpRequest", runSuite(NewXMLHttpRequestSuite(h.New())))
 	t.Run("Location", runSuite(NewLocationSuite(h.New())))
 	t.Run("EventLoop", runSuite(NewEventLoopTestSuite(h.New())))
+	t.Run("Element", runSuite(NewElementSuite(h.New())))
 	t.Run("Window", runSuite(NewWindowTestSuite(h.New())))
 	t.Run("UIEvents", runSuite(NewUIEventTestSuite(h.New())))
 	t.Run("Document", runSuite(NewDocumentSuite(h.New())))
