@@ -69,3 +69,8 @@ func (s *WindowTestSuite) TestDOMContentLoaded() {
 </script></body>`)).To(Succeed())
 	s.Expect(s.Eval("scripts.join(',')")).To(Equal("DOMContentLoaded,load"))
 }
+
+func (s *WindowTestSuite) TestLocation() {
+	s.OpenWindow("http://location.example.com/foo", nil)
+	s.Expect(s.Eval("location.href")).To(Equal("http://location.example.com/foo"))
+}
