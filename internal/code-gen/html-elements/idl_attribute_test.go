@@ -1,65 +1,59 @@
 package htmlelements_test
 
 import (
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
+	"testing"
+
+	"github.com/onsi/gomega"
 
 	. "github.com/gost-dom/code-gen/html-elements"
 	g "github.com/gost-dom/generators"
 	. "github.com/gost-dom/generators/testing/matchers"
 )
 
-var _ = Describe("IDLAttribute", func() {
-	It("Should generate a getter and setter", func() {
-		Skip("Temporary different solution")
+func TestIDLAttributeGetterAndSetter(t *testing.T) {
+	t.Run("Temporary disabled solution", func(t *testing.T) {
+		Expect := gomega.NewWithT(t).Expect
+		t.Skip("Temporary different solution")
 		Expect(IDLAttribute{
 			AttributeName: "target",
 			Receiver: Receiver{
 				Name: g.Id("e"),
 				Type: g.NewType("htmlAnchorElement").Pointer(),
 			},
-		}).To(HaveRendered(
-			`func (e *htmlAnchorElement) Target() string {
-	return e.target
-}
-
-func (e *htmlAnchorElement) SetTarget(val string) {
-	e.target = val
-}`))
+		}).To(HaveRendered(lines(
+			"func (e *htmlAnchorElement) Target() string {",
+			"\treturn e.target",
+			"}",
+			"",
+			"func (e *htmlAnchorElement) SetTarget(val string) {",
+			"\te.target = val",
+			"https://docs.couchdb.org/en/stable/api/index.html}")))
 	})
 
-	It("Should generate a getter and setter", func() {
+	t.Run("Generates getter and setter", func(t *testing.T) {
+		Expect := gomega.NewWithT(t).Expect
 		Expect(IDLAttribute{
 			AttributeName: "target",
 			Receiver: Receiver{
 				Name: g.Id("e"),
 				Type: g.NewType("htmlAnchorElement").Pointer(),
 			},
-		}).To(HaveRendered(
-			`func (e *htmlAnchorElement) Target() string {
-	result, _ := e.GetAttribute("target")
-	return result
-}
-
-func (e *htmlAnchorElement) SetTarget(val string) {
-	e.SetAttribute("target", val)
-}`))
+		}).To(HaveRendered(lines(
+			`func (e *htmlAnchorElement) Target() string {`,
+			`	result, _ := e.GetAttribute("target")`,
+			`	return result`,
+			`}`,
+			``,
+			`func (e *htmlAnchorElement) SetTarget(val string) {`,
+			`	e.SetAttribute("target", val)`,
+			`}`,
+		)))
 	})
 
-	It("Should generate a getter when readOnly", func() {
-		actual := IDLAttribute{
-			AttributeName: "target",
-			Receiver: Receiver{
-				Name: g.Id("e"),
-				Type: g.NewType("htmlAnchorElement").Pointer(),
-			},
-			ReadOnly: true,
-		}
-		Expect(actual).To(HaveRendered(ContainSubstring(`Target() string`)))
-		Expect(actual).ToNot(HaveRendered(ContainSubstring(`SetTarget()`)))
-	})
-
-	It("Should NOT sanitize Type", func() {
+	t.Run("Don't sanitize exported names", func(t *testing.T) {
+		// Some unexported names, like `type` conflict with go reserved words.
+		// This test is about NOT sanitizing exported names
+		Expect := gomega.NewWithT(t).Expect
 		actual := IDLAttribute{
 			AttributeName: "type",
 			Receiver: Receiver{
@@ -68,7 +62,21 @@ func (e *htmlAnchorElement) SetTarget(val string) {
 			},
 			ReadOnly: true,
 		}
-		Expect(actual).To(HaveRendered(ContainSubstring(`Type() string`)))
-		Expect(actual).ToNot(HaveRendered(ContainSubstring(`SetType()`)))
+		Expect(actual).To(HaveRenderedSubstring(`Type() string`))
+		Expect(actual).ToNot(HaveRenderedSubstring(`SetType()`))
 	})
-})
+}
+
+func TestIDLAttributeReadonlyGetter(t *testing.T) {
+	Expect := gomega.NewWithT(t).Expect
+	actual := IDLAttribute{
+		AttributeName: "target",
+		Receiver: Receiver{
+			Name: g.Id("e"),
+			Type: g.NewType("htmlAnchorElement").Pointer(),
+		},
+		ReadOnly: true,
+	}
+	Expect(actual).To(HaveRenderedSubstring(`Target() string`))
+	Expect(actual).ToNot(HaveRenderedSubstring(`SetTarget()`))
+}

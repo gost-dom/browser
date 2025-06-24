@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"strings"
 	"testing"
 
 	htmlelements "github.com/gost-dom/code-gen/html-elements"
@@ -52,4 +53,8 @@ func render(g generator) (string, error) {
 	var b bytes.Buffer
 	err := g.Generate().Render(&b)
 	return b.String(), err
+}
+
+func lines(l ...string) string {
+	return strings.Join(l, "\n")
 }
