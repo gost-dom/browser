@@ -18,6 +18,7 @@ type ScriptHostFactory interface{ New() html.ScriptHost }
 
 func RunSuites(t *testing.T, h ScriptHostFactory) {
 	t.Run("SharowRoot", runSuite(NewShadowRootSuite(h.New())))
+	t.Run("DocumentFragment", runSuite(NewDocumentFragmentSuite(h.New())))
 	t.Run("Location", runSuite(NewLocationSuite(h.New())))
 	t.Run("EventLoop", runSuite(NewEventLoopTestSuite(h.New())))
 	t.Run("Window", runSuite(NewWindowTestSuite(h.New())))
