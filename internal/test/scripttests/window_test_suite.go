@@ -15,6 +15,7 @@ func (s *WindowTestSuite) TestGlobalInstance() {
 
 func (s *WindowTestSuite) TestWindowInheritance() {
 	s.Expect(s.Eval("window instanceof EventTarget")).To(BeTrue())
+	s.Expect(s.Eval("window instanceof Window")).To(BeTrue(), "window instanceof Window")
 	s.Expect(s.Eval("Object.getPrototypeOf(window).constructor === Window")).To(BeTrue())
 }
 
