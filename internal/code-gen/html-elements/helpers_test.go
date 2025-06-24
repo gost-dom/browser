@@ -1,7 +1,6 @@
 package htmlelements_test
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"strings"
@@ -47,12 +46,6 @@ func getIdlInterfaceGenerator(
 		interfaceName,
 		packageName,
 	)
-}
-
-func render(g generator) (string, error) {
-	var b bytes.Buffer
-	err := g.Generate().Render(&b)
-	return b.String(), err
 }
 
 func lines(l ...string) string {
