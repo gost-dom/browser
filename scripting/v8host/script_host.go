@@ -98,10 +98,6 @@ type V8ScriptHost struct {
 	iterator        v8Iterator
 }
 
-func createGlobals[T any](reg js.ClassBuilder[T], host js.ScriptEngine[T]) {
-	reg.CreateGlobals(host)
-}
-
 // consoleAPIMessageFunc represents a function that can receive javascript
 // console messages and implements the [v8go.consoleAPIMessageFunc] interface.
 //
