@@ -93,6 +93,7 @@ type V8ScriptHost struct {
 	inspectorClient *v8go.InspectorClient
 	windowTemplate  *v8go.ObjectTemplate
 	globals         globals
+	scripts         [][2]string
 	contexts        map[*v8go.Context]*V8ScriptContext
 	disposed        bool
 	iterator        v8Iterator
@@ -281,4 +282,8 @@ func (host *V8ScriptHost) CreateFunction(
 ) {
 	ft := wrapV8Callback(host, callback)
 	host.windowTemplate.Set(name, ft)
+}
+
+func (host *V8ScriptHost) RunScript(script, src string) {
+	host.scripts = append(host.scripts, [2]string{script, src})
 }

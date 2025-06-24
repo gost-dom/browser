@@ -81,6 +81,15 @@ func (context *V8ScriptContext) initializeGlobals() error {
 			return fmt.Errorf("error installing location: %v\n%s", err, constants.BUG_ISSUE_URL)
 		}
 	}
+	for _, s := range context.host.scripts {
+		script := s[0]
+		src := s[1]
+		_, err := context.v8ctx.RunScript(script, src)
+		context.clock.Tick()
+		if err != nil {
+			return fmt.Errorf("v8host: install globals (%s): %w", src, err)
+		}
+	}
 	err := installPolyfills(context)
 	if err != nil {
 		return fmt.Errorf(

@@ -3,6 +3,7 @@ package js
 type ScriptEngine[T any] interface {
 	CreateClass(name string, Parent Class[T], cb FunctionCallback[T]) Class[T]
 	CreateFunction(name string, cb FunctionCallback[T])
+	RunScript(script, src string)
 }
 
 // ScriptEngineFactory constructs ScriptEngine instances. Client code can

@@ -11,7 +11,6 @@ var xpath []byte
 func installPolyfills(context *V8ScriptContext) error {
 	installer := (*installer)(context)
 	errs := []error{
-		installer.installFormData(),
 		installer.polyfillAnchor(),
 		context.Run(string(xpath)),
 		context.Run(`
@@ -38,14 +37,6 @@ func (i *installer) polyfillAnchor() error {
 	// TODO: This should eventually be generated
 	return i.run(`
 		HTMLAnchorElement.prototype.toString = function() { return this.href }
-	`)
-}
-
-func (i *installer) installFormData() error {
-	return i.run(`
-		FormData.prototype.forEach = function(cb) {
-			return Array.from(this).forEach(([k,v]) => { cb(v,k) })
-		}
 	`)
 }
 

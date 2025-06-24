@@ -111,6 +111,10 @@ func (c *GojaContext) CreateFunction(name string, cb js.FunctionCallback[jsTypeP
 	c.vm.Set(name, wrapJSCallback(c, cb))
 }
 
+func (c *GojaContext) RunScript(script, src string) {
+	c.vm.RunScript(src, script)
+}
+
 func (c *GojaContext) CreateClass(
 	name string, extends js.Class[jsTypeParam],
 	cb js.FunctionCallback[jsTypeParam],

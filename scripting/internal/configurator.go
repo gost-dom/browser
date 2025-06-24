@@ -14,6 +14,7 @@ import (
 func Configure[T any](host js.ScriptEngine[T]) {
 	dom.Configure(host)
 	fetch.Configure(host)
+	installPolyfills(host)
 }
 
 func Bootstrap[T any](reg js.ClassBuilder[T]) {
@@ -40,4 +41,12 @@ func Bootstrap[T any](reg js.ClassBuilder[T]) {
 			js.RegisterClass(reg, cls, "HTMLElement", NewUnconstructable)
 		}
 	}
+}
+
+func installPolyfills[T any](host js.ScriptEngine[T]) {
+	host.RunScript(`
+		FormData.prototype.forEach = function(cb) {
+			return Array.from(this).forEach(([k,v]) => { cb(v,k) })
+		}
+	`, "gost-dom/polyfills/formdata.js")
 }
