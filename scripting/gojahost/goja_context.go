@@ -112,7 +112,11 @@ func (c *GojaContext) CreateFunction(name string, cb js.FunctionCallback[jsTypeP
 }
 
 func (c *GojaContext) RunScript(script, src string) {
-	c.vm.RunScript(src, script)
+	_, err := c.vm.RunScript(src, script)
+	if err != nil {
+		fmt.Println("RUN SCRIPT FAIL", script, src)
+		panic(err)
+	}
 }
 
 func (c *GojaContext) CreateClass(

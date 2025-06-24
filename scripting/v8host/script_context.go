@@ -90,14 +90,6 @@ func (context *V8ScriptContext) initializeGlobals() error {
 			return fmt.Errorf("v8host: install globals (%s): %w", src, err)
 		}
 	}
-	err := installPolyfills(context)
-	if err != nil {
-		return fmt.Errorf(
-			"Error installing polyfills: %v. Should not be possible on a passing build of Gost-DOM.\n%s",
-			err,
-			constants.BUG_ISSUE_URL,
-		)
-	}
 
 	return nil
 }

@@ -29,4 +29,5 @@ func init() {
 	js.AddConfigurator(factory, internal.Configure)
 	js.AddConfigurator(factory, html.Initialize)
 	js.AddConfigurator(factory, classRegistrations.CreateGlobals)
+	js.AddConfigurator(factory, internal.InstallPolyfills)
 }

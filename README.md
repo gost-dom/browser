@@ -254,7 +254,7 @@ in certain scopes, implemented by "classes" in JavaScript.
 
 ## Attribution / 3rd party included code.
 
-This library contains [code derived](./scripting/v8host/polyfills/xpath) from the [jsdom project](https://github.com/jsdom/jsdom) distributed under the MIT license.
+This library contains [code derived](./scripting/internal/polyfills/xpath) from the [jsdom project](https://github.com/jsdom/jsdom) distributed under the MIT license.
 
 ---
 

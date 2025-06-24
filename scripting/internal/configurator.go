@@ -1,6 +1,8 @@
 package internal
 
 import (
+	_ "embed"
+
 	"github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/dom"
 	"github.com/gost-dom/browser/scripting/internal/fetch"
@@ -14,7 +16,6 @@ import (
 func Configure[T any](host js.ScriptEngine[T]) {
 	dom.Configure(host)
 	fetch.Configure(host)
-	installPolyfills(host)
 }
 
 func Bootstrap[T any](reg js.ClassBuilder[T]) {
@@ -43,7 +44,10 @@ func Bootstrap[T any](reg js.ClassBuilder[T]) {
 	}
 }
 
-func installPolyfills[T any](host js.ScriptEngine[T]) {
+//go:embed polyfills/xpath/xpath.js
+var xpath []byte
+
+func InstallPolyfills[T any](host js.ScriptEngine[T]) {
 	host.RunScript(`
 		FormData.prototype.forEach = function(cb) {
 			return Array.from(this).forEach(([k,v]) => { cb(v,k) })
@@ -69,4 +73,15 @@ func installPolyfills[T any](host js.ScriptEngine[T]) {
 		Node.DOCUMENT_POSITION_CONTAINED_BY = 0x10;
 		Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC = 0x20;
 	`, "gost-dom/polyfills/node.js")
+
+	host.RunScript(string(xpath), "gost-dom/polyfills/xpath-jsdom.js")
+	host.RunScript(`
+			const { XPathExpression, XPathResult } = window;
+			const evaluate = XPathExpression.prototype.evaluate;
+			XPathExpression.prototype.evaluate = function (context, type, res) {
+				return evaluate.call(this, context, type ?? XPathResult.ANY_TYPE, res);
+			};
+			Element.prototype.scrollIntoView = function() {};
+
+	`, "gost-dom/polyfills/xpath-custom.js")
 }
