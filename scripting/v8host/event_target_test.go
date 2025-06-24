@@ -36,6 +36,8 @@ func TestV8EventTargetAddRemoveListeners(t *testing.T) {
 
 func TestV8EventCapture(t *testing.T) {
 	g := gomega.NewWithT(t)
+	host := v8host.New()
+	t.Cleanup(host.Close)
 	win := html.NewWindow(html.WindowOptionHost(host))
 	t.Cleanup(win.Close)
 	g.Expect(win.Eval(`
