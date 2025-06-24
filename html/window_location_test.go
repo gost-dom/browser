@@ -1,12 +1,15 @@
 package html_test
 
 import (
+	"net/http"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/gosthttp"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
@@ -83,4 +86,58 @@ func (s *WindowLocationTestSuite) TestClickRelativeURL() {
 	link.Click()
 	s.Expect(s.window.Location().Pathname()).To(Equal("/products"))
 
+}
+
+func (s *WindowLocationTestSuite) TestParseLocationWithoutQuery() {
+	win := s.openWindow("http://localhost:9999/foo/bar")
+	location := win.Location()
+	s.Expect(location.Host()).To(Equal("localhost:9999"), "host")
+	s.Expect(location.Hash()).To(Equal(""), "hash")
+	s.Expect(location.Hostname()).To(Equal("localhost"), "hostname")
+	s.Expect(location.Href()).To(Equal("http://localhost:9999/foo/bar"), "href")
+	s.Expect(location.Origin()).To(Equal("http://localhost:9999"), "origin")
+	s.Expect(location.Pathname()).To(Equal("/foo/bar"), "Pathname")
+	s.Expect(location.Port()).To(Equal("9999"), "port")
+	s.Expect(location.Protocol()).To(Equal("http:"), "protocol")
+	s.Expect(location.Search()).To(Equal(""), "query")
+}
+
+func (s *WindowLocationTestSuite) TestParseLocationWithQuery() {
+	win := s.openWindow("http://localhost:9999/foo/bar?q=baz")
+	location := win.Location()
+	s.Expect(location.Host()).To(Equal("localhost:9999"), "host")
+	s.Expect(location.Hostname()).To(Equal("localhost"), "hostname")
+	s.Expect(location.Href()).To(Equal("http://localhost:9999/foo/bar?q=baz"), "href")
+	s.Expect(location.Origin()).To(Equal("http://localhost:9999"), "origin")
+	s.Expect(location.Pathname()).To(Equal("/foo/bar"), "Pathname")
+	s.Expect(location.Port()).To(Equal("9999"), "port")
+	s.Expect(location.Protocol()).To(Equal("http:"), "protocol")
+	s.Expect(location.Search()).To(Equal("?q=baz"), "query")
+
+}
+
+func (s *WindowLocationTestSuite) TestParseLocationWithoutFragment() {
+	win := s.openWindow("http://localhost:9999/foo#heading-1")
+	location := win.Location()
+	s.Expect(location.Host()).To(Equal("localhost:9999"), "host")
+	s.Expect(location.Hash()).To(Equal("#heading-1"), "hash")
+	s.Expect(location.Hostname()).To(Equal("localhost"), "hostname")
+	s.Expect(location.Href()).To(Equal("http://localhost:9999/foo#heading-1"), "href")
+}
+
+func (s *WindowLocationTestSuite) openWindow(location string) html.Window {
+	handler := http.HandlerFunc(
+		func(res http.ResponseWriter, req *http.Request) { res.Write([]byte("<html></html>")) },
+	)
+	windowOptions := html.WindowOptions{
+		HttpClient: gosthttp.NewHttpClientFromHandler(handler),
+	}
+	win, err := html.OpenWindowFromLocation(location, windowOptions)
+	assert.NoError(s.T(), err)
+	s.T().Cleanup(func() {
+		if win != nil {
+			win.Close()
+		}
+	})
+	return win
 }
