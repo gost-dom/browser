@@ -1,111 +1,124 @@
 package html_test
 
 import (
-	. "github.com/gost-dom/browser/html"
+	"testing"
 
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
+	. "github.com/gost-dom/browser/html"
+	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
+	"github.com/gost-dom/browser/internal/testing/gosttest"
+	"github.com/stretchr/testify/suite"
+
 	"github.com/onsi/gomega/gcustom"
 	"github.com/onsi/gomega/types"
 )
 
-var _ = Describe("FormDataForm", func() {
-	It("Should handle empty name/value of input fields", func() {
-		Skip("Not yet handled properly")
+func TestFormData(t *testing.T) {
+	t.Parallel()
+
+	Expect(t, NewFormData()).To(BeEmptyFormData(), "New form data is empty")
+
+	t.Run("Append multiple values with same key", func(t *testing.T) {
+		suite.Run(t, new(FormDataMultipleValuesTestSuite))
 	})
-})
+}
 
-var _ = Describe("FormData", func() {
-	It("Should be empty when new", func() {
-		Expect(NewFormData()).To(BeEmptyFormData())
-	})
+type FormDataMultipleValuesTestSuite struct {
+	gosttest.GomegaSuite
+	formData *FormData
+}
 
-	Describe("Multiple values have been appended with the same key", func() {
-		var formData *FormData
+func (s *FormDataMultipleValuesTestSuite) SetupTest() {
+	s.formData = NewFormData()
+	s.formData.Append("Key1", "Value1")
+	s.formData.Append("Key2", "Value2")
+	s.formData.Append("Key1", "Value3")
+	s.formData.Append("Key3", "Value4")
+}
 
-		BeforeEach(func() {
-			formData = NewFormData()
-			formData.Append("Key1", "Value1")
-			formData.Append("Key2", "Value2")
-			formData.Append("Key1", "Value3")
-			formData.Append("Key3", "Value4")
-		})
+func (s *FormDataMultipleValuesTestSuite) TestQueryFunctions() {
+	s.Expect(
+		s.formData).To(
+		HaveEntries(
+			"Key1", "Value1",
+			"Key2", "Value2",
+			"Key1", "Value3",
+			"Key3", "Value4",
+		),
+		"FormData.Entries() returns all entries, including duplicate keys",
+	)
 
-		It("Should contain all values", func() {
-			Expect(
-				formData,
-			).To(HaveEntries(
-				"Key1", "Value1",
-				"Key2", "Value2",
-				"Key1", "Value3",
-				"Key3", "Value4"))
-		})
+	s.Expect(
+		s.formData.Keys()).To(
+		HaveExactElements(
+			"Key1",
+			"Key2",
+			"Key1",
+			"Key3",
+		),
+		"FormData.Keys() return all keys, including duplicates",
+	)
+	s.Expect(
+		s.formData.Values()).To(
+		HaveExactElements(
+			BeFormDataStringValue("Value1"),
+			BeFormDataStringValue("Value2"),
+			BeFormDataStringValue("Value3"),
+			BeFormDataStringValue("Value4"),
+		),
+		"FormData.Values() return all values, including duplicate keys",
+	)
+	s.Expect(
+		s.formData.Get("Key1")).To(
+		BeEquivalentTo("Value1"),
+		"Get returns the first value for duplicate keys",
+	)
 
-		It("Delete() should remove all values with the name", func() {
-			formData.Delete("Key1")
-			Expect(formData).To(HaveEntries(
-				"Key2", "Value2",
-				"Key3", "Value4"))
-		})
+	s.Expect(
+		s.formData.GetAll("Key1")).To(
+		HaveExactElements(
+			BeFormDataStringValue("Value1"),
+			BeFormDataStringValue("Value3"),
+		),
+		"Get all returns all values for duplicate keys",
+	)
 
-		It("Set() should replace all values with the name", func() {
-			formData.Set("Key1", "Value5")
-			Expect(formData).To(HaveEntries(
-				"Key1", "Value5",
-				"Key2", "Value2",
-				"Key3", "Value4"))
+	s.Expect(
+		s.formData.Has("Key1")).To(
+		BeTrue(),
+		"Has() called with existing key",
+	)
 
-		})
+	s.Expect(
+		s.formData.Has("non-existing-key")).To(
+		BeFalse(),
+		"Has() called with non-existing key",
+	)
+}
 
-		It("Set() should add a new value when given a new name", func() {
-			formData.Set("Key4", "Value5")
-			Expect(
-				formData,
-			).To(HaveEntries(
-				"Key1", "Value1",
-				"Key2", "Value2",
-				"Key1", "Value3",
-				"Key3", "Value4",
-				"Key4", "Value5"))
-		})
+func (s *FormDataMultipleValuesTestSuite) TestRemoveValue() {
+	s.formData.Delete("Key1")
+	s.Expect(s.formData).To(HaveEntries(
+		"Key2", "Value2",
+		"Key3", "Value4"))
+}
 
-		It("Keys() Should return all keys, including duplicates", func() {
-			Expect(formData.Keys()).To(HaveExactElements(
-				"Key1",
-				"Key2",
-				"Key1",
-				"Key3"))
-		})
+func (s *FormDataMultipleValuesTestSuite) TestSetValueWithExistingName() {
+	s.formData.Set("Key1", "Value5")
+	s.Expect(s.formData).To(HaveEntries(
+		"Key1", "Value5",
+		"Key2", "Value2",
+		"Key3", "Value4"))
+}
 
-		It("Values() Should return all values, including duplicates", func() {
-			Expect(formData.Values()).To(HaveExactElements(
-				BeFormDataStringValue("Value1"),
-				BeFormDataStringValue("Value2"),
-				BeFormDataStringValue("Value3"),
-				BeFormDataStringValue("Value4")))
-		})
-
-		It("Get() Should return the first value with the name", func() {
-			Expect(formData.Get("Key1")).To(BeEquivalentTo("Value1"))
-		})
-
-		It("GetAll() Should return all values with the name", func() {
-			Expect(formData.GetAll("Key1")).To(HaveExactElements(
-				BeFormDataStringValue("Value1"),
-				BeFormDataStringValue("Value3"),
-			))
-		})
-
-		Describe("Has()", func() {
-			It("Should return true for a key that exists", func() {
-				Expect(formData.Has("Key1")).To(BeTrue())
-			})
-			It("Should return false for a key that exists", func() {
-				Expect(formData.Has("BadKey")).To(BeFalse())
-			})
-		})
-	})
-})
+func (s *FormDataMultipleValuesTestSuite) TestSetValueWithNewName() {
+	s.formData.Set("Key4", "Value5")
+	s.Expect(s.formData).To(HaveEntries(
+		"Key1", "Value1",
+		"Key2", "Value2",
+		"Key1", "Value3",
+		"Key3", "Value4",
+		"Key4", "Value5"))
+}
 
 func BeEmptyFormData() types.GomegaMatcher {
 	return gcustom.MakeMatcher(func(data *FormData) (bool, error) {
