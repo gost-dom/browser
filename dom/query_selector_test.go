@@ -1,34 +1,38 @@
 package dom_test
 
 import (
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
+	"testing"
 
+	"github.com/onsi/gomega"
+	"github.com/onsi/gomega/types"
+
+	"github.com/gost-dom/browser/internal/testing/htmltest"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 )
 
-var _ = Describe("QuerySelector", func() {
-	It("Should support these cases", func() {
-		doc := ParseHtmlString("<body><div>hello</div><p>world!</p><div>Selector</div></body>")
-		Expect(
-			(doc.QuerySelector("div")),
-		).To(HaveOuterHTML("<div>hello</div>"))
+func Exp(t testing.TB, v any) types.Assertion { return gomega.NewWithT(t).Expect(v) }
+
+func TestDocumentQuerySelector(t *testing.T) {
+	parse := func(t testing.TB, html string) htmltest.HTMLDocumentHelper {
+		return htmltest.NewHTMLDocumentHelper(t, ParseHtmlString(html))
+	}
+	t.Run("Tag name", func(t *testing.T) {
+		doc := parse(t, "<body><div>hello</div><p>world!</p><div>Selector</div></body>")
+		Exp(t,
+			doc.QuerySelectorHTML("div")).
+			To(HaveOuterHTML("<div>hello</div>"))
+
+		Exp(t,
+			doc.QuerySelectorHTML("DIV")).
+			To(HaveOuterHTML("<div>hello</div>"))
 	})
 
-	It("Should work with upper-case tag names", func() {
-		doc := ParseHtmlString("<body><div>hello</div><p>world!</p><div>Selector</div></body>")
-		Expect(
-			(doc.QuerySelector("DIV")),
-		).To(HaveOuterHTML("<div>hello</div>"))
-
-	})
-
-	It("Should find by attribute", func() {
-		doc := ParseHtmlString(
+	t.Run("attribute value", func(t *testing.T) {
+		doc := parse(t,
 			`<body><div>hello</div><p>world!</p><div data-foo="bar">Selector</div></body>`,
 		)
-		Expect(
-			(doc.QuerySelector("div[data-foo='bar']")),
-		).To(HaveOuterHTML(`<div data-foo="bar">Selector</div>`))
+		Exp(t,
+			doc.QuerySelectorHTML("div[data-foo='bar']")).
+			To(HaveOuterHTML(`<div data-foo="bar">Selector</div>`))
 	})
-})
+}
