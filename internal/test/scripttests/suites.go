@@ -26,6 +26,7 @@ func RunSuites(t *testing.T, h ScriptHostFactory) {
 	t.Run("UIEvents", runSuite(NewUIEventTestSuite(h.New())))
 	t.Run("Document", runSuite(NewDocumentSuite(h.New())))
 	t.Run("EventTarget", runSuite(NewEventTargetTestSuite(h.New())))
+	t.Run("FormData", runSuite(NewFormDataSuite(h.New())))
 	t.Run("ClassList", runSuite(NewClassListTestSuite(h.New())))
 	t.Run("Node", runSuite(NewNodeTestSuite(h.New())))
 	t.Run("NamedNodeMap", runSuite(NewNamedNodeMapSuite(h.New())))
