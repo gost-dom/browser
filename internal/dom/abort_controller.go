@@ -2,6 +2,8 @@ package dom
 
 import "github.com/gost-dom/browser/dom/event"
 
+const EventTypeAbort = "abort"
+
 type AbortController struct {
 	signal AbortSignal
 }
@@ -15,7 +17,7 @@ func (c *AbortController) Signal() *AbortSignal { return &c.signal }
 func (c *AbortController) Abort(reason any) {
 	c.signal.aborted = true
 	c.signal.reason = reason
-	c.signal.DispatchEvent(&event.Event{Type: "abort"})
+	c.signal.DispatchEvent(&event.Event{Type: EventTypeAbort})
 }
 
 type AbortSignal struct {
