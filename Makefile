@@ -58,7 +58,7 @@ test-browser:
 
 .PHONY: test-html
 test-html: 
-	cd html && ginkgo watch -vet=off
+	gotestsum --format dots --watch --packages "./scripting/html" -- -vet=off
 
 .PHONY: test-v8
 test-v8: 
