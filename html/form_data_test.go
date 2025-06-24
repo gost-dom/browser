@@ -119,7 +119,7 @@ func HaveEntries(entries ...string) types.GomegaMatcher {
 	}
 	noOfEntries := len(entries) / 2
 	expected := make([]FormDataEntry, noOfEntries)
-	for i := 0; i < noOfEntries; i++ {
+	for i := range noOfEntries {
 		j := i * 2
 		expected[i] = FormDataEntry{
 			Name:  entries[j],
