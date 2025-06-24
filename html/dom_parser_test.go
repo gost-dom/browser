@@ -2,18 +2,20 @@ package html_test
 
 import (
 	"fmt"
+	"testing"
 
 	"github.com/gost-dom/browser/dom"
+	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	matchers "github.com/gost-dom/browser/testing/gomega-matchers"
 
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega"
 	"github.com/onsi/gomega/gcustom"
 	"github.com/onsi/gomega/types"
 )
 
-var _ = Describe("Parser", func() {
-	It("Should be able to parse an empty HTML document", func() {
+func TestDOMParser(t *testing.T) {
+	t.Run("Should be able to parse an empty HTML document", func(t *testing.T) {
+		Expect := gomega.NewWithT(t).Expect
 		result := ParseHtmlString("<!DOCTYPE HTML><html><head></head><body></body></html>")
 		element := result.DocumentElement()
 		Expect(element.NodeName()).To(Equal("HTML"))
@@ -25,7 +27,8 @@ var _ = Describe("Parser", func() {
 			))
 	})
 
-	It("Should wrap contents in an HTML element if missing", func() {
+	t.Run("Should wrap contents in an HTML element if missing", func(t *testing.T) {
+		Expect := gomega.NewWithT(t).Expect
 		result := ParseHtmlString("<head></head><body></body>")
 		element := result.DocumentElement()
 		Expect(element.NodeName()).To(Equal("HTML"))
@@ -36,7 +39,8 @@ var _ = Describe("Parser", func() {
 				MatchStructure("BODY")))
 	})
 
-	It("Should create a HEAD if missing", func() {
+	t.Run("Should create a HEAD if missing", func(t *testing.T) {
+		Expect := gomega.NewWithT(t).Expect
 		result := ParseHtmlString("<html><body></body></html>")
 		Expect(result).To(
 			MatchStructure("HTML",
@@ -44,7 +48,8 @@ var _ = Describe("Parser", func() {
 				MatchStructure("BODY")))
 	})
 
-	It("Should create HTML and HEAD if missing", func() {
+	t.Run("Should create HTML and HEAD if missing", func(t *testing.T) {
+		Expect := gomega.NewWithT(t).Expect
 		result := ParseHtmlString("<body></body>")
 		Expect(result).To(
 			MatchStructure("HTML",
@@ -52,7 +57,8 @@ var _ = Describe("Parser", func() {
 				MatchStructure("BODY")))
 	})
 
-	It("Should embed a root <div> in an HTML document structure", func() {
+	t.Run("Should embed a root <div> in an HTML document structure", func(t *testing.T) {
+		Expect := gomega.NewWithT(t).Expect
 		result := ParseHtmlString("<div></div>")
 		Expect(result).To(
 			MatchStructure("HTML",
@@ -62,13 +68,13 @@ var _ = Describe("Parser", func() {
 				)))
 	})
 
-	It("Should parse text nodes in body", func() {
-		result := ParseHtmlString(`<html><body><div>
-  <h1>Hello</h1>
-  <p>Lorem Ipsum</p>
-</div></body></html>`)
-		// Expect(result.Body().FirstChild()).To(matchers.HaveTag("DIV"))
-		// return
+	t.Run("Should parse text nodes in body", func(t *testing.T) {
+		Expect := gomega.NewWithT(t).Expect
+		result := ParseHtmlString(
+			`<html><body><div>
+			  <h1>Hello</h1>
+			  <p>Lorem Ipsum</p>
+			</div></body></html>`)
 		Expect(result.Body()).To(MatchStructure("BODY", MatchStructure("DIV",
 			BeTextNode("\n  "),
 			MatchStructure("H1", BeTextNode("Hello")),
@@ -78,8 +84,9 @@ var _ = Describe("Parser", func() {
 		)))
 	})
 
-	It("Should parse svg elements correctly", func() {
-		// Note: At the moment of writing this, the DOM doesn't yet support xml
+	t.Run("Should parse svg elements correctly", func(t *testing.T) {
+		Expect := gomega.NewWithT(t).Expect
+		// NOTE: At the moment of writing this, the DOM doesn't yet support xml
 		// namespaces. This test exists to ensure that SVG elements _can_ be parsed,
 		// particularly because the code depends on the x/net/html parser, which
 		// _does_ handle namespaces.
@@ -95,8 +102,9 @@ var _ = Describe("Parser", func() {
 		Expect(svg).To(matchers.HaveTag("svg"))
 	})
 
-	It("Should parse a document with comments", func() {
-		// Note: At the moment of writing this, the DOM doesn't yet support xml
+	t.Run("Should parse a document with comments", func(t *testing.T) {
+		Expect := gomega.NewWithT(t).Expect
+		// NOTE: At the moment of writing this, the DOM doesn't yet support xml
 		// namespaces. This test exists to ensure that SVG elements _can_ be parsed,
 		// particularly because the code depends on the x/net/html parser, which
 		// _does_ handle namespaces.
@@ -110,7 +118,7 @@ var _ = Describe("Parser", func() {
 			body,
 		).To(matchers.HaveOuterHTML(`<body>Text content<!-- comment --> More content</body>`))
 	})
-})
+}
 
 func BeTextNode(content string) types.GomegaMatcher {
 	return gcustom.MakeMatcher(func(actual interface{}) (bool, error) {
