@@ -15,7 +15,7 @@ func TestHTMLLabelElement(t *testing.T) {
 	doc := htmltest.NewHTMLDocumentHelper(t, nil)
 	input := doc.CreateElement("input")
 	input.SetAttribute("id", "input")
-	label := doc.CreateHTMLElement("label").(html.HTMLLabelElement)
+	label := htmltest.UnwrapHTMLElement[html.HTMLLabelElement](doc.CreateHTMLElement("label"))
 	label.SetHTMLFor("input")
 	doc.Body().Append(input, label)
 	input.AddEventListener("click", eventtest.NewTestHandler(func(*event.Event) {

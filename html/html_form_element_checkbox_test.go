@@ -28,7 +28,9 @@ func (s *HTMLFormElementWithCheckboxTestSuite) TestSubmitWithCheckboxes() {
 			<label id="lbl-2" for="check">Check me 2</label>
 		</form>
 	</body>`)
-	form := win.HTMLDocument().QuerySelectorHTML("form").(html.HTMLFormElement)
+	form := htmltest.UnwrapHTMLElement[html.HTMLFormElement](
+		win.HTMLDocument().QuerySelectorHTML("form"),
+	)
 	check := win.HTMLDocument().GetHTMLElementById("check-1").(html.HTMLInputElement)
 	check.SetChecked(true)
 	form.Submit()

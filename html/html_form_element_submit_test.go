@@ -148,8 +148,7 @@ type HTMLFormSubmitButtonFixture struct {
 }
 
 func (f *HTMLFormSubmitButtonFixture) Setup() {
-	f.Submitter = AssertType[html.HTMLButtonElement](
-		f,
+	f.Submitter = htmltest.UnwrapHTMLElement[html.HTMLButtonElement](
 		f.Window.HTMLDocument().CreateHTMLElement("button"),
 	)
 	f.Submitter.SetAttribute("type", "submit")
@@ -267,8 +266,7 @@ type HTMLFormSubmitInputFixture struct {
 }
 
 func (f *HTMLFormSubmitInputFixture) Setup() {
-	f.Submitter = AssertType[html.HTMLInputElement](
-		f,
+	f.Submitter = htmltest.UnwrapHTMLElement[html.HTMLInputElement](
 		f.Window.HTMLDocument().CreateHTMLElement("input"),
 	)
 	f.Submitter.SetAttribute("type", "submit")

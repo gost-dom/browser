@@ -67,6 +67,7 @@ func (h WindowHelper) MustLoadHTML(html string) {
 // Helper type on top of html.HTMLDocument to provide useful helper functions
 // for testing.
 type HTMLDocumentHelper struct {
+	HTMLParentNodeHelper
 	dom.Document
 	t testing.TB
 }
@@ -75,7 +76,7 @@ func NewHTMLDocumentHelper(t testing.TB, doc dom.Document) HTMLDocumentHelper {
 	if doc == nil {
 		doc = html.NewHTMLDocument(nil)
 	}
-	return HTMLDocumentHelper{doc, t}
+	return HTMLDocumentHelper{NewHTMLParentNodeHelper(t, doc), doc, t}
 }
 
 func ParseHTMLDocumentHelper(t testing.TB, s string) (res HTMLDocumentHelper) {
@@ -103,11 +104,11 @@ func (h HTMLDocumentHelper) GetHTMLElementById(id string) html.HTMLElement {
 	return e
 }
 
-func (h HTMLDocumentHelper) CreateHTMLElement(tag string) html.HTMLElement {
+func (h HTMLDocumentHelper) CreateHTMLElement(tag string) HTMLElementHelper {
 	h.t.Helper()
 	el := h.CreateElement(tag)
 	if el == nil {
-		return nil
+		h.t.Fatalf("htmltest: invalid html element tag: %s", tag)
 	}
 	e, ok := el.(html.HTMLElement)
 	if !ok {
@@ -115,20 +116,50 @@ func (h HTMLDocumentHelper) CreateHTMLElement(tag string) html.HTMLElement {
 		// should all be HTMLElements. Right?
 		h.t.Errorf("Element with tag '%s' was expected to be an HTMLElement", tag)
 	}
-	return e
+	return NewHTMLElementHelper(h.t, e)
 }
 
-func (h HTMLDocumentHelper) QuerySelectorHTML(pattern string) (res html.HTMLElement) {
+type HTMLParentNodeHelper struct {
+	t          testing.TB
+	ParentNode dom.ParentNode
+}
+
+func NewHTMLParentNodeHelper(t testing.TB, n dom.ParentNode) HTMLParentNodeHelper {
+	return HTMLParentNodeHelper{t, n}
+}
+
+func (h HTMLParentNodeHelper) QuerySelectorHTML(pattern string) (res HTMLElementHelper) {
 	h.t.Helper()
-	e, err := h.QuerySelector(pattern)
+	e, err := h.ParentNode.QuerySelector(pattern)
+	h.t.Logf("Element: %T", e)
 	if err != nil {
 		h.t.Errorf("QuerySelector error. Pattern: '%s'. Error: %s", pattern, err.Error())
 	}
 	if e != nil {
-		var ok bool
-		if res, ok = e.(html.HTMLElement); !ok {
+		if e, ok := e.(html.HTMLElement); !ok {
 			h.t.Errorf("Element found by query '%s' was expected to be an HTMLElement", pattern)
+		} else {
+			res = NewHTMLElementHelper(h.t, e)
 		}
+	}
+	return
+}
+
+func (h HTMLParentNodeHelper) QuerySelectorHTMLOpt(pattern string) (res *HTMLElementHelper) {
+	h.t.Helper()
+	e, err := h.ParentNode.QuerySelector(pattern)
+	h.t.Logf("Element: %T", e)
+	if err != nil {
+		h.t.Errorf("QuerySelector error. Pattern: '%s'. Error: %s", pattern, err.Error())
+	}
+	if e == nil {
+		return nil
+	}
+	if e, ok := e.(html.HTMLElement); !ok {
+		h.t.Errorf("Element found by query '%s' was expected to be an HTMLElement", pattern)
+	} else {
+		res = new(HTMLElementHelper)
+		*res = NewHTMLElementHelper(h.t, e)
 	}
 	return
 }
