@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/gost-dom/browser/dom/event"
-	"github.com/onsi/gomega"
+	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -89,14 +89,7 @@ func TestEventStreamSource(t *testing.T) {
 			assert.Equal(t, 1, spy.addCallCount)
 			assert.Equal(t, 1, spy.removeCallCount)
 
-			gomega.NewWithT(t).Expect(events).To(gomega.BeClosed())
-			var closed bool
-			select {
-			case _, ok := <-events:
-				closed = !ok
-			default:
-			}
-			assert.True(t, closed, "channel closed after cancel")
+			Expect(t, events).To(BeClosed())
 		})
 	})
 

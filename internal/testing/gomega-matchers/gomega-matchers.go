@@ -29,3 +29,5 @@ var HaveExactElements = gomega.HaveExactElements
 var And = gomega.And
 var HaveField = gomega.HaveField
 var ContainElements = gomega.ContainElements
+
+var BeClosed = gomega.BeClosed
