@@ -136,10 +136,10 @@ func (s *EventPropagationTestSuite) TestRemoveCorrectPhase() {
 func (s *EventPropagationTestSuite) TestEventOnce() {
 	var events []string
 	s.window.AddEventListener("custom", NewTestHandler(func(e *Event) {
-		events = append(events, fmt.Sprintf("Handler A"))
+		events = append(events, "Handler A")
 	}))
 	s.window.AddEventListener("custom", NewTestHandler(func(e *Event) {
-		events = append(events, fmt.Sprintf("Handler B"))
+		events = append(events, "Handler B")
 	}), Once)
 
 	s.target.DispatchEvent(&event.Event{Type: "custom", Bubbles: true})
