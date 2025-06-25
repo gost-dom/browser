@@ -2,7 +2,6 @@ package event_test
 
 import (
 	"context"
-	"fmt"
 	"testing"
 	"testing/synctest"
 	"time"
@@ -34,38 +33,36 @@ func NewEventStream(tgt event.EventTarget, t string, ctx context.Context) EventC
 
 func TestEventsAreReceivedInOrder(t *testing.T) {
 	t.Parallel()
+	synctest.Run(func() {
+		ctx, cancel := context.WithCancel(t.Context())
+		defer cancel()
 
-	ctx, cancel := context.WithCancel(t.Context())
-	defer cancel()
+		src := EventSource{event.NewEventTarget()}
+		const buf = 32
+		c := src.Listen(ctx, "gost-event", buf)
 
-	src := EventSource{event.NewEventTarget()}
-	const buf = 32
-	c := src.Listen(ctx, "gost-event", buf)
-
-	for i := range buf << 1 {
-		// Dispatch twice as many events as the buffer size
-		src.DispatchEvent(event.New("gost-event", i))
-	}
-
-	// Verify the events in the scope of the buffer size
-	var i int
-	events := make([]*event.Event, buf)
-	for e := range c {
-		events[i] = e
-		i++
-		if i == buf {
-			break
+		for i := range buf << 1 {
+			// Dispatch twice as many events as the buffer size
+			src.DispatchEvent(event.New("gost-event", i))
 		}
-	}
-	for i := range buf {
-		e := events[i]
-		fmt.Printf("Compare %t\n", e == nil)
-		assert.Equal(t, i, e.Data, "Event data at index: %d", i)
-	}
-}
+		synctest.Wait()
 
-// func TestEventStreamIsClosedOnCancel(t *testing.T) {
-// }
+		// Verify the events in the scope of the buffer size
+		var i int
+		events := make([]*event.Event, buf)
+		for e := range c {
+			events[i] = e
+			i++
+			if i == buf {
+				break
+			}
+		}
+		for i := range buf {
+			e := events[i]
+			assert.Equal(t, i, e.Data, "Event data at index: %d", i)
+		}
+	})
+}
 
 func TestEventStreamSource(t *testing.T) {
 	t.Parallel()
@@ -163,8 +160,15 @@ type EventSource struct {
 // Ordering of events is guaranteed only when events are dispatched from the
 // same goroutine, and the channel buffer is not full.
 func (s EventSource) Listen(ctx context.Context, t string, buf int) <-chan *event.Event {
-	c := make(chan *event.Event, 32)
+	c := make(chan *event.Event, buf)
 	handler := event.NewEventHandlerFunc(func(e *event.Event) error {
+		// It is assumed that all events are dispatched from the same
+		// goroutine. If the buffer permits, send as a blocking call,
+		// ensuring ordering of events.
+		//
+		// If the channel is not ready to
+		// accept messages, send in a new goroutine to avoid blocking the
+		// EventTarget
 		select {
 		case c <- e:
 		default:
