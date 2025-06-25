@@ -2,6 +2,9 @@ package event
 
 import "context"
 
+// DEFAULT_BUF is the default buffer size for event channels created by
+// [EventSource] when buffer size not specified explicitly. Buffer size affects
+// event ordering guarantees.
 const DEFAULT_BUF = 16
 
 // EventSource embeds an [EventTarget] and provides events in a channel,
