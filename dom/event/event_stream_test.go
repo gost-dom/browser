@@ -7,8 +7,11 @@ import (
 	"time"
 
 	"github.com/gost-dom/browser/dom/event"
+	"github.com/onsi/gomega"
 	"github.com/stretchr/testify/assert"
 )
+
+const DEFAULT_BUF = 16
 
 type EventChan chan *event.Event
 
@@ -39,7 +42,7 @@ func TestEventsAreReceivedInOrder(t *testing.T) {
 
 		src := EventSource{event.NewEventTarget()}
 		const buf = 32
-		c := src.Listen(ctx, "gost-event", buf)
+		c := src.Listen(ctx, "gost-event", BufSize(buf))
 
 		for i := range buf << 1 {
 			// Dispatch twice as many events as the buffer size
@@ -75,7 +78,7 @@ func TestEventStreamSource(t *testing.T) {
 
 			spy := &EventTargetSpy{EventTarget: target}
 			src := EventSource{spy}
-			events := src.Listen(newCtx, "gost-event", 1)
+			events := src.Listen(newCtx, "gost-event")
 
 			assert.Equal(t, 1, spy.addCallCount)
 			assert.Equal(t, 0, spy.removeCallCount)
@@ -86,6 +89,7 @@ func TestEventStreamSource(t *testing.T) {
 			assert.Equal(t, 1, spy.addCallCount)
 			assert.Equal(t, 1, spy.removeCallCount)
 
+			gomega.NewWithT(t).Expect(events).To(gomega.BeClosed())
 			var closed bool
 			select {
 			case _, ok := <-events:
@@ -104,7 +108,7 @@ func TestEventStreamSource(t *testing.T) {
 			spy := &EventTargetSpy{EventTarget: target}
 			src := &EventSource{spy}
 
-			events := src.Listen(ctx, "gost-event", 1)
+			events := src.Listen(ctx, "gost-event")
 
 			e := event.New("gost-event", nil)
 			target.DispatchEvent(e)
@@ -153,22 +157,41 @@ type EventSource struct {
 	event.EventTarget
 }
 
-// Listen returns a read channel of all events of type t until ctx is cancelled.
-// If ctx is nil, the event stream will continue indefinitely. The channel will
-// have a buffer size of buf.
+type eventSourceOptions struct {
+	buf int
+}
+
+type EventSourceOption func(*eventSourceOptions)
+
+func BufSize(buf int) EventSourceOption {
+	return func(o *eventSourceOptions) { o.buf = buf }
+}
+
+// Listen adds an event listener for events of type t and returns a channel of
+// events containing all the events. Cancelling context ctx will remove the
+// event listener and close the channel. If no context is passed, the event
+// listener will never be removed.
 //
-// Ordering of events is guaranteed only when events are dispatched from the
-// same goroutine, and the channel buffer is not full.
-func (s EventSource) Listen(ctx context.Context, t string, buf int) <-chan *event.Event {
-	c := make(chan *event.Event, buf)
+// Ordering of events is guaranteed when the channel buffer is not full and all
+// events are dispatched from the same goroutine. The channel buffer size is
+// controlled with the [BufSize] option. Default value is [DEFAULT_BUF].
+func (s EventSource) Listen(
+	ctx context.Context,
+	t string,
+	opts ...EventSourceOption,
+) <-chan *event.Event {
+	opt := eventSourceOptions{buf: DEFAULT_BUF}
+	for _, o := range opts {
+		o(&opt)
+	}
+	c := make(chan *event.Event, opt.buf)
 	handler := event.NewEventHandlerFunc(func(e *event.Event) error {
 		// It is assumed that all events are dispatched from the same
 		// goroutine. If the buffer permits, send as a blocking call,
 		// ensuring ordering of events.
 		//
-		// If the channel is not ready to
-		// accept messages, send in a new goroutine to avoid blocking the
-		// EventTarget
+		// If the channel is not ready to accept messages, send in a new
+		// goroutine to avoid blocking the EventTarget
 		select {
 		case c <- e:
 		default:
