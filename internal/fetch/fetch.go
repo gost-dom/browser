@@ -8,6 +8,7 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/dom"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
+	"github.com/gost-dom/browser/internal/promise"
 	"github.com/gost-dom/browser/url"
 )
 
@@ -65,7 +66,7 @@ func (f Fetch) FetchAsync(
 	ctx context.Context,
 	req Request,
 	opts ...FetchOption,
-) Promise[*Response] {
+) promise.Promise[*Response] {
 	var opt fetchOption
 	for _, o := range opts {
 		o(&opt)
@@ -76,7 +77,7 @@ func (f Fetch) FetchAsync(
 		ctx = dom.AbortContext(ctx, opt.signal)
 	}
 
-	return NewPromiseFunc(func() (*Response, error) {
+	return promise.New(func() (*Response, error) {
 		resp, err := req.do(ctx)
 		if err != nil {
 			return nil, err
@@ -94,25 +95,4 @@ type Response struct {
 	Status int
 
 	httpResponse *http.Response
-}
-
-type Result[T any] struct {
-	Value T
-	Err   error
-}
-
-type Promise[T any] chan Result[T]
-
-func NewPromise[T any]() Promise[T]      { return make(Promise[T], 1) }
-func (p Promise[T]) Close()              { close(p) }
-func (p Promise[T]) Resolve(v T)         { p <- Result[T]{Value: v} }
-func (p Promise[T]) Reject(err error)    { p <- Result[T]{Err: err} }
-func (p Promise[T]) Send(v T, err error) { p <- Result[T]{Value: v, Err: err} }
-
-// NewPromiseFunc returns a promise that will settle with the outcome of running
-// function f. It runs f in a separate gorouting, allowing early return.
-func NewPromiseFunc[T any](f func() (T, error)) Promise[T] {
-	p := NewPromise[T]()
-	go func() { p.Send(f()) }()
-	return p
 }
