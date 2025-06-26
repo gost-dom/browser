@@ -18,7 +18,7 @@ func (h TestRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
 	if body == nil {
 		body = nullReader{}
 	}
-	serverReq, err := http.NewRequest(req.Method, req.URL.String(), body)
+	serverReq, err := http.NewRequestWithContext(req.Context(), req.Method, req.URL.String(), body)
 	if err != nil {
 		return nil, err
 	}

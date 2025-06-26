@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 	"testing"
+	"testing/synctest"
 	"time"
 
 	"github.com/gost-dom/browser/internal/dom"
@@ -45,23 +46,29 @@ func TestRequestURLUsesDocumentLocation(t *testing.T) {
 }
 
 func TestFetchWithAbortSignal(t *testing.T) {
-	ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
-	defer cancel()
+	synctest.Run(func() {
+		ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
+		defer cancel()
 
-	handler := gosttest.NewPipeHandler(t, ctx)
-	bc := TestBrowsingContext{
-		Location: "https://example.com/users/joe",
-		Client:   gosthttp.NewHttpClientFromHandler(handler),
-	}
-	ac := dom.NewAbortController()
-	f := fetch.New(bc)
-	req := f.NewRequest("url")
+		handler := gosttest.NewPipeHandler(t, ctx)
+		bc := NewBrowsingContext(t, handler)
+		// 	Location: "https://example.com/users/joe",
+		// 	Client:   gosthttp.NewHttpClientFromHandler(handler),
+		// }
+		ac := dom.NewAbortController()
+		f := fetch.New(bc)
+		req := f.NewRequest("url")
 
-	p := f.FetchAsync(req, fetch.WithSignal(ac.Signal()))
+		p := f.FetchAsync(req, fetch.WithSignal(ac.Signal()))
 
-	ac.Abort("Dummy Reason")
+		synctest.Wait()
 
-	gosttest.ExpectReceive(t, p, gosttest.Context(t.Context()))
+		ac.Abort("Dummy Reason")
+
+		gosttest.ExpectReceive(t, p, gosttest.Context(t.Context()))
+
+		assert.True(t, handler.ClientDisconnected)
+	})
 }
 
 type Result[T any] struct {

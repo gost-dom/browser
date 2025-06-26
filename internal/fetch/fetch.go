@@ -5,7 +5,6 @@ import (
 	"errors"
 	"io"
 	"net/http"
-	"time"
 
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
@@ -35,10 +34,14 @@ type Request struct {
 
 func (r *Request) URL() string { return url.ParseURLBase(r.url, r.bc.LocationHREF()).Href() }
 
-func (r *Request) do() (*http.Response, error) {
+func (r *Request) do(ctx context.Context) (*http.Response, error) {
 	r.bc.Logger().Info("Get", "url", r.URL())
+	req, err := http.NewRequestWithContext(ctx, "GET", r.URL(), nil)
+	if err != nil {
+		return nil, err
+	}
 	c := r.bc.HTTPClient()
-	return c.Get(r.URL())
+	return c.Do(req)
 }
 
 type fetchOption struct {
@@ -63,33 +66,45 @@ func (f Fetch) FetchAsync(req Request, opts ...FetchOption) Promise[*Response] {
 	}
 	var abortEvents <-chan *event.Event
 
-	// TODO: Get context from BrowsingContext
-	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
-	defer cancel()
-
+	ctx := context.Background()
 	f.BrowsingContext.Logger().Info("Signal?", "signal", opt.signal)
 	if opt.signal != nil {
-		abortEvents = event.NewEventSource(opt.signal).Listen(ctx, "abort")
+		// TODO: Get context from BrowsingContext
+		ctx, cancel := context.WithCancel(ctx)
+		defer cancel()
+		abortEvents = event.NewEventSource(opt.signal).Listen(ctx, "abort", event.BufSize(1))
 	}
-	p := NewPromise[*Response]()
+
 	p2 := NewPromise[*Response]()
 	go func() {
-		resp, err := req.do()
-		if err != nil {
-			p.Reject(err)
-		} else {
-			p.Resolve(&Response{
-				Reader:       resp.Body,
-				Status:       resp.StatusCode,
-				httpResponse: resp,
-			})
+		p := NewPromise[*Response]()
+		reqCtx, cancel := context.WithCancel(ctx)
+
+		go func() {
+			f.BrowsingContext.Logger().Info("Send request")
+			resp, err := req.do(reqCtx)
+			f.BrowsingContext.Logger().Info("Got response")
+			if err != nil {
+				p.Reject(err)
+			} else {
+				p.Resolve(&Response{
+					Reader:       resp.Body,
+					Status:       resp.StatusCode,
+					httpResponse: resp,
+				})
+			}
+		}()
+		f.BrowsingContext.Logger().Info("Wait for response")
+		if abortEvents == nil {
+			p2 <- <-p
+			return
 		}
-	}()
-	go func() {
 		select {
 		case res := <-p:
 			p2.Send(res.Value, res.Err)
 		case <-abortEvents:
+			f.BrowsingContext.Logger().Info("Abort event!")
+			cancel()
 			p2.Reject(errors.New("Aborted"))
 		}
 	}()

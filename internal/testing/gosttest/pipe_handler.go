@@ -31,6 +31,9 @@ type PipeHandler struct {
 	T       testing.TB
 	Ctx     context.Context
 	BufSize uint
+	// ClientDisconnected tells whther the HTTP client disconnects before the
+	// handler has completed.
+	ClientDisconnected bool
 
 	once   sync.Once
 	fs     chan func(http.ResponseWriter)
@@ -45,20 +48,23 @@ func NewPipeHandler(t testing.TB, ctx context.Context) *PipeHandler {
 	return &PipeHandler{T: t, Ctx: ctx}
 }
 
-func (h *PipeHandler) ServeHTTP(w http.ResponseWriter, _ *http.Request) {
+func (h *PipeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if h.served {
 		panic("gosttest: PipeHandler: ServeHTTP: received multiple requests")
 	}
 	h.served = true
 	h.ensureChannel()
 	for {
+		h.T.Log("PipeHandler: Wait for cmd")
 		select {
 		case f, ok := <-h.fs:
 			if !ok {
 				return
 			}
 			f(w)
-		case <-h.Ctx.Done():
+		case <-r.Context().Done():
+			h.T.Log("Request context cancelled")
+			h.ClientDisconnected = true
 			return
 		}
 	}
