@@ -83,7 +83,7 @@ func testFetchJSONAsync(t *testing.T, host html.ScriptHost) {
 	ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
 	defer cancel()
 
-	delayedHandler := &gosttest.PipeHandler{T: t, Ctx: ctx}
+	delayedHandler := &gosttest.PipeHandler{T: t}
 	handler := gosttest.StaticFileServer{
 		"/index.html":     gosttest.StaticHTML(`<body>dummy</body>`),
 		"/data.json":      gosttest.StaticJSON(`{"foo": "Foo value"}`),

@@ -2,9 +2,10 @@ package gosthttp
 
 import (
 	"bufio"
+	"context"
+	"fmt"
 	"io"
 	"net/http"
-	"time"
 )
 
 // A TestRoundTripper is an implementation of the [http.RoundTripper] interface
@@ -18,7 +19,7 @@ func (h TestRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
 	if body == nil {
 		body = nullReader{}
 	}
-	serverReq, err := http.NewRequest(req.Method, req.URL.String(), body)
+	serverReq, err := http.NewRequestWithContext(req.Context(), req.Method, req.URL.String(), body)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +30,7 @@ func (h TestRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
 		h.ServeHTTP(&rw, serverReq)
 		rw.CloseWriter()
 	}()
-	return rw.Response(), nil
+	return rw.Response(req.Context())
 }
 
 // nullReader is just a reader with no content. When _sending_ an HTTP request,
@@ -70,14 +71,26 @@ func newTestResponseWriter(req *http.Request) testResponseWriter {
 	}
 }
 
-func (w *testResponseWriter) Response() *http.Response {
+func (w *testResponseWriter) Response(ctx context.Context) (*http.Response, error) {
 	select {
-	case <-time.After(time.Second):
-		panic("Time out waiting for body to be ready")
+	case <-ctx.Done():
+		err := ctx.Err()
+		if cause := context.Cause(ctx); cause == err {
+			err = fmt.Errorf("gosthttp: roundtripper: %w", ctx.Err())
+		} else {
+			err = fmt.Errorf("gosthttp: roundtripper: %w. cause: %w", ctx.Err(), cause)
+		}
+		return nil, err
 	case <-w.BodyReady:
 	}
 	w.response.Request = w.req
-	return w.response
+	context.AfterFunc(ctx, func() {
+		// Close the pipe with an error when context is done. There is no need
+		// to check if there was an error. If the writer was closed normally,
+		// the context error will not overwrite the EOF marker already present.
+		w.Writer.CloseWithError(ctx.Err())
+	})
+	return w.response, nil
 }
 
 func (w *testResponseWriter) WriteHeader(status int) {

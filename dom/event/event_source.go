@@ -13,6 +13,8 @@ type EventSource struct {
 	EventTarget
 }
 
+func NewEventSource(tgt EventTarget) EventSource { return EventSource{tgt} }
+
 type eventSourceOptions struct {
 	buf int
 }
