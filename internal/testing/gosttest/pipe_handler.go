@@ -34,8 +34,8 @@ type PipeHandler struct {
 	ClientDisconnected bool
 
 	mu     sync.RWMutex
-	once   sync.Once
-	fs     chan func(http.ResponseWriter)
+	init   sync.Once
+	cmds   chan func(http.ResponseWriter)
 	served bool
 	closed bool
 }
@@ -56,26 +56,27 @@ func (h *PipeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h.ensureChannel()
 	for {
 		select {
-		case f, ok := <-h.fs:
+		case f, ok := <-h.cmds:
 			if !ok {
 				return
 			}
 			f(w)
 		case <-r.Context().Done():
 			h.ClientDisconnected = true
+			h.close() // probably not necessary, as the channel is subject to gc
 			return
 		}
 	}
 }
 
 func (h *PipeHandler) ensureChannel() {
-	h.once.Do(func() {
-		if h.fs == nil {
+	h.init.Do(func() {
+		if h.cmds == nil {
 			buf := h.BufSize
 			if buf == 0 {
 				buf = 16
 			}
-			h.fs = make(chan func(http.ResponseWriter), buf)
+			h.cmds = make(chan func(http.ResponseWriter), buf)
 		}
 	})
 }
@@ -120,22 +121,23 @@ func (h *PipeHandler) addF(n string, f func(http.ResponseWriter)) {
 		h.errorF("delayed http response: %s: context closed", n)
 		return
 	}
-	h.fs <- f
+	h.cmds <- f
 }
 
 // Close closes the "pipe", completing the HTTP response. Panics if already
 // closed.
 func (h *PipeHandler) Close() {
-	defer func() {
-		if err := recover(); err != nil {
-			panic(fmt.Sprintf("gost-dom/gosttest: PipeHandler.Close(): %v", err))
-		}
-	}()
 	h.ensureChannel()
+	h.close()
+}
+
+func (h *PipeHandler) close() {
 	h.mu.Lock()
 	defer h.mu.Unlock()
-	h.closed = true
-	close(h.fs)
+	if !h.closed {
+		h.closed = true
+		close(h.cmds)
+	}
 }
 
 func (h *PipeHandler) Flush() {
