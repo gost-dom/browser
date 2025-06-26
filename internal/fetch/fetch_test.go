@@ -63,7 +63,8 @@ func TestFetchWithAbortSignal(t *testing.T) {
 
 		ac.Abort("Dummy Reason")
 
-		gosttest.ExpectReceive(t, p, gosttest.Context(t.Context()))
+		result := gosttest.ExpectReceive(t, p, gosttest.Context(t.Context()))
+		assert.Error(t, result.Err, "Response should be an error")
 
 		synctest.Wait()
 		assert.True(t, handler.ClientDisconnected, "Client disconnected after cancel")
