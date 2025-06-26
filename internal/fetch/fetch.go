@@ -18,18 +18,23 @@ type Fetch struct {
 
 func New(bc html.BrowsingContext) Fetch { return Fetch{bc} }
 
-func (f Fetch) NewRequest(url string) Request {
-	return Request{
+func (f Fetch) NewRequest(url string, opts ...RequestOption) Request {
+	req := Request{
 		url: url,
 		bc:  f.BrowsingContext,
 	}
+	for _, o := range opts {
+		o(&req)
+	}
+	return req
 }
 
 type RequestOption func(*Request)
 
 type Request struct {
-	url string
-	bc  html.BrowsingContext
+	url    string
+	bc     html.BrowsingContext
+	signal dominterfaces.AbortSignal
 }
 
 func (r *Request) URL() string { return url.ParseURLBase(r.url, r.bc.LocationHREF()).Href() }
@@ -46,35 +51,23 @@ func (r *Request) do(ctx context.Context) (*http.Response, error) {
 	return c.Do(req)
 }
 
-type fetchOption struct {
-	signal dominterfaces.AbortSignal
+func WithSignal(s dominterfaces.AbortSignal) RequestOption {
+	return func(opt *Request) { opt.signal = s }
 }
 
-type FetchOption func(*fetchOption)
-
-func WithSignal(s dominterfaces.AbortSignal) FetchOption {
-	return func(opt *fetchOption) { opt.signal = s }
-}
-
-func (f Fetch) Fetch(req Request, opts ...FetchOption) (*Response, error) {
+func (f Fetch) Fetch(req Request) (*Response, error) {
 	// TODO: Get context from outside
-	res := <-f.FetchAsync(context.Background(), req, opts...)
+	res := <-f.FetchAsync(context.Background(), req)
 	return res.Value, res.Err
 }
 
 func (f Fetch) FetchAsync(
 	ctx context.Context,
 	req Request,
-	opts ...FetchOption,
 ) promise.Promise[*Response] {
-	var opt fetchOption
-	for _, o := range opts {
-		o(&opt)
-	}
-
 	// TODO: Get context from BrowsingContext
-	if opt.signal != nil {
-		ctx = dom.AbortContext(ctx, opt.signal)
+	if req.signal != nil {
+		ctx = dom.AbortContext(ctx, req.signal)
 	}
 
 	return promise.New(func() (*Response, error) {

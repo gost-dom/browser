@@ -59,9 +59,9 @@ func TestFetchAborted(t *testing.T) {
 			bc := NewBrowsingContext(t, handler)
 			ac := dom.NewAbortController()
 			f := fetch.New(bc)
-			req := f.NewRequest("url")
+			req := f.NewRequest("url", fetch.WithSignal(ac.Signal()))
 
-			p := f.FetchAsync(ctx, req, fetch.WithSignal(ac.Signal()))
+			p := f.FetchAsync(ctx, req)
 
 			synctest.Wait() // Doesn't affect the outcome, but the next assertion is useless without
 			assert.False(t, handler.ClientDisconnected, "Client disconnected before cancel")
@@ -85,10 +85,10 @@ func TestFetchAborted(t *testing.T) {
 			bc := NewBrowsingContext(t, handler)
 			ac := dom.NewAbortController()
 			f := fetch.New(bc)
-			req := f.NewRequest("url")
+			req := f.NewRequest("url", fetch.WithSignal(ac.Signal()))
 			handler.WriteHeader(200)
 
-			p := f.FetchAsync(ctx, req, fetch.WithSignal(ac.Signal()))
+			p := f.FetchAsync(ctx, req)
 
 			synctest.Wait()
 			res := <-p
