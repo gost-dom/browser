@@ -19,6 +19,7 @@ import (
 
 type TestBrowsingContext struct {
 	logger   *slog.Logger
+	Ctx      context.Context
 	Client   http.Client
 	Location string
 }
@@ -30,8 +31,9 @@ func NewBrowsingContext(t testing.TB, h http.Handler) TestBrowsingContext {
 	}
 }
 
-func (c TestBrowsingContext) HTTPClient() http.Client { return c.Client }
-func (c TestBrowsingContext) LocationHREF() string    { return c.Location }
+func (c TestBrowsingContext) Context() context.Context { return c.Ctx }
+func (c TestBrowsingContext) HTTPClient() http.Client  { return c.Client }
+func (c TestBrowsingContext) LocationHREF() string     { return c.Location }
 func (c TestBrowsingContext) Logger() *slog.Logger {
 	if c.logger != nil {
 		return c.logger
@@ -57,11 +59,12 @@ func TestFetchAborted(t *testing.T) {
 
 			handler := gosttest.NewPipeHandler(t)
 			bc := NewBrowsingContext(t, handler)
+			bc.Ctx = ctx
 			ac := dom.NewAbortController()
 			f := fetch.New(bc)
 			req := f.NewRequest("url", fetch.WithSignal(ac.Signal()))
 
-			p := f.FetchAsync(ctx, req)
+			p := f.FetchAsync(req)
 
 			synctest.Wait() // Doesn't affect the outcome, but the next assertion is useless without
 			assert.False(t, handler.ClientDisconnected, "Client disconnected before cancel")
@@ -83,12 +86,13 @@ func TestFetchAborted(t *testing.T) {
 
 			handler := gosttest.NewPipeHandler(t)
 			bc := NewBrowsingContext(t, handler)
+			bc.Ctx = ctx
 			ac := dom.NewAbortController()
 			f := fetch.New(bc)
 			req := f.NewRequest("url", fetch.WithSignal(ac.Signal()))
 			handler.WriteHeader(200)
 
-			p := f.FetchAsync(ctx, req)
+			p := f.FetchAsync(req)
 
 			synctest.Wait()
 			res := <-p

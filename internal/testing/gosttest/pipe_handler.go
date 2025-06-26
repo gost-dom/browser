@@ -29,6 +29,7 @@ import (
 type PipeHandler struct {
 	T       testing.TB
 	BufSize uint
+	Req     *http.Request
 	// ClientDisconnected tells whther the HTTP client disconnects before the
 	// handler has completed.
 	ClientDisconnected bool
@@ -52,6 +53,7 @@ func (h *PipeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if h.served {
 		panic("gosttest: PipeHandler: ServeHTTP: received multiple requests")
 	}
+	h.Req = r
 	h.served = true
 	h.ensureChannel()
 	for {

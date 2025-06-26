@@ -1,8 +1,6 @@
 package fetch
 
 import (
-	"context"
-
 	"github.com/gost-dom/browser/internal/fetch"
 	"github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
@@ -20,5 +18,5 @@ func Fetch[T any](info js.CallbackContext[T]) (js.Value[T], error) {
 	f := fetch.New(info.Window())
 	info.Logger().Debug("js/fetch: create promise")
 	req := f.NewRequest(url)
-	return codec.EncodePromise(info, f.FetchAsync(context.Background(), req), encodeResponse)
+	return codec.EncodePromise(info, f.FetchAsync(req), encodeResponse)
 }

@@ -1,6 +1,7 @@
 package html_test
 
 import (
+	"context"
 	"io"
 	"log/slog"
 	"net/http"
@@ -26,18 +27,10 @@ type stubBrowsingContext struct {
 	url    string
 }
 
-func (c stubBrowsingContext) HTTPClient() http.Client { return c.client }
-func (c stubBrowsingContext) LocationHREF() string    { return c.url }
-func (c stubBrowsingContext) Logger() *slog.Logger    { return nil }
-
-func newFromHandlerFunc(
-	clock *clock.Clock,
-	f func(http.ResponseWriter, *http.Request),
-) XmlHttpRequest {
-	return NewXmlHttpRequest(stubBrowsingContext{
-		client: http.Client{Transport: gosthttp.TestRoundTripper{Handler: http.HandlerFunc(f)}},
-	}, clock)
-}
+func (c stubBrowsingContext) HTTPClient() http.Client  { return c.client }
+func (c stubBrowsingContext) LocationHREF() string     { return c.url }
+func (c stubBrowsingContext) Logger() *slog.Logger     { return nil }
+func (c stubBrowsingContext) Context() context.Context { return nil }
 
 type XMLHTTPRequestTestSuite struct {
 	gosttest.GomegaSuite

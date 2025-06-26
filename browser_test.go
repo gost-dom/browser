@@ -2,11 +2,14 @@ package browser_test
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"log/slog"
 	"net/http"
 	"testing"
+	"testing/synctest"
 
+	"github.com/gost-dom/browser"
 	. "github.com/gost-dom/browser"
 	"github.com/gost-dom/browser/dom/event"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
@@ -15,6 +18,7 @@ import (
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 
 	"github.com/onsi/gomega"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -55,7 +59,35 @@ func (s *BrowserTestSuite) TestExecuteScript() {
 	Expect(target).To(HaveOuterHTML(`<div id="target">42</div>`))
 }
 
+func (s *BrowserTestSuite) TestCancellation() {
+	synctest.Run(func() {
+		handler := gosttest.NewPipeHandler(s.T())
+		h := gosttest.StaticFileServer{
+			"/index.html": gosttest.StaticHTML("body>Dummy</body>"),
+			"/data":       handler,
+		}
+
+		ctx, cancel := context.WithCancel(s.T().Context())
+		b := browser.New(
+			browser.WithHandler(h),
+			browser.WithContext(ctx),
+		)
+		w, err := b.Open("http://example.com/index.html")
+		if assert.NoError(s.T(), err) {
+			assert.NoError(s.T(), w.Run("fetch('/data')"))
+			synctest.Wait()
+			assert.NotNil(s.T(), handler.Req, "/data requested")
+			cancel()
+			synctest.Wait()
+			assert.True(s.T(), handler.ClientDisconnected, "http client disconnected")
+		} else {
+			cancel()
+		}
+	})
+}
+
 func TestBrowserSuite(t *testing.T) {
+	t.Parallel()
 	suite.Run(t, new(BrowserTestSuite))
 }
 
@@ -141,7 +173,6 @@ func (s *CookiesTestSuite) TestCookiesAreNotReusedInNewBrowser() {
 	Expect(err).ToNot(HaveOccurred())
 	el = win.Document().GetElementById("gost")
 	Expect(el).To(HaveTextContent(""))
-
 }
 
 func TestCookies(t *testing.T) {

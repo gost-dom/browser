@@ -1,6 +1,7 @@
 package browser
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -16,6 +17,7 @@ type browserConfig struct {
 	client http.Client
 	logger *slog.Logger
 	host   html.ScriptHost
+	ctx    context.Context
 }
 
 type BrowserOption func(*browserConfig)
@@ -41,6 +43,10 @@ func WithScriptHost(host html.ScriptHost) BrowserOption {
 	return func(b *browserConfig) { b.host = host }
 }
 
+func WithContext(ctx context.Context) BrowserOption {
+	return func(b *browserConfig) { b.ctx = ctx }
+}
+
 // Pretty stupid right now, but should _probably_ allow handling multiple
 // windows/tabs. This used to be the case for _some_ identity providers, but I'm
 // not sure if that even work anymore because of browser security.
@@ -48,6 +54,7 @@ type Browser struct {
 	Client     http.Client
 	ScriptHost ScriptHost
 	Logger     log.Logger
+	ctx        context.Context
 	windows    []Window
 }
 
@@ -97,6 +104,7 @@ func New(options ...BrowserOption) *Browser {
 		Client:     config.client,
 		Logger:     config.logger,
 		ScriptHost: config.host,
+		ctx:        config.ctx,
 	}
 	return result
 }
@@ -121,6 +129,7 @@ func (b *Browser) createOptions(location string) WindowOptions {
 		HttpClient:   b.Client,
 		BaseLocation: location,
 		Logger:       b.Logger,
+		Context:      b.ctx,
 	}
 }
 

@@ -39,6 +39,7 @@ type BrowsingContext interface {
 	// Logger returns the currently configured logger for the window. Returns
 	// nil if no instance is created.
 	Logger() *slog.Logger
+	Context() context.Context
 	HTTPClient() http.Client
 	LocationHREF() string
 }
@@ -92,12 +93,17 @@ type window struct {
 	domParser           domParser
 	logger              *slog.Logger
 	deferredScripts     []*htmlScriptElement
+	context             context.Context
 }
 
 func newWindow(windowOptions ...WindowOption) *window {
 	var options WindowOptions
 	for _, option := range windowOptions {
 		option.Apply(&options)
+	}
+	ctx := options.Context
+	if ctx == nil {
+		ctx = context.Background()
 	}
 	win := &window{
 		EventTarget:         event.NewEventTarget(),
@@ -106,6 +112,7 @@ func newWindow(windowOptions ...WindowOption) *window {
 		scriptEngineFactory: options.ScriptHost,
 		logger:              options.Logger,
 		history:             new(History),
+		context:             ctx,
 	}
 	if win.baseLocation == "" {
 		win.baseLocation = "about:blank"
@@ -152,6 +159,11 @@ func OpenWindowFromLocation(location string, windowOptions ...WindowOption) (Win
 	return result, result.get(location)
 }
 
+func (w *window) HTTPClient() http.Client  { return w.httpClient }
+func (w *window) Document() dom.Document   { return w.document }
+func (w *window) History() *History        { return w.history }
+func (w *window) Context() context.Context { return w.context }
+
 func (w *window) initScriptEngine() {
 	w.EventTarget.RemoveAll()
 	factory := w.scriptEngineFactory
@@ -170,10 +182,6 @@ func (w *window) setBaseLocation(href string) string {
 	}
 	w.baseLocation = w.resolveHref(href).Href()
 	return w.baseLocation
-}
-
-func (w *window) History() *History {
-	return w.history
 }
 
 func (w *window) ParseFragment(
@@ -213,12 +221,6 @@ func (w *window) parseReader(reader io.Reader) error {
 	}
 
 	return err
-}
-
-func (w *window) HTTPClient() http.Client { return w.httpClient }
-
-func (w *window) Document() dom.Document {
-	return w.document
 }
 
 func (w *window) Navigate(href string) (err error) {
@@ -338,6 +340,7 @@ type WindowOptions struct {
 	HttpClient   http.Client
 	BaseLocation string
 	Logger       *slog.Logger
+	Context      context.Context
 }
 
 type WindowOption interface {

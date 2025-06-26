@@ -8,6 +8,7 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/dom"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
+	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/internal/promise"
 	"github.com/gost-dom/browser/url"
 )
@@ -42,7 +43,7 @@ func (r *Request) URL() string { return url.ParseURLBase(r.url, r.bc.LocationHRE
 func (r *Request) do(ctx context.Context) (*http.Response, error) {
 	method := "GET"
 	url := r.URL()
-	r.bc.Logger().Info("gost-dom/fetch: Request.do", "method", method, "url", url)
+	log.Info(r.bc.Logger(), "gost-dom/fetch: Request.do", "method", method, "url", url)
 	req, err := http.NewRequestWithContext(ctx, method, url, nil)
 	if err != nil {
 		return nil, err
@@ -56,16 +57,12 @@ func WithSignal(s dominterfaces.AbortSignal) RequestOption {
 }
 
 func (f Fetch) Fetch(req Request) (*Response, error) {
-	// TODO: Get context from outside
-	res := <-f.FetchAsync(context.Background(), req)
+	res := <-f.FetchAsync(req)
 	return res.Value, res.Err
 }
 
-func (f Fetch) FetchAsync(
-	ctx context.Context,
-	req Request,
-) promise.Promise[*Response] {
-	// TODO: Get context from BrowsingContext
+func (f Fetch) FetchAsync(req Request) promise.Promise[*Response] {
+	ctx := f.BrowsingContext.Context()
 	if req.signal != nil {
 		ctx = dom.AbortContext(ctx, req.signal)
 	}
