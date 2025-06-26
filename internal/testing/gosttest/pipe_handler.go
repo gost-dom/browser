@@ -1,7 +1,6 @@
 package gosttest
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 	"sync"
@@ -29,23 +28,24 @@ import (
 // cancel on timeout.
 type PipeHandler struct {
 	T       testing.TB
-	Ctx     context.Context
 	BufSize uint
 	// ClientDisconnected tells whther the HTTP client disconnects before the
 	// handler has completed.
 	ClientDisconnected bool
 
+	mu     sync.RWMutex
 	once   sync.Once
 	fs     chan func(http.ResponseWriter)
 	served bool
+	closed bool
 }
 
 // Creates a new [PipeHandler] with a default [testing.TB] and [context.Context]
 // instance.
 //
 // While both are optional, they are recommended options.
-func NewPipeHandler(t testing.TB, ctx context.Context) *PipeHandler {
-	return &PipeHandler{T: t, Ctx: ctx}
+func NewPipeHandler(t testing.TB) *PipeHandler {
+	return &PipeHandler{T: t}
 }
 
 func (h *PipeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -61,8 +61,6 @@ func (h *PipeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			f(w)
-		case <-h.Ctx.Done():
-			return
 		case <-r.Context().Done():
 			h.ClientDisconnected = true
 			return
@@ -78,9 +76,6 @@ func (h *PipeHandler) ensureChannel() {
 				buf = 16
 			}
 			h.fs = make(chan func(http.ResponseWriter), buf)
-		}
-		if h.Ctx == nil {
-			h.Ctx = context.Background()
 		}
 	})
 }
@@ -118,11 +113,14 @@ func (h *PipeHandler) Do(f func(http.ResponseWriter)) {
 
 func (h *PipeHandler) addF(n string, f func(http.ResponseWriter)) {
 	h.ensureChannel()
-	select {
-	case h.fs <- f:
-	case <-h.Ctx.Done():
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+
+	if h.closed {
 		h.errorF("delayed http response: %s: context closed", n)
+		return
 	}
+	h.fs <- f
 }
 
 // Close closes the "pipe", completing the HTTP response. Panics if already
@@ -134,6 +132,9 @@ func (h *PipeHandler) Close() {
 		}
 	}()
 	h.ensureChannel()
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	h.closed = true
 	close(h.fs)
 }
 

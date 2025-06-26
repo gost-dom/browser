@@ -55,7 +55,7 @@ func TestFetchAborted(t *testing.T) {
 			ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
 			defer cancel()
 
-			handler := gosttest.NewPipeHandler(t, ctx)
+			handler := gosttest.NewPipeHandler(t)
 			bc := NewBrowsingContext(t, handler)
 			ac := dom.NewAbortController()
 			f := fetch.New(bc)
@@ -81,7 +81,7 @@ func TestFetchAborted(t *testing.T) {
 			ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
 			defer cancel()
 
-			handler := gosttest.NewPipeHandler(t, ctx)
+			handler := gosttest.NewPipeHandler(t)
 			bc := NewBrowsingContext(t, handler)
 			ac := dom.NewAbortController()
 			f := fetch.New(bc)
