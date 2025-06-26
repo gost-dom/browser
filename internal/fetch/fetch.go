@@ -1,13 +1,14 @@
 package fetch
 
 import (
+	"context"
 	"errors"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
-	"github.com/gost-dom/browser/internal/dom"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
 	"github.com/gost-dom/browser/url"
 )
@@ -60,19 +61,15 @@ func (f Fetch) FetchAsync(req Request, opts ...FetchOption) Promise[*Response] {
 	for _, o := range opts {
 		o(&opt)
 	}
-	signal := make(chan struct{})
+	var abortEvents <-chan *event.Event
+
+	// TODO: Get context from BrowsingContext
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	defer cancel()
 
 	f.BrowsingContext.Logger().Info("Signal?", "signal", opt.signal)
 	if opt.signal != nil {
-		handler := event.NewEventHandlerFunc(
-			func(e *event.Event) error {
-				f.BrowsingContext.Logger().Info("AbortSignal")
-				go func() { signal <- struct{}{} }()
-				return nil
-			},
-		)
-		f.BrowsingContext.Logger().Info("Add event listener")
-		opt.signal.AddEventListener(dom.EventTypeAbort, handler)
+		abortEvents = event.NewEventSource(opt.signal).Listen(ctx, "abort")
 	}
 	p := NewPromise[*Response]()
 	p2 := NewPromise[*Response]()
@@ -92,7 +89,7 @@ func (f Fetch) FetchAsync(req Request, opts ...FetchOption) Promise[*Response] {
 		select {
 		case res := <-p:
 			p2.Send(res.Value, res.Err)
-		case <-signal:
+		case <-abortEvents:
 			p2.Reject(errors.New("Aborted"))
 		}
 	}()
