@@ -84,6 +84,12 @@ func (w *testResponseWriter) Response(ctx context.Context) (*http.Response, erro
 	case <-w.BodyReady:
 	}
 	w.response.Request = w.req
+	context.AfterFunc(ctx, func() {
+		// Close the pipe with an error when context is done. There is no need
+		// to check if there was an error. If the writer was closed normally,
+		// the context error will not overwrite the EOF marker already present.
+		w.Writer.CloseWithError(ctx.Err())
+	})
 	return w.response, nil
 }
 
