@@ -61,11 +61,7 @@ func TestFetchWithAbortSignal(t *testing.T) {
 
 	ac.Abort("Dummy Reason")
 
-	select {
-	case <-ctx.Done():
-		t.Error("timeout")
-	case <-p:
-	}
+	gosttest.ExpectReceive(t, p, gosttest.Context(t.Context()))
 }
 
 type Result[T any] struct {
