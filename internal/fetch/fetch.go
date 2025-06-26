@@ -2,13 +2,11 @@ package fetch
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"io"
 	"net/http"
 
-	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/dom"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
 	"github.com/gost-dom/browser/url"
 )
@@ -72,51 +70,23 @@ func (f Fetch) FetchAsync(
 	for _, o := range opts {
 		o(&opt)
 	}
-	var abortEvents <-chan *event.Event
 
+	// TODO: Get context from BrowsingContext
 	if opt.signal != nil {
-		// // TODO: Get context from BrowsingContext
-		// ctx, cancel := context.WithCancel(ctx)
-		// defer cancel()
-		abortEvents = event.NewEventSource(opt.signal).Listen(ctx, "abort", event.BufSize(1))
+		ctx = dom.AbortContext(ctx, opt.signal)
 	}
 
-	p2 := NewPromise[*Response]()
-	go func() {
-		p := NewPromise[*Response]()
-		reqCtx, cancel := context.WithCancelCause(ctx)
-
-		go func() {
-			resp, err := req.do(reqCtx)
-			if err != nil {
-				p.Reject(err)
-			} else {
-				p.Resolve(&Response{
-					Reader:       resp.Body,
-					Status:       resp.StatusCode,
-					httpResponse: resp,
-				})
-			}
-		}()
-		if abortEvents == nil {
-			p2 <- <-p
-			return
+	return NewPromiseFunc(func() (*Response, error) {
+		resp, err := req.do(ctx)
+		if err != nil {
+			return nil, err
 		}
-
-		select {
-		case res := <-p:
-			p2.Send(res.Value, res.Err)
-		case e := <-abortEvents:
-			err, ok := e.Data.(error)
-			if !ok {
-				err = ErrAbortSignal{Data: e.Data}
-			}
-			cancel(err)
-			p2.Reject(errors.New("Aborted"))
-		}
-	}()
-
-	return p2
+		return &Response{
+			Reader:       resp.Body,
+			Status:       resp.StatusCode,
+			httpResponse: resp,
+		}, nil
+	})
 }
 
 type Response struct {
@@ -139,8 +109,10 @@ func (p Promise[T]) Resolve(v T)         { p <- Result[T]{Value: v} }
 func (p Promise[T]) Reject(err error)    { p <- Result[T]{Err: err} }
 func (p Promise[T]) Send(v T, err error) { p <- Result[T]{Value: v, Err: err} }
 
-type ErrAbortSignal struct{ Data any }
-
-func (err ErrAbortSignal) Error() string {
-	return fmt.Sprintf("aborted: readon: %v", err.Data)
+// NewPromiseFunc returns a promise that will settle with the outcome of running
+// function f. It runs f in a separate gorouting, allowing early return.
+func NewPromiseFunc[T any](f func() (T, error)) Promise[T] {
+	p := NewPromise[T]()
+	go func() { p.Send(f()) }()
+	return p
 }
