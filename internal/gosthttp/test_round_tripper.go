@@ -2,6 +2,7 @@ package gosthttp
 
 import (
 	"bufio"
+	"context"
 	"io"
 	"net/http"
 	"time"
@@ -29,7 +30,7 @@ func (h TestRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
 		h.ServeHTTP(&rw, serverReq)
 		rw.CloseWriter()
 	}()
-	return rw.Response(), nil
+	return rw.Response(req.Context()), nil
 }
 
 // nullReader is just a reader with no content. When _sending_ an HTTP request,
@@ -70,10 +71,11 @@ func newTestResponseWriter(req *http.Request) testResponseWriter {
 	}
 }
 
-func (w *testResponseWriter) Response() *http.Response {
+func (w *testResponseWriter) Response(ctx context.Context) *http.Response {
 	select {
 	case <-time.After(time.Second):
 		panic("Time out waiting for body to be ready")
+	case <-ctx.Done():
 	case <-w.BodyReady:
 	}
 	w.response.Request = w.req

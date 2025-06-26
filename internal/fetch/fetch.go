@@ -35,8 +35,10 @@ type Request struct {
 func (r *Request) URL() string { return url.ParseURLBase(r.url, r.bc.LocationHREF()).Href() }
 
 func (r *Request) do(ctx context.Context) (*http.Response, error) {
-	r.bc.Logger().Info("Get", "url", r.URL())
-	req, err := http.NewRequestWithContext(ctx, "GET", r.URL(), nil)
+	method := "GET"
+	url := r.URL()
+	r.bc.Logger().Info("gost-dom/fetch: Request.do", "method", method, "url", url)
+	req, err := http.NewRequestWithContext(ctx, method, url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -55,23 +57,26 @@ func WithSignal(s dominterfaces.AbortSignal) FetchOption {
 }
 
 func (f Fetch) Fetch(req Request, opts ...FetchOption) (*Response, error) {
-	res := <-f.FetchAsync(req, opts...)
+	// TODO: Get context from outside
+	res := <-f.FetchAsync(context.Background(), req, opts...)
 	return res.Value, res.Err
 }
 
-func (f Fetch) FetchAsync(req Request, opts ...FetchOption) Promise[*Response] {
+func (f Fetch) FetchAsync(
+	ctx context.Context,
+	req Request,
+	opts ...FetchOption,
+) Promise[*Response] {
 	var opt fetchOption
 	for _, o := range opts {
 		o(&opt)
 	}
 	var abortEvents <-chan *event.Event
 
-	ctx := context.Background()
-	f.BrowsingContext.Logger().Info("Signal?", "signal", opt.signal)
 	if opt.signal != nil {
-		// TODO: Get context from BrowsingContext
-		ctx, cancel := context.WithCancel(ctx)
-		defer cancel()
+		// // TODO: Get context from BrowsingContext
+		// ctx, cancel := context.WithCancel(ctx)
+		// defer cancel()
 		abortEvents = event.NewEventSource(opt.signal).Listen(ctx, "abort", event.BufSize(1))
 	}
 
@@ -81,9 +86,7 @@ func (f Fetch) FetchAsync(req Request, opts ...FetchOption) Promise[*Response] {
 		reqCtx, cancel := context.WithCancel(ctx)
 
 		go func() {
-			f.BrowsingContext.Logger().Info("Send request")
 			resp, err := req.do(reqCtx)
-			f.BrowsingContext.Logger().Info("Got response")
 			if err != nil {
 				p.Reject(err)
 			} else {
@@ -94,16 +97,15 @@ func (f Fetch) FetchAsync(req Request, opts ...FetchOption) Promise[*Response] {
 				})
 			}
 		}()
-		f.BrowsingContext.Logger().Info("Wait for response")
 		if abortEvents == nil {
 			p2 <- <-p
 			return
 		}
+
 		select {
 		case res := <-p:
 			p2.Send(res.Value, res.Err)
 		case <-abortEvents:
-			f.BrowsingContext.Logger().Info("Abort event!")
 			cancel()
 			p2.Reject(errors.New("Aborted"))
 		}

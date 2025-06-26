@@ -52,22 +52,21 @@ func TestFetchWithAbortSignal(t *testing.T) {
 
 		handler := gosttest.NewPipeHandler(t, ctx)
 		bc := NewBrowsingContext(t, handler)
-		// 	Location: "https://example.com/users/joe",
-		// 	Client:   gosthttp.NewHttpClientFromHandler(handler),
-		// }
 		ac := dom.NewAbortController()
 		f := fetch.New(bc)
 		req := f.NewRequest("url")
 
-		p := f.FetchAsync(req, fetch.WithSignal(ac.Signal()))
+		p := f.FetchAsync(ctx, req, fetch.WithSignal(ac.Signal()))
 
-		synctest.Wait()
+		synctest.Wait() // Doesn't affect the outcome, but the next assertion is useless without
+		assert.False(t, handler.ClientDisconnected, "Client disconnected before cancel")
 
 		ac.Abort("Dummy Reason")
 
 		gosttest.ExpectReceive(t, p, gosttest.Context(t.Context()))
 
-		assert.True(t, handler.ClientDisconnected)
+		synctest.Wait()
+		assert.True(t, handler.ClientDisconnected, "Client disconnected after cancel")
 	})
 }
 

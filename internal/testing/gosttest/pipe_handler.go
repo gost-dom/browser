@@ -55,15 +55,15 @@ func (h *PipeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h.served = true
 	h.ensureChannel()
 	for {
-		h.T.Log("PipeHandler: Wait for cmd")
 		select {
 		case f, ok := <-h.fs:
 			if !ok {
 				return
 			}
 			f(w)
+		case <-h.Ctx.Done():
+			return
 		case <-r.Context().Done():
-			h.T.Log("Request context cancelled")
 			h.ClientDisconnected = true
 			return
 		}
