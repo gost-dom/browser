@@ -3,6 +3,7 @@ package fetch
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -83,7 +84,7 @@ func (f Fetch) FetchAsync(
 	p2 := NewPromise[*Response]()
 	go func() {
 		p := NewPromise[*Response]()
-		reqCtx, cancel := context.WithCancel(ctx)
+		reqCtx, cancel := context.WithCancelCause(ctx)
 
 		go func() {
 			resp, err := req.do(reqCtx)
@@ -105,8 +106,12 @@ func (f Fetch) FetchAsync(
 		select {
 		case res := <-p:
 			p2.Send(res.Value, res.Err)
-		case <-abortEvents:
-			cancel()
+		case e := <-abortEvents:
+			err, ok := e.Data.(error)
+			if !ok {
+				err = ErrAbortSignal{Data: e.Data}
+			}
+			cancel(err)
 			p2.Reject(errors.New("Aborted"))
 		}
 	}()
@@ -133,3 +138,9 @@ func (p Promise[T]) Close()              { close(p) }
 func (p Promise[T]) Resolve(v T)         { p <- Result[T]{Value: v} }
 func (p Promise[T]) Reject(err error)    { p <- Result[T]{Err: err} }
 func (p Promise[T]) Send(v T, err error) { p <- Result[T]{Value: v, Err: err} }
+
+type ErrAbortSignal struct{ Data any }
+
+func (err ErrAbortSignal) Error() string {
+	return fmt.Sprintf("aborted: readon: %v", err.Data)
+}
