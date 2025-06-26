@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gost-dom/browser/internal/entity"
+	"github.com/gost-dom/browser/internal/promise"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -85,13 +86,13 @@ func EncodeConstrucedValue[T any](cbCtx js.CallbackScope[T], val any) (js.Value[
 	return nil, nil
 }
 
-// EncodePromise returnes a JavaScript Promise that will settle with the result
+// EncodePromiseFunc returnes a JavaScript Promise that will settle with the result
 // of running function f. Function f must be safe to run concurrently, as it
 // will execute in a separate goroutine.
 //
 // The promise will not settile immediately after f finishes, but will be
 // deferred to run on the "main loop" that the embedder controls.
-func EncodePromise[T any](
+func EncodePromiseFunc[T any](
 	c js.Scope[T],
 	f func() (js.Value[T], error),
 ) (js.Value[T], error) {
@@ -105,6 +106,40 @@ func EncodePromise[T any](
 				p.Resolve(r)
 			} else {
 				fmt.Println("Reject")
+				p.Reject(err)
+			}
+		})
+	}()
+	return p, nil
+}
+
+type Encoder[T, U any] = func(js.Scope[T], U) (js.Value[T], error)
+
+// EncodePromise converts a [promise.Promise] value to a JavaScript Promise
+// value, using encoder to convert the native fulfilled value to a JavaScript
+// value.
+//
+// The returned Promise will not settile immediately after a value is received
+// from prom, but will be deferred to run on the "main loop" that the embedder
+// controls.
+func EncodePromise[T, U any](
+	scope js.Scope[T],
+	prom promise.Promise[U],
+	encoder Encoder[T, U],
+) (js.Value[T], error) {
+	p := scope.NewPromise()
+	e := scope.Clock().BeginEvent()
+	go func() {
+		res := <-prom
+		e.AddSafeEvent(func() {
+			err := res.Err
+			var val js.Value[T]
+			if err == nil {
+				val, err = encoder(scope, res.Value)
+			}
+			if err == nil {
+				p.Resolve(val)
+			} else {
 				p.Reject(err)
 			}
 		})
