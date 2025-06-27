@@ -73,5 +73,5 @@ func AbortContext(ctx context.Context, signal event.EventTarget) context.Context
 type ErrReason struct{ Reason any }
 
 func (err ErrReason) Error() string {
-	return fmt.Sprintf("aborted: readon: %v", err.Reason)
+	return fmt.Sprintf("aborted: reason: %v", err.Reason)
 }
