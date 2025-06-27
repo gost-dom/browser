@@ -4,6 +4,8 @@ RAW := $(if $(filter $(MAKELEVEL),0),-r,)
 
 GOW_FLAGS := $(RAW)
 
+GOEXPERIMENT=synctest
+
 # Expects an existing stable version of `gow`.
 GOW := gow $(GOW_FLAGS)
 
