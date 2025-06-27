@@ -1,9 +1,7 @@
 package html_test
 
 import (
-	"context"
 	"io"
-	"log/slog"
 	"net/http"
 	"slices"
 	"strings"
@@ -12,7 +10,6 @@ import (
 	"github.com/gost-dom/browser/dom/event"
 	. "github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
-	"github.com/gost-dom/browser/internal/gosthttp"
 	. "github.com/gost-dom/browser/internal/html"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
@@ -21,16 +18,6 @@ import (
 
 	"github.com/onsi/gomega/types"
 )
-
-type stubBrowsingContext struct {
-	client http.Client
-	url    string
-}
-
-func (c stubBrowsingContext) HTTPClient() http.Client  { return c.client }
-func (c stubBrowsingContext) LocationHREF() string     { return c.url }
-func (c stubBrowsingContext) Logger() *slog.Logger     { return nil }
-func (c stubBrowsingContext) Context() context.Context { return nil }
 
 type XMLHTTPRequestTestSuite struct {
 	gosttest.GomegaSuite
@@ -69,7 +56,7 @@ func (s *XMLHTTPRequestTestSuite) SetupTest() {
 		w.Write([]byte("Hello, World!"))
 	})
 	s.xhr = NewXmlHttpRequest(
-		stubBrowsingContext{client: gosthttp.NewHttpClientFromHandler(s.handler)},
+		gosttest.NewBrowsingContext(s.T(), s.handler),
 		s.timer,
 	)
 
@@ -223,7 +210,7 @@ func TestXMLHTTPRequestRedirect(t *testing.T) {
 		w.Write([]byte("Handled"))
 	})
 	xhr := NewXmlHttpRequest(
-		stubBrowsingContext{client: gosthttp.NewHttpClientFromHandler(m)},
+		gosttest.NewBrowsingContext(t, m),
 		clock.New(),
 	)
 	xhr.Open("GET", "https://example.com/redirect", RequestOptionAsync(false))
