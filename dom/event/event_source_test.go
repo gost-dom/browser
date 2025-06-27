@@ -13,21 +13,6 @@ import (
 
 type EventChan chan *event.Event
 
-func NewEventStream(tgt event.EventTarget, t string, ctx context.Context) EventChan {
-	c := make(chan *event.Event)
-	handler := event.NewEventHandlerFunc(func(e *event.Event) error {
-		go func() { c <- e }()
-		return nil
-	})
-	tgt.AddEventListener(t, handler)
-	go func() {
-		<-ctx.Done()
-		tgt.RemoveEventListener(t, handler)
-	}()
-
-	return c
-}
-
 func TestEventsAreReceivedInOrder(t *testing.T) {
 	t.Parallel()
 	synctest.Run(func() {
