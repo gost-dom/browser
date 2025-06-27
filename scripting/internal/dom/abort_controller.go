@@ -24,9 +24,5 @@ func (w AbortController[T]) toAbortSignal(
 	cbCtx js.CallbackContext[T],
 	signal dominterfaces.AbortSignal,
 ) (js.Value[T], error) {
-	instance, err := js.As[dominterfaces.AbortController](cbCtx.Instance())
-	if err != nil {
-		return nil, err
-	}
-	return cbCtx.Constructor("AbortSignal").NewInstance(instance.Signal())
+	return cbCtx.Constructor("AbortSignal").NewInstance(signal)
 }
