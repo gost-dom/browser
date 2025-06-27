@@ -2,10 +2,10 @@ package event
 
 import "context"
 
-// DEFAULT_BUF is the default buffer size for event channels created by
+// DefaultBuf is the default buffer size for event channels created by
 // [EventSource] when buffer size not specified explicitly. Buffer size affects
 // event ordering guarantees.
-const DEFAULT_BUF = 16
+const DefaultBuf = 16
 
 // EventSource embeds an [EventTarget] and provides events in a channel,
 // simplifying Go code consuming events.
@@ -34,13 +34,13 @@ func BufSize(buf int) EventSourceOption {
 //
 // Ordering of events is guaranteed when the channel buffer is not full and all
 // events are dispatched from the same goroutine. The channel buffer size is
-// controlled with the [BufSize] option. Default value is [DEFAULT_BUF].
+// controlled with the [BufSize] option. Default value is [DefaultBuf].
 func (s EventSource) Listen(
 	ctx context.Context,
 	t string,
 	opts ...EventSourceOption,
 ) <-chan *Event {
-	opt := eventSourceOptions{buf: DEFAULT_BUF}
+	opt := eventSourceOptions{buf: DefaultBuf}
 	for _, o := range opts {
 		o(&opt)
 	}

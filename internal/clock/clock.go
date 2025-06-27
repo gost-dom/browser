@@ -14,7 +14,7 @@ import (
 	"github.com/gost-dom/browser/internal/log"
 )
 
-const DEFAULT_EVENT_BUF_SIZE = 8
+const DefaultEventBufSize = 8
 
 type TaskHandle uint32
 
@@ -279,7 +279,7 @@ func (c *Clock) BeginEvent() *EventLoopCallback {
 		c.logger().Debug("Clock.BeginEvent: initialize channel")
 		bufSize := c.EventBufSize
 		if bufSize == 0 {
-			bufSize = DEFAULT_EVENT_BUF_SIZE
+			bufSize = DefaultEventBufSize
 		}
 		c.events = make(chan TaskCallback, bufSize)
 	}
