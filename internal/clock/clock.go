@@ -14,6 +14,8 @@ import (
 	"github.com/gost-dom/browser/internal/log"
 )
 
+// DefaultEventBufSize is the default capacity used when not specified
+// explicitly for the internal channel events pushed to the event loop.
 const DefaultEventBufSize = 8
 
 type TaskHandle uint32
