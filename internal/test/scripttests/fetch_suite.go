@@ -40,6 +40,7 @@ func (s *FetchSuite) TestPrototypes() {
 
 type option struct {
 	logOptions []gosttest.TestLoggerOption
+	ctx        context.Context
 }
 
 type InitOption func(*option)
@@ -50,6 +51,10 @@ func WithLogOption(lo gosttest.TestLoggerOption) InitOption {
 
 func WithMinLogLevel(lvl slog.Level) InitOption {
 	return WithLogOption(gosttest.MinLogLevel(lvl))
+}
+
+func WithContext(ctx context.Context) InitOption {
+	return func(o *option) { o.ctx = ctx }
 }
 
 func initWindow(
@@ -63,7 +68,12 @@ func initWindow(
 		opt(&o)
 	}
 	logger := gosttest.NewTestLogger(t, o.logOptions...)
+	ctx := o.ctx
+	if ctx == nil {
+		ctx = t.Context()
+	}
 	b := htmltest.NewBrowserHelper(t, browser.New(
+		browser.WithContext(ctx),
 		browser.WithLogger(logger),
 		browser.WithHandler(h),
 		browser.WithScriptHost(host),
