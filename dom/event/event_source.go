@@ -40,6 +40,9 @@ func (s EventSource) Listen(
 	t string,
 	opts ...EventSourceOption,
 ) <-chan *Event {
+	if ctx == nil {
+		panic("gost-dom/event: EventSource.Listen: ctx is nil")
+	}
 	opt := eventSourceOptions{buf: DefaultBuf}
 	for _, o := range opts {
 		o(&opt)
@@ -51,25 +54,38 @@ func (s EventSource) Listen(
 		// ensuring ordering of events.
 		//
 		// If the channel is not ready to accept messages, send in a new
-		// goroutine to avoid blocking the EventTarget
+		// goroutine to avoid blocking the EventTarget.
+		//
+		// TODO: Reconcider if the channel buffer should be a hard limit,
+		// resulting in an error if the channel is not ready to accept new
+		// messages
 		select {
 		case c <- e:
 		default:
-			go func() { c <- e }()
+			go func() {
+				select {
+				case c <- e:
+				case <-ctx.Done():
+					// This is technically not needed because:
+					//
+					// - The function doesn't block
+					// - The event handler is removed when the context cancels.
+					//
+					// But review tools complain about possible goroutine leaks - so
+					// this just adds a line to fix that issue
+				}
+			}()
 		}
 		return nil
 	})
 
 	s.EventTarget.AddEventListener(t, handler)
 
-	if ctx != nil {
-		// If no context is provided, the event listener is never removed.
-		go func() {
-			<-ctx.Done()
-			s.EventTarget.RemoveEventListener(t, handler)
-			close(c)
-		}()
-	}
+	go func() {
+		<-ctx.Done()
+		s.EventTarget.RemoveEventListener(t, handler)
+		close(c)
+	}()
 
 	return c
 }
