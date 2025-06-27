@@ -30,11 +30,17 @@ func ExpectReceive[T any](t testing.TB, c <-chan T, opts ...ExpectOption) (msg T
 		ctx = context.Background()
 	}
 	timeout := o.timeout
-	if timeout == 0 {
+	_, hasDeadline := ctx.Deadline()
+	if timeout == 0 && !hasDeadline {
+		// If there is no timeout option, and the context doesn't have a
+		// deadline already, create a default timeout
 		timeout = 100 * time.Millisecond
 	}
-	ctx, cancel := context.WithTimeout(ctx, timeout)
-	defer cancel()
+	if timeout != 0 {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, timeout)
+		defer cancel()
+	}
 
 	select {
 	case <-ctx.Done():

@@ -95,7 +95,7 @@ func TestFetchAborted(t *testing.T) {
 			p := f.FetchAsync(req)
 
 			synctest.Wait()
-			res := <-p
+			res := gosttest.ExpectReceive(t, p, gosttest.Context(ctx))
 			assert.Equal(t, 200, res.Value.Status)
 			assert.NoError(t, res.Err, "response error")
 
@@ -103,7 +103,6 @@ func TestFetchAborted(t *testing.T) {
 
 			_, err := io.ReadAll(res.Value.Reader)
 			assert.Error(t, err, "reading response body of cancelled response")
-
 		})
 	})
 }
