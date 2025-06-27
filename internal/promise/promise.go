@@ -1,6 +1,9 @@
 package promise
 
-import "io"
+import (
+	"fmt"
+	"io"
+)
 
 // Result represents the outcome of a promise. If the promise is rejected, Err
 // will contain a non-nil value. If Err is nil, the promise was fulfilled, the
@@ -33,4 +36,20 @@ func New[T any](f func() (T, error)) Promise[T] {
 
 func ReadAll(reader io.Reader) Promise[[]byte] {
 	return New(func() ([]byte, error) { return io.ReadAll(reader) })
+}
+
+// ErrAny wraps any value as a valid go [error] value. While errors originating
+// from Go code will always be instances of error, in JavaScript, any value can
+// be an error.
+//
+// When an error is generated in JavaScript code, and not representable directly
+// as an error in Go, ErrAny will represent the value.
+//
+// TODO: This isn't specific to promises, but there's not really another package
+// that's a good fit ATM, and I don't want to create a new package just to have
+// this type. Consider moving in the future
+type ErrAny struct{ Reason any }
+
+func (err ErrAny) Error() string {
+	return fmt.Sprintf("aborted: reason: %v", err.Reason)
 }
