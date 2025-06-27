@@ -4,7 +4,7 @@ RAW := $(if $(filter $(MAKELEVEL),0),-r,)
 
 GOW_FLAGS := $(RAW)
 
-GOEXPERIMENT=synctest
+GO_TEST := GOEXPERIMENT=synctest go test
 
 # Expects an existing stable version of `gow`.
 GOW := gow $(GOW_FLAGS)
@@ -45,7 +45,7 @@ codegen: codegen-clean codegen-build
 
 .PHONY: test test-watch test-browser test-v8 test-goja
 test: 
-	go test -v -vet=all ./...
+	$(GO_TEST) -v -vet=all ./...
 
 test-watch: 
 	gotestsum --format dots ./... -- vet=off || echo "Error"
