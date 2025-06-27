@@ -43,7 +43,7 @@ func TestFetchAborted(t *testing.T) {
 
 			ac.Abort("Dummy Reason")
 
-			result := gosttest.ExpectReceive(t, p, gosttest.Context(t.Context()))
+			result := gosttest.ExpectReceive(t, p, gosttest.Context(ctx))
 			assert.Error(t, result.Err, "Response should be an error")
 
 			synctest.Wait()
