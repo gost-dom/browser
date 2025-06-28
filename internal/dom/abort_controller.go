@@ -41,7 +41,7 @@ func (s AbortSignal) Onabort() event.EventHandler   { return nil }
 func (s AbortSignal) SetOnabort(event.EventHandler) {}
 func (s AbortSignal) ThrowIfAborted() error         { return nil }
 
-// AbortContext will listen to abort events from an [EventSignal]. The return
+// AbortContext will listen to abort events from an [AbortSignal]. The return
 // value is a child context of ctx which will be cancelled if a, abort event is
 // dispatched before the parent context cancels.
 //
