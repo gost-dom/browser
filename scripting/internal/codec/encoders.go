@@ -100,11 +100,14 @@ func EncodePromiseFunc[T any](
 	e := c.Clock().BeginEvent()
 	go func() {
 		r, err := f()
-		e.AddSafeEvent(func() {
+		e.AddEvent(func() error {
 			if err == nil {
 				p.Resolve(r)
+				return nil
 			} else {
-				p.Reject(err)
+				jsErr, err := EncodeError(c, err)
+				p.Reject(jsErr)
+				return err
 			}
 		})
 	}()
@@ -143,7 +146,7 @@ func EncodePromise[T, U any](
 				if errVal == nil {
 					errVal = scope.Undefined()
 				}
-				p.RejectValue(errVal)
+				p.Reject(errVal)
 				return err
 			}
 		})

@@ -98,6 +98,5 @@ type Promise[T any] interface {
 	// So while you can reject with any value in JavaScript, it is best practice
 	// to only use Error values, and this assumes that all API calls will follow
 	// this practice.
-	Reject(error)
-	RejectValue(Value[T])
+	Reject(Value[T])
 }
