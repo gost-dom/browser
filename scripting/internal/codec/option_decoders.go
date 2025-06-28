@@ -14,13 +14,14 @@ func OptDecoder[T, U, V any](f func(U) V) OptionDecoder[T, V] {
 	return func(val js.Value[T]) (res V, err error) {
 		obj, ok := val.AsObject()
 		if !ok {
-			err = fmt.Errorf("Not an object")
+			err = fmt.Errorf("gost-dom/codec: option not an object: %v", val)
 			return
 		}
-		if opt, ok := obj.NativeValue().(U); ok {
+		optVal := obj.NativeValue()
+		if opt, ok := optVal.(U); ok {
 			return f(opt), nil
 		}
-		err = fmt.Errorf("Option not compatible")
+		err = fmt.Errorf("gost-dom/codec: option not of type %T: %v", res, optVal)
 		return
 	}
 }
@@ -45,4 +46,12 @@ func DecodeOptions[T, U any](
 		opts = append(opts, o)
 	}
 	return
+}
+
+func NewOptionsDecoder[T, U any](
+	opts Options[T, U],
+) func(js.CallbackContext[T], js.Value[T]) ([]U, error) {
+	return func(scope js.CallbackContext[T], v js.Value[T]) ([]U, error) {
+		return DecodeOptions(scope, v, opts)
+	}
 }

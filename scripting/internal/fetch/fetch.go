@@ -15,21 +15,12 @@ func Fetch[T any](info js.CallbackContext[T]) (js.Value[T], error) {
 	if err != nil {
 		return nil, err
 	}
-	opts, err := js.ConsumeArgument(info, "options", defaultRequestOptions, decodeRequestOptions)
+	opts, err := js.ConsumeArgument(info, "options", codec.ZeroValue, codec.NewOptionsDecoder(
+		codec.Options[T, fetch.RequestOption]{
+			"signal": codec.OptDecoder[T](fetch.WithSignal),
+		}))
 	f := fetch.New(info.Window())
 	info.Logger().Debug("js/fetch: create promise")
 	req := f.NewRequest(url, opts...)
 	return codec.EncodePromise(info, f.FetchAsync(req), encodeResponse)
-}
-
-func defaultRequestOptions() []fetch.RequestOption { return nil }
-
-// TODO: There is a general pattern that can be reused, an options object
-func decodeRequestOptions[T any](
-	ctx js.CallbackContext[T],
-	val js.Value[T],
-) (opts []fetch.RequestOption, err error) {
-	return codec.DecodeOptions(ctx, val, codec.Options[T, fetch.RequestOption]{
-		"signal": codec.OptDecoder[T](fetch.WithSignal),
-	})
 }
