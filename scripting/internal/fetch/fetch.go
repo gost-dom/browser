@@ -1,7 +1,8 @@
 package fetch
 
 import (
-	"github.com/gost-dom/browser/internal/dom"
+	"errors"
+
 	"github.com/gost-dom/browser/internal/fetch"
 	"github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
@@ -29,22 +30,38 @@ func decodeRequestOptions[T any](
 	ctx js.CallbackContext[T],
 	val js.Value[T],
 ) (opts []fetch.RequestOption, err error) {
-	obj, ok := val.AsObject()
-	if !ok {
-		return nil, nil
+	signal, ok, err1 := decodeOption(ctx, val, "signal", fetch.WithSignal)
+	if ok && err1 == nil {
+		opts = append(opts, signal)
 	}
-	var f js.Value[T]
-	if f, err = obj.Get("signal"); err != nil {
+	err = errors.Join(err1)
+	return
+}
+
+type Decoder[T, U any] = func(scope js.Scope[T], v js.Value[T]) (U, error)
+
+func decodeOption[T, U, V any](
+	_ js.Scope[T],
+	v js.Value[T],
+	key string,
+	encode func(U) V,
+) (res V, ok bool, err error) {
+	var obj js.Object[T]
+	if obj, ok = v.AsObject(); !ok {
 		return
 	}
-	fobj, ok := f.AsObject()
-	signal, err := js.As[*dom.AbortSignal](fobj.NativeValue(), nil)
-	if err != nil {
-		return nil, err
+	var opt js.Value[T]
+	if opt, err = obj.Get(key); err != nil {
+		return
 	}
-	if signal != nil {
-		ctx.Logger().Debug("ADD Signal", "signal", signal)
-		opts = append(opts, fetch.WithSignal(signal))
+	optObj, ok := opt.AsObject()
+	if ok {
+		native, succ := optObj.NativeValue().(U)
+		if succ {
+			res = encode(native)
+		} else {
+			err = errors.New("Option is not correct type")
+		}
 	}
 	return
 }
