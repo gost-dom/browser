@@ -26,42 +26,15 @@ func Fetch[T any](info js.CallbackContext[T]) (js.Value[T], error) {
 
 func defaultRequestOptions() []fetch.RequestOption { return nil }
 
+// TODO: There is a general pattern that can be reused, an options object
 func decodeRequestOptions[T any](
 	ctx js.CallbackContext[T],
 	val js.Value[T],
 ) (opts []fetch.RequestOption, err error) {
-	signal, ok, err1 := decodeOption(ctx, val, "signal", fetch.WithSignal)
+	signal, ok, err1 := codec.DecodeOption(ctx, val, "signal", fetch.WithSignal)
 	if ok && err1 == nil {
 		opts = append(opts, signal)
 	}
 	err = errors.Join(err1)
-	return
-}
-
-type Decoder[T, U any] = func(scope js.Scope[T], v js.Value[T]) (U, error)
-
-func decodeOption[T, U, V any](
-	_ js.Scope[T],
-	v js.Value[T],
-	key string,
-	encode func(U) V,
-) (res V, ok bool, err error) {
-	var obj js.Object[T]
-	if obj, ok = v.AsObject(); !ok {
-		return
-	}
-	var opt js.Value[T]
-	if opt, err = obj.Get(key); err != nil {
-		return
-	}
-	optObj, ok := opt.AsObject()
-	if ok {
-		native, succ := optObj.NativeValue().(U)
-		if succ {
-			res = encode(native)
-		} else {
-			err = errors.New("Option is not correct type")
-		}
-	}
 	return
 }
