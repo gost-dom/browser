@@ -2,6 +2,7 @@ package dom
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/internal/promise"
@@ -48,16 +49,19 @@ func (s AbortSignal) ThrowIfAborted() error         { return nil }
 // If the context is cancelled due to an abort event, the abort reason can be
 // used as the cancel cause, which can be read using [context.Cause]. If the
 // cause is not an error type, an [ErrAny] will be returned.
-func AbortContext(ctx context.Context, signal event.EventTarget) context.Context {
+func AbortContext(ctx context.Context, signal *AbortSignal) context.Context {
 	abortEvents := event.NewEventSource(signal).Listen(ctx, EventTypeAbort, event.BufSize(1))
 	ctx, cancel := context.WithCancelCause(ctx)
 	go func() {
 		select {
-		case e := <-abortEvents:
-			err, ok := e.Data.(error)
+		case <-abortEvents:
+
+			reason := signal.reason
+			err, ok := reason.(error)
 			if !ok {
-				err = promise.ErrAny{Reason: e.Data}
+				err = promise.ErrAny{Reason: reason}
 			}
+			fmt.Printf("Cancelling with reason (%p): %v\n", signal, err)
 			cancel(err)
 		case <-ctx.Done():
 			cancel(nil)

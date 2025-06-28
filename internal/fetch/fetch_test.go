@@ -9,6 +9,7 @@ import (
 
 	"github.com/gost-dom/browser/internal/dom"
 	"github.com/gost-dom/browser/internal/fetch"
+	"github.com/gost-dom/browser/internal/promise"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/stretchr/testify/assert"
 )
@@ -71,10 +72,14 @@ func TestFetchAborted(t *testing.T) {
 			assert.Equal(t, 200, res.Value.Status)
 			assert.NoError(t, res.Err, "response error")
 
+			t.Log("Reason before", ac.Signal().Reason())
 			ac.Abort("Dummy reason")
+			t.Logf("Reason after (%p): %v", ac.Signal(), ac.Signal().Reason())
 
 			_, err := io.ReadAll(res.Value.Reader)
-			assert.Error(t, err, "reading response body of cancelled response")
+			var errAny promise.ErrAny
+			assert.ErrorAs(t, err, &errAny, "reading response body of cancelled response")
+			assert.Equal(t, "Dummy reason", errAny.Reason, "Error reason")
 		})
 	})
 }

@@ -72,15 +72,18 @@ func newTestResponseWriter(req *http.Request) testResponseWriter {
 }
 
 func (w *testResponseWriter) Response(ctx context.Context) (*http.Response, error) {
+	getErr := func() error {
+		err := ctx.Err()
+		cause := context.Cause(ctx)
+		if cause == err { // No explicit cause was provided
+			return fmt.Errorf("gosthttp: roundtripper: %w", ctx.Err())
+		} else {
+			return fmt.Errorf("gosthttp: roundtripper: %w (%w)", ctx.Err(), cause)
+		}
+	}
 	select {
 	case <-ctx.Done():
-		err := ctx.Err()
-		if cause := context.Cause(ctx); cause == err {
-			err = fmt.Errorf("gosthttp: roundtripper: %w", ctx.Err())
-		} else {
-			err = fmt.Errorf("gosthttp: roundtripper: %w. cause: %w", ctx.Err(), cause)
-		}
-		return nil, err
+		return nil, getErr()
 	case <-w.BodyReady:
 	}
 	w.response.Request = w.req
@@ -88,7 +91,7 @@ func (w *testResponseWriter) Response(ctx context.Context) (*http.Response, erro
 		// Close the pipe with an error when context is done. There is no need
 		// to check if there was an error. If the writer was closed normally,
 		// the context error will not overwrite the EOF marker already present.
-		w.Writer.CloseWithError(ctx.Err())
+		w.Writer.CloseWithError(getErr())
 	})
 	return w.response, nil
 }

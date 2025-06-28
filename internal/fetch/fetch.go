@@ -7,7 +7,6 @@ import (
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/dom"
-	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/internal/promise"
 	"github.com/gost-dom/browser/url"
@@ -35,7 +34,7 @@ type RequestOption func(*Request)
 type Request struct {
 	url    string
 	bc     html.BrowsingContext
-	signal dominterfaces.AbortSignal
+	signal *dom.AbortSignal
 }
 
 func (r *Request) URL() string { return url.ParseURLBase(r.url, r.bc.LocationHREF()).Href() }
@@ -52,7 +51,7 @@ func (r *Request) do(ctx context.Context) (*http.Response, error) {
 	return c.Do(req)
 }
 
-func WithSignal(s dominterfaces.AbortSignal) RequestOption {
+func WithSignal(s *dom.AbortSignal) RequestOption {
 	return func(opt *Request) { opt.signal = s }
 }
 

@@ -53,3 +53,11 @@ type ErrAny struct{ Reason any }
 func (err ErrAny) Error() string {
 	return fmt.Sprintf("aborted: reason: %v", err.Reason)
 }
+
+func (err ErrAny) As(target any) bool {
+	if errAny, ok := target.(*ErrAny); ok {
+		*errAny = err
+		return true
+	}
+	return false
+}
