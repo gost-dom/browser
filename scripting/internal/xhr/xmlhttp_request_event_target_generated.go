@@ -17,6 +17,6 @@ func (wrapper XMLHttpRequestEventTarget[T]) Initialize(jsClass js.Class[T]) {
 func (w XMLHttpRequestEventTarget[T]) installPrototype(jsClass js.Class[T]) {}
 
 func (w XMLHttpRequestEventTarget[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: XMLHttpRequestEventTarget.Constructor")
+	cbCtx.Logger().Debug("JS Function call: XMLHttpRequestEventTarget.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }

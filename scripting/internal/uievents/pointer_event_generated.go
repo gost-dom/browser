@@ -20,7 +20,7 @@ func (w PointerEvent[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w PointerEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: PointerEvent.Constructor")
+	cbCtx.Logger().Debug("JS Function call: PointerEvent.Constructor")
 	type_, errArg1 := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
@@ -36,21 +36,21 @@ func (w PointerEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], 
 }
 
 func (w PointerEvent[T]) width(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: PointerEvent.width")
+	cbCtx.Logger().Debug("JS Function call: PointerEvent.width")
 	return nil, errors.New("PointerEvent.width: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w PointerEvent[T]) height(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: PointerEvent.height")
+	cbCtx.Logger().Debug("JS Function call: PointerEvent.height")
 	return nil, errors.New("PointerEvent.height: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w PointerEvent[T]) pressure(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: PointerEvent.pressure")
+	cbCtx.Logger().Debug("JS Function call: PointerEvent.pressure")
 	return nil, errors.New("PointerEvent.pressure: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w PointerEvent[T]) tangentialPressure(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: PointerEvent.tangentialPressure")
+	cbCtx.Logger().Debug("JS Function call: PointerEvent.tangentialPressure")
 	return nil, errors.New("PointerEvent.tangentialPressure: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

@@ -35,12 +35,12 @@ func (w HTMLHyperlinkElementUtils[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w HTMLHyperlinkElementUtils[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.Constructor")
+	cbCtx.Logger().Debug("JS Function call: HTMLHyperlinkElementUtils.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w HTMLHyperlinkElementUtils[T]) href(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.href")
+	cbCtx.Logger().Debug("JS Function call: HTMLHyperlinkElementUtils.href")
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -50,7 +50,7 @@ func (w HTMLHyperlinkElementUtils[T]) href(cbCtx js.CallbackContext[T]) (js.Valu
 }
 
 func (w HTMLHyperlinkElementUtils[T]) setHref(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.setHref")
+	cbCtx.Logger().Debug("JS Function call: HTMLHyperlinkElementUtils.setHref")
 	instance, err0 := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
@@ -62,7 +62,7 @@ func (w HTMLHyperlinkElementUtils[T]) setHref(cbCtx js.CallbackContext[T]) (js.V
 }
 
 func (w HTMLHyperlinkElementUtils[T]) origin(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.origin")
+	cbCtx.Logger().Debug("JS Function call: HTMLHyperlinkElementUtils.origin")
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -72,7 +72,7 @@ func (w HTMLHyperlinkElementUtils[T]) origin(cbCtx js.CallbackContext[T]) (js.Va
 }
 
 func (w HTMLHyperlinkElementUtils[T]) protocol(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.protocol")
+	cbCtx.Logger().Debug("JS Function call: HTMLHyperlinkElementUtils.protocol")
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -82,7 +82,7 @@ func (w HTMLHyperlinkElementUtils[T]) protocol(cbCtx js.CallbackContext[T]) (js.
 }
 
 func (w HTMLHyperlinkElementUtils[T]) setProtocol(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.setProtocol")
+	cbCtx.Logger().Debug("JS Function call: HTMLHyperlinkElementUtils.setProtocol")
 	instance, err0 := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
@@ -94,7 +94,7 @@ func (w HTMLHyperlinkElementUtils[T]) setProtocol(cbCtx js.CallbackContext[T]) (
 }
 
 func (w HTMLHyperlinkElementUtils[T]) username(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.username")
+	cbCtx.Logger().Debug("JS Function call: HTMLHyperlinkElementUtils.username")
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -104,7 +104,7 @@ func (w HTMLHyperlinkElementUtils[T]) username(cbCtx js.CallbackContext[T]) (js.
 }
 
 func (w HTMLHyperlinkElementUtils[T]) setUsername(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.setUsername")
+	cbCtx.Logger().Debug("JS Function call: HTMLHyperlinkElementUtils.setUsername")
 	instance, err0 := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
@@ -116,7 +116,7 @@ func (w HTMLHyperlinkElementUtils[T]) setUsername(cbCtx js.CallbackContext[T]) (
 }
 
 func (w HTMLHyperlinkElementUtils[T]) password(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.password")
+	cbCtx.Logger().Debug("JS Function call: HTMLHyperlinkElementUtils.password")
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -126,7 +126,7 @@ func (w HTMLHyperlinkElementUtils[T]) password(cbCtx js.CallbackContext[T]) (js.
 }
 
 func (w HTMLHyperlinkElementUtils[T]) setPassword(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.setPassword")
+	cbCtx.Logger().Debug("JS Function call: HTMLHyperlinkElementUtils.setPassword")
 	instance, err0 := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
@@ -138,7 +138,7 @@ func (w HTMLHyperlinkElementUtils[T]) setPassword(cbCtx js.CallbackContext[T]) (
 }
 
 func (w HTMLHyperlinkElementUtils[T]) host(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.host")
+	cbCtx.Logger().Debug("JS Function call: HTMLHyperlinkElementUtils.host")
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -148,7 +148,7 @@ func (w HTMLHyperlinkElementUtils[T]) host(cbCtx js.CallbackContext[T]) (js.Valu
 }
 
 func (w HTMLHyperlinkElementUtils[T]) setHost(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.setHost")
+	cbCtx.Logger().Debug("JS Function call: HTMLHyperlinkElementUtils.setHost")
 	instance, err0 := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
@@ -160,7 +160,7 @@ func (w HTMLHyperlinkElementUtils[T]) setHost(cbCtx js.CallbackContext[T]) (js.V
 }
 
 func (w HTMLHyperlinkElementUtils[T]) hostname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.hostname")
+	cbCtx.Logger().Debug("JS Function call: HTMLHyperlinkElementUtils.hostname")
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -170,7 +170,7 @@ func (w HTMLHyperlinkElementUtils[T]) hostname(cbCtx js.CallbackContext[T]) (js.
 }
 
 func (w HTMLHyperlinkElementUtils[T]) setHostname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.setHostname")
+	cbCtx.Logger().Debug("JS Function call: HTMLHyperlinkElementUtils.setHostname")
 	instance, err0 := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
@@ -182,7 +182,7 @@ func (w HTMLHyperlinkElementUtils[T]) setHostname(cbCtx js.CallbackContext[T]) (
 }
 
 func (w HTMLHyperlinkElementUtils[T]) port(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.port")
+	cbCtx.Logger().Debug("JS Function call: HTMLHyperlinkElementUtils.port")
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -192,7 +192,7 @@ func (w HTMLHyperlinkElementUtils[T]) port(cbCtx js.CallbackContext[T]) (js.Valu
 }
 
 func (w HTMLHyperlinkElementUtils[T]) setPort(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.setPort")
+	cbCtx.Logger().Debug("JS Function call: HTMLHyperlinkElementUtils.setPort")
 	instance, err0 := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
@@ -204,7 +204,7 @@ func (w HTMLHyperlinkElementUtils[T]) setPort(cbCtx js.CallbackContext[T]) (js.V
 }
 
 func (w HTMLHyperlinkElementUtils[T]) pathname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.pathname")
+	cbCtx.Logger().Debug("JS Function call: HTMLHyperlinkElementUtils.pathname")
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -214,7 +214,7 @@ func (w HTMLHyperlinkElementUtils[T]) pathname(cbCtx js.CallbackContext[T]) (js.
 }
 
 func (w HTMLHyperlinkElementUtils[T]) setPathname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.setPathname")
+	cbCtx.Logger().Debug("JS Function call: HTMLHyperlinkElementUtils.setPathname")
 	instance, err0 := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
@@ -226,7 +226,7 @@ func (w HTMLHyperlinkElementUtils[T]) setPathname(cbCtx js.CallbackContext[T]) (
 }
 
 func (w HTMLHyperlinkElementUtils[T]) search(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.search")
+	cbCtx.Logger().Debug("JS Function call: HTMLHyperlinkElementUtils.search")
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -236,7 +236,7 @@ func (w HTMLHyperlinkElementUtils[T]) search(cbCtx js.CallbackContext[T]) (js.Va
 }
 
 func (w HTMLHyperlinkElementUtils[T]) setSearch(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.setSearch")
+	cbCtx.Logger().Debug("JS Function call: HTMLHyperlinkElementUtils.setSearch")
 	instance, err0 := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
@@ -248,7 +248,7 @@ func (w HTMLHyperlinkElementUtils[T]) setSearch(cbCtx js.CallbackContext[T]) (js
 }
 
 func (w HTMLHyperlinkElementUtils[T]) hash(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.hash")
+	cbCtx.Logger().Debug("JS Function call: HTMLHyperlinkElementUtils.hash")
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -258,7 +258,7 @@ func (w HTMLHyperlinkElementUtils[T]) hash(cbCtx js.CallbackContext[T]) (js.Valu
 }
 
 func (w HTMLHyperlinkElementUtils[T]) setHash(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLHyperlinkElementUtils.setHash")
+	cbCtx.Logger().Debug("JS Function call: HTMLHyperlinkElementUtils.setHash")
 	instance, err0 := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)

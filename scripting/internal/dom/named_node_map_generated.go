@@ -32,12 +32,12 @@ func (w NamedNodeMap[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w NamedNodeMap[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: NamedNodeMap.Constructor")
+	cbCtx.Logger().Debug("JS Function call: NamedNodeMap.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w NamedNodeMap[T]) item(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: NamedNodeMap.item")
+	cbCtx.Logger().Debug("JS Function call: NamedNodeMap.item")
 	instance, errInst := js.As[dom.NamedNodeMap](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -51,37 +51,37 @@ func (w NamedNodeMap[T]) item(cbCtx js.CallbackContext[T]) (js.Value[T], error) 
 }
 
 func (w NamedNodeMap[T]) getNamedItem(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: NamedNodeMap.getNamedItem")
+	cbCtx.Logger().Debug("JS Function call: NamedNodeMap.getNamedItem")
 	return nil, errors.New("NamedNodeMap.getNamedItem: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w NamedNodeMap[T]) getNamedItemNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: NamedNodeMap.getNamedItemNS")
+	cbCtx.Logger().Debug("JS Function call: NamedNodeMap.getNamedItemNS")
 	return nil, errors.New("NamedNodeMap.getNamedItemNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w NamedNodeMap[T]) setNamedItem(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: NamedNodeMap.setNamedItem")
+	cbCtx.Logger().Debug("JS Function call: NamedNodeMap.setNamedItem")
 	return nil, errors.New("NamedNodeMap.setNamedItem: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w NamedNodeMap[T]) setNamedItemNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: NamedNodeMap.setNamedItemNS")
+	cbCtx.Logger().Debug("JS Function call: NamedNodeMap.setNamedItemNS")
 	return nil, errors.New("NamedNodeMap.setNamedItemNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w NamedNodeMap[T]) removeNamedItem(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: NamedNodeMap.removeNamedItem")
+	cbCtx.Logger().Debug("JS Function call: NamedNodeMap.removeNamedItem")
 	return nil, errors.New("NamedNodeMap.removeNamedItem: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w NamedNodeMap[T]) removeNamedItemNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: NamedNodeMap.removeNamedItemNS")
+	cbCtx.Logger().Debug("JS Function call: NamedNodeMap.removeNamedItemNS")
 	return nil, errors.New("NamedNodeMap.removeNamedItemNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w NamedNodeMap[T]) length(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: NamedNodeMap.length")
+	cbCtx.Logger().Debug("JS Function call: NamedNodeMap.length")
 	instance, err := js.As[dom.NamedNodeMap](cbCtx.Instance())
 	if err != nil {
 		return nil, err

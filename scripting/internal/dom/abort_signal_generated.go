@@ -26,12 +26,12 @@ func (w AbortSignal[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w AbortSignal[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: AbortSignal.Constructor")
+	cbCtx.Logger().Debug("JS Function call: AbortSignal.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w AbortSignal[T]) throwIfAborted(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: AbortSignal.throwIfAborted")
+	cbCtx.Logger().Debug("JS Function call: AbortSignal.throwIfAborted")
 	instance, err := js.As[dominterfaces.AbortSignal](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func (w AbortSignal[T]) throwIfAborted(cbCtx js.CallbackContext[T]) (js.Value[T]
 }
 
 func (w AbortSignal[T]) aborted(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: AbortSignal.aborted")
+	cbCtx.Logger().Debug("JS Function call: AbortSignal.aborted")
 	instance, err := js.As[dominterfaces.AbortSignal](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -51,6 +51,6 @@ func (w AbortSignal[T]) aborted(cbCtx js.CallbackContext[T]) (js.Value[T], error
 }
 
 func (w AbortSignal[T]) reason(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: AbortSignal.reason")
+	cbCtx.Logger().Debug("JS Function call: AbortSignal.reason")
 	return nil, errors.New("AbortSignal.reason: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

@@ -27,12 +27,12 @@ func (w Attr[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w Attr[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Attr.Constructor")
+	cbCtx.Logger().Debug("JS Function call: Attr.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w Attr[T]) localName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Attr.localName")
+	cbCtx.Logger().Debug("JS Function call: Attr.localName")
 	instance, err := js.As[dom.Attr](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func (w Attr[T]) localName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w Attr[T]) name(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Attr.name")
+	cbCtx.Logger().Debug("JS Function call: Attr.name")
 	instance, err := js.As[dom.Attr](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -52,7 +52,7 @@ func (w Attr[T]) name(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w Attr[T]) value(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Attr.value")
+	cbCtx.Logger().Debug("JS Function call: Attr.value")
 	instance, err := js.As[dom.Attr](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -62,7 +62,7 @@ func (w Attr[T]) value(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w Attr[T]) setValue(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Attr.setValue")
+	cbCtx.Logger().Debug("JS Function call: Attr.setValue")
 	instance, err0 := js.As[dom.Attr](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err := errors.Join(err0, err1)
@@ -74,7 +74,7 @@ func (w Attr[T]) setValue(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w Attr[T]) ownerElement(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Attr.ownerElement")
+	cbCtx.Logger().Debug("JS Function call: Attr.ownerElement")
 	instance, err := js.As[dom.Attr](cbCtx.Instance())
 	if err != nil {
 		return nil, err

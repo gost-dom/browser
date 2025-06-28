@@ -43,7 +43,7 @@ func (w Request[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w Request[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Request.Constructor")
+	cbCtx.Logger().Debug("JS Function call: Request.Constructor")
 	input, errArg1 := js.ConsumeArgument(cbCtx, "input", nil, w.decodeRequestInfo)
 	init, errArg2 := js.ConsumeArgument(cbCtx, "init", nil, w.decodeRequestInit)
 	err := errors.Join(errArg1, errArg2)
@@ -54,17 +54,17 @@ func (w Request[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error
 }
 
 func (w Request[T]) clone(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Request.clone")
+	cbCtx.Logger().Debug("JS Function call: Request.clone")
 	return nil, errors.New("Request.clone: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Request[T]) method(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Request.method")
+	cbCtx.Logger().Debug("JS Function call: Request.method")
 	return nil, errors.New("Request.method: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Request[T]) url(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Request.url")
+	cbCtx.Logger().Debug("JS Function call: Request.url")
 	instance, err := js.As[*fetch.Request](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -74,71 +74,71 @@ func (w Request[T]) url(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w Request[T]) headers(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Request.headers")
+	cbCtx.Logger().Debug("JS Function call: Request.headers")
 	return nil, errors.New("Request.headers: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Request[T]) destination(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Request.destination")
+	cbCtx.Logger().Debug("JS Function call: Request.destination")
 	return nil, errors.New("Request.destination: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Request[T]) referrer(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Request.referrer")
+	cbCtx.Logger().Debug("JS Function call: Request.referrer")
 	return nil, errors.New("Request.referrer: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Request[T]) referrerPolicy(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Request.referrerPolicy")
+	cbCtx.Logger().Debug("JS Function call: Request.referrerPolicy")
 	return nil, errors.New("Request.referrerPolicy: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Request[T]) mode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Request.mode")
+	cbCtx.Logger().Debug("JS Function call: Request.mode")
 	return nil, errors.New("Request.mode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Request[T]) credentials(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Request.credentials")
+	cbCtx.Logger().Debug("JS Function call: Request.credentials")
 	return nil, errors.New("Request.credentials: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Request[T]) cache(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Request.cache")
+	cbCtx.Logger().Debug("JS Function call: Request.cache")
 	return nil, errors.New("Request.cache: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Request[T]) redirect(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Request.redirect")
+	cbCtx.Logger().Debug("JS Function call: Request.redirect")
 	return nil, errors.New("Request.redirect: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Request[T]) integrity(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Request.integrity")
+	cbCtx.Logger().Debug("JS Function call: Request.integrity")
 	return nil, errors.New("Request.integrity: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Request[T]) keepalive(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Request.keepalive")
+	cbCtx.Logger().Debug("JS Function call: Request.keepalive")
 	return nil, errors.New("Request.keepalive: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Request[T]) isReloadNavigation(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Request.isReloadNavigation")
+	cbCtx.Logger().Debug("JS Function call: Request.isReloadNavigation")
 	return nil, errors.New("Request.isReloadNavigation: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Request[T]) isHistoryNavigation(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Request.isHistoryNavigation")
+	cbCtx.Logger().Debug("JS Function call: Request.isHistoryNavigation")
 	return nil, errors.New("Request.isHistoryNavigation: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Request[T]) signal(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Request.signal")
+	cbCtx.Logger().Debug("JS Function call: Request.signal")
 	return nil, errors.New("Request.signal: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Request[T]) duplex(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Request.duplex")
+	cbCtx.Logger().Debug("JS Function call: Request.duplex")
 	return nil, errors.New("Request.duplex: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

@@ -31,7 +31,7 @@ func (w URL[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w URL[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.Constructor")
+	cbCtx.Logger().Debug("JS Function call: URL.Constructor")
 	url, errArg1 := js.ConsumeArgument(cbCtx, "url", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
@@ -47,7 +47,7 @@ func (w URL[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w URL[T]) toJSON(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.toJSON")
+	cbCtx.Logger().Debug("JS Function call: URL.toJSON")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -60,7 +60,7 @@ func (w URL[T]) toJSON(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w URL[T]) href(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.href")
+	cbCtx.Logger().Debug("JS Function call: URL.href")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -70,12 +70,12 @@ func (w URL[T]) href(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w URL[T]) setHref(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.setHref")
+	cbCtx.Logger().Debug("JS Function call: URL.setHref")
 	return nil, errors.New("URL.setHref: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w URL[T]) origin(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.origin")
+	cbCtx.Logger().Debug("JS Function call: URL.origin")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -85,7 +85,7 @@ func (w URL[T]) origin(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w URL[T]) protocol(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.protocol")
+	cbCtx.Logger().Debug("JS Function call: URL.protocol")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -95,32 +95,32 @@ func (w URL[T]) protocol(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w URL[T]) setProtocol(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.setProtocol")
+	cbCtx.Logger().Debug("JS Function call: URL.setProtocol")
 	return nil, errors.New("URL.setProtocol: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w URL[T]) username(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.username")
+	cbCtx.Logger().Debug("JS Function call: URL.username")
 	return nil, errors.New("URL.username: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w URL[T]) setUsername(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.setUsername")
+	cbCtx.Logger().Debug("JS Function call: URL.setUsername")
 	return nil, errors.New("URL.setUsername: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w URL[T]) password(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.password")
+	cbCtx.Logger().Debug("JS Function call: URL.password")
 	return nil, errors.New("URL.password: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w URL[T]) setPassword(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.setPassword")
+	cbCtx.Logger().Debug("JS Function call: URL.setPassword")
 	return nil, errors.New("URL.setPassword: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w URL[T]) host(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.host")
+	cbCtx.Logger().Debug("JS Function call: URL.host")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -130,12 +130,12 @@ func (w URL[T]) host(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w URL[T]) setHost(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.setHost")
+	cbCtx.Logger().Debug("JS Function call: URL.setHost")
 	return nil, errors.New("URL.setHost: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w URL[T]) hostname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.hostname")
+	cbCtx.Logger().Debug("JS Function call: URL.hostname")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -145,12 +145,12 @@ func (w URL[T]) hostname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w URL[T]) setHostname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.setHostname")
+	cbCtx.Logger().Debug("JS Function call: URL.setHostname")
 	return nil, errors.New("URL.setHostname: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w URL[T]) port(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.port")
+	cbCtx.Logger().Debug("JS Function call: URL.port")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -160,12 +160,12 @@ func (w URL[T]) port(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w URL[T]) setPort(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.setPort")
+	cbCtx.Logger().Debug("JS Function call: URL.setPort")
 	return nil, errors.New("URL.setPort: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w URL[T]) pathname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.pathname")
+	cbCtx.Logger().Debug("JS Function call: URL.pathname")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -175,12 +175,12 @@ func (w URL[T]) pathname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w URL[T]) setPathname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.setPathname")
+	cbCtx.Logger().Debug("JS Function call: URL.setPathname")
 	return nil, errors.New("URL.setPathname: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w URL[T]) search(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.search")
+	cbCtx.Logger().Debug("JS Function call: URL.search")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -190,17 +190,17 @@ func (w URL[T]) search(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w URL[T]) setSearch(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.setSearch")
+	cbCtx.Logger().Debug("JS Function call: URL.setSearch")
 	return nil, errors.New("URL.setSearch: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w URL[T]) searchParams(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.searchParams")
+	cbCtx.Logger().Debug("JS Function call: URL.searchParams")
 	return nil, errors.New("URL.searchParams: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w URL[T]) hash(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.hash")
+	cbCtx.Logger().Debug("JS Function call: URL.hash")
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -210,6 +210,6 @@ func (w URL[T]) hash(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w URL[T]) setHash(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URL.setHash")
+	cbCtx.Logger().Debug("JS Function call: URL.setHash")
 	return nil, errors.New("URL.setHash: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

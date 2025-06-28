@@ -33,7 +33,7 @@ func (w URLSearchParams[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w URLSearchParams[T]) append(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URLSearchParams.append")
+	cbCtx.Logger().Debug("JS Function call: URLSearchParams.append")
 	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -49,7 +49,7 @@ func (w URLSearchParams[T]) append(cbCtx js.CallbackContext[T]) (js.Value[T], er
 }
 
 func (w URLSearchParams[T]) delete(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URLSearchParams.delete")
+	cbCtx.Logger().Debug("JS Function call: URLSearchParams.delete")
 	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -71,7 +71,7 @@ func (w URLSearchParams[T]) delete(cbCtx js.CallbackContext[T]) (js.Value[T], er
 }
 
 func (w URLSearchParams[T]) get(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URLSearchParams.get")
+	cbCtx.Logger().Debug("JS Function call: URLSearchParams.get")
 	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -85,7 +85,7 @@ func (w URLSearchParams[T]) get(cbCtx js.CallbackContext[T]) (js.Value[T], error
 }
 
 func (w URLSearchParams[T]) getAll(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URLSearchParams.getAll")
+	cbCtx.Logger().Debug("JS Function call: URLSearchParams.getAll")
 	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -99,7 +99,7 @@ func (w URLSearchParams[T]) getAll(cbCtx js.CallbackContext[T]) (js.Value[T], er
 }
 
 func (w URLSearchParams[T]) has(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URLSearchParams.has")
+	cbCtx.Logger().Debug("JS Function call: URLSearchParams.has")
 	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -121,7 +121,7 @@ func (w URLSearchParams[T]) has(cbCtx js.CallbackContext[T]) (js.Value[T], error
 }
 
 func (w URLSearchParams[T]) set(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URLSearchParams.set")
+	cbCtx.Logger().Debug("JS Function call: URLSearchParams.set")
 	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -137,7 +137,7 @@ func (w URLSearchParams[T]) set(cbCtx js.CallbackContext[T]) (js.Value[T], error
 }
 
 func (w URLSearchParams[T]) sort(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URLSearchParams.sort")
+	cbCtx.Logger().Debug("JS Function call: URLSearchParams.sort")
 	instance, err := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -147,7 +147,7 @@ func (w URLSearchParams[T]) sort(cbCtx js.CallbackContext[T]) (js.Value[T], erro
 }
 
 func (w URLSearchParams[T]) toString(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URLSearchParams.toString")
+	cbCtx.Logger().Debug("JS Function call: URLSearchParams.toString")
 	instance, err := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -157,7 +157,7 @@ func (w URLSearchParams[T]) toString(cbCtx js.CallbackContext[T]) (js.Value[T], 
 }
 
 func (w URLSearchParams[T]) size(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: URLSearchParams.size")
+	cbCtx.Logger().Debug("JS Function call: URLSearchParams.size")
 	instance, err := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if err != nil {
 		return nil, err

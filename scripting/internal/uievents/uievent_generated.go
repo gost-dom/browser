@@ -24,7 +24,7 @@ func (w UIEvent[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w UIEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: UIEvent.Constructor")
+	cbCtx.Logger().Debug("JS Function call: UIEvent.Constructor")
 	type_, errArg1 := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
@@ -40,11 +40,11 @@ func (w UIEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error
 }
 
 func (w UIEvent[T]) view(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: UIEvent.view")
+	cbCtx.Logger().Debug("JS Function call: UIEvent.view")
 	return nil, errors.New("UIEvent.view: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w UIEvent[T]) detail(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: UIEvent.detail")
+	cbCtx.Logger().Debug("JS Function call: UIEvent.detail")
 	return nil, errors.New("UIEvent.detail: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

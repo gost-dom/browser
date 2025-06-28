@@ -157,7 +157,7 @@ func (cb CallbackMethods) ReturnNotImplementedError(
 
 func (cb CallbackMethods) LogCall(name string, cbCtx g.Generator) g.Generator {
 	return g.ValueOf(cbCtx).Field("Logger").Call().Field("Debug").Call(
-		g.Lit(fmt.Sprintf("V8 Function call: %s.%s", cb.Data.Name(), name)))
+		g.Lit(fmt.Sprintf("JS Function call: %s.%s", cb.Data.Name(), name)))
 }
 
 func (cb CallbackMethods) assignInstance(

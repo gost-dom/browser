@@ -24,12 +24,12 @@ func (w AbortController[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w AbortController[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: AbortController.Constructor")
+	cbCtx.Logger().Debug("JS Function call: AbortController.Constructor")
 	return w.CreateInstance(cbCtx)
 }
 
 func (w AbortController[T]) abort(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: AbortController.abort")
+	cbCtx.Logger().Debug("JS Function call: AbortController.abort")
 	instance, errInst := js.As[dominterfaces.AbortController](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -43,7 +43,7 @@ func (w AbortController[T]) abort(cbCtx js.CallbackContext[T]) (js.Value[T], err
 }
 
 func (w AbortController[T]) signal(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: AbortController.signal")
+	cbCtx.Logger().Debug("JS Function call: AbortController.signal")
 	instance, err := js.As[dominterfaces.AbortController](cbCtx.Instance())
 	if err != nil {
 		return nil, err

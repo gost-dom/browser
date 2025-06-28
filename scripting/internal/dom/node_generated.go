@@ -40,12 +40,12 @@ func (w Node[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w Node[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Node.Constructor")
+	cbCtx.Logger().Debug("JS Function call: Node.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w Node[T]) getRootNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Node.getRootNode")
+	cbCtx.Logger().Debug("JS Function call: Node.getRootNode")
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -59,7 +59,7 @@ func (w Node[T]) getRootNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w Node[T]) cloneNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Node.cloneNode")
+	cbCtx.Logger().Debug("JS Function call: Node.cloneNode")
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -73,7 +73,7 @@ func (w Node[T]) cloneNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w Node[T]) isSameNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Node.isSameNode")
+	cbCtx.Logger().Debug("JS Function call: Node.isSameNode")
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -87,7 +87,7 @@ func (w Node[T]) isSameNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w Node[T]) contains(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Node.contains")
+	cbCtx.Logger().Debug("JS Function call: Node.contains")
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -101,7 +101,7 @@ func (w Node[T]) contains(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w Node[T]) insertBefore(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Node.insertBefore")
+	cbCtx.Logger().Debug("JS Function call: Node.insertBefore")
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -120,7 +120,7 @@ func (w Node[T]) insertBefore(cbCtx js.CallbackContext[T]) (js.Value[T], error) 
 }
 
 func (w Node[T]) appendChild(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Node.appendChild")
+	cbCtx.Logger().Debug("JS Function call: Node.appendChild")
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -137,7 +137,7 @@ func (w Node[T]) appendChild(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w Node[T]) removeChild(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Node.removeChild")
+	cbCtx.Logger().Debug("JS Function call: Node.removeChild")
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -154,7 +154,7 @@ func (w Node[T]) removeChild(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w Node[T]) nodeName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Node.nodeName")
+	cbCtx.Logger().Debug("JS Function call: Node.nodeName")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -164,7 +164,7 @@ func (w Node[T]) nodeName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w Node[T]) isConnected(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Node.isConnected")
+	cbCtx.Logger().Debug("JS Function call: Node.isConnected")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -174,7 +174,7 @@ func (w Node[T]) isConnected(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w Node[T]) ownerDocument(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Node.ownerDocument")
+	cbCtx.Logger().Debug("JS Function call: Node.ownerDocument")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -184,7 +184,7 @@ func (w Node[T]) ownerDocument(cbCtx js.CallbackContext[T]) (js.Value[T], error)
 }
 
 func (w Node[T]) parentElement(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Node.parentElement")
+	cbCtx.Logger().Debug("JS Function call: Node.parentElement")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -194,7 +194,7 @@ func (w Node[T]) parentElement(cbCtx js.CallbackContext[T]) (js.Value[T], error)
 }
 
 func (w Node[T]) childNodes(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Node.childNodes")
+	cbCtx.Logger().Debug("JS Function call: Node.childNodes")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -204,7 +204,7 @@ func (w Node[T]) childNodes(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w Node[T]) firstChild(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Node.firstChild")
+	cbCtx.Logger().Debug("JS Function call: Node.firstChild")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -214,7 +214,7 @@ func (w Node[T]) firstChild(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func (w Node[T]) previousSibling(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Node.previousSibling")
+	cbCtx.Logger().Debug("JS Function call: Node.previousSibling")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -224,7 +224,7 @@ func (w Node[T]) previousSibling(cbCtx js.CallbackContext[T]) (js.Value[T], erro
 }
 
 func (w Node[T]) nextSibling(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: Node.nextSibling")
+	cbCtx.Logger().Debug("JS Function call: Node.nextSibling")
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err

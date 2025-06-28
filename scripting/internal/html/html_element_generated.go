@@ -25,12 +25,12 @@ func (w HTMLElement[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w HTMLElement[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLElement.Constructor")
+	cbCtx.Logger().Debug("JS Function call: HTMLElement.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w HTMLElement[T]) click(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLElement.click")
+	cbCtx.Logger().Debug("JS Function call: HTMLElement.click")
 	instance, err := js.As[html.HTMLElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err

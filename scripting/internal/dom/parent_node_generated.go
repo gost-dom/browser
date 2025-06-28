@@ -30,12 +30,12 @@ func (w ParentNode[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w ParentNode[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: ParentNode.Constructor")
+	cbCtx.Logger().Debug("JS Function call: ParentNode.Constructor")
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w ParentNode[T]) prepend(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: ParentNode.prepend")
+	cbCtx.Logger().Debug("JS Function call: ParentNode.prepend")
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -49,7 +49,7 @@ func (w ParentNode[T]) prepend(cbCtx js.CallbackContext[T]) (js.Value[T], error)
 }
 
 func (w ParentNode[T]) append(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: ParentNode.append")
+	cbCtx.Logger().Debug("JS Function call: ParentNode.append")
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -63,7 +63,7 @@ func (w ParentNode[T]) append(cbCtx js.CallbackContext[T]) (js.Value[T], error) 
 }
 
 func (w ParentNode[T]) replaceChildren(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: ParentNode.replaceChildren")
+	cbCtx.Logger().Debug("JS Function call: ParentNode.replaceChildren")
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -77,7 +77,7 @@ func (w ParentNode[T]) replaceChildren(cbCtx js.CallbackContext[T]) (js.Value[T]
 }
 
 func (w ParentNode[T]) querySelector(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: ParentNode.querySelector")
+	cbCtx.Logger().Debug("JS Function call: ParentNode.querySelector")
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -94,7 +94,7 @@ func (w ParentNode[T]) querySelector(cbCtx js.CallbackContext[T]) (js.Value[T], 
 }
 
 func (w ParentNode[T]) querySelectorAll(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: ParentNode.querySelectorAll")
+	cbCtx.Logger().Debug("JS Function call: ParentNode.querySelectorAll")
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -111,7 +111,7 @@ func (w ParentNode[T]) querySelectorAll(cbCtx js.CallbackContext[T]) (js.Value[T
 }
 
 func (w ParentNode[T]) firstElementChild(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: ParentNode.firstElementChild")
+	cbCtx.Logger().Debug("JS Function call: ParentNode.firstElementChild")
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -121,7 +121,7 @@ func (w ParentNode[T]) firstElementChild(cbCtx js.CallbackContext[T]) (js.Value[
 }
 
 func (w ParentNode[T]) lastElementChild(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: ParentNode.lastElementChild")
+	cbCtx.Logger().Debug("JS Function call: ParentNode.lastElementChild")
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -131,7 +131,7 @@ func (w ParentNode[T]) lastElementChild(cbCtx js.CallbackContext[T]) (js.Value[T
 }
 
 func (w ParentNode[T]) childElementCount(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: ParentNode.childElementCount")
+	cbCtx.Logger().Debug("JS Function call: ParentNode.childElementCount")
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
 		return nil, err
