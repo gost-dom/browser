@@ -3,6 +3,9 @@ package customrules
 import "github.com/gost-dom/webref/idl"
 
 var domRules = SpecRules{
+	"AbortController": {Operations: OperationRules{
+		"abort": {Arguments: ArgumentRules{"reason": {ZeroAsDefault: true}}},
+	}},
 	"AbortSignal": {Operations: OperationRules{
 		"throwIfAborted": {HasError: true},
 	}},

@@ -109,6 +109,7 @@ func (s v8Scope) GlobalThis() jsObject { return s.global }
 func (s v8Scope) Clock() *clock.Clock  { return s.clock }
 
 func (f v8Scope) iso() *v8go.Isolate { return f.host.iso }
+func (f v8Scope) Undefined() jsValue { return f.toJSValue(v8go.Undefined(f.iso())) }
 func (f v8Scope) Null() jsValue      { return f.toJSValue(v8go.Null(f.iso())) }
 
 func (f v8Scope) NewString(val string) jsValue { return f.newV8Value(val) }
@@ -118,6 +119,12 @@ func (f v8Scope) NewInt64(val int64) jsValue   { return f.newV8Value(val) }
 func (f v8Scope) NewBoolean(val bool) jsValue  { return f.newV8Value(val) }
 func (s v8Scope) NewPromise() js.Promise[jsTypeParam] {
 	return newV8Promise(s.V8ScriptContext)
+}
+
+func (s v8Scope) NewError(
+	err error,
+) js.Error[jsTypeParam] {
+	return newV8Error(s.V8ScriptContext, err)
 }
 
 func (f v8Scope) JSONStringify(val jsValue) string {

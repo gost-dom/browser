@@ -150,6 +150,9 @@ func (gen OpCallbackMethods) CtorOrOperationCallback(
 }
 
 func (gen OpCallbackMethods) DefaultValuer(a model.ESOperationArgument) (g.Generator, bool) {
+	if a.CustomRule.ZeroAsDefault {
+		return zeroValue, true
+	}
 	switch a.IdlArg.Type.Name {
 	case "EventInit", "HTMLElement":
 		return zeroValue, true

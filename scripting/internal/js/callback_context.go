@@ -136,6 +136,7 @@ func WithEnumeratorCallback[T, U any](cb HandlerEnumeratorCallback[T, U]) Handle
 
 // ValueFactory allows creating JavaScript values from Go values
 type ValueFactory[T any] interface {
+	Undefined() Value[T]
 	Null() Value[T]
 
 	NewPromise() Promise[T]
@@ -155,6 +156,14 @@ type ValueFactory[T any] interface {
 
 	NewTypeError(msg string) error
 
+	NewError(err error) Error[T]
+
 	JSONStringify(val Value[T]) string
 	JSONParse(val string) (Value[T], error)
+}
+
+// Error is a JavaScript representation of a go error instance.
+type Error[T any] interface {
+	Value[T]
+	error
 }

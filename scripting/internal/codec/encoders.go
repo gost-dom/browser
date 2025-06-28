@@ -1,7 +1,7 @@
 package codec
 
 import (
-	"fmt"
+	"errors"
 
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/promise"
@@ -102,10 +102,8 @@ func EncodePromiseFunc[T any](
 		r, err := f()
 		e.AddSafeEvent(func() {
 			if err == nil {
-				fmt.Println("Resolve")
 				p.Resolve(r)
 			} else {
-				fmt.Println("Reject")
 				p.Reject(err)
 			}
 		})
@@ -131,7 +129,7 @@ func EncodePromise[T, U any](
 	e := scope.Clock().BeginEvent()
 	go func() {
 		res := <-prom
-		e.AddSafeEvent(func() {
+		e.AddEvent(func() error {
 			err := res.Err
 			var val js.Value[T]
 			if err == nil {
@@ -139,10 +137,29 @@ func EncodePromise[T, U any](
 			}
 			if err == nil {
 				p.Resolve(val)
+				return nil
 			} else {
-				p.Reject(err)
+				errVal, err := EncodeError(scope, err)
+				if errVal == nil {
+					errVal = scope.Undefined()
+				}
+				p.RejectValue(errVal)
+				return err
 			}
 		})
 	}()
 	return p, nil
+}
+
+func EncodeError[T any](scope js.Scope[T], err error) (js.Value[T], error) {
+	if err == nil {
+		return nil, nil
+	}
+	var errAny promise.ErrAny
+	if errors.As(err, &errAny) {
+		if v, ok := errAny.Reason.(js.Value[T]); ok {
+			return v, nil
+		}
+	}
+	return scope.NewError(err), nil
 }

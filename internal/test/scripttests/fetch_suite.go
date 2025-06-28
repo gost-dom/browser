@@ -9,6 +9,7 @@ import (
 
 	"github.com/gost-dom/browser"
 	"github.com/gost-dom/browser/html"
+	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
@@ -84,9 +85,42 @@ func initWindow(
 func testFetch(t *testing.T, host html.ScriptHost) {
 	t.Parallel()
 
+	t.Run(
+		"Abort using AbortController and AbortSignal",
+		func(t *testing.T) { testFetchAbortSignal(t, host) },
+	)
 	t.Run("Fetch resource async/await", func(t *testing.T) { testFetchJSONAsync(t, host) })
 	t.Run("Fetch invalid JSON", func(t *testing.T) { testFetchInvalidJSON(t, host) })
 	t.Run("404 for not found resource", func(t *testing.T) { testNotFound(t, host) })
+}
+
+func testFetchAbortSignal(t *testing.T, host html.ScriptHost) {
+	g := gomega.NewWithT(t)
+	ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
+	defer cancel()
+
+	delayedHandler := &gosttest.PipeHandler{T: t}
+	handler := gosttest.StaticFileServer{
+		"/index.html":     gosttest.StaticHTML(`<body>dummy</body>`),
+		"/slow-data.json": delayedHandler,
+	}
+	win := initWindow(t, host, handler, WithMinLogLevel(slog.LevelDebug), WithContext(ctx))
+	win.MustRun(`
+		let resolved;
+		let rejected;
+		const ctrl = new AbortController()
+		const signal = ctrl.signal
+		fetch("/slow-data.json", { signal })
+			.then(r => r.json())
+			.then(r => { resolved = r }, r => { rejected = r })
+		ctrl.abort("abort-reason")
+	`)
+	win.Clock().ProcessEvents(ctx)
+
+	ctrl := win.MustEval("ctrl").(dominterfaces.AbortController)
+	assert.NotNil(t, ctrl, "AbortController nil")
+	g.Expect(win.Eval(`typeof signal`)).To(Equal("object"), "signal is an object")
+	g.Expect(win.Eval(`rejected`)).To(Equal("abort-reason"))
 }
 
 func testFetchJSONAsync(t *testing.T, host html.ScriptHost) {
@@ -96,7 +130,6 @@ func testFetchJSONAsync(t *testing.T, host html.ScriptHost) {
 	delayedHandler := &gosttest.PipeHandler{T: t}
 	handler := gosttest.StaticFileServer{
 		"/index.html":     gosttest.StaticHTML(`<body>dummy</body>`),
-		"/data.json":      gosttest.StaticJSON(`{"foo": "Foo value"}`),
 		"/slow-data.json": delayedHandler,
 	}
 

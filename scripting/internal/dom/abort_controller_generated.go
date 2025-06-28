@@ -3,8 +3,8 @@
 package dom
 
 import (
-	"errors"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -30,7 +30,16 @@ func (w AbortController[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T
 
 func (w AbortController[T]) abort(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("V8 Function call: AbortController.abort")
-	return nil, errors.New("AbortController.abort: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	instance, errInst := js.As[dominterfaces.AbortController](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	reason, errArg1 := js.ConsumeArgument(cbCtx, "reason", codec.ZeroValue, w.decodeAny)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	instance.Abort(reason)
+	return nil, nil
 }
 
 func (w AbortController[T]) signal(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

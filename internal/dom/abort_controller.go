@@ -2,7 +2,6 @@ package dom
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/internal/promise"
@@ -60,7 +59,6 @@ func AbortContext(ctx context.Context, signal *AbortSignal) context.Context {
 			if !ok {
 				err = promise.ErrAny{Reason: reason}
 			}
-			fmt.Printf("Cancelling with reason (%p): %v\n", signal, err)
 			cancel(err)
 		case <-ctx.Done():
 			cancel(nil)

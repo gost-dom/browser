@@ -99,4 +99,5 @@ type Promise[T any] interface {
 	// to only use Error values, and this assumes that all API calls will follow
 	// this practice.
 	Reject(error)
+	RejectValue(Value[T])
 }

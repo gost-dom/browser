@@ -26,3 +26,7 @@ func (w AbortController[T]) toAbortSignal(
 ) (js.Value[T], error) {
 	return cbCtx.Constructor("AbortSignal").NewInstance(signal)
 }
+
+func (w AbortController[T]) decodeAny(_ js.CallbackContext[T], v js.Value[T]) (js.Value[T], error) {
+	return v, nil
+}

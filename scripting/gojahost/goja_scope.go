@@ -84,6 +84,10 @@ func (f gojaScope) NewBoolean(v bool) js.Value[jsTypeParam] {
 	return newGojaValue(f.GojaContext, f.vm.ToValue(v))
 }
 
+func (f gojaScope) Undefined() js.Value[jsTypeParam] {
+	return newGojaValue(f.GojaContext, goja.Undefined())
+}
+
 func (f gojaScope) Null() js.Value[jsTypeParam] {
 	return newGojaValue(f.GojaContext, goja.Null())
 }
@@ -109,6 +113,10 @@ func (f gojaScope) NewTypeError(v string) error {
 }
 
 func (c gojaScope) NewPromise() js.Promise[jsTypeParam] { return newGojaPromise(c.GojaContext) }
+
+func (c gojaScope) NewError(err error) js.Error[jsTypeParam] {
+	return newGojaError(c.GojaContext, err)
+}
 
 func (f gojaScope) NewIterator(
 	items iter.Seq2[js.Value[jsTypeParam], error],

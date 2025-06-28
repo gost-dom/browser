@@ -19,7 +19,9 @@ func newV8Promise(ctx *V8ScriptContext) v8Promise {
 	return v8Promise{newV8Value(ctx, promise.GetPromise().Value), promise}
 }
 
-func (p v8Promise) Resolve(val jsValue) { p.PromiseResolver.Resolve(val.Self().Value) }
+func (p v8Promise) Resolve(val jsValue)     { p.PromiseResolver.Resolve(val.Self().Value) }
+func (p v8Promise) RejectValue(val jsValue) { p.PromiseResolver.Reject(val.Self().Value) }
+
 func (p v8Promise) Reject(err error) {
 	v8err := v8go.NewError(p.Self().iso(), err.Error())
 	p.PromiseResolver.Reject(v8err.Value)

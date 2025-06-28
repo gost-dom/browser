@@ -78,6 +78,7 @@ func TestFetchAborted(t *testing.T) {
 
 			_, err := io.ReadAll(res.Value.Reader)
 			var errAny promise.ErrAny
+			t.Logf("Error: %#v", err)
 			assert.ErrorAs(t, err, &errAny, "reading response body of cancelled response")
 			assert.Equal(t, "Dummy reason", errAny.Reason, "Error reason")
 		})

@@ -9,8 +9,7 @@ func ConfigureDOMSpecs(specs *WebIdlConfigurations) {
 func configureDOMNode(specs *WebAPIConfig) {
 	configureMutationObserver(specs)
 
-	abortCtrl := specs.Type("AbortController")
-	abortCtrl.MarkMembersAsNotImplemented("abort")
+	specs.Type("AbortController")
 	abortSignal := specs.Type("AbortSignal")
 	abortSignal.MarkMembersAsNotImplemented("reason")
 
