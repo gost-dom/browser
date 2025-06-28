@@ -1,8 +1,6 @@
 package fetch
 
 import (
-	"errors"
-
 	"github.com/gost-dom/browser/internal/fetch"
 	"github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
@@ -31,10 +29,7 @@ func decodeRequestOptions[T any](
 	ctx js.CallbackContext[T],
 	val js.Value[T],
 ) (opts []fetch.RequestOption, err error) {
-	signal, ok, err1 := codec.DecodeOption(ctx, val, "signal", fetch.WithSignal)
-	if ok && err1 == nil {
-		opts = append(opts, signal)
-	}
-	err = errors.Join(err1)
-	return
+	return codec.DecodeOptions(ctx, val, codec.Options[T, fetch.RequestOption]{
+		"signal": codec.OptDecoder[T](fetch.WithSignal),
+	})
 }

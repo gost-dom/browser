@@ -1,33 +1,48 @@
 package codec
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func DecodeOption[T, U, V any](
-	_ js.Scope[T],
-	v js.Value[T],
-	key string,
-	encode func(U) V,
-) (res V, ok bool, err error) {
-	var obj js.Object[T]
-	if obj, ok = v.AsObject(); !ok {
-		return
-	}
-	var opt js.Value[T]
-	if opt, err = obj.Get(key); err != nil {
-		return
-	}
-	optObj, ok := opt.AsObject()
-	if ok {
-		native, succ := optObj.NativeValue().(U)
-		if succ {
-			res = encode(native)
-		} else {
-			err = errors.New("Option is not correct type")
+type OptionDecoder[T, U any] = func(js.Value[T]) (U, error)
+
+type Options[T, U any] map[string]OptionDecoder[T, U]
+
+func OptDecoder[T, U, V any](f func(U) V) OptionDecoder[T, V] {
+	return func(val js.Value[T]) (res V, err error) {
+		obj, ok := val.AsObject()
+		if !ok {
+			err = fmt.Errorf("Not an object")
+			return
 		}
+		if opt, ok := obj.NativeValue().(U); ok {
+			return f(opt), nil
+		}
+		err = fmt.Errorf("Option not compatible")
+		return
+	}
+}
+
+func DecodeOptions[T, U any](
+	scope js.Scope[T], val js.Value[T], specs Options[T, U],
+) (opts []U, err error) {
+	var obj js.Object[T]
+	obj, ok := val.AsObject()
+	if !ok {
+		return nil, nil
+	}
+	for k, v := range specs {
+		opt, err := obj.Get(k)
+		if err != nil {
+			return nil, err
+		}
+		o, err := v(opt)
+		if err != nil {
+			return nil, err
+		}
+		opts = append(opts, o)
 	}
 	return
 }
