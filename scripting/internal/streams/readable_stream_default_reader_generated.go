@@ -3,6 +3,7 @@
 package streams
 
 import (
+	streams "github.com/gost-dom/browser/internal/streams"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -33,7 +34,12 @@ func (w ReadableStreamDefaultReader[T]) Constructor(cbCtx js.CallbackContext[T])
 
 func (w ReadableStreamDefaultReader[T]) read(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: ReadableStreamDefaultReader.read")
-	return codec.EncodeCallbackErrorf(cbCtx, "ReadableStreamDefaultReader.read: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	instance, err := js.As[streams.ReadableStreamDefaultReader](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	result := instance.Read()
+	return w.toPromiseReadableStreamReadResult(cbCtx, result)
 }
 
 func (w ReadableStreamDefaultReader[T]) releaseLock(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

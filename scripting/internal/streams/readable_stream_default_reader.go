@@ -3,6 +3,8 @@
 package streams
 
 import (
+	"github.com/gost-dom/browser/internal/promise"
+	"github.com/gost-dom/browser/internal/streams"
 	"github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -22,4 +24,8 @@ func (w ReadableStreamDefaultReader[T]) decodeReadableStream(ctx js.CallbackCont
 		)
 	}
 	return "", nil
+}
+func (w ReadableStreamDefaultReader[T]) toPromiseReadableStreamReadResult(
+	ctx js.CallbackContext[T], _ promise.Promise[streams.ReadResult]) (js.Value[T], error) {
+	return codec.EncodeCallbackErrorf(ctx, "Encode ReadResult not implemented")
 }

@@ -131,6 +131,10 @@ func (o ESOperation) Encoder(
 		converter += "Sequence"
 		t = *t.TypeParam
 	}
+	if t.Kind == idl.KindPromise {
+		converter += "Promise"
+		t = *t.TypeParam
+	}
 	if t.Nullable && !idlType.Nillable() {
 		if data.CustomRule.OutputType == customrules.OutputTypeStruct {
 			converter += "Nullable"
