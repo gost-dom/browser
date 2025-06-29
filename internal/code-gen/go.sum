@@ -14,6 +14,8 @@ github.com/gost-dom/generators v0.0.0-20250307100108-99a074201466 h1:1QvUd3RPIt9
 github.com/gost-dom/generators v0.0.0-20250307100108-99a074201466/go.mod h1:KYCKK6byuCYZRyl0VrTX4F+x5kVzggRY6LcO1pectPI=
 github.com/gost-dom/webref v0.5.7 h1:xikxt7iLJKp1ieaDagASZs8GPIo6YiIvSuZddrSeqoo=
 github.com/gost-dom/webref v0.5.7/go.mod h1:dDG6ljKAixLvdbSHD/FeyKbaFB5a9GiV9aHvSM5QmqE=
+github.com/gost-dom/webref v0.5.8 h1:0O7zmvzRpyK+rIBhWD8WqqGWx8jGiBYDQBBROZ/QRh4=
+github.com/gost-dom/webref v0.5.8/go.mod h1:dDG6ljKAixLvdbSHD/FeyKbaFB5a9GiV9aHvSM5QmqE=
 github.com/onsi/ginkgo/v2 v2.23.0 h1:FA1xjp8ieYDzlgS5ABTpdUDB7wtngggONc8a7ku2NqQ=
 github.com/onsi/ginkgo/v2 v2.23.0/go.mod h1:zXTP6xIp3U8aVuXN8ENK9IXRaTjFnpVB9mGmaSRvxnM=
 github.com/onsi/gomega v1.36.2 h1:koNYke6TVk6ZmnyHrCXba/T/MoLBXFjeC1PtvYgw0A8=
