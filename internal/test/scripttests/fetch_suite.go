@@ -234,19 +234,16 @@ func testReadableStream(t *testing.T, host html.ScriptHost) {
 	win.MustRun(`
 		let response;
 		let body;
+		let reader;
 		fetch("/piped")
 			.then(r => { 
 				response = r;
 				body = response.body;
+				reader = body.getReader()
 			})
 	`)
 	pipe.WriteHeader(200)
-	win.Clock().ProcessEventsWhile(ctx, func() bool {
-		t.Log("Check response")
-		res, err := win.Eval("!response")
-		t.Logf("RESPONSE: %v - (%v)", res, err)
-		return res.(bool)
-	})
+	win.Clock().ProcessEventsWhile(ctx, func() bool { return win.MustEval("!response").(bool) })
 
 	g.Expect(win.MustEval("typeof response")).To(Equal("object"), "Response is an object")
 	assert.Equal(

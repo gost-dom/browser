@@ -8,5 +8,8 @@ var streamsRules = SpecRules{
 				"strategy":         {Variadic: true},
 			},
 		},
+		"getReader": {
+			Arguments: ArgumentRules{"options": {Variadic: true}},
+		},
 	}},
 }

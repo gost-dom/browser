@@ -4,6 +4,7 @@ package streams
 
 import (
 	"errors"
+	streams "github.com/gost-dom/browser/internal/streams"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -45,7 +46,16 @@ func (w ReadableStream[T]) cancel(cbCtx js.CallbackContext[T]) (js.Value[T], err
 
 func (w ReadableStream[T]) getReader(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: ReadableStream.getReader")
-	return codec.EncodeCallbackErrorf(cbCtx, "ReadableStream.getReader: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	instance, errInst := js.As[streams.ReadableStream](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	options, errArg1 := js.ConsumeArgument(cbCtx, "options", nil, w.decodeReadableStreamGetReaderOptions)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result := instance.GetReader(options...)
+	return w.toReadableStreamReader(cbCtx, result)
 }
 
 func (w ReadableStream[T]) pipeThrough(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
