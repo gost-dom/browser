@@ -9,6 +9,7 @@ import (
 	"github.com/gost-dom/browser/internal/dom"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/internal/promise"
+	"github.com/gost-dom/browser/internal/streams"
 	"github.com/gost-dom/browser/url"
 )
 
@@ -86,6 +87,16 @@ type Response struct {
 	httpResponse *http.Response
 }
 
-func (r Response) Body() io.Reader {
-	return r.Reader
+type ReadableStream struct {
+	io.Reader
 }
+
+func (s ReadableStream) GetReader(opts ...streams.GetReaderOption) streams.Reader {
+	return Reader{s.Reader}
+}
+
+type Reader struct {
+	io.Reader
+}
+
+func (r Response) Body() streams.ReadableStream { return ReadableStream{r.Reader} }
