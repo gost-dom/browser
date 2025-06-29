@@ -3,7 +3,6 @@
 package uievents
 
 import (
-	"errors"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -37,20 +36,20 @@ func (w PointerEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], 
 
 func (w PointerEvent[T]) width(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: PointerEvent.width")
-	return nil, errors.New("PointerEvent.width: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "PointerEvent.width: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w PointerEvent[T]) height(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: PointerEvent.height")
-	return nil, errors.New("PointerEvent.height: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "PointerEvent.height: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w PointerEvent[T]) pressure(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: PointerEvent.pressure")
-	return nil, errors.New("PointerEvent.pressure: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "PointerEvent.pressure: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w PointerEvent[T]) tangentialPressure(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: PointerEvent.tangentialPressure")
-	return nil, errors.New("PointerEvent.tangentialPressure: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "PointerEvent.tangentialPressure: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

@@ -3,7 +3,6 @@
 package dom
 
 import (
-	"errors"
 	dom "github.com/gost-dom/browser/dom"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
@@ -61,22 +60,22 @@ func (w Document[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], erro
 
 func (w Document[T]) getElementsByTagName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Document.getElementsByTagName")
-	return nil, errors.New("Document.getElementsByTagName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.getElementsByTagName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Document[T]) getElementsByTagNameNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Document.getElementsByTagNameNS")
-	return nil, errors.New("Document.getElementsByTagNameNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.getElementsByTagNameNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Document[T]) getElementsByClassName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Document.getElementsByClassName")
-	return nil, errors.New("Document.getElementsByClassName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.getElementsByClassName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Document[T]) createElementNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Document.createElementNS")
-	return nil, errors.New("Document.createElementNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.createElementNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Document[T]) createDocumentFragment(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -91,7 +90,7 @@ func (w Document[T]) createDocumentFragment(cbCtx js.CallbackContext[T]) (js.Val
 
 func (w Document[T]) createCDATASection(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Document.createCDATASection")
-	return nil, errors.New("Document.createCDATASection: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.createCDATASection: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Document[T]) createComment(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -110,17 +109,17 @@ func (w Document[T]) createComment(cbCtx js.CallbackContext[T]) (js.Value[T], er
 
 func (w Document[T]) createProcessingInstruction(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Document.createProcessingInstruction")
-	return nil, errors.New("Document.createProcessingInstruction: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.createProcessingInstruction: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Document[T]) importNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Document.importNode")
-	return nil, errors.New("Document.importNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.importNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Document[T]) adoptNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Document.adoptNode")
-	return nil, errors.New("Document.adoptNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.adoptNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Document[T]) createAttribute(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -139,72 +138,72 @@ func (w Document[T]) createAttribute(cbCtx js.CallbackContext[T]) (js.Value[T], 
 
 func (w Document[T]) createAttributeNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Document.createAttributeNS")
-	return nil, errors.New("Document.createAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.createAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Document[T]) createEvent(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Document.createEvent")
-	return nil, errors.New("Document.createEvent: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.createEvent: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Document[T]) createRange(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Document.createRange")
-	return nil, errors.New("Document.createRange: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.createRange: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Document[T]) createNodeIterator(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Document.createNodeIterator")
-	return nil, errors.New("Document.createNodeIterator: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.createNodeIterator: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Document[T]) createTreeWalker(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Document.createTreeWalker")
-	return nil, errors.New("Document.createTreeWalker: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.createTreeWalker: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Document[T]) implementation(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Document.implementation")
-	return nil, errors.New("Document.implementation: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.implementation: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Document[T]) URL(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Document.URL")
-	return nil, errors.New("Document.URL: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.URL: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Document[T]) documentURI(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Document.documentURI")
-	return nil, errors.New("Document.documentURI: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.documentURI: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Document[T]) compatMode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Document.compatMode")
-	return nil, errors.New("Document.compatMode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.compatMode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Document[T]) characterSet(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Document.characterSet")
-	return nil, errors.New("Document.characterSet: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.characterSet: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Document[T]) charset(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Document.charset")
-	return nil, errors.New("Document.charset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.charset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Document[T]) inputEncoding(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Document.inputEncoding")
-	return nil, errors.New("Document.inputEncoding: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.inputEncoding: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Document[T]) contentType(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Document.contentType")
-	return nil, errors.New("Document.contentType: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.contentType: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Document[T]) doctype(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Document.doctype")
-	return nil, errors.New("Document.doctype: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.doctype: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Document[T]) documentElement(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

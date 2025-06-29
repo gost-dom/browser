@@ -3,7 +3,6 @@
 package dom
 
 import (
-	"errors"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
@@ -52,5 +51,5 @@ func (w AbortSignal[T]) aborted(cbCtx js.CallbackContext[T]) (js.Value[T], error
 
 func (w AbortSignal[T]) reason(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: AbortSignal.reason")
-	return nil, errors.New("AbortSignal.reason: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "AbortSignal.reason: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

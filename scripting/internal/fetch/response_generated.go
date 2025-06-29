@@ -3,7 +3,6 @@
 package fetch
 
 import (
-	"errors"
 	fetch "github.com/gost-dom/browser/internal/fetch"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
@@ -35,22 +34,22 @@ func (w Response[T]) installPrototype(jsClass js.Class[T]) {
 
 func (w Response[T]) clone(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Response.clone")
-	return nil, errors.New("Response.clone: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Response.clone: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Response[T]) type_(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Response.type_")
-	return nil, errors.New("Response.type_: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Response.type_: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Response[T]) url(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Response.url")
-	return nil, errors.New("Response.url: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Response.url: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Response[T]) redirected(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Response.redirected")
-	return nil, errors.New("Response.redirected: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Response.redirected: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Response[T]) status(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -65,15 +64,15 @@ func (w Response[T]) status(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 
 func (w Response[T]) ok(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Response.ok")
-	return nil, errors.New("Response.ok: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Response.ok: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Response[T]) statusText(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Response.statusText")
-	return nil, errors.New("Response.statusText: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Response.statusText: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Response[T]) headers(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Response.headers")
-	return nil, errors.New("Response.headers: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Response.headers: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

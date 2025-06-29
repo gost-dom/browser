@@ -267,5 +267,5 @@ func (w Location[T]) setHash(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 
 func (w Location[T]) ancestorOrigins(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Location.ancestorOrigins")
-	return nil, errors.New("Location.ancestorOrigins: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "Location.ancestorOrigins: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

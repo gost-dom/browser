@@ -98,7 +98,7 @@ func (w DOMTokenList[T]) replace(cbCtx js.CallbackContext[T]) (js.Value[T], erro
 
 func (w DOMTokenList[T]) supports(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: DOMTokenList.supports")
-	return nil, errors.New("DOMTokenList.supports: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "DOMTokenList.supports: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w DOMTokenList[T]) length(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

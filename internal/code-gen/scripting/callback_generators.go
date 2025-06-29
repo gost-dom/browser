@@ -148,11 +148,14 @@ func (cb CallbackMethods) ReturnNotImplementedError(
 	name string,
 	cbCtx CallbackContext,
 ) g.Generator {
-	errMsg := fmt.Sprintf(
+	errMsg := g.Lit(fmt.Sprintf(
 		"%s.%s: Not implemented. Create an issue: %s",
 		cb.Data.Name(), name, packagenames.ISSUE_URL,
+	))
+	// return g.Return(g.Nil, g.NewValuePackage("New", "errors").Call(g.Lit(errMsg)))
+	return g.Return(
+		EncodeCallbackErrorf.Call(cbCtx, errMsg),
 	)
-	return g.Return(g.Nil, g.NewValuePackage("New", "errors").Call(g.Lit(errMsg)))
 }
 
 func (cb CallbackMethods) LogCall(name string, cbCtx g.Generator) g.Generator {
