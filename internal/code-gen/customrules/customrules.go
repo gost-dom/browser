@@ -79,11 +79,12 @@ type ArgumentRule struct {
 func (r ArgumentRule) OverridesType() bool { return !reflect.ValueOf(r.Type).IsZero() }
 
 var rules = CustomRules{
-	"dom":   domRules,
-	"fetch": fetchRules,
-	"html":  htmlRules,
-	"url":   urlRules,
-	"xhr":   xhrRules,
+	"dom":     domRules,
+	"fetch":   fetchRules,
+	"html":    htmlRules,
+	"url":     urlRules,
+	"xhr":     xhrRules,
+	"streams": streamsRules,
 }
 
 func GetSpecRules(specName string) SpecRules {

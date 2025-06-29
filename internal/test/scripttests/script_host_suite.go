@@ -79,8 +79,7 @@ func (s *ScriptHostSuite) RunScript(script string) error {
 	return s.Window.Run(script)
 }
 
-// MustRunScript runs a script and marks the test as an error if an error
-// occurrs.
+// MustRunScript runs a script and marks the test as an error if an error occurs.
 func (s *ScriptHostSuite) MustRunScript(script string) {
 	s.T().Helper()
 	s.Assert().NoError(s.RunScript(script))

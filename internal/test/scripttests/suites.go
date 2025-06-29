@@ -36,4 +36,5 @@ func RunSuites(t *testing.T, h ScriptHostFactory) {
 	t.Run("AbortController", runSuite(NewAbortControllerSuite(h.New())))
 	t.Run("FetchSuite", runSuite(NewFetchSuite(h.New())))
 	t.Run("Fetch", func(t *testing.T) { testFetch(t, h.New()) })
+	t.Run("Streams", func(t *testing.T) { testStreams(t, h) })
 }

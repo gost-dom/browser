@@ -20,6 +20,8 @@ func CreateV8SpecsForSpec(spec string) WebIdlConfigurations {
 		configureURLSpecs(specs.Module("url"))
 	case "fetch":
 		configureFetchSpecs(specs.Module("fetch"))
+	case "streams":
+		configureStreamsSpecs(specs.Module("streams"))
 	default:
 		panic(fmt.Sprintf("bad spec: %s", spec))
 	}

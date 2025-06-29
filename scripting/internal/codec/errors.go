@@ -20,7 +20,15 @@ func EncodeCallbackErrorf[T any](
 	format string,
 	a ...any,
 ) (js.Value[T], error) {
+	return nil, CallbackErrorf(ctx, format, a...)
+}
+
+func CallbackErrorf[T any](
+	ctx js.CallbackContext[T],
+	format string,
+	a ...any,
+) error {
 	err := fmt.Errorf(format, a...)
 	ctx.Logger().Error("JS Callback", log.ErrAttr(err))
-	return nil, err
+	return err
 }
