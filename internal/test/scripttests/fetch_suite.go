@@ -233,6 +233,7 @@ func testReadableStream(t *testing.T, host html.ScriptHost) {
 	win := initWindow(t, host, handler)
 	win.MustRun(`
 		let response;
+		let rejected;
 		let body;
 		let reader;
 		fetch("/piped")
@@ -252,10 +253,12 @@ func testReadableStream(t *testing.T, host html.ScriptHost) {
 
 	win.MustEval(`
 		let readResult
-		reader.read().then(x => {
-			readResult = x
-		})
+		const dummy = reader.read().then(x => {
+			readResult = new TextDecoder().decode(x.value)
+		}, r => { rejected = r })
 	`)
-	pipe.Print("Hello, world")
+	pipe.Print("Hello, world!")
 	win.Clock().ProcessEvents(ctx)
+
+	assert.Equal(t, "Hello, world!", win.MustEval("readResult"))
 }

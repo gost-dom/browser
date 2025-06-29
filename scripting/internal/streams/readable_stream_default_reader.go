@@ -26,6 +26,16 @@ func (w ReadableStreamDefaultReader[T]) decodeReadableStream(ctx js.CallbackCont
 	return "", nil
 }
 func (w ReadableStreamDefaultReader[T]) toPromiseReadableStreamReadResult(
-	ctx js.CallbackContext[T], _ promise.Promise[streams.ReadResult]) (js.Value[T], error) {
-	return codec.EncodeCallbackErrorf(ctx, "Encode ReadResult not implemented")
+	ctx js.CallbackContext[T], prom promise.Promise[streams.ReadResult]) (js.Value[T], error) {
+	return codec.EncodePromise(ctx, prom, w.encodeReadResult)
+}
+
+func (w ReadableStreamDefaultReader[T]) encodeReadResult(
+	ctx js.Scope[T], readResult streams.ReadResult,
+) (js.Value[T], error) {
+	res := ctx.NewObject()
+	res.Set("value", ctx.NewUint8Array(readResult.Value))
+	res.Set("done", ctx.NewBoolean(readResult.Done))
+	return res, nil
+
 }

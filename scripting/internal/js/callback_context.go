@@ -142,6 +142,8 @@ type ValueFactory[T any] interface {
 	NewPromise() Promise[T]
 	NewString(string) Value[T]
 	NewBoolean(bool) Value[T]
+	NewObject() Object[T]
+	NewUint8Array([]byte) Value[T]
 	NewUint32(uint32) Value[T]
 	NewInt32(int32) Value[T]
 	NewInt64(int64) Value[T]

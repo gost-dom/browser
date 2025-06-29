@@ -8,7 +8,13 @@ type ReadableStream interface {
 	GetReader(...GetReaderOption) Reader
 }
 
-type ReadResult struct{}
+// ReadResult represents the result of calling the browser function [ReadableStream.read]
+//
+// [ReadableStream.read]: https://developer.mozilla.org/en-US/docs/Web/API/ReadableStreamDefaultReader/read
+type ReadResult struct {
+	Value []byte
+	Done  bool
+}
 
 type Reader interface {
 	Read() promise.Promise[ReadResult]

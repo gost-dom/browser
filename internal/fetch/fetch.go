@@ -2,7 +2,6 @@ package fetch
 
 import (
 	"context"
-	"errors"
 	"io"
 	"net/http"
 
@@ -93,16 +92,36 @@ type ReadableStream struct {
 }
 
 func (s ReadableStream) GetReader(opts ...streams.GetReaderOption) streams.Reader {
-	return Reader{s.Reader}
+	return &Reader{s.Reader, false}
 }
 
 type Reader struct {
 	Reader io.Reader
+	Done   bool
 }
 
-func (r Reader) Read() promise.Promise[streams.ReadResult] {
+func (r *Reader) Read() promise.Promise[streams.ReadResult] {
 	return promise.New(
-		func() (streams.ReadResult, error) { return streams.ReadResult{}, errors.New("TODO") },
+		func() (streams.ReadResult, error) {
+			if r.Done {
+				return streams.ReadResult{nil, true}, nil
+			}
+			buf := make([]byte, 1024)
+			l, err := r.Reader.Read(buf)
+			buf = buf[0:l]
+			if err == nil {
+				return streams.ReadResult{buf, false}, nil
+			}
+			if err == io.EOF {
+				r.Done = true
+				if l == 0 {
+					return streams.ReadResult{nil, true}, nil
+				} else {
+					return streams.ReadResult{buf, false}, nil
+				}
+			}
+			return streams.ReadResult{}, err
+		},
 	)
 }
 

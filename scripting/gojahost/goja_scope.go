@@ -114,6 +114,28 @@ func (f gojaScope) NewTypeError(v string) error {
 
 func (c gojaScope) NewPromise() js.Promise[jsTypeParam] { return newGojaPromise(c.GojaContext) }
 
+func (c gojaScope) NewObject() js.Object[jsTypeParam] {
+	return newGojaObject(c.GojaContext, c.vm.NewObject())
+}
+
+func (c gojaScope) NewUint8Array(data []byte) js.Value[jsTypeParam] {
+	vm := c.GojaContext.vm
+	arrayBuf := vm.NewArrayBuffer(data)
+	fVal, err := vm.RunScript("gost-dom/gojahost/NewUint8Array", "Uint8Array")
+	if err != nil {
+		panic(fmt.Sprintf("gost-dom/gojahost: Uint8Array: %v", err))
+	}
+	ctor, ok := goja.AssertConstructor(fVal)
+	if !ok {
+		panic(fmt.Sprintf("gost-dom/gojahost: Uint8Array as constructor: %v", err))
+	}
+	value, err := ctor(nil, vm.ToValue(arrayBuf))
+	if err != nil {
+		panic(fmt.Sprintf("gost-dom/gojahost: Uint8Array call: %v", err))
+	}
+	return newGojaValue(c.GojaContext, value)
+}
+
 func (c gojaScope) NewError(err error) js.Error[jsTypeParam] {
 	return newGojaError(c.GojaContext, err)
 }
