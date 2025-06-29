@@ -85,3 +85,7 @@ type Response struct {
 
 	httpResponse *http.Response
 }
+
+func (r Response) Body() io.Reader {
+	return r.Reader
+}

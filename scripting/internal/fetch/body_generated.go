@@ -3,6 +3,7 @@
 package fetch
 
 import (
+	fetch "github.com/gost-dom/browser/internal/fetch"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -60,7 +61,12 @@ func (w Body[T]) text(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 
 func (w Body[T]) body(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Body.body")
-	return codec.EncodeCallbackErrorf(cbCtx, "Body.body: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	instance, err := js.As[fetch.Body](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	result := instance.Body()
+	return w.toReadableStream(cbCtx, result)
 }
 
 func (w Body[T]) bodyUsed(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
