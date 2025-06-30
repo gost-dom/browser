@@ -6,17 +6,17 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w *NodeList[T]) CustomInitializer(class js.Class[T]) {
-	nodeListIterator := js.NewIterator(
-		func(ctx js.Scope[T], instance dom.Node) (js.Value[T], error) {
+func (w *HTMLCollection[T]) CustomInitializer(class js.Class[T]) {
+	iterator := js.NewIterator(
+		func(ctx js.Scope[T], instance dom.Element) (js.Value[T], error) {
 			return codec.EncodeEntityScoped(ctx, instance)
 		})
-	nodeListIterator.InstallPrototype(class)
+	iterator.InstallPrototype(class)
 
 	class.CreateIndexedHandler(
 		js.WithIndexedGetterCallback(
 			func(info js.CallbackScope[T], index int) (js.Value[T], error) {
-				instance, err := js.As[dom.NodeList](info.Instance())
+				instance, err := js.As[dom.HTMLCollection](info.Instance())
 				if err != nil {
 					return nil, err
 				}
@@ -28,7 +28,7 @@ func (w *NodeList[T]) CustomInitializer(class js.Class[T]) {
 		),
 		js.WithLengthCallback(
 			func(cbCtx js.CallbackScope[T]) (int, error) {
-				instance, err := js.As[dom.NodeList](cbCtx.Instance())
+				instance, err := js.As[dom.HTMLCollection](cbCtx.Instance())
 				if err != nil {
 					return 0, err
 				}

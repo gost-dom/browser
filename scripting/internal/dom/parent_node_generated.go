@@ -24,6 +24,7 @@ func (w ParentNode[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("replaceChildren", w.replaceChildren)
 	jsClass.CreatePrototypeMethod("querySelector", w.querySelector)
 	jsClass.CreatePrototypeMethod("querySelectorAll", w.querySelectorAll)
+	jsClass.CreatePrototypeAttribute("children", w.children, nil)
 	jsClass.CreatePrototypeAttribute("firstElementChild", w.firstElementChild, nil)
 	jsClass.CreatePrototypeAttribute("lastElementChild", w.lastElementChild, nil)
 	jsClass.CreatePrototypeAttribute("childElementCount", w.childElementCount, nil)
@@ -108,6 +109,16 @@ func (w ParentNode[T]) querySelectorAll(cbCtx js.CallbackContext[T]) (js.Value[T
 		return nil, errCall
 	}
 	return codec.EncodeEntity(cbCtx, result)
+}
+
+func (w ParentNode[T]) children(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	cbCtx.Logger().Debug("JS Function call: ParentNode.children")
+	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	result := instance.Children()
+	return w.toHTMLCollection(cbCtx, result)
 }
 
 func (w ParentNode[T]) firstElementChild(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

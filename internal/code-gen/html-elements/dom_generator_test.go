@@ -21,6 +21,9 @@ func (s *DomSuite) SetupTest() {
 }
 
 func (s *DomSuite) TestGenerateHTMLCollection() {
+	s.T().Skip(
+		"HTMLCollection is not generated currently, as it doesn't generate an All() function",
+	)
 	generator, err := getIdlInterfaceGenerator("dom", "HTMLCollection")
 	s.Expect(err).ToNot(HaveOccurred())
 	s.Expect(generator).To(HaveRendered(ContainSubstring(`Length() int`)))
