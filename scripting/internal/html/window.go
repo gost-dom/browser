@@ -16,3 +16,7 @@ func (w *Window[T]) history(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	}
 	return cbCtx.Constructor("History").NewInstance(win.History())
 }
+
+func (w *Window[T]) self(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	return cbCtx.This(), nil
+}
