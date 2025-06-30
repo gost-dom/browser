@@ -8,6 +8,7 @@ import (
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 
 	"github.com/onsi/gomega"
@@ -162,34 +163,45 @@ func TestElement(t *testing.T) {
 	suite.Run(t, new(ElementTestSuite))
 }
 
-func TestElementInsertAdjacentHTMLBeforeBegin(t *testing.T) {
-	gomega := gomega.NewWithT(t)
-	doc := ParseHtmlString(`<body>
-  <div id="1">El 1</div>
-  <div id="2">El 2
-    <div>El 2-a</div>
-    <div>El 2-b</div>
-  </div>
-  <div id="3">El 1</div>
-</body>`)
-	el := doc.GetElementById("2")
-	gomega.Expect(el.InsertAdjacentHTML(
-		"beforebegin",
-		`<div id="new">1st new child</div>Text node<div>2nd new child</div>`,
-	)).To(Succeed())
-	gomega.Expect(doc.Body()).To(HaveOuterHTML(`<body>
+func TestElementInsertAdjacentHTML(t *testing.T) {
+	specs := map[string]string{
+		"beforebegin": `<body>
   <div id="1">El 1</div>
   <div id="new">1st new child</div>Text node<div>2nd new child</div><div id="2">El 2
     <div>El 2-a</div>
     <div>El 2-b</div>
   </div>
   <div id="3">El 1</div>
-</body>`))
-}
+</body>`,
+		"afterbegin": `<body>
+  <div id="1">El 1</div>
+  <div id="2"><div id="new">1st new child</div>Text node<div>2nd new child</div>El 2
+    <div>El 2-a</div>
+    <div>El 2-b</div>
+  </div>
+  <div id="3">El 1</div>
+</body>`,
+		"beforeend": `<body>
+  <div id="1">El 1</div>
+  <div id="2">El 2
+    <div>El 2-a</div>
+    <div>El 2-b</div>
+  <div id="new">1st new child</div>Text node<div>2nd new child</div></div>
+  <div id="3">El 1</div>
+</body>`,
+		"afterend": `<body>
+  <div id="1">El 1</div>
+  <div id="2">El 2
+    <div>El 2-a</div>
+    <div>El 2-b</div>
+  </div><div id="new">1st new child</div>Text node<div>2nd new child</div>
+  <div id="3">El 1</div>
+</body>`,
+	}
 
-func TestElementInsertAdjacentHTMLAfterBegin(t *testing.T) {
-	gomega := gomega.NewWithT(t)
-	doc := ParseHtmlString(`<body>
+	for position, want := range specs {
+		t.Run(position, func(t *testing.T) {
+			doc := ParseHtmlString(`<body>
   <div id="1">El 1</div>
   <div id="2">El 2
     <div>El 2-a</div>
@@ -197,83 +209,20 @@ func TestElementInsertAdjacentHTMLAfterBegin(t *testing.T) {
   </div>
   <div id="3">El 1</div>
 </body>`)
-	el, err := (doc.QuerySelector("[id='2']"))
-	gomega.Expect(err).ToNot(HaveOccurred())
-	gomega.Expect(
-		el.InsertAdjacentHTML(
-			"afterbegin",
-			"<div>1st new child</div><div>2nd new child</div>",
-		),
-	).To(Succeed())
-	gomega.Expect(doc.Body()).To(HaveOuterHTML(`<body>
-  <div id="1">El 1</div>
-  <div id="2"><div>1st new child</div><div>2nd new child</div>El 2
-    <div>El 2-a</div>
-    <div>El 2-b</div>
-  </div>
-  <div id="3">El 1</div>
-</body>`))
-}
-
-func TestElementInsertAdjacentHTMLBeforeEnd(t *testing.T) {
-	gomega := gomega.NewWithT(t)
-	doc := ParseHtmlString(`<body>
-  <div id="1">El 1</div>
-  <div id="2">El 2
-    <div>El 2-a</div>
-    <div>El 2-b</div>
-  </div>
-  <div id="3">El 1</div>
-</body>`)
-	el, err := (doc.QuerySelector("[id='2']"))
-	gomega.Expect(err).ToNot(HaveOccurred())
-	gomega.Expect(
-		el.InsertAdjacentHTML(
-			"beforeend",
-			"<div>1st new child</div><div>2nd new child</div>",
-		),
-	).To(Succeed())
-	gomega.Expect(doc.Body()).To(HaveOuterHTML(`<body>
-  <div id="1">El 1</div>
-  <div id="2">El 2
-    <div>El 2-a</div>
-    <div>El 2-b</div>
-  <div>1st new child</div><div>2nd new child</div></div>
-  <div id="3">El 1</div>
-</body>`))
-}
-
-func TestElementInsertAdjacentHTMLAfterEnd(t *testing.T) {
-	gomega := gomega.NewWithT(t)
-	doc := ParseHtmlString(`<body>
-  <div id="1">El 1</div>
-  <div id="2">El 2
-    <div>El 2-a</div>
-    <div>El 2-b</div>
-  </div>
-  <div id="3">El 1</div>
-</body>`)
-	el, err := (doc.QuerySelector("[id='2']"))
-	gomega.Expect(err).ToNot(HaveOccurred())
-	gomega.Expect(
-		el.InsertAdjacentHTML(
-			"afterend",
-			"<div>1st new child</div><div>2nd new child</div>",
-		),
-	).To(Succeed())
-	gomega.Expect(doc.Body()).To(HaveOuterHTML(`<body>
-  <div id="1">El 1</div>
-  <div id="2">El 2
-    <div>El 2-a</div>
-    <div>El 2-b</div>
-  </div><div>1st new child</div><div>2nd new child</div>
-  <div id="3">El 1</div>
-</body>`))
+			el := doc.GetElementById("2")
+			assert.NoError(t, el.InsertAdjacentHTML(
+				position,
+				`<div id="new">1st new child</div>Text node<div>2nd new child</div>`,
+			))
+			got := doc.Body().OuterHTML()
+			assert.Equal(t, want, got)
+		})
+	}
 }
 
 func TestElementOuterHTML(t *testing.T) {
 	gomega := gomega.NewWithT(t)
-	// NOTE: Whitespace is part of the parsed HTML as #text nodes
+	// Whitespace is part of the parsed HTML as #text nodes
 	doc := ParseHtmlString(`<body><div id="2">El 2
     <div>El 2-a</div>
     <div>El 2-b</div>
