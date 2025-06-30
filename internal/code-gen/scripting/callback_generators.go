@@ -152,7 +152,6 @@ func (cb CallbackMethods) ReturnNotImplementedError(
 		"%s.%s: Not implemented. Create an issue: %s",
 		cb.Data.Name(), name, packagenames.ISSUE_URL,
 	))
-	// return g.Return(g.Nil, g.NewValuePackage("New", "errors").Call(g.Lit(errMsg)))
 	return g.Return(
 		EncodeCallbackErrorf.Call(cbCtx, errMsg),
 	)
