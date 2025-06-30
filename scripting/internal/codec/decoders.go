@@ -34,6 +34,16 @@ func DecodeNode[T any](ctx js.CallbackContext[T], val js.Value[T]) (dom.Node, er
 	return nil, ctx.NewTypeError("Value is not a node")
 }
 
+func DecodeAs[T, U any](ctx js.CallbackContext[U], val js.Value[U]) (res T, err error) {
+	if obj, ok := val.AsObject(); ok {
+		if res, ok = obj.NativeValue().(T); ok {
+			return
+		}
+	}
+	err = ctx.NewTypeError("Value is not a node")
+	return
+}
+
 func DecodeHTMLElement[T any](
 	ctx js.CallbackContext[T],
 	val js.Value[T],

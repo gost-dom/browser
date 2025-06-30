@@ -229,7 +229,21 @@ func (w Element[T]) getElementsByClassName(cbCtx js.CallbackContext[T]) (js.Valu
 
 func (w Element[T]) insertAdjacentElement(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Element.insertAdjacentElement")
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.insertAdjacentElement: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	instance, errInst := js.As[dom.Element](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	where, errArg1 := js.ConsumeArgument(cbCtx, "where", nil, codec.DecodeString)
+	element, errArg2 := js.ConsumeArgument(cbCtx, "element", nil, w.decodeElement)
+	err := errors.Join(errArg1, errArg2)
+	if err != nil {
+		return nil, err
+	}
+	result, errCall := instance.InsertAdjacentElement(where, element)
+	if errCall != nil {
+		return nil, errCall
+	}
+	return codec.EncodeEntity(cbCtx, result)
 }
 
 func (w Element[T]) insertAdjacentText(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

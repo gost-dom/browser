@@ -23,7 +23,8 @@ var domRules = SpecRules{
 		"removeChild":  {HasError: true},
 	}},
 	"Element": {Operations: OperationRules{
-		"matches": {HasError: true},
+		"matches":               {HasError: true},
+		"insertAdjacentElement": {HasError: true},
 	}},
 	"ParentNode": {Operations: OperationRules{
 		"append":           parentNodeOperation,
