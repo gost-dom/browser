@@ -11,6 +11,7 @@ import (
 func (e *Element[T]) CustomInitializer(class js.Class[T]) {
 	class.CreatePrototypeMethod("insertAdjacentHTML", e.insertAdjacentHTML)
 	class.CreatePrototypeAttribute("outerHTML", e.outerHTML, nil)
+	class.CreatePrototypeAttribute("innerHTML", e.innerHTML, e.setInnerHTML)
 }
 
 func (e *Element[T]) insertAdjacentHTML(
@@ -32,6 +33,25 @@ func (e *Element[T]) outerHTML(cbCtx js.CallbackContext[T]) (js.Value[T], error)
 	} else {
 		return nil, err
 	}
+}
+
+func (e *Element[T]) innerHTML(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	if element, err := js.As[dom.Element](cbCtx.Instance()); err == nil {
+		return codec.EncodeString(cbCtx, element.InnerHTML())
+	} else {
+		return nil, err
+	}
+}
+
+func (e *Element[T]) setInnerHTML(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	html, err1 := js.ConsumeArgument(cbCtx, "value", nil, codec.DecodeString)
+	element, errInstance := js.As[dom.Element](cbCtx.Instance())
+
+	err := errors.Join(err1, errInstance)
+	if err == nil {
+		err = element.SetInnerHTML(html)
+	}
+	return nil, err
 }
 
 func (e Element[T]) classList(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
