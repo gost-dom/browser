@@ -92,6 +92,7 @@ func testFetch(t *testing.T, host html.ScriptHost) {
 	t.Run("Fetch resource async/await", func(t *testing.T) { testFetchJSONAsync(t, host) })
 	t.Run("Fetch invalid JSON", func(t *testing.T) { testFetchInvalidJSON(t, host) })
 	t.Run("404 for not found resource", func(t *testing.T) { testNotFound(t, host) })
+	t.Run("ReadableStream body", func(t *testing.T) { testReadableStream(t, host) })
 }
 
 func testFetchAbortSignal(t *testing.T, host html.ScriptHost) {
@@ -217,4 +218,47 @@ func testNotFound(t *testing.T, host html.ScriptHost) {
 	defer cancel()
 	assert.NoError(t, win.Clock().ProcessEvents(ctx))
 	g.Expect(win.Eval("got")).To(BeEquivalentTo(404))
+}
+
+func testReadableStream(t *testing.T, host html.ScriptHost) {
+	ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
+	defer cancel()
+
+	pipe := gosttest.NewPipeHandler(t)
+	handler := gosttest.StaticFileServer{
+		"/index.html": gosttest.StaticHTML(`<body>dummy</body>`),
+		"/piped":      pipe,
+	}
+	g := gomega.NewWithT(t)
+	win := initWindow(t, host, handler)
+	win.MustRun(`
+		let response;
+		let rejected;
+		let body;
+		let reader;
+		fetch("/piped")
+			.then(r => { 
+				response = r;
+				body = response.body;
+				reader = body.getReader()
+			})
+	`)
+	pipe.WriteHeader(200)
+	win.Clock().ProcessEvents(ctx)
+
+	g.Expect(win.MustEval("typeof response")).To(Equal("object"), "Response is an object")
+	assert.Equal(t, "ReadableStream", win.MustEval("Object.getPrototypeOf(body).constructor.name"),
+		"body is a ReadableStream",
+	)
+
+	win.MustEval(`
+		let readResult
+		const dummy = reader.read().then(x => {
+			readResult = new TextDecoder().decode(x.value)
+		}, r => { rejected = r })
+	`)
+	pipe.Print("Hello, world!")
+	win.Clock().ProcessEvents(ctx)
+
+	assert.Equal(t, "Hello, world!", win.MustEval("readResult"))
 }

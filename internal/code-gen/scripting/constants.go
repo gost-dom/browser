@@ -27,6 +27,9 @@ var (
 	// Exported values from: scripting/internal/codec
 
 	zeroValue = g.NewValuePackage("ZeroValue", packagenames.Codec)
+
+	// Codecs
+	EncodeCallbackErrorf = g.NewValuePackage("EncodeCallbackErrorf", packagenames.Codec)
 )
 
 var IdlTypeUndefined = idl.Type{Name: "undefined", Kind: idl.KindSimple}

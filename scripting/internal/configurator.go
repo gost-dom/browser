@@ -8,6 +8,7 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/fetch"
 	"github.com/gost-dom/browser/scripting/internal/html"
 	"github.com/gost-dom/browser/scripting/internal/js"
+	"github.com/gost-dom/browser/scripting/internal/streams"
 	"github.com/gost-dom/browser/scripting/internal/uievents"
 	"github.com/gost-dom/browser/scripting/internal/url"
 	"github.com/gost-dom/browser/scripting/internal/xhr"
@@ -25,6 +26,7 @@ func Bootstrap[T any](reg js.ClassBuilder[T]) {
 	url.Bootstrap(reg)
 	uievents.Bootstrap(reg)
 	fetch.Bootstrap(reg)
+	streams.Bootstrap(reg)
 
 	js.RegisterClass(reg, "File", "", dom.NewEvent)
 	js.RegisterClass(reg, "CustomEvent", "Event", dom.NewCustomEvent)

@@ -3,6 +3,7 @@ package fetch
 import (
 	"github.com/gost-dom/browser/internal/fetch"
 	"github.com/gost-dom/browser/internal/promise"
+	"github.com/gost-dom/browser/internal/streams"
 	"github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -20,4 +21,11 @@ func (w Body[T]) json(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) 
 
 func EncodeJSONBytes[T any](scope js.Scope[T], b []byte) (js.Value[T], error) {
 	return scope.JSONParse(string(b))
+}
+
+func (w Body[T]) toReadableStream(
+	cbCtx js.CallbackContext[T],
+	body streams.ReadableStream,
+) (js.Value[T], error) {
+	return cbCtx.Constructor("ReadableStream").NewInstance(body)
 }

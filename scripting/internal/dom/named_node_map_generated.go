@@ -3,7 +3,6 @@
 package dom
 
 import (
-	"errors"
 	dom "github.com/gost-dom/browser/dom"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
@@ -52,32 +51,32 @@ func (w NamedNodeMap[T]) item(cbCtx js.CallbackContext[T]) (js.Value[T], error) 
 
 func (w NamedNodeMap[T]) getNamedItem(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: NamedNodeMap.getNamedItem")
-	return nil, errors.New("NamedNodeMap.getNamedItem: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "NamedNodeMap.getNamedItem: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w NamedNodeMap[T]) getNamedItemNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: NamedNodeMap.getNamedItemNS")
-	return nil, errors.New("NamedNodeMap.getNamedItemNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "NamedNodeMap.getNamedItemNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w NamedNodeMap[T]) setNamedItem(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: NamedNodeMap.setNamedItem")
-	return nil, errors.New("NamedNodeMap.setNamedItem: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "NamedNodeMap.setNamedItem: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w NamedNodeMap[T]) setNamedItemNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: NamedNodeMap.setNamedItemNS")
-	return nil, errors.New("NamedNodeMap.setNamedItemNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "NamedNodeMap.setNamedItemNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w NamedNodeMap[T]) removeNamedItem(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: NamedNodeMap.removeNamedItem")
-	return nil, errors.New("NamedNodeMap.removeNamedItem: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "NamedNodeMap.removeNamedItem: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w NamedNodeMap[T]) removeNamedItemNS(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: NamedNodeMap.removeNamedItemNS")
-	return nil, errors.New("NamedNodeMap.removeNamedItemNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	return codec.EncodeCallbackErrorf(cbCtx, "NamedNodeMap.removeNamedItemNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w NamedNodeMap[T]) length(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
