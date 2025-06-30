@@ -126,6 +126,32 @@ func (f v8Scope) NewObject() jsObject {
 	return newV8Object(f.V8ScriptContext, obj)
 }
 
+func (f v8Scope) NewUint8Array(data []byte) jsValue {
+	bytes := make([]jsValue, len(data))
+	for i, b := range data {
+		bytes[i] = f.NewInt32(int32(b))
+	}
+	byteArray := f.NewArray(bytes...)
+	from, err := f.v8ctx.RunScript("(data) => Uint8Array.from(data)", "gost-dom/v8host/uint8array")
+	if err != nil {
+		panic(fmt.Sprintf("gost-dom/v8host: Uint8Array.from: %v", err))
+	}
+	fn, err := from.AsFunction()
+	if err != nil {
+		panic(
+			fmt.Sprintf(
+				"gost-dom/v8host: Uint8Array.from: asFunction: %v (%v)",
+				err, from,
+			),
+		)
+	}
+	res, err := fn.Call(f.v8ctx.Global(), byteArray.Self().Value)
+	if err != nil {
+		panic(fmt.Sprintf("gost-dom/v8host: Uint8Array.from: call: %v", err))
+	}
+	return f.toJSValue(res)
+}
+
 func (f v8Scope) NewInt32(val int32) jsValue   { return f.newV8Value(val) }
 func (f v8Scope) NewUint32(val uint32) jsValue { return f.newV8Value(val) }
 func (f v8Scope) NewInt64(val int64) jsValue   { return f.newV8Value(val) }
