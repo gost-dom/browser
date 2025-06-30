@@ -16,15 +16,14 @@ func (w *NodeList[T]) CustomInitializer(class js.Class[T]) {
 	class.CreateIndexedHandler(
 		js.WithIndexedGetterCallback(
 			func(info js.CallbackScope[T], index int) (js.Value[T], error) {
-				instance := info.This().NativeValue()
-				if nodemap, ok := instance.(dom.NodeList); ok {
-					item := nodemap.Item(index)
-					if item == nil {
-						return nil, nil
-					}
+				instance, err := js.As[dom.NodeList](info.Instance())
+				if err != nil {
+					return nil, err
+				}
+				if item := instance.Item(index); item != nil {
 					return codec.EncodeEntity(info, item)
 				}
-				return nil, info.NewTypeError("dunno")
+				return nil, nil
 			},
 		),
 		js.WithLengthCallback(
