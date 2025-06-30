@@ -12,7 +12,7 @@ func (w ReadableStream[T]) decodeObject(
 	var err error
 	if v != nil && v.Boolean() {
 		return "", codec.CallbackErrorf(cbCtx,
-			"godt-dom/scripting/streams: ReadableStream underlyingSource not yet supported",
+			"gost-dom/scripting/streams: ReadableStream underlyingSource not yet supported",
 		)
 	}
 	return "", err
