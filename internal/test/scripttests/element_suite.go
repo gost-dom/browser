@@ -36,6 +36,18 @@ func (s *ElementSuite) TestAppendMultipleElements() {
 		d2.outerHTML`)).To(Equal("<div><p></p>Foobar<p></p></div>"))
 }
 
+func (s *ElementSuite) TestAttributes() {
+	s.MustLoadHTML(`<body><div foo="foo-value" bar="bar-value"></div><body>`)
+	s.MustEval(`
+		const div = document.querySelector("div")
+		const attrs = Array.from(div.attributes)
+		const names = attrs.map(x => x.name).join(",")
+		const values = attrs.map(x => x.value).join(",")
+	`)
+	s.Assert().Equal("foo,bar", s.MustEval("names"))
+	s.Assert().Equal("foo-value,bar-value", s.MustEval("values"))
+}
+
 func (s *ElementSuite) TestIDLInterfaceNamesForElements() {
 	ctx := s.Window.ScriptContext()
 	s.Expect("document.createElement('a')").To(BeJSInstanceOf("HTMLAnchorElement", ctx))
