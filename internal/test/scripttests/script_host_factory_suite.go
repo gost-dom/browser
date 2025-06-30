@@ -40,14 +40,15 @@ func (s *ScriptHostFactorySuite) MustRunScript(script string) {
 	s.Assert().NoError(s.RunScript(script))
 }
 
-// Runs a script and returns the evaluated value as a native Go value.
+// Eval runs a script and returns the evaluated value as a native Go value.
 //
-// Panics (or generates an error?) if no suitable conversion could be found (i.e.
-// gost doesn't implement this yet).
+// Returns an error if no suitable conversion could be found or if the
+// conversion is not implemented.
 //
-// Returns an error if script code throws.
+// Returns an error if script code throws an exception.
 //
-// If the return value is not used, call run; to avoid panic/error
+// If the return value is not needed, you can use RunScript instead to avoid
+// dealing with errors if return value conversion is not possible.
 func (s *ScriptHostFactorySuite) Eval(script string) (any, error) {
 	return s.Window.Eval(script)
 }
