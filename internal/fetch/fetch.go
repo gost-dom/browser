@@ -104,20 +104,20 @@ func (r *Reader) Read() promise.Promise[streams.ReadResult] {
 	return promise.New(
 		func() (streams.ReadResult, error) {
 			if r.Done {
-				return streams.ReadResult{nil, true}, nil
+				return streams.ReadResult{Done: true}, nil
 			}
 			buf := make([]byte, 1024)
 			l, err := r.Reader.Read(buf)
 			buf = buf[0:l]
 			if err == nil {
-				return streams.ReadResult{buf, false}, nil
+				return streams.ReadResult{Value: buf}, nil
 			}
 			if err == io.EOF {
 				r.Done = true
 				if l == 0 {
-					return streams.ReadResult{nil, true}, nil
+					return streams.ReadResult{Done: true}, nil
 				} else {
-					return streams.ReadResult{buf, false}, nil
+					return streams.ReadResult{Value: buf}, nil
 				}
 			}
 			return streams.ReadResult{}, err
