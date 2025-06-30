@@ -3,8 +3,6 @@
 package streams
 
 import (
-	"errors"
-
 	"github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -12,7 +10,7 @@ import (
 func (w ReadableStreamBYOBReader[T]) CreateInstance(
 	cbCtx js.CallbackContext[T], _x string,
 ) (js.Value[T], error) {
-	return nil, errors.New(
+	return codec.EncodeCallbackErrorf(cbCtx,
 		"gost-dom/scripting/streams: ReadableStreamBYOBReader constructor not yet supported",
 	)
 }
