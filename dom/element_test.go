@@ -220,6 +220,29 @@ func TestElementInsertAdjacentHTML(t *testing.T) {
 	}
 }
 
+func TestInsertAdjacentElement(t *testing.T) {
+	specs := map[string]string{
+		"beforebegin": `<body><div>New child</div><div id="target">Text node</div></body>`,
+		"afterbegin":  `<body><div id="target"><div>New child</div>Text node</div></body>`,
+		"beforeend":   `<body><div id="target">Text node<div>New child</div></div></body>`,
+		"afterend":    `<body><div id="target">Text node</div><div>New child</div></body>`,
+	}
+
+	for position, want := range specs {
+		t.Run(position, func(t *testing.T) {
+			doc := ParseHtmlString(`<body><div id="target">Text node</div></body>`)
+			e := doc.GetElementById("target")
+			d := doc.CreateElement("div")
+			d.SetTextContent("New child")
+			res, err := e.InsertAdjacentElement(position, d)
+			assert.Equal(t, d, res)
+			assert.NoError(t, err)
+
+			assert.Equal(t, want, doc.Body().OuterHTML())
+		})
+	}
+}
+
 func TestElementOuterHTML(t *testing.T) {
 	gomega := gomega.NewWithT(t)
 	// Whitespace is part of the parsed HTML as #text nodes
