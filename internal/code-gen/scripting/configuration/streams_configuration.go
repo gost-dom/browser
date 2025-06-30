@@ -6,7 +6,7 @@ func configureStreamsSpecs(specs *WebAPIConfig) {
 		"cancel", "pipeThrough", "pipeTo", "tee", "locked",
 	)
 	defaultReader := specs.Type("ReadableStreamDefaultReader")
-	defaultReader.MarkMembersAsNotImplemented("read", "releaseLock")
+	defaultReader.MarkMembersAsNotImplemented("releaseLock")
 	byobReader := specs.Type("ReadableStreamBYOBReader")
 	byobReader.MarkMembersAsNotImplemented("read", "releaseLock")
 }

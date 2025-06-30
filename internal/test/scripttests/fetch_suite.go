@@ -233,6 +233,7 @@ func testReadableStream(t *testing.T, host html.ScriptHost) {
 	win := initWindow(t, host, handler)
 	win.MustRun(`
 		let response;
+		let rejected;
 		let body;
 		let reader;
 		fetch("/piped")
@@ -243,13 +244,21 @@ func testReadableStream(t *testing.T, host html.ScriptHost) {
 			})
 	`)
 	pipe.WriteHeader(200)
-	win.Clock().ProcessEventsWhile(ctx, func() bool { return win.MustEval("!response").(bool) })
+	win.Clock().ProcessEvents(ctx)
 
 	g.Expect(win.MustEval("typeof response")).To(Equal("object"), "Response is an object")
-	assert.Equal(
-		t,
-		"ReadableStream",
-		win.MustEval("Object.getPrototypeOf(body).constructor.name"),
+	assert.Equal(t, "ReadableStream", win.MustEval("Object.getPrototypeOf(body).constructor.name"),
 		"body is a ReadableStream",
 	)
+
+	win.MustEval(`
+		let readResult
+		const dummy = reader.read().then(x => {
+			readResult = new TextDecoder().decode(x.value)
+		}, r => { rejected = r })
+	`)
+	pipe.Print("Hello, world!")
+	win.Clock().ProcessEvents(ctx)
+
+	assert.Equal(t, "Hello, world!", win.MustEval("readResult"))
 }
