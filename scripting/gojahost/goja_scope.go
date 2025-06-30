@@ -114,6 +114,10 @@ func (f gojaScope) NewTypeError(v string) error {
 
 func (c gojaScope) NewPromise() js.Promise[jsTypeParam] { return newGojaPromise(c.GojaContext) }
 
+func (c gojaScope) NewObject() js.Object[jsTypeParam] {
+	return newGojaObject(c.GojaContext, c.vm.NewObject())
+}
+
 func (c gojaScope) NewError(err error) js.Error[jsTypeParam] {
 	return newGojaError(c.GojaContext, err)
 }
