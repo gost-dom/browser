@@ -34,7 +34,7 @@ func (s *ScriptHostFactorySuite) RunScript(script string) error {
 }
 
 // MustRunScript runs a script and marks the test as an error if an error
-// occurrs.
+// occurs.
 func (s *ScriptHostFactorySuite) MustRunScript(script string) {
 	s.T().Helper()
 	s.Assert().NoError(s.RunScript(script))
