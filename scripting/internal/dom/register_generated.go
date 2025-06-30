@@ -14,6 +14,7 @@ func Bootstrap[T any](reg js.ClassBuilder[T]) {
 	js.RegisterClass(reg, "Element", "Node", NewElement)
 	js.RegisterClass(reg, "Event", "", NewEvent)
 	js.RegisterClass(reg, "EventTarget", "", NewEventTarget)
+	js.RegisterClass(reg, "HTMLCollection", "", NewHTMLCollection)
 	js.RegisterClass(reg, "MutationObserver", "", NewMutationObserver)
 	js.RegisterClass(reg, "MutationRecord", "", NewMutationRecord)
 	js.RegisterClass(reg, "NamedNodeMap", "", NewNamedNodeMap)

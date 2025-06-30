@@ -41,7 +41,39 @@ func (s *ElementSuite) TestIDLInterfaceNamesForElements() {
 	s.Expect("document.createElement('a')").To(BeJSInstanceOf("HTMLAnchorElement", ctx))
 	s.Expect("document.createElement('p')").To(BeJSInstanceOf("HTMLParagraphElement", ctx))
 	s.Expect("document.createElement('div')").To(BeJSInstanceOf("HTMLDivElement", ctx))
+}
 
+func (s *ElementSuite) TestChildren() {
+	s.MustLoadHTML(`
+		<body>
+			<div id="target">
+				Initial text
+				<div id="child-1">Child 1</div>
+				Some text
+				<div id="child-2">Child 2</div>
+				Final text
+			</div>
+		</body>`,
+	)
+	s.MustRunScript(`
+		const target = document.getElementById("target")
+		const child1ByItem = target.children.item(0)
+		const child1ByIndex = target.children[0]
+		const child2ByItem = target.children.item(1)
+		const child2ByIndex = target.children[1]
+		const length = target.children.length
+		const arr = Array.from(target.children)
+		const contents = arr.map(x => x.getAttribute("id")).join(",")
+	`)
+	assert := s.Assert()
+	assert.Equal("Child 1", s.MustEval("child1ByItem.textContent"))
+	assert.Equal("Child 1", s.MustEval("child1ByIndex.textContent"))
+	assert.Equal("Child 2", s.MustEval("child2ByItem.textContent"))
+	assert.Equal("Child 2", s.MustEval("child2ByIndex.textContent"))
+
+	s.Expect(s.MustEval("length")).To(BeEquivalentTo(2))
+
+	assert.Equal("child-1,child-2", s.MustEval("contents"))
 }
 
 type BeJSInstanceOfMatcher struct {

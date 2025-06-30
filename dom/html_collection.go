@@ -1,11 +1,18 @@
 package dom
 
+type HTMLCollection interface {
+	All() []Element
+	Length() int
+	Item(int) Element
+	NamedItem(string) Element
+}
+
 // htmlCollection provides an implementation for [HTMLCollection].
 type htmlCollection struct{ node Node }
 
 func newHtmlCollection(n Node) HTMLCollection { return htmlCollection{n} }
 
-func (c htmlCollection) elements() []Element {
+func (c htmlCollection) All() []Element {
 	nodes := c.node.ChildNodes().All()
 	res := make([]Element, 0, len(nodes))
 	for _, n := range nodes {
@@ -17,11 +24,11 @@ func (c htmlCollection) elements() []Element {
 }
 
 func (c htmlCollection) Length() int {
-	return len(c.elements())
+	return len(c.All())
 }
 
 func (c htmlCollection) Item(i int) Element {
-	es := c.elements()
+	es := c.All()
 	if i < 0 || i >= len(es) {
 		return nil
 	}
@@ -29,7 +36,7 @@ func (c htmlCollection) Item(i int) Element {
 }
 
 func (c htmlCollection) NamedItem(name string) Element {
-	for _, e := range c.elements() {
+	for _, e := range c.All() {
 		if id, hasId := e.GetAttribute("id"); hasId && id == name {
 			return e
 		}

@@ -73,8 +73,10 @@ func configureDOMNode(specs *WebAPIConfig) {
 	nodeList := specs.Type("NodeList")
 	nodeList.RunCustomCode = true
 
+	htmlCollection := specs.Type("HTMLCollection")
+	htmlCollection.RunCustomCode = true
+
 	parentNode := specs.Type("ParentNode")
-	parentNode.Method("children").Ignore()
 	parentNode.Method("append").Argument("nodes").Decoder = "w.decodeNodeOrText"
 	parentNode.Method("prepend").Argument("nodes").Decoder = "w.decodeNodeOrText"
 	parentNode.Method("replaceChildren").Argument("nodes").Decoder = "w.decodeNodeOrText"
