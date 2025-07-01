@@ -37,4 +37,5 @@ func RunSuites(t *testing.T, h ScriptHostFactory) {
 	t.Run("FetchSuite", runSuite(NewFetchSuite(h.New())))
 	t.Run("Fetch", func(t *testing.T) { testFetch(t, h.New()) })
 	t.Run("Streams", func(t *testing.T) { testStreams(t, h) })
+	t.Run("CharacterData", func(t *testing.T) { testCharacterData(t, h) })
 }

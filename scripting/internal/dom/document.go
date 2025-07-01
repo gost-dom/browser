@@ -62,13 +62,3 @@ func (w *Document[T]) createElement(cbCtx js.CallbackContext[T]) (js.Value[T], e
 	}
 	return codec.EncodeEntity(cbCtx, instance.CreateElement(name))
 }
-
-func (w *Document[T]) createTextNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	data, err1 := js.ConsumeArgument(cbCtx, "data", nil, codec.DecodeString)
-	instance, err2 := js.As[dom.Document](cbCtx.Instance())
-	err := errors.Join(err1, err2)
-	if err != nil {
-		return nil, err
-	}
-	return codec.EncodeEntity(cbCtx, instance.CreateText(data))
-}

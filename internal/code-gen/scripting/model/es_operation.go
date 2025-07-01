@@ -60,7 +60,7 @@ func (op ESOperation) HasResult() bool {
 func IsNodeType(typeName string) bool {
 	loweredName := strings.ToLower(typeName)
 	switch loweredName {
-	case "node":
+	case "node", "text", "cdata", "comment":
 		return true
 	case "document":
 		return true

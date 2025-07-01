@@ -88,6 +88,20 @@ func (w Document[T]) createDocumentFragment(cbCtx js.CallbackContext[T]) (js.Val
 	return codec.EncodeEntity(cbCtx, result)
 }
 
+func (w Document[T]) createTextNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	cbCtx.Logger().Debug("JS Function call: Document.createTextNode")
+	instance, errInst := js.As[dom.Document](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	data, errArg1 := js.ConsumeArgument(cbCtx, "data", nil, codec.DecodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result := instance.CreateTextNode(data)
+	return codec.EncodeEntity(cbCtx, result)
+}
+
 func (w Document[T]) createCDATASection(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Document.createCDATASection")
 	return codec.EncodeCallbackErrorf(cbCtx, "Document.createCDATASection: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")

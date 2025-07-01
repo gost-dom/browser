@@ -68,7 +68,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 		"createCDATASection",
 	)
 	document.Method("createElement").SetCustomImplementation()
-	document.Method("createTextNode").SetCustomImplementation()
 
 	nodeList := specs.Type("NodeList")
 	nodeList.RunCustomCode = true
