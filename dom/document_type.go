@@ -22,8 +22,8 @@ func NewDocumentType(name string, ownerDocument Document) DocumentType {
 func (t *documentType) Name() string       { return t.name }
 func (t *documentType) NodeType() NodeType { return NodeTypeDocumentType }
 
-func (t *documentType) CloneNode(deep bool) Node {
-	return NewDocumentType(t.name, t.OwnerDocument())
+func (t *documentType) cloneNode(doc Document, deep bool) Node {
+	return NewDocumentType(t.name, doc)
 }
 
 func (t *documentType) createHtmlNode() *html.Node {

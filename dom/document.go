@@ -41,7 +41,10 @@ type Document interface {
 	CreateElementNS(string, string) Element
 	CreateElement(string) Element
 	DocumentElement() Element
+	ImportNode(Node, bool) Node
 	parseFragment(reader io.Reader) (DocumentFragment, error)
+
+	window() DocumentParentWindow
 }
 
 type elementConstructor func(doc *document) Element
@@ -69,7 +72,8 @@ func NewDocument(window DocumentParentWindow) Document {
 	return result
 }
 
-func (d document) Logger() *slog.Logger { return d.logger }
+func (d document) Logger() *slog.Logger         { return d.logger }
+func (d document) window() DocumentParentWindow { return d.ownerWindow }
 
 func (d document) ActiveElement() Element {
 	if d.activeElement == nil {
@@ -78,8 +82,8 @@ func (d document) ActiveElement() Element {
 	return d.activeElement
 }
 
-func (d *document) CloneNode(deep bool) Node {
-	result := NewDocument(d.ownerWindow)
+func (d *document) cloneNode(doc Document, deep bool) Node {
+	result := NewDocument(doc.window())
 	if deep {
 		result.Append(d.cloneChildren()...)
 	}
@@ -88,6 +92,10 @@ func (d *document) CloneNode(deep bool) Node {
 
 func (d *document) parseFragment(reader io.Reader) (DocumentFragment, error) {
 	return d.ownerWindow.ParseFragment(d, reader)
+}
+
+func (d *document) ImportNode(n Node, deep bool) Node {
+	return n.cloneNode(d.getSelf().(Document), deep)
 }
 
 func (d *document) Body() Element {

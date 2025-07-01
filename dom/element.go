@@ -342,8 +342,7 @@ func (e *element) String() string {
 	return fmt.Sprintf("<%s %s(child count=%d) />", e.tagName, id, childLen)
 }
 
-func (e *element) CloneNode(deep bool) Node {
-	doc := e.OwnerDocument()
+func (e *element) cloneNode(doc Document, deep bool) Node {
 	tag := e.selfElement.TagName()
 	res := doc.CreateElement(tag)
 	for a := range e.Attributes().All() {

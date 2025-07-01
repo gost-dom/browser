@@ -50,6 +50,7 @@ func newAttr(n, v string, doc Document) Attr {
 			Val: v,
 		},
 	}
+	res.SetSelf(res)
 	event.SetEventTargetSelf(res)
 	return res
 }
@@ -67,10 +68,8 @@ func (a *attr) htmlAttr() html.Attribute {
 	return *a.attr
 }
 
-func (a *attr) CloneNode(
-	deep bool,
-) Node {
-	return newAttr(a.attr.Key, a.attr.Val, a.OwnerDocument())
+func (a *attr) cloneNode(doc Document, deep bool) Node {
+	return newAttr(a.attr.Key, a.attr.Val, doc)
 }
 
 func (m *namedNodeMap) All() iter.Seq[Attr] {
