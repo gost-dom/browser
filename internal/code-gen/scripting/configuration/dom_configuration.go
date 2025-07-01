@@ -63,7 +63,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 		"getElementsByTagNameNS",
 		"getElementsByClassName",
 		"createProcessingInstruction",
-		"importNode",
 		"adoptNode",
 		"createRange",
 		"createEvent",

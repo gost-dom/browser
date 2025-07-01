@@ -83,8 +83,8 @@ func (n *comment) createHtmlNode() *html.Node {
 	}
 }
 
-func (c *comment) CloneNode(bool) Node {
-	return NewComment(c.TextContent(), c.OwnerDocument())
+func (c *comment) cloneNode(doc Document, _ bool) Node {
+	return NewComment(c.TextContent(), doc)
 }
 
 /* -------- Text -------- */
@@ -103,8 +103,8 @@ func NewText(text string, ownerDocument Document) Text {
 	return result
 }
 
-func (n *textNode) CloneNode(bool) Node {
-	return NewText(n.characterData.data, n.OwnerDocument())
+func (n *textNode) cloneNode(doc Document, _ bool) Node {
+	return NewText(n.characterData.data, doc)
 }
 
 func (n *textNode) Render(builder *strings.Builder) {

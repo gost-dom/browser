@@ -188,6 +188,7 @@ type Node interface {
 	createHtmlNode() *html.Node
 	nodeDocument() Document
 	notify(ChangeEvent)
+	cloneNode(Document, bool) Node
 }
 
 type node struct {
@@ -211,6 +212,11 @@ func newNode(ownerDocument Document) node {
 func newNodePtr(ownerDocument Document) *node {
 	n := newNode(ownerDocument)
 	return &n
+}
+
+func (n *node) CloneNode(deep bool) Node {
+	fmt.Println("node.CloneNode", n.self, n.OwnerDocument())
+	return n.self.cloneNode(n.OwnerDocument(), deep)
 }
 
 func (n *node) cloneChildren() []Node {

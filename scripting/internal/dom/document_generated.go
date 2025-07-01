@@ -3,6 +3,7 @@
 package dom
 
 import (
+	"errors"
 	dom "github.com/gost-dom/browser/dom"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
@@ -128,7 +129,18 @@ func (w Document[T]) createProcessingInstruction(cbCtx js.CallbackContext[T]) (j
 
 func (w Document[T]) importNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Document.importNode")
-	return codec.EncodeCallbackErrorf(cbCtx, "Document.importNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	instance, errInst := js.As[dom.Document](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	node, errArg1 := js.ConsumeArgument(cbCtx, "node", nil, codec.DecodeNode)
+	subtree, errArg2 := js.ConsumeArgument(cbCtx, "subtree", codec.ZeroValue, codec.DecodeBoolean)
+	err := errors.Join(errArg1, errArg2)
+	if err != nil {
+		return nil, err
+	}
+	result := instance.ImportNode(node, subtree)
+	return codec.EncodeEntity(cbCtx, result)
 }
 
 func (w Document[T]) adoptNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
