@@ -44,6 +44,8 @@ func LookupJSPrototype(entity entity.ObjectIder) string {
 		return "Attr"
 	case dom.NodeList:
 		return "NodeList"
+	case dom.Text:
+		return "Text"
 	case dom.Node:
 		return "Node"
 	case *html.DOMStringMap:

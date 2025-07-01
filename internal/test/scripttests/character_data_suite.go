@@ -23,4 +23,5 @@ func testCharacterData(t *testing.T, shf ScriptHostFactory) {
 		b.outerHTML
 	`)
 	assert.Equal(t, `<body>foo<div></div></body>`, bodyHTML)
+	assert.Equal(t, "Text", win.MustEval(`Object.getPrototypeOf(t).constructor.name`))
 }

@@ -9,6 +9,15 @@ func ConfigureDOMSpecs(specs *WebIdlConfigurations) {
 func configureDOMNode(specs *WebAPIConfig) {
 	configureMutationObserver(specs)
 
+	cd := specs.Type("CharacterData")
+	cd.MarkMembersAsNotImplemented(
+		"substringData", "appendData", "insertData", "deleteData", "replaceData",
+	)
+	text := specs.Type("Text")
+	text.MarkMembersAsNotImplemented(
+		"splitText", "wholeText",
+	)
+
 	specs.Type("AbortController")
 	abortSignal := specs.Type("AbortSignal")
 	abortSignal.MarkMembersAsNotImplemented("reason")

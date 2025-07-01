@@ -8,6 +8,7 @@ func Bootstrap[T any](reg js.ClassBuilder[T]) {
 	js.RegisterClass(reg, "AbortController", "", NewAbortController)
 	js.RegisterClass(reg, "AbortSignal", "EventTarget", NewAbortSignal)
 	js.RegisterClass(reg, "Attr", "Node", NewAttr)
+	js.RegisterClass(reg, "CharacterData", "Node", NewCharacterData)
 	js.RegisterClass(reg, "DOMTokenList", "", NewDOMTokenList)
 	js.RegisterClass(reg, "Document", "Node", NewDocument)
 	js.RegisterClass(reg, "DocumentFragment", "Node", NewDocumentFragment)
@@ -22,4 +23,5 @@ func Bootstrap[T any](reg js.ClassBuilder[T]) {
 	js.RegisterClass(reg, "NodeList", "", NewNodeList)
 	js.RegisterClass(reg, "NonDocumentTypeChildNode", "", NewNonDocumentTypeChildNode)
 	js.RegisterClass(reg, "ParentNode", "", NewParentNode)
+	js.RegisterClass(reg, "Text", "CharacterData", NewText)
 }
