@@ -3,6 +3,7 @@ package html_test
 import (
 	"testing"
 
+	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
@@ -37,4 +38,17 @@ func TestHTMLTemplateElement(t *testing.T) {
 		BeNil(),
 		"searching for <template> children from document",
 	)
+}
+
+func TestDocumentFragmentSetInnerHTML(t *testing.T) {
+	doc := htmltest.ParseHTMLDocumentHelper(t,
+		`<body><template id="t"><div id="d"></div></template></body>`,
+	)
+	template := htmltest.UnwrapHTMLElement[html.HTMLTemplateElement](
+		doc.QuerySelectorHTML("template"),
+	)
+	template.SetInnerHTML("<p>P1</p><p>P2</p>")
+	Expect(t, template.InnerHTML()).To(Equal(
+		`<p>P1</p><p>P2</p>`,
+	))
 }
