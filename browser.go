@@ -56,9 +56,15 @@ type Browser struct {
 	Logger     log.Logger
 	ctx        context.Context
 	windows    []Window
+	closed     bool
+	ownsHost   bool
 }
 
+// NewWindow creates a new window. Panics if the browser has been closed
 func (b *Browser) NewWindow() Window {
+	if b.closed {
+		panic("gost-dom/browser: browser closed")
+	}
 	window := html.NewWindow(b.createOptions(""))
 	b.windows = append(b.windows, window)
 	return window
@@ -97,14 +103,18 @@ func New(options ...BrowserOption) *Browser {
 	for _, o := range options {
 		o(config)
 	}
-	if config.host == nil {
-		config.host = v8host.New(v8host.WithLogger(config.logger))
-	}
 	result := &Browser{
 		Client:     config.client,
 		Logger:     config.logger,
 		ScriptHost: config.host,
 		ctx:        config.ctx,
+	}
+	if result.ScriptHost == nil {
+		result.ownsHost = true
+		result.ScriptHost = v8host.New(v8host.WithLogger(config.logger))
+	}
+	if config.ctx != nil {
+		context.AfterFunc(config.ctx, result.Close)
 	}
 	return result
 }
@@ -138,7 +148,10 @@ func (b *Browser) Close() {
 	for _, win := range b.windows {
 		win.Close()
 	}
-	if b.ScriptHost != nil {
+	if b.ScriptHost != nil && b.ownsHost {
 		b.ScriptHost.Close()
 	}
+	b.closed = true
 }
+
+func (b *Browser) Closed() bool { return b.closed }

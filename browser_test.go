@@ -37,6 +37,16 @@ func (s *BrowserTestSuite) TestReadFromHTTPHandler() {
 	s.Assert().Equal("HTML", element.TagName())
 }
 
+func TestBrowserClosedOnCancel(t *testing.T) {
+	synctest.Run(func() {
+		ctx, cancel := context.WithCancel(t.Context())
+		browser := browser.New(browser.WithContext(ctx))
+		cancel()
+		synctest.Wait()
+		assert.True(t, browser.Closed())
+	})
+}
+
 func (s *BrowserTestSuite) TestExecuteScript() {
 	Expect := gomega.NewWithT(s.T()).Expect
 	server := gosttest.StaticFileServer{
