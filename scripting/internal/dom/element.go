@@ -48,6 +48,12 @@ func (e *Element[T]) toNamedNodeMap(
 	cbCtx js.CallbackContext[T],
 	n dom.NamedNodeMap,
 ) (js.Value[T], error) {
-
 	return codec.EncodeEntity(cbCtx, n)
+}
+
+func (e *Element[T]) decodeElement(
+	ctx js.CallbackContext[T],
+	val js.Value[T],
+) (dom.Element, error) {
+	return codec.DecodeAs[dom.Element](ctx, val)
 }

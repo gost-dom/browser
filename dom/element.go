@@ -34,6 +34,7 @@ type Element interface {
 	SetAttributeNode(Attr) (Attr, error)
 	RemoveAttributeNode(Attr) (Attr, error)
 	Attributes() NamedNodeMap
+	InsertAdjacentElement(position string, element Element) (Element, error)
 	InsertAdjacentHTML(position string, text string) error
 	OuterHTML() string
 	InnerHTML() string
@@ -247,7 +248,7 @@ func (e *element) createHtmlNode() *html.Node {
 	}
 }
 
-func (n *element) InsertAdjacentHTML(position string, text string) error {
+func (n *element) insertAdjacentNode(position string, node Node) error {
 	var (
 		parent    Node
 		reference Node
@@ -268,9 +269,22 @@ func (n *element) InsertAdjacentHTML(position string, text string) error {
 	default:
 		return errors.New("Invalid position")
 	}
+	_, err := parent.InsertBefore(node, reference)
+	return err
+}
+
+func (n *element) InsertAdjacentElement(position string, element Element) (res Element, err error) {
+	err = n.insertAdjacentNode(position, element)
+	if err == nil {
+		res = element
+	}
+	return
+}
+
+func (n *element) InsertAdjacentHTML(position string, text string) error {
 	fragment, err := n.nodeDocument().parseFragment(strings.NewReader(text))
 	if err == nil {
-		_, err = parent.InsertBefore(fragment, reference)
+		err = n.insertAdjacentNode(position, fragment)
 	}
 	return err
 }
