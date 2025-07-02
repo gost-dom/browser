@@ -72,6 +72,7 @@ func (s *BrowserTestSuite) TestExecuteScript() {
 func (s *BrowserTestSuite) TestCancellation() {
 	synctest.Run(func() {
 		handler := gosttest.NewPipeHandler(s.T())
+		defer handler.Close()
 		h := gosttest.StaticFileServer{
 			"/index.html": gosttest.StaticHTML("body>Dummy</body>"),
 			"/data":       handler,

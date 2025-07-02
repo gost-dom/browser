@@ -1,6 +1,7 @@
 package gosttest
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"sync"
@@ -56,18 +57,11 @@ func (h *PipeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h.Req = r
 	h.served = true
 	h.ensureChannel()
-	for {
-		select {
-		case f, ok := <-h.cmds:
-			if !ok {
-				return
-			}
-			f(w)
-		case <-r.Context().Done():
-			h.ClientDisconnected = true
-			h.close() // probably not necessary, as the channel is subject to gc
-			return
-		}
+	context.AfterFunc(r.Context(), func() {
+		h.ClientDisconnected = true
+	})
+	for f := range h.cmds {
+		f(w)
 	}
 }
 

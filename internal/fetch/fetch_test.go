@@ -42,6 +42,9 @@ func TestFetchAborted(t *testing.T) {
 			assert.False(t, handler.ClientDisconnected, "Client disconnected before cancel")
 
 			ac.Abort("Dummy Reason")
+			synctest.Wait()
+			handler.WriteHeader(200)
+			handler.Close()
 
 			result := gosttest.ExpectReceive(t, p, gosttest.Context(ctx))
 			assert.Error(t, result.Err, "Response should be an error")
@@ -65,7 +68,6 @@ func TestFetchAborted(t *testing.T) {
 			handler.WriteHeader(200)
 
 			p := f.FetchAsync(req)
-
 			synctest.Wait()
 			res := gosttest.ExpectReceive(t, p, gosttest.Context(ctx))
 			assert.Equal(t, 200, res.Value.Status)
@@ -73,9 +75,12 @@ func TestFetchAborted(t *testing.T) {
 
 			ac.Abort("Dummy reason")
 			synctest.Wait()
+			handler.Close()
+			synctest.Wait()
 
 			_, err := io.ReadAll(res.Value.Reader)
 			var errAny promise.ErrAny
+			assert.Error(t, err, "reading response body of cancelled response")
 			assert.ErrorAs(t, err, &errAny, "reading response body of cancelled response")
 			assert.Equal(t, "Dummy reason", errAny.Reason, "Error reason")
 		})
