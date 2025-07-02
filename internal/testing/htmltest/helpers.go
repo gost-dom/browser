@@ -121,10 +121,10 @@ func (h HTMLDocumentHelper) CreateHTMLElement(tag string) HTMLElementHelper {
 
 type HTMLParentNodeHelper struct {
 	t          testing.TB
-	ParentNode dom.ParentNode
+	ParentNode dom.ElementParent
 }
 
-func NewHTMLParentNodeHelper(t testing.TB, n dom.ParentNode) HTMLParentNodeHelper {
+func NewHTMLParentNodeHelper(t testing.TB, n dom.ElementParent) HTMLParentNodeHelper {
 	return HTMLParentNodeHelper{t, n}
 }
 

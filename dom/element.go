@@ -51,7 +51,7 @@ type Element interface {
 
 type element struct {
 	childNode
-	ParentNode
+	ElementParent
 	tagName          string
 	namespace        string
 	attributes       Attributes
@@ -69,7 +69,7 @@ func NewElement(tagName string, ownerDocument Document) Element {
 		tagName:    tagName,
 		attributes: Attributes(nil),
 	}
-	result.ParentNode = newParentNode(&result.node)
+	result.ElementParent = newParentNode(&result.node)
 	result.SetSelf(result)
 	return result
 }

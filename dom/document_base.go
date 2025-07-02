@@ -6,7 +6,7 @@ package dom
 // elements
 type ElementContainer interface {
 	Node
-	ParentNode
+	ElementParent
 }
 
 // RootNode implements defines common behaviour between [Document] and
@@ -19,7 +19,7 @@ type RootNode interface {
 
 type rootNode struct {
 	*node
-	ParentNode
+	ElementParent
 }
 
 func newRootNode(ownerDoc Document) rootNode {

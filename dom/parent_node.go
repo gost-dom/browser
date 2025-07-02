@@ -6,6 +6,11 @@ import (
 	"github.com/gost-dom/css"
 )
 
+// ElementParent is a type alias for ParentNode that allows it to be embedded in
+// other interfaces and types, without conflicting with the ParentNode method on
+// [Node]
+type ElementParent = ParentNode
+
 // parentNode implements the functions defined in the [ParentNode] IDL Mixin
 // interface.
 type parentNode struct {
