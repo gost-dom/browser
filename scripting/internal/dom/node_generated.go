@@ -184,6 +184,16 @@ func (w Node[T]) ownerDocument(cbCtx js.CallbackContext[T]) (js.Value[T], error)
 	return codec.EncodeEntity(cbCtx, result)
 }
 
+func (w Node[T]) parentNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	cbCtx.Logger().Debug("JS Function call: Node.parentNode")
+	instance, err := js.As[dom.Node](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	result := instance.ParentNode()
+	return codec.EncodeEntity(cbCtx, result)
+}
+
 func (w Node[T]) parentElement(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Node.parentElement")
 	instance, err := js.As[dom.Node](cbCtx.Instance())

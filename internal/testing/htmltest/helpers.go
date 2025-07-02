@@ -120,8 +120,8 @@ func (h HTMLDocumentHelper) CreateHTMLElement(tag string) HTMLElementHelper {
 }
 
 type HTMLParentNodeHelper struct {
-	t          testing.TB
-	ParentNode dom.ElementParent
+	t             testing.TB
+	ElementParent dom.ElementParent
 }
 
 func NewHTMLParentNodeHelper(t testing.TB, n dom.ElementParent) HTMLParentNodeHelper {
@@ -130,7 +130,7 @@ func NewHTMLParentNodeHelper(t testing.TB, n dom.ElementParent) HTMLParentNodeHe
 
 func (h HTMLParentNodeHelper) QuerySelectorHTML(pattern string) (res HTMLElementHelper) {
 	h.t.Helper()
-	e, err := h.ParentNode.QuerySelector(pattern)
+	e, err := h.ElementParent.QuerySelector(pattern)
 	h.t.Logf("Element: %T", e)
 	if err != nil {
 		h.t.Errorf("QuerySelector error. Pattern: '%s'. Error: %s", pattern, err.Error())
@@ -147,7 +147,7 @@ func (h HTMLParentNodeHelper) QuerySelectorHTML(pattern string) (res HTMLElement
 
 func (h HTMLParentNodeHelper) QuerySelectorHTMLOpt(pattern string) (res *HTMLElementHelper) {
 	h.t.Helper()
-	e, err := h.ParentNode.QuerySelector(pattern)
+	e, err := h.ElementParent.QuerySelector(pattern)
 	h.t.Logf("Element: %T", e)
 	if err != nil {
 		h.t.Errorf("QuerySelector error. Pattern: '%s'. Error: %s", pattern, err.Error())

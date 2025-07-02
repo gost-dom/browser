@@ -154,7 +154,9 @@ type Node interface {
 	NodeName() string
 	NodeType() NodeType
 	OwnerDocument() Document
+	// Deprecated: Call ParentNode() instead.
 	Parent() Node
+	ParentNode() Node
 	ParentElement() Element
 	RemoveChild(node Node) (Node, error)
 	NextSibling() Node
@@ -277,7 +279,9 @@ func (n *node) Contains(node Node) bool {
 	return false
 }
 
-func (n *node) Parent() Node { return n.parent }
+// Deprecated: Use [node.ParentNode] instead
+func (n *node) Parent() Node     { return n.ParentNode() }
+func (n *node) ParentNode() Node { return n.parent }
 
 func (n *node) ParentElement() Element {
 	r, _ := n.Parent().(Element)

@@ -141,7 +141,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 
 	domNode := specs.Type("Node")
 	domNode.Method("nodeType").SetCustomImplementation()
-	domNode.Method("parentNode").SetCustomImplementation()
 	domNode.Method("getRootNode").Argument("options").SetHasDefault()
 	domNode.Method("textContent").SetCustomImplementation()
 
