@@ -36,8 +36,8 @@ func (mod V8Module) Eval() (any, error) {
 
 func awaitPromise(ctx *v8.Context, val *v8.Value) (*v8.Value, error) {
 	timeout := time.After(time.Second)
-	resolve := make(chan *v8.Value)
-	reject := make(chan error)
+	resolve := make(chan *v8.Value, 1)
+	reject := make(chan error, 1)
 
 	if !val.IsPromise() {
 		return val, nil
@@ -68,7 +68,7 @@ func awaitPromise(ctx *v8.Context, val *v8.Value) (*v8.Value, error) {
 		}
 		return nil
 	})
-	go ctx.PerformMicrotaskCheckpoint()
+	ctx.PerformMicrotaskCheckpoint()
 
 	select {
 	case <-timeout:
