@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/gost-dom/v8go"
-	v8 "github.com/gost-dom/v8go"
 )
 
 // V8Module represents a compiled ECMAScript module
@@ -34,9 +33,9 @@ func (mod V8Module) Eval() (any, error) {
 	return nil, mod.Run()
 }
 
-func awaitPromise(ctx *v8.Context, val *v8.Value) (*v8.Value, error) {
+func awaitPromise(ctx *v8go.Context, val *v8go.Value) (*v8go.Value, error) {
 	timeout := time.After(time.Second)
-	resolve := make(chan *v8.Value, 1)
+	resolve := make(chan *v8go.Value, 1)
 	reject := make(chan error, 1)
 
 	if !val.IsPromise() {
@@ -44,7 +43,7 @@ func awaitPromise(ctx *v8.Context, val *v8.Value) (*v8.Value, error) {
 	}
 	p, _ := val.AsPromise()
 
-	p.Then(func(info *v8.FunctionCallbackInfo) *v8.Value {
+	p.Then(func(info *v8go.FunctionCallbackInfo) *v8go.Value {
 		args := info.Args()
 		if len(args) > 0 {
 			resolve <- args[0]
@@ -53,7 +52,7 @@ func awaitPromise(ctx *v8.Context, val *v8.Value) (*v8.Value, error) {
 			resolve <- nil
 			return nil
 		}
-	}, func(info *v8.FunctionCallbackInfo) *v8.Value {
+	}, func(info *v8go.FunctionCallbackInfo) *v8go.Value {
 		args := info.Args()
 		if len(args) > 0 && args[0] != nil {
 			val := args[0]
