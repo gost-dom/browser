@@ -22,7 +22,6 @@ func TestRequestURLUsesDocumentLocation(t *testing.T) {
 }
 
 func TestFetchAborted(t *testing.T) {
-
 	// Status code sent indicates the time when a Response object is returned by
 	// the HTTP roundtripper, but the body is still not streamed.
 	t.Run("Before status code has been sent", func(t *testing.T) {
@@ -72,13 +71,11 @@ func TestFetchAborted(t *testing.T) {
 			assert.Equal(t, 200, res.Value.Status)
 			assert.NoError(t, res.Err, "response error")
 
-			t.Log("Reason before", ac.Signal().Reason())
 			ac.Abort("Dummy reason")
-			t.Logf("Reason after (%p): %v", ac.Signal(), ac.Signal().Reason())
+			synctest.Wait()
 
 			_, err := io.ReadAll(res.Value.Reader)
 			var errAny promise.ErrAny
-			t.Logf("Error: %#v", err)
 			assert.ErrorAs(t, err, &errAny, "reading response body of cancelled response")
 			assert.Equal(t, "Dummy reason", errAny.Reason, "Error reason")
 		})
