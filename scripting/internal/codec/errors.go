@@ -14,7 +14,7 @@ import (
 // is caught by JavaScript, the error message will not be logged.
 //
 // This is particularly valuable for not-implemented methods, as JavaScript code
-// will fail perfectly valid assumptions about the function are violated.
+// will fail when perfectly valid assumptions about the function are violated.
 func EncodeCallbackErrorf[T any](
 	ctx js.CallbackContext[T],
 	format string,
