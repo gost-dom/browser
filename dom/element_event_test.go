@@ -15,7 +15,7 @@ func TestElementClickEventPropagation(t *testing.T) {
 		targetCalled bool
 		parentCalled bool
 	)
-	doc := htmltest.ParseHTMLDocumentHelper(t,
+	doc := htmltest.ParseHTMLDocument(t,
 		`<body><div id="parent"><div id="target"></div></div></body>`,
 	)
 	target := doc.GetHTMLElementById("target")
@@ -39,7 +39,7 @@ func TestElementClickEventPreventDefault(t *testing.T) {
 		targetCalled bool
 		parentCalled bool
 	)
-	doc := htmltest.ParseHTMLDocumentHelper(
+	doc := htmltest.ParseHTMLDocument(
 		t,
 		`<body><div id="parent"><div id="target"></div></div></body>`,
 	)
@@ -64,7 +64,7 @@ func TestElementClickEventBubbles(t *testing.T) {
 		targetCalled bool
 		parentCalled bool
 	)
-	doc := htmltest.ParseHTMLDocumentHelper(
+	doc := htmltest.ParseHTMLDocument(
 		t,
 		`<body><div id="parent"><div id="target"></div></div></body>`,
 	)

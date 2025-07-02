@@ -19,7 +19,7 @@ func TestHTMLElement(t *testing.T) {
 func testHTMLElementDataset(t *testing.T) {
 	t.Parallel()
 
-	doc := htmltest.ParseHTMLDocumentHelper(t,
+	doc := htmltest.ParseHTMLDocument(t,
 		`<body>
 			<div id="target" 
 				data-foo="foo" 
@@ -52,7 +52,7 @@ func testHTMLElementDataset(t *testing.T) {
 
 func testHTMLElementTabIndex(t *testing.T) {
 	t.Parallel()
-	doc := htmltest.ParseHTMLDocumentHelper(t,
+	doc := htmltest.ParseHTMLDocument(t,
 		`<body>
 			<div id="target-1"><div>
 			<div id="target-2" tabindex="1"><div>

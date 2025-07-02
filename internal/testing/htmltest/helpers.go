@@ -79,16 +79,6 @@ func NewHTMLDocumentHelper(t testing.TB, doc dom.Document) HTMLDocumentHelper {
 	return HTMLDocumentHelper{NewHTMLParentNodeHelper(t, doc), doc, t}
 }
 
-func ParseHTMLDocumentHelper(t testing.TB, s string) (res HTMLDocumentHelper) {
-	t.Helper()
-	win, err := html.NewWindowReader(strings.NewReader(s))
-	if err != nil {
-		t.Errorf("Error parsing HTML")
-		return
-	}
-	return NewWindowHelper(t, win).HTMLDocument()
-}
-
 // GetHTMLElementById works as [html/HTMLDocument.GetElementById] but assumes the
 // found element to be an [html/HTMLElement]
 func (h HTMLDocumentHelper) GetHTMLElementById(id string) html.HTMLElement {

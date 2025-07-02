@@ -10,7 +10,7 @@ import (
 )
 
 func TestHTMLTemplateElement(t *testing.T) {
-	doc := htmltest.ParseHTMLDocumentHelper(t,
+	doc := htmltest.ParseHTMLDocument(t,
 		`<body><template id="t"><div id="d"></div></template></body>`)
 
 	template := doc.QuerySelectorHTML("template")
@@ -41,7 +41,7 @@ func TestHTMLTemplateElement(t *testing.T) {
 }
 
 func TestDocumentFragmentSetInnerHTML(t *testing.T) {
-	doc := htmltest.ParseHTMLDocumentHelper(t,
+	doc := htmltest.ParseHTMLDocument(t,
 		`<body><template id="t"><div id="d"></div></template></body>`,
 	)
 	template := htmltest.UnwrapHTMLElement[html.HTMLTemplateElement](

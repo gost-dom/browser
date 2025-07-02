@@ -13,7 +13,7 @@ import (
 
 func TestFocusEvents(t *testing.T) {
 	assert := assert.New(t)
-	doc := htmltest.ParseHTMLDocumentHelper(t, activeDocumentTestHtml)
+	doc := htmltest.ParseHTMLDocument(t, activeDocumentTestHtml)
 	var logs []string
 	var logHandler = func(name string) EventHandler {
 		return eventtest.NewTestHandler(func(e *Event) {
@@ -67,7 +67,7 @@ func TestFocusEvents(t *testing.T) {
 }
 
 func TestAutofocus(t *testing.T) {
-	doc := htmltest.ParseHTMLDocumentHelper(t,
+	doc := htmltest.ParseHTMLDocument(t,
 		`<body><form><input id="i" name="i" type="text" autofocus/></form></body>`,
 	)
 	input := doc.GetElementById("i")
