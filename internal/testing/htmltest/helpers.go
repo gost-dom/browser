@@ -163,3 +163,11 @@ func (h HTMLParentNodeHelper) QuerySelectorHTMLOpt(pattern string) (res *HTMLEle
 	}
 	return
 }
+
+func ParseHTMLDocument(t testing.TB, s string) HTMLDocumentHelper {
+	win, err := html.NewWindowReader(strings.NewReader(s))
+	if err != nil {
+		panic(err)
+	}
+	return NewHTMLDocumentHelper(t, win.Document())
+}

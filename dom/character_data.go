@@ -15,14 +15,19 @@ import (
 // See also: https://developer.mozilla.org/en-US/docs/Web/API/CharacterData
 type CharacterData interface {
 	Node
+	ChildNode
 	Data() string
 	SetData(string)
 	Length() int
 }
 
 type characterData struct {
-	node
+	childNode
 	data string
+}
+
+func newCharacterData(text string, ownerDocument Document) characterData {
+	return characterData{newChildNode(ownerDocument), text}
 }
 
 func (n *characterData) Data() string {
@@ -56,7 +61,7 @@ type comment struct {
 }
 
 func NewComment(text string, ownerDocument Document) Comment {
-	result := &comment{characterData{newNode(ownerDocument), text}}
+	result := &comment{newCharacterData(text, ownerDocument)}
 	result.SetSelf(result)
 	return result
 }
@@ -93,7 +98,7 @@ type textNode struct {
 }
 
 func NewText(text string, ownerDocument Document) Text {
-	result := &textNode{characterData{newNode(ownerDocument), text}}
+	result := &textNode{newCharacterData(text, ownerDocument)}
 	result.SetSelf(result)
 	return result
 }

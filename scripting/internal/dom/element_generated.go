@@ -12,12 +12,14 @@ import (
 type Element[T any] struct {
 	parentNode               *ParentNode[T]
 	nonDocumentTypeChildNode *NonDocumentTypeChildNode[T]
+	childNode                *ChildNode[T]
 }
 
 func NewElement[T any](scriptHost js.ScriptEngine[T]) *Element[T] {
 	return &Element[T]{
 		NewParentNode(scriptHost),
 		NewNonDocumentTypeChildNode(scriptHost),
+		NewChildNode(scriptHost),
 	}
 }
 
@@ -62,6 +64,7 @@ func (w Element[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("shadowRoot", w.shadowRoot, nil)
 	w.parentNode.installPrototype(jsClass)
 	w.nonDocumentTypeChildNode.installPrototype(jsClass)
+	w.childNode.installPrototype(jsClass)
 }
 
 func (w Element[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

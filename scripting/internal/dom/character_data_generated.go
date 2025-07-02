@@ -11,10 +11,14 @@ import (
 
 type CharacterData[T any] struct {
 	nonDocumentTypeChildNode *NonDocumentTypeChildNode[T]
+	childNode                *ChildNode[T]
 }
 
 func NewCharacterData[T any](scriptHost js.ScriptEngine[T]) *CharacterData[T] {
-	return &CharacterData[T]{NewNonDocumentTypeChildNode(scriptHost)}
+	return &CharacterData[T]{
+		NewNonDocumentTypeChildNode(scriptHost),
+		NewChildNode(scriptHost),
+	}
 }
 
 func (wrapper CharacterData[T]) Initialize(jsClass js.Class[T]) {
@@ -30,6 +34,7 @@ func (w CharacterData[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("data", w.data, w.setData)
 	jsClass.CreatePrototypeAttribute("length", w.length, nil)
 	w.nonDocumentTypeChildNode.installPrototype(jsClass)
+	w.childNode.installPrototype(jsClass)
 }
 
 func (w CharacterData[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

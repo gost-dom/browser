@@ -9,6 +9,7 @@ func Bootstrap[T any](reg js.ClassBuilder[T]) {
 	js.RegisterClass(reg, "AbortSignal", "EventTarget", NewAbortSignal)
 	js.RegisterClass(reg, "Attr", "Node", NewAttr)
 	js.RegisterClass(reg, "CharacterData", "Node", NewCharacterData)
+	js.RegisterClass(reg, "ChildNode", "", NewChildNode)
 	js.RegisterClass(reg, "DOMTokenList", "", NewDOMTokenList)
 	js.RegisterClass(reg, "Document", "Node", NewDocument)
 	js.RegisterClass(reg, "DocumentFragment", "Node", NewDocumentFragment)

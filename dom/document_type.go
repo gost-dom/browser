@@ -4,16 +4,17 @@ import "golang.org/x/net/html"
 
 type DocumentType interface {
 	Node
+	ChildNode
 	Name() string
 }
 
 type documentType struct {
-	node
+	childNode
 	name string
 }
 
 func NewDocumentType(name string, ownerDocument Document) DocumentType {
-	result := &documentType{newNode(ownerDocument), name}
+	result := &documentType{newChildNode(ownerDocument), name}
 	result.SetSelf(result)
 	return result
 }
