@@ -12,5 +12,7 @@ func newChildNode(ownerDocument Document) childNode { return childNode{newNode(o
 
 func (n *childNode) Remove() {
 	s := n.self
-	s.Parent().RemoveChild(s)
+	if parent := s.Parent(); parent != nil {
+		parent.RemoveChild(s)
+	}
 }
