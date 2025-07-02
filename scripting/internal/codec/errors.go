@@ -32,3 +32,29 @@ func CallbackErrorf[T any](
 	ctx.Logger().Error("JS Callback", log.ErrAttr(err))
 	return err
 }
+
+// UnsupportedOptionErrorf is used to detect when script code uses options or
+// arguments that are not yet supported by Gost-DOM.
+//
+// The primary usage is to identify when a failing test case is failing because
+// of missing functionality in Gost-DOM, rather than an error in the system
+// under test.
+//
+// The value argument represents a JavaScript function argument keyed option
+// value. If it is not null or undefined, an error is logged and returned. The
+// name of the api is specified in the webAPI, and the unsupported method or
+// option is specified in key.
+func UnsupportedOptionErrorf[T any](
+	ctx js.CallbackContext[T],
+	value js.Value[T],
+	webAPI string,
+	key string,
+) error {
+	if js.IsNullish(value) {
+		return nil
+	}
+	return CallbackErrorf(ctx,
+		"gost-dom/scripting/%s: %s: not yet supported",
+		webAPI, key,
+	)
+}

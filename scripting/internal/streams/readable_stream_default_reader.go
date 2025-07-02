@@ -17,15 +17,13 @@ func (w ReadableStreamDefaultReader[T]) CreateInstance(
 
 func (w ReadableStreamDefaultReader[T]) decodeReadableStream(
 	ctx js.CallbackContext[T], v js.Value[T],
-) (string, error) {
-	if v != nil && v.Boolean() {
-		return "", codec.CallbackErrorf(
-			ctx,
-			"gost-dom/scripting/streams: ReadableStreamDefaultReader readableStream not yet supported",
-		)
-	}
-	return "", nil
+) (res string, err error) {
+	err = codec.UnsupportedOptionErrorf(
+		ctx, v, "streams", "ReadableStreamDefaultReader readableStream",
+	)
+	return
 }
+
 func (w ReadableStreamDefaultReader[T]) toPromiseReadableStreamReadResult(
 	ctx js.CallbackContext[T], prom promise.Promise[streams.ReadResult]) (js.Value[T], error) {
 	return codec.EncodePromise(ctx, prom, w.encodeReadResult)
