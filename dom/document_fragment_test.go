@@ -9,7 +9,6 @@ import (
 )
 
 func TestDocumentFragmentClone(t *testing.T) {
-
 	doc := ParseHtmlString("")
 	f := doc.CreateDocumentFragment()
 	dNode, _ := f.AppendChild(doc.CreateElement("div"))
