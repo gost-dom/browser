@@ -122,7 +122,7 @@ func TestModuleCyclicDeps(t *testing.T) {
 
 	server := gosttest.StaticFileServer{
 		"/index.html": gosttest.StaticHTML(indexHTML),
-		"/a.js": gosttest.StaticHTML(`
+		"/a.js": gosttest.StaticJS(`
 				import * as b from "./b.js";
 				let keys
 				try {
@@ -134,7 +134,7 @@ func TestModuleCyclicDeps(t *testing.T) {
 				export const valueFromA = () => "valueFromA";
 				export const printA = () => "a-" + b.valueFromB();
 			`),
-		"/b.js": gosttest.StaticHTML(`
+		"/b.js": gosttest.StaticJS(`
 				import * as a from "./a.js";
 				let keys
 				try {
@@ -146,7 +146,7 @@ func TestModuleCyclicDeps(t *testing.T) {
 				export const valueFromB = () => "valueFromB";
 				export const printB = () => "b-" + a.valueFromA();
 			`),
-		"/module.js": gosttest.StaticHTML(`
+		"/module.js": gosttest.StaticJS(`
 				import * as a from "./a.js"
 				import * as b from "./b.js"
 				document.addEventListener("DOMContentLoaded", () => {
