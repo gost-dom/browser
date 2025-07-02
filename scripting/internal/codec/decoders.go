@@ -23,6 +23,9 @@ func DecodeInt[T any](_ js.CallbackContext[T], val js.Value[T]) (int, error) {
 }
 
 func DecodeNode[T any](ctx js.CallbackContext[T], val js.Value[T]) (dom.Node, error) {
+	if val.IsNull() {
+		return nil, nil
+	}
 	if obj, ok := val.AsObject(); ok {
 		if node, ok := obj.NativeValue().(dom.Node); ok {
 			return node, nil
