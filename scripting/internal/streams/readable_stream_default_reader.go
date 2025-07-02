@@ -1,5 +1,3 @@
-// This file is generated. Do not edit.
-
 package streams
 
 import (
@@ -17,9 +15,12 @@ func (w ReadableStreamDefaultReader[T]) CreateInstance(
 	)
 }
 
-func (w ReadableStreamDefaultReader[T]) decodeReadableStream(ctx js.CallbackContext[T], v js.Value[T]) (string, error) {
+func (w ReadableStreamDefaultReader[T]) decodeReadableStream(
+	ctx js.CallbackContext[T], v js.Value[T],
+) (string, error) {
 	if v != nil && v.Boolean() {
-		return "", codec.CallbackErrorf(ctx,
+		return "", codec.CallbackErrorf(
+			ctx,
 			"gost-dom/scripting/streams: ReadableStreamDefaultReader readableStream not yet supported",
 		)
 	}
