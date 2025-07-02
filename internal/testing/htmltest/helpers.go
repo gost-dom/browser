@@ -167,7 +167,7 @@ func (h HTMLParentNodeHelper) QuerySelectorHTMLOpt(pattern string) (res *HTMLEle
 func ParseHTMLDocument(t testing.TB, s string) HTMLDocumentHelper {
 	win, err := html.NewWindowReader(strings.NewReader(s))
 	if err != nil {
-		panic(err)
+		t.Fatalf("gost-dom/htmltest: ParseHTMLDocument: %v", err)
 	}
 	return NewHTMLDocumentHelper(t, win.Document())
 }
