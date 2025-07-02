@@ -47,7 +47,9 @@ type PipeHandler struct {
 //
 // While both are optional, they are recommended options.
 func NewPipeHandler(t testing.TB) *PipeHandler {
-	return &PipeHandler{T: t}
+	h := &PipeHandler{T: t}
+	context.AfterFunc(h.T.Context(), func() { h.Close() })
+	return h
 }
 
 func (h *PipeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -57,9 +59,7 @@ func (h *PipeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h.Req = r
 	h.served = true
 	h.ensureChannel()
-	context.AfterFunc(r.Context(), func() {
-		h.ClientDisconnected = true
-	})
+	context.AfterFunc(h.Req.Context(), func() { h.ClientDisconnected = true })
 	for f := range h.cmds {
 		f(w)
 	}
@@ -120,8 +120,7 @@ func (h *PipeHandler) addF(n string, f func(http.ResponseWriter)) {
 	h.cmds <- f
 }
 
-// Close closes the "pipe", completing the HTTP response. Panics if already
-// closed.
+// Close closes the "pipe", completing the HTTP response.
 func (h *PipeHandler) Close() {
 	h.ensureChannel()
 	h.close()
