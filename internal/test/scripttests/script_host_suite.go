@@ -52,6 +52,10 @@ func (s *ScriptHostSuite) TeardownTest() {
 	s.Window.Close()
 }
 
+func (s *ScriptHostSuite) TearDownSuite() {
+	s.scriptHost.Close()
+}
+
 // Runs a script and returns the evaluated value as a native Go value.
 //
 // Panics (or generates an error?) if no suitable conversion could be found (i.e.
