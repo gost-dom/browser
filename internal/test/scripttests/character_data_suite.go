@@ -10,15 +10,15 @@ import (
 )
 
 func testCharacterData(t *testing.T, shf ScriptHostFactory) {
-	suite := characterDataSuie{shf}
+	suite := characterDataSuite{shf}
 	t.Run("TextNode", suite.testTextNode)
 }
 
-type characterDataSuie struct {
+type characterDataSuite struct {
 	ScriptHostFactory
 }
 
-func (s characterDataSuie) testTextNode(t *testing.T) {
+func (s characterDataSuite) testTextNode(t *testing.T) {
 	b := browser.New(
 		browser.WithScriptHost(s.New()),
 		browser.WithLogger(gosttest.NewTestLogger(t)),
