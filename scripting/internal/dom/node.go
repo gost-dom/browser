@@ -34,6 +34,15 @@ func (n Node[T]) nodeType(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeInt(cbCtx, int(instance.NodeType()))
 }
 
+func (n Node[T]) parentNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	cbCtx.Logger().Debug("JS Function call: Node.parentNode")
+	instance, err := js.As[dom.Node](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	return codec.EncodeEntity(cbCtx, instance.Parent())
+}
+
 func (n Node[T]) decodeGetRootNodeOptions(
 	_ js.CallbackContext[T],
 	value js.Value[T],

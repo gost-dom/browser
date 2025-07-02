@@ -138,8 +138,10 @@ func configureDOMNode(specs *WebAPIConfig) {
 	domTokenList.Method("toggle").SetCustomImplementation()
 	domTokenList.Method("remove").SetCustomImplementation()
 	domTokenList.Method("supports").SetNotImplemented()
+
 	domNode := specs.Type("Node")
 	domNode.Method("nodeType").SetCustomImplementation()
+	domNode.Method("parentNode").SetCustomImplementation()
 	domNode.Method("getRootNode").Argument("options").SetHasDefault()
 	domNode.Method("textContent").SetCustomImplementation()
 
@@ -152,7 +154,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 	domNode.Method("isDefaultNamespace").Ignore()
 	domNode.Method("replaceChild").Ignore()
 	domNode.Method("baseURI").Ignore()
-	domNode.Method("parentNode").Ignore()
 	domNode.Method("lastChild").Ignore()
 	domNode.Method("nodeValue").Ignore()
 }

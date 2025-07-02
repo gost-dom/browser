@@ -13,6 +13,15 @@ func NewNodeTestSuite(h html.ScriptHost) *NodeTestSuite {
 	return &NodeTestSuite{ScriptHostSuite: ScriptHostSuite{scriptHost: h}}
 }
 
+func (s *NodeTestSuite) TestStructure() {
+	s.MustLoadHTML(`<div id="parent-1"><div id="child-1"></div><div id="child-2"></div></div>`)
+	s.Assert().Equal(true, s.MustEval(`
+		const parent1 = document.getElementById("parent-1")
+		const child1 = document.getElementById("child-1")
+		child1.parentNode === parent1
+	`))
+}
+
 func (s *NodeTestSuite) TestInsertBefore() {
 	s.MustLoadHTML(`<div id="parent-1"><div id="child-1"></div><div id="child-2"></div></div>`)
 	s.Expect(s.Eval(`

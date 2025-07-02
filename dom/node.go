@@ -503,7 +503,11 @@ func (n *node) NextSibling() Node {
 	return children[idx]
 }
 func (n *node) PreviousSibling() Node {
-	children := n.Parent().nodes()
+	parent := n.Parent()
+	if parent == nil {
+		return nil
+	}
+	children := parent.nodes()
 	idx := slices.IndexFunc(
 		children,
 		func(child Node) bool { return n.ObjectId() == child.ObjectId() },

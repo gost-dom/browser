@@ -31,6 +31,7 @@ func (w Node[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("nodeName", w.nodeName, nil)
 	jsClass.CreatePrototypeAttribute("isConnected", w.isConnected, nil)
 	jsClass.CreatePrototypeAttribute("ownerDocument", w.ownerDocument, nil)
+	jsClass.CreatePrototypeAttribute("parentNode", w.parentNode, nil)
 	jsClass.CreatePrototypeAttribute("parentElement", w.parentElement, nil)
 	jsClass.CreatePrototypeAttribute("childNodes", w.childNodes, nil)
 	jsClass.CreatePrototypeAttribute("firstChild", w.firstChild, nil)
