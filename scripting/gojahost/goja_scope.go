@@ -121,7 +121,7 @@ func (c gojaScope) NewObject() js.Object[jsTypeParam] {
 func (c gojaScope) NewUint8Array(data []byte) js.Value[jsTypeParam] {
 	vm := c.GojaContext.vm
 	arrayBuf := vm.NewArrayBuffer(data)
-	fVal, err := vm.RunScript("gost-dom/gojahost/NewUint8Array", "Uint8Array")
+	fVal, err := vm.RunScript("gost-dom/gojahost:NewUint8Array", "Uint8Array")
 	if err != nil {
 		panic(fmt.Sprintf("gost-dom/gojahost: Uint8Array: %v", err))
 	}
