@@ -43,17 +43,11 @@ break the API aren't.
 
 ## Provide examples for other frameworks.
 
-You can help discover compatibility issues and drive development by supplying an
-example project using other libraries.
+In order to check how Gost-DOM works with different frameworks, example projects
+are necessary. You can help by creating new projects, or extend the existing
+ones with more use cases, to help find compatibility issues.
 
-<!--
-Gost-DOM should support all _modern_ JavaScript libraries and front-end
-frameworks, including:
-
-- Datastar
-- React
-- Alpine
--->
+https://github.com/gost-dom/browser/issues/124
 
 ### Test project "requirement"
 

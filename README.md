@@ -7,22 +7,22 @@ application in Go that relies on JavaScript. Properties of Gost-DOM-based tests:
 
 - Tests run in parallel due to complete _complete isolation_[^1]
 - No erratic behaviour due to 100% predictable UI reactions.
-- "Blazingly fast". No out-of-process calls, not even thread boundaries. Web
-  application code runs in the test thread, so a panic in your code keeps a full
-  stack trace to the test case. [^2]
+- "Blazingly fast". No out-of-process calls, not even thread boundaries for web
+  API calls. Web application code runs in the test thread, so a panic in your
+  code keeps a full stack trace to the test case. [^2]
 - Dependencies can be replaced while testing.
 
 Yet Gost-DOM still uses HTTP request and responses for verification, testing the
 entire stack, as well as middlewares. 
 
-[Read this to get started](./docs/Getting-started.md), and see a quick example
 of usage.
 
 > [!NOTE]
 >
 > This is 0.x version still, and breaking API changes do occur, but will be
-> announced before release in the [Gost-DOM
-> discussions](https://github.com/orgs/gost-dom/discussions/categories/announcements) (do say Hi! 👋)
+> announced before release in the [Gost-DOM discussions] (do say Hi! 👋)
+
+[Gost-DOM discussions]: https://github.com/orgs/gost-dom/discussions/categories/announcements
 
 ## Looking for sponsors
 
@@ -37,131 +37,70 @@ development, or death 😢
 For companies wanting to sponsor, I can send formal invoices too. More
 information on the project's [Sponsor page](https://gostdom.net/sponsor)
 
-## Join the "community"
+## Getting started
 
-- [Join my discord server](https://discord.gg/rPBRt8Rf) to chat with me, and stay
-up-to-date on progress
-- Participate in the [github discussions](https://github.com/orgs/gost-dom/discussions), and [say
-hi!](https://github.com/orgs/gost-dom/discussions)
-- Want to contribute to the project, there's a very rough early [guide describing the overall project structure](./CONTRIBUTING.md)
+- Read [Getting Started]
+- Familiarize yourself with the [Feature list] to know what is implemented.
+- [Join my discord server] to chat with me, and stay up-to-date on progress.
+- [say hi!] on the github discussions page.
+- Read the [contribution guide](./CONTRIBUTING.md) to see how you can help.
 
-## Versioning and breaking changes
-
-While still versioned as 0.x, this library will _generally_ follow the
-convention, that a minor version increment indicates a breaking change.
-
-Breaking changes will be announced up-front in the [anouncements
-discussions](https://github.com/orgs/gost-dom/discussions/categories/announcements).
-When feasible withing a reasonable amount of work, an alternate solution will be
-made available prior to releasing the breaking change. Reply to the anouncements
-if this would affect you.
+[Getting Started]: ./docs/Getting-started.md
+[Feature list]: ./docs/Features.md
+[say hi!]: https://github.com/orgs/gost-dom/discussions
+[Join my discord server]: https://discord.gg/rPBRt8Rf
 
 ## Project status
 
-This still early pre-release, and only the core web APIs are supported, and not
-100%. Check the [Feature list](./docs/Features.md) for an overview.
+This is still in an early phase, but it's approaching a design that seems
+promising for the purpose.
 
-The original priority was to support session based login-flow using in an HTMX
-app. This is working, and Gost-DOM supports basic HTMX behaviour, including
-content swapping, XHR, forms, and cookies.
+At the moment there's an emphasis on high-risk features that can expose poor
+design choices, but the "primary API" has been reasonably stable for a good
+amount of time.
 
-In order to identify risks and architectural flaws, focus has moved to support 
-[Datastar](https://data-star.dev/)
+### Upcoming work
 
-### Upcoming changes
+The near-future work is prioritised around
 
-Currently, the script binding layer is undergoing a refactoring process. 
+- Provide distinct error messages when using unsupported JS functions
+- Improving `fetch` implementation
+- Fix incorrectly implemented features
+- Simulate user interaction, such as typing
 
-In order to support DataStar, a lot of new JS APIs were needed. But the
-JavaScript layer has some unsolved problems problems in the JavaScript were a
-becoming a greater and greater burden:
+#### Notify when using unsupported JS functions
 
-- Supporting different script engines without rebuilding the entire script layer
-  from scratch.
-- Design a modular approach, allowing non-core web APIs to be implemented as 3rd
-  party modules; without coupling them to V8 and the v8go project.
-- Provide better code structure in the JS wrapping layer; rather than all files
-  in one package.
+Most of the JS mapping layer is auto-generated, including operations and
+attribute getter/setters that are not yet supported. This generates explicit
+error messages in the callback functions, making it clear when using, that the
+failed test case is caused by lack of support in Gost-DOM - not a bug in your
+code.
 
-This task shows more details: https://github.com/gost-dom/browser/issues/92
+This should be improved further - including when calling functions accepting an
+options object, and clien code pass a valid, but unsupported option.
 
-#### JS Features
+#### Implement more of `fetch`
 
-To support DataStar, I need the following features:
+The current `fetch` implementation is extremely basic, having only support for
+simple `GET` requests.
 
-- ESM support (requires new features in  v8go)
-- `HTMLElement.dataset` (requires new features in v8go)
-- [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver)
-  support.
-- `fetch` API, including `AbortController` and `ReadableStream`.
+This will be improved in the future for more advanced scenarios, including
+correct headers support, cookies, body - including streaming response bodies,
+etc.
 
-I have experimental working features for ESM, `dataset`. `MutationObserver` is
-included in the latest release, but the Go implementation is stil in an
-`internal/` package, as I don't think the Go interface is just right yet.
-
-Only `fetch` is lacking completely. I tried a few polyfills to build it on the
-JS side on top if XHR - but I was unable to find a working combination of
-polyfills that works with Datastar's streaming. So a native fetch implementation
-is necessary.
-
-#### Fix already implemented features
+#### Fix incorrectly implemented features
 
 Many of the already implemented features or APIs are not completely implemented,
 a few examples.
 
 - Assigning to the `history` doesn't navigate
-- [Live collections](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCollection) are static.
+- [Live collections] are not live.
 - Submit buttons cannot override form method and action.
 
 To give users a better chance of predicting what works, and what doesn't, it is
 an aim to make sure that existing features work as they would in a real browser.
 
-#### Goja support
-
-V8 depends on Cgo, but [Goja](https://github.com/dop251/goja) is a pure Go
-JavaScript engine. While it may not be as complete as V8, it could be a usable
-alternative for many projects providing a pure Go option.
-
-V8 support will not go away, so there's always a fallback, if important JS
-features are lacking from Goja.
-
-### Memory Leaks
-
-The current implementation is leaking memory for the scope of a browsing
-context. all DOM nodes created and deleted for the lifetime of the context will
-stay in memory until navigating, or the browser is actively disposed.
-
-**This is not a problem for the intended use case**. Web scraping SPAs _might_
-become a problem.
-
-Actions that will reset the browsing context are:
-
-- Clicking a link (default behaviour not prevented by JavaScript)
-- Submitting a form (default behaviour not prevented by JavaScript)
-- Refresh or navigating history entries generated by these operations.
-
-Examples that **will not reset** the browsing context are (not necessarily a
-complete list):
-
-- Navigating an SPA.
-- Navigating an HTML app with boosted links.
-- Navigating history entries generated by these types of actions.
-
-#### Why memory leaks
-
-This codebase is a marriage between two garbage collected runtimes, and what is
-conceptually _one object_ is split into two, a Go object and a JavaScript
-wrapper. As long of them is reachable; so must the other be.
-
-I could join them into one; but that would result in an undesired coupling; the
-DOM implementation being coupled to the JavaScript execution engine.
-
-Since this project started, weak references has been introduced to Go 1.24 which
-I beleve provides a solution to the problem, but this hasn't been prioritised 
-
-For that reason; and because it's not a problem for the intended use case, I
-have postponed dealing with that issue.
-
+[Live collections]: https://developer.mozilla.org/en-US/docs/Web/API/HTMLCollection
 
 ### Future goals
 
@@ -178,7 +117,15 @@ There is much to do, which includes (but this is not a full list):
 - Implement default browser behaviour for user interaction, e.g. pressing 
   <key>enter</key> when an input field has focus should submit the form.
 
-### Long Term Goals
+#### Pure Go script engine
+
+V8 is a "feature complete" JavaScript environment, so V8 support will never go
+away. But it has some overhead, and it depends on Cgo. Also, the current V8
+layer [leaks memory in the scope of a browsing context](./docs/V8.md).
+
+[Goja](https://github.com/dop251/goja) is a pure Go JavaScript engine, and is
+alsmost fully supported as an alternative. JavaScript bindings in code target a
+layer of abstraction, allowing the script engine to be replaced.
 
 #### CSS Parsing
 
@@ -270,5 +217,3 @@ JavaScript libraries.
     database dependencies, they are not isolated.
 [^2]: This depends on how you configure Gost-DOM. 
 
-[dataset]: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset
-[MutationObserver]: https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver

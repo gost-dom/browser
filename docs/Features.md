@@ -2,15 +2,16 @@
 
 Gost-DOM is still in version 0.x and not all features are supported.
 
-Don't hesitate to [Start a
-discussion](https://github.com/orgs/gost-dom/discussions) or [Submit an
-issue](https://github.com/gost-dom/browser/issues?q=sort%3Aupdated-desc+is%3Aissue+is%3Aopen)
-if you need any of the features missing.
+Don't hesitate to [Start a discussion] or [Submit an issue] if you need any of
+the features missing.
 
 User feedback helps setting the direction and prioritising development.
 
-For missing features, described here, check the linked issues to see if this
-document might be missing updates updates.
+Missing features described here may have been implemented. Check the linked
+issue if applicable.
+
+[Start a discussion]: https://github.com/orgs/gost-dom/discussions
+[Submit an issue]: https://github.com/gost-dom/browser/issues?q=sort%3Aupdated-desc+is%3Aissue+is%3Aopen
 
 ## General browser behaviour
 
@@ -21,9 +22,10 @@ Opening windows with isolated script context, sharing a cookie store.
 The browser supports plain JavaScript, either as content in a `<script>`
 element, or `<script src="">`.
 
-- `async` or `defer` attributes are ignored, and the script is executed when
-mounted in the DOM. 
-- ESM is not supported, [#64](https://github.com/gost-dom/browser/issues/64).
+- `async` is ignored. `defer` will delay script execution until the DOM has
+  parsed.
+- `<script type="module">` imports an ES module. Import maps are not supported,
+  so any `import` statement in the script must be a valid href.
 - WASM is not supported.
 
 ### Script runtime
@@ -44,6 +46,9 @@ are partially implemented:
 - [XMLHttpRequest](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest_API)
 - [Console](https://developer.mozilla.org/en-US/docs/Web/API/console) (sort of)
 - [History](https://developer.mozilla.org/en-US/docs/Web/API/History_API)
+- [Fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
+- [Encoding](https://developer.mozilla.org/en-US/docs/Web/API/Encoding_API)
+- [Streams](https://developer.mozilla.org/en-US/docs/Web/API/Streams_API)
 
 So no location API, no session storage, cookies API, etc. (Cookies work, but not
 exposed to JavaScript)
@@ -114,3 +119,15 @@ be directed back to Go code, see [Getting started](./Getting-started.md)
 ### History
 
 - Setting attributes on `window.history` has no effect, i.e., it doesn't navigate.
+
+### Fetch, Encoding, and Streams
+
+This is so far very limited in capabilities. Only enough has been implemented to
+support some basic [Datastar](https://data-star.dev/) cases.
+
+- Fetch only supports `GET` requests [#93]
+- The **only** option accepted is `signal` [#106]
+- Only basic `ReadableStream` support, and no BYOB reader.
+
+[#93]: https://github.com/gost-dom/browser/issues/93
+[#106]: https://github.com/gost-dom/browser/issues/106
