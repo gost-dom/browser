@@ -47,7 +47,6 @@ func TestDocumentImportNode(t *testing.T) {
 			</div>
 		</body>`,
 	)
-	t.Log(doc.DocumentElement().OuterHTML())
 	parent := doc.GetElementById("parent")
 	newDoc := html.NewHTMLDocument(html.NewWindow())
 	if !assert.NotNil(t, parent) {
