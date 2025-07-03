@@ -116,7 +116,7 @@ func New(options ...BrowserOption) *Browser {
 		b.ScriptHost = v8host.New(v8host.WithLogger(config.logger))
 	}
 	if config.ctx != nil {
-		context.AfterFunc(config.ctx, b.close)
+		context.AfterFunc(config.ctx, b.Close)
 	}
 	return b
 }
@@ -147,10 +147,6 @@ func (b *Browser) createOptions(location string) WindowOptions {
 
 func (b *Browser) Close() {
 	log.Debug(b.Logger, "Browser: Close()")
-	b.close()
-}
-
-func (b *Browser) close() {
 	for _, win := range b.windows {
 		win.Close()
 	}

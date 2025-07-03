@@ -22,8 +22,15 @@ func (l TestingLogHandler) Enabled(_ context.Context, lvl slog.Level) bool {
 	return lvl >= slog.Level(l.MinLogLevel)
 }
 
+func (h TestingLogHandler) testDone() bool {
+	if h.testCompleted {
+		return true
+	}
+	return h.TB.Context().Err() != nil
+}
+
 func (l TestingLogHandler) Handle(ctx context.Context, r slog.Record) error {
-	if l.testCompleted {
+	if l.testDone() {
 		if l.fallbackHandler == nil {
 			l.fallbackHandler = slog.NewTextHandler(os.Stderr, nil)
 		}
@@ -52,7 +59,9 @@ func (l TestingLogHandler) WithGroup(name string) slog.Handler { return l }
 
 // close prevents further log messages from being written to the wrapped
 // [testing.TB] instance. Once a test has completed, logging will cause a panic.
-func (l *TestingLogHandler) close() { l.testCompleted = true }
+func (l *TestingLogHandler) close() {
+	l.testCompleted = true
+}
 
 type HandlerOption = func(*TestingLogHandler)
 
