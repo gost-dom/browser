@@ -61,7 +61,7 @@ func (e *htmlScriptElement) run() {
 		// TODO: Dispatch "error" event
 		log.Error(e.Logger(), "Script error", "src", e.src, log.ErrAttr(err))
 	}
-	log.Info(e.Logger(), "Script done")
+	log.Debug(e.Logger(), "Script execution completed", "src", e.src, "hasSource", e.src != "")
 }
 
 func (e *htmlScriptElement) AppendChild(n dom.Node) (dom.Node, error) {
