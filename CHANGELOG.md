@@ -1,6 +1,56 @@
 # Changelog - Gost-DOM
 
 
+## [0.8.0](https://github.com/gost-dom/browser/compare/v0.7.2...v0.8.0) (2025-07-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* Update minimum Go version to 1.24
+* Add body argument to XHR Send method
+
+### build
+
+* Update minimum Go version to 1.24 ([75bb6f3](https://github.com/gost-dom/browser/commit/75bb6f3570155d499512c2f9e41b23dcdb3fa11b))
+
+
+### Features
+
+* Add body argument to XHR Send method ([632750c](https://github.com/gost-dom/browser/commit/632750c6fc0aafe486b34ae599ffe943f462df71))
+* Add ReadableStreamDefaultReader.read() method ([8f3a918](https://github.com/gost-dom/browser/commit/8f3a9184bdc49dd47091a80e18354c0801d5f19e))
+* add skeleton fetch function ([8a52970](https://github.com/gost-dom/browser/commit/8a5297075be6eecd7de220dd6119ca3f8316ce70))
+* Add suport for ES modules ([4082907](https://github.com/gost-dom/browser/commit/408290748d45e9d171b5555238318b737565023b))
+* Add XHR.responseType ([d9e3dd4](https://github.com/gost-dom/browser/commit/d9e3dd433c3d67023b777f6966d582b1f9849c40))
+* Close browser when context is closed ([8a68449](https://github.com/gost-dom/browser/commit/8a684491b59dd8c784c1ee2a83a792fb43d76d61))
+* Create EventSource ([76a0bcc](https://github.com/gost-dom/browser/commit/76a0bcce9dc76d6bea6dfb3d2a07a58ad9e91358))
+* Create log error record when calling not implemented JS function ([bb49840](https://github.com/gost-dom/browser/commit/bb49840a3dcd4c7d18b88b18f0ea7b4cabd62baf))
+* Create Text prototype in JS ([496098c](https://github.com/gost-dom/browser/commit/496098cd3024062cb9f3179133df72b81483aace))
+* **dom:** Add AbortController.Abort() ([31e75d2](https://github.com/gost-dom/browser/commit/31e75d248217e0c81deeedf5d067e7f015246a81))
+* Expose ParentNode.children to JS ([fadb9ec](https://github.com/gost-dom/browser/commit/fadb9eccc4282d28e6e244e9a5b909484d601dec))
+* **goja:** Support indexed and named handlers ([2748c92](https://github.com/gost-dom/browser/commit/2748c92e91aace3c2bdbc1a5cbba7fd22f952f6b))
+* Implement ChildNode.remove() ([5f1f7e5](https://github.com/gost-dom/browser/commit/5f1f7e5e395390c07d26a848b0638ebc79f05d21))
+* Implement Document.importNode ([fc20d9a](https://github.com/gost-dom/browser/commit/fc20d9a9769ac529af5750ca850c3fae180d089a))
+* Implement Element.InsertAdjecentElement ([aa2469e](https://github.com/gost-dom/browser/commit/aa2469e689a42946c616e7d1a90cf5c55fdf3737))
+* Implement Response.body returning a ReadableStream ([edf1786](https://github.com/gost-dom/browser/commit/edf17860af8fbf93f6aa8141ac372ed51867e4bf))
+* Improve error logging of JS errors ([595fe57](https://github.com/gost-dom/browser/commit/595fe573c56368016c49aec2c25585d0e54146fa))
+* Override HTMLTemplateElement.SetInnerHTML ([8c2e396](https://github.com/gost-dom/browser/commit/8c2e39606177fdef25a16350c2a5836c6ba09dcc))
+* **scripting:** Add Element.innerHTML attribute getter/setter ([899ae81](https://github.com/gost-dom/browser/commit/899ae81b46bcac22295c37fb0c36216c9d4d68e3))
+* **scripting:** Add iterable to element attributes ([e463ed7](https://github.com/gost-dom/browser/commit/e463ed77c22b2effe468921143364c625e7ad01f))
+* **scripting:** Basic window.self implementation ([52853d4](https://github.com/gost-dom/browser/commit/52853d4d1fc9a2bcde93694424af8a257ab8177b))
+* **scripting:** Expose Node.parentNode ([bae0bee](https://github.com/gost-dom/browser/commit/bae0bee3a7bc62c12484d6a9f284db080a7f0fa3))
+* **scripting:** Support TextDecoder through polyfill ([edaf1a4](https://github.com/gost-dom/browser/commit/edaf1a4923764bb4a26b2bf199c36e05e145876e))
+* **scripting:** Support url.setSearch ([3c45e0b](https://github.com/gost-dom/browser/commit/3c45e0ba2348824dc58fcedc2fbb23bba8846043))
+* Support aborting fetch request ([cc31b91](https://github.com/gost-dom/browser/commit/cc31b913411749e65a7acbc3cca7ca9cc82eb2a6))
+* Support basic Datastar `GET` request ([2d29e9d](https://github.com/gost-dom/browser/commit/2d29e9d5089376b6cda9e85e3dd930654dc64c46))
+* Support predictable event loop callbacks in goroutines ([ff6d160](https://github.com/gost-dom/browser/commit/ff6d1600f65e1e9ca704def89efa083373af071d))
+
+
+### Bug Fixes
+
+* Add missing return for V8 error logs ([f623045](https://github.com/gost-dom/browser/commit/f623045f15c7754c4a9cd4bc2deec776d8e69df3))
+* Error when passing null as a Node in JS ([891d50a](https://github.com/gost-dom/browser/commit/891d50a1c856723c32d2441d77613efad207f495))
+* **goja:** Errors in callbacks were not reported as errors ([5650df6](https://github.com/gost-dom/browser/commit/5650df6f8eac07e3a846594dfd03a2974c0b1140))
+
 ## [0.7.2](https://github.com/gost-dom/browser/compare/v0.7.1...v0.7.2) (2025-06-12)
 
 
