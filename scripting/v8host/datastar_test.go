@@ -1,0 +1,77 @@
+package v8host_test
+
+import (
+	"context"
+	"log/slog"
+	"testing"
+	"time"
+
+	"github.com/gost-dom/browser"
+	app "github.com/gost-dom/browser/internal/test/integration/test-app"
+	"github.com/gost-dom/browser/internal/testing/gosttest"
+	"github.com/gost-dom/browser/internal/testing/htmltest"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestDatastar(t *testing.T) {
+	// Each test has it's own V8 instance, so everything can be parallelized.
+	t.Parallel()
+
+	// Make the test abort if it hasn't completed withing a second. This is an
+	// excessive timeout - the test runs in about a millisecond, but
+	// bootstrapping new v8 isolates, when one cannot be picked from a pool
+	// incurs an overhead.
+	ctx, cancel := context.WithTimeout(t.Context(), time.Second)
+	defer cancel()
+
+	// The BrowserHelper is an internal test helper in Gost-DOM, and may
+	// eventually make it's way out of the "internal" space. The patterns are
+	// easily adopted locally.
+	//
+	// It adds testing.TB-aware helpers on top of native functions, e.g, non-nil
+	// error return values will be reported to t.Error(), automatically causing
+	// the test to fail.
+	b := htmltest.NewBrowserHelper(t,
+		// browser.New is the primary entry point to creating a Gost-DOM browser
+		browser.New(
+			// By passing a context, the browser is automatically disposed when the
+			// context cancels. This is derived from the test's context, but this
+			// could be `t.Context()` as well, disposing the browser when the test
+			// is done.
+			//
+			// Disposing the browser will allow V8 isolates to be reused,
+			// significantly speeding up creation of new browsers.
+			browser.WithContext(ctx),
+			// app.CreateServer returns the root HTTP handler for the test
+			// application. browser.WithHandler connects Gost-DOM directly to the
+			// http Handler, bypassing the TCP transport layer.
+			browser.WithHandler(app.CreateServer()),
+			// WithLogger installs a log handler Gost-DOM logs to an *slog.Logger
+			// from the standard library.
+			browser.WithLogger(
+				// The test logger pipes all log messages to t.Log() methods.
+				// Error level logs are piped to t.Error() though (this is
+				// configurable). This will cause tests to fail if a JavaScript
+				// error is thrown, even if the assertions in Go code succeed.
+				gosttest.NewTestLogger(t,
+					gosttest.MinLogLevel(slog.LevelDebug),
+				),
+			),
+		))
+	// The host name is ignored, but the server serves a Datastar test page on
+	// the /ds route
+	win := b.OpenWindow("https://example.com/ds")
+	doc := win.HTMLDocument() // Wrap Window.Document() and returns a "Document test helper"
+
+	// GetHTMLElementById wraps GetElementById, but asserts that any non-nil
+	// return values are value HTMLElement instances, providing access to user
+	// interaction methods, here Click(), avoiding tedious type assertions and
+	// success checks.
+	clickTarget := doc.GetHTMLElementById("click-target")
+
+	// Verify textContent both before and after clicking.
+	assert.Equal(t, "", clickTarget.TextContent())
+	doc.GetHTMLElementById("fetch-events-button").Click()
+	assert.NoError(t, win.Clock().ProcessEvents(ctx)) // Wait for pending promises to settle.
+	assert.Equal(t, "Foobar", clickTarget.TextContent())
+}
