@@ -34,9 +34,9 @@ func TestDatastar(t *testing.T) {
 	b := htmltest.NewBrowserHelper(t,
 		// browser.New is the primary entry point to creating a Gost-DOM browser
 		browser.New(
-			// By passing a context, the browser is automatically disposed when the
-			// context cancels. This is derived from the test's context, but this
-			// could be `t.Context()` as well, disposing the browser when the test
+			// By passing a context, the browser automatically disposes
+			// resources when the context cancels. By deriving contexts from
+			// t.Context(), the context will automatically cancel when the test
 			// is done.
 			//
 			// Disposing the browser will allow V8 isolates to be reused,
@@ -44,7 +44,9 @@ func TestDatastar(t *testing.T) {
 			browser.WithContext(ctx),
 			// app.CreateServer returns the root HTTP handler for the test
 			// application. browser.WithHandler connects Gost-DOM directly to the
-			// http Handler, bypassing the TCP transport layer.
+			// http Handler, bypassing the TCP transport layer, and elliminating
+			// the need for starting/stopping HTTP servers, and managing ports -
+			// as well as facilitating stubbing components.
 			browser.WithHandler(app.CreateServer()),
 			// WithLogger installs a log handler Gost-DOM logs to an *slog.Logger
 			// from the standard library.
@@ -64,9 +66,8 @@ func TestDatastar(t *testing.T) {
 	doc := win.HTMLDocument() // Wrap Window.Document() and returns a "Document test helper"
 
 	// GetHTMLElementById wraps GetElementById, but asserts that any non-nil
-	// return values are value HTMLElement instances, providing access to user
-	// interaction methods, here Click(), avoiding tedious type assertions and
-	// success checks.
+	// return values are valid HTMLElement instances, providing access to
+	// methods such as Click() that don't exist on the Element.
 	clickTarget := doc.GetHTMLElementById("click-target")
 
 	// Verify textContent both before and after clicking.
