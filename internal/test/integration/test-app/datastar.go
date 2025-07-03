@@ -8,7 +8,6 @@ import (
 func NewDatastarMux() http.Handler {
 	mux := http.NewServeMux()
 
-	// mux.HandleFunc("GET /events/", func(w http.ResponseWriter, r *http.Request) {
 	mux.HandleFunc("GET /events", func(w http.ResponseWriter, r *http.Request) {
 		flusher, ok := w.(http.Flusher)
 		if !ok {
