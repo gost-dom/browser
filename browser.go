@@ -103,7 +103,7 @@ func New(options ...BrowserOption) *Browser {
 	for _, o := range options {
 		o(config)
 	}
-	result := &Browser{
+	b := &Browser{
 		Client: config.client,
 		Logger: config.logger,
 		ScriptHost: v8host.New(v8host.WithLogger(config.logger),
@@ -111,14 +111,14 @@ func New(options ...BrowserOption) *Browser {
 		),
 		ctx: config.ctx,
 	}
-	if result.ScriptHost == nil {
-		result.ownsHost = true
-		result.ScriptHost = v8host.New(v8host.WithLogger(config.logger))
+	if b.ScriptHost == nil {
+		b.ownsHost = true
+		b.ScriptHost = v8host.New(v8host.WithLogger(config.logger))
 	}
 	if config.ctx != nil {
-		context.AfterFunc(config.ctx, result.Close)
+		context.AfterFunc(config.ctx, b.close)
 	}
-	return result
+	return b
 }
 
 // Deprecated: NewBrowser should not be called. Call New instead.
@@ -147,6 +147,10 @@ func (b *Browser) createOptions(location string) WindowOptions {
 
 func (b *Browser) Close() {
 	log.Debug(b.Logger, "Browser: Close()")
+	b.close()
+}
+
+func (b *Browser) close() {
 	for _, win := range b.windows {
 		win.Close()
 	}
