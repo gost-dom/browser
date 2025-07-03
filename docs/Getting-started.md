@@ -219,10 +219,22 @@ logged.
 
 ### Piping logs to `testing.T`
 
-This is intended for use in a test scenario, and log output can be helpful to
-redirect back to the `testing.T` instance. Furthermore, logged errors will
-_often_ indicate the system under test isn't behaving as expected, so triggering
-a test error on error level logging could be sensible behaviour.
+Gost-DOM is written with testing in mind, so piping log output to the
+`testing.T` log can be helpful. Furthermore, error logs _typically_ represent
+scenarios where your code is behaving unexpectedly, and you'd want the test to
+fail - even if assertions are passing.
+
+Gost-DOM log errors in these cases:
+
+- A JavaScript error is unhandled.
+- A network error occurs.
+- JavaScript code calls functions that are not yet supported.
+
+Whether you want error level logs to automatically fail the test or not, the
+last part provides crucial information. The test is failing, not because of a
+bug in your code, but you use a feature not yet implemented in Gost-DOM (it's
+not you, it's us). The error message will include the URL where you can submit
+an issue.
 
 A simple log handler could look like this.
 
@@ -232,6 +244,14 @@ type TestingLogHandler struct { testing.TB; allowErrors bool }
 func (l TestingLogHandler) Enabled(_ context.Context, lvl slog.Level) bool { return lvl >= slog.LevelInfo }
 
 func (l TestingLogHandler) Handle(_ context.Context, r slog.Record) error {
+	h.TB.Context().Err() != nil {
+        // Check if the context is cancelled to detect if the test has
+        // completed to avoid calling t.Log/t.Error (which panics).
+        // This can happen when constructing a browser using t.Context(). The
+        // browser will dispose resources _after_ the context is closed, and log
+        // statements written during cleanup would result in a panic
+        return nil
+    }
 	l.TB.Helper()
 	if r.Level < slog.LevelError || l.allowErrors {
 		l.TB.Logf("%v: %s", r.Level, r.Message)
