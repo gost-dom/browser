@@ -10,6 +10,7 @@ type OptionDecoder[T, U any] = func(js.Value[T]) (U, error)
 
 type Options[T, U any] map[string]OptionDecoder[T, U]
 
+// OptDecoder extracts the "native value" of a JavaScript object
 func OptDecoder[T, U, V any](f func(U) V) OptionDecoder[T, V] {
 	return func(val js.Value[T]) (res V, err error) {
 		obj, ok := val.AsObject()
@@ -36,14 +37,16 @@ func DecodeOptions[T, U any](
 	}
 	for k, v := range specs {
 		opt, err := obj.Get(k)
-		if err != nil {
-			return nil, err
+		if !opt.IsUndefined() {
+			if err != nil {
+				return nil, err
+			}
+			o, err := v(opt)
+			if err != nil {
+				return nil, err
+			}
+			opts = append(opts, o)
 		}
-		o, err := v(opt)
-		if err != nil {
-			return nil, err
-		}
-		opts = append(opts, o)
 	}
 	return
 }
