@@ -57,9 +57,9 @@ func v8ValueToGoValue(result *v8go.Value) (any, error) {
 		length, err := obj.Get("length")
 		l := length.Uint32()
 		errs := make([]error, l+1)
-		errs[0] = err
 		result := make([]any, l)
-		for i := uint32(0); i < l; i++ {
+		errs[0] = err
+		for i := range l {
 			val, err := obj.GetIdx(i)
 			if err == nil {
 				result[i], err = v8ValueToGoValue(val)
