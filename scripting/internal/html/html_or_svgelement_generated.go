@@ -43,6 +43,16 @@ func (w HTMLOrSVGElement[T]) blur(cbCtx js.CallbackContext[T]) (js.Value[T], err
 	return nil, nil
 }
 
+func (w HTMLOrSVGElement[T]) dataset(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	cbCtx.Logger().Debug("JS Function call: HTMLOrSVGElement.dataset")
+	instance, err := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	result := instance.Dataset()
+	return codec.EncodeEntity(cbCtx, result)
+}
+
 func (w HTMLOrSVGElement[T]) nonce(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: HTMLOrSVGElement.nonce")
 	instance, err := js.As[html.HTMLOrSVGElement](cbCtx.Instance())

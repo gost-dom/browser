@@ -89,7 +89,7 @@ func (o ESOperation) EncodeAsSimpleJSLookup() bool {
 		return true
 	}
 	switch o.RetType.Name {
-	case "Attr", "NodeList", "HTMLFormControlsCollection", "Comment":
+	case "Attr", "NodeList", "HTMLFormControlsCollection", "Comment", "DOMStringMap":
 		return true
 	default:
 		return false
