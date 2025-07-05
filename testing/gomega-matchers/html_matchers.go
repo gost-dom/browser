@@ -64,3 +64,17 @@ func HaveTag(expected string) GomegaMatcher {
 		return matcher.Match(e.TagName())
 	}).WithTemplate("Expected:\n{{.FormattedActual}}\n{{.To}} have tag {{.Data.FailureMessage .Actual.TagName}}", matcher)
 }
+
+type Valuer interface{ Value() string }
+
+// HaveIDLValue asserts that the element has the IDL attribute, "value". This
+// could be named "HaveValue", but that conflicts with gomega's own "HaveValue"
+// function.
+func HaveIDLValue(expected string) GomegaMatcher {
+	m := gomega.Equal(expected)
+	return gcustom.MakeMatcher(
+		func(v Valuer) (bool, error) {
+			return m.Match(v.Value())
+		},
+	)
+}
