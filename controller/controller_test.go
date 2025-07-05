@@ -31,7 +31,7 @@ func (c KeyboardController) SendKey(k Key) {
 		e.DispatchEvent(&event.Event{Type: "keypress"})
 		e.DispatchEvent(&event.Event{Type: "input"})
 		e.DispatchEvent(&event.Event{Type: "keyup"})
-		e.SetAttribute("value", e.Value()+string(k))
+		e.SetValue(e.Value() + string(k))
 	}
 }
 
@@ -54,11 +54,11 @@ func TestKeyboardController(t *testing.T) {
 
 	ctrl.SendKey(KeyChar('a'))
 	g.Expect(input).To(HaveIDLValue("a"), "Keypress when input does not have focus")
-	g.Expect(input).To(HaveAttribute("value", "a"), "Keypress when input does not have focus")
+	g.Expect(input).ToNot(HaveAttribute("value", nil), "Keypress when input does not have focus")
 
 	ctrl.SendKey(KeyChar('b'))
 	g.Expect(input).To(HaveIDLValue("ab"), "Keypress when input does not have focus")
-	g.Expect(input).To(HaveAttribute("value", "ab"), "Keypress when input does not have focus")
+	g.Expect(input).ToNot(HaveAttribute("value", nil), "Keypress when input does not have focus")
 }
 
 func TestEventsDispatched(t *testing.T) {
