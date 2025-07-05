@@ -22,8 +22,9 @@ than desired. This is particularly the case in the DOM tree itself.
 
 Where possible, JavaScript APIs are implemented through polyfills.
 
-- Go code to install polyfills: https://github.com/gost-dom/browser/blob/main/scripting/v8host/polyfills.go 
-- Folder for javascript files to load: https://github.com/gost-dom/browser/tree/main/scripting/v8host/polyfills
+Polyfills are configured [`polyfills.go`](/scripting/internal/polyfills.go), and
+JavaScript code is embedded from the folder
+[`polyfills`](/scripting/internal/polyfills)
 
 ## Commit guidelines
 
