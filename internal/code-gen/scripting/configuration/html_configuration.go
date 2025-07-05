@@ -108,7 +108,6 @@ func configureHTMLInputElement(htmlSpecs *WebAPIConfig) {
 	input.Method("maxLength").Ignore()
 	input.Method("minLength").Ignore()
 	input.Method("multiple").Ignore()
-	input.Method("setName").Ignore()
 	input.Method("setPattern").Ignore()
 	input.Method("placeholder").Ignore()
 	input.Method("readonly").Ignore()
@@ -136,8 +135,6 @@ func configureHTMLInputElement(htmlSpecs *WebAPIConfig) {
 	input.Method("formNoValidate").Ignore()
 	input.Method("indeterminate").Ignore()
 	input.Method("min").Ignore()
-	input.Method("name").Ignore()
-	input.Method("value").Ignore()
 	input.Method("readOnly").Ignore()
 	input.Method("pattern").Ignore()
 

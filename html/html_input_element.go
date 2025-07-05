@@ -9,6 +9,9 @@ type HTMLInputElement interface {
 	Type() string
 	SetType(value string)
 	Name() string
+	SetName(string)
+	Value() string
+	SetValue(string)
 	CheckValidity() bool
 	Checked() bool
 	SetChecked(bool)
@@ -17,6 +20,7 @@ type HTMLInputElement interface {
 type htmlInputElement struct {
 	htmlElement
 	checked bool
+	value   string
 }
 
 func NewHTMLInputElement(ownerDocument HTMLDocument) HTMLInputElement {
@@ -27,10 +31,20 @@ func NewHTMLInputElement(ownerDocument HTMLDocument) HTMLInputElement {
 	return result
 }
 
-func (e *htmlInputElement) Name() string        { return e.GetAttributeNode("name").Value() }
-func (e *htmlInputElement) CheckValidity() bool { return true }
-func (e *htmlInputElement) Checked() bool       { return e.checked }
-func (e *htmlInputElement) SetChecked(b bool)   { e.checked = b }
+func (e *htmlInputElement) Name() string         { return e.GetAttributeNode("name").Value() }
+func (e *htmlInputElement) SetName(value string) { e.SetAttribute("name", value) }
+func (e *htmlInputElement) CheckValidity() bool  { return true }
+func (e *htmlInputElement) Checked() bool        { return e.checked }
+func (e *htmlInputElement) SetChecked(b bool)    { e.checked = b }
+func (e *htmlInputElement) Value() string {
+	value := e.value
+	if value == "" {
+		value, _ = e.GetAttribute("value")
+	}
+	return value
+}
+
+func (e *htmlInputElement) SetValue(value string) { e.value = value }
 
 func (e *htmlInputElement) Type() string {
 	t, _ := e.GetAttribute("type")
