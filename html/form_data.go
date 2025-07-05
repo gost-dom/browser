@@ -32,20 +32,21 @@ func NewFormDataForm(form HTMLFormElement) *FormData {
 	inputs := form.Elements()
 	formData := NewFormData()
 	for _, input := range inputs.All() {
-		if inputElement, ok := input.(HTMLInputElement); ok {
-			switch inputElement.Type() {
+		if input, ok := input.(HTMLInputElement); ok {
+			switch input.Type() {
 			case "submit":
 				continue
 			case "checkbox":
-				name, _ := inputElement.GetAttribute("name")
-				if inputElement.Checked() {
+				name, _ := input.GetAttribute("name")
+				if input.Checked() {
 					formData.Append(name, "on")
 				}
 			default:
 				// TODO, handle no values
-				name, _ := inputElement.GetAttribute("name")
-				value, _ := inputElement.GetAttribute("value")
-				formData.Append(name, NewFormDataValueString(value))
+				formData.Append(
+					input.Name(),
+					NewFormDataValueString(input.Value()),
+				)
 			}
 		}
 	}
