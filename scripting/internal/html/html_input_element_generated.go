@@ -4,7 +4,6 @@ package html
 
 import (
 	"errors"
-
 	html "github.com/gost-dom/browser/html"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
