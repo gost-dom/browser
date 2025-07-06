@@ -6,6 +6,7 @@ import (
 
 	. "github.com/gost-dom/browser/controller"
 	"github.com/gost-dom/browser/dom/event"
+	"github.com/gost-dom/browser/input/key"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
@@ -26,16 +27,16 @@ func TestKeyboardController(t *testing.T) {
 
 	input := win.HTMLDocument().GetHTMLElementById("input")
 
-	ctrl.SendKey(KeyChar('a'))
+	ctrl.SendKey(key.RuneToKey('a'))
 	g.Expect(input).To(HaveIDLValue(""), "Keydown when input does not have focus")
 
 	input.Focus()
 
-	ctrl.SendKey(KeyChar('a'))
+	ctrl.SendKey(key.RuneToKey('a'))
 	g.Expect(input).To(HaveIDLValue("a"), "Keydown when input does not have focus")
 	g.Expect(input).ToNot(HaveAttribute("value", nil), "Keydown when input does not have focus")
 
-	ctrl.SendKey(KeyChar('b'))
+	ctrl.SendKey(key.RuneToKey('b'))
 	g.Expect(input).To(HaveIDLValue("ab"), "Keydown when input does not have focus")
 	g.Expect(input).ToNot(HaveAttribute("value", nil), "Keydown when input does not have focus")
 }
@@ -61,7 +62,7 @@ func TestInputEventIsDispatchedAfterInputUpdates(t *testing.T) {
 		return nil
 	}))
 
-	ctrl.SendKey("a")
+	ctrl.SendKey(key.RuneToKey('a'))
 
 	g.Expect(eventFired).To(BeTrue())
 }
@@ -84,7 +85,7 @@ func TestEventsDispatched(t *testing.T) {
 	input.AddEventListener("change", r)
 
 	ctrl := KeyboardController{win}
-	ctrl.SendKeys(KeysOfString("ab"))
+	ctrl.SendKeys(key.StringToKeys("ab"))
 
 	g.Expect(r).To(HaveRecordedEvents(
 		&MatchEvent{Type: "keydown"},

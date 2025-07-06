@@ -8,6 +8,7 @@ import (
 
 	"github.com/gost-dom/browser"
 	"github.com/gost-dom/browser/controller"
+	"github.com/gost-dom/browser/input/key"
 	app "github.com/gost-dom/browser/internal/test/integration/test-app"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
 	"github.com/gost-dom/browser/testing/gosttest"
@@ -98,7 +99,7 @@ func TestDatastarSignals(t *testing.T) {
 	win := b.OpenWindow("https://example.com/ds/")
 	win.HTMLDocument().GetHTMLElementById("echo-input-field").Focus()
 	ctrl := controller.KeyboardController{Window: win}
-	ctrl.SendKey("a")
+	ctrl.SendKey(key.RuneToKey('a'))
 	win.Clock().RunAll()
 
 	output := win.HTMLDocument().GetHTMLElementById("echo-output")

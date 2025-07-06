@@ -5,41 +5,26 @@ import (
 
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/input/key"
 )
-
-type Key string
-
-func KeyChar(r rune) Key {
-	return Key(string(r))
-}
 
 type KeyboardController struct {
 	Window html.Window
 }
 
-func (c KeyboardController) SendKey(k Key) {
+func (c KeyboardController) SendKey(k key.Key) {
 	active := c.Window.Document().ActiveElement()
 	switch e := active.(type) {
 	case html.HTMLInputElement:
 		e.DispatchEvent(&event.Event{Type: "keydown"})
-		e.SetValue(e.Value() + string(k))
+		e.SetValue(e.Value() + k.Letter)
 		e.DispatchEvent(&event.Event{Type: "input"})
 		e.DispatchEvent(&event.Event{Type: "keyup"})
 	}
 }
 
-func (c KeyboardController) SendKeys(keys iter.Seq[Key]) {
+func (c KeyboardController) SendKeys(keys iter.Seq[key.Key]) {
 	for k := range keys {
 		c.SendKey(k)
-	}
-}
-
-func KeysOfString(s string) iter.Seq[Key] {
-	return func(yield func(Key) bool) {
-		for _, r := range s {
-			if !yield(KeyChar(r)) {
-				return
-			}
-		}
 	}
 }
