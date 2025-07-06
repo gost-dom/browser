@@ -28,7 +28,6 @@ func (c KeyboardController) SendKey(k Key) {
 	switch e := active.(type) {
 	case html.HTMLInputElement:
 		e.DispatchEvent(&event.Event{Type: "keydown"})
-		e.DispatchEvent(&event.Event{Type: "keypress"})
 		e.DispatchEvent(&event.Event{Type: "input"})
 		e.DispatchEvent(&event.Event{Type: "keyup"})
 		e.SetValue(e.Value() + string(k))
@@ -48,17 +47,17 @@ func TestKeyboardController(t *testing.T) {
 	input := win.HTMLDocument().GetHTMLElementById("input")
 
 	ctrl.SendKey(KeyChar('a'))
-	g.Expect(input).To(HaveIDLValue(""), "Keypress when input does not have focus")
+	g.Expect(input).To(HaveIDLValue(""), "Keydown when input does not have focus")
 
 	input.Focus()
 
 	ctrl.SendKey(KeyChar('a'))
-	g.Expect(input).To(HaveIDLValue("a"), "Keypress when input does not have focus")
-	g.Expect(input).ToNot(HaveAttribute("value", nil), "Keypress when input does not have focus")
+	g.Expect(input).To(HaveIDLValue("a"), "Keydown when input does not have focus")
+	g.Expect(input).ToNot(HaveAttribute("value", nil), "Keydown when input does not have focus")
 
 	ctrl.SendKey(KeyChar('b'))
-	g.Expect(input).To(HaveIDLValue("ab"), "Keypress when input does not have focus")
-	g.Expect(input).ToNot(HaveAttribute("value", nil), "Keypress when input does not have focus")
+	g.Expect(input).To(HaveIDLValue("ab"), "Keydown when input does not have focus")
+	g.Expect(input).ToNot(HaveAttribute("value", nil), "Keydown when input does not have focus")
 }
 
 func TestEventsDispatched(t *testing.T) {
@@ -75,7 +74,6 @@ func TestEventsDispatched(t *testing.T) {
 
 	input.AddEventListener("keydown", r)
 	input.AddEventListener("keyup", r)
-	input.AddEventListener("keypress", r)
 	input.AddEventListener("input", r)
 	input.AddEventListener("change", r)
 
@@ -84,7 +82,6 @@ func TestEventsDispatched(t *testing.T) {
 
 	g.Expect(r).To(HaveRecordedEvents(
 		&MatchEvent{Type: "keydown"},
-		&MatchEvent{Type: "keypress"},
 		&MatchEvent{Type: "input"},
 		&MatchEvent{Type: "keyup"},
 	))
