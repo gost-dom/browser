@@ -84,9 +84,12 @@ func TestEventsDispatched(t *testing.T) {
 	input.AddEventListener("change", r)
 
 	ctrl := KeyboardController{win}
-	ctrl.SendKey(Key('a'))
+	ctrl.SendKeys(KeysOfString("ab"))
 
 	g.Expect(r).To(HaveRecordedEvents(
+		&MatchEvent{Type: "keydown"},
+		&MatchEvent{Type: "input"},
+		&MatchEvent{Type: "keyup"},
 		&MatchEvent{Type: "keydown"},
 		&MatchEvent{Type: "input"},
 		&MatchEvent{Type: "keyup"},

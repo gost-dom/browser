@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"iter"
+
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 )
@@ -23,5 +25,21 @@ func (c KeyboardController) SendKey(k Key) {
 		e.SetValue(e.Value() + string(k))
 		e.DispatchEvent(&event.Event{Type: "input"})
 		e.DispatchEvent(&event.Event{Type: "keyup"})
+	}
+}
+
+func (c KeyboardController) SendKeys(keys iter.Seq[Key]) {
+	for k := range keys {
+		c.SendKey(k)
+	}
+}
+
+func KeysOfString(s string) iter.Seq[Key] {
+	return func(yield func(Key) bool) {
+		for _, r := range s {
+			if !yield(KeyChar(r)) {
+				return
+			}
+		}
 	}
 }
