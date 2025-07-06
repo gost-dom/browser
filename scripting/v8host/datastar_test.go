@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/gost-dom/browser"
-	"github.com/gost-dom/browser/controller"
+	"github.com/gost-dom/browser/input/controller"
 	"github.com/gost-dom/browser/input/key"
 	app "github.com/gost-dom/browser/internal/test/integration/test-app"
 	"github.com/gost-dom/browser/internal/testing/htmltest"

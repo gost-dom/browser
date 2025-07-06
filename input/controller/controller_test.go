@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	. "github.com/gost-dom/browser/controller"
 	"github.com/gost-dom/browser/dom/event"
+	. "github.com/gost-dom/browser/input/controller"
 	"github.com/gost-dom/browser/input/key"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
