@@ -62,8 +62,8 @@ func TestDatastar(t *testing.T) {
 			),
 		))
 	// The host name is ignored, but the server serves a Datastar test page on
-	// the /ds route
-	win := b.OpenWindow("https://example.com/ds")
+	// the /ds/index.html route
+	win := b.OpenWindow("https://example.com/ds/")
 	doc := win.HTMLDocument() // Wrap Window.Document() and returns a "Document test helper"
 
 	// GetHTMLElementById wraps GetElementById, but asserts that any non-nil
