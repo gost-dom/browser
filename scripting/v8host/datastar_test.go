@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gost-dom/browser"
+	"github.com/gost-dom/browser/controller"
 	app "github.com/gost-dom/browser/internal/test/integration/test-app"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
 	"github.com/gost-dom/browser/testing/gosttest"
@@ -76,4 +77,30 @@ func TestDatastar(t *testing.T) {
 	doc.GetHTMLElementById("fetch-events-button").Click()
 	assert.NoError(t, win.Clock().ProcessEvents(ctx)) // Wait for pending promises to settle.
 	assert.Equal(t, "Foobar", clickTarget.TextContent())
+}
+
+func TestDatastarSignals(t *testing.T) {
+	t.Parallel()
+
+	ctx, cancel := context.WithTimeout(t.Context(), time.Second)
+	defer cancel()
+
+	b := htmltest.NewBrowserHelper(t,
+		browser.New(
+			browser.WithContext(ctx),
+			browser.WithHandler(app.CreateServer()),
+			browser.WithLogger(
+				gosttest.NewTestingLogger(t,
+					gosttest.MinLogLevel(slog.LevelDebug),
+				),
+			),
+		))
+	win := b.OpenWindow("https://example.com/ds/")
+	win.HTMLDocument().GetHTMLElementById("echo-input-field").Focus()
+	ctrl := controller.KeyboardController{Window: win}
+	ctrl.SendKey("a")
+	win.Clock().RunAll()
+
+	output := win.HTMLDocument().GetHTMLElementById("echo-output")
+	assert.Equal(t, "a", output.TextContent())
 }
