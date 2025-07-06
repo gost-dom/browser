@@ -4,6 +4,9 @@
   </head>
   <body>
     <div id="parent">
+      <button onclick="
+        document.getElementById('input').value = document.getElementById('input2').value"
+      >Assign</button>
       <input id="input" type="text" />
       <input id="input2" type="text" />
     </div>
@@ -15,11 +18,12 @@
         console.log({
           type: e.type,
           id: id,
+          value: e.target.value,
           event: e,
         })
         const log = document.getElementById("log")
         const pre = document.createElement("pre")
-        pre.textContent = `"${id}": ${e.type} - ${JSON.stringify(e)}`
+        pre.textContent = `"${id}": ${e.type} - value: ${e.target.value} - ${JSON.stringify(e)}`
         log.append(pre)
       }
       function logEvents(id) {
@@ -29,6 +33,7 @@
         e.addEventListener("keypress", logEvent(id))
         e.addEventListener("change", logEvent(id))
         e.addEventListener("input", logEvent(id))
+        e.addEventListener("beforeinput", logEvent(id))
       }
       logEvents("parent")
       logEvents("input")
