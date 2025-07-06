@@ -53,7 +53,10 @@ func TestWebBrowser(t *testing.T) {
 }
 ```
 
-The returned `Window` represents an [HTML DOM API Window](https://developer.mozilla.org/en-US/docs/Web/API/Window), mening you can navigate the DOM just as you would in client-side script.
+The returned `Window` represents an [HTML DOM API Window] allowing you to
+navigate the DOM just as you would in client-side script.
+
+[HTML DOM API Window]: https://developer.mozilla.org/en-US/docs/Web/API/Window
 
 ## Important notes
 
@@ -93,7 +96,7 @@ Some Web APIs, e.g. Location services, require a secure context.
 This doesn't affect Gost-DOM at the moment, but it's advised to use a secure
 origin, in order to not have to rewrite a lot of tests in the future.
 
-### Time and timeouts
+## Time and timeouts
 
 Gost-DOM's "event loop" runs in the test thread. That means that callbacks
 registered by `setTimeout` and `setInterval` are not necessarily executed. They
@@ -117,9 +120,9 @@ explicitly forward time to execute.
 
 Both versions will panic if the number of registered callbacks does not
 decrease. So `RunAll()` will currently panic if there are any `setInterval`
-handlers that doesn't get cleared. Likewise, if `setInterval` is always called
-with zero delay, it will too ([which is a missing
-behaviour](https://github.com/gost-dom/browser/issues/45)
+handlers that doesn't get cleared. Likewise, so will `setInterval` if always
+called with zero delay, it will too (but shouldn't:
+https://github.com/gost-dom/browser/issues/45)
 
 ## The DOM API
 
