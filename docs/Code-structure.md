@@ -25,13 +25,18 @@ browser/ # Main entry point,
             integration/ # Contains a simple go web app for testing
             scripttests/ # Common test suite for JavaScript implementations
         testing/ # Test helpers
-    dom/ # Code dom functionality. Node elements, and 
+    dom/ # Core dom functionality. Nodes, elements, attributes, document, etc.
         event/ # EventTarget and Event types
     html/ # Window, HTMLDocument, and specific HTML element implementations
     logger/ # Provides a way for client code of receiving log messages
     scripting/ # Impementing of scripting engines
+        internal/
+            js/    # Defines the interface for a script engine
+            codec/ # Conversion between Go and JS values
+            dom/   # Implementation of the DOM API
+            html/  # Implementation of the HTML DOM API
         v8host/ # Scripting support using v8 (and CGo)
-        gojahost/ # INCOMPLETE scripting support using Goja, a pure Go engine
+        gojahost/ # scripting support using Goja, a pure Go engine
     testing/ # Provides usable test helpers for users of the library
         gomega-matchers/ # Matchers useful for users of the Gomega library
     url/ # Implementation of URL behaviour
