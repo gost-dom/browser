@@ -8,13 +8,6 @@ import (
 )
 
 func HaveAttribute(name string, expected interface{}) GomegaMatcher {
-	if expected == nil {
-		return gcustom.MakeMatcher(func(e dom.Element) (bool, error) {
-			_, found := e.GetAttribute(name)
-			return found, nil
-		}).WithTemplate(`Expected:\n{{.FormattedActual}}\n{{.To}} have attribute '{{.Data.Attribute}}'`)
-	}
-
 	data := struct {
 		Attribute string
 		Found     bool
@@ -24,6 +17,14 @@ func HaveAttribute(name string, expected interface{}) GomegaMatcher {
 	}{
 		Attribute: name,
 	}
+
+	if expected == nil {
+		return gcustom.MakeMatcher(func(e dom.Element) (bool, error) {
+			_, found := e.GetAttribute(name)
+			return found, nil
+		}).WithTemplate(`Expected:\n{{.FormattedActual}}\n{{.To}} have attribute '{{.Data.Attribute}}'`, &data)
+	}
+
 	if data.Matcher, data.IsMatcher = expected.(GomegaMatcher); !data.IsMatcher {
 		return HaveAttribute(name, gomega.Equal(expected))
 	}
