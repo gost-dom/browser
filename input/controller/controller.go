@@ -3,9 +3,9 @@ package controller
 import (
 	"iter"
 
-	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/input/key"
+	"github.com/gost-dom/browser/internal/uievents"
 )
 
 // KeyboardController simulates the user typing a sequence of keys.
@@ -18,10 +18,12 @@ func (c KeyboardController) SendKey(k key.Key) {
 	active := c.Window.Document().ActiveElement()
 	switch e := active.(type) {
 	case html.HTMLInputElement:
-		e.DispatchEvent(&event.Event{Type: "keydown"})
+		if !uievents.Keydown(e) {
+			return
+		}
 		e.SetValue(e.Value() + k.Letter)
-		e.DispatchEvent(&event.Event{Type: "input"})
-		e.DispatchEvent(&event.Event{Type: "keyup"})
+		uievents.Input(e)
+		uievents.Keyup(e)
 	}
 }
 

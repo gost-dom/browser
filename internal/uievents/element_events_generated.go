@@ -22,6 +22,21 @@ func Auxclick(e dom.Element) bool {
 	return e.DispatchEvent(event)
 }
 
+// Dispatches a [beforeinput event]. Returns the return value from [EventTarget.DispatchEvent].
+//
+// The behaviour dictating the return value depends on the type of event. For
+// more information see the [MDN docs]
+//
+// [beforeinput event]: https://developer.mozilla.org/en-US/docs/Web/API/Element/beforeinput_event
+// [MDN docs]: https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent#return_value
+func Beforeinput(e dom.Element) bool {
+	data := InputEventInit{}
+	event := &event.Event{Type: "beforeinput", Data: data}
+	event.Bubbles = true
+	event.Cancelable = true
+	return e.DispatchEvent(event)
+}
+
 // Dispatches a [blur event]. Returns the return value from [EventTarget.DispatchEvent].
 //
 // The behaviour dictating the return value depends on the type of event. For
@@ -109,5 +124,65 @@ func Focusout(e dom.Element) bool {
 	event := &event.Event{Type: "focusout", Data: data}
 	event.Bubbles = true
 	event.Cancelable = false
+	return e.DispatchEvent(event)
+}
+
+// Dispatches a [input event]. Returns the return value from [EventTarget.DispatchEvent].
+//
+// The behaviour dictating the return value depends on the type of event. For
+// more information see the [MDN docs]
+//
+// [input event]: https://developer.mozilla.org/en-US/docs/Web/API/Element/input_event
+// [MDN docs]: https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent#return_value
+func Input(e dom.Element) bool {
+	data := InputEventInit{}
+	event := &event.Event{Type: "input", Data: data}
+	event.Bubbles = true
+	event.Cancelable = false
+	return e.DispatchEvent(event)
+}
+
+// Dispatches a [keydown event]. Returns the return value from [EventTarget.DispatchEvent].
+//
+// The behaviour dictating the return value depends on the type of event. For
+// more information see the [MDN docs]
+//
+// [keydown event]: https://developer.mozilla.org/en-US/docs/Web/API/Element/keydown_event
+// [MDN docs]: https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent#return_value
+func Keydown(e dom.Element) bool {
+	data := KeyboardEventInit{}
+	event := &event.Event{Type: "keydown", Data: data}
+	event.Bubbles = true
+	event.Cancelable = true
+	return e.DispatchEvent(event)
+}
+
+// Dispatches a [keyup event]. Returns the return value from [EventTarget.DispatchEvent].
+//
+// The behaviour dictating the return value depends on the type of event. For
+// more information see the [MDN docs]
+//
+// [keyup event]: https://developer.mozilla.org/en-US/docs/Web/API/Element/keyup_event
+// [MDN docs]: https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent#return_value
+func Keyup(e dom.Element) bool {
+	data := KeyboardEventInit{}
+	event := &event.Event{Type: "keyup", Data: data}
+	event.Bubbles = true
+	event.Cancelable = true
+	return e.DispatchEvent(event)
+}
+
+// Dispatches a [keypress event]. Returns the return value from [EventTarget.DispatchEvent].
+//
+// The behaviour dictating the return value depends on the type of event. For
+// more information see the [MDN docs]
+//
+// [keypress event]: https://developer.mozilla.org/en-US/docs/Web/API/Element/keypress_event
+// [MDN docs]: https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent#return_value
+func Keypress(e dom.Element) bool {
+	data := KeyboardEventInit{}
+	event := &event.Event{Type: "keypress", Data: data}
+	event.Bubbles = true
+	event.Cancelable = true
 	return e.DispatchEvent(event)
 }
