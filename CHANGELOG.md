@@ -1,6 +1,31 @@
 # Changelog - Gost-DOM
 
 
+## [0.9.0](https://github.com/gost-dom/browser/compare/v0.8.0...v0.9.0) (2025-07-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* Remove anchor tag navigation server
+
+This removes an internal test helper type from exported code.
+
+* Move test server to unexported function in used package ([b8bf485](https://github.com/gost-dom/browser/commit/b8bf4854c214ff2f263fa9bbef3318760f11cbc1))
+
+
+### Features
+
+* Export a Testing.TB aware logger ([351fc7f](https://github.com/gost-dom/browser/commit/351fc7f0ccdc2282282326ce7ce1923ea1b91e31))
+* FormData reads input element IDL instead of content attributes ([fe18a93](https://github.com/gost-dom/browser/commit/fe18a93fdc2580c6f99401c66fac0f8be71d6727))
+* Implement name/value IDL attributes on HTMLInputElement ([3919814](https://github.com/gost-dom/browser/commit/3919814beba42251ba718a0202647193febf7925))
+* Return with an error when using unfinished request option ([07634b9](https://github.com/gost-dom/browser/commit/07634b92e33ed55253bfb9c00a6b983eabf6e19d))
+
+
+### Bug Fixes
+
+* Don't write to logger when closing browser ([ec5abb0](https://github.com/gost-dom/browser/commit/ec5abb0ede4611aa755e6c8dc440f009c642deda))
+* Fix TestLogger to now write after test is done ([004884b](https://github.com/gost-dom/browser/commit/004884b44c85423ec12d4b72c7000cee2ea1013e))
+
 ## [0.8.0](https://github.com/gost-dom/browser/compare/v0.7.2...v0.8.0) (2025-07-03)
 
 
