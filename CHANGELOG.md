@@ -1,6 +1,16 @@
 # Changelog - Gost-DOM
 
 
+## [0.9.1](https://github.com/gost-dom/browser/compare/v0.9.0...v0.9.1) (2025-07-07)
+
+
+### Features
+
+* Create KeyboardController to simulate keyboard input ([ad843c8](https://github.com/gost-dom/browser/commit/ad843c8269207cfb75ba32cb1c5d4c5ae9bca9b1))
+
+This was in fact in 0.9 - but the the commit describing the feature was not
+reachable.
+
 ## [0.9.0](https://github.com/gost-dom/browser/compare/v0.8.0...v0.9.0) (2025-07-07)
 
 
