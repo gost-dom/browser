@@ -15,67 +15,69 @@ import (
 	"github.com/onsi/gomega/types"
 )
 
-func TestKeyboardController(t *testing.T) {
-	g := gomega.NewWithT(t)
+type keyboardControllerSuite struct {
+	gomega.Gomega
+	KeyboardController
+	win htmltest.WindowHelper
+	doc htmltest.HTMLDocumentHelper
+}
+
+func initKeyboardControllerSuite(t *testing.T) *keyboardControllerSuite {
 	html := `
 		<body>
 			<input id="input" type="text" />
 		</body>
 	`
 	win := htmltest.NewWindowHTML(t, html)
-	ctrl := KeyboardController{win}
+	return &keyboardControllerSuite{
+		Gomega:             gomega.NewWithT(t),
+		KeyboardController: KeyboardController{win},
+		win:                win,
+		doc:                win.HTMLDocument(),
+	}
+}
 
-	input := win.HTMLDocument().GetHTMLElementById("input")
+func TestKeyboardController(t *testing.T) {
+	suite := initKeyboardControllerSuite(t)
 
-	ctrl.SendKey(key.RuneToKey('a'))
-	g.Expect(input).To(HaveIDLValue(""), "Keydown when input does not have focus")
+	input := suite.doc.GetHTMLElementById("input")
+
+	suite.SendKey(key.RuneToKey('a'))
+	suite.Expect(input).To(HaveIDLValue(""), "Keydown when input does not have focus")
 
 	input.Focus()
 
-	ctrl.SendKey(key.RuneToKey('a'))
-	g.Expect(input).To(HaveIDLValue("a"), "Keydown when input does not have focus")
-	g.Expect(input).ToNot(HaveAttribute("value", nil), "Keydown when input does not have focus")
+	suite.SendKey(key.RuneToKey('a'))
+	suite.Expect(input).To(HaveIDLValue("a"), "Keydown when input does not have focus")
+	suite.Expect(input).ToNot(HaveAttribute("value", nil), "Keydown when input does not have focus")
 
-	ctrl.SendKey(key.RuneToKey('b'))
-	g.Expect(input).To(HaveIDLValue("ab"), "Keydown when input does not have focus")
-	g.Expect(input).ToNot(HaveAttribute("value", nil), "Keydown when input does not have focus")
+	suite.SendKey(key.RuneToKey('b'))
+	suite.Expect(input).To(HaveIDLValue("ab"), "Keydown when input does not have focus")
+	suite.Expect(input).ToNot(HaveAttribute("value", nil), "Keydown when input does not have focus")
 }
 
 func TestInputEventIsDispatchedAfterInputUpdates(t *testing.T) {
-	g := gomega.NewWithT(t)
-	html := `
-		<body>
-			<input id="input" type="text" />
-		</body>
-	`
-	win := htmltest.NewWindowHTML(t, html)
-	input := win.HTMLDocument().GetHTMLElementById("input")
-	input.Focus()
-	ctrl := KeyboardController{win}
+	suite := initKeyboardControllerSuite(t)
 
+	input := suite.doc.GetHTMLElementById("input")
+	input.Focus()
 	var eventFired bool
 
 	input.AddEventListener("input", event.NewEventHandlerFunc(func(e *event.Event) error {
-		g.Expect(e.Target).To(Equal(input))
-		g.Expect(e.Target).To(HaveIDLValue("a"))
+		suite.Expect(e.Target).To(Equal(input))
+		suite.Expect(e.Target).To(HaveIDLValue("a"))
 		eventFired = true
 		return nil
 	}))
 
-	ctrl.SendKey(key.RuneToKey('a'))
+	suite.SendKey(key.RuneToKey('a'))
 
-	g.Expect(eventFired).To(BeTrue())
+	suite.Expect(eventFired).To(BeTrue())
 }
 
 func TestEventsDispatched(t *testing.T) {
-	g := gomega.NewWithT(t)
-	html := `
-		<body>
-			<input id="input" type="text" />
-		</body>
-	`
-	win := htmltest.NewWindowHTML(t, html)
-	input := win.HTMLDocument().GetHTMLElementById("input")
+	suite := initKeyboardControllerSuite(t)
+	input := suite.doc.GetHTMLElementById("input")
 	input.Focus()
 	r := &EventRecorder{}
 
@@ -84,10 +86,9 @@ func TestEventsDispatched(t *testing.T) {
 	input.AddEventListener("input", r)
 	input.AddEventListener("change", r)
 
-	ctrl := KeyboardController{win}
-	ctrl.SendKeys(key.StringToKeys("ab"))
+	suite.SendKeys(key.StringToKeys("ab"))
 
-	g.Expect(r).To(HaveRecordedEvents(
+	suite.Expect(r).To(HaveRecordedEvents(
 		&MatchEvent{Type: "keydown"},
 		&MatchEvent{Type: "input"},
 		&MatchEvent{Type: "keyup"},
