@@ -3,7 +3,7 @@
 This document will try to explain the most essential concepts of Gost-DOM to get
 started, as well as limitations you should be aware of.
 
-## Creating a browser
+## Creating a browser, an example
 
 The recommended way is to export the root `http.Handler`, and connecting to this
 from Gost-DOM. The root handler is the handler you would pass to `http.Server`
@@ -37,13 +37,14 @@ import (
     "myapp/server"
     "github.com/gost-dom/browser"
     "github.com/gost-dom/html"
+    "github.com/gost-dom/testing/gosttest"
 )
 
 func TestWebBrowser(t *testing.T) {
     t.Parallel() 
     b := browser.New(
         browser.WithHandler(server.RootHttpHandler),
-        browser.WithLogger(gosttest.TestingLogger(t)),
+        browser.WithLogger(gosttest.NewTestingLogger(t)),
         browser.WithContext(t.Context()),
     )
     window, err := b.Open("http://example.com/") // Host is ignored
@@ -64,8 +65,8 @@ Breakdown of the code:
     Without it, you need to start the server on a TCP port, as well as remember
     to close it afterwards.
   - `browser.WithLogger` accepts an `*slog.Logger` from the std [slog] package.
-    `gosttest.TestingLogger(t)` returns a `*Logger` that writes log output to
-    the `testing.TB` instance. 
+    `gosttest.NewTestingLogger(t)` returns a `*Logger` that writes log output to
+    the `testing.TB` instance.
   - `browser.WithContext(t.Context())` will cause the browser to automatically
     close then the test context is cancelled. This will free resources, and
     allow the V8 instance to be reused for a new test, reducing the overhead of

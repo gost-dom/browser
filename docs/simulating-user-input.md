@@ -7,36 +7,31 @@
 User input currently consist of simulating mouse clicks and keyboard
 interaction. These interactions triggers default behaviour in many elements.
 
-## Input controller
+## `KeyboardController`
 
-Keyboard input is simulated through the `KeyboardController` type. This is
-associated with a single window, and it will simulate what should happen when
-the user types on the keyboard, and the window has input focus in the OS.
+To simulate user input, use the `KeyboardController` type. Example:
 
-Input is directed goes to the currently focused element. To type a value in a
-text field, you must first move focus to the text field, e.g. by simulating a
-click, or simply calling [Element.focus]
+```Go
+b := browser.New()
+win := b.Open("http://example.com")
+input := win.Document().QueryElement("#fullname-input")
+input.(html.HTMLElement).Focus()
+
+ctrl := KeyboardController{Window: win}
+ctrl.SendKeys(keys.StringToKeys("John Smith"))
+assert.Equal(t, "John Smith", input.Value())
+```
+
+Input is directed goes to the currently focused element. here [Element.focus] is
+explicitly called to bring focus to the element.
 
 [Element.focus]: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/focus
 
-### Sending a sequence of keys
-
-To simulate the user typing, call `KeybaordConroller.SendKeys()`. Use
-`key.StringToKeys()` to generate the proper sequence from a string.
-
 > [!IMPORTANT]  
 > 
-> It is currently clear that the design is not sufficient, as modifier keys are
-> not simulated properly. So the design _might_ change, but the operation
-> `SendKeys(key.StringToKeys("input"))` should stay valid as a whole.
-
-A key press is represented by the `Key` type, but generally you 
-calling `SendKey`.
-
-A sequence of keys can be simulated using the experimental `SendKeys`, accepting
-an `iter.Seq[Key]` as input. `KeysOfString` can be used to create a sequence of
-keys from a `string` input.
-
+> It is currently clear that the design is not sufficient, as modifier keys have
+> not been taken into consideration. So the design _might_ change. But the
+> operation `SendKeys(key.StringToKeys("input"))` should stay valid as a whole.
 
 ## Misssing features
 
