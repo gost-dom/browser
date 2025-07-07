@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// Key represents a single keyboard input.
+// Key represents a single keyboard input. WARNING: This is experimental.
 //
 // This is currently a simple abstraction, not taking the sequence of modifier
 // keys into consideration. E.g., shift+A would result in keydown (shift),
@@ -14,11 +14,11 @@ import (
 // This general sequence of events is not yet properly representable in the
 // types.
 type Key struct {
-	// Delay is not used yet. It merely shows an possible solution to simulating
+	Letter string
+	// delay is not used yet, but express n possible solution to simulating
 	// delays betwen keystrokes, which can be valuable in order to verify
 	// throttling/debounce behaviour.
-	Delay  time.Duration
-	Letter string
+	delay time.Duration
 }
 
 // RuneToKey returns a Key representing the keyboard key with the letter
