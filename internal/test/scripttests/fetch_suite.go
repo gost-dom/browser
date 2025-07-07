@@ -40,13 +40,13 @@ func (s *FetchSuite) TestPrototypes() {
 }
 
 type option struct {
-	logOptions []gosttest.TestLoggerOption
+	logOptions []gosttest.HandlerOption
 	ctx        context.Context
 }
 
 type InitOption func(*option)
 
-func WithLogOption(lo gosttest.TestLoggerOption) InitOption {
+func WithLogOption(lo gosttest.HandlerOption) InitOption {
 	return func(o *option) { o.logOptions = append(o.logOptions, lo) }
 }
 
