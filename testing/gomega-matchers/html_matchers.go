@@ -76,5 +76,5 @@ func HaveIDLValue(expected string) GomegaMatcher {
 		func(v Valuer) (bool, error) {
 			return m.Match(v.Value())
 		},
-	)
+	).WithTemplate("Expected:\n{{.FormattedActual}}\n{{.To}} have IDL value {{.Data.FailureMessage .Actual.Value}}", m)
 }

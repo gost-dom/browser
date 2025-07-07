@@ -12,7 +12,7 @@ func HaveAttribute(name string, expected interface{}) GomegaMatcher {
 		return gcustom.MakeMatcher(func(e dom.Element) (bool, error) {
 			_, found := e.GetAttribute(name)
 			return found, nil
-		}).WithTemplate(`Expected:\n{{.FormattedActual}}\n{{.To}} have have attribute '{{.Data.Attribute}}'`)
+		}).WithTemplate(`Expected:\n{{.FormattedActual}}\n{{.To}} have attribute '{{.Data.Attribute}}'`)
 	}
 
 	data := struct {
@@ -32,7 +32,7 @@ func HaveAttribute(name string, expected interface{}) GomegaMatcher {
 			return false, nil
 		}
 		return data.Matcher.Match(data.Actual)
-	}).WithTemplate(`Expected:\n{{.FormattedActual}}\n{{.To}} have have attribute '{{.Data.Attribute}}'
+	}).WithTemplate(`Expected:\n{{.FormattedActual}}\n{{.To}} have attribute '{{.Data.Attribute}}'
 {{ if .Data.Found}}{{.Data.Matcher.FailureMessage .Data.Actual -}}
 {{else}}  Attribute did not exist{{end}}`, &data)
 }
