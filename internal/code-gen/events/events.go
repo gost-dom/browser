@@ -24,7 +24,6 @@ type EventGeneratorSpecs struct {
 //	data := PointerEventInit{}
 type EventInitGenerator struct {
 	EventType
-	Receiver gen.Value
 }
 
 func (g EventInitGenerator) Generate() *jen.Statement {
@@ -83,7 +82,7 @@ func (g DispatchEventBodyGenerator) Generate() *jen.Statement {
 	receiver := gen.NewValue("e")
 	event := gen.NewValue("event")
 	return gen.StatementList(
-		EventInitGenerator{g.EventType, receiver},
+		EventInitGenerator{g.EventType},
 		gen.Assign(event, EventConstructorGenerator(g)),
 		EventPropertiesGenerator(g),
 		gen.Return(
