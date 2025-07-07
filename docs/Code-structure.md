@@ -12,12 +12,11 @@ browser/ # Main entry point,
     internal/
         clock/ # Controls the passing of simulated time
         code-gen/ # Code generator. Not documented here!
-        constants/ # String constants, like 
-        dom/ # Hmmm 
-        domslices/ # ... 
+        constants/ # String constants, e.g., BUG issue URLs for error messages
+        dom/ # Parts of the DOM API not yet available to client code.
         entity/ # Generates objects with JS-friendly unique IDs
         html/ # XMLHTTPRequest implementation
-        http/ # Helper for handling HTTP requests
+        gosthttp/ # Helper for handling HTTP requests
         interfaces/ # Interfaces generated from webref specs
             url-interfaces/ # Interfaces for the URL spec.
         log/ # Logging functionality
@@ -60,13 +59,13 @@ exists in the `html` package.
 ## Heavy use of internal packages
 
 In order to keep as much freedom for refactoring without breaking compatibility,
-code is largely placed in internal packages until it's known if it provided
-value to test code.
+new code is largely placed in internal packages until it's known if it provides
+value to test code; and the public API seems stable.
 
 For example, the XMLHttpRequest can be constructed from and used from
-JavaScript, but it doesn't seem to have any value to provide to Go code. You Go
-code can already make HTTP requests, so using the clunky XHR interface doesn't
-seem to provide any value.
+JavaScript, but it doesn't seem to have any value to provide to Go code. Go code
+can already make HTTP requests, so using the clunky XHR interface doesn't seem
+to provide any value.
 
 ## Internal interfaces are for verification
 
@@ -74,4 +73,3 @@ Package `browser/internal/interfaces` contain interfaces generated from web IDL
 specifications. The interfaces are not referenced in production code, but test
 code for the `URL` type uses this interface. This effectively makes it a static
 check, that the `URL` type conforms to the web IDL specifications.
-
