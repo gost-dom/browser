@@ -26,6 +26,7 @@ type FocusEventInit struct {
 
 type KeyboardEventInit struct {
 	UIEventInit
+	Key string
 }
 
 type InputEventInit struct {

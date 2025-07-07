@@ -102,6 +102,30 @@ func TestEventsDispatched(t *testing.T) {
 	))
 }
 
+func TestStreamOfEventsWithShiftKey(t *testing.T) {
+	suite := initKeyboardControllerSuite(t)
+	input := suite.input
+	input.Focus()
+	r := &EventRecorder{}
+
+	input.AddEventListener("keydown", r)
+	input.AddEventListener("keyup", r)
+
+	suite.SendKeys(key.StringToKeys("aBc"))
+
+	suite.Expect(r).To(HaveRecordedEvents(
+		&MatchEvent{Type: "keydown", Key: "a"},
+		&MatchEvent{Type: "keyup", Key: "a"},
+		&MatchEvent{Type: "keydown", Key: "Shift"},
+		&MatchEvent{Type: "keydown", Key: "B"},
+		&MatchEvent{Type: "keyup", Key: "B"},
+		&MatchEvent{Type: "keyup", Key: "Shift"},
+		&MatchEvent{Type: "keydown", Key: "c"},
+		&MatchEvent{Type: "keyup", Key: "c"},
+	))
+	suite.Expect(input).To(HaveIDLValue("aBc"))
+}
+
 func initKeyboardControllerSuite(t *testing.T) *keyboardControllerSuite {
 	win := htmltest.NewWindowHTML(t, `<body><input id="input" type="text" /></body>`)
 	input := win.HTMLDocument().GetHTMLElementById("input")

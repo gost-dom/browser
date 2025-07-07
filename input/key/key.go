@@ -3,6 +3,9 @@ package key
 import (
 	"iter"
 	"time"
+	"unicode"
+
+	"github.com/gost-dom/browser/internal/uievents"
 )
 
 // Key represents a single keyboard input. WARNING: This is experimental.
@@ -14,24 +17,39 @@ import (
 // This general sequence of events is not yet properly representable in the
 // types.
 type Key struct {
-	Letter string
+	Key      string
+	Letter   string
+	Down, Up bool
 	// delay is not used yet, but express n possible solution to simulating
 	// delays betwen keystrokes, which can be valuable in order to verify
 	// throttling/debounce behaviour.
 	delay time.Duration
 }
 
+func (k Key) KeyboardEventInit() uievents.KeyboardEventInit {
+	return uievents.KeyboardEventInit{
+		Key: k.Key,
+	}
+}
+
 // RuneToKey returns a Key representing the keyboard key with the letter
 // specified.
 func RuneToKey(r rune) Key {
-	return Key{Letter: string(r)}
+	return Key{Key: string(r), Letter: string(r), Down: true, Up: true}
 }
 
 // StringToKeys returns a sequence of [Key]
 func StringToKeys(s string) iter.Seq[Key] {
 	return func(yield func(Key) bool) {
 		for _, r := range s {
+			isUpper := unicode.IsUpper(r)
+			if isUpper && !yield(Key{Key: "Shift", Down: true}) {
+				return
+			}
 			if !yield(RuneToKey(r)) {
+				return
+			}
+			if isUpper && !yield(Key{Key: "Shift", Up: true}) {
 				return
 			}
 		}

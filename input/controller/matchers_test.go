@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/gost-dom/browser/dom/event"
+	"github.com/gost-dom/browser/internal/uievents"
 	"github.com/onsi/gomega"
-	"github.com/onsi/gomega/gcustom"
 	"github.com/onsi/gomega/types"
 )
 
@@ -37,14 +37,18 @@ func (r *EventRecorder) Equals(other event.EventHandler) bool {
 }
 
 func HaveRecordedEvents(expected ...types.GomegaMatcher) types.GomegaMatcher {
-	m := gomega.HaveExactElements(expected)
-	return gcustom.MakeMatcher(func(rec *EventRecorder) (bool, error) {
-		return m.Match(rec.Events)
-	})
+	return gomega.WithTransform(func(rec *EventRecorder) []event.Event {
+		return rec.Events
+	}, gomega.HaveExactElements(expected))
+	// m := gomega.HaveExactElements(expected)
+	// return gcustom.MakeMatcher(func(rec *EventRecorder) (bool, error) {
+	// 	return m.Match(rec.Events)
+	// })
 }
 
 type MatchEvent struct {
 	Type   string
+	Key    string
 	actual event.Event
 }
 
@@ -59,11 +63,24 @@ func (e *MatchEvent) Match(actual any) (success bool, err error) {
 			e.actual = *ptr
 		}
 	}
-	if isEvent {
-		return e.actual.Type == e.Type, nil
-	} else {
+	fmt.Println("Testing one two")
+	if !isEvent {
+		fmt.Println("Not an event")
 		return false, fmt.Errorf("Value is not an event")
 	}
+	data := e.actual.Data
+	if e.Key != "" {
+		eventInit, ok := data.(uievents.KeyboardEventInit)
+		if !ok {
+			fmt.Println("Nit a keyboard event")
+			return true, fmt.Errorf("Expected a KeyboardEvent")
+		}
+		if eventInit.Key != e.Key {
+			fmt.Println("Key doesn't match", e.Key)
+			return false, nil
+		}
+	}
+	return e.actual.Type == e.Type, nil
 }
 
 func (e *MatchEvent) FailureMessage(actual any) (message string) {

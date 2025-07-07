@@ -29,7 +29,7 @@ type EventInitGenerator struct {
 func (g EventInitGenerator) Generate() *jen.Statement {
 	return gen.Assign(
 		gen.NewValue("data"),
-		gen.NewType(fmt.Sprintf("%sInit", g.Interface)).CreateInstance(),
+		g.EventType.InitType().CreateInstance(),
 	).Generate()
 }
 
@@ -67,6 +67,20 @@ func (s EventConstructorGenerator) Generate() *jen.Statement {
 		}.Value().Reference(),
 	).Generate()
 
+}
+
+type DispatchEventInitBodyGenerator struct {
+	EventType
+}
+
+func (g DispatchEventInitBodyGenerator) Generate() *jen.Statement {
+	receiver := gen.NewValue("e")
+	event := gen.NewValue("event")
+	return gen.StatementList(
+		gen.Assign(event, EventConstructorGenerator(g)),
+		EventPropertiesGenerator(g),
+		gen.Return(
+			receiver.Field("DispatchEvent").Call(event, gen.Line))).Generate()
 }
 
 // Renders the line to dispatch an event
@@ -111,6 +125,29 @@ func (g EventDispatchMethodGenerator) Generate() *jen.Statement {
 			Name:     internal.UpperCaseFirstLetter(event.Type),
 			RtnTypes: []gen.Generator{gen.Id("bool")},
 			Body:     DispatchEventBodyGenerator{event},
+		},
+	).Generate()
+}
+
+// Generates a single event dispatch methods for an element with data, e.g.
+//
+//	func Keydown(e Element, data KeyboardEventInit) { /* ... */ }
+type DispatchEventInitGenerator struct {
+	Type       gen.Type
+	TargetType EventTargetType
+	Event      EventType
+}
+
+func (g DispatchEventInitGenerator) Generate() *jen.Statement {
+	event := g.Event
+
+	return gen.StatementList(
+		DispatchFunctionDocumentation{EventType: g.Event.Type, Target: g.TargetType},
+		gen.FunctionDefinition{
+			Args:     gen.Arg(gen.Id("e"), g.TargetType).Arg(gen.Id("data"), g.Event.InitType()),
+			Name:     internal.UpperCaseFirstLetter(event.Type) + "Init",
+			RtnTypes: []gen.Generator{gen.Id("bool")},
+			Body:     DispatchEventInitBodyGenerator{event},
 		},
 	).Generate()
 }
@@ -191,6 +228,10 @@ func (g ElementEventGenerator) Type() gen.Type {
 // functions, e.g. to generate the corresponding Go data types.
 type EventType events.Event
 
+func (t EventType) InitType() gen.Type {
+	return gen.NewType(fmt.Sprintf("%sInit", t.Interface))
+}
+
 func (g ElementEventGenerator) Generate() *jen.Statement {
 	events := g.Events()
 	type_ := g.Type()
@@ -262,6 +303,12 @@ func (g EventDispatchMethodsGenerator) Generate() *jen.Statement {
 	for _, e := range g.Events {
 		res.Append(gen.Line)
 		res.Append(EventDispatchMethodGenerator{
+			Type:       g.Type,
+			TargetType: g.TargetType,
+			Event:      e,
+		})
+		res.Append(gen.Line)
+		res.Append(DispatchEventInitGenerator{
 			Type:       g.Type,
 			TargetType: g.TargetType,
 			Event:      e,

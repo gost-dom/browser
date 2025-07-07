@@ -20,15 +20,20 @@ func (c KeyboardController) SendKey(k key.Key) {
 	if c.Window == nil {
 		return
 	}
+	eventInit := k.KeyboardEventInit()
 	active := c.Window.Document().ActiveElement()
 	switch e := active.(type) {
 	case html.HTMLInputElement:
-		if !uievents.Keydown(e) {
-			return
+		if k.Down {
+			if !uievents.KeydownInit(e, eventInit) {
+				return
+			}
+			e.SetValue(e.Value() + k.Letter)
+			uievents.Input(e)
 		}
-		e.SetValue(e.Value() + k.Letter)
-		uievents.Input(e)
-		uievents.Keyup(e)
+		if k.Up {
+			uievents.KeyupInit(e, eventInit)
+		}
 	}
 }
 
