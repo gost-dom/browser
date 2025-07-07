@@ -19,17 +19,21 @@ func TestKeyboardController(t *testing.T) {
 	input := suite.input
 
 	suite.SendKey(key.RuneToKey('a'))
-	suite.Expect(input).To(HaveIDLValue(""), "Keydown when input does not have focus")
+	suite.Expect(input).
+		To(HaveIDLValue(""), "input field IDL value without focus after keyboard input")
 
 	input.Focus()
 
 	suite.SendKey(key.RuneToKey('a'))
-	suite.Expect(input).To(HaveIDLValue("a"), "Keydown when input does not have focus")
-	suite.Expect(input).ToNot(HaveAttribute("value", nil), "Keydown when input does not have focus")
+	suite.Expect(input).
+		To(HaveIDLValue("a"), "input field IDL value with focus after keyboard input")
+	suite.Expect(input).
+		ToNot(HaveAttribute("value", nil), "keyboard input should not set value content attribute")
 
 	suite.SendKey(key.RuneToKey('b'))
-	suite.Expect(input).To(HaveIDLValue("ab"), "Keydown when input does not have focus")
-	suite.Expect(input).ToNot(HaveAttribute("value", nil), "Keydown when input does not have focus")
+	suite.Expect(input).To(HaveIDLValue("ab"), "subsequent input is appended to the value")
+	suite.Expect(input).
+		ToNot(HaveAttribute("value", nil), "subsequent input does not set value content attribute")
 }
 
 func TestKeyboardControllerPreventDefault(t *testing.T) {
@@ -48,9 +52,12 @@ func TestKeyboardControllerPreventDefault(t *testing.T) {
 		e.PreventDefault()
 	})))
 
-	// suite.SendKey(key.RuneToKey('a'))
+	suite.SendKey(key.RuneToKey('a'))
 
 	suite.Expect(input).To(HaveIDLValue(""))
+	suite.Expect(r).To(HaveRecordedEvents(
+		&MatchEvent{Type: "keydown"},
+	))
 }
 
 func TestInputEventIsDispatchedAfterInputUpdates(t *testing.T) {
