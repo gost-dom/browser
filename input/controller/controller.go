@@ -14,7 +14,12 @@ type KeyboardController struct {
 }
 
 // SendKey simulates the input of a single key.
+//
+// Ignored if no Window is assigned.
 func (c KeyboardController) SendKey(k key.Key) {
+	if c.Window == nil {
+		return
+	}
 	active := c.Window.Document().ActiveElement()
 	switch e := active.(type) {
 	case html.HTMLInputElement:
@@ -29,6 +34,8 @@ func (c KeyboardController) SendKey(k key.Key) {
 
 // SendKeys simulates the user typing a sequence of keys. The key package
 // contains functionality to generate sequences of keys from an input string.
+//
+// Ignored if no Window is assigned.
 func (c KeyboardController) SendKeys(keys iter.Seq[key.Key]) {
 	for k := range keys {
 		c.SendKey(k)
