@@ -65,7 +65,7 @@ is true.
 
 
 [^1]: There are tuning parameters for this behaviour; but not exposed. Please
-    submit an issue, if this you experience issues with this.
+    submit an issue if this you experience issues with this.
 
 [^2]: A recursive `setInterval` call with zero delay will trigger this
     behaviour, but shouldn't for the `Advance()` case: 
