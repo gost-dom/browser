@@ -165,7 +165,7 @@ func (g EventInterfaceGenerator) Generate() *jen.Statement {
 
 func IncludeEvent(e events.Event) bool {
 	switch e.Interface {
-	case "PointerEvent":
+	case "PointerEvent", "KeyboardEvent", "InputEvent":
 		return true
 	case "FocusEvent":
 		return !strings.HasPrefix(e.Type, "DOMFocus")

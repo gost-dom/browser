@@ -3,12 +3,12 @@
 This document will try to explain the most essential concepts of Gost-DOM to get
 started, as well as limitations you should be aware of.
 
-## Creating a browser
+## Creating a browser, an example
 
 The recommended way is to export the root `http.Handler`, and connecting to this
-from Gost-DOM. This is generally the the handler passed to an `http.Server`
-or `http.ListenAndServe`, but optionally without irrellevant middlewares like
-logging/monitoring.
+from Gost-DOM. The root handler is the handler you would pass to `http.Server`
+or `http.ListenAndServe`, but optionally configured without irrellevant
+middlewares like logging/monitoring.
 
 ```go
 package server
@@ -34,53 +34,85 @@ package server_test
 
 import (
     "testing"
-
     "myapp/server"
-
     "github.com/gost-dom/browser"
+    "github.com/gost-dom/html"
+    "github.com/gost-dom/testing/gosttest"
 )
 
 func TestWebBrowser(t *testing.T) {
-    t.Parallel()
-    b := browser.NewFromHandler(server.RootHttpHandler)
+    t.Parallel() 
+    b := browser.New(
+        browser.WithHandler(server.RootHttpHandler),
+        browser.WithLogger(gosttest.NewTestingLogger(t)),
+        browser.WithContext(t.Context()),
+    )
     window, err := b.Open("http://example.com/") // Host is ignored
     assert.NoError(t, err)
-    // Interact with the document
-    win.Document().GetElementById("test-button").Click()
-    // Inspect the state of the document
+    win.Document().GetElementById("test-button").(html.HTMLElement).Click()
+
     resultField := win.Document().GetElementById("output-element")
     assert.Equal(t, "The button was clicked", resultField.TextContent())
 }
 ```
 
-The returned `Window` represents an [HTML DOM API Window](https://developer.mozilla.org/en-US/docs/Web/API/Window), mening you can navigate the DOM just as you would in client-side script.
+Breakdown of the code:
 
-## Important notes
+- `browser.New` obviously creates a new browser instance. By default, this will
+  be configured with a V8 script engine.
+  - `browser.WithHandler` is the recommended way, connect the browser directly
+    to the root HTTP handler, bypassing the TCP stack. This is not necessary.
+    Without it, you need to start the server on a TCP port, as well as remember
+    to close it afterwards.
+  - `browser.WithLogger` accepts an `*slog.Logger` from the std [slog] package.
+    `gosttest.NewTestingLogger(t)` returns a `*Logger` that writes log output to
+    the `testing.TB` instance.
+  - `browser.WithContext(t.Context())` will cause the browser to automatically
+    close when the test context is cancelled. This will free resources, and
+    allow the V8 instance to be reused for a new test, reducing the overhead of
+    configuring V8.
+- `b.Open("http://example.com")` opens the page, and returns an `html.Window`.
+  The host name is ignored when having used `browser.WithHandler`. In fact,
+  `Open("/")` will work, but cookies don't, as they are associated with an
+  origin.
+- The window implements the DOM API, adjusted for Go naming conventions (upper
+  case letters. Attributes are accessed througn methods).
+- `GetElementById` returns an `Element` from the DOM specification. But
+  `Focus()` is a method on `HTMLElement` from the HTML DOM specification, so
+  this requires a type assertion.
+
+
+> [!NOTE]
+>
+> The `gosttest.NewTestLogger()` could be replaced by something like [slogt].
+> But be sure to close the browser _before_ the test completes, as closing the
+> browser can write log statements, and writing the test output _after_ the test
+> completes will panic.
+
+> [!WARNING]
+>
+> When using the `browser.WithHandler` option, **NO** outgoing HTTP requests
+> will be performed. This effectively means that you **must** serve all content
+> locally; JavaScript served from CDN will not work.
+
+[HTML DOM API Window]: https://developer.mozilla.org/en-US/docs/Web/API/Window
+[slog]: https://pkg.go.dev/log/slog
+[slogt]: https://github.com/neilotoole/slogt
+
+## Read next
+
+- [Timeouts and the event loop](./event-loop.md) for information about how
+  delayed callbacks and the "event loop" works.
+- [Simulating user input](./simulating-user-input.md) to simulate user
+  interactions.
+
+## A mixed bag of information
 
 There are some crucial points you should be aware of:
 
 - JavaScript served from CDN doesn't work (in the recommended usage)
 - The host name is ignored, but not quite! (in the recommended usage)
 - `setTimeout` and `setInterval` handlers require you to "advance the clock"
-
-### JavaScript served from CDN doesn't work
-
-When you using the recommended approach, to connect directly to an
-`http.Handler`, _no outgoing_ HTTP requests will be made, meaning that CDN content will not be downloaded.
-
-[Let us know](https://github.com/gost-dom/browser/issues/53) if you need this,
-it's not difficult; so far the assumption has been that your server serves all
-required assets.
-
-### The host name is ignored, but not quite!
-
-The call to open the your application in the Gost-DOM browser ignores the host,
-so the following two lines will both open the "index path"
-
-```go
-b.Open("http://example.com/")
-b.Open("/")
-```
 
 But cookies are associated with a host name, so the second version will not use
 cookies.
@@ -92,34 +124,6 @@ Some Web APIs, e.g. Location services, require a secure context.
 
 This doesn't affect Gost-DOM at the moment, but it's advised to use a secure
 origin, in order to not have to rewrite a lot of tests in the future.
-
-### Time and timeouts
-
-Gost-DOM's "event loop" runs in the test thread. That means that callbacks
-registered by `setTimeout` and `setInterval` are not necessarily executed. They
-are controlled by a "virtual clock", that test code controls
-
-This means that a test of a behaviour that is throttled for e.g. 300ms, doesn't
-actually need to wait for 300ms - you just tell the clock to advance 300ms.
-
-When JavaScript code is executed, any callbacks that are registered for the
-same time, i.e., microtasks, or `setTimeout` called with a callback of zero
-milliseconds will execute before returning to Go code.
-
-But other invocations of `setTimeout` or `setInterval` requires test code to
-explicitly forward time to execute.
-
-- `Window.Clock().Advance(time.Duration)` advances time for a certain amount of
-  time, running all timeout and interval callbacks that should run in that
-  period.
-- `Window.Clock().RunAll()` will run until all `setTimeout` callbacks are
-  called.
-
-Both versions will panic if the number of registered callbacks does not
-decrease. So `RunAll()` will currently panic if there are any `setInterval`
-handlers that doesn't get cleared. Likewise, if `setInterval` is always called
-with zero delay, it will too ([which is a missing
-behaviour](https://github.com/gost-dom/browser/issues/45)
 
 ## The DOM API
 
@@ -147,12 +151,6 @@ Gost as well.
 Each `Browser` instance has it's own isolated V8 instance, and each window
 created from the browser has it's own context, i.e. it's own global scope,
 allowing all tests to run in parallel.
-
-Each `Browser` instance is not currently safe to use from multiple threads, and
-there is some overhead to creating an isolated V8 instance and setting up global
-scope, so browsers them _may_ lead to better performance, but it is strongly
-recommended to not do that, unless performance _is_ a problem. There are
-optimisations planned, such as reusing V8 instances from discarded browsers.
 
 ## IDL Attributes vs. Content Attributes
 

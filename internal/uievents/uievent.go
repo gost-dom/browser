@@ -24,6 +24,14 @@ type FocusEventInit struct {
 	RelatedTarget event.EventTarget
 }
 
+type KeyboardEventInit struct {
+	UIEventInit
+}
+
+type InputEventInit struct {
+	UIEventInit
+}
+
 func NewUIEvent(type_ string) *event.Event {
 	return event.New(type_, UIEventInit{})
 }

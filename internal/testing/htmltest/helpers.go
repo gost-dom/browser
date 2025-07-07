@@ -35,6 +35,13 @@ type WindowHelper struct {
 	t testing.TB
 }
 
+func NewWindowHTML(t testing.TB, s string) WindowHelper {
+	t.Helper()
+	win, err := html.NewWindowReader(strings.NewReader(s))
+	assert.NoError(t, err, "htmltest: NewWindowHTML")
+	return NewWindowHelper(t, win)
+}
+
 func NewWindowHelper(t testing.TB, win html.Window) WindowHelper {
 	return WindowHelper{win, t}
 }

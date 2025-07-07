@@ -13,7 +13,6 @@ import (
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
-	"github.com/gost-dom/browser/testing/testservers"
 )
 
 type WindowLocationTestSuite struct {
@@ -22,7 +21,7 @@ type WindowLocationTestSuite struct {
 }
 
 func (s *WindowLocationTestSuite) SetupTest() {
-	server := testservers.NewAnchorTagNavigationServer()
+	server := newAnchorTagNavigationServer()
 	s.window = NewWindowFromHandler(server)
 
 }
@@ -140,4 +139,27 @@ func (s *WindowLocationTestSuite) openWindow(location string) html.Window {
 		}
 	})
 	return win
+}
+
+func newAnchorTagNavigationServer() http.Handler {
+	server := http.NewServeMux()
+	server.HandleFunc("GET /index",
+		func(res http.ResponseWriter, req *http.Request) {
+			res.Write([]byte(
+				`<body>
+					<h1>Index</h1>
+					<a href="products">Products from relative url</a>
+					<a href="/products">Products from absolute url</a>
+				</body>`))
+		})
+
+	server.HandleFunc("GET /products",
+		func(res http.ResponseWriter, req *http.Request) {
+			res.Write([]byte(
+				`<body>
+					<h1>Products</h1>
+				</body>`))
+		})
+
+	return server
 }

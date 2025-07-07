@@ -1,10 +1,10 @@
 package matchers
 
 import (
+	"github.com/gost-dom/browser/dom"
 	"github.com/onsi/gomega"
 	"github.com/onsi/gomega/gcustom"
 	. "github.com/onsi/gomega/types"
-	"github.com/gost-dom/browser/dom"
 )
 
 func HaveAttribute(name string, expected interface{}) GomegaMatcher {
@@ -17,6 +17,14 @@ func HaveAttribute(name string, expected interface{}) GomegaMatcher {
 	}{
 		Attribute: name,
 	}
+
+	if expected == nil {
+		return gcustom.MakeMatcher(func(e dom.Element) (bool, error) {
+			_, found := e.GetAttribute(name)
+			return found, nil
+		}).WithTemplate(`Expected:\n{{.FormattedActual}}\n{{.To}} have attribute '{{.Data.Attribute}}'`, &data)
+	}
+
 	if data.Matcher, data.IsMatcher = expected.(GomegaMatcher); !data.IsMatcher {
 		return HaveAttribute(name, gomega.Equal(expected))
 	}
@@ -25,7 +33,7 @@ func HaveAttribute(name string, expected interface{}) GomegaMatcher {
 			return false, nil
 		}
 		return data.Matcher.Match(data.Actual)
-	}).WithTemplate(`Expected:\n{{.FormattedActual}}\n{{.To}} have have attribute '{{.Data.Attribute}}'
+	}).WithTemplate(`Expected:\n{{.FormattedActual}}\n{{.To}} have attribute '{{.Data.Attribute}}'
 {{ if .Data.Found}}{{.Data.Matcher.FailureMessage .Data.Actual -}}
 {{else}}  Attribute did not exist{{end}}`, &data)
 }
