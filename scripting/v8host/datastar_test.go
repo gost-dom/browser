@@ -8,8 +8,8 @@ import (
 
 	"github.com/gost-dom/browser"
 	app "github.com/gost-dom/browser/internal/test/integration/test-app"
-	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
+	"github.com/gost-dom/browser/testing/gosttest"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -55,7 +55,8 @@ func TestDatastar(t *testing.T) {
 				// Error level logs are piped to t.Error() though (this is
 				// configurable). This will cause tests to fail if a JavaScript
 				// error is thrown, even if the assertions in Go code succeed.
-				gosttest.NewTestLogger(t,
+				gosttest.NewTestingLogger(t,
+					// You don't need this. Logs all JS->Go calls
 					gosttest.MinLogLevel(slog.LevelDebug),
 				),
 			),
