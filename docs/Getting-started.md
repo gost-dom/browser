@@ -58,7 +58,7 @@ func TestWebBrowser(t *testing.T) {
 
 Breakdown of the code:
 
-- `browser.New` obviously creates a new browser instance. By default this will
+- `browser.New` obviously creates a new browser instance. By default, this will
   be configured with a V8 script engine.
   - `browser.WithHandler` is the recommended way, connect the browser directly
     to the root HTTP handler, bypassing the TCP stack. This is not necessary.
@@ -68,7 +68,7 @@ Breakdown of the code:
     `gosttest.NewTestingLogger(t)` returns a `*Logger` that writes log output to
     the `testing.TB` instance.
   - `browser.WithContext(t.Context())` will cause the browser to automatically
-    close then the test context is cancelled. This will free resources, and
+    close when the test context is cancelled. This will free resources, and
     allow the V8 instance to be reused for a new test, reducing the overhead of
     configuring V8.
 - `b.Open("http://example.com")` opens the page, and returns an `html.Window`.
@@ -86,8 +86,8 @@ Breakdown of the code:
 >
 > The `gosttest.NewTestLogger()` could be replaced by something like [slogt].
 > But be sure to close the browser _before_ the test completes, as closing the
-> browser can write log statements, and writing the the test output _after_ the
-> test completes will panic.
+> browser can write log statements, and writing the test output _after_ the test
+> completes will panic.
 
 > [!WARNING]
 >

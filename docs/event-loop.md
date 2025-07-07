@@ -33,7 +33,7 @@ Client code advance time by calling these two functions.
 > [!WARNING]
 >
 > Both `Advance()` and `RunAll()` will try to prevent an infinite loop caused by
-> new callbacks continuously being registered. It expects that the no of
+> new callbacks continuously being registered. It expects that the number of
 > registered callbacks decrease over time; and will panic if they don't. This
 > will be triggered if a `setTimeout` callback continuously registers new
 > timeouts. Likewise, `RunAll()` will effectively panic if there are any
@@ -64,8 +64,8 @@ is true.
 > a consequence, the entire clock/event loop may require some changes.
 
 
-[^1]: There are tuning parameters for this behaviour; but not exposed. Please
-    submit an issue, if this you experience issues with this.
+[^1]: There are tuning parameters for this behaviour; but they are not exposed.
+    Please submit an issue if this you experience issues with this.
 
 [^2]: A recursive `setInterval` call with zero delay will trigger this
     behaviour, but shouldn't for the `Advance()` case: 
