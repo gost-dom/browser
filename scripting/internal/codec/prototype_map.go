@@ -21,6 +21,8 @@ func LookupJSPrototype(entity entity.ObjectIder) string {
 			return "PointerEvent"
 		case uievents.MouseEventInit:
 			return "MouseEvent"
+		case uievents.KeyboardEventInit:
+			return "KeyboardEvent"
 		case uievents.UIEventInit:
 			return "UIEvent"
 		default:

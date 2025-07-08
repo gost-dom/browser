@@ -6,6 +6,7 @@ import js "github.com/gost-dom/browser/scripting/internal/js"
 
 func Bootstrap[T any](reg js.ClassBuilder[T]) {
 	js.RegisterClass(reg, "PointerEvent", "MouseEvent", NewPointerEvent)
+	js.RegisterClass(reg, "KeyboardEvent", "UIEvent", NewKeyboardEvent)
 	js.RegisterClass(reg, "MouseEvent", "UIEvent", NewMouseEvent)
 	js.RegisterClass(reg, "UIEvent", "Event", NewUIEvent)
 }

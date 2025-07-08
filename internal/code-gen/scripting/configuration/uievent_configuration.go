@@ -23,6 +23,20 @@ func ConfigureEventSpecs(specs *WebIdlConfigurations) {
 	mouseEvent.Method("buttons").Ignore()
 	mouseEvent.Method("relatedTarget").SetNotImplemented()
 
+	keyboardEvent := s.Type("KeyboardEvent")
+	keyboardEvent.SkipWrapper = true
+
+	keyboardEvent.Method("getModifierState").SetNotImplemented()
+	keyboardEvent.Method("key").SetCustomImplementation()
+	keyboardEvent.Method("code").SetNotImplemented()
+	keyboardEvent.Method("location").SetNotImplemented()
+	keyboardEvent.Method("ctrlKey").SetNotImplemented()
+	keyboardEvent.Method("shiftKey").SetNotImplemented()
+	keyboardEvent.Method("altKey").SetNotImplemented()
+	keyboardEvent.Method("metaKey").SetNotImplemented()
+	keyboardEvent.Method("repeat").SetNotImplemented()
+	keyboardEvent.Method("isComposing").SetNotImplemented()
+
 	ConfigurePointerEventSpecs(specs)
 }
 
