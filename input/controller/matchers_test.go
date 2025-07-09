@@ -40,10 +40,6 @@ func HaveRecordedEvents(expected ...types.GomegaMatcher) types.GomegaMatcher {
 	return gomega.WithTransform(func(rec *EventRecorder) []event.Event {
 		return rec.Events
 	}, gomega.HaveExactElements(expected))
-	// m := gomega.HaveExactElements(expected)
-	// return gcustom.MakeMatcher(func(rec *EventRecorder) (bool, error) {
-	// 	return m.Match(rec.Events)
-	// })
 }
 
 type MatchEvent struct {
