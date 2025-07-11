@@ -39,10 +39,10 @@ this was much faster than trying to figure out what was wrong.
 ### TDD and web applications
 
 When it comes to web user interfaces, a real browser is difficult to avoid
-unless the application is void of any JavaScript code. As JavaScript plays a
-significant role in most modern web applications, you need a JavaScript runtime
-in a browser-like environment. For many projects, only a real browser provides
-this environment.
+unless the application is void of any JavaScript code. But with a significant
+amount of behaviour implemented on the client, testing needs a JavaScript
+runtime in a browser-like environment. For many projects, only a real browser
+provides this environment.
 
 Using a real browser is not without problems, and developers often struggle
 with:
@@ -52,10 +52,10 @@ with:
 - Slow tests, and initial startup overhead, due to launching external programs,
   inter-process communication, and network traffic.
 
-If we accept the premise that the faster the test feedback cycle, the more
-effective TDD becomes, then the overhead of browser automation negatively
-impacts the benefit of TDD; possibly even to the point where it's slowing you
-down instead of speeding you up.
+If we accept the premise that the effectiveness of TDD is directly affected by
+the speed of the test feedback cycle, then the overhead of browser automation
+negatively impacts the benefit of TDD; possibly even to the point where it's
+slowing you down instead of speeding you up.
 
 In addition to the overhead inherent to the technical nature, some test are also
 inherently slow because the behaviour under test _depends the passing of time_.
@@ -263,7 +263,7 @@ different pre-programmed responses from the mocked use case.
 > Gost-DOM facilitates mocking as well as any other test in the system, i.e. -
 > it only depends on how well your application architecture supports it; whereas
 > .NET makes it _very_ difficult; although [Nancy](https://nancyfx.org/)
-> _appears to_ support this much better. 
+> _appears to_ support this much better.[^2]
 
 ## Conclusion
 
@@ -273,8 +273,8 @@ In this document, I set the premises:
   applications.
 - Web user interfaces has historically been an exception to this rule.
 - This is caused by the overhead and erraticness of browser automation.
-- Because of this, web UI is typically developed using a more traditional code-first
-  approach, and some tests _might_ be added afterwards.
+- Because of this, web UI is typically developed using a more traditional
+  production-code-first approach; _possibly_ adding a few tests afterwards.
 - Black box testring the user interface is a flawed strategy, as a system
   contains many use cases, not all of which are necessarily triggered through
   the user interface.
@@ -306,23 +306,23 @@ ports, etc.
 
 [When not to use Gost-DOM](bad-cases-for-gost-dom.md)
 
-### The overall test strategy
+### TDD vs. Test Strategy
 
 Here, I have been describing TDD as a means to increse effeciency during
-development; not as the test strategy for a project.
+development; not as the test strategy for a project. But a side effect of TDD is
+a test suite performing verification, and facilitating safe refactoring.
 
-The tests that fall out of a TDD process typically focus on an isolated
+Each test that the TDD process leaves behind typically focus on an isolated
 behaviour of the system; be it the business rules in the domain layer, how the
 user interface present validation errors to the user, or how the database layer
-detects conflicting updates. 
+detects conflicting updates.
 
 I would be relunctant to trust a system that did not have tests verifying the
-behaviour of the system as a whole, going through a complete "flow"; whatever
-that flow might be. E.g., for a web shop, this could be from login to checkout.
+behaviour of the system as a whole, going through a complete "flow"; E.g., for a
+web shop, a flow from login to checkout.
 
 In my experience, a good TDD process leaves little to add, requiring possibly
-only a handful of such tests written after the fact; but they are very worth
-writing.
+only a handful of such tests written after code was developed.
 
 And the strategy for those tests, you are free to choose. Having a suite of
 black box tests that do not run during a normal TDD cycle could be a perfectly
