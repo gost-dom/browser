@@ -225,13 +225,12 @@ production code.
 #### Mocking becomes an option
 
 UI tests are typically full integration tests, i.e. when exercising the
-UI, all layers of the system are exercised, persisting state in a database, and
-the previous examples were written from the context, that tests were indeed
-integration tests.
+UI, all layers of the system are exercised, persisting state in a database. The
+example in the previous section was described in a way asuming tests were
+written as integration tests.
 
 But when the test is about the behaviour in the UI, a viable approach is mocking
-the actual "use case"
-
+the actual "use case".
 
 This ties the test more closely to the responsibilities of the UI layer in isolation. The
 responsibilities of the user interface layer are primarily conversion of user
@@ -240,14 +239,15 @@ proper user responses. Related responsibilities include authentication and
 checking input validity.[^1]
 
 The test case becomes just that, verifying that given some user input in the
-browser, the use case is called with specific arguments, invalid input generates
-proper error messages, as well as verifying the response to the user based on
-different pre-programmed responses. 
+browser, the use case is called with verifyable arguments, error messages are
+verified for invalid inputs, as well as the response to the user based on
+different pre-programmed responses from the use case.
 
 > [!tip]
 >
 > I do not intend to imply that mocking is preferable to integration tests.
-> Boths have pros and cons. 
+> Boths have pros and cons. And the application might not even have that level
+> of functional segregation.
 >
 > But the ability to stub out some dependencies is extremely powerful.
 > Particularly when systems start to incorporate messages-driven aspects, or
