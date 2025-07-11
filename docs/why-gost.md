@@ -232,22 +232,22 @@ written as integration tests.
 But when the test is about the behaviour in the UI, a viable approach is mocking
 the actual "use case".
 
-This ties the test more closely to the responsibilities of the UI layer in isolation. The
-responsibilities of the user interface layer are primarily conversion of user
-input to use case calls, and conversion of the outcomes of the use cases to
-proper user responses. Related responsibilities include authentication and
-checking input validity.[^1]
+This ties the test more closely to the responsibilities of the UI layer in
+isolation. E.g., when following the "clean architecture", the responsibilities
+of the user interface layer are primarily conversion of user input to use case
+calls, and conversion of the outcomes of the use cases to proper user responses.
+Related responsibilities include authentication and checking input validity.[^1]
 
 The test case becomes just that, verifying that given some user input in the
 browser, the use case is called with verifyable arguments, error messages are
 verified for invalid inputs, as well as the response to the user based on
-different pre-programmed responses from the use case.
+different pre-programmed responses from the mocked use case.
 
 > [!tip]
 >
-> I do not intend to imply that mocking is preferable to integration tests.
-> Boths have pros and cons. And the application might not even have that level
-> of functional segregation.
+> I do not intend to imply that mocking is preferable to integration tests;
+> neither that the "clean architecture" is superior in any way; it's just meant
+> as an example. All approaches have pros and cons.
 >
 > But the ability to stub out some dependencies is extremely powerful.
 > Particularly when systems start to incorporate messages-driven aspects, or
