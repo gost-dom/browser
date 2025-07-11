@@ -20,7 +20,7 @@ func (c KeyboardController) SendKey(k key.Key) {
 	if c.Window == nil {
 		return
 	}
-	eventInit := k.KeyboardEventInit()
+	eventInit := k.EventInit()
 	active := c.Window.Document().ActiveElement()
 	switch e := active.(type) {
 	case html.HTMLInputElement:

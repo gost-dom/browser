@@ -26,7 +26,8 @@ type Key struct {
 	delay time.Duration
 }
 
-func (k Key) KeyboardEventInit() uievents.KeyboardEventInit {
+// EventInit creates a KeyboardEventInit representing the key stroke.
+func (k Key) EventInit() uievents.KeyboardEventInit {
 	return uievents.KeyboardEventInit{
 		Key: k.Key,
 	}
