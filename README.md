@@ -15,8 +15,6 @@ application in Go that relies on JavaScript. Properties of Gost-DOM-based tests:
 Yet Gost-DOM still uses HTTP request and responses for verification, testing the
 entire stack, as well as middlewares. 
 
-of usage.
-
 > [!NOTE]
 >
 > This is 0.x version still, and breaking API changes do occur, but will be

@@ -71,6 +71,7 @@ format](https://github.com/angular/angular/blob/main/contributing-docs/commit-me
 | **test**     | Adding missing tests, correcting existing tests, or refactors tests   |
 | **work**     | An incremental change working towards a feature                       |
 
+
 A commit may naturally fall into multiple categories. A feature must have tests,
 and ideally, test and implementation are in the same commit of type `feat` or
 `work`.
@@ -80,6 +81,7 @@ the commits are on a different level than what we want to describe in the change
 log.[^3]
 
 ### Commit scopes
+
 
 | Scope       | Description                                           |
 |-------------|-------------------------------------------------------|
