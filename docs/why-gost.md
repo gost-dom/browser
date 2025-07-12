@@ -137,61 +137,38 @@ manipulation), but exercise the user interface relating to the behaviour under t
 
 ### Black box testing is a flawed strategy
 
-Imagine we want to verify the behaviour of the user interface of a system that
-has two core use cases:
+A test case will typically have 3 cases
 
-- Open an account
-- Close an account
+1. Setting up an initial state
+2. Exercising the system, providing some external stimuli
+3. Verifying the end state of the system
 
-Opening an account doesn't require an initial state, but closing an account
-requires an existing account.
+When testing the behaviour of the user interface, the external stimuli will
+exercise the user interface, and for the part that the verification that relates
+to the response communicated to the user, verification also need to interact
+with the user interface. 
 
-At first it would appear that there's no problem creating the initial state for
-both use cases, as the "close account" test could use the user interface for
-"Open account" to create the initial state. But this strategy is flawed, and
-I'll get back to that.
+But setting up initial entities in the system, or verifying the state of
+persisted entities, this should just use back-door manipulation. Performing
+these task through the user interface is not just a bad idea, it can be outright
+impossible.
 
-#### Verifying the end state
+#### Black box testing leads to fragile tests
 
-After exercising the behaviour of the use case under test, the test case
-verifies the correct end state. Part of the verification is asserting on the
-user state of the user interface; did it provide the correct response to the
-user. The other part of verification is asserting on the entities that may have
-been created, updated, or deleted.
+User interfaces may change. When the user interface for feature X is changed,
+only the tests for feature X should be updated.
 
-For the "Open account" use case, the successful test case should at the very
-minimum display a success message for the test to verify. But how to verify
-that the account was created?
+Black box testing the user interface will lead to fragile tests, as changes to
+a part of the user interface affect the outcome of tests for other features.
 
-In a black box test, there is only one way, navigate to the account page and
-verify the information shown. 
+> [!INFO]
+>
+> A _fragile test_, as a test anti-pattern. It is a test the often fails when
+> you make code changes despite the feature still works as intended. Fragile
+> tests are usually caused by test cases too closely coupled to the
+> implementation.
 
-But wait! There wasn't a use case about having an account page.
-
-The test strategy requires that the test of one features depends on a completely
-different feature being implemented.
-
-Some systems add "test pages", but this is a very dangerous strategy, as you are
-now adding behaviour in the system to expose information that wasn't intended to
-be exposed. Hackers can take advantage of this to learn more about the system.
-Even if you _think_ you have secured them properly, it _is_ an added attack
-vector.
-
-#### Closing an account was flawed
-
-I mentioned previously that a strategy that relies on using using the UI for the
-"Open Account" use case to setup the initial state for the "Close account" test
-cases is a flawed strategy.
-
-This is because the strategy assumes that the user interface allows creating the
-initial object in all relevant states.
-
-Imaging a rule in the system stating, "An customer cannot close an account
-created by an administrator". If administrators use a completely different user
-interface the black box test of the customer's user interface cannot setup the
-correct initial state.
-
-#### Not all use cases are exposed the the user interface
+#### Black box testing the behaviour of the UI is not possible
 
 As the application grows, so does the number of use cases, but not all use cases
 are initiated from the user interface.
@@ -199,38 +176,44 @@ are initiated from the user interface.
 Some use cases can be triggered by the passing of time, e.g., when an invoice is
 past its due date, send a reminder to the customer. Some may be triggered by
 events from other systems; When a user account was deleted in the identity
-provider, mark all comments created by the user as deleted.
+provider, mark all comments created by the user as deleted. And some may be
+triggered by a system administrator using a CLI, like creating a new tenant in a
+multi-tenant SaaS start-up, that doesn't have an automated sign-up process yet.
 
-The conclusion is clear, it's impossible to black box test all behaviours of the
-system by exercising the user interface alone.
+It's simply impossible to black box test all behaviours of the system by
+exercising the user interface alone.
 
-### Gray box tests is the way to go
+#### Black box tests operate at the wrong level of abstration
 
-Instead of using the UI to create the existing account, the production code
-already has the functionality to create an account in a valid state. The UI test
-for the "Close account" should use this code to create the account; not exercise
-the user interface.
+Imagine a user story, "Close account", and there's a rule, "A member cannot
+close an account that was created by an administrator". The behaviour in the
+user interface could be that for such an account, the normal button to delete an
+account is replaced by a message saying "please contact ...".
 
-Not only do you elliminate the problem that the initial state may not be
-possible to create; even when they are, creating the state using back-door
-manipulation is both faster and more predictable. A change to the user interface
-for the "Open account" use case should not cause tests for "Close account" to
-fail.
+To setup the initial state, you need an account that was created by an
+administrator, and this should be expressed as concisely as possible in the test
+case. For example, it could be:
 
-The same thing when verifying the end state; While the outcome communicated to
-the user must obviously be verified in the browser, the entities stored in the
-system are much faster, and much more reliably verified by reusing the
-production code.
+```Go
+creator := User{ Kind: UserKindAdministrator }
+account := Account{ CreatedBy: creator }
+userRepo.Save(creator)
+accountRepo.Save(account)
+currentUser := User{ Kind: UserKindMember }
+```
+
+A black box does not clearly expresses the business rules: an account created by
+an administrator. The black box test describes the process to create such an
+account. That process is not the focus of _this_ test; that process is tested
+elsewhere.
 
 #### Mocking becomes an option
 
 UI tests are typically full integration tests, i.e. when exercising the
-UI, all layers of the system are exercised, persisting state in a database. The
-example in the previous section was described in a way asuming tests were
-written as integration tests.
+UI, all layers of the system are exercised, persisting state in a database.
 
-But when the test is about the behaviour in the UI, a viable approach is mocking
-the actual "use case".
+If you choose to isolate the test to verify the behaviour of the UI alone, a
+viable approach is mocking the actual "use case".
 
 This ties the test more closely to the responsibilities of the UI layer in
 isolation. E.g., when following the "clean architecture", the responsibilities
@@ -240,8 +223,8 @@ Related responsibilities include authentication and checking input validity.[^1]
 
 The test case becomes just that, verifying that given some user input in the
 browser, the use case is called with verifyable arguments, error messages are
-verified for invalid inputs, as well as the response to the user based on
-different pre-programmed responses from the mocked use case.
+verified for invalid inputs, as well as the feedback to the user is verified for
+different pre-programmed mocked responses from the use case call.
 
 > [!tip]
 >
@@ -249,13 +232,13 @@ different pre-programmed responses from the mocked use case.
 > neither that the "clean architecture" is superior in any way; it's just meant
 > as an example. All approaches have pros and cons.
 >
-> But the ability to stub out some dependencies is extremely powerful.
+> But the ability to replace some dependencies is extremely powerful.
 > Particularly when systems start to incorporate messages-driven aspects, or
 > other delayed processing the runtime behaviour becomes unpredictable, and
 > stable tests are more difficult to maintain.
 >
-> Replaceing some components to improve predictability can significantly
-> improve the stability of the test suite.
+> Replaceing components to improve predictability can significantly improve the
+> stability of the test suite.
 
 > [!caution]
 >
@@ -275,12 +258,12 @@ In this document, I set the premises:
 - This is caused by the overhead and erraticness of browser automation.
 - Because of this, web UI is typically developed using a more traditional
   production-code-first approach; _possibly_ adding a few tests afterwards.
-- Black box testring the user interface is a flawed strategy, as a system
-  contains many use cases, not all of which are necessarily triggered through
-  the user interface.
+- Black box testring the user interface is a flawed strategy, tests do not
+  reflect business rules, and may rely on behaviour not exposed through the UI.
 
-Gost-DOM aims to improve the developer experience and efficiency when writing web applications in
-Go by facilitating a fast feedback loop and gray box tests. This is achieved by:
+Gost-DOM aims to support a TDD process by elliminating the problems of browser
+automation, achiving a fast feedback loop for a reliable test suite that is a
+joy to work with. This is achieved by:
 
 - elliminating the overhead involved in launching a browser and chatty
   inter-process communication.
@@ -304,7 +287,8 @@ consequence, when mocking database layers or other shared state, the tests cases
 can run in parallel, without any hassle of managing database contexts, TCP
 ports, etc.
 
-[When not to use Gost-DOM](bad-cases-for-gost-dom.md)
+Gost is specifically written for hypermedia applications in mind. Other
+architectures may have better options. Read more here: [When not to use Gost-DOM](bad-cases-for-gost-dom.md)
 
 ### TDD vs. Test Strategy
 
