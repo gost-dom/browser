@@ -161,7 +161,7 @@ only the tests for feature X should be updated.
 Black box testing the user interface will lead to fragile tests, as changes to
 a part of the user interface affect the outcome of tests for other features.
 
-> [!INFO]
+> [!note]
 >
 > A _fragile test_, as a test anti-pattern. It is a test the often fails when
 > you make code changes despite the feature still works as intended. Fragile
