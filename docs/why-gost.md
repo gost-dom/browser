@@ -28,32 +28,80 @@ this was much faster than trying to figure out what was wrong.
 > areas I imaging might not do so well under TDD, and you may need to search for
 > other means of feedback. 
 >
-> No matter what you work with, to improve efficiency, you should optimise the
-> feedback loop, e.g. when working the the visual design, running a browser with
+> No matter what you work with, to improve efficiency, you should optimise for
+> fast feedback, e.g. when working the the visual design, running a browser with
 > live-reload provides fast visual (relevant) feedback.
 >
-> TDD just happen to work really well for _most of the code_ in _most_ applications.
+> TDD just happen to work best for _most of the code_ in _most_ applications.
 
 ### TDD and web applications
 
+When the implementation of behaviour in a web application requires JavaScript, a
+browser-like environment with a JavaScript runtime is necessary to test.
+JavaScript projects have had this ability without needing a real browser through
+projects like:
+
+- [jsdom](https://github.com/jsdom/jsdom)
+- [happy-dom](https://github.com/capricorn86/happy-dom/wiki/)
+- [Zombie](https://github.com/assaf/zombie) (no longer maintained)
+- [PhantomJS](https://github.com/ariya/phantomjs) (no longer maintained)
+
+JSDom and Happy-dom are typically used to unit test front end components in
+Single-page applications, i.e., not the web page as a whole, but testing
+individual components in isolation, in a browser-like environment. Zonbie and
+PhantomJS were headless browsers, i.e. JavaScript libraries simulating the
+behaviour of a browser.
+
+However, applications with server-side rendering requires a "browser" to request
+an HTML page, parse the HTML, and execute the client-side script in a proper
+environment where it's internal DOM has been exposed to JavaScript. 
+
+Writing meaningful tests of individual parts is not feasible; For hypermedia
+frameworks like HTMX and Datastar, the application behaviour is the choreography
+of rendered HTML, the attributes on specific elements, the endpoints that the
+framework calls, the request and response headers and bodies.
+
+Generally, the only option is to use a real browser, but developers often
+struggle with:
+
+- Erratic tests cases (they sometimes fail, but pass when rerunning)
+- Fragile test cases (they break when code changes, but the system works)
+- Slow tests caused by the overhead, due to launching external programs,
+  inter-process communication, and network traffic.
+- Slow test caused by testing functionslity requiring time to pass, e.g.,
+  throttled or debounced behaviour.
+
+If we accept the premise that the effectiveness of TDD is directly affected by
+the speed of the test feedback cycle, then the overhead of browser automation
+negatively impacts the benefit of TDD; possibly even to the point where it's
+slowing you down instead of speeding you up.
+
+#### A headless browser to the rescue.
+
+A _headless browser_ written in the same language as the tests cases mitigates
+the problems faced by developers when using browser automation.
+
+- By running as a library, you elliminate the overhead of launching a new
+  process, as well as inter-process communication.
+- Running in-process allows the embedder (the test case) control over internals,
+  such as the passing of time, avoiding delays in test cases for throttled
+  behaviour, as tests may fast forward simulated time.
+- Test cases can much better synchronise with the browser itself, avoiding
+  fragile tests.
+
+> [!Note]
+>
+> Running a real browser, like chrome, in headless mode _does not_ make it a
+> headless browser; it's still a browser running in headless mode, and has the
+> problems inherent to browser automation.
+
+<!--
 When it comes to web user interfaces, a real browser is difficult to avoid
 unless the application is void of any JavaScript code. But with a significant
 amount of behaviour implemented on the client, testing needs a JavaScript
 runtime in a browser-like environment. For many projects, only a real browser
 provides this environment.
 
-Using a real browser is not without problems, and developers often struggle
-with:
-
-- Erratic tests cases (they sometimes fail, but pass when rerunning)
-- Fragile test cases (they break when code changes, but the system works)
-- Slow tests, and initial startup overhead, due to launching external programs,
-  inter-process communication, and network traffic.
-
-If we accept the premise that the effectiveness of TDD is directly affected by
-the speed of the test feedback cycle, then the overhead of browser automation
-negatively impacts the benefit of TDD; possibly even to the point where it's
-slowing you down instead of speeding you up.
 
 In addition to the overhead inherent to the technical nature, some test are also
 inherently slow because the behaviour under test _depends the passing of time_.
@@ -71,143 +119,29 @@ been manually verified to work as intended.
 > them slower; but if you want to avoid bugs creeping into existing
 > functionaily; you need a reliable test suite.
 
-### The "headless browser"
+-->
 
-A headless browser is a piece of software that in many ways acts as a browser,
-but doesn't render a user interface. Headless browsers are often intended for
-testing. The headless browser offers APIs allowing test code to simulate user
-interaction with the application.
+## Testing the UI should be "Gray Box Tests"
 
-As the browser needs a JavaScript runtime to be of any use, the libraries that
-simulate a browser environment are generally written in JavaScript.
+A test case will typically have 3 phases:
 
-- [happy-dom](https://github.com/capricorn86/happy-dom/wiki/)
-- [jsdom](https://github.com/jsdom/jsdom)
-- [zombie](https://github.com/assaf/zombie) (no longer maintained)
-- [PhantomJS](https://github.com/ariya/phantomjs) (no longer maintained)
-
-Happy-dom and jsdom are tools used extensively to "unit test" front-end code for
-single-page applications. I.e., they don't act as full browsers, but provide
-enough implementation of the DOM, to allow the developer to test their
-application. These types of test don't "open a web page", but renders and tests
-a single component in isolation.
-
-As these are all JavaScript libraries, these tools also allows you to "hack the
-runtime", for example, using a tool like [lolex] to simulate time, allowing
-fast-forwarding of time when verifying throttled or debounced behaviour
-permitting instantaneous feedback.
-
-[lolex]: https://www.npmjs.com/package/lolex
-
-> [!Note]
->
-> Running a real browser, like chrome, in headless mode _does not_ make it a
-> headless browser; it's still a browser running in headless mode, and has the
-> problems inherent to browser automation.
->
-> This is still an improvement compared to early browser automation methods
-> where browsers did not include a headless mode, requiring the desktop
-> environment on the build server (though unix-like systems could create a
-> virtual desktop environment using a tool like [xvfb])
-
-[xvfb]: https://www.x.org/archive/X11R7.7/doc/man/man1/Xvfb.1.xhtml
-
-## TDD of UI behaviour tests should be "gray box tests" written in the back-end language
-
-Many projects employ a black box testing strategy when it comes to testing the
-UI. This is a flawed approach, but before explaining why, let's get the
-terminology clear.
-
-### Black box vs. white box testing
-
-A _black box test_ is a test exercising the system from the outside with no
-knowledge of the internals of the system (we cannot see inside, it's black).
-Testing the system entirely through the UI is an example of a black-box test.
-
-Obviously, a white box test is the opposite, you test the system with intimate
-knowledge of its internals. Unit testing is an example of white box testing. TDD
-typically generates white box tests.
-
-Gray box testing uses knowledge with the internals, but stimulates the system
-from the outside. A gray box test might use the internals of the system to setup
-the initial state and/or verify the end state (also known as back-door
-manipulation), but exercise the user interface relating to the behaviour under
-test.
-
-### Black box testing is a flawed strategy
-
-A test case will typically have 3 cases (disregarding cleanup, as it's
-irrelevant in this context)
-
-1. Setting up an initial state
-2. Exercising the system, providing some external stimuli
+1. Setting up an initial state of the system
+2. Exercising behaviour under test through some external stimuli
 3. Verifying the end state of the system
 
 When testing the behaviour of the user interface, the external stimuli will
-exercise the user interface, and for the part that the verification that relates
-to the response communicated to the user, verification also need to interact
-with the user interface. 
+exercise the user interface, simulating click or keyboard input. Part of the
+verification relates to the response communicated to the user, and here the test
+must interact with the user interface.
 
 But setting up initial entities in the system, or verifying the state of
-persisted entities, this should just use back-door manipulation. Performing
-these task through the user interface is not just a bad idea, it can be outright
-impossible.
+persisted entities, this should reuse the existing code you already have in 
 
-#### Black box testing leads to fragile tests
+Some projects use only black box testing when testing the user interface. That
+[that is a flawed strategy](./1.1.1 Black box testing is a flawed strategy.md),
+and might even not be possible.
 
-User interfaces may change. When the user interface for feature X is changed,
-only the tests for feature X should be updated.
-
-Black box testing the user interface will lead to fragile tests, as changes to
-a part of the user interface affect the outcome of tests for other features.
-
-> [!note]
->
-> A _fragile test_, as a test anti-pattern. It is a test the often fails when
-> you make code changes despite the feature still works as intended. Fragile
-> tests are usually caused by test cases too closely coupled to the
-> implementation.
-
-#### Black box testing the behaviour of the UI is not possible
-
-As the application grows, so does the number of use cases, but not all use cases
-are initiated from the user interface.
-
-Some use cases can be triggered by the passing of time, e.g., when an invoice is
-past its due date, send a reminder to the customer. Some may be triggered by
-events from other systems; When a user account was deleted in the identity
-provider, mark all comments created by the user as deleted. And some may be
-triggered by a system administrator using a CLI, like creating a new tenant in a
-multi-tenant SaaS start-up, that doesn't have an automated sign-up process yet.
-
-It's simply impossible to black box test all behaviours of the system by
-exercising the user interface alone.
-
-#### Black box tests operate at the wrong level of abstration
-
-Imagine a user story, "Close account", and there's a rule, "A member cannot
-close an account that was created by an administrator". The behaviour in the
-user interface could be that for such an account, the normal button to delete an
-account is replaced by a message saying "please contact ...".
-
-To setup the initial state, you need an account that was created by an
-administrator, and this should be expressed as concisely as possible in the test
-case. For example, it could be:
-
-```Go
-creator := User{ Kind: UserKindAdministrator }
-account := Account{ CreatedBy: creator }
-userRepo.Save(creator)
-accountRepo.Save(account)
-currentUser := User{ Kind: UserKindMember }
-```
-
-A black box does not clearly expresses the business rules: an account created by
-an administrator. The black box test describes the process to create such an
-account. That process is not the focus of _this_ test; that process is tested
-elsewhere.
-
-#### Mocking becomes an option
+### Mocking becomes an option
 
 UI tests are typically full integration tests, i.e. when exercising the
 UI, all layers of the system are exercised, persisting state in a database.
@@ -247,6 +181,36 @@ different pre-programmed mocked responses from the use case call.
 > it only depends on how well your application architecture supports it; whereas
 > .NET makes it _very_ difficult; although [Nancy](https://nancyfx.org/)
 > _appears to_ support this much better.[^2]
+
+### TDD'ing the UI
+
+So to drive development of a new behaviour in the a test, it will typically have
+these steps.
+
+1. Set up the initial state, inserting domain objects in an empty database; or
+   mocking a pre-programmed response.
+2. Create a browser instance, possibly logging in if the feature requires an
+   authenticated user.
+3. Navigate to the page with the behaviour to verify
+4. Interact with the page.
+5. Verify that the proper response was communicated to the user
+6. Verify data was updated correctly/mocks were called with the correct
+   arguments.
+
+When your test code can reuse production code for setting up initial state, and
+verifying end state; and when the UI interaction runs in the same thread as the
+test case, the test is fast and reliable, and facilitates a TDD loop.
+
+This facilitates refactoring, as well as choosing the easy and simple solution
+up front, and slowly refactoring to patterns as you identify the, extracting
+common behaviour in middlewares, replacing one 3rd party CSRF library with a
+different one, and have the test case verify that protection still works.
+
+Over time, a large part of the test code will be extracted to test helpers.
+E.g., I would explicitly interact with the login page when testing login
+behaviour; but all other tests that merely repends on a logged in user will use
+a test helper to create a browser in a logged in state.
+
 
 ## Conclusion
 
