@@ -129,13 +129,15 @@ knowledge of its internals. Unit testing is an example of white box testing. TDD
 typically generates white box tests.
 
 Gray box testing uses knowledge with the internals, but stimulates the system
-from the outside. A gray box test might use the internals of the syste setup the
-system in the initial state and/or verify the end state (also known as back-door
-manipulation), but exercise the user interface relating to the behaviour under test.
+from the outside. A gray box test might use the internals of the system to setup
+the initial state and/or verify the end state (also known as back-door
+manipulation), but exercise the user interface relating to the behaviour under
+test.
 
 ### Black box testing is a flawed strategy
 
-A test case will typically have 3 cases
+A test case will typically have 3 cases (disregarding cleanup, as it's
+irrelevant in this context)
 
 1. Setting up an initial state
 2. Exercising the system, providing some external stimuli
@@ -304,7 +306,10 @@ system as a whole, going through a complete "flow"; E.g., for a web shop, a flow
 from login to checkout.
 
 In my experience, a good TDD process leaves little to add, requiring possibly
-only a handful of such tests written after code was developed.
+only a handful of such tests written after code was developed. But they are very
+worth having, preventing an issue such as users unable to log in because you
+accidentally changed the login page to only be visible for authenticated
+users.[^3]
 
 And the strategy for those tests, you are free to choose. Having a suite of
 black box tests that do not run during a normal TDD cycle could be a perfectly
@@ -322,3 +327,7 @@ reasonable strategy.
 [^2]: This is based on my last .NET project. If this has improved, please let me
     know with an example, and I'll correct. I do not have experience with Nancy;
     my note about Nancy is based on information on the project's web site.
+
+[^3]: Yes, this is actually an example of a bug introduced while refactoring
+    authentication in the front end. It wasn't caught by any of the unit tests -
+    only an integration test that had been added after code was written.
