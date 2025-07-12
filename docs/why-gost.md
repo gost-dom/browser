@@ -137,9 +137,11 @@ must interact with the user interface.
 But setting up initial entities in the system, or verifying the state of
 persisted entities, this should reuse the existing code you already have in 
 
-Some projects use only black box testing when testing the user interface. That
-[that is a flawed strategy](./1.1.1 Black box testing is a flawed strategy.md),
+Some projects use only black box testing when testing the user interface. 
+That is a [flawed strategy],
 and might even not be possible.
+
+[flawed strategy]: 1.1.1-Black-box-testing-is-a-flawed-strategy.md
 
 ### Mocking becomes an option
 
