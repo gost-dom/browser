@@ -268,7 +268,7 @@ joy to work with. This is achieved by:
 - allow bypassing the overhead of the TCP stack when communicating with the web
   application under test, further reducing overhead.
 - simulate time, allowing fast-forwarding of time, testing throttling and
-  debound behaviour without the delay.
+  debounce behaviour without the delay.
 - providing completely predictable runtime execution, elliminating erraticness
   of tests.
 - writing the test code in the same language as production code, allowing back
@@ -291,7 +291,7 @@ architectures may have better options. Read more here: [When not to use Gost-DOM
 ### TDD vs. Test Strategy
 
 Here, I have been describing TDD as a means to increse effeciency during
-development; not as the test strategy for a project. But a side effect of TDD is
+development; not as the test strategy for a project. A side effect of TDD is
 a test suite performing verification, and facilitating safe refactoring.
 
 Each test that the TDD process leaves behind typically focus on an isolated
@@ -299,9 +299,9 @@ behaviour of the system; be it the business rules in the domain layer, how the
 user interface present validation errors to the user, or how the database layer
 detects conflicting updates.
 
-I would be relunctant to trust a system that did not have tests verifying the
-behaviour of the system as a whole, going through a complete "flow"; E.g., for a
-web shop, a flow from login to checkout.
+I wouldn't trust a system that did not have tests verifying the behaviour of the
+system as a whole, going through a complete "flow"; E.g., for a web shop, a flow
+from login to checkout.
 
 In my experience, a good TDD process leaves little to add, requiring possibly
 only a handful of such tests written after code was developed.
