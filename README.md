@@ -2,8 +2,9 @@
 
 **The Go-to headless browser for TDD workflows.**
 
-Gost-DOM is a headless browser written in Go intended to write tests of web
-application in Go that relies on JavaScript. Properties of Gost-DOM-based tests:
+Gost-DOM is a headless browser written in Go designed simplify and speed up
+testing of web application in Go, particularly when a the application behaviour
+relies on JavaScript. Properties of Gost-DOM-based tests:
 
 - Tests run in parallel due to complete _complete isolation_[^1]
 - No erratic behaviour due to 100% predictable UI reactions.
@@ -13,7 +14,10 @@ application in Go that relies on JavaScript. Properties of Gost-DOM-based tests:
 - Dependencies can be replaced while testing.
 
 Yet Gost-DOM still uses HTTP request and responses for verification, testing the
-entire stack, as well as middlewares. 
+entire stack, including how middlewares. 
+
+I wrote a [longer document](./docs/why-gost.md) further describing the use case
+for such a tool.
 
 > [!NOTE]
 >
