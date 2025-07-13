@@ -322,6 +322,9 @@ var tagNameAndAttribute = regexp.MustCompile(`(?m:^([a-zA-Z]+)+[[]([a-zA-Z-]+)="
 // trailing whitespace trimmed. Returns an error if the patterns is not
 // supported (or invalid)
 func (e *element) Matches(pattern string) (res bool, err error) {
+	// This less-than-obvious implementation is due to the fact that Gost-DOM
+	// uses a library for CSS selectors, but that library doesn't support the
+	// "Matches" function.
 	dummy := e.OwnerDocument().CreateElement("div")
 	clone := e.self.CloneNode(true)
 	dummy.Append(clone)
