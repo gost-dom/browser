@@ -213,6 +213,10 @@ JavaScript libraries.
 - [FastestSmallestTextEncoderDecoder](./scripting/internal/polyfills/FastestSmallestTextEncoderDecoder)
   distributed under the Creative Commons Zero v1.0 Universal license.
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=gost-dom/browser&type=Date)](https://www.star-history.com/#gost-dom/browser&Date)
+
 ---
 
 [^1]: Complete isolation depends on _your code_, e.g., if you don't replace
