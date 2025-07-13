@@ -132,8 +132,7 @@ func (n parentNode) QuerySelectorAll(pattern string) (NodeList, error) {
 	nodes := sel.Select(htmlNode)
 	result := make([]Node, len(nodes))
 	for i, node := range nodes {
-		resultNode := m[node]
-		result[i] = resultNode
+		result[i] = m[node]
 	}
 	return &nodeList{nodes: result}, nil
 }
