@@ -91,6 +91,11 @@ func (s *WindowNavigationTestSuite) TestRedirectGetRequests() {
 	s.Assert().Equal("https://example.com/new-page-2", s.win.Location().Href())
 }
 
+func (s *WindowNavigationTestSuite) TestRedirectNavigate() {
+	s.win.Navigate("https://example.com/old-page-2")
+	s.Assert().Equal("/new-page-2", s.win.Location().Pathname())
+}
+
 func (s *WindowNavigationTestSuite) TestInfinteRedirects() {
 	err := s.win.Navigate("/infinite-redirects")
 	s.Assert().ErrorIs(err, html.ErrTooManyRedirects, "Error is too many redirects")
