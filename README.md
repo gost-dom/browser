@@ -1,30 +1,45 @@
-# Gost-DOM - A headless browser for Go
+<h1 align="center"><img src="https://avatars.githubusercontent.com/u/196428063?s=50&v=4" alt="logo" /><br />Gost-DOM<br /><span font-size="0.05em">A headless browser for Go</span></h1>
 
-**The Go-to headless browser for TDD workflows.**
+<p align="center">
+<em>The Go-to solution for a TDD workflow.</em>
+</p>
 
-Gost-DOM is a headless browser written in Go designed simplify and speed up
-testing of web application in Go, particularly when a the application behaviour
-relies on JavaScript. Properties of Gost-DOM-based tests:
+<div align="center">
+<blockquote margin="100">As a developer<br />
+In order to work effeciently with code<br />
+I want a fast feedback loop for <em>all</em> of my code.</blockquote></div>
 
-- Tests run in parallel due to complete _complete isolation_[^1]
-- No erratic behaviour due to 100% predictable UI reactions.
-- "Blazingly fast". No out-of-process calls, not even thread boundaries for web
-  API calls. Web application code runs in the test thread, so a panic in your
-  code keeps a full stack trace to the test case. [^2]
-- Dependencies can be replaced while testing.
+Gost-DOM was born from the philosophy that the fast feedback loop provided by
+TDD makes it the most effective way to work with _the majority of the code
+base_.
 
-Yet Gost-DOM still uses HTTP request and responses for verification, testing the
-entire stack, including how middlewares. 
+Web UIs are typical exceptions to this rule. They rely on _real browsers_ for
+testing which introduce excessive overhead and slows down the feedback loop;
+reducing, or even eliminating, the effectiveness of TDD. In addition, developers
+often struggle with erratic tests due to unpredictable code execution.
 
-I wrote a [longer document](./docs/why-gost.md) further describing the use case
-for such a tool.
+Gost-DOM aims to solve that problem for web projects using Go. Gost-DOM
+simulates a browser environment, using a JavaScript engine to execute client
+script, allowing you to write test cases in Go to verify application behaviour,
+and apply an iterative process; supporting refactoring.[^1]
 
-> [!NOTE]
->
-> This is 0.x version still, and breaking API changes do occur, but will be
-> announced before release in the [Gost-DOM discussions] (do say Hi! 👋)
+To learn more, read [Why Gost-DOM?](./docs/why-gost.md)
 
-[Gost-DOM discussions]: https://github.com/orgs/gost-dom/discussions/categories/announcements
+## Benefits of Gost-DOM
+
+Compared to browser automation, Gost-DOM provides the benefits:
+
+- Tests run in parallel due to complete _complete isolation_[^2]
+- No erratic behaviour; 100% predictable UI reactions.
+- _Blazingly fast_.[^3] No out-of-process calls, not even thread boundaries for web
+  API calls as web application code runs in the test thread.[^4]
+- Dependencies can be replaced in tests.
+- Write tests at a higher level of abstraction, expressing the expected
+  _behaviour_ of a system, decoupled from implementation details.
+
+Gost-DOM still uses HTTP request and responses for verification, testing the
+entire stack, including how middlewares affect the behaviour, verifying, and
+supporting refactoring of e.g., authentication logic. 
 
 ## Looking for sponsors
 
@@ -47,6 +62,12 @@ information on the project's [Sponsor page](https://gostdom.net/sponsor)
 - [say hi!] on the github discussions page.
 - Read the [contribution guide](./CONTRIBUTING.md) to see how you can help.
 
+> [!NOTE]
+>
+> This is 0.x version still, and breaking API changes do occur, but will be
+> announced before release in the [Gost-DOM discussions] (do say Hi! 👋)
+
+[Gost-DOM discussions]: https://github.com/orgs/gost-dom/discussions/categories/announcements
 [Getting Started]: ./docs/Getting-started.md
 [Feature list]: ./docs/Features.md
 [say hi!]: https://github.com/orgs/gost-dom/discussions
@@ -61,61 +82,17 @@ At the moment there's an emphasis on high-risk features that can expose poor
 design choices, but the "primary API" has been reasonably stable for a good
 amount of time.
 
-### Upcoming work
-
-The near-future work is prioritised around
-
-- Provide distinct error messages when using unsupported JS functions
-- Improving `fetch` implementation
-- Fix incorrectly implemented features
-- Simulate user interaction, such as typing
-
-#### Notify when using unsupported JS functions
-
-Most of the JS mapping layer is auto-generated, including operations and
-attribute getter/setters that are not yet supported. This generates explicit
-error messages in the callback functions, making it clear when using, that the
-failed test case is caused by lack of support in Gost-DOM - not a bug in your
-code.
-
-This should be improved further - including when calling functions accepting an
-options object, and clien code pass a valid, but unsupported option.
-
-#### Implement more of `fetch`
-
-The current `fetch` implementation is extremely basic, having only support for
-simple `GET` requests.
-
-This will be improved in the future for more advanced scenarios, including
-correct headers support, cookies, body - including streaming response bodies,
-etc.
-
-#### Fix incorrectly implemented features
-
-Many of the already implemented features or APIs are not completely implemented,
-a few examples.
-
-- Assigning to the `history` doesn't navigate
-- [Live collections] are not live.
-- Submit buttons cannot override form method and action.
-
-To give users a better chance of predicting what works, and what doesn't, it is
-an aim to make sure that existing features work as they would in a real browser.
-
-[Live collections]: https://developer.mozilla.org/en-US/docs/Web/API/HTMLCollection
+Gost-DOM supports basic HTMX interactions, as well as basic Datastar cases. 
 
 ### Future goals
 
 There is much to do, which includes (but this is not a full list):
 
-- Support web-sockets and server events.
+- Support web-sockets and server-sent events.
 - Implement all standard JavaScript classes that a browser should support; but
   not part of the ECMAScript standard itself.
   - JavaScript polyfills would be a good starting point; which is how xpath is
     implemented at the moment.
-    - Conversion to native go implementations would be prioritized on usage, e.g.
-      [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) 
-      would be high in the list of priorities.
 - Implement default browser behaviour for user interaction, e.g. pressing 
   <key>enter</key> when an input field has focus should submit the form.
 
@@ -131,9 +108,9 @@ layer of abstraction, allowing the script engine to be replaced.
 
 #### CSS Parsing
 
-Parsing CSS woule be nice, allowing test code to verify the resulting styles of
-an element; but having a working DOM with a JavaScript engine is higher
-priority.
+Parsing CSS woule be nice, allowing test code to verify the style properties of
+HTML elements; in particular whether an element is visible; but having a working
+DOM with a JavaScript engine is higher priority.
 
 #### Mock external sites
 
@@ -168,22 +145,21 @@ benefits:
 While it is a goal to reach whatwg spec compliance, the primary goal is to have
 a useful tool for testing modern web applications. 
 
-Some specs don't really have any usage in modern web applications. For example,
-you generally wouldn't write an application that depends on quirks mode.
-
-Another example is `document.write`. I've yet to work on any application that
-depends on this. However, implementing support for this feature require a
-complete rewrite of the HTML parser. You would need a really good case (or
-sponsorship level) to have that prioritised.
+Some specs don't really have any usage in modern web applications, like
+`document.write` or depending on quirks mode.
 
 ### Accessibility tree
 
 It is not currently planned that this library should maintain the accessibility
-tree; nor provide higher level testing capabilities like what
-[Testing Library](https://testing-library.com) provides for JavaScript.
+tree.
 
-These problems _should_ eventually be solved, but could easily be implemented in
-a different library with dependency to the DOM alone.
+The [Shaman module] provides capabilities of querying the DOM at a higher level
+of abstraction, e.g., find an element with a specific _label_ / _accessibility
+name_, allowing tests to be more expressive. This is inspired by the
+capabilities that [Testing Library] provides for JavaScript.
+
+[Shaman module]: https://github.com/gost-dom/shaman
+[Testing Library]: https://testing-library.com
 
 ### Visual Rendering
 
@@ -199,7 +175,8 @@ Some words inherntly have multiple meanings.
 - **Interface**. The IDL Specification defines _interfaces_; which are exposed
 in certain scopes, implemented by "classes" in JavaScript. 
   - The interfaces can be composed of _partial_ or _mixin_ interfaces.
-  - IDL Interfaces and mixin interfaces are represented in Go, and typically exposed as Go `interface` types.
+  - IDL Interfaces and mixin interfaces are represented in Go, and typically
+    exposed as Go `interface` types.
 
 ## Attribution / 3rd party included code.
 
@@ -213,13 +190,21 @@ JavaScript libraries.
 - [FastestSmallestTextEncoderDecoder](./scripting/internal/polyfills/FastestSmallestTextEncoderDecoder)
   distributed under the Creative Commons Zero v1.0 Universal license.
 
+In addition, for testing compatibility, test code of this repository contains
+compiled versions of:
+
+- [HTMX](https://htmx.org)
+- [Datastar](https://data-star.dev/)
+
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=gost-dom/browser&type=Date)](https://www.star-history.com/#gost-dom/browser&Date)
 
 ---
 
-[^1]: Complete isolation depends on _your code_, e.g., if you don't replace
+[^1]: Gost-DOM, by default, embeds a V8 engine - the same JavaScript engine that powers Chrome.
+[^2]: Complete isolation depends on _your code_, e.g., if you don't replace
     database dependencies, they are not isolated.
-[^2]: This depends on how you configure Gost-DOM. 
+[^3]: Cliché, I know! But it is!
+[^4]: This depends on how you configure Gost-DOM. 
 

@@ -48,7 +48,7 @@ projects like:
 
 JSDom and Happy-dom are typically used to unit test front end components in
 Single-page applications, i.e., not the web page as a whole, but testing
-individual components in isolation, in a browser-like environment. Zonbie and
+individual components in isolation, in a browser-like environment. Zombie and
 PhantomJS were headless browsers, i.e. JavaScript libraries simulating the
 behaviour of a browser.
 
@@ -68,7 +68,7 @@ struggle with:
 - Fragile test cases (they break when code changes, but the system works)
 - Slow tests caused by the overhead, due to launching external programs,
   inter-process communication, and network traffic.
-- Slow test caused by testing functionslity requiring time to pass, e.g.,
+- Slow test caused by testing functionality requiring time to pass, e.g.,
   throttled or debounced behaviour.
 
 If we accept the premise that the effectiveness of TDD is directly affected by
