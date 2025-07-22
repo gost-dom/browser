@@ -248,6 +248,9 @@ func (w *window) parseReader(reader io.Reader) error {
 
 func (w *window) Navigate(href string) (err error) {
 	log.Info(w.Logger(), "Window.navigate:", "href", href)
+	if w.baseLocation != "about:blank" {
+		href = w.resolveHref(href).String()
+	}
 	defer func() {
 		if err != nil {
 			log.Warn(w.logger, "Window.navigate: Error response", log.ErrAttr(err))

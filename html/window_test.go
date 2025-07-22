@@ -100,3 +100,12 @@ func (s *WindowNavigationTestSuite) TestInfinteRedirects() {
 	err := s.win.Navigate("/infinite-redirects")
 	s.Assert().ErrorIs(err, html.ErrTooManyRedirects, "Error is too many redirects")
 }
+
+func (s *WindowNavigationTestSuite) TestNavigateHref() {
+	s.win.Navigate("https://example.com/page-1")
+	s.win.Navigate("/new-page-2")
+	s.Assert().Equal(
+		"https://example.com/new-page-2", s.win.LocationHREF(),
+		"Navigate resolves the HREF for a local URI",
+	)
+}
