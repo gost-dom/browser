@@ -89,7 +89,9 @@ type Window interface {
 	Document() dom.Document
 	Close()
 	Clock() Clock
-	Navigate(string) error // TODO: Remove, perhaps? for testing
+	// Open an HTML document from an href. A URL will be opened, but a path will
+	// be resolved based on the current location.
+	Navigate(href string) error
 	LoadHTML(string) error // TODO: Remove, for testing
 	// Eval calls [ScriptContext.Eval]
 	Eval(string) (any, error)
