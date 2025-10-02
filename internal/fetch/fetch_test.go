@@ -25,7 +25,7 @@ func TestFetchAborted(t *testing.T) {
 	// Status code sent indicates the time when a Response object is returned by
 	// the HTTP roundtripper, but the body is still not streamed.
 	t.Run("Before status code has been sent", func(t *testing.T) {
-		synctest.Run(func() {
+		synctest.Test(t, func(t *testing.T) {
 			ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
 			defer cancel()
 
@@ -55,7 +55,7 @@ func TestFetchAborted(t *testing.T) {
 	})
 
 	t.Run("After status code has been sent", func(t *testing.T) {
-		synctest.Run(func() {
+		synctest.Test(t, func(t *testing.T) {
 			ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
 			defer cancel()
 

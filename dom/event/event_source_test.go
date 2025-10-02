@@ -15,7 +15,7 @@ type EventChan chan *event.Event
 
 func TestEventsAreReceivedInOrder(t *testing.T) {
 	t.Parallel()
-	synctest.Run(func() {
+	synctest.Test(t, func(t *testing.T) {
 		ctx, cancel := context.WithCancel(t.Context())
 		defer cancel()
 
@@ -52,7 +52,7 @@ func TestEventStreamSource(t *testing.T) {
 	target := event.NewEventTarget()
 
 	t.Run("RemoveEventListener on cancel", func(t *testing.T) {
-		synctest.Run(func() {
+		synctest.Test(t, func(t *testing.T) {
 			newCtx, cancel := context.WithCancel(t.Context())
 
 			spy := &EventTargetSpy{EventTarget: target}
@@ -73,7 +73,7 @@ func TestEventStreamSource(t *testing.T) {
 	})
 
 	t.Run("Events are delivered in order", func(t *testing.T) {
-		synctest.Run(func() {
+		synctest.Test(t, func(t *testing.T) {
 			ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
 			defer cancel()
 

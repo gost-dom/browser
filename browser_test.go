@@ -38,7 +38,7 @@ func (s *BrowserTestSuite) TestReadFromHTTPHandler() {
 }
 
 func TestBrowserClosedOnCancel(t *testing.T) {
-	synctest.Run(func() {
+	synctest.Test(t, func(t *testing.T) {
 		ctx, cancel := context.WithCancel(t.Context())
 		browser := browser.New(browser.WithContext(ctx))
 		cancel()
@@ -70,27 +70,27 @@ func (s *BrowserTestSuite) TestExecuteScript() {
 }
 
 func (s *BrowserTestSuite) TestCancellation() {
-	synctest.Run(func() {
-		handler := gosttest.NewPipeHandler(s.T())
+	synctest.Test(s.T(), func(t *testing.T) {
+		handler := gosttest.NewPipeHandler(t)
 		defer handler.Close()
 		h := gosttest.StaticFileServer{
 			"/index.html": gosttest.StaticHTML("body>Dummy</body>"),
 			"/data":       handler,
 		}
 
-		ctx, cancel := context.WithCancel(s.T().Context())
+		ctx, cancel := context.WithCancel(t.Context())
 		b := browser.New(
 			browser.WithHandler(h),
 			browser.WithContext(ctx),
 		)
 		w, err := b.Open("http://example.com/index.html")
-		if assert.NoError(s.T(), err) {
-			assert.NoError(s.T(), w.Run("fetch('/data')"))
+		if assert.NoError(t, err) {
+			assert.NoError(t, w.Run("fetch('/data')"))
 			synctest.Wait()
-			assert.NotNil(s.T(), handler.Req, "/data requested")
+			assert.NotNil(t, handler.Req, "/data requested")
 			cancel()
 			synctest.Wait()
-			assert.True(s.T(), handler.ClientDisconnected, "http client disconnected")
+			assert.True(t, handler.ClientDisconnected, "http client disconnected")
 		} else {
 			cancel()
 		}
