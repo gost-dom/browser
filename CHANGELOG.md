@@ -1,6 +1,22 @@
 # Changelog - Gost-DOM
 
 
+## [0.9.1](https://github.com/gost-dom/browser/compare/v0.9.0...v0.9.1) (2025-10-23)
+
+
+### Features
+
+* Add "Key" to KeyboardEventInit, and support mixed case strings ([0134b49](https://github.com/gost-dom/browser/commit/0134b499ea6cd0bba990a071774e1004d2f72db2))
+* Create KeyboardController to simulate keyboard input ([ad843c8](https://github.com/gost-dom/browser/commit/ad843c8269207cfb75ba32cb1c5d4c5ae9bca9b1))
+* Expose correct event type, and Key to JavaScript ([08eca25](https://github.com/gost-dom/browser/commit/08eca257d0e0b6f3a824ede599e5a85d0f1041a0))
+* Improve TestLogger, how it renders attribute groups ([1fb6421](https://github.com/gost-dom/browser/commit/1fb6421b5037eff8b35d87537301d7465903121a))
+* Window.Navigate resolves href ([52b7521](https://github.com/gost-dom/browser/commit/52b7521984700d6ebfefb77ba8e0e6ae627e4023))
+
+
+### Bug Fixes
+
+* Browser.Open didn't set location on redirect ([e989c76](https://github.com/gost-dom/browser/commit/e989c7645146ff8ba45f10e42357319fd087779c))
+
 ## [0.9.1](https://github.com/gost-dom/browser/compare/v0.9.0...v0.9.1) (2025-07-07)
 
 
