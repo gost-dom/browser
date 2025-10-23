@@ -85,7 +85,8 @@ func (b *Browser) Open(location string) (window Window, err error) {
 	if resp.StatusCode != 200 {
 		return nil, fmt.Errorf("Non-ok Response: %d", resp.StatusCode)
 	}
-	window, err = html.NewWindowReader(resp.Body, b.createOptions(location))
+	respLocation := resp.Request.URL.String()
+	window, err = html.NewWindowReader(resp.Body, b.createOptions(respLocation))
 	b.windows = append(b.windows, window)
 	return
 }
