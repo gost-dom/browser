@@ -241,3 +241,17 @@ func newBrowserNavigateTestServer() http.Handler {
 			</body>`),
 	}
 }
+
+func TestBrowserOpenRedirect(t *testing.T) {
+	browser := New(WithHandler(
+		gosttest.HttpHandlerMap{
+			"/old-location": http.RedirectHandler("/new-location", 301),
+			"/new-location": gosttest.StaticHTML("<body><h1>Hello</h1></body>"),
+		},
+	))
+	win, err := browser.Open("/old-location")
+	assert.NoError(t, err)
+	heading, _ := win.Document().QuerySelector("h1")
+	assert.Equal(t, "Hello", heading.TextContent())
+	assert.Equal(t, "/new-location", win.Location().Pathname())
+}
