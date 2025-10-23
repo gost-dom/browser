@@ -55,10 +55,7 @@ func (s *WindowNavigationTestSuite) SetupTest() {
 			</body>`))
 	})
 	m.HandleFunc("/old-page-2", func(w http.ResponseWriter, r *http.Request) {
-		u := r.URL
-		u.Path = "/new-page-2"
-		w.Header().Add("Location", u.String())
-		w.WriteHeader(301)
+		http.Redirect(w, r, "/new-page-2", http.StatusSeeOther)
 	})
 	m.HandleFunc("/new-page-2", func(w http.ResponseWriter, r *http.Request) {
 		body, err := io.ReadAll(r.Body)
@@ -82,6 +79,7 @@ func (s *WindowNavigationTestSuite) SetupTest() {
 }
 
 func TestWindowNavigation(t *testing.T) {
+	t.Parallel()
 	suite.Run(t, new(WindowNavigationTestSuite))
 }
 
