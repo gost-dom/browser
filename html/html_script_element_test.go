@@ -88,7 +88,7 @@ func TestScriptElementSourceResolution(t *testing.T) {
 		<body><h1>Script Test Page</h1></body>
 	</html>`
 	dummyScript := "// dummy script with no behaviour"
-	srv := gosttest.StaticFileServer{
+	srv := gosttest.HttpHandlerMap{
 		"/index.html":              gosttest.StaticHTML(indexHTML),
 		"/script.js":               gosttest.StaticJS(dummyScript),
 		"/folder/index.html":       gosttest.StaticHTML(indexHTML),
@@ -142,7 +142,7 @@ func TestScriptElementModuleResolution(t *testing.T) {
 		<body><h1>Script Test Page</h1></body>
 	</html>`
 	dummyScript := "// dummy script with no behaviour"
-	srv := gosttest.StaticFileServer{
+	srv := gosttest.HttpHandlerMap{
 		"/index.html": gosttest.StaticHTML(indexHTML),
 		"/script.js":  gosttest.StaticJS(dummyScript),
 	}

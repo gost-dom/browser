@@ -10,7 +10,7 @@ import (
 )
 
 func TestBrowserScriptLoading(t *testing.T) {
-	server := gosttest.StaticFileServer{
+	server := gosttest.HttpHandlerMap{
 		"/index.html": gosttest.StaticHTML(`
 			<!doctype html>
 			<html>

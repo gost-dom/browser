@@ -49,7 +49,7 @@ func TestBrowserClosedOnCancel(t *testing.T) {
 
 func (s *BrowserTestSuite) TestExecuteScript() {
 	Expect := gomega.NewWithT(s.T()).Expect
-	server := gosttest.StaticFileServer{
+	server := gosttest.HttpHandlerMap{
 		"/index.html": gosttest.StaticHTML(
 			`<body>
 				<div id='target'></div>
@@ -73,7 +73,7 @@ func (s *BrowserTestSuite) TestCancellation() {
 	synctest.Test(s.T(), func(t *testing.T) {
 		handler := gosttest.NewPipeHandler(t)
 		defer handler.Close()
-		h := gosttest.StaticFileServer{
+		h := gosttest.HttpHandlerMap{
 			"/index.html": gosttest.StaticHTML("body>Dummy</body>"),
 			"/data":       handler,
 		}
@@ -227,7 +227,7 @@ func cookieHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func newBrowserNavigateTestServer() http.Handler {
-	return gosttest.StaticFileServer{
+	return gosttest.HttpHandlerMap{
 		"/a.html": gosttest.StaticHTML(
 			`<body>
 				<h1>Page A</h1>

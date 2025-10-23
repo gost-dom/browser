@@ -101,7 +101,7 @@ func testFetchAbortSignal(t *testing.T, host html.ScriptHost) {
 	defer cancel()
 
 	delayedHandler := &gosttest.PipeHandler{T: t}
-	handler := gosttest.StaticFileServer{
+	handler := gosttest.HttpHandlerMap{
 		"/index.html":     gosttest.StaticHTML(`<body>dummy</body>`),
 		"/slow-data.json": delayedHandler,
 	}
@@ -129,7 +129,7 @@ func testFetchJSONAsync(t *testing.T, host html.ScriptHost) {
 	defer cancel()
 
 	delayedHandler := &gosttest.PipeHandler{T: t}
-	handler := gosttest.StaticFileServer{
+	handler := gosttest.HttpHandlerMap{
 		"/index.html":     gosttest.StaticHTML(`<body>dummy</body>`),
 		"/slow-data.json": delayedHandler,
 	}
@@ -179,7 +179,7 @@ func testFetchInvalidJSON(t *testing.T, host html.ScriptHost) {
 	ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
 	defer cancel()
 
-	handler := gosttest.StaticFileServer{
+	handler := gosttest.HttpHandlerMap{
 		"/index.html":    gosttest.StaticHTML(`<body>dummy</body>`),
 		"/bad-data.json": gosttest.StaticJSON(`{"foo": "Foo value",`),
 	}
@@ -205,7 +205,7 @@ func testFetchInvalidJSON(t *testing.T, host html.ScriptHost) {
 }
 
 func testNotFound(t *testing.T, host html.ScriptHost) {
-	handler := gosttest.StaticFileServer{
+	handler := gosttest.HttpHandlerMap{
 		"/index.html": gosttest.StaticHTML(`<body>dummy</body>`),
 	}
 	g := gomega.NewWithT(t)
@@ -225,7 +225,7 @@ func testReadableStream(t *testing.T, host html.ScriptHost) {
 	defer cancel()
 
 	pipe := gosttest.NewPipeHandler(t)
-	handler := gosttest.StaticFileServer{
+	handler := gosttest.HttpHandlerMap{
 		"/index.html": gosttest.StaticHTML(`<body>dummy</body>`),
 		"/piped":      pipe,
 	}

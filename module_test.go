@@ -39,7 +39,7 @@ func TestModule(t *testing.T) {
 			document.getElementById("tgt").textContent="CONTENT";
 		})
 	`
-	server := gosttest.StaticFileServer{
+	server := gosttest.HttpHandlerMap{
 		"/index.html": gosttest.StaticHTML(indexHTML),
 		"/module.js":  gosttest.StaticJS(moduleJS),
 	}
@@ -67,7 +67,7 @@ func TestModuleImportPaths(t *testing.T) {
 			document.getElementById("tgt").textContent="CONTENT";
 		})
 	`
-	server := gosttest.StaticFileServer{
+	server := gosttest.HttpHandlerMap{
 		"/index.html": gosttest.StaticHTML(indexHTML),
 		"/module.js": gosttest.StaticJS(`
 				import * as importValues from "./script.js";
@@ -120,7 +120,7 @@ func TestModuleCyclicDeps(t *testing.T) {
 			</body>
 		</html>`
 
-	server := gosttest.StaticFileServer{
+	server := gosttest.HttpHandlerMap{
 		"/index.html": gosttest.StaticHTML(indexHTML),
 		"/a.js": gosttest.StaticJS(`
 				import * as b from "./b.js";
