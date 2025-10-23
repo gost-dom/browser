@@ -31,6 +31,15 @@ type ParentNode interface {
 	   See also: https://developer.mozilla.org/en-US/docs/Web/API/Element
 	*/
 	ReplaceChildren(...Node) error
-	QuerySelector(string) (Element, error)
-	QuerySelectorAll(string) (NodeList, error)
+	// QuerySelector returns the first element that matches the CSS selector.
+	// Returns nil if no match was found. Returns an error if selector cannot be
+	// parsed.
+	//
+	// See also: https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector
+	QuerySelector(selector string) (Element, error)
+	// QuerySelectorAll returns a static NodeList of all elements matching the
+	// selector. Returns an error if selector cannot be parsed.
+	//
+	// https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelectorAll
+	QuerySelectorAll(selector string) (NodeList, error)
 }
