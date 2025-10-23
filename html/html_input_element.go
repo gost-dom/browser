@@ -31,7 +31,12 @@ func NewHTMLInputElement(ownerDocument HTMLDocument) HTMLInputElement {
 	return result
 }
 
-func (e *htmlInputElement) Name() string         { return e.GetAttributeNode("name").Value() }
+func (e *htmlInputElement) Name() string {
+	if attr := e.GetAttributeNode("name"); attr != nil {
+		return attr.Value()
+	}
+	return ""
+}
 func (e *htmlInputElement) SetName(value string) { e.SetAttribute("name", value) }
 func (e *htmlInputElement) CheckValidity() bool  { return true }
 func (e *htmlInputElement) Checked() bool        { return e.checked }

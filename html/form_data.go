@@ -33,17 +33,23 @@ func NewFormDataForm(form HTMLFormElement) *FormData {
 	formData := NewFormData()
 	for _, input := range inputs.All() {
 		if input, ok := input.(HTMLInputElement); ok {
+			name := input.Name()
+			// Skip inputs without a name attribute, per HTML spec:
+			// https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#constructing-the-form-data-set
+			if name == "" {
+				continue
+			}
 			switch input.Type() {
 			case "submit":
 				continue
 			case "checkbox":
 				if input.Checked() {
-					formData.Append(input.Name(), "on")
+					formData.Append(name, "on")
 				}
 			default:
 				// TODO, handle no values
 				formData.Append(
-					input.Name(),
+					name,
 					NewFormDataValueString(input.Value()),
 				)
 			}
