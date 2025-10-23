@@ -77,3 +77,36 @@ func (s *HTMLFormElementTestSuite) TestActionIDLAttribute() {
 		Equal("http://example.com/forms/submit-target"),
 		"Action IDL attribute when set to a relative path")
 }
+
+// TestFormDataWithUnnamedInput tests that form data construction skips input
+// elements without a name attribute, conforming to the HTML spec:
+// https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#constructing-the-form-data-set
+func (s *HTMLFormElementTestSuite) TestFormDataWithUnnamedInput() {
+	form := s.createForm()
+
+	// Create input with name
+	namedInput := s.doc.CreateElement("input").(HTMLInputElement)
+	namedInput.SetName("username")
+	namedInput.SetValue("john")
+	form.AppendChild(namedInput)
+
+	// Create input without name attribute
+	unnamedInput := s.doc.CreateElement("input").(HTMLInputElement)
+	unnamedInput.SetValue("should-be-skipped")
+	form.AppendChild(unnamedInput)
+
+	// Create another input with name
+	anotherNamedInput := s.doc.CreateElement("input").(HTMLInputElement)
+	anotherNamedInput.SetName("email")
+	anotherNamedInput.SetValue("john@example.com")
+	form.AppendChild(anotherNamedInput)
+
+	// Construct form data - should not panic and should skip unnamed input
+	formData := html.NewFormDataForm(form)
+
+	s.Expect(formData.Has("username")).To(BeTrue(), "Form data includes named input 'username'")
+	s.Expect(formData.Get("username")).To(Equal(html.FormDataValue("john")), "Form data has correct value for 'username'")
+	s.Expect(formData.Has("email")).To(BeTrue(), "Form data includes named input 'email'")
+	s.Expect(formData.Get("email")).To(Equal(html.FormDataValue("john@example.com")), "Form data has correct value for 'email'")
+	s.Expect(len(formData.Entries)).To(Equal(2), "Form data has exactly 2 entries, skipping the unnamed input")
+}
