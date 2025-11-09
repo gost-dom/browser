@@ -71,9 +71,6 @@ func (e *Element[T]) toNamedNodeMap(
 	return codec.EncodeEntity(cbCtx, n)
 }
 
-func (e *Element[T]) decodeElement(
-	ctx js.Scope[T],
-	val js.Value[T],
-) (dom.Element, error) {
-	return codec.DecodeAs[dom.Element](ctx, val)
+func (e *Element[T]) decodeElement(s js.Scope[T], v js.Value[T]) (dom.Element, error) {
+	return codec.DecodeAs[dom.Element](s, v)
 }

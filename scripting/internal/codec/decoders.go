@@ -11,53 +11,50 @@ import (
 
 func ZeroValue[T any]() (res T) { return }
 
-func DecodeString[T any](cbCtx js.Scope[T], val js.Value[T]) (string, error) {
-	return val.String(), nil
+func DecodeString[T any](_ js.Scope[T], v js.Value[T]) (string, error) {
+	return v.String(), nil
 }
 
 func DecodeBoolean[T any](_ js.Scope[T], val js.Value[T]) (bool, error) {
 	return val.Boolean(), nil
 }
 
-func DecodeInt[T any](_ js.Scope[T], val js.Value[T]) (int, error) {
-	return int(val.Int32()), nil
+func DecodeInt[T any](_ js.Scope[T], v js.Value[T]) (int, error) {
+	return int(v.Int32()), nil
 }
 
-func DecodeNode[T any](ctx js.Scope[T], val js.Value[T]) (dom.Node, error) {
-	if val.IsNull() {
+func DecodeNode[T any](s js.Scope[T], v js.Value[T]) (dom.Node, error) {
+	if v.IsNull() {
 		return nil, nil
 	}
-	if obj, ok := val.AsObject(); ok {
+	if obj, ok := v.AsObject(); ok {
 		if node, ok := obj.NativeValue().(dom.Node); ok {
 			return node, nil
 		}
 	}
-	return nil, ctx.NewTypeError("Value is not a node")
+	return nil, s.NewTypeError("Value is not a node")
 }
 
-func DecodeAs[T, U any](ctx js.Scope[U], val js.Value[U]) (res T, err error) {
-	if js.IsNullish(val) {
+func DecodeAs[T, U any](s js.Scope[U], v js.Value[U]) (res T, err error) {
+	if js.IsNullish(v) {
 		return
 	}
-	if obj, ok := val.AsObject(); ok {
+	if obj, ok := v.AsObject(); ok {
 		if res, ok = obj.NativeValue().(T); ok {
 			return
 		}
 	}
-	err = ctx.NewTypeError(fmt.Sprintf("JavaScript value does not wrap an instance of %T", res))
+	err = s.NewTypeError(fmt.Sprintf("JavaScript value does not wrap an instance of %T", res))
 	return
 }
 
-func DecodeHTMLElement[T any](
-	ctx js.Scope[T],
-	val js.Value[T],
-) (html.HTMLElement, error) {
-	if obj, ok := val.AsObject(); ok {
+func DecodeHTMLElement[T any](s js.Scope[T], v js.Value[T]) (html.HTMLElement, error) {
+	if obj, ok := v.AsObject(); ok {
 		if res, ok := obj.NativeValue().(html.HTMLElement); ok {
 			return res, nil
 		}
 	}
-	return nil, ctx.NewTypeError("Value is not a node")
+	return nil, s.NewTypeError("Value is not a node")
 }
 
 type EventInit struct {
@@ -88,9 +85,9 @@ func DecodeEventInit[T any](
 	return init, nil
 }
 
-func DecodeFunction[T any](cbCtx js.Scope[T], val js.Value[T]) (js.Function[T], error) {
-	if f, ok := val.AsFunction(); ok {
+func DecodeFunction[T any](s js.Scope[T], v js.Value[T]) (js.Function[T], error) {
+	if f, ok := v.AsFunction(); ok {
 		return f, nil
 	}
-	return nil, cbCtx.NewTypeError("Must be a function")
+	return nil, s.NewTypeError("Must be a function")
 }

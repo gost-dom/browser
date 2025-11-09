@@ -8,8 +8,8 @@ import (
 
 func (w *HTMLCollection[T]) CustomInitializer(class js.Class[T]) {
 	iterator := js.NewIterator(
-		func(ctx js.Scope[T], instance dom.Element) (js.Value[T], error) {
-			return codec.EncodeEntityScoped(ctx, instance)
+		func(s js.Scope[T], instance dom.Element) (js.Value[T], error) {
+			return codec.EncodeEntityScoped(s, instance)
 		})
 	iterator.InstallPrototype(class)
 
@@ -27,8 +27,8 @@ func (w *HTMLCollection[T]) CustomInitializer(class js.Class[T]) {
 			},
 		),
 		js.WithLengthCallback(
-			func(cbCtx js.CallbackScope[T]) (int, error) {
-				instance, err := js.As[dom.HTMLCollection](cbCtx.Instance())
+			func(s js.CallbackScope[T]) (int, error) {
+				instance, err := js.As[dom.HTMLCollection](s.Instance())
 				if err != nil {
 					return 0, err
 				}

@@ -16,10 +16,10 @@ func (w ReadableStreamDefaultReader[T]) CreateInstance(
 }
 
 func (w ReadableStreamDefaultReader[T]) decodeReadableStream(
-	ctx js.Scope[T], v js.Value[T],
+	s js.Scope[T], v js.Value[T],
 ) (res string, err error) {
 	err = codec.UnsupportedOptionErrorf(
-		ctx, v, "streams", "ReadableStreamDefaultReader readableStream",
+		s, v, "streams", "ReadableStreamDefaultReader readableStream",
 	)
 	return
 }
@@ -30,11 +30,11 @@ func (w ReadableStreamDefaultReader[T]) toPromiseReadableStreamReadResult(
 }
 
 func (w ReadableStreamDefaultReader[T]) encodeReadResult(
-	ctx js.Scope[T], readResult streams.ReadResult,
+	s js.Scope[T], readResult streams.ReadResult,
 ) (js.Value[T], error) {
-	res := ctx.NewObject()
-	res.Set("value", ctx.NewUint8Array(readResult.Value))
-	res.Set("done", ctx.NewBoolean(readResult.Done))
+	res := s.NewObject()
+	res.Set("value", s.NewUint8Array(readResult.Value))
+	res.Set("done", s.NewBoolean(readResult.Done))
 	return res, nil
 
 }

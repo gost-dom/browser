@@ -10,14 +10,14 @@ import (
 )
 
 type MutationCallback[T any] struct {
-	ctx      js.Scope[T]
-	function js.Function[T]
+	s js.Scope[T]
+	f js.Function[T]
 }
 
 func (cb MutationCallback[T]) HandleMutation(recs []mutation.Record, obs *mutation.Observer) {
-	v8Recs, _ := toSequenceMutationRecord(cb.ctx, recs)
-	if _, err := cb.function.Call(cb.ctx.GlobalThis(), v8Recs); err != nil {
-		js.UnhandledError(cb.ctx, err)
+	v8Recs, _ := toSequenceMutationRecord(cb.s, recs)
+	if _, err := cb.f.Call(cb.s.GlobalThis(), v8Recs); err != nil {
+		js.UnhandledError(cb.s, err)
 	}
 }
 
@@ -28,23 +28,21 @@ func (w MutationObserver[T]) CreateInstance(
 	return codec.EncodeConstrucedValue(cbCtx, mutation.NewObserver(cbCtx.Clock(), cb))
 }
 
-func (w MutationObserver[T]) decodeMutationCallback(
-	cbCtx js.Scope[T],
-	val js.Value[T],
+func (w MutationObserver[T]) decodeMutationCallback(s js.Scope[T], val js.Value[T],
 ) (mutation.Callback, error) {
 	if f, ok := val.AsFunction(); ok {
-		return MutationCallback[T]{cbCtx, f}, nil
+		return MutationCallback[T]{s, f}, nil
 	}
-	return nil, cbCtx.NewTypeError("Not a function")
+	return nil, s.NewTypeError("Not a function")
 }
 
 func (w MutationObserver[T]) decodeObserveOption(
-	cbCtx js.Scope[T],
-	val js.Value[T],
+	s js.Scope[T],
+	v js.Value[T],
 ) ([]mutation.ObserveOption, error) {
-	obj, ok := val.AsObject()
+	obj, ok := v.AsObject()
 	if !ok {
-		return nil, cbCtx.NewTypeError("Obtions not an object")
+		return nil, s.NewTypeError("Obtions not an object")
 	}
 	var res []mutation.ObserveOption
 	ap := func(key string, o mutation.ObserveOption) {
@@ -74,11 +72,10 @@ func (w MutationObserver[T]) toSequenceMutationRecord(
 }
 
 func toSequenceMutationRecord[T any](
-	cbCtx js.Scope[T],
-	records []mutation.Record,
+	s js.Scope[T], records []mutation.Record,
 ) (js.Value[T], error) {
 	res := make([]js.Value[T], len(records))
-	prototype := cbCtx.Constructor("MutationRecord")
+	prototype := s.Constructor("MutationRecord")
 	for i, r := range records {
 		rec, err := prototype.NewInstance(&r)
 		if err != nil {
@@ -86,5 +83,5 @@ func toSequenceMutationRecord[T any](
 		}
 		res[i] = rec
 	}
-	return cbCtx.NewArray(res...), nil
+	return s.NewArray(res...), nil
 }

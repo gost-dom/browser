@@ -8,8 +8,8 @@ import (
 
 func (w *NodeList[T]) CustomInitializer(class js.Class[T]) {
 	nodeListIterator := js.NewIterator(
-		func(ctx js.Scope[T], instance dom.Node) (js.Value[T], error) {
-			return codec.EncodeEntityScoped(ctx, instance)
+		func(s js.Scope[T], instance dom.Node) (js.Value[T], error) {
+			return codec.EncodeEntityScoped(s, instance)
 		})
 	nodeListIterator.InstallPrototype(class)
 
@@ -27,8 +27,8 @@ func (w *NodeList[T]) CustomInitializer(class js.Class[T]) {
 			},
 		),
 		js.WithLengthCallback(
-			func(cbCtx js.CallbackScope[T]) (int, error) {
-				instance, err := js.As[dom.NodeList](cbCtx.Instance())
+			func(s js.CallbackScope[T]) (int, error) {
+				instance, err := js.As[dom.NodeList](s.Instance())
 				if err != nil {
 					return 0, err
 				}

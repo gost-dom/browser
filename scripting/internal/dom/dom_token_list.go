@@ -13,11 +13,8 @@ func (l DOMTokenList[T]) CustomInitializer(class js.Class[T]) {
 	it.InstallPrototype(class)
 }
 
-func (w DOMTokenList[T]) toString_(
-	cbCtx js.Scope[T],
-	val string,
-) (js.Value[T], error) {
-	return cbCtx.NewString(val), nil
+func (w DOMTokenList[T]) toString_(s js.Scope[T], val string) (js.Value[T], error) {
+	return s.NewString(val), nil
 }
 
 func (l DOMTokenList[T]) toggle(args js.CallbackContext[T]) (js.Value[T], error) {

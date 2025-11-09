@@ -9,23 +9,21 @@ import (
 )
 
 type v8EventListener[T any] struct {
-	// TODO: Replace with "scope" - as we keep on to this for longer than the
-	// callback
-	ctx js.Scope[T]
+	s   js.Scope[T]
 	val js.Function[T]
 }
 
-func newV8EventListener[T any](ctx js.Scope[T], val js.Function[T]) event.EventHandler {
-	return v8EventListener[T]{ctx, val}
+func newV8EventListener[T any](s js.Scope[T], val js.Function[T]) event.EventHandler {
+	return v8EventListener[T]{s, val}
 }
 
 func (l v8EventListener[T]) HandleEvent(e *event.Event) error {
 	f := l.val
-	event, err := codec.EncodeEntity(l.ctx, e)
+	event, err := codec.EncodeEntity(l.s, e)
 	if err == nil {
-		global := l.ctx.GlobalThis()
+		global := l.s.GlobalThis()
 		_, err1 := f.Call(global, event)
-		err2 := l.ctx.Clock().Tick()
+		err2 := l.s.Clock().Tick()
 		err = errors.Join(err1, err2)
 	}
 	return err
@@ -43,13 +41,12 @@ func (w EventTarget[T]) CreateInstance(cbCtx js.CallbackContext[T]) (js.Value[T]
 }
 
 func (w EventTarget[T]) decodeEventListener(
-	cbCtx js.Scope[T],
-	val js.Value[T],
+	s js.Scope[T], v js.Value[T],
 ) (event.EventHandler, error) {
-	if fn, ok := val.AsFunction(); ok {
-		return newV8EventListener(cbCtx, fn), nil
+	if fn, ok := v.AsFunction(); ok {
+		return newV8EventListener(s, fn), nil
 	} else {
-		return nil, cbCtx.NewTypeError("Must be a function")
+		return nil, s.NewTypeError("Must be a function")
 	}
 }
 
@@ -58,14 +55,13 @@ func (w EventTarget[T]) defaultEventListenerOptions() []event.EventListenerOptio
 }
 
 func (w EventTarget[T]) decodeEventListenerOptions(
-	cbCtx js.Scope[T],
-	val js.Value[T],
+	_ js.Scope[T], v js.Value[T],
 ) ([]event.EventListenerOption, error) {
 	var options []func(*event.EventListener)
-	if val.IsBoolean() && val.Boolean() {
+	if v.IsBoolean() && v.Boolean() {
 		options = append(options, event.Capture)
 	}
-	if obj, ok := val.AsObject(); ok {
+	if obj, ok := v.AsObject(); ok {
 		if capture, err := obj.Get("capture"); err == nil &&
 			capture != nil {
 			if capture.Boolean() {
@@ -76,11 +72,8 @@ func (w EventTarget[T]) decodeEventListenerOptions(
 	return options, nil
 }
 
-func (w EventTarget[T]) decodeEvent(
-	cbCtx js.Scope[T],
-	val js.Value[T],
-) (*event.Event, error) {
-	obj, err := js.AssertObjectArg(cbCtx, val)
+func (w EventTarget[T]) decodeEvent(s js.Scope[T], v js.Value[T]) (*event.Event, error) {
+	obj, err := js.AssertObjectArg(s, v)
 	if err == nil {
 		return js.As[*event.Event](obj.NativeValue(), nil)
 	}

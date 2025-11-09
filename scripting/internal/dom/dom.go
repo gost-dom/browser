@@ -6,12 +6,9 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w ParentNode[T]) decodeNodeOrText(
-	cbCtx js.Scope[T],
-	val js.Value[T],
-) (dom.Node, error) {
+func (w ParentNode[T]) decodeNodeOrText(s js.Scope[T], val js.Value[T]) (dom.Node, error) {
 	if val.IsString() {
-		return cbCtx.Window().Document().CreateTextNode(val.String()), nil
+		return s.Window().Document().CreateTextNode(val.String()), nil
 	}
-	return codec.DecodeNode(cbCtx, val)
+	return codec.DecodeNode(s, val)
 }

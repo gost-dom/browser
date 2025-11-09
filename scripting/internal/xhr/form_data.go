@@ -9,8 +9,8 @@ import (
 func (w FormData[T]) CustomInitializer(class js.Class[T]) {
 	iterator := js.NewIterator2(
 		codec.EncodeStringScoped,
-		func(ctx js.Scope[T], v html.FormDataValue) (js.Value[T], error) {
-			return codec.EncodeStringScoped(ctx, string(v))
+		func(s js.Scope[T], v html.FormDataValue) (js.Value[T], error) {
+			return codec.EncodeStringScoped(s, string(v))
 		},
 	)
 	iterator.InstallPrototype(class)
@@ -67,18 +67,18 @@ func (w FormData[T]) toSequenceFormDataEntryValue(
 }
 
 func (w FormData[T]) decodeHTMLFormElement(
-	cbCtx js.Scope[T],
+	s js.Scope[T],
 	val js.Value[T],
 ) (html.HTMLFormElement, error) {
 	var (
 		res html.HTMLFormElement
 		ok  bool
 	)
-	node, err := codec.DecodeNode(cbCtx, val)
+	node, err := codec.DecodeNode(s, val)
 	if err == nil {
 		res, ok = node.(html.HTMLFormElement)
 		if !ok {
-			err = cbCtx.NewTypeError("Not a form")
+			err = s.NewTypeError("Not a form")
 		}
 	}
 	return res, err

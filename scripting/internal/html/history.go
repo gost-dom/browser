@@ -6,11 +6,8 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w History[T]) decodeHistoryState(
-	cbCtx js.Scope[T],
-	val js.Value[T],
-) (html.HistoryState, error) {
-	return html.HistoryState(cbCtx.JSONStringify(val)), nil
+func (w History[T]) decodeHistoryState(s js.Scope[T], val js.Value[T]) (html.HistoryState, error) {
+	return html.HistoryState(s.JSONStringify(val)), nil
 }
 
 func (w History[T]) toHistoryState(

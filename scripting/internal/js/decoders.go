@@ -7,11 +7,11 @@ import (
 
 // AssertObject asserts that an argument is of an object type. A TypeError is
 // returned if the value is not an object
-func AssertObjectArg[T any](cbCtx Scope[T], v Value[T]) (Object[T], error) {
+func AssertObjectArg[T any](s Scope[T], v Value[T]) (Object[T], error) {
 	if obj, ok := v.AsObject(); ok {
 		return obj, nil
 	}
-	return nil, cbCtx.NewTypeError("Value must be an object")
+	return nil, s.NewTypeError("Value must be an object")
 }
 
 // ParseSetterArg parses a single argument and is intended for attribute

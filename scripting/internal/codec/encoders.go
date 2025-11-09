@@ -11,8 +11,8 @@ import (
 // getJSInstance gets the JavaScript object that wraps a specific Go object. If
 // a wrapper already has been created, that wrapper is returned; otherwise a new
 // object is created with the correct prototype configured.
-func EncodeEntity[T any](cbCtx js.Scope[T], e entity.ObjectIder) (js.Value[T], error) {
-	return EncodeEntityScoped(cbCtx, e)
+func EncodeEntity[T any](s js.Scope[T], e entity.ObjectIder) (js.Value[T], error) {
+	return EncodeEntityScoped(s, e)
 }
 
 // TODO: Embed scope in CallbackScope, so only one function is necessary
@@ -34,54 +34,51 @@ func EncodeEntityScoped[T any](scope js.Scope[T], e entity.ObjectIder) (js.Value
 	return value, err
 }
 
-func EncodeBoolean[T any](cbCtx js.CallbackScope[T], b bool) (js.Value[T], error) {
-	return cbCtx.NewBoolean(b), nil
+func EncodeBoolean[T any](s js.CallbackScope[T], b bool) (js.Value[T], error) {
+	return s.NewBoolean(b), nil
 }
-func EncodeInt[T any](cbCtx js.CallbackScope[T], i int) (js.Value[T], error) {
-	return cbCtx.NewInt32(int32(i)), nil
+func EncodeInt[T any](s js.CallbackScope[T], i int) (js.Value[T], error) {
+	return s.NewInt32(int32(i)), nil
 }
 
 // TODO: Embed scope in CallbackScope, so only one function is necessary
-func EncodeStringScoped[T any](cbCtx js.Scope[T], s string) (js.Value[T], error) {
-	return cbCtx.NewString(s), nil
+func EncodeStringScoped[T any](scope js.Scope[T], s string) (js.Value[T], error) {
+	return scope.NewString(s), nil
 }
 
-func EncodeString[T any](cbCtx js.CallbackScope[T], s string) (js.Value[T], error) {
-	return cbCtx.NewString(s), nil
+func EncodeString[T any](scope js.Scope[T], s string) (js.Value[T], error) {
+	return scope.NewString(s), nil
 }
 
-func EncodeNullableString[T any](
-	cbCtx js.CallbackScope[T],
-	s *string,
-) (js.Value[T], error) {
+func EncodeNullableString[T any](scope js.CallbackScope[T], s *string) (js.Value[T], error) {
 	if s != nil {
-		return cbCtx.NewString(*s), nil
+		return scope.NewString(*s), nil
 	}
-	return EncodeNull(cbCtx)
+	return EncodeNull(scope)
 }
 func EncodeNillableString[T any](
-	cbCtx js.CallbackScope[T],
+	scope js.CallbackScope[T],
 	s string,
 	hasValue bool,
 ) (js.Value[T], error) {
 	if hasValue {
-		return cbCtx.NewString(s), nil
+		return scope.NewString(s), nil
 	}
-	return EncodeNull(cbCtx)
+	return EncodeNull(scope)
 }
 
-func EncodeNull[T any](cbCtx js.CallbackScope[T]) (js.Value[T], error) {
-	return cbCtx.Null(), nil
+func EncodeNull[T any](s js.CallbackScope[T]) (js.Value[T], error) {
+	return s.Null(), nil
 }
 
 // EncodeConstrucedValue is a simple helper for JS constructor callbacks to
 // store the constructed Go value in the JavaScript object, and possibly cache
 // it with the script context.
-func EncodeConstrucedValue[T any](cbCtx js.CallbackScope[T], val any) (js.Value[T], error) {
+func EncodeConstrucedValue[T any](s js.CallbackScope[T], val any) (js.Value[T], error) {
 	// TODO: Figure out if this function should survive
-	cbCtx.This().SetNativeValue(val)
+	s.This().SetNativeValue(val)
 	if e, ok := val.(entity.ObjectIder); ok {
-		cbCtx.SetValue(e, cbCtx.This())
+		s.SetValue(e, s.This())
 	}
 	return nil, nil
 }

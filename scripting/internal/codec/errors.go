@@ -23,13 +23,9 @@ func EncodeCallbackErrorf[T any](
 	return nil, CallbackErrorf(ctx, format, a...)
 }
 
-func CallbackErrorf[T any](
-	ctx js.Scope[T],
-	format string,
-	a ...any,
-) error {
+func CallbackErrorf[T any](s js.Scope[T], format string, a ...any) error {
 	err := fmt.Errorf(format, a...)
-	ctx.Logger().Error("JS Callback", log.ErrAttr(err))
+	s.Logger().Error("JS Callback", log.ErrAttr(err))
 	return err
 }
 
@@ -45,7 +41,7 @@ func CallbackErrorf[T any](
 // name of the api is specified in the webAPI, and the unsupported method or
 // option is specified in key.
 func UnsupportedOptionErrorf[T any](
-	ctx js.Scope[T],
+	s js.Scope[T],
 	value js.Value[T],
 	webAPI string,
 	key string,
@@ -53,7 +49,7 @@ func UnsupportedOptionErrorf[T any](
 	if js.IsNullish(value) {
 		return nil
 	}
-	return CallbackErrorf(ctx,
+	return CallbackErrorf(s,
 		"gost-dom/scripting/%s: %s: not yet supported",
 		webAPI, key,
 	)

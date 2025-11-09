@@ -85,16 +85,14 @@ func (xhr XMLHttpRequest[T]) upload(cbCtx js.CallbackContext[T]) (js.Value[T], e
 	return cbCtx.This(), nil
 }
 
-func (w XMLHttpRequest[T]) toAny(
-	cbCtx js.CallbackContext[T],
-	val string,
-) (js.Value[T], error) {
-	return codec.EncodeString(cbCtx, val)
+func (w XMLHttpRequest[T]) toAny(s js.Scope[T], val string) (js.Value[T], error) {
+	return codec.EncodeString(s, val)
 }
 
 func (xhr XMLHttpRequest[T]) decodeXMLHttpRequestResponseType(
-	ctx js.Scope[T], val js.Value[T]) (string, error) {
-	return codec.DecodeString(ctx, val)
+	s js.Scope[T], val js.Value[T],
+) (string, error) {
+	return codec.DecodeString(s, val)
 }
 
 func (xhr XMLHttpRequest[T]) toXMLHttpRequestResponseType(

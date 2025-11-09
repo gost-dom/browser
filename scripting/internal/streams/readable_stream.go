@@ -6,23 +6,19 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w ReadableStream[T]) decodeObject(
-	cbCtx js.Scope[T], v js.Value[T],
-) (string, error) {
+func (w ReadableStream[T]) decodeObject(s js.Scope[T], v js.Value[T]) (string, error) {
 	var err error
 	if v != nil && v.Boolean() {
-		return "", codec.CallbackErrorf(cbCtx,
+		return "", codec.CallbackErrorf(s,
 			"gost-dom/scripting/streams: ReadableStream underlyingSource not yet supported",
 		)
 	}
 	return "", err
 }
 
-func (w ReadableStream[T]) decodeQueuingStrategy(
-	cbCtx js.Scope[T], v js.Value[T],
-) ([]string, error) {
+func (w ReadableStream[T]) decodeQueuingStrategy(s js.Scope[T], v js.Value[T]) ([]string, error) {
 	if v != nil && v.Boolean() {
-		return nil, codec.CallbackErrorf(cbCtx,
+		return nil, codec.CallbackErrorf(s,
 			"gost-dom/scripting/streams: ReadableStream strategy not yet supported",
 		)
 	}
@@ -37,10 +33,10 @@ func (w ReadableStream[T]) CreateInstance(
 	)
 }
 func (w ReadableStream[T]) decodeReadableStreamGetReaderOptions(
-	cbCtx js.Scope[T], v js.Value[T],
+	s js.Scope[T], v js.Value[T],
 ) ([]streams.GetReaderOption, error) {
 	if v != nil && v.Boolean() {
-		return nil, codec.CallbackErrorf(cbCtx,
+		return nil, codec.CallbackErrorf(s,
 			"gost-dom/scripting/streams: ReadableStream.getReader options not yet supported",
 		)
 	}

@@ -23,19 +23,19 @@ func newCallbackScope(ctx *GojaContext, this *goja.Object, instance any) gojaCal
 	}
 }
 
-func (c gojaCallbackScope) This() js.Object[jsTypeParam] {
-	return newGojaObject(c.GojaContext, c.this)
+func (s gojaCallbackScope) This() js.Object[jsTypeParam] {
+	return newGojaObject(s.GojaContext, s.this)
 }
 
-func (ctx gojaCallbackScope) Instance() (any, error) {
-	if ctx.instance == nil {
-		panic(ctx.vm.NewTypeError("No embedded value"))
+func (s gojaCallbackScope) Instance() (any, error) {
+	if s.instance == nil {
+		panic(s.vm.NewTypeError("No embedded value"))
 	}
-	return ctx.instance, nil
+	return s.instance, nil
 }
 
-func (ctx gojaCallbackScope) Logger() *slog.Logger {
-	if l := ctx.logger(); l != nil {
+func (s gojaCallbackScope) Logger() *slog.Logger {
+	if l := s.logger(); l != nil {
 		return l
 	}
 	return log.Default()

@@ -15,7 +15,7 @@ type Iterator[E, T any] struct {
 	Resolver ValueResolver[E, T]
 }
 
-type ValueResolver[T, U any] func(ctx Scope[U], value T) (Value[U], error)
+type ValueResolver[T, U any] func(s Scope[U], value T) (Value[U], error)
 
 func NewIterator[T, U any](entityLookup ValueResolver[T, U]) Iterator[T, U] {
 	return Iterator[T, U]{entityLookup}
@@ -28,11 +28,8 @@ type sliceIter[T any] interface {
 	All() []T
 }
 
-func (i Iterator[T, U]) newIteratorOfSlice(
-	cbCtx Scope[U],
-	items []T,
-) (Value[U], error) {
-	return i.NewIterator(cbCtx, slices.Values(items))
+func (i Iterator[T, U]) newIteratorOfSlice(s Scope[U], items []T) (Value[U], error) {
+	return i.NewIterator(s, slices.Values(items))
 }
 
 func (i Iterator[T, U]) mapItems(
@@ -50,11 +47,8 @@ func (i Iterator[T, U]) mapItems(
 
 // Method NewIterator on an iterator returns a new iterator, iterating from the
 // beginning of the specified sequence.
-func (i Iterator[T, U]) NewIterator(
-	cbCtx Scope[U],
-	items iter.Seq[T],
-) (Value[U], error) {
-	return cbCtx.NewIterator(i.mapItems(cbCtx, items)), nil
+func (i Iterator[T, U]) NewIterator(s Scope[U], items iter.Seq[T]) (Value[U], error) {
+	return s.NewIterator(i.mapItems(s, items)), nil
 }
 
 // Method InstallPrototype creates the following prototype methods:
