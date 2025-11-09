@@ -42,7 +42,7 @@ func (w FormData[T]) CreateInstanceFormSubmitter(
 }
 
 func (w FormData[T]) decodeFormDataValue(
-	_ js.CallbackContext[T],
+	_ js.Scope[T],
 	val js.Value[T],
 ) (html.FormDataValue, error) {
 	return html.FormDataValue(val.String()), nil
@@ -67,7 +67,7 @@ func (w FormData[T]) toSequenceFormDataEntryValue(
 }
 
 func (w FormData[T]) decodeHTMLFormElement(
-	cbCtx js.CallbackContext[T],
+	cbCtx js.Scope[T],
 	val js.Value[T],
 ) (html.HTMLFormElement, error) {
 	var (

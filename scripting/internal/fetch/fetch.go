@@ -31,7 +31,7 @@ func Fetch[T any](info js.CallbackContext[T]) (js.Value[T], error) {
 }
 
 func decodeRequestInit[T any](
-	scope js.CallbackContext[T], val js.Value[T],
+	scope js.Scope[T], val js.Value[T],
 ) ([]fetch.RequestOption, error) {
 	options := codec.Options[T, fetch.RequestOption]{
 		"signal": codec.OptDecoder[T](fetch.WithSignal),

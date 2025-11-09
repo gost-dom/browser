@@ -72,7 +72,7 @@ func (e *Element[T]) toNamedNodeMap(
 }
 
 func (e *Element[T]) decodeElement(
-	ctx js.CallbackContext[T],
+	ctx js.Scope[T],
 	val js.Value[T],
 ) (dom.Element, error) {
 	return codec.DecodeAs[dom.Element](ctx, val)

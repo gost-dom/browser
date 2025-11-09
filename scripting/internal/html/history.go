@@ -7,7 +7,7 @@ import (
 )
 
 func (w History[T]) decodeHistoryState(
-	cbCtx js.CallbackContext[T],
+	cbCtx js.Scope[T],
 	val js.Value[T],
 ) (html.HistoryState, error) {
 	return html.HistoryState(cbCtx.JSONStringify(val)), nil

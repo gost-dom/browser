@@ -10,7 +10,7 @@ import (
 )
 
 type MutationCallback[T any] struct {
-	ctx      js.CallbackContext[T]
+	ctx      js.Scope[T]
 	function js.Function[T]
 }
 
@@ -29,7 +29,7 @@ func (w MutationObserver[T]) CreateInstance(
 }
 
 func (w MutationObserver[T]) decodeMutationCallback(
-	cbCtx js.CallbackContext[T],
+	cbCtx js.Scope[T],
 	val js.Value[T],
 ) (mutation.Callback, error) {
 	if f, ok := val.AsFunction(); ok {
@@ -39,7 +39,7 @@ func (w MutationObserver[T]) decodeMutationCallback(
 }
 
 func (w MutationObserver[T]) decodeObserveOption(
-	cbCtx js.CallbackContext[T],
+	cbCtx js.Scope[T],
 	val js.Value[T],
 ) ([]mutation.ObserveOption, error) {
 	obj, ok := val.AsObject()
@@ -74,7 +74,7 @@ func (w MutationObserver[T]) toSequenceMutationRecord(
 }
 
 func toSequenceMutationRecord[T any](
-	cbCtx js.CallbackContext[T],
+	cbCtx js.Scope[T],
 	records []mutation.Record,
 ) (js.Value[T], error) {
 	res := make([]js.Value[T], len(records))

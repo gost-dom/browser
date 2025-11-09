@@ -7,7 +7,7 @@ import (
 )
 
 func (w ReadableStream[T]) decodeObject(
-	cbCtx js.CallbackContext[T], v js.Value[T],
+	cbCtx js.Scope[T], v js.Value[T],
 ) (string, error) {
 	var err error
 	if v != nil && v.Boolean() {
@@ -19,7 +19,7 @@ func (w ReadableStream[T]) decodeObject(
 }
 
 func (w ReadableStream[T]) decodeQueuingStrategy(
-	cbCtx js.CallbackContext[T], v js.Value[T],
+	cbCtx js.Scope[T], v js.Value[T],
 ) ([]string, error) {
 	if v != nil && v.Boolean() {
 		return nil, codec.CallbackErrorf(cbCtx,
@@ -37,7 +37,7 @@ func (w ReadableStream[T]) CreateInstance(
 	)
 }
 func (w ReadableStream[T]) decodeReadableStreamGetReaderOptions(
-	cbCtx js.CallbackContext[T], v js.Value[T],
+	cbCtx js.Scope[T], v js.Value[T],
 ) ([]streams.GetReaderOption, error) {
 	if v != nil && v.Boolean() {
 		return nil, codec.CallbackErrorf(cbCtx,

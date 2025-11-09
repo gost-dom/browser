@@ -7,14 +7,14 @@ import (
 )
 
 func (w Request[T]) decodeRequestInfo(
-	_ js.CallbackContext[T],
+	_ js.Scope[T],
 	val js.Value[T],
 ) (string, error) {
 	return val.String(), nil
 }
 
 func (w Request[T]) decodeRequestInit(
-	_ js.CallbackContext[T],
+	_ js.Scope[T],
 	_ js.Value[T],
 ) ([]fetch.RequestOption, error) {
 	return nil, nil

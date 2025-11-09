@@ -13,7 +13,7 @@ import (
 )
 
 func (xhr XMLHttpRequest[T]) decodeDocument(
-	_ js.CallbackContext[T],
+	_ js.Scope[T],
 	val js.Value[T],
 ) (io.Reader, error) {
 	if val.IsNull() {
@@ -23,7 +23,7 @@ func (xhr XMLHttpRequest[T]) decodeDocument(
 }
 
 func (xhr XMLHttpRequest[T]) decodeXMLHttpRequestBodyInit(
-	_ js.CallbackContext[T],
+	_ js.Scope[T],
 	val js.Value[T],
 ) (io.Reader, error) {
 	if val == nil {
@@ -93,7 +93,7 @@ func (w XMLHttpRequest[T]) toAny(
 }
 
 func (xhr XMLHttpRequest[T]) decodeXMLHttpRequestResponseType(
-	ctx js.CallbackContext[T], val js.Value[T]) (string, error) {
+	ctx js.Scope[T], val js.Value[T]) (string, error) {
 	return codec.DecodeString(ctx, val)
 }
 

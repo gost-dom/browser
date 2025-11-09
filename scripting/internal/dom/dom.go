@@ -7,7 +7,7 @@ import (
 )
 
 func (w ParentNode[T]) decodeNodeOrText(
-	cbCtx js.CallbackContext[T],
+	cbCtx js.Scope[T],
 	val js.Value[T],
 ) (dom.Node, error) {
 	if val.IsString() {

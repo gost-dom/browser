@@ -16,7 +16,7 @@ func (w ReadableStreamDefaultReader[T]) CreateInstance(
 }
 
 func (w ReadableStreamDefaultReader[T]) decodeReadableStream(
-	ctx js.CallbackContext[T], v js.Value[T],
+	ctx js.Scope[T], v js.Value[T],
 ) (res string, err error) {
 	err = codec.UnsupportedOptionErrorf(
 		ctx, v, "streams", "ReadableStreamDefaultReader readableStream",

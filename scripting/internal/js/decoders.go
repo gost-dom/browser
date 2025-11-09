@@ -7,7 +7,7 @@ import (
 
 // AssertObject asserts that an argument is of an object type. A TypeError is
 // returned if the value is not an object
-func AssertObjectArg[T any](cbCtx CallbackContext[T], v Value[T]) (Object[T], error) {
+func AssertObjectArg[T any](cbCtx Scope[T], v Value[T]) (Object[T], error) {
 	if obj, ok := v.AsObject(); ok {
 		return obj, nil
 	}
@@ -18,7 +18,7 @@ func AssertObjectArg[T any](cbCtx CallbackContext[T], v Value[T]) (Object[T], er
 // setters, where exactly one argument must be passed by v8.
 func ParseSetterArg[T, U any](
 	ctx CallbackContext[T],
-	parsers ...func(CallbackContext[T], Value[T]) (U, error),
+	parsers ...func(Scope[T], Value[T]) (U, error),
 ) (result U, err error) {
 	arg, ok := ctx.ConsumeArg()
 	if !ok {

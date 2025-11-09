@@ -8,14 +8,14 @@ import (
 )
 
 func (w UIEvent[T]) decodeMouseEventInit(
-	cbCtx js.CallbackContext[T],
+	cbCtx js.Scope[T],
 	v js.Value[T],
 ) (codec.EventInit, error) {
 	return w.decodeUIEventInit(cbCtx, v)
 }
 
 func (w UIEvent[T]) decodePointerEventInit(
-	cbCtx js.CallbackContext[T],
+	cbCtx js.Scope[T],
 	v js.Value[T],
 ) (codec.EventInit, error) {
 	return w.decodeMouseEventInit(cbCtx, v)
@@ -37,14 +37,14 @@ func (w UIEvent[T]) CreateInstanceEventInitDict(
 }
 
 func (w UIEvent[T]) decodeUIEventInit(
-	cbCtx js.CallbackContext[T],
+	cbCtx js.Scope[T],
 	v js.Value[T],
 ) (codec.EventInit, error) {
 	return codec.DecodeEventInit(cbCtx, v)
 }
 
 func (w UIEvent[T]) decodeKeyboardEventInit(
-	cbCtx js.CallbackContext[T],
+	cbCtx js.Scope[T],
 	v js.Value[T],
 ) (codec.EventInit, error) {
 	return w.decodeUIEventInit(cbCtx, v)

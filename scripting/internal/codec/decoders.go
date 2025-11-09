@@ -11,19 +11,19 @@ import (
 
 func ZeroValue[T any]() (res T) { return }
 
-func DecodeString[T any](cbCtx js.CallbackContext[T], val js.Value[T]) (string, error) {
+func DecodeString[T any](cbCtx js.Scope[T], val js.Value[T]) (string, error) {
 	return val.String(), nil
 }
 
-func DecodeBoolean[T any](_ js.CallbackContext[T], val js.Value[T]) (bool, error) {
+func DecodeBoolean[T any](_ js.Scope[T], val js.Value[T]) (bool, error) {
 	return val.Boolean(), nil
 }
 
-func DecodeInt[T any](_ js.CallbackContext[T], val js.Value[T]) (int, error) {
+func DecodeInt[T any](_ js.Scope[T], val js.Value[T]) (int, error) {
 	return int(val.Int32()), nil
 }
 
-func DecodeNode[T any](ctx js.CallbackContext[T], val js.Value[T]) (dom.Node, error) {
+func DecodeNode[T any](ctx js.Scope[T], val js.Value[T]) (dom.Node, error) {
 	if val.IsNull() {
 		return nil, nil
 	}
@@ -35,7 +35,7 @@ func DecodeNode[T any](ctx js.CallbackContext[T], val js.Value[T]) (dom.Node, er
 	return nil, ctx.NewTypeError("Value is not a node")
 }
 
-func DecodeAs[T, U any](ctx js.CallbackContext[U], val js.Value[U]) (res T, err error) {
+func DecodeAs[T, U any](ctx js.Scope[U], val js.Value[U]) (res T, err error) {
 	if js.IsNullish(val) {
 		return
 	}
@@ -49,7 +49,7 @@ func DecodeAs[T, U any](ctx js.CallbackContext[U], val js.Value[U]) (res T, err 
 }
 
 func DecodeHTMLElement[T any](
-	ctx js.CallbackContext[T],
+	ctx js.Scope[T],
 	val js.Value[T],
 ) (html.HTMLElement, error) {
 	if obj, ok := val.AsObject(); ok {
@@ -67,7 +67,7 @@ type EventInit struct {
 }
 
 func DecodeEventInit[T any](
-	_ js.CallbackContext[T],
+	_ js.Scope[T],
 	val js.Value[T],
 ) (EventInit, error) {
 	options, ok := val.AsObject()
@@ -88,7 +88,7 @@ func DecodeEventInit[T any](
 	return init, nil
 }
 
-func DecodeFunction[T any](cbCtx js.CallbackContext[T], val js.Value[T]) (js.Function[T], error) {
+func DecodeFunction[T any](cbCtx js.Scope[T], val js.Value[T]) (js.Function[T], error) {
 	if f, ok := val.AsFunction(); ok {
 		return f, nil
 	}

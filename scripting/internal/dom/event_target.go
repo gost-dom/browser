@@ -11,11 +11,11 @@ import (
 type v8EventListener[T any] struct {
 	// TODO: Replace with "scope" - as we keep on to this for longer than the
 	// callback
-	ctx js.CallbackContext[T]
+	ctx js.Scope[T]
 	val js.Function[T]
 }
 
-func newV8EventListener[T any](ctx js.CallbackContext[T], val js.Function[T]) event.EventHandler {
+func newV8EventListener[T any](ctx js.Scope[T], val js.Function[T]) event.EventHandler {
 	return v8EventListener[T]{ctx, val}
 }
 
@@ -43,7 +43,7 @@ func (w EventTarget[T]) CreateInstance(cbCtx js.CallbackContext[T]) (js.Value[T]
 }
 
 func (w EventTarget[T]) decodeEventListener(
-	cbCtx js.CallbackContext[T],
+	cbCtx js.Scope[T],
 	val js.Value[T],
 ) (event.EventHandler, error) {
 	if fn, ok := val.AsFunction(); ok {
@@ -58,7 +58,7 @@ func (w EventTarget[T]) defaultEventListenerOptions() []event.EventListenerOptio
 }
 
 func (w EventTarget[T]) decodeEventListenerOptions(
-	cbCtx js.CallbackContext[T],
+	cbCtx js.Scope[T],
 	val js.Value[T],
 ) ([]event.EventListenerOption, error) {
 	var options []func(*event.EventListener)
@@ -77,7 +77,7 @@ func (w EventTarget[T]) decodeEventListenerOptions(
 }
 
 func (w EventTarget[T]) decodeEvent(
-	cbCtx js.CallbackContext[T],
+	cbCtx js.Scope[T],
 	val js.Value[T],
 ) (*event.Event, error) {
 	obj, err := js.AssertObjectArg(cbCtx, val)

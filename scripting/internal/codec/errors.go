@@ -24,7 +24,7 @@ func EncodeCallbackErrorf[T any](
 }
 
 func CallbackErrorf[T any](
-	ctx js.CallbackContext[T],
+	ctx js.Scope[T],
 	format string,
 	a ...any,
 ) error {
@@ -45,7 +45,7 @@ func CallbackErrorf[T any](
 // name of the api is specified in the webAPI, and the unsupported method or
 // option is specified in key.
 func UnsupportedOptionErrorf[T any](
-	ctx js.CallbackContext[T],
+	ctx js.Scope[T],
 	value js.Value[T],
 	webAPI string,
 	key string,

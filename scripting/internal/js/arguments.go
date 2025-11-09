@@ -20,7 +20,7 @@ func ConsumeArgument[T, U any](
 	args CallbackContext[U],
 	name string,
 	defaultValue func() T,
-	decoders ...func(CallbackContext[U], Value[U]) (T, error),
+	decoders ...func(Scope[U], Value[U]) (T, error),
 ) (result T, err error) {
 	value, _ := args.ConsumeArg()
 	if value == nil && defaultValue != nil {
@@ -42,7 +42,7 @@ func ConsumeArgument[T, U any](
 func ConsumeRestArguments[T, U any](
 	args CallbackContext[U],
 	name string,
-	decoders ...func(CallbackContext[U], Value[U]) (T, error),
+	decoders ...func(Scope[U], Value[U]) (T, error),
 ) (results []T, err error) {
 	errs := make([]error, len(decoders))
 outer:
@@ -67,7 +67,7 @@ outer:
 func ConsumeOptionalArg[T, U any](
 	cbCtx CallbackContext[T],
 	name string,
-	decoders ...func(CallbackContext[T], Value[T]) (U, error),
+	decoders ...func(Scope[T], Value[T]) (U, error),
 ) (result U, found bool, err error) {
 	value, _ := cbCtx.ConsumeArg()
 	if value == nil {
