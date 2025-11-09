@@ -91,3 +91,17 @@ func DecodeFunction[T any](s js.Scope[T], v js.Value[T]) (js.Function[T], error)
 	}
 	return nil, s.NewTypeError("Must be a function")
 }
+
+func DecodeInnerObject[T, U any](s js.Scope[T], v js.Value[T]) (res U, err error) {
+	obj, ok := v.AsObject()
+	if !ok {
+		err = fmt.Errorf("gost-dom/codec: option not an object: %v", v)
+		return
+	}
+	optVal := obj.NativeValue()
+	if opt, ok := optVal.(U); ok {
+		return opt, nil
+	}
+	err = fmt.Errorf("gost-dom/codec: option not of type %T: %v", res, optVal)
+	return
+}

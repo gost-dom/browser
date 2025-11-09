@@ -1,28 +1,23 @@
 package codec
 
 import (
-	"fmt"
-
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type OptionDecoder[T, U any] = func(js.Value[T]) (U, error)
+type OptionDecoder[T, U any] = func(js.Scope[T], js.Value[T]) (U, error)
 
 type Options[T, U any] map[string]OptionDecoder[T, U]
 
-// OptDecoder extracts the "native value" of a JavaScript object
-func OptDecoder[T, U, V any](f func(U) V) OptionDecoder[T, V] {
-	return func(val js.Value[T]) (res V, err error) {
-		obj, ok := val.AsObject()
-		if !ok {
-			err = fmt.Errorf("gost-dom/codec: option not an object: %v", val)
-			return
+func OptDecoder[T, U, V any](
+	decode func(scope js.Scope[T], val js.Value[T]) (U, error),
+	f func(U) V,
+) OptionDecoder[T, V] {
+	return func(scope js.Scope[T], val js.Value[T]) (res V, err error) {
+		var tmp U
+		tmp, err = decode(scope, val)
+		if err == nil {
+			res = f(tmp)
 		}
-		optVal := obj.NativeValue()
-		if opt, ok := optVal.(U); ok {
-			return f(opt), nil
-		}
-		err = fmt.Errorf("gost-dom/codec: option not of type %T: %v", res, optVal)
 		return
 	}
 }
@@ -41,7 +36,7 @@ func DecodeOptions[T, U any](
 			if err != nil {
 				return nil, err
 			}
-			o, err := v(opt)
+			o, err := v(scope, opt)
 			if err != nil {
 				return nil, err
 			}
