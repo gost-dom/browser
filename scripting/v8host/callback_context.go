@@ -57,10 +57,6 @@ func (h v8CallbackScope) Instance() (any, error) {
 	return nil, v8go.NewTypeError(h.iso(), "No internal instance")
 }
 
-func (c v8CallbackScope) Logger() *slog.Logger {
-	return c.host.Logger()
-}
-
 type v8CallbackContext struct {
 	v8CallbackScope
 	v8Info       *v8.FunctionCallbackInfo
@@ -104,6 +100,7 @@ func newV8Scope(ctx *V8ScriptContext) v8Scope {
 	return v8Scope{ctx}
 }
 
+func (s v8Scope) Logger() *slog.Logger { return s.host.Logger() }
 func (s v8Scope) Window() html.Window  { return s.window }
 func (s v8Scope) GlobalThis() jsObject { return s.global }
 func (s v8Scope) Clock() *clock.Clock  { return s.clock }

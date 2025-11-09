@@ -29,6 +29,7 @@ type Disposable interface{ Dispose() }
 type Scope[T any] interface {
 	ValueFactory[T]
 
+	Logger() *slog.Logger
 	Window() html.Window
 	GlobalThis() Object[T]
 	Clock() *clock.Clock
@@ -62,7 +63,6 @@ type CallbackScope[T any] interface {
 	// contain an internal Go value an [ErrNoInternalValue] error is returned.
 	Instance() (any, error)
 
-	Logger() *slog.Logger
 	This() Object[T]
 }
 
