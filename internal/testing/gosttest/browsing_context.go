@@ -27,6 +27,7 @@ func NewBrowsingContext(t testing.TB, h http.Handler) BrowsingContext {
 	return BrowsingContext{
 		logger: NewTestLogger(t),
 		Client: gosthttp.NewHttpClientFromHandler(h),
+		Ctx:    t.Context(),
 	}
 }
 

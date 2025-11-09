@@ -1,8 +1,10 @@
 package fetch_test
 
 import (
+	"bytes"
 	"context"
 	"io"
+	"net/http"
 	"testing"
 	"testing/synctest"
 	"time"
@@ -85,6 +87,34 @@ func TestFetchAborted(t *testing.T) {
 			assert.Equal(t, "Dummy reason", errAny.Reason, "Error reason")
 		})
 	})
+}
+
+func TestFetchPost(t *testing.T) {
+	ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
+	defer cancel()
+
+	var b bytes.Buffer
+	recorder := gosttest.NewHTTPRequestRecorder(t,
+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			t.Log("Serve request!")
+			io.Copy(&b, r.Body)
+			w.WriteHeader(200)
+		}),
+	)
+	bc := gosttest.NewBrowsingContext(t, recorder)
+	bc.Ctx = ctx
+	f := fetch.New(bc)
+	var reqBody = bytes.NewBufferString("Hello, World!")
+	res, err := f.Fetch(f.NewRequest(
+		"url", fetch.WithMethod("POST"), fetch.WithBody(reqBody),
+	))
+	if !assert.NoError(t, err) {
+		return
+	}
+	assert.Equal(t, 200, res.Status)
+	req := recorder.Requests[0]
+	assert.Equal(t, "POST", req.Method)
+	assert.Equal(t, "Hello, World!", b.String())
 }
 
 type Result[T any] struct {

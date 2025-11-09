@@ -35,16 +35,21 @@ type RequestOption func(*Request)
 type Request struct {
 	url    string
 	bc     html.BrowsingContext
+	method string
 	signal *dom.AbortSignal
+	body   io.Reader
 }
 
 func (r *Request) URL() string { return url.ParseURLBase(r.url, r.bc.LocationHREF()).Href() }
 
 func (r *Request) do(ctx context.Context) (*http.Response, error) {
-	method := "GET"
+	method := r.method
+	if method == "" {
+		method = "GET"
+	}
 	url := r.URL()
 	log.Info(r.bc.Logger(), "gost-dom/fetch: Request.do", "method", method, "url", url)
-	req, err := http.NewRequestWithContext(ctx, method, url, nil)
+	req, err := http.NewRequestWithContext(ctx, method, url, r.body)
 	if err != nil {
 		return nil, err
 	}
@@ -54,6 +59,14 @@ func (r *Request) do(ctx context.Context) (*http.Response, error) {
 
 func WithSignal(s *dom.AbortSignal) RequestOption {
 	return func(opt *Request) { opt.signal = s }
+}
+
+func WithMethod(m string) RequestOption {
+	return func(opt *Request) { opt.method = m }
+}
+
+func WithBody(b io.Reader) RequestOption {
+	return func(opt *Request) { opt.body = b }
 }
 
 func (f Fetch) Fetch(req Request) (*Response, error) {
