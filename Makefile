@@ -7,7 +7,7 @@ GOW_FLAGS := $(RAW)
 GO_TEST := GOEXPERIMENT=synctest go test
 
 # Expects an existing stable version of `gow`.
-GOW := gow $(GOW_FLAGS)
+GOW := go run github.com/mitranim/gow  $(GOW_FLAGS)
 
 .PHONY: changes
 changes:

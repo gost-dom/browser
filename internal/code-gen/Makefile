@@ -1,5 +1,5 @@
 test-watch:
-	gow -c test ./...
+	go run github.com/mitranim/gow -c test ./...
 
 
 build:
@@ -9,4 +9,4 @@ test:
 	go test ./...
 
 build-watch:
-	gow -s -S "Build done" build
+	go run github.com/mitranim/gow -s -S "Build done" build
