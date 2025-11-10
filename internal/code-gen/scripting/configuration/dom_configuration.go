@@ -128,7 +128,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 	domElement.MarkMembersAsIgnored(
 		// HTMX fails if these exist but throw
 		"webkitMatchesSelector",
-		"closest",
 	)
 
 	domTokenList := specs.Type("DOMTokenList")

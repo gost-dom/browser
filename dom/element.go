@@ -26,6 +26,7 @@ type Element interface {
 	ChildNode
 	NonDocumentTypeChildNode
 	ClassList() DOMTokenList
+	Closest(string) (Element, error)
 	HasAttribute(name string) bool
 	GetAttribute(name string) (string, bool)
 	SetAttribute(name string, value string)
@@ -333,6 +334,21 @@ func (e *element) Matches(pattern string) (res bool, err error) {
 		return slices.Contains(el.All(), clone), nil
 	}
 	return false, err
+}
+
+func (e *element) Closest(pattern string) (Element, error) {
+	ok, err := e.Matches(pattern)
+	if ok {
+		return e.getSelfElement(), nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	parent := e.ParentElement()
+	if parent == nil {
+		return nil, nil
+	}
+	return parent.Closest(pattern)
 }
 
 func (e *element) String() string {

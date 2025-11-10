@@ -46,6 +46,7 @@ func (w Element[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("setAttributeNodeNS", w.setAttributeNodeNS)
 	jsClass.CreatePrototypeMethod("removeAttributeNode", w.removeAttributeNode)
 	jsClass.CreatePrototypeMethod("attachShadow", w.attachShadow)
+	jsClass.CreatePrototypeMethod("closest", w.closest)
 	jsClass.CreatePrototypeMethod("matches", w.matches)
 	jsClass.CreatePrototypeMethod("getElementsByTagName", w.getElementsByTagName)
 	jsClass.CreatePrototypeMethod("getElementsByTagNameNS", w.getElementsByTagNameNS)
@@ -193,6 +194,23 @@ func (w Element[T]) removeAttributeNode(cbCtx js.CallbackContext[T]) (js.Value[T
 func (w Element[T]) attachShadow(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Element.attachShadow")
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.attachShadow: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+}
+
+func (w Element[T]) closest(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	cbCtx.Logger().Debug("JS Function call: Element.closest")
+	instance, errInst := js.As[dom.Element](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	selectors, errArg1 := js.ConsumeArgument(cbCtx, "selectors", nil, codec.DecodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result, errCall := instance.Closest(selectors)
+	if errCall != nil {
+		return nil, errCall
+	}
+	return codec.EncodeEntity(cbCtx, result)
 }
 
 func (w Element[T]) matches(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

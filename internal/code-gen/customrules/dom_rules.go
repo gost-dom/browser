@@ -24,6 +24,7 @@ var domRules = SpecRules{
 	}},
 	"Element": {Operations: OperationRules{
 		"matches":               {HasError: true},
+		"closest":               {HasError: true},
 		"insertAdjacentElement": {HasError: true},
 	}},
 	"ParentNode": {Operations: OperationRules{
