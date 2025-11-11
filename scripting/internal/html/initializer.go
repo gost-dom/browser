@@ -32,7 +32,7 @@ func QueueMicrotask[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 }
 func SetTimeout[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	f, err1 := js.ConsumeArgument(cbCtx, "callback", nil, codec.DecodeFunction)
-	delay, err2 := js.ConsumeArgument(cbCtx, "delay", nil, codec.DecodeInt)
+	delay, err2 := js.ConsumeArgument(cbCtx, "delay", codec.ZeroValue, codec.DecodeInt)
 	err := errors.Join(err1, err2)
 	if err != nil {
 		return nil, err
