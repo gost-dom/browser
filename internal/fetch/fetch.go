@@ -4,6 +4,7 @@ import (
 	"context"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/dom"
@@ -15,6 +16,33 @@ import (
 
 type Fetch struct {
 	BrowsingContext html.BrowsingContext
+}
+
+type HeaderOption interface{}
+type Headers http.Header
+
+func (h Headers) Append(name, val string) {
+	httpH := http.Header(h)
+	httpH.Add(name, val)
+}
+
+func (h Headers) Delete(name string) {
+	httpH := http.Header(h)
+	httpH.Del(name)
+}
+
+func (h Headers) Get(name string) (string, bool) {
+	res, ok := h[name]
+	return strings.Join(res, ","), ok
+}
+
+func (h Headers) Has(name string) bool {
+	_, ok := h[name]
+	return ok
+}
+
+func (h Headers) Set(name, value string) {
+	h[name] = []string{value}
 }
 
 func New(bc html.BrowsingContext) Fetch { return Fetch{bc} }
@@ -85,17 +113,23 @@ func (f Fetch) FetchAsync(req Request) promise.Promise[*Response] {
 		if err != nil {
 			return nil, err
 		}
+		headers := Headers(resp.Header)
+		if headers == nil {
+			headers = make(Headers)
+		}
 		return &Response{
 			Reader:       resp.Body,
 			Status:       resp.StatusCode,
 			httpResponse: resp,
+			Headers:      headers,
 		}, nil
 	})
 }
 
 type Response struct {
 	io.Reader
-	Status int
+	Status  int
+	Headers Headers
 
 	httpResponse *http.Response
 }

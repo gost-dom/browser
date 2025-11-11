@@ -10,5 +10,14 @@ var fetchRules = SpecRules{
 			},
 		},
 	},
+	"Headers": {
+		Operations: OperationRules{
+			"constructor": {
+				Arguments: ArgumentRules{
+					"init": {Variadic: true},
+				},
+			},
+		},
+	},
 	"Response": {OutputType: OutputTypeStruct},
 }

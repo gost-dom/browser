@@ -1,0 +1,117 @@
+// This file is generated. Do not edit.
+
+package fetch
+
+import (
+	"errors"
+	fetch "github.com/gost-dom/browser/internal/fetch"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
+	js "github.com/gost-dom/browser/scripting/internal/js"
+)
+
+type Headers[T any] struct{}
+
+func NewHeaders[T any](scriptHost js.ScriptEngine[T]) *Headers[T] {
+	return &Headers[T]{}
+}
+
+func (wrapper Headers[T]) Initialize(jsClass js.Class[T]) {
+	wrapper.installPrototype(jsClass)
+}
+
+func (w Headers[T]) installPrototype(jsClass js.Class[T]) {
+	jsClass.CreatePrototypeMethod("append", w.append)
+	jsClass.CreatePrototypeMethod("delete", w.delete)
+	jsClass.CreatePrototypeMethod("get", w.get)
+	jsClass.CreatePrototypeMethod("getSetCookie", w.getSetCookie)
+	jsClass.CreatePrototypeMethod("has", w.has)
+	jsClass.CreatePrototypeMethod("set", w.set)
+}
+
+func (w Headers[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	cbCtx.Logger().Debug("JS Function call: Headers.Constructor")
+	init, errArg1 := js.ConsumeArgument(cbCtx, "init", nil, w.decodeHeadersInit)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	return w.CreateInstance(cbCtx, init...)
+}
+
+func (w Headers[T]) append(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	cbCtx.Logger().Debug("JS Function call: Headers.append")
+	instance, errInst := js.As[fetch.Headers](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
+	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, codec.DecodeString)
+	err := errors.Join(errArg1, errArg2)
+	if err != nil {
+		return nil, err
+	}
+	instance.Append(name, value)
+	return nil, nil
+}
+
+func (w Headers[T]) delete(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	cbCtx.Logger().Debug("JS Function call: Headers.delete")
+	instance, errInst := js.As[fetch.Headers](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	instance.Delete(name)
+	return nil, nil
+}
+
+func (w Headers[T]) get(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	cbCtx.Logger().Debug("JS Function call: Headers.get")
+	instance, errInst := js.As[fetch.Headers](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result, hasValue := instance.Get(name)
+	return codec.EncodeNillableString(cbCtx, result, hasValue)
+}
+
+func (w Headers[T]) getSetCookie(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	cbCtx.Logger().Debug("JS Function call: Headers.getSetCookie")
+	return codec.EncodeCallbackErrorf(cbCtx, "Headers.getSetCookie: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+}
+
+func (w Headers[T]) has(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	cbCtx.Logger().Debug("JS Function call: Headers.has")
+	instance, errInst := js.As[fetch.Headers](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result := instance.Has(name)
+	return codec.EncodeBoolean(cbCtx, result)
+}
+
+func (w Headers[T]) set(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	cbCtx.Logger().Debug("JS Function call: Headers.set")
+	instance, errInst := js.As[fetch.Headers](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
+	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, codec.DecodeString)
+	err := errors.Join(errArg1, errArg2)
+	if err != nil {
+		return nil, err
+	}
+	instance.Set(name, value)
+	return nil, nil
+}

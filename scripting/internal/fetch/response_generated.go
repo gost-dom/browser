@@ -74,5 +74,10 @@ func (w Response[T]) statusText(cbCtx js.CallbackContext[T]) (js.Value[T], error
 
 func (w Response[T]) headers(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	cbCtx.Logger().Debug("JS Function call: Response.headers")
-	return codec.EncodeCallbackErrorf(cbCtx, "Response.headers: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	instance, err := js.As[*fetch.Response](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	result := instance.Headers
+	return w.toHeaders(cbCtx, result)
 }

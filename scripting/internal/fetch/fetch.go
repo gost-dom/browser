@@ -16,6 +16,7 @@ func encodeResponse[T any](info js.Scope[T], res *fetch.Response) (js.Value[T], 
 }
 
 func Fetch[T any](info js.CallbackContext[T]) (js.Value[T], error) {
+	info.Logger().Debug("JS Function call: fetch")
 	url, err := js.ConsumeArgument(info, "url", nil, codec.DecodeString)
 	if err != nil {
 		return nil, err
