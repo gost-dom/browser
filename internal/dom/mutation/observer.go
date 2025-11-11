@@ -118,8 +118,10 @@ func (o Observer) assertCanObserve() {
 
 func (o *Observer) Disconnect() {
 	o.Flushers.RemoveFlusher(o)
-	o.closer.Close()
-	o.closer = nil
+	if o.closer != nil {
+		o.closer.Close()
+		o.closer = nil
+	}
 }
 
 func (o *Observer) TakeRecords() (res []Record) {

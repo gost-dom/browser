@@ -19,9 +19,6 @@ func (r *FlusherSet) AddFlusher(f Flusher) {
 }
 
 func (r *FlusherSet) RemoveFlusher(f Flusher) {
-	if _, found := r.flushers[f]; !found {
-		panic("FlusherSet.RemoveFlusher: flusher is not added")
-	}
 	delete(r.flushers, f)
 }
 
