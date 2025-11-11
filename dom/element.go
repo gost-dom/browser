@@ -41,6 +41,7 @@ type Element interface {
 	InnerHTML() string
 	SetInnerHTML(string) error
 	TagName() string
+	Namespace() string
 	Matches(string) (bool, error)
 	ID() string
 	SetID(string)
@@ -76,6 +77,28 @@ func NewElement(tagName string, ownerDocument Document) Element {
 	return result
 }
 
+func (e *element) IsEqualNode(n Node) bool {
+	if !e.isEqualNode(n) {
+		return false
+	}
+	other, ok := n.(Element)
+	if !ok {
+		return false
+	}
+	if len(e.attributes) != other.Attributes().Length() {
+		return false
+	}
+	if e.tagName != other.TagName() || e.namespace != other.Namespace() {
+		return false
+	}
+	for _, a := range e.attributes {
+		if v, ok := other.GetAttribute(a.Name()); !ok || v != a.Value() {
+			return false
+		}
+	}
+	return true
+}
+
 func (e *element) SetSelf(n Node) {
 	if self, ok := n.(Element); ok {
 		e.selfElement = self
@@ -102,6 +125,8 @@ func (e *element) NodeName() string {
 func (e *element) TagName() string {
 	return strings.ToLower(e.tagName)
 }
+
+func (e *element) Namespace() string { return e.namespace }
 
 func (e *element) ID() string {
 	id, _ := e.GetAttribute("id")
