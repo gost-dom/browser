@@ -50,6 +50,13 @@ func (n *characterData) Length() int {
 
 func (d *characterData) cloneChildren() []Node { return nil }
 
+func (d *characterData) IsEqualNode(other Node) bool {
+	if od, ok := other.(CharacterData); ok {
+		return od.Data() == d.data && d.node.isEqualNode(other)
+	}
+	return false
+}
+
 /* -------- Comment -------- */
 
 type Comment interface {

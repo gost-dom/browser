@@ -165,6 +165,7 @@ type Node interface {
 	TextContent() string
 	SetTextContent(value string)
 	Connected()
+	IsEqualNode(Node) bool
 	// SetSelf must be called when creating instances of structs embedding a Node.
 	//
 	// If this is not called, the specialised type, which is itself a Node, will
@@ -258,6 +259,23 @@ func (n *node) Observe(observer observer) Closer {
 	}
 	n.observers = append(n.observers, observer)
 	return observerCloser{n, observer}
+}
+
+func (n *node) IsEqualNode(other Node) bool { return n.isEqualNode(other) }
+
+func (n *node) isEqualNode(other Node) bool {
+	if n.self.NodeType() != other.NodeType() {
+		return false
+	}
+	if n.childNodes.Length() != other.ChildNodes().Length() {
+		return false
+	}
+	for i := 0; i < n.childNodes.Length(); i++ {
+		if !n.childNodes.Item(i).IsEqualNode(other.ChildNodes().Item(i)) {
+			return false
+		}
+	}
+	return true
 }
 
 func (n *node) removeObserver(o observer) {
