@@ -143,7 +143,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 
 	domNode.Method("hasChildNodes").Ignore()
 	domNode.Method("normalize").Ignore()
-	domNode.Method("isEqualNode").Ignore()
 	domNode.Method("compareDocumentPosition").Ignore()
 	domNode.Method("lookupPrefix").Ignore()
 	domNode.Method("lookupNamespaceURI").Ignore()

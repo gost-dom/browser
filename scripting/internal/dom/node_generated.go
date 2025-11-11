@@ -22,6 +22,7 @@ func (wrapper Node[T]) Initialize(jsClass js.Class[T]) {
 func (w Node[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("getRootNode", w.getRootNode)
 	jsClass.CreatePrototypeMethod("cloneNode", w.cloneNode)
+	jsClass.CreatePrototypeMethod("isEqualNode", w.isEqualNode)
 	jsClass.CreatePrototypeMethod("isSameNode", w.isSameNode)
 	jsClass.CreatePrototypeMethod("contains", w.contains)
 	jsClass.CreatePrototypeMethod("insertBefore", w.insertBefore)
@@ -71,6 +72,20 @@ func (w Node[T]) cloneNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	}
 	result := instance.CloneNode(subtree)
 	return codec.EncodeEntity(cbCtx, result)
+}
+
+func (w Node[T]) isEqualNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	cbCtx.Logger().Debug("JS Function call: Node.isEqualNode")
+	instance, errInst := js.As[dom.Node](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	otherNode, errArg1 := js.ConsumeArgument(cbCtx, "otherNode", codec.ZeroValue, codec.DecodeNode)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result := instance.IsEqualNode(otherNode)
+	return codec.EncodeBoolean(cbCtx, result)
 }
 
 func (w Node[T]) isSameNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
