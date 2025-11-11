@@ -24,7 +24,7 @@ func QueueMicrotask[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 		clock := cbCtx.Clock()
 		clock.AddSafeMicrotask(func() {
 			if _, err := f.Call(cbCtx.GlobalThis()); err != nil {
-				js.UnhandledError(cbCtx, err)
+				js.HandleJSCallbackError(cbCtx, "Microtask", err)
 			}
 		})
 	}
@@ -41,7 +41,7 @@ func SetTimeout[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	handle := clock.AddSafeTask(
 		func() {
 			if _, err := f.Call(cbCtx.GlobalThis()); err != nil {
-				js.UnhandledError(cbCtx, err)
+				js.HandleJSCallbackError(cbCtx, "setTimeout", err)
 			}
 		},
 		time.Duration(delay)*time.Millisecond,
@@ -59,7 +59,7 @@ func SetInterval[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	handle := cbCtx.Clock().SetInterval(
 		func() {
 			if _, err := f.Call(cbCtx.GlobalThis()); err != nil {
-				js.UnhandledError(cbCtx, err)
+				js.HandleJSCallbackError(cbCtx, "SetInterval", err)
 			}
 		},
 		time.Duration(delay)*time.Millisecond,
