@@ -22,7 +22,7 @@ func TestFetch(t *testing.T) {
 
 	w.MustRun(`
 		let result;
-		fetch("http://example.com/file.json", { body: null }).
+		fetch("http://example.com/file.json", { signal: null, body: null }).
 			then(response => response.json()).
 			then(js => { result = js });
 	`)

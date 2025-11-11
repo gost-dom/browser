@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/gosthttp"
@@ -23,12 +24,40 @@ type BrowsingContext struct {
 	Location string
 }
 
-func NewBrowsingContext(t testing.TB, h http.Handler) BrowsingContext {
+type browsingContextOption struct {
+	timeout time.Duration
+}
+
+type BrowsingContextOption func(*browsingContextOption)
+
+func WithTimeoutMS(ms int) BrowsingContextOption {
+	return func(o *browsingContextOption) {
+		o.timeout = time.Duration(ms) * time.Millisecond
+	}
+}
+
+// NewBrowsingContextFromT creates [html.BrowsingContext] with the logger
+// connected to the current test case, as well as a default context deadline.
+func NewBrowsingContextFromT(
+	t testing.TB,
+	h http.Handler,
+	opts ...BrowsingContextOption,
+) (BrowsingContext, context.CancelFunc) {
+	var opt browsingContextOption
+	for _, o := range opts {
+		o(&opt)
+	}
+	timeout := opt.timeout
+	if timeout == 0 {
+		timeout = time.Second
+	}
+
+	ctx, cancel := context.WithTimeout(t.Context(), timeout)
 	return BrowsingContext{
 		logger: NewTestLogger(t),
 		Client: gosthttp.NewHttpClientFromHandler(h),
-		Ctx:    t.Context(),
-	}
+		Ctx:    ctx,
+	}, cancel
 }
 
 func (c BrowsingContext) Context() context.Context { return c.Ctx }

@@ -2,12 +2,10 @@ package fetch_test
 
 import (
 	"bytes"
-	"context"
 	"io"
 	"net/http"
 	"testing"
 	"testing/synctest"
-	"time"
 
 	"github.com/gost-dom/browser/internal/dom"
 	"github.com/gost-dom/browser/internal/fetch"
@@ -28,12 +26,10 @@ func TestFetchAborted(t *testing.T) {
 	// the HTTP roundtripper, but the body is still not streamed.
 	t.Run("Before status code has been sent", func(t *testing.T) {
 		synctest.Test(t, func(t *testing.T) {
-			ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
+			handler := gosttest.NewPipeHandler(t)
+			bc, cancel := gosttest.NewBrowsingContextFromT(t, handler)
 			defer cancel()
 
-			handler := gosttest.NewPipeHandler(t)
-			bc := gosttest.NewBrowsingContext(t, handler)
-			bc.Ctx = ctx
 			ac := dom.NewAbortController()
 			f := fetch.New(bc)
 			req := f.NewRequest("url", fetch.WithSignal(ac.Signal()))
@@ -48,7 +44,7 @@ func TestFetchAborted(t *testing.T) {
 			handler.WriteHeader(200)
 			handler.Close()
 
-			result := gosttest.ExpectReceive(t, p, gosttest.Context(ctx))
+			result := gosttest.ExpectReceive(t, p, gosttest.Context(t.Context()))
 			assert.Error(t, result.Err, "Response should be an error")
 
 			synctest.Wait()
@@ -58,12 +54,10 @@ func TestFetchAborted(t *testing.T) {
 
 	t.Run("After status code has been sent", func(t *testing.T) {
 		synctest.Test(t, func(t *testing.T) {
-			ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
+			handler := gosttest.NewPipeHandler(t)
+			bc, cancel := gosttest.NewBrowsingContextFromT(t, handler)
 			defer cancel()
 
-			handler := gosttest.NewPipeHandler(t)
-			bc := gosttest.NewBrowsingContext(t, handler)
-			bc.Ctx = ctx
 			ac := dom.NewAbortController()
 			f := fetch.New(bc)
 			req := f.NewRequest("url", fetch.WithSignal(ac.Signal()))
@@ -71,7 +65,7 @@ func TestFetchAborted(t *testing.T) {
 
 			p := f.FetchAsync(req)
 			synctest.Wait()
-			res := gosttest.ExpectReceive(t, p, gosttest.Context(ctx))
+			res := gosttest.ExpectReceive(t, p, gosttest.Context(t.Context()))
 			assert.Equal(t, 200, res.Value.Status)
 			assert.NoError(t, res.Err, "response error")
 
@@ -90,9 +84,6 @@ func TestFetchAborted(t *testing.T) {
 }
 
 func TestFetchPost(t *testing.T) {
-	ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
-	defer cancel()
-
 	var b bytes.Buffer
 	recorder := gosttest.NewHTTPRequestRecorder(t,
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -101,8 +92,9 @@ func TestFetchPost(t *testing.T) {
 			w.WriteHeader(200)
 		}),
 	)
-	bc := gosttest.NewBrowsingContext(t, recorder)
-	bc.Ctx = ctx
+	bc, cancel := gosttest.NewBrowsingContextFromT(t, recorder, gosttest.WithTimeoutMS(100))
+	defer cancel()
+
 	f := fetch.New(bc)
 	var reqBody = bytes.NewBufferString("Hello, World!")
 	res, err := f.Fetch(f.NewRequest(

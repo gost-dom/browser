@@ -55,8 +55,12 @@ func (s *XMLHTTPRequestTestSuite) SetupTest() {
 		}
 		w.Write([]byte("Hello, World!"))
 	})
+
+	ctx, cancel := gosttest.NewBrowsingContextFromT(s.T(), s.handler)
+	defer cancel()
+
 	s.xhr = NewXmlHttpRequest(
-		gosttest.NewBrowsingContext(s.T(), s.handler),
+		ctx,
 		s.timer,
 	)
 
@@ -209,10 +213,10 @@ func TestXMLHTTPRequestRedirect(t *testing.T) {
 	m.HandleFunc("GET /redirected-url", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Handled"))
 	})
-	xhr := NewXmlHttpRequest(
-		gosttest.NewBrowsingContext(t, m),
-		clock.New(),
-	)
+	ctx, cancel := gosttest.NewBrowsingContextFromT(t, m)
+	defer cancel()
+
+	xhr := NewXmlHttpRequest(ctx, clock.New())
 	xhr.Open("GET", "https://example.com/redirect", RequestOptionAsync(false))
 	xhr.Send(nil)
 
