@@ -13,3 +13,7 @@ func (w HTMLOrSVGElement[T]) focus(cbCtx js.CallbackContext[T]) (js.Value[T], er
 	}
 	return nil, err
 }
+
+func (w HTMLOrSVGElement[T]) InstallPrototype(jsClass js.Class[T]) {
+	w.installPrototype(jsClass)
+}

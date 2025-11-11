@@ -6,7 +6,9 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/fetch"
 	"github.com/gost-dom/browser/scripting/internal/html"
 	"github.com/gost-dom/browser/scripting/internal/js"
+	"github.com/gost-dom/browser/scripting/internal/mathml"
 	"github.com/gost-dom/browser/scripting/internal/streams"
+	"github.com/gost-dom/browser/scripting/internal/svg"
 	"github.com/gost-dom/browser/scripting/internal/uievents"
 	"github.com/gost-dom/browser/scripting/internal/url"
 	"github.com/gost-dom/browser/scripting/internal/xhr"
@@ -20,6 +22,8 @@ func Configure[T any](host js.ScriptEngine[T]) {
 func Bootstrap[T any](reg js.ClassBuilder[T]) {
 	dom.Bootstrap(reg)
 	html.InitBuilder(reg)
+	svg.Bootstrap(reg)
+	mathml.Bootstrap(reg)
 	xhr.Bootstrap(reg)
 	url.Bootstrap(reg)
 	uievents.Bootstrap(reg)
