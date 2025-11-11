@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <meta charset="utf-8" />
@@ -14,7 +14,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/a11y-light.min.css"
     />
-    <script src="datastar.js" type="module"></script>
+    <script src="datastar.rc6.js" type="module"></script>
   </head>
   <body>
     <h1 class="d-flex justify-content-center mt-5">Datastar test</h1>
@@ -23,7 +23,7 @@
         <h2>Button click test</h2>
         <button
           id="fetch-events-button"
-          data-on-click="@get('/datastarapi/events')"
+          data-on:click="@get('/datastarapi/events')"
           class="btn btn-primary"
         >
           Click me
@@ -33,8 +33,13 @@
 
       <div class="py-4">
         <h2>Simple data bind</h2>
-        <input id="echo-input-field" class="form-control" data-bind-input />
-        <div data-text="$input" id="echo-output">
+        <input
+          id="echo-input-field"
+          class="form-control"
+          data-bind="foo"
+          name="foo"
+        />
+        <div data-text="$foo" id="echo-output">
           I will be replaced with the contents of the input signal
         </div>
       </div>

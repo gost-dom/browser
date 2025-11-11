@@ -19,8 +19,8 @@ func NewDatastarMux() http.Handler {
 		w.Header().Set("Connection", "keep-alive")
 		w.WriteHeader(200)
 
-		fmt.Fprintf(w, "event: datastar-merge-fragments\n")
-		fmt.Fprintf(w, `data: fragments <div id="click-target">Foobar</div>`)
+		fmt.Fprintf(w, "event: datastar-patch-elements\n")
+		fmt.Fprintf(w, `data: elements <div id="click-target">Foobar</div>`)
 		fmt.Fprintf(w, "\n\n")
 		flusher.Flush()
 	})
