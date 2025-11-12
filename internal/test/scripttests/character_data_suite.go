@@ -4,23 +4,24 @@ import (
 	"testing"
 
 	"github.com/gost-dom/browser"
+	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
 	"github.com/stretchr/testify/assert"
 )
 
-func testCharacterData(t *testing.T, shf ScriptHostFactory) {
+func testCharacterData(t *testing.T, shf html.ScriptEngine) {
 	suite := characterDataSuite{shf}
 	t.Run("TextNode", suite.testTextNode)
 }
 
 type characterDataSuite struct {
-	ScriptHostFactory
+	engine html.ScriptEngine
 }
 
 func (s characterDataSuite) testTextNode(t *testing.T) {
 	b := browser.New(
-		browser.WithScriptHost(s.New()),
+		browser.WithScriptEngine(s.engine),
 		browser.WithLogger(gosttest.NewTestLogger(t)),
 	)
 	win := htmltest.NewWindowHelper(t, b.NewWindow())

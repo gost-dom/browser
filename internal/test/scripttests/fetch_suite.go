@@ -82,8 +82,10 @@ func initWindow(
 	return b.OpenWindow("https://example.com/index.html")
 }
 
-func testFetch(t *testing.T, host html.ScriptHost) {
+func testFetch(t *testing.T, e html.ScriptEngine) {
 	t.Parallel()
+
+	host := e.NewHost(html.ScriptEngineOptions{})
 
 	t.Run(
 		"Abort using AbortController and AbortSignal",

@@ -8,20 +8,23 @@ import (
 
 type ScriptHostFactorySuite struct {
 	gosttest.GomegaSuite
-	factory ScriptHostFactory
+	factory html.ScriptEngine
 	host    html.ScriptHost
 	Window  htmltest.WindowHelper
 }
 
 func (s *ScriptHostFactorySuite) SetupTest() {
-	s.host = s.factory.New()
+	logger := gosttest.NewTestLogger(s.T())
+	s.host = s.factory.NewHost(html.ScriptEngineOptions{
+		Logger: logger,
+	})
 	s.Window = htmltest.NewWindowHelper(s.T(), html.NewWindow(html.WindowOptions{
 		Logger:     gosttest.NewTestLogger(s.T()),
 		ScriptHost: s.host,
 	}))
 }
 
-func NewScriptHostFactorySuite(f ScriptHostFactory) *ScriptHostFactorySuite {
+func NewScriptHostFactorySuite(f html.ScriptEngine) *ScriptHostFactorySuite {
 	return &ScriptHostFactorySuite{factory: f}
 }
 

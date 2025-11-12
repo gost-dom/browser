@@ -3,19 +3,20 @@ package scripttests
 import (
 	"testing"
 
+	"github.com/gost-dom/browser/html"
 	"github.com/stretchr/testify/suite"
 )
 
-func testStreams(t *testing.T, shf ScriptHostFactory) {
-	suite.Run(t, NewStreamsSuite(shf))
+func testStreams(t *testing.T, engine html.ScriptEngine) {
+	suite.Run(t, NewStreamsSuite(engine))
 }
 
 type StreamsSuite struct {
 	ScriptHostFactorySuite
 }
 
-func NewStreamsSuite(f ScriptHostFactory) *StreamsSuite {
-	return &StreamsSuite{ScriptHostFactorySuite: *NewScriptHostFactorySuite(f)}
+func NewStreamsSuite(e html.ScriptEngine) *StreamsSuite {
+	return &StreamsSuite{ScriptHostFactorySuite: *NewScriptHostFactorySuite(e)}
 }
 
 func (s *StreamsSuite) TestPrototypes() {

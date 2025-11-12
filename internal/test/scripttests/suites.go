@@ -14,17 +14,7 @@ func runSuite(s suite.TestingSuite) func(t *testing.T) {
 	}
 }
 
-type ScriptHostFactory interface{ New() html.ScriptHost }
-
-type scriptEngineHost struct{ engine html.ScriptEngine }
-
-// Deprecated: Get rid of this
-func (h scriptEngineHost) New() html.ScriptHost {
-	return h.engine.NewHost(html.ScriptEngineOptions{})
-}
-
 func RunSuites(t *testing.T, e html.ScriptEngine) {
-	h := scriptEngineHost{e}
 	t.Run("SharowRoot", runSuite(NewShadowRootSuite(e)))
 	t.Run("DocumentFragment", runSuite(NewDocumentFragmentSuite(e)))
 	t.Run("XMLHttpRequest", runSuite(NewXMLHttpRequestSuite(e)))
@@ -43,7 +33,7 @@ func RunSuites(t *testing.T, e html.ScriptEngine) {
 	t.Run("NodeList", runSuite(NewNodeListSuite(e)))
 	t.Run("AbortController", runSuite(NewAbortControllerSuite(e)))
 	t.Run("FetchSuite", runSuite(NewFetchSuite(e)))
-	t.Run("Fetch", func(t *testing.T) { testFetch(t, h.New()) })
-	t.Run("Streams", func(t *testing.T) { testStreams(t, h) })
-	t.Run("CharacterData", func(t *testing.T) { testCharacterData(t, h) })
+	t.Run("Fetch", func(t *testing.T) { testFetch(t, e) })
+	t.Run("Streams", func(t *testing.T) { testStreams(t, e) })
+	t.Run("CharacterData", func(t *testing.T) { testCharacterData(t, e) })
 }
