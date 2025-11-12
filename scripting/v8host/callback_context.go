@@ -15,9 +15,7 @@ import (
 	v8 "github.com/gost-dom/v8go"
 )
 
-type jsScriptEngine = js.ScriptEngine[jsTypeParam]
 type jsCallbackContext = js.CallbackContext[*v8Value]
-type jsValueFactory = js.ValueFactory[*v8Value]
 
 var (
 	ErrWrongNoOfArguments = errors.New("Not enough arguments passed")

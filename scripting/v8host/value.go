@@ -14,7 +14,6 @@ type jsTypeParam = *v8Value
 type jsValue = js.Value[*v8Value]
 type jsFunction = js.Function[*v8Value]
 type jsObject = js.Object[*v8Value]
-type jsConstructor = js.Class[jsTypeParam]
 
 func toV8Value(v jsValue) *v8go.Value {
 	if v == nil {
@@ -223,8 +222,6 @@ type v8Class struct {
 	proto *v8go.ObjectTemplate
 	inst  *v8go.ObjectTemplate
 }
-
-type jsClass = js.Class[jsTypeParam]
 
 func newV8Class(host *V8ScriptHost, ft *v8go.FunctionTemplate) v8Class {
 	return v8Class{host, ft, ft.PrototypeTemplate(), ft.InstanceTemplate()}

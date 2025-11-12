@@ -17,8 +17,6 @@ import (
 	"github.com/gost-dom/v8go"
 )
 
-type jsScriptEngineInitializer = func(js.ScriptEngine[jsTypeParam])
-
 // MAX_POOL_SIZE sets a limit to the number of script hosts that will be pooled
 // for reuse. By default Go will run as many tests in parallel as you have CPU
 // cores, so there shouldn't be a reason for a larger pool, but this provides a
@@ -68,11 +66,6 @@ func (pool *scriptHostPool) tryGet() (iso *V8ScriptHost, found bool) {
 }
 
 var pool = &scriptHostPool{}
-
-type globalInstall struct {
-	name        string
-	constructor jsClass
-}
 
 type globals struct {
 	namedGlobals map[string]v8Class
