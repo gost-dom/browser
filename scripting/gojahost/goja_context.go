@@ -11,7 +11,6 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 
 	"github.com/dop251/goja"
-	g "github.com/dop251/goja"
 )
 
 type GojaContext struct {
@@ -55,13 +54,13 @@ func (i *GojaContext) EvalCore(str string) (res any, err error) {
 	return i.vm.RunString(str)
 }
 
-func (c *GojaContext) storeInternal(value any, obj *g.Object) {
+func (c *GojaContext) storeInternal(value any, obj *goja.Object) {
 	obj.DefineDataPropertySymbol(
 		c.wrappedGoObj,
 		c.vm.ToValue(value),
-		g.FLAG_FALSE,
-		g.FLAG_FALSE,
-		g.FLAG_FALSE,
+		goja.FLAG_FALSE,
+		goja.FLAG_FALSE,
+		goja.FLAG_FALSE,
 	)
 	if e, ok := value.(entity.ObjectIder); ok {
 		c.cachedNodes[e.ObjectId()] = obj
