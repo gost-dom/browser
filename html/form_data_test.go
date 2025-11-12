@@ -3,11 +3,13 @@ package html_test
 import (
 	"testing"
 
+	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/stretchr/testify/suite"
 
+	"github.com/onsi/gomega"
 	"github.com/onsi/gomega/gcustom"
 	"github.com/onsi/gomega/types"
 )
@@ -118,6 +120,35 @@ func (s *FormDataMultipleValuesTestSuite) TestSetValueWithNewName() {
 		"Key1", "Value3",
 		"Key3", "Value4",
 		"Key4", "Value5"))
+}
+
+func TestFormDataFormWithUnnamedInput(t *testing.T) {
+	doc := NewHTMLDocument(nil)
+	form := NewHtmlFormElement(doc)
+	Expect := gomega.NewWithT(t).Expect
+
+	namedInput1 := NewHTMLInputElement(doc)
+	namedInput1.SetName("username")
+	namedInput1.SetValue("john")
+
+	unnamedInput := NewHTMLInputElement(doc)
+	unnamedInput.SetValue("should-be-skipped")
+
+	namedInput2 := NewHTMLInputElement(doc)
+	namedInput2.SetName("email")
+	namedInput2.SetValue("john@example.com")
+
+	form.Append(namedInput1, unnamedInput, namedInput2)
+	formData := html.NewFormDataForm(form)
+
+	Expect(formData.Has("username")).To(BeTrue(), "Form data includes named input 'username'")
+	Expect(formData.Get("username")).
+		To(Equal(html.FormDataValue("john")), "Form data has correct value for 'username'")
+	Expect(formData.Has("email")).To(BeTrue(), "Form data includes named input 'email'")
+	Expect(formData.Get("email")).
+		To(Equal(html.FormDataValue("john@example.com")), "Form data has correct value for 'email'")
+	Expect(len(formData.Entries)).
+		To(Equal(2), "Form data has exactly 2 entries, skipping the unnamed input")
 }
 
 func BeEmptyFormData() types.GomegaMatcher {

@@ -28,22 +28,29 @@ func NewFormData() *FormData {
 	return &FormData{nil}
 }
 
+// NewFormDataForm creates a new FormData initialised with values from a form.
+//
+// see also: https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#constructing-the-form-data-set
 func NewFormDataForm(form HTMLFormElement) *FormData {
 	inputs := form.Elements()
 	formData := NewFormData()
 	for _, input := range inputs.All() {
 		if input, ok := input.(HTMLInputElement); ok {
+			name := input.Name()
+			if name == "" {
+				continue
+			}
 			switch input.Type() {
 			case "submit":
 				continue
 			case "checkbox":
 				if input.Checked() {
-					formData.Append(input.Name(), "on")
+					formData.Append(name, "on")
 				}
 			default:
 				// TODO, handle no values
 				formData.Append(
-					input.Name(),
+					name,
 					NewFormDataValueString(input.Value()),
 				)
 			}
