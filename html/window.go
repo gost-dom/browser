@@ -24,10 +24,29 @@ type ScriptEngineOptions struct {
 	Logger     *slog.Logger
 }
 
+// ScriptEngine represents a JavaScript interpreter with a specific global scope
+// initialized.
+//
+// A script engine is used to create multiple script contexts. The engine
+// provides the ability to cache
+//
+// E.g., v8 has the root level of an "Isolate", on which you create "templates"
+// for values that must exist in global scope; including inheritance
+// hierarchies. Gost-DOM can reuse isolates between tests, reducing the amount
+// of work necessary to recreate global scope.
+//
+// Multiple engines can be used, if client code has different scenarios
+// requiring different APIs exposed to global scope.
 type ScriptEngine interface {
 	NewHost(ScriptEngineOptions) ScriptHost
 }
 
+// A script host is a cacheable initialized "host" created from the script
+// engine. Each host can create a new [ScriptContext], representing a new global
+// scope.
+//
+// Client code should call Close() when done using the host, allowing it to be
+// returned to the cache.
 type ScriptHost interface {
 	NewContext(window Window) ScriptContext
 	Close()
@@ -36,10 +55,26 @@ type ScriptHost interface {
 type Clock interface {
 	// Deprecated: Call ProcessEvents() instead
 	RunAll() error
+	// Advance simulated time by a specific duration. Will run relevant
+	// callbacks registered with setInterval or setTimeout
 	Advance(time.Duration) error
 	// ProcessEvents ensures that all immediate functions as well as
-	// microtasks are executed
+	// microtasks are executed.
 	ProcessEvents(ctx context.Context) error
+	// ProcessEventsWhile will process events in the event loop as long as a
+	// callback function f returns true. This has two specific uses over the
+	// simpler ProcessEvents
+	//
+	// - ProcessEvents will not stop when code uses setInterval as there is
+	// always an event scheduled in the future
+	// - ProcessEvents will stop if it doesn't know about a future event
+	//
+	// Example, clicking a button result in an HTTP request. The server will
+	// eventually push a web socket message. Using ProcessEvents could fail due
+	// to a race condition.
+	//
+	// For these types of tests, Go's synctest package is worth considering as
+	// well.
 	ProcessEventsWhile(ctx context.Context, f func() bool) error
 }
 
