@@ -8,7 +8,6 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/entity"
-	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting/internal/js"
 
 	"github.com/dop251/goja"
@@ -57,7 +56,6 @@ func (i *GojaContext) EvalCore(str string) (res any, err error) {
 }
 
 func (c *GojaContext) storeInternal(value any, obj *g.Object) {
-	log.Debug(c.logger(), "storeInternal")
 	obj.DefineDataPropertySymbol(
 		c.wrappedGoObj,
 		c.vm.ToValue(value),
