@@ -1,4 +1,4 @@
-package gojahost
+package sobekhost
 
 import (
 	"errors"
@@ -9,17 +9,16 @@ import (
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/scripting/internal/js"
-
-	"github.com/dop251/goja"
+	"github.com/grafana/sobek"
 )
 
 type GojaContext struct {
-	vm           *goja.Runtime
+	vm           *sobek.Runtime
 	clock        *clock.Clock
 	window       html.Window
 	classes      map[string]*gojaClass
-	wrappedGoObj *goja.Symbol
-	cachedNodes  map[int32]goja.Value
+	wrappedGoObj *sobek.Symbol
+	cachedNodes  map[int32]sobek.Value
 }
 
 func (c *GojaContext) Clock() html.Clock { return c.clock }
@@ -33,7 +32,7 @@ func (i *GojaContext) logger() *slog.Logger {
 	return i.window.Logger()
 }
 
-func (i *GojaContext) run(str string) (goja.Value, error) {
+func (i *GojaContext) run(str string) (sobek.Value, error) {
 	res, err := i.vm.RunString(str)
 	i.clock.Tick()
 	return res, err
@@ -54,13 +53,13 @@ func (i *GojaContext) EvalCore(str string) (res any, err error) {
 	return i.vm.RunString(str)
 }
 
-func (c *GojaContext) storeInternal(value any, obj *goja.Object) {
+func (c *GojaContext) storeInternal(value any, obj *sobek.Object) {
 	obj.DefineDataPropertySymbol(
 		c.wrappedGoObj,
 		c.vm.ToValue(value),
-		goja.FLAG_FALSE,
-		goja.FLAG_FALSE,
-		goja.FLAG_FALSE,
+		sobek.FLAG_FALSE,
+		sobek.FLAG_FALSE,
+		sobek.FLAG_FALSE,
 	)
 	if e, ok := value.(entity.ObjectIder); ok {
 		c.cachedNodes[e.ObjectId()] = obj
@@ -68,26 +67,26 @@ func (c *GojaContext) storeInternal(value any, obj *goja.Object) {
 }
 
 func (i *GojaContext) RunFunction(str string, arguments ...any) (res any, err error) {
-	var f goja.Value
+	var f sobek.Value
 	if f, err = i.vm.RunString(str); err == nil {
-		if c, ok := goja.AssertFunction(f); !ok {
+		if c, ok := sobek.AssertFunction(f); !ok {
 			err = errors.New("GojaContext.RunFunction: script is not a function")
 		} else {
-			values := make([]goja.Value, len(arguments))
+			values := make([]sobek.Value, len(arguments))
 			for i, a := range arguments {
 				var ok bool
-				if values[i], ok = a.(goja.Value); !ok {
+				if values[i], ok = a.(sobek.Value); !ok {
 					err = fmt.Errorf("GojaContext.RunFunction: argument %d was not a goja Value", i)
 				}
 			}
-			res, err = c(goja.Undefined(), values...)
+			res, err = c(sobek.Undefined(), values...)
 		}
 	}
 	return
 }
 
 // Export create a native Go value out of a javascript value. The value argument
-// must be a [goja.Value] instance.
+// must be a [sobek.Value] instance.
 //
 // This function is intended to be used only for test purposes. The value has an
 // [any] type as the tests are not supposed to know the details of the
@@ -103,7 +102,7 @@ func (i *GojaContext) Export(value any) (res any, err error) {
 			err = fmt.Errorf("GojaContext.Export: %v", r)
 		}
 	}()
-	if gv, ok := value.(goja.Value); ok {
+	if gv, ok := value.(sobek.Value); ok {
 		res = gv.Export()
 	} else {
 		err = fmt.Errorf("GojaContext.Export: Value not a goja value: %v", value)
@@ -111,7 +110,7 @@ func (i *GojaContext) Export(value any) (res any, err error) {
 	return
 }
 
-func (m *GojaContext) createLocationInstance() *goja.Object {
+func (m *GojaContext) createLocationInstance() *sobek.Object {
 	location, err := m.classes["Location"].NewInstance(m.window.Location())
 	if err != nil {
 		panic(err)
@@ -136,15 +135,15 @@ func (c *GojaContext) CreateClass(
 	cb js.FunctionCallback[jsTypeParam],
 ) js.Class[jsTypeParam] {
 	class := &gojaClass{ctx: c, cb: cb, instanceAttrs: make(map[string]attributeHandler)}
-	constructor := c.vm.ToValue(class.constructorCb).(*goja.Object)
+	constructor := c.vm.ToValue(class.constructorCb).(*sobek.Object)
 	constructor.DefineDataProperty(
 		"name",
 		c.vm.ToValue(name),
-		goja.FLAG_NOT_SET,
-		goja.FLAG_NOT_SET,
-		goja.FLAG_NOT_SET,
+		sobek.FLAG_NOT_SET,
+		sobek.FLAG_NOT_SET,
+		sobek.FLAG_NOT_SET,
 	)
-	class.prototype = constructor.Get("prototype").(*goja.Object)
+	class.prototype = constructor.Get("prototype").(*sobek.Object)
 	c.vm.Set(name, constructor)
 	c.classes[name] = class
 
@@ -159,13 +158,13 @@ func (c *GojaContext) CreateClass(
 	return class
 }
 
-func (class *gojaClass) constructorCb(call goja.ConstructorCall, r *goja.Runtime) *goja.Object {
+func (class *gojaClass) constructorCb(call sobek.ConstructorCall, r *sobek.Runtime) *sobek.Object {
 	class.installInstance(&call.This, nil)
 	class.cb(newGojaCallbackContext(class.ctx, call))
 	return nil
 }
 
-func (class *gojaClass) installInstance(this **goja.Object, native any) {
+func (class *gojaClass) installInstance(this **sobek.Object, native any) {
 	for _, v := range class.instanceAttrs {
 		v.install(*this)
 	}
@@ -207,8 +206,8 @@ type attributeHandler struct {
 	setter js.FunctionCallback[jsTypeParam]
 }
 
-func (h attributeHandler) install(object *goja.Object) {
-	var g, s goja.Value
+func (h attributeHandler) install(object *sobek.Object) {
+	var g, s sobek.Value
 	if h.getter != nil {
 		g = wrapJSCallback(h.ctx, h.getter)
 	}
@@ -216,14 +215,14 @@ func (h attributeHandler) install(object *goja.Object) {
 		s = wrapJSCallback(h.ctx, h.setter)
 	}
 	object.DefineAccessorProperty(h.name, g, s,
-		goja.FLAG_TRUE, // configurable
-		goja.FLAG_TRUE, // enumerable
+		sobek.FLAG_TRUE, // configurable
+		sobek.FLAG_TRUE, // enumerable
 	)
 }
 
 func newGojaCallbackContext(
 	ctx *GojaContext,
-	call goja.ConstructorCall,
+	call sobek.ConstructorCall,
 ) *callbackContext {
 	return &callbackContext{
 		newCallbackScope(ctx, call.This, nil),
@@ -257,7 +256,7 @@ func (s GojaScript) Run() error {
 
 func (s GojaScript) Eval() (res any, err error) {
 	if gojaVal, err := s.context.run(s.script); err == nil {
-		if goja.IsNull(gojaVal) || goja.IsUndefined(gojaVal) {
+		if sobek.IsNull(gojaVal) || sobek.IsUndefined(gojaVal) {
 			return nil, nil
 		}
 		if obj := gojaVal.ToObject(s.context.vm); obj != nil {
