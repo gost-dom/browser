@@ -10,6 +10,10 @@ type classSpec[T any] struct {
 	factory        ConstructorFactory[T]
 }
 
+// ClassBuilder provides a simplified way of registering classes in global
+// scope. Method [CreateGlobals] initializes a script engine with the classes
+// registered using [Register]. This handles the correct order of registration,
+// creating superclasses before subclasses.
 type ClassBuilder[T any] struct {
 	classes map[string]classSpec[T]
 }
@@ -58,9 +62,11 @@ type Initializer[T any] interface {
 
 type InitializerFactory[T any, U Initializer[T]] = func(ScriptEngine[T]) U
 
-// CreateGlobals returns an ordered list of constructors to be created in global
-// scope. They must be installed in "order", as base classes must be installed
-// before subclasses
+// CreateGlobals registers classes in global scope, as well as the prototype and
+// instance operations and attributes. The function conforms to the
+// [ConfigurerFunc] type.
+// The function creates the classes in the correct order, creating superclasses
+// before subclasses.
 func (c *ClassBuilder[T]) CreateGlobals(host ScriptEngine[T]) {
 	var iter func(class classSpec[T]) Class[T]
 	uniqueNames := make(map[string]Class[T])
