@@ -1,4 +1,4 @@
-package gojahost
+package sobekhost
 
 import (
 	"github.com/gost-dom/browser/scripting/internal/js"

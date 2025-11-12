@@ -1,15 +1,15 @@
-package gojahost
+package sobekhost
 
 import (
 	"errors"
 	"fmt"
 	"iter"
 
-	"github.com/dop251/goja"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/scripting/internal/js"
+	"github.com/grafana/sobek"
 )
 
 type gojaScope struct {
@@ -47,7 +47,7 @@ func (f gojaScope) JSONParse(s string) (js.Value[jsTypeParam], error) {
 	if err != nil {
 		return nil, err
 	}
-	fn, ok := goja.AssertFunction(parse)
+	fn, ok := sobek.AssertFunction(parse)
 	if !ok {
 		return nil, errors.New("Goja error, retrieving JSON.parse")
 	}
@@ -79,11 +79,11 @@ func (f gojaScope) NewBoolean(v bool) js.Value[jsTypeParam] {
 }
 
 func (f gojaScope) Undefined() js.Value[jsTypeParam] {
-	return newGojaValue(f.GojaContext, goja.Undefined())
+	return newGojaValue(f.GojaContext, sobek.Undefined())
 }
 
 func (f gojaScope) Null() js.Value[jsTypeParam] {
-	return newGojaValue(f.GojaContext, goja.Null())
+	return newGojaValue(f.GojaContext, sobek.Null())
 }
 
 func (f gojaScope) NewUint32(v uint32) js.Value[jsTypeParam] {
@@ -119,7 +119,7 @@ func (c gojaScope) NewUint8Array(data []byte) js.Value[jsTypeParam] {
 	if err != nil {
 		panic(fmt.Sprintf("gost-dom/gojahost: Uint8Array: %v", err))
 	}
-	ctor, ok := goja.AssertConstructor(fVal)
+	ctor, ok := sobek.AssertConstructor(fVal)
 	if !ok {
 		panic(fmt.Sprintf("gost-dom/gojahost: Uint8Array as constructor: %v", err))
 	}
@@ -167,7 +167,7 @@ func (f gojaScope) NewIterator(
 		),
 	)
 	gojaObj.SetSymbol(
-		goja.SymIterator,
+		sobek.SymIterator,
 		wrapJSCallback(
 			f.GojaContext,
 			func(cbCtx js.CallbackContext[jsTypeParam]) (js.Value[jsTypeParam], error) {

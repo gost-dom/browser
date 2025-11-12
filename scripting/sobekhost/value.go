@@ -1,27 +1,27 @@
-package gojahost
+package sobekhost
 
 import (
-	"github.com/dop251/goja"
 	"github.com/gost-dom/browser/scripting/internal/js"
+	"github.com/grafana/sobek"
 )
 
 type gojaValue struct {
 	ctx   *GojaContext
-	value goja.Value
+	value sobek.Value
 }
 
 type jsTypeParam = gojaValue
 
-func toGojaValue(val js.Value[jsTypeParam]) goja.Value {
+func toGojaValue(val js.Value[jsTypeParam]) sobek.Value {
 	if val == nil {
-		return goja.Undefined()
+		return sobek.Undefined()
 	}
 	return val.Self().value
 }
 
 // newGojaValue createa a js.Value[T] wrapping goja value v. This is safe to use
 // on nil values, returning nil if v is nil.
-func newGojaValue(ctx *GojaContext, v goja.Value) js.Value[jsTypeParam] {
+func newGojaValue(ctx *GojaContext, v sobek.Value) js.Value[jsTypeParam] {
 	if v == nil {
 		return nil
 	}
@@ -29,7 +29,7 @@ func newGojaValue(ctx *GojaContext, v goja.Value) js.Value[jsTypeParam] {
 }
 
 func (v gojaValue) AsFunction() (js.Function[jsTypeParam], bool) {
-	f, ok := goja.AssertFunction(v.value)
+	f, ok := sobek.AssertFunction(v.value)
 	return gojaFunction{v, f}, ok
 }
 
@@ -40,11 +40,11 @@ func (v gojaValue) AsObject() (js.Object[jsTypeParam], bool) {
 	return nil, false
 }
 
-func (v gojaValue) IsNull() bool { return goja.IsNull(v.value) }
+func (v gojaValue) IsNull() bool { return sobek.IsNull(v.value) }
 
-func (v gojaValue) IsUndefined() bool { return goja.IsUndefined(v.value) }
-func (v gojaValue) IsString() bool    { return goja.IsString(v.value) }
-func (v gojaValue) IsObject() bool    { return goja.IsNull(v.value) }
+func (v gojaValue) IsUndefined() bool { return sobek.IsUndefined(v.value) }
+func (v gojaValue) IsString() bool    { return sobek.IsString(v.value) }
+func (v gojaValue) IsObject() bool    { return sobek.IsNull(v.value) }
 
 func (v gojaValue) IsBoolean() bool { _, ok := v.AsObject(); return ok }
 func (v gojaValue) Self() gojaValue { return v }
@@ -54,7 +54,7 @@ func (v gojaValue) StrictEquals(other js.Value[jsTypeParam]) bool {
 }
 
 func (v gojaValue) IsFunction() bool {
-	_, ok := goja.AssertFunction(v.value)
+	_, ok := sobek.AssertFunction(v.value)
 	return ok
 }
 
@@ -65,17 +65,17 @@ func (v gojaValue) Uint32() uint32 { return uint32(v.value.ToInteger()) }
 
 type gojaObject struct {
 	gojaValue
-	obj *goja.Object
+	obj *sobek.Object
 }
 
-func newGojaObject(c *GojaContext, o *goja.Object) js.Object[jsTypeParam] {
+func newGojaObject(c *GojaContext, o *sobek.Object) js.Object[jsTypeParam] {
 	return gojaObject{gojaValue{c, o}, o}
 }
 
 func (o gojaObject) Get(key string) (js.Value[jsTypeParam], error) {
 	v := o.obj.Get(key)
 	if v == nil {
-		v = goja.Undefined()
+		v = sobek.Undefined()
 	}
 	return newGojaValue(o.ctx, v), nil
 }
@@ -99,22 +99,22 @@ func (o gojaObject) SetNativeValue(value any) {
 	o.obj.DefineDataPropertySymbol(
 		o.ctx.wrappedGoObj,
 		o.ctx.vm.ToValue(value),
-		goja.FLAG_FALSE, // Writable
-		goja.FLAG_FALSE, // Configurable
-		goja.FLAG_FALSE, // Enumerable
+		sobek.FLAG_FALSE, // Writable
+		sobek.FLAG_FALSE, // Configurable
+		sobek.FLAG_FALSE, // Enumerable
 	)
 }
 
 type gojaFunction struct {
 	gojaValue
-	f goja.Callable
+	f sobek.Callable
 }
 
 func (f gojaFunction) Call(
 	this js.Object[jsTypeParam],
 	args ...js.Value[jsTypeParam],
 ) (js.Value[jsTypeParam], error) {
-	v := make([]goja.Value, len(args))
+	v := make([]sobek.Value, len(args))
 	for i, a := range args {
 		v[i] = a.Self().value
 	}

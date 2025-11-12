@@ -1,12 +1,12 @@
-package gojahost
+package sobekhost
 
 import (
-	"github.com/dop251/goja"
 	"github.com/gost-dom/browser/scripting/internal/js"
+	"github.com/grafana/sobek"
 )
 
 type gojaIteratorInstance struct {
-	vm   *goja.Runtime
+	vm   *sobek.Runtime
 	next func() (js.Value[jsTypeParam], error, bool)
 	stop func()
 }

@@ -1,14 +1,14 @@
-package gojahost
+package sobekhost
 
 import (
-	"github.com/dop251/goja"
 	"github.com/gost-dom/browser/scripting/internal/js"
+	"github.com/grafana/sobek"
 )
 
 type gojaClass struct {
 	ctx            *GojaContext
 	cb             js.FunctionCallback[jsTypeParam]
-	prototype      *goja.Object
+	prototype      *sobek.Object
 	indexedHandler *js.IndexedHandlerCallbacks[jsTypeParam]
 	instanceAttrs  map[string]attributeHandler
 
@@ -74,7 +74,7 @@ func (c gojaClass) CreatePrototypeAttribute(
 }
 
 func (c gojaClass) CreateIteratorMethod(cb js.FunctionCallback[jsTypeParam]) {
-	c.prototype.SetSymbol(goja.SymIterator, wrapJSCallback(c.ctx, cb))
+	c.prototype.SetSymbol(sobek.SymIterator, wrapJSCallback(c.ctx, cb))
 }
 
 func (c *gojaClass) NewInstance(native any) (js.Object[jsTypeParam], error) {
@@ -85,16 +85,16 @@ func (c *gojaClass) NewInstance(native any) (js.Object[jsTypeParam], error) {
 	return newGojaObject(c.ctx, obj), nil
 }
 
-// gojaDynamicArray implements [goja.DynamicArray], serving as an indexed
+// gojaDynamicArray implements [sobek.DynamicArray], serving as an indexed
 // property handler.
 type gojaDynamicArray struct {
 	ctx   *GojaContext
-	this  *goja.Object
+	this  *sobek.Object
 	scope gojaCallbackScope
 	cbs   js.IndexedHandlerCallbacks[jsTypeParam]
 }
 
-func (o gojaDynamicArray) Get(index int) goja.Value {
+func (o gojaDynamicArray) Get(index int) sobek.Value {
 	if o.cbs.Getter == nil {
 		return nil
 	}
@@ -108,7 +108,7 @@ func (o gojaDynamicArray) Get(index int) goja.Value {
 	return toGojaValue(res)
 }
 
-func (o gojaDynamicArray) Set(index int, value goja.Value) bool {
+func (o gojaDynamicArray) Set(index int, value sobek.Value) bool {
 	panic("gojaDynamicArray.Set: not implemented")
 }
 
@@ -130,16 +130,16 @@ func (o gojaDynamicArray) SetLen(int) bool {
 	panic("gojaDynamicArray.SetLen: not implemented")
 }
 
-// gojaDynamicObject implements [goja.DynamicObject], serving as a named
+// gojaDynamicObject implements [sobek.DynamicObject], serving as a named
 // property handler.
 type gojaDynamicObject struct {
 	ctx   *GojaContext
-	this  *goja.Object
+	this  *sobek.Object
 	scope gojaCallbackScope
 	cbs   js.NamedHandlerCallbacks[jsTypeParam]
 }
 
-func (o gojaDynamicObject) Get(key string) goja.Value {
+func (o gojaDynamicObject) Get(key string) sobek.Value {
 	if o.cbs.Getter == nil {
 		return nil
 	}
@@ -200,7 +200,7 @@ func (o gojaDynamicObject) Keys() []string {
 	return res
 }
 
-func (o gojaDynamicObject) Set(key string, val goja.Value) bool {
+func (o gojaDynamicObject) Set(key string, val sobek.Value) bool {
 	if o.cbs.Setter == nil {
 		return false
 	}

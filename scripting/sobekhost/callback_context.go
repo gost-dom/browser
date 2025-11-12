@@ -1,20 +1,20 @@
-package gojahost
+package sobekhost
 
 import (
 	"log/slog"
 
-	"github.com/dop251/goja"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting/internal/js"
+	"github.com/grafana/sobek"
 )
 
 type gojaCallbackScope struct {
 	gojaScope
-	this     *goja.Object
+	this     *sobek.Object
 	instance any
 }
 
-func newCallbackScope(ctx *GojaContext, this *goja.Object, instance any) gojaCallbackScope {
+func newCallbackScope(ctx *GojaContext, this *sobek.Object, instance any) gojaCallbackScope {
 	return gojaCallbackScope{
 		gojaScope: newGojaScope(ctx),
 		this:      this,
@@ -42,12 +42,13 @@ func (s gojaCallbackScope) Logger() *slog.Logger {
 
 type callbackContext struct {
 	gojaCallbackScope
-	args     []goja.Value
+	args     []sobek.Value
 	argIndex int
 }
 
-func newArgumentHelper(ctx *GojaContext, c goja.FunctionCall) *callbackContext {
-	// I would consider this a bug in goja. When calling a function in global
+func newArgumentHelper(ctx *GojaContext, c sobek.FunctionCall) *callbackContext {
+	// BUG: Consider if this is still an issue
+	// I would consider this a bug in sobek. When calling a function in global
 	// scope, `this` is "undefined". It should have been `globalThis`.
 	callThis := c.This
 	if !callThis.ToBoolean() {
@@ -63,12 +64,12 @@ func newArgumentHelper(ctx *GojaContext, c goja.FunctionCall) *callbackContext {
 		c.Arguments, 0}
 }
 
-func (ctx *callbackContext) Argument(index int) goja.Value {
+func (ctx *callbackContext) Argument(index int) sobek.Value {
 	return ctx.args[index]
 }
 
-func wrapJSCallback(ctx *GojaContext, cb js.FunctionCallback[jsTypeParam]) goja.Value {
-	return ctx.vm.ToValue(func(c goja.FunctionCall) goja.Value {
+func wrapJSCallback(ctx *GojaContext, cb js.FunctionCallback[jsTypeParam]) sobek.Value {
+	return ctx.vm.ToValue(func(c sobek.FunctionCall) sobek.Value {
 		res, err := cb(newArgumentHelper(ctx, c))
 		if err != nil {
 			panic(ctx.vm.ToValue(err))
@@ -78,10 +79,9 @@ func wrapJSCallback(ctx *GojaContext, cb js.FunctionCallback[jsTypeParam]) goja.
 }
 
 func (c *callbackContext) Args() []js.Value[jsTypeParam] {
-	args := c.args
-	res := make([]js.Value[jsTypeParam], len(args))
-	for i, arg := range args {
-		res[i] = newGojaValue(c.GojaContext, arg)
+	res := make([]js.Value[jsTypeParam], len(c.args))
+	for i, a := range c.args {
+		res[i] = newGojaValue(c.GojaContext, a)
 	}
 	return res
 }
