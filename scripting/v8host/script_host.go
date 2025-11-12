@@ -176,6 +176,7 @@ func (host *V8ScriptHost) setDisposed() {
 // Calling with a nil value for w is allowed, but not supported; and any attempt
 // to access the DOM will result in a runtime error.
 func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
+	host.assertUndisposed()
 	v8ctx := v8go.NewContext(host.iso, host.windowTemplate)
 	// TODO: The possibility to use nil is primarily for testing support
 	context := &V8ScriptContext{
@@ -199,6 +200,15 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 	context.cacheEntity(global, w)
 
 	return context
+}
+
+func (host *V8ScriptHost) assertUndisposed() {
+	host.mu.Lock()
+	defer host.mu.Unlock()
+
+	if host.disposed {
+		panic("v8host: V8ScriptHost.NewContext: script host disposed")
+	}
 }
 
 func (host *V8ScriptHost) CreateClass(
