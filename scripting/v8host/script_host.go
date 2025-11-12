@@ -173,12 +173,9 @@ func (host *V8ScriptHost) setDisposed() {
 }
 
 // NewContext creates a new script context using w as the global window object.
-// Calling with a nil value for w is allowed, but not supported; and any attempt
-// to access the DOM will result in a runtime error.
 func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 	host.assertUndisposed()
 	v8ctx := v8go.NewContext(host.iso, host.windowTemplate)
-	// TODO: The possibility to use nil is primarily for testing support
 	context := &V8ScriptContext{
 		host:     host,
 		clock:    clock.New(clock.WithLogger(w.Logger())),
