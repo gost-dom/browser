@@ -16,7 +16,7 @@ import (
 type browserConfig struct {
 	client http.Client
 	logger *slog.Logger
-	host   html.ScriptHost
+	engine ScriptEngine
 	ctx    context.Context
 }
 
@@ -39,8 +39,23 @@ func WithHandler(h http.Handler) BrowserOption {
 	return func(b *browserConfig) { b.client = NewHttpClientFromHandler(h) }
 }
 
+type staticHostEngine struct{ host html.ScriptHost }
+
+func (e staticHostEngine) NewHost(html.ScriptEngineOptions) html.ScriptHost {
+	host := html.ScriptHost(e.host)
+	return host
+}
+
+// WithScriptHost uses a specific script host.
+//
+// Deprecated: Prefer WithScriptEngine
 func WithScriptHost(host html.ScriptHost) BrowserOption {
-	return func(b *browserConfig) { b.host = host }
+	return WithScriptEngine(staticHostEngine{host})
+}
+
+func WithScriptEngine(engine html.ScriptEngine) BrowserOption {
+	return func(b *browserConfig) { b.engine = engine }
+
 }
 
 func WithContext(ctx context.Context) BrowserOption {
@@ -104,12 +119,18 @@ func New(options ...BrowserOption) *Browser {
 	for _, o := range options {
 		o(config)
 	}
+	engine := config.engine
+	if engine == nil {
+		engine = v8host.NewEngine()
+	}
 	b := &Browser{
 		Client: config.client,
 		Logger: config.logger,
-		ScriptHost: v8host.New(v8host.WithLogger(config.logger),
-			v8host.WithHTTPClient(&config.client),
-		),
+		ScriptHost: engine.NewHost(
+			html.ScriptEngineOptions{
+				Logger:     config.logger,
+				HttpClient: &config.client,
+			}),
 		ctx: config.ctx,
 	}
 	if b.ScriptHost == nil {

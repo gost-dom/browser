@@ -85,9 +85,20 @@ type hostOptions struct {
 
 type HostOption func(o *hostOptions)
 
-func WithLogger(logger log.Logger) HostOption { return func(o *hostOptions) { o.logger = logger } }
+func WithLogger(logger log.Logger) HostOption {
+	return func(o *hostOptions) {
+		if logger != nil {
+			o.logger = logger
+		}
+	}
+}
+
 func WithHTTPClient(client *http.Client) HostOption {
-	return func(o *hostOptions) { o.httpClient = client }
+	return func(o *hostOptions) {
+		if client != nil {
+			o.httpClient = client
+		}
+	}
 }
 
 type V8ScriptHost struct {

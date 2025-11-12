@@ -19,6 +19,15 @@ import (
 
 var ErrTooManyRedirects = errors.New("Too many redirects")
 
+type ScriptEngineOptions struct {
+	HttpClient *http.Client
+	Logger     *slog.Logger
+}
+
+type ScriptEngine interface {
+	NewHost(ScriptEngineOptions) ScriptHost
+}
+
 type ScriptHost interface {
 	NewContext(window Window) ScriptContext
 	Close()
