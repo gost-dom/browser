@@ -60,9 +60,7 @@ func (d *gojaScriptHost) NewContext(window html.Window) html.ScriptContext {
 		goja.FLAG_FALSE,
 	)
 	globalThis.Set("window", globalThis)
-	for _, i := range factory.initializers {
-		i.Configure(result)
-	}
+	initializer.Configure(result)
 	location := result.createLocationInstance()
 	globalThis.DefineAccessorProperty("location", vm.ToValue(func(c *goja.FunctionCall) goja.Value {
 		return location
