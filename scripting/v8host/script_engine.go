@@ -21,20 +21,23 @@ type v8ScriptEngine struct {
 	configurer *internal.ScriptEngineConfigurer[jsTypeParam]
 }
 
+// engineOwnedHost embeds a V8ScriptHost but adds a new Close() method that
+// allows the host to be returned to the pool.
 type engineOwnedHost struct {
 	*V8ScriptHost
+
 	engine *v8ScriptEngine
 }
 
 func (h engineOwnedHost) Close() {
-	h.Close()
+	h.V8ScriptHost.Close()
 	if !h.engine.add(h.V8ScriptHost) {
 		h.Dispose()
 	}
 }
 
 func (e *v8ScriptEngine) NewHost(options html.ScriptEngineOptions) html.ScriptHost {
-	return e.newHost(options)
+	return engineOwnedHost{e.newHost(options), e}
 }
 
 func (e *v8ScriptEngine) newHost(options html.ScriptEngineOptions) *V8ScriptHost {
