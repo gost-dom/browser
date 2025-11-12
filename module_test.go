@@ -15,7 +15,9 @@ import (
 // initBrowser creates a browser with the most useful options. This browser will
 // by default fail a test if an error is logged, meaning an uncaught JavaScript
 // error will result in a test error.
-func initBrowser(t testing.TB, handler http.Handler) *browser.Browser {
+func initBrowser(t testing.TB, handler http.Handler) (b *browser.Browser) {
+	defer t.Cleanup(func() { b.Close() })
+
 	return browser.New(
 		browser.WithHandler(handler),
 		browser.WithLogger(gosttest.NewTestLogger(t)),
