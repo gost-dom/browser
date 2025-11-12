@@ -10,7 +10,7 @@ type EventTargetTestSuite struct {
 	ScriptHostSuite
 }
 
-func NewEventTargetTestSuite(h html.ScriptHost) *EventTargetTestSuite {
+func NewEventTargetTestSuite(h html.ScriptEngine) *EventTargetTestSuite {
 	return &EventTargetTestSuite{ScriptHostSuite: *NewScriptHostSuite(h)}
 }
 

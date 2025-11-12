@@ -9,7 +9,7 @@ type ShadowRootSuite struct {
 	ScriptHostSuite
 }
 
-func NewShadowRootSuite(h html.ScriptHost) *ShadowRootSuite {
+func NewShadowRootSuite(h html.ScriptEngine) *ShadowRootSuite {
 	return &ShadowRootSuite{ScriptHostSuite: *NewScriptHostSuite(h)}
 }
 

@@ -51,7 +51,7 @@ func (s *WindowTestSuite) TestConstructorName() {
 	s.Expect(s.Eval("window.constructor.name")).To(Equal("Window"))
 }
 
-func NewWindowTestSuite(h html.ScriptHost) *WindowTestSuite {
+func NewWindowTestSuite(h html.ScriptEngine) *WindowTestSuite {
 	return &WindowTestSuite{ScriptHostSuite: *NewScriptHostSuite(h)}
 }
 

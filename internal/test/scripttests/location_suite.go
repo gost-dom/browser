@@ -9,7 +9,7 @@ type LocationSuite struct {
 	ScriptHostSuite
 }
 
-func NewLocationSuite(h html.ScriptHost) *LocationSuite {
+func NewLocationSuite(h html.ScriptEngine) *LocationSuite {
 	return &LocationSuite{ScriptHostSuite: *NewScriptHostSuite(h)}
 }
 
@@ -22,7 +22,7 @@ func (s *LocationSuite) TestHrefEqualsDocumentLocation() {
 	window := html.NewWindow(
 		html.WindowOptions{
 			BaseLocation: "http://example.com/foo",
-			ScriptHost:   s.scriptHost,
+			ScriptHost:   s.Host(),
 		})
 	s.Expect(window.Eval("location.href")).To(Equal("http://example.com/foo"))
 }

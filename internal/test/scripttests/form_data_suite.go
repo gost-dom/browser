@@ -9,8 +9,8 @@ type FormDataSuite struct {
 	ScriptHostSuite
 }
 
-func NewFormDataSuite(h html.ScriptHost) *FormDataSuite {
-	return &FormDataSuite{ScriptHostSuite: ScriptHostSuite{scriptHost: h}}
+func NewFormDataSuite(h html.ScriptEngine) *FormDataSuite {
+	return &FormDataSuite{ScriptHostSuite: *NewScriptHostSuite(h)}
 }
 
 func (s *FormDataSuite) TestInheritance() {

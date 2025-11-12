@@ -17,7 +17,7 @@ type XMLHttpRequestSuite struct {
 	actualPath string
 }
 
-func NewXMLHttpRequestSuite(h html.ScriptHost) *XMLHttpRequestSuite {
+func NewXMLHttpRequestSuite(h html.ScriptEngine) *XMLHttpRequestSuite {
 	return &XMLHttpRequestSuite{ScriptHostSuite: *NewScriptHostSuite(h)}
 }
 

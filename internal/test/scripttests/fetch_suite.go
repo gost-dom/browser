@@ -21,7 +21,7 @@ type FetchSuite struct {
 	ScriptHostSuite
 }
 
-func NewFetchSuite(h html.ScriptHost) *FetchSuite {
+func NewFetchSuite(h html.ScriptEngine) *FetchSuite {
 	return &FetchSuite{ScriptHostSuite: *NewScriptHostSuite(h)}
 }
 

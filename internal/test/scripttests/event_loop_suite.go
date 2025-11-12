@@ -15,8 +15,8 @@ type EventLoopTestSuite struct {
 	ctx  html.ScriptContext
 }
 
-func NewEventLoopTestSuite(host html.ScriptHost) *EventLoopTestSuite {
-	return &EventLoopTestSuite{host: host}
+func NewEventLoopTestSuite(e html.ScriptEngine) *EventLoopTestSuite {
+	return &EventLoopTestSuite{host: e.NewHost(html.ScriptEngineOptions{})}
 }
 
 func (s *EventLoopTestSuite) SetupTest() {

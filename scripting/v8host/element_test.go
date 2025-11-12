@@ -7,7 +7,6 @@ import (
 	"github.com/gost-dom/browser/internal/test/scripttests"
 	"github.com/gost-dom/browser/internal/testing/browsertest"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
-	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/scripting/v8host"
 	"github.com/onsi/gomega"
 	"github.com/stretchr/testify/suite"
@@ -18,10 +17,8 @@ type ElementTestSuite struct {
 }
 
 func TestElement(t *testing.T) {
-	logger := gosttest.NewTestLogger(t)
-	host := v8host.New(v8host.WithLogger(logger))
 	suite.Run(t,
-		&ElementTestSuite{scripttests.NewScriptHostSuite(host)},
+		&ElementTestSuite{scripttests.NewScriptHostSuite(v8host.NewEngine())},
 	)
 }
 

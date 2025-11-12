@@ -9,8 +9,8 @@ type NamedNodeMapSuite struct {
 	ScriptHostSuite
 }
 
-func NewNamedNodeMapSuite(h html.ScriptHost) *NamedNodeMapSuite {
-	return &NamedNodeMapSuite{ScriptHostSuite: ScriptHostSuite{scriptHost: h}}
+func NewNamedNodeMapSuite(h html.ScriptEngine) *NamedNodeMapSuite {
+	return &NamedNodeMapSuite{ScriptHostSuite: *NewScriptHostSuite(h)}
 }
 
 func (s *NamedNodeMapSuite) TestInheritance() {

@@ -11,7 +11,7 @@ type ClassListTestSuite struct {
 	ScriptHostSuite
 }
 
-func NewClassListTestSuite(h html.ScriptHost) *ClassListTestSuite {
+func NewClassListTestSuite(h html.ScriptEngine) *ClassListTestSuite {
 	return &ClassListTestSuite{ScriptHostSuite: *NewScriptHostSuite(h)}
 }
 

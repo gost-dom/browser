@@ -9,7 +9,7 @@ type DocumentTestSuite struct {
 	ScriptHostSuite
 }
 
-func NewDocumentSuite(h html.ScriptHost) *DocumentTestSuite {
+func NewDocumentSuite(h html.ScriptEngine) *DocumentTestSuite {
 	return &DocumentTestSuite{ScriptHostSuite: *NewScriptHostSuite(h)}
 }
 

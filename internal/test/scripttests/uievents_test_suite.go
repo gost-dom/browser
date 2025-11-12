@@ -10,8 +10,8 @@ type UIEventTestSuite struct {
 	ScriptHostSuite
 }
 
-func NewUIEventTestSuite(h html.ScriptHost) *UIEventTestSuite {
-	return &UIEventTestSuite{ScriptHostSuite{scriptHost: h}}
+func NewUIEventTestSuite(h html.ScriptEngine) *UIEventTestSuite {
+	return &UIEventTestSuite{*NewScriptHostSuite(h)}
 }
 
 func (s *UIEventTestSuite) TestEventInheritance() {

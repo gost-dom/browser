@@ -9,7 +9,7 @@ type DocumentFragmentSuite struct {
 	ScriptHostSuite
 }
 
-func NewDocumentFragmentSuite(h html.ScriptHost) *DocumentFragmentSuite {
+func NewDocumentFragmentSuite(h html.ScriptEngine) *DocumentFragmentSuite {
 	return &DocumentFragmentSuite{ScriptHostSuite: *NewScriptHostSuite(h)}
 }
 

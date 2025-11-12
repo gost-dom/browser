@@ -14,5 +14,5 @@ func (f scriptHostFactory) New() html.ScriptHost { return v8host.New() }
 
 // Runs all the shared script tests using the V8 script engine
 func TestV8ScriptHost(t *testing.T) {
-	scripttests.RunSuites(t, scriptHostFactory{})
+	scripttests.RunSuites(t, v8host.NewEngine())
 }

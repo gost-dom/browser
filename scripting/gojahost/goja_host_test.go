@@ -10,7 +10,12 @@ import (
 
 type scriptHostFactory struct{}
 
-func (f scriptHostFactory) New() html.ScriptHost { return gojahost.New() }
+// TODO: Fix this
+func (f scriptHostFactory) NewHost(
+	html.ScriptEngineOptions,
+) html.ScriptHost {
+	return gojahost.New()
+}
 
 func TestGojaHost(t *testing.T) {
 	t.Parallel()

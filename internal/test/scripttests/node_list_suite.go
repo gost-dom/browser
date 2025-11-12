@@ -9,8 +9,8 @@ type NodeListSuite struct {
 	ScriptHostSuite
 }
 
-func NewNodeListSuite(h html.ScriptHost) *NodeListSuite {
-	return &NodeListSuite{ScriptHostSuite: ScriptHostSuite{scriptHost: h}}
+func NewNodeListSuite(h html.ScriptEngine) *NodeListSuite {
+	return &NodeListSuite{ScriptHostSuite: *NewScriptHostSuite(h)}
 }
 
 func (s *NodeListSuite) TestExtendsObject() {

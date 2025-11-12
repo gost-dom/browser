@@ -12,8 +12,9 @@ import (
 
 type ScriptHostSuite struct {
 	gosttest.GomegaSuite
-	scriptHost html.ScriptHost
-	Window     htmltest.WindowHelper
+	engine html.ScriptEngine
+	host   html.ScriptHost
+	Window htmltest.WindowHelper
 }
 
 func (s *ScriptHostSuite) MustLoadHTML(html string) {
@@ -21,10 +22,16 @@ func (s *ScriptHostSuite) MustLoadHTML(html string) {
 	s.Assert().NoError(s.Window.LoadHTML(html))
 }
 
+func (s *ScriptHostSuite) Host() html.ScriptHost {
+	if s.host == nil {
+		s.host = s.engine.NewHost(html.ScriptEngineOptions{})
+	}
+	return s.host
+}
 func (s *ScriptHostSuite) SetupTest() {
 	s.Window = htmltest.NewWindowHelper(s.T(), html.NewWindow(html.WindowOptions{
 		Logger:     gosttest.NewTestLogger(s.T()),
-		ScriptHost: s.scriptHost,
+		ScriptHost: s.Host(),
 	}))
 }
 
@@ -33,7 +40,7 @@ func (s *ScriptHostSuite) SetupTest() {
 func (s *ScriptHostSuite) NewWindowLocation(location string) {
 	s.Window = htmltest.NewWindowHelper(s.T(), html.NewWindow(html.WindowOptions{
 		Logger:       gosttest.NewTestLogger(s.T(), gosttest.MinLogLevel(slog.LevelDebug)),
-		ScriptHost:   s.scriptHost,
+		ScriptHost:   s.Host(),
 		BaseLocation: location,
 	}))
 }
@@ -43,7 +50,7 @@ func (s *ScriptHostSuite) OpenWindow(location string, h http.Handler) html.Windo
 		BaseLocation: location,
 		HttpClient:   gosthttp.NewHttpClientFromHandler(h),
 		Logger:       gosttest.NewTestLogger(s.T()),
-		ScriptHost:   s.scriptHost,
+		ScriptHost:   s.Host(),
 	}))
 	return s.Window
 }
@@ -53,7 +60,9 @@ func (s *ScriptHostSuite) TeardownTest() {
 }
 
 func (s *ScriptHostSuite) TearDownSuite() {
-	s.scriptHost.Close()
+	if s.host != nil {
+		s.host.Close()
+	}
 }
 
 // Runs a script and returns the evaluated value as a native Go value.
@@ -89,8 +98,6 @@ func (s *ScriptHostSuite) MustRunScript(script string) {
 	s.Assert().NoError(s.RunScript(script))
 }
 
-func NewScriptHostSuite(h html.ScriptHost) *ScriptHostSuite {
-	return &ScriptHostSuite{
-		scriptHost: h,
-	}
+func NewScriptHostSuite(e html.ScriptEngine) *ScriptHostSuite {
+	return &ScriptHostSuite{engine: e}
 }

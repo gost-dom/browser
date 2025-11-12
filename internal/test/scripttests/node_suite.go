@@ -9,8 +9,8 @@ type NodeTestSuite struct {
 	ScriptHostSuite
 }
 
-func NewNodeTestSuite(h html.ScriptHost) *NodeTestSuite {
-	return &NodeTestSuite{ScriptHostSuite: ScriptHostSuite{scriptHost: h}}
+func NewNodeTestSuite(h html.ScriptEngine) *NodeTestSuite {
+	return &NodeTestSuite{ScriptHostSuite: *NewScriptHostSuite(h)}
 }
 
 func (s *NodeTestSuite) TestStructure() {

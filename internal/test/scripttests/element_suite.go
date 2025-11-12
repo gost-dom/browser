@@ -12,8 +12,8 @@ type ElementSuite struct {
 	ScriptHostSuite
 }
 
-func NewElementSuite(h html.ScriptHost) *ElementSuite {
-	return &ElementSuite{ScriptHostSuite: ScriptHostSuite{scriptHost: h}}
+func NewElementSuite(h html.ScriptEngine) *ElementSuite {
+	return &ElementSuite{ScriptHostSuite: *NewScriptHostSuite(h)}
 }
 
 func (s *ElementSuite) TestAppendMultipleElements() {

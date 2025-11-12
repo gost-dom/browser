@@ -9,7 +9,7 @@ type AbortControllerSuite struct {
 	ScriptHostSuite
 }
 
-func NewAbortControllerSuite(h html.ScriptHost) *AbortControllerSuite {
+func NewAbortControllerSuite(h html.ScriptEngine) *AbortControllerSuite {
 	return &AbortControllerSuite{ScriptHostSuite: *NewScriptHostSuite(h)}
 }
 
