@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/scripting/internal"
 	"github.com/gost-dom/v8go"
 )
 
@@ -15,8 +16,9 @@ import (
 var MAX_POOL_SIZE = runtime.NumCPU() * 2
 
 type v8ScriptEngine struct {
-	m        sync.Mutex
-	isolates []*V8ScriptHost
+	m          sync.Mutex
+	isolates   []*V8ScriptHost
+	configurer *internal.ScriptEngineConfigurer[jsTypeParam]
 }
 
 type engineOwnedHost struct {
@@ -42,44 +44,59 @@ func (e *v8ScriptEngine) newHost(options html.ScriptEngineOptions) *V8ScriptHost
 		host.logger = options.Logger
 		host.httpClient = options.HttpClient
 	} else {
-		host = factory.createHost(hostOptions{
-			logger:     options.Logger,
-			httpClient: options.HttpClient,
-		})
+		host = e.createHost(options)
 	}
 	host.inspectorClient = v8go.NewInspectorClient(consoleAPIMessageFunc(host.consoleAPIMessage))
 	host.inspector = v8go.NewInspector(host.iso, host.inspectorClient)
 	return host
 }
 
-func NewEngine() html.ScriptEngine {
-	return &v8ScriptEngine{}
+func (e *v8ScriptEngine) createHost(config html.ScriptEngineOptions) *V8ScriptHost {
+	host := &V8ScriptHost{
+		mu:         new(sync.Mutex),
+		iso:        v8go.NewIsolate(),
+		httpClient: config.HttpClient,
+		logger:     config.Logger,
+		globals:    globals{make(map[string]v8Class)},
+		contexts:   make(map[*v8go.Context]*V8ScriptContext),
+	}
+	host.iso.SetPromiseRejectedCallback(host.promiseRejected)
+	host.windowTemplate = v8go.NewObjectTemplate(host.iso)
+	host.iterator = newV8Iterator(host)
+	host.windowTemplate.SetInternalFieldCount(1)
+
+	e.configurer.Configure(host)
+	return host
 }
 
-func (pool *v8ScriptEngine) tryGet() (iso *V8ScriptHost, found bool) {
-	pool.m.Lock()
-	defer pool.m.Unlock()
+func (e *v8ScriptEngine) tryGet() (iso *V8ScriptHost, found bool) {
+	e.m.Lock()
+	defer e.m.Unlock()
 
-	l := len(pool.isolates)
+	l := len(e.isolates)
 	if l == 0 {
 		return nil, false
 	}
 
-	iso = pool.isolates[l-1]
-	pool.isolates = pool.isolates[0 : l-1]
+	iso = e.isolates[l-1]
+	e.isolates = e.isolates[0 : l-1]
 	return iso, true
 }
 
-func (pool *v8ScriptEngine) add(iso *V8ScriptHost) bool {
-	pool.m.Lock()
-	defer pool.m.Unlock()
+func (e *v8ScriptEngine) add(iso *V8ScriptHost) bool {
+	e.m.Lock()
+	defer e.m.Unlock()
 
-	if len(pool.isolates) >= MAX_POOL_SIZE {
+	if len(e.isolates) >= MAX_POOL_SIZE {
 		return false
 	} else {
-		pool.isolates = append(pool.isolates, iso)
+		e.isolates = append(e.isolates, iso)
 		return true
 	}
 }
 
 var DefaultEngine v8ScriptEngine
+
+func init() {
+	DefaultEngine.configurer = internal.DefaultInitializer[jsTypeParam]()
+}

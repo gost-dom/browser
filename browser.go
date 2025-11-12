@@ -121,7 +121,7 @@ func New(options ...BrowserOption) *Browser {
 	}
 	engine := config.engine
 	if engine == nil {
-		engine = v8host.NewEngine()
+		engine = &v8host.DefaultEngine
 	}
 	b := &Browser{
 		Client: config.client,
