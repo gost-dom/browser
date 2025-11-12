@@ -133,10 +133,6 @@ func New(options ...BrowserOption) *Browser {
 			}),
 		ctx: config.ctx,
 	}
-	if b.ScriptHost == nil {
-		b.ownsHost = true
-		b.ScriptHost = v8host.New(v8host.WithLogger(config.logger))
-	}
 	if config.ctx != nil {
 		context.AfterFunc(config.ctx, b.Close)
 	}

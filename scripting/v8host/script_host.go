@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"maps"
 	"net/http"
-	"runtime"
 	"slices"
 	"sync"
 
@@ -16,56 +15,6 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
 )
-
-// MAX_POOL_SIZE sets a limit to the number of script hosts that will be pooled
-// for reuse. By default Go will run as many tests in parallel as you have CPU
-// cores, so there shouldn't be a reason for a larger pool, but this provides a
-// bit of flexibility.
-var MAX_POOL_SIZE = runtime.NumCPU() * 2
-
-// A pool of unused V8ScriptHost instances. When a host is disposed calling
-// [V8ScriptHost.Close], it will be added to the pool.
-type scriptHostPool struct {
-	m        sync.Mutex
-	isolates []*V8ScriptHost
-}
-
-func (pool *scriptHostPool) releaseAll() []*V8ScriptHost {
-	pool.m.Lock()
-	defer pool.m.Unlock()
-
-	res := pool.isolates
-	pool.isolates = nil
-	return res
-}
-
-func (pool *scriptHostPool) add(iso *V8ScriptHost) bool {
-	pool.m.Lock()
-	defer pool.m.Unlock()
-
-	if len(pool.isolates) >= MAX_POOL_SIZE {
-		return false
-	} else {
-		pool.isolates = append(pool.isolates, iso)
-		return true
-	}
-}
-
-func (pool *scriptHostPool) tryGet() (iso *V8ScriptHost, found bool) {
-	pool.m.Lock()
-	defer pool.m.Unlock()
-
-	l := len(pool.isolates)
-	if l == 0 {
-		return nil, false
-	}
-
-	iso = pool.isolates[l-1]
-	pool.isolates = pool.isolates[0 : l-1]
-	return iso, true
-}
-
-var pool = &scriptHostPool{}
 
 type globals struct {
 	namedGlobals map[string]v8Class
@@ -134,23 +83,6 @@ func (host *V8ScriptHost) consoleAPIMessage(message v8go.ConsoleAPIMessage) {
 	}
 }
 
-func createHostInstance(config hostOptions) *V8ScriptHost {
-	var host *V8ScriptHost
-	res, hostReused := pool.tryGet()
-
-	if hostReused {
-		host = res
-		host.disposed = false
-		host.logger = config.logger
-	} else {
-		host = factory.createHost(config)
-	}
-
-	host.inspectorClient = v8go.NewInspectorClient(consoleAPIMessageFunc(host.consoleAPIMessage))
-	host.inspector = v8go.NewInspector(host.iso, host.inspectorClient)
-	return host
-}
-
 func (host *V8ScriptHost) deleteContext(ctx *V8ScriptContext) {
 	host.mu.Lock()
 	defer host.mu.Unlock()
@@ -184,16 +116,20 @@ func (host *V8ScriptHost) Logger() log.Logger {
 	return host.logger
 }
 
+// New returns a new initialized V8ScriptHost
+//
+// Deprecated: Obtain V8ScriptHost instances from a script engine which will
+// handle caching of unused isolates
 func New(opts ...HostOption) *V8ScriptHost {
 	config := hostOptions{}
 	for _, opt := range opts {
 		opt(&config)
 	}
 
-	res := createHostInstance(config)
-	res.logger = config.logger
-	res.httpClient = config.httpClient
-	return res
+	return DefaultEngine.newHost(html.ScriptEngineOptions{
+		Logger:     config.logger,
+		HttpClient: config.httpClient,
+	})
 }
 
 // Close informs that client code is done using this script host. The host will
@@ -218,17 +154,10 @@ func (host *V8ScriptHost) Close() {
 
 	host.inspectorClient.Dispose()
 	host.inspector.Dispose()
-
-	if !pool.add(host) {
-		host.iso.Dispose()
-	}
 }
 
-// Dispose all pooled isolates
-func Shutdown() {
-	for _, host := range pool.releaseAll() {
-		host.iso.Dispose()
-	}
+func (host *V8ScriptHost) Dispose() {
+	host.iso.Dispose()
 }
 
 func (host *V8ScriptHost) undisposedContexts() []*V8ScriptContext {
@@ -250,12 +179,11 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 	v8ctx := v8go.NewContext(host.iso, host.windowTemplate)
 	// TODO: The possibility to use nil is primarily for testing support
 	context := &V8ScriptContext{
-		host:    host,
-		clock:   clock.New(clock.WithLogger(w.Logger())),
-		v8ctx:   v8ctx,
-		window:  w,
-		v8nodes: make(map[entity.ObjectId]jsValue),
-		// global:   newV8Object(host.iso, v8ctx.Global()),
+		host:     host,
+		clock:    clock.New(clock.WithLogger(w.Logger())),
+		v8ctx:    v8ctx,
+		window:   w,
+		v8nodes:  make(map[entity.ObjectId]jsValue),
 		resolver: moduleResolver{host: host},
 	}
 	if _, err := context.runScript("Object.setPrototypeOf(globalThis, globalThis.Window.prototype)"); err != nil {
