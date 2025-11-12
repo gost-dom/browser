@@ -19,37 +19,6 @@ func New() html.ScriptHost {
 
 type gojaScriptHost struct{}
 
-type wrapper interface {
-	constructor(call goja.ConstructorCall, r *goja.Runtime) *goja.Object
-	storeInternal(value any, this *goja.Object)
-}
-
-type createWrapper func(instance *GojaContext) wrapper
-
-type wrapperPrototypeInitializer interface {
-	initializePrototype(prototype *goja.Object, r *goja.Runtime)
-}
-
-type class struct {
-	name           string
-	superClassName string
-	wrapper        createWrapper
-}
-
-type classMap map[string]class
-
-var globals classMap = make(classMap)
-
-type function struct {
-	Constructor *goja.Object
-	Prototype   *goja.Object
-	Wrapper     wrapper
-}
-
-type instanceInitializer interface {
-	initObject(*goja.Object)
-}
-
 type propertyNameMapper struct{}
 
 func (_ propertyNameMapper) FieldName(t reflect.Type, f reflect.StructField) string {

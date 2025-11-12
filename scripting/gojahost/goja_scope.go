@@ -42,12 +42,6 @@ func (s gojaScope) SetValue(e entity.ObjectIder, v js.Value[jsTypeParam]) {
 	s.cachedNodes[e.ObjectId()] = v.Self().value
 }
 
-type gojaConstructor struct {
-	ctx       *GojaContext
-	class     *gojaClass
-	prototype *goja.Object
-}
-
 func (f gojaScope) JSONParse(s string) (js.Value[jsTypeParam], error) {
 	parse, err := f.vm.RunString("JSON.parse")
 	if err != nil {

@@ -14,12 +14,6 @@ func (c *ScriptEngineConfigurer) AddConfigurator(configurer js.Configurator[jsTy
 	c.initializers = append(c.initializers, configurer)
 }
 
-func (c *ScriptEngineConfigurer) configure(ctx *GojaContext) {
-	for _, i := range c.initializers {
-		i.Configure(ctx)
-	}
-}
-
 var factory = new(ScriptEngineConfigurer)
 
 func init() {
