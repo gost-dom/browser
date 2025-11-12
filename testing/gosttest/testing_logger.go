@@ -41,7 +41,7 @@ func (l testingLogHandler) Handle(ctx context.Context, r slog.Record) error {
 		if l.fallbackHandler == nil {
 			l.fallbackHandler = slog.NewTextHandler(os.Stderr, nil)
 		}
-		fmt.Fprintf(os.Stderr, "gost-dom/gosttest: write to test logger after close")
+		fmt.Fprintf(os.Stderr, "gost-dom/gosttest: write to test logger after close\n")
 		return l.fallbackHandler.Handle(ctx, r)
 	}
 	l.TB.Helper()
