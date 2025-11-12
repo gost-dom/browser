@@ -18,9 +18,6 @@ func InitBuilder[T any](reg js.ClassBuilder[T]) {
 	js.RegisterClass(reg, "DOMStringMap", "", NewDOMStringMap)
 }
 
-type eventLoopGlobals[T any] struct {
-}
-
 func QueueMicrotask[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	f, err := js.ConsumeArgument(cbCtx, "callback", nil, codec.DecodeFunction)
 	if err == nil {
