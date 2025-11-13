@@ -59,13 +59,25 @@ func WithScriptEngine(engine html.ScriptEngine) BrowserOption {
 	return func(b *browserConfig) { b.engine = engine; b.ownsHost = true }
 }
 
+// WithContext lets the browser operate from a [context.Context]. E.g., this
+// will close all outgoing HTTP connections, including long-lived connections
+// such as SSE connections.
 func WithContext(ctx context.Context) BrowserOption {
 	return func(b *browserConfig) { b.ctx = ctx }
 }
 
-// Pretty stupid right now, but should _probably_ allow handling multiple
-// windows/tabs. This used to be the case for _some_ identity providers, but I'm
-// not sure if that even work anymore because of browser security.
+// Browser contains an initialized browser with a script engine. Create new
+// windows by calling [Browser.Open].
+//
+// Browser values should be closed by calling [Browser.Close].
+//
+//	func TestApplication(t *testing.T) {
+//		b := browser.New(browser.WithHandler(handler))
+//		t.Cleanup(func() { b.Close() })
+//
+//		win, err := b.Open("http://example.com")
+//		// ...
+//	}
 type Browser struct {
 	Client     http.Client
 	ScriptHost ScriptHost
@@ -74,6 +86,43 @@ type Browser struct {
 	windows    []Window
 	closed     bool
 	ownsHost   bool
+}
+
+// New initialises a new [Browser]. Options can be one of
+//
+//   - [WithScriptEngine]
+//   - [WithLogger]
+//   - [WithHandler]
+//
+// Script engine defaults to V8. This will change in the future, but a migration
+// path is not ready.
+func New(options ...BrowserOption) *Browser {
+	config := &browserConfig{client: NewHttpClient()}
+	for _, o := range options {
+		o(config)
+	}
+	engine := config.engine
+	ownsHost := config.ownsHost
+	if engine == nil {
+		engine = &v8host.DefaultEngine
+		ownsHost = true
+	}
+	b := &Browser{
+		Client: config.client,
+		Logger: config.logger,
+		ScriptHost: engine.NewHost(
+			html.ScriptEngineOptions{
+				Logger:     config.logger,
+				HttpClient: &config.client,
+			}),
+		ctx: config.ctx,
+
+		ownsHost: ownsHost,
+	}
+	if config.ctx != nil {
+		context.AfterFunc(config.ctx, b.Close)
+	}
+	return b
 }
 
 // NewWindow creates a new window. Panics if the browser has been closed
@@ -114,36 +163,6 @@ func NewFromHandler(handler http.Handler) *Browser {
 	return New(WithHandler(handler))
 }
 
-// New initialises a new [Browser] with the default script engine.
-func New(options ...BrowserOption) *Browser {
-	config := &browserConfig{client: NewHttpClient()}
-	for _, o := range options {
-		o(config)
-	}
-	engine := config.engine
-	ownsHost := config.ownsHost
-	if engine == nil {
-		engine = &v8host.DefaultEngine
-		ownsHost = true
-	}
-	b := &Browser{
-		Client: config.client,
-		Logger: config.logger,
-		ScriptHost: engine.NewHost(
-			html.ScriptEngineOptions{
-				Logger:     config.logger,
-				HttpClient: &config.client,
-			}),
-		ctx: config.ctx,
-
-		ownsHost: ownsHost,
-	}
-	if config.ctx != nil {
-		context.AfterFunc(config.ctx, b.Close)
-	}
-	return b
-}
-
 // Deprecated: NewBrowser should not be called. Call New instead.
 //
 // This method will selfdestruct in 10 commits
@@ -168,6 +187,15 @@ func (b *Browser) createOptions(location string) WindowOptions {
 	}
 }
 
+// Close "closes" a browser, releasing resources. This will close any
+// initialized script hosts and contexts. Has two purposes
+//
+//   - Reuse a template engine, reducing engine initialization overhead.
+//   - Release memory for non-Go engines, e.g., V8
+//
+// The relevance depends mostly on the script engine. For a pure Go engine,
+// resources would be garbage collections. And the ability to reuse a
+// preconfigured engine depends on engine capabilities.
 func (b *Browser) Close() {
 	log.Debug(b.Logger, "Browser: Close()")
 	for _, win := range b.windows {
