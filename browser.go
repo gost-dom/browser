@@ -49,13 +49,6 @@ func (e staticHostEngine) NewHost(html.ScriptEngineOptions) html.ScriptHost {
 	return host
 }
 
-// WithScriptHost uses a specific script host.
-//
-// Deprecated: Prefer WithScriptEngine
-func WithScriptHost(host html.ScriptHost) BrowserOption {
-	return func(b *browserConfig) { b.engine = staticHostEngine{host} }
-}
-
 func WithScriptEngine(engine html.ScriptEngine) BrowserOption {
 	return func(b *browserConfig) { b.engine = engine; b.ownsHost = true }
 }
@@ -178,27 +171,6 @@ func (b *Browser) Open(location string) (window Window, err error) {
 	window, err = html.NewWindowReader(resp.Body, b.createOptions(respLocation))
 	b.windows = append(b.windows, window)
 	return
-}
-
-// NewFromHandler initialises a new [Browser] with with an [http.Handler]
-//
-// Deprecated: Prefer browser.New(browser.WithHandler(...)) instead.
-func NewFromHandler(handler http.Handler) *Browser {
-	return New(WithHandler(handler))
-}
-
-// Deprecated: NewBrowser should not be called. Call New instead.
-//
-// This method will selfdestruct in 10 commits
-func NewBrowser() *Browser {
-	return New()
-}
-
-// Deprecated: NewBrowserFromHandler should not be called, call, NewFromHandler instead.
-//
-// This method will selfdestruct in 10 commits
-func NewBrowserFromHandler(handler http.Handler) *Browser {
-	return NewFromHandler(handler)
 }
 
 func (b *Browser) createOptions(location string) WindowOptions {
