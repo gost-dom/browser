@@ -10,7 +10,6 @@ import (
 	"testing/synctest"
 
 	"github.com/gost-dom/browser"
-	. "github.com/gost-dom/browser"
 	"github.com/gost-dom/browser/dom/event"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
@@ -27,7 +26,8 @@ type BrowserTestSuite struct {
 }
 
 func (s *BrowserTestSuite) TestReadFromHTTPHandler() {
-	browser := NewBrowserFromHandler(gosttest.StaticHTML("<html></html>"))
+	browser := browser.New(browser.WithHandler(gosttest.StaticHTML("<html></html>")))
+	defer browser.Close()
 
 	result, err := browser.Open("/")
 	s.Assert().NoError(err)
@@ -59,7 +59,7 @@ func (s *BrowserTestSuite) TestExecuteScript() {
 				</script>
 			</body>`),
 	}
-	browser := NewBrowserFromHandler(server)
+	browser := browser.New(browser.WithHandler(server))
 	s.T().Cleanup(browser.Close)
 
 	win, err := browser.Open("/index.html")
@@ -113,7 +113,7 @@ func (s *BrowserNavigationTestSuite) SetupTest() {
 
 func (s *BrowserNavigationTestSuite) loadPageA() htmltest.WindowHelper {
 	server := newBrowserNavigateTestServer()
-	browser := htmltest.NewBrowserHelper(s.T(), NewBrowserFromHandler(server))
+	browser := htmltest.NewBrowserHelper(s.T(), browser.New(browser.WithHandler(server)))
 	window := browser.OpenWindow("/a.html")
 	return window
 }
@@ -160,7 +160,7 @@ type CookiesTestSuite struct {
 
 func (s *CookiesTestSuite) TestCookiesArePersistedInSameBrowser() {
 	Expect := gomega.NewWithT(s.T()).Expect
-	browser := NewBrowserFromHandler(http.HandlerFunc(cookieHandler))
+	browser := browser.New(browser.WithHandler(http.HandlerFunc(cookieHandler)))
 	win, err := browser.Open("http://localhost/")
 	Expect(err).ToNot(HaveOccurred())
 	el := win.Document().GetElementById("gost")
@@ -173,14 +173,14 @@ func (s *CookiesTestSuite) TestCookiesArePersistedInSameBrowser() {
 
 func (s *CookiesTestSuite) TestCookiesAreNotReusedInNewBrowser() {
 	Expect := gomega.NewWithT(s.T()).Expect
-	browser := New(WithHandler(http.HandlerFunc(cookieHandler)))
-	win, err := browser.Open("http://localhost/")
+	b := browser.New(browser.WithHandler(http.HandlerFunc(cookieHandler)))
+	win, err := b.Open("http://localhost/")
 	Expect(err).ToNot(HaveOccurred())
 	el := win.Document().GetElementById("gost")
 	Expect(el).To(HaveTextContent(""))
 
-	browser = NewBrowserFromHandler(http.HandlerFunc(cookieHandler))
-	win, err = browser.Open("http://localhost/")
+	b = browser.New(browser.WithHandler(http.HandlerFunc(cookieHandler)))
+	win, err = b.Open("http://localhost/")
 	Expect(err).ToNot(HaveOccurred())
 	el = win.Document().GetElementById("gost")
 	Expect(el).To(HaveTextContent(""))
@@ -191,30 +191,31 @@ func TestCookies(t *testing.T) {
 }
 
 func TestLogOutput(t *testing.T) {
-	var b bytes.Buffer
+	var buf bytes.Buffer
 	Expect := gomega.NewWithT(t).Expect
-	logger := slog.New(slog.NewTextHandler(&b, &slog.HandlerOptions{
+	logger := slog.New(slog.NewTextHandler(&buf, &slog.HandlerOptions{
 		Level: slog.LevelDebug,
 	}))
-	browser := New(
-		WithHandler(http.HandlerFunc(cookieHandler)),
-		WithLogger(logger),
+	b := browser.New(
+		browser.WithHandler(http.HandlerFunc(cookieHandler)),
+		browser.WithLogger(logger),
 	)
-	win, err := browser.Open("http://localhost/")
+	defer b.Close()
+	win, err := b.Open("http://localhost/")
 	Expect(err).ToNot(HaveOccurred())
 	win.Run("console.log('foo bar')")
-	Expect(b.String()).To(ContainSubstring("foo bar"))
+	Expect(buf.String()).To(ContainSubstring("foo bar"))
 
-	b.Reset()
+	buf.Reset()
 	win.DispatchEvent(event.NewCustomEvent("dummy", event.CustomEventInit{}))
-	Expect(b.String()).To(ContainSubstring(`msg="Dispatch event"`))
+	Expect(buf.String()).To(ContainSubstring(`msg="Dispatch event"`))
 
-	b.Reset()
+	buf.Reset()
 	win.Document().Body().AppendChild(win.Document().CreateElement("div"))
 	win.Document().Body().DispatchEvent(event.NewCustomEvent("dummy", event.CustomEventInit{}))
-	Expect(b.String()).To(ContainSubstring(`msg=Node.AppendChild`))
-	Expect(b.String()).To(ContainSubstring(`msg="Dispatch event"`))
-	b.Reset()
+	Expect(buf.String()).To(ContainSubstring(`msg=Node.AppendChild`))
+	Expect(buf.String()).To(ContainSubstring(`msg="Dispatch event"`))
+	buf.Reset()
 }
 
 func cookieHandler(w http.ResponseWriter, r *http.Request) {
@@ -243,13 +244,13 @@ func newBrowserNavigateTestServer() http.Handler {
 }
 
 func TestBrowserOpenRedirect(t *testing.T) {
-	browser := New(WithHandler(
+	b := browser.New(browser.WithHandler(
 		gosttest.HttpHandlerMap{
 			"/old-location": http.RedirectHandler("/new-location", 301),
 			"/new-location": gosttest.StaticHTML("<body><h1>Hello</h1></body>"),
 		},
 	))
-	win, err := browser.Open("/old-location")
+	win, err := b.Open("/old-location")
 	assert.NoError(t, err)
 	heading, _ := win.Document().QuerySelector("h1")
 	assert.Equal(t, "Hello", heading.TextContent())
