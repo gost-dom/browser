@@ -19,8 +19,6 @@ type browserConfig struct {
 	logger *slog.Logger
 	engine ScriptEngine
 	ctx    context.Context
-
-	ownsHost bool // TODO: Should always own host once WithScriptHost is removed
 }
 
 type BrowserOption func(*browserConfig)
@@ -51,7 +49,7 @@ func (e staticHostEngine) NewHost(html.ScriptEngineOptions) html.ScriptHost {
 }
 
 func WithScriptEngine(engine html.ScriptEngine) BrowserOption {
-	return func(b *browserConfig) { b.engine = engine; b.ownsHost = true }
+	return func(b *browserConfig) { b.engine = engine }
 }
 
 // WithContext passes a [context.Context] than can trigger cancellation, e.g.:
@@ -98,7 +96,6 @@ type Browser struct {
 	ctx        context.Context
 	windows    []Window
 	closed     bool
-	ownsHost   bool
 
 	// closeLock protects the windows slice and closed field. When creating a
 	// new window, browser should panic if closed - as it may have a reference
@@ -134,10 +131,8 @@ func New(options ...BrowserOption) *Browser {
 		o(config)
 	}
 	engine := config.engine
-	ownsHost := config.ownsHost
 	if engine == nil {
 		engine = v8host.DefaultEngine()
-		ownsHost = true
 	}
 	b := &Browser{
 		Client: config.client,
@@ -148,8 +143,6 @@ func New(options ...BrowserOption) *Browser {
 				HttpClient: &config.client,
 			}),
 		ctx: config.ctx,
-
-		ownsHost: ownsHost,
 	}
 	if config.ctx != nil {
 		context.AfterFunc(config.ctx, b.Close)
@@ -231,7 +224,7 @@ func (b *Browser) Close() {
 	for _, win := range b.windows {
 		win.Close()
 	}
-	if b.ScriptHost != nil && b.ownsHost {
+	if b.ScriptHost != nil {
 		b.ScriptHost.Close()
 	}
 	b.windows = nil
