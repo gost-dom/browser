@@ -59,9 +59,12 @@ func WithScriptEngine(engine html.ScriptEngine) BrowserOption {
 	return func(b *browserConfig) { b.engine = engine; b.ownsHost = true }
 }
 
-// WithContext lets the browser operate from a [context.Context]. E.g., this
-// will close all outgoing HTTP connections, including long-lived connections
-// such as SSE connections.
+// WithContext passes a [context.Context] than can trigger cancellation, e.g.:
+//
+//   - Close any open HTTP connections and disconnect from the server.
+//   - Release resources, and reuse script hosts.
+//
+// See also: [Browser.Close]
 func WithContext(ctx context.Context) BrowserOption {
 	return func(b *browserConfig) { b.ctx = ctx }
 }
@@ -69,11 +72,26 @@ func WithContext(ctx context.Context) BrowserOption {
 // Browser contains an initialized browser with a script engine. Create new
 // windows by calling [Browser.Open].
 //
-// Browser values should be closed by calling [Browser.Close].
+// Browser values should be closed by calling [Browser.Close], or passing a
+// context:
 //
-//	func TestApplication(t *testing.T) {
+//	func TestBrowserWithClose(t *testing.T) {
+//		handler := NewRootHttpHandler()
 //		b := browser.New(browser.WithHandler(handler))
 //		t.Cleanup(func() { b.Close() })
+//
+//		win, err := b.Open("http://example.com")
+//		// ...
+//	}
+//
+// Passing a context:
+//
+//	func TestBrowserWithContext(t *testing.T) {
+//		handler := NewRootHttpHandler()
+//		b := browser.New(
+//			browser.WithHandler(handler),
+//			browser.WithContext(t.Context(),
+//		)
 //
 //		win, err := b.Open("http://example.com")
 //		// ...
@@ -93,6 +111,7 @@ type Browser struct {
 //   - [WithScriptEngine]
 //   - [WithLogger]
 //   - [WithHandler]
+//   - [WithContext]
 //
 // Script engine defaults to V8. This will change in the future, but a migration
 // path is not ready.
@@ -188,7 +207,7 @@ func (b *Browser) createOptions(location string) WindowOptions {
 }
 
 // Close "closes" a browser, releasing resources. This will close any
-// initialized script hosts and contexts. Has two purposes
+// initialized script hosts and contexts. Has two purposes.
 //
 //   - Reuse a template engine, reducing engine initialization overhead.
 //   - Release memory for non-Go engines, e.g., V8
@@ -196,6 +215,9 @@ func (b *Browser) createOptions(location string) WindowOptions {
 // The relevance depends mostly on the script engine. For a pure Go engine,
 // resources would be garbage collections. And the ability to reuse a
 // preconfigured engine depends on engine capabilities.
+//
+// Note: If a browser is initialized by passing a [context.Context] to the
+// [WithContext] option, it will be closed if the context is cancelled.
 func (b *Browser) Close() {
 	log.Debug(b.Logger, "Browser: Close()")
 	for _, win := range b.windows {
