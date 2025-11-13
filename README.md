@@ -190,11 +190,13 @@ JavaScript libraries.
 - [FastestSmallestTextEncoderDecoder](./scripting/internal/polyfills/FastestSmallestTextEncoderDecoder)
   distributed under the Creative Commons Zero v1.0 Universal license.
 
-In addition, for testing compatibility, test code of this repository contains
-compiled versions of:
+In addition, to verify compatibility with 3rd party JavaScript libraries, the
+[test code] in repository contains compiled versions of:
 
-- [HTMX](https://htmx.org)
-- [Datastar](https://data-star.dev/)
+- [HTMX](https://htmx.org) distributed under the Zero-Clause BSD license.
+- [Datastar](https://data-star.dev/) distributed under the MIT license.
+
+[test code]: ./internal/test/integration/test-app/content/public/datastar/datastar.rc6.js
 
 ## Star History
 
@@ -204,7 +206,7 @@ compiled versions of:
 
 [^1]: Gost-DOM, by default, embeds a V8 engine - the same JavaScript engine that powers Chrome.
 [^2]: Complete isolation depends on _your code_, e.g., if you don't replace
-    database dependencies, they are not isolated.
+    database dependencies, tests are not isolated.
 [^3]: Cliché, I know! But it is!
 [^4]: This depends on how you configure Gost-DOM. 
 
