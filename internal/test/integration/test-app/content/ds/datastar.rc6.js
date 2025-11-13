@@ -1103,7 +1103,6 @@ ${l}`
           T = new AbortController();
           try {
             let b = await B(e, { ...h, headers: A, signal: T.signal });
-            console.log("b", b);
             ((ne = 0), (f = g), await fe(b));
             let F = async (y, k, ue, Ee, ...Vt) => {
                 let tt = { [ue]: await k.text() };
@@ -1166,9 +1165,6 @@ ${l}`
               H(),
               v());
           } catch (b) {
-            console.log("b", b);
-            console.log("b", b.message);
-            console.log("b stack", b.stack);
             if (!T.signal.aborted)
               try {
                 let F = o?.(b) || f;
@@ -1177,11 +1173,10 @@ ${l}`
                   (f = Math.min(f * d, x)),
                   ++ne >= u
                     ? (ee(en, t, {}), H(), L("Max retries reached."))
-                    : console.error(`Datastar 
-  failed to reach ${e.toString()} retrying in ${F}ms.`));
+                    : console.error(
+                        `Datastar failed to reach ${e.toString()} retrying in ${F}ms.`,
+                      ));
               } catch (F) {
-                console.error("msg", F.message);
-                console.error("stack", F.stack);
                 (H(), L(F));
               }
           }

@@ -24,6 +24,7 @@ func CreateServer() *TestServer {
 	mux.Handle("GET /", fs)
 
 	mux.Handle("GET /datastarapi/", http.StripPrefix("/datastarapi", NewDatastarMux()))
+	mux.Handle("POST /datastarapi/", http.StripPrefix("/datastarapi", NewDatastarMux()))
 
 	mux.HandleFunc("POST /counter/increment", func(w http.ResponseWriter, r *http.Request) {
 		count++
