@@ -18,8 +18,6 @@ type browserConfig struct {
 	logger *slog.Logger
 	engine ScriptEngine
 	ctx    context.Context
-
-	ownsHost bool // TODO: Should always own host once WithScriptHost is removed
 }
 
 type BrowserOption func(*browserConfig)
@@ -49,7 +47,7 @@ func (e staticHostEngine) NewHost(html.ScriptEngineOptions) html.ScriptHost {
 }
 
 func WithScriptEngine(engine html.ScriptEngine) BrowserOption {
-	return func(b *browserConfig) { b.engine = engine; b.ownsHost = true }
+	return func(b *browserConfig) { b.engine = engine }
 }
 
 // WithContext lets the browser operate from a [context.Context]. E.g., this
@@ -78,7 +76,6 @@ type Browser struct {
 	ctx        context.Context
 	windows    []Window
 	closed     bool
-	ownsHost   bool
 }
 
 // New initialises a new [Browser]. Options can be one of
@@ -95,10 +92,8 @@ func New(options ...BrowserOption) *Browser {
 		o(config)
 	}
 	engine := config.engine
-	ownsHost := config.ownsHost
 	if engine == nil {
 		engine = &v8host.DefaultEngine
-		ownsHost = true
 	}
 	b := &Browser{
 		Client: config.client,
@@ -109,8 +104,6 @@ func New(options ...BrowserOption) *Browser {
 				HttpClient: &config.client,
 			}),
 		ctx: config.ctx,
-
-		ownsHost: ownsHost,
 	}
 	if config.ctx != nil {
 		context.AfterFunc(config.ctx, b.Close)
@@ -173,7 +166,7 @@ func (b *Browser) Close() {
 	for _, win := range b.windows {
 		win.Close()
 	}
-	if b.ScriptHost != nil && b.ownsHost {
+	if b.ScriptHost != nil {
 		b.ScriptHost.Close()
 	}
 	b.closed = true
