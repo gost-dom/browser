@@ -60,7 +60,7 @@ func WithContext(ctx context.Context) InitOption {
 
 func initWindow(
 	t *testing.T,
-	host html.ScriptHost,
+	e html.ScriptEngine,
 	h http.Handler,
 	opts ...InitOption,
 ) htmltest.WindowHelper {
@@ -77,7 +77,7 @@ func initWindow(
 		browser.WithContext(ctx),
 		browser.WithLogger(logger),
 		browser.WithHandler(h),
-		browser.WithScriptHost(host),
+		browser.WithScriptEngine(e),
 	))
 	return b.OpenWindow("https://example.com/index.html")
 }
@@ -85,19 +85,17 @@ func initWindow(
 func testFetch(t *testing.T, e html.ScriptEngine) {
 	t.Parallel()
 
-	host := e.NewHost(html.ScriptEngineOptions{})
-
 	t.Run(
 		"Abort using AbortController and AbortSignal",
-		func(t *testing.T) { testFetchAbortSignal(t, host) },
+		func(t *testing.T) { testFetchAbortSignal(t, e) },
 	)
-	t.Run("Fetch resource async/await", func(t *testing.T) { testFetchJSONAsync(t, host) })
-	t.Run("Fetch invalid JSON", func(t *testing.T) { testFetchInvalidJSON(t, host) })
-	t.Run("404 for not found resource", func(t *testing.T) { testNotFound(t, host) })
-	t.Run("ReadableStream body", func(t *testing.T) { testReadableStream(t, host) })
+	t.Run("Fetch resource async/await", func(t *testing.T) { testFetchJSONAsync(t, e) })
+	t.Run("Fetch invalid JSON", func(t *testing.T) { testFetchInvalidJSON(t, e) })
+	t.Run("404 for not found resource", func(t *testing.T) { testNotFound(t, e) })
+	t.Run("ReadableStream body", func(t *testing.T) { testReadableStream(t, e) })
 }
 
-func testFetchAbortSignal(t *testing.T, host html.ScriptHost) {
+func testFetchAbortSignal(t *testing.T, e html.ScriptEngine) {
 	g := gomega.NewWithT(t)
 	ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
 	defer cancel()
@@ -107,7 +105,7 @@ func testFetchAbortSignal(t *testing.T, host html.ScriptHost) {
 		"/index.html":     gosttest.StaticHTML(`<body>dummy</body>`),
 		"/slow-data.json": delayedHandler,
 	}
-	win := initWindow(t, host, handler, WithMinLogLevel(slog.LevelDebug), WithContext(ctx))
+	win := initWindow(t, e, handler, WithMinLogLevel(slog.LevelDebug), WithContext(ctx))
 	win.MustRun(`
 		let resolved;
 		let rejected;
@@ -126,7 +124,7 @@ func testFetchAbortSignal(t *testing.T, host html.ScriptHost) {
 	g.Expect(win.Eval(`rejected`)).To(Equal("abort-reason"))
 }
 
-func testFetchJSONAsync(t *testing.T, host html.ScriptHost) {
+func testFetchJSONAsync(t *testing.T, e html.ScriptEngine) {
 	ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
 	defer cancel()
 
@@ -137,7 +135,7 @@ func testFetchJSONAsync(t *testing.T, host html.ScriptHost) {
 	}
 
 	g := gomega.NewWithT(t)
-	win := initWindow(t, host, handler, WithMinLogLevel(slog.LevelDebug))
+	win := initWindow(t, e, handler, WithMinLogLevel(slog.LevelDebug))
 	win.MustRun(`
 		let gotStatus
 		let gotJson = "uninitialized"
@@ -177,7 +175,7 @@ func testFetchJSONAsync(t *testing.T, host html.ScriptHost) {
 	g.Expect(win.Eval("err")).To(BeNil())
 }
 
-func testFetchInvalidJSON(t *testing.T, host html.ScriptHost) {
+func testFetchInvalidJSON(t *testing.T, e html.ScriptEngine) {
 	ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
 	defer cancel()
 
@@ -186,7 +184,7 @@ func testFetchInvalidJSON(t *testing.T, host html.ScriptHost) {
 		"/bad-data.json": gosttest.StaticJSON(`{"foo": "Foo value",`),
 	}
 	g := gomega.NewWithT(t)
-	win := initWindow(t, host, handler)
+	win := initWindow(t, e, handler)
 
 	win.MustRun(`
 			let code = 0
@@ -206,12 +204,12 @@ func testFetchInvalidJSON(t *testing.T, host html.ScriptHost) {
 	g.Expect(win.Eval("!!rejected")).To(BeTrue())
 }
 
-func testNotFound(t *testing.T, host html.ScriptHost) {
+func testNotFound(t *testing.T, e html.ScriptEngine) {
 	handler := gosttest.HttpHandlerMap{
 		"/index.html": gosttest.StaticHTML(`<body>dummy</body>`),
 	}
 	g := gomega.NewWithT(t)
-	win := initWindow(t, host, handler)
+	win := initWindow(t, e, handler)
 	win.MustRun(`
 			fetch("non-existing.json")
 				.then(response => { globalThis.got = response.status })
@@ -222,7 +220,7 @@ func testNotFound(t *testing.T, host html.ScriptHost) {
 	g.Expect(win.Eval("got")).To(BeEquivalentTo(404))
 }
 
-func testReadableStream(t *testing.T, host html.ScriptHost) {
+func testReadableStream(t *testing.T, e html.ScriptEngine) {
 	ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
 	defer cancel()
 
@@ -232,7 +230,7 @@ func testReadableStream(t *testing.T, host html.ScriptHost) {
 		"/piped":      pipe,
 	}
 	g := gomega.NewWithT(t)
-	win := initWindow(t, host, handler)
+	win := initWindow(t, e, handler)
 	win.MustRun(`
 		let response;
 		let rejected;
