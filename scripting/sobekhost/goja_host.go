@@ -18,37 +18,6 @@ func New() html.ScriptHost {
 
 type gojaScriptHost struct{}
 
-type wrapper interface {
-	constructor(call sobek.ConstructorCall, r *sobek.Runtime) *sobek.Object
-	storeInternal(value any, this *sobek.Object)
-}
-
-type createWrapper func(instance *GojaContext) wrapper
-
-type wrapperPrototypeInitializer interface {
-	initializePrototype(prototype *sobek.Object, r *sobek.Runtime)
-}
-
-type class struct {
-	name           string
-	superClassName string
-	wrapper        createWrapper
-}
-
-type classMap map[string]class
-
-var globals classMap = make(classMap)
-
-type function struct {
-	Constructor *sobek.Object
-	Prototype   *sobek.Object
-	Wrapper     wrapper
-}
-
-type instanceInitializer interface {
-	initObject(*sobek.Object)
-}
-
 type propertyNameMapper struct{}
 
 func (_ propertyNameMapper) FieldName(t reflect.Type, f reflect.StructField) string {
@@ -90,9 +59,7 @@ func (d *gojaScriptHost) NewContext(window html.Window) html.ScriptContext {
 		sobek.FLAG_FALSE,
 	)
 	globalThis.Set("window", globalThis)
-	for _, i := range factory.initializers {
-		i.Configure(result)
-	}
+	initializer.Configure(result)
 	location := result.createLocationInstance()
 	globalThis.DefineAccessorProperty(
 		"location",

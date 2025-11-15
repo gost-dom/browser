@@ -7,6 +7,7 @@ import (
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
+	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/grafana/sobek"
 )
@@ -50,6 +51,19 @@ func (i *GojaContext) Eval(str string) (res any, err error) {
 
 func (i *GojaContext) EvalCore(str string) (res any, err error) {
 	return i.vm.RunString(str)
+}
+
+func (c *GojaContext) storeInternal(value any, obj *sobek.Object) {
+	obj.DefineDataPropertySymbol(
+		c.wrappedGoObj,
+		c.vm.ToValue(value),
+		sobek.FLAG_FALSE,
+		sobek.FLAG_FALSE,
+		sobek.FLAG_FALSE,
+	)
+	if e, ok := value.(entity.ObjectIder); ok {
+		c.cachedNodes[e.ObjectId()] = obj
+	}
 }
 
 func (i *GojaContext) RunFunction(str string, arguments ...any) (res any, err error) {
@@ -183,10 +197,6 @@ func (class *gojaClass) installInstance(this **sobek.Object, native any) {
 		})
 		(*this).SetPrototype(proto)
 	}
-}
-
-type gojaIndexedHandler struct {
-	cb js.HandlerGetterCallback[jsTypeParam, int]
 }
 
 type attributeHandler struct {
