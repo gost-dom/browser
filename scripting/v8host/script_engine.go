@@ -15,6 +15,8 @@ import (
 // bit of flexibility.
 var MAX_POOL_SIZE = runtime.NumCPU() * 2
 
+var _ html.ScriptEngine = &v8ScriptEngine{}
+
 type v8ScriptEngine struct {
 	m          sync.Mutex
 	isolates   []*V8ScriptHost
@@ -98,8 +100,13 @@ func (e *v8ScriptEngine) add(iso *V8ScriptHost) bool {
 	}
 }
 
-var DefaultEngine v8ScriptEngine
+var defaultEngine *v8ScriptEngine
+
+func DefaultEngine() html.ScriptEngine {
+	return defaultEngine
+}
 
 func init() {
-	DefaultEngine.configurer = internal.DefaultInitializer[jsTypeParam]()
+	defaultEngine = new(v8ScriptEngine)
+	defaultEngine.configurer = internal.DefaultInitializer[jsTypeParam]()
 }

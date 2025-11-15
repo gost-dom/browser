@@ -18,7 +18,7 @@ type ElementTestSuite struct {
 
 func TestElement(t *testing.T) {
 	suite.Run(t,
-		&ElementTestSuite{scripttests.NewScriptHostSuite(&v8host.DefaultEngine)},
+		&ElementTestSuite{scripttests.NewScriptHostSuite(v8host.DefaultEngine())},
 	)
 }
 

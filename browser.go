@@ -123,7 +123,7 @@ func New(options ...BrowserOption) *Browser {
 	engine := config.engine
 	ownsHost := config.ownsHost
 	if engine == nil {
-		engine = &v8host.DefaultEngine
+		engine = v8host.DefaultEngine()
 		ownsHost = true
 	}
 	b := &Browser{

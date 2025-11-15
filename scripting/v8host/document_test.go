@@ -15,7 +15,7 @@ type DocumentTestSuite struct {
 }
 
 func TestDocument(t *testing.T) {
-	suite.Run(t, &DocumentTestSuite{*scripttests.NewScriptHostSuite(&v8host.DefaultEngine)})
+	suite.Run(t, &DocumentTestSuite{*scripttests.NewScriptHostSuite(v8host.DefaultEngine())})
 }
 
 func (s *DocumentTestSuite) SetupTest() {

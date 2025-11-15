@@ -125,7 +125,7 @@ func New(opts ...HostOption) *V8ScriptHost {
 		opt(&config)
 	}
 
-	return DefaultEngine.newHost(html.ScriptEngineOptions{
+	return defaultEngine.newHost(html.ScriptEngineOptions{
 		Logger:     config.logger,
 		HttpClient: config.httpClient,
 	})
