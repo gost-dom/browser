@@ -148,12 +148,14 @@ func (f gojaScope) NewIterator(
 		wrapJSCallback(
 			f.GojaContext,
 			func(cbCtx js.CallbackContext[jsTypeParam]) (js.Value[jsTypeParam], error) {
+				cbCtx.Logger().Debug("js function call: sobekhost/iterator.next")
 				instance, ok := (cbCtx.This().NativeValue()).(*gojaIteratorInstance)
 				if !ok {
 					return cbCtx.ReturnWithTypeError("Not an iterator instance")
 				}
 				res := f.vm.NewObject()
 				item, err, ok := instance.next()
+				cbCtx.Logger().Debug("sobek next", "item", item, "err", err, "ok", ok)
 				res.Set("done", instance.vm.ToValue(!ok))
 				if !ok {
 					instance.stop()
@@ -171,6 +173,7 @@ func (f gojaScope) NewIterator(
 		wrapJSCallback(
 			f.GojaContext,
 			func(cbCtx js.CallbackContext[jsTypeParam]) (js.Value[jsTypeParam], error) {
+				cbCtx.Logger().Debug("sobekhost/iterator[SymbolIterator]")
 				return f.NewIterator(items), nil
 			},
 		),

@@ -30,7 +30,7 @@ func (s *ScriptHostSuite) Host() html.ScriptHost {
 }
 func (s *ScriptHostSuite) SetupTest() {
 	s.Window = htmltest.NewWindowHelper(s.T(), html.NewWindow(html.WindowOptions{
-		Logger:     gosttest.NewTestLogger(s.T()),
+		Logger:     gosttest.NewTestLogger(s.T(), gosttest.MinLogLevel(slog.LevelDebug)),
 		ScriptHost: s.Host(),
 	}))
 }

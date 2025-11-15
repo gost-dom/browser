@@ -15,7 +15,10 @@ var textEncoderDecoder []byte
 func InstallPolyfills[T any](host js.ScriptEngine[T]) {
 	host.RunScript(`
 		FormData.prototype.forEach = function(cb) {
-			return Array.from(this).forEach(([k,v]) => { cb(v,k) })
+			for (const [k,v] of this) {
+				cb(v,k)
+			}
+			// return Array.from(this).forEach(([k,v]) => { cb(v,k) })
 		}
 	`, "gost-dom/polyfills/formdata.js")
 	host.RunScript(`
