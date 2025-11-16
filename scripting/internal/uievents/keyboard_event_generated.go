@@ -25,8 +25,9 @@ func (w KeyboardEvent[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w KeyboardEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: KeyboardEvent.Constructor", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: KeyboardEvent.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: KeyboardEvent.Constructor", js.LogAttr("res", res))
 	}()
 	type_, errArg1 := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
 	if errArg1 != nil {
@@ -43,64 +44,73 @@ func (w KeyboardEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value
 }
 
 func (w KeyboardEvent[T]) getModifierState(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: KeyboardEvent.getModifierState", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: KeyboardEvent.getModifierState", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: KeyboardEvent.getModifierState", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.getModifierState: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w KeyboardEvent[T]) code(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: KeyboardEvent.code", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: KeyboardEvent.code", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: KeyboardEvent.code", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.code: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w KeyboardEvent[T]) location(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: KeyboardEvent.location", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: KeyboardEvent.location", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: KeyboardEvent.location", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.location: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w KeyboardEvent[T]) ctrlKey(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: KeyboardEvent.ctrlKey", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: KeyboardEvent.ctrlKey", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: KeyboardEvent.ctrlKey", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.ctrlKey: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w KeyboardEvent[T]) shiftKey(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: KeyboardEvent.shiftKey", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: KeyboardEvent.shiftKey", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: KeyboardEvent.shiftKey", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.shiftKey: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w KeyboardEvent[T]) altKey(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: KeyboardEvent.altKey", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: KeyboardEvent.altKey", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: KeyboardEvent.altKey", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.altKey: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w KeyboardEvent[T]) metaKey(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: KeyboardEvent.metaKey", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: KeyboardEvent.metaKey", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: KeyboardEvent.metaKey", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.metaKey: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w KeyboardEvent[T]) repeat(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: KeyboardEvent.repeat", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: KeyboardEvent.repeat", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: KeyboardEvent.repeat", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.repeat: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w KeyboardEvent[T]) isComposing(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: KeyboardEvent.isComposing", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: KeyboardEvent.isComposing", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: KeyboardEvent.isComposing", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.isComposing: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

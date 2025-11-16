@@ -27,15 +27,17 @@ func (w HTMLInputElement[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w HTMLInputElement[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: HTMLInputElement.Constructor", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: HTMLInputElement.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: HTMLInputElement.Constructor", js.LogAttr("res", res))
 	}()
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w HTMLInputElement[T]) checkValidity(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: HTMLInputElement.checkValidity", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: HTMLInputElement.checkValidity", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: HTMLInputElement.checkValidity", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[html.HTMLInputElement](cbCtx.Instance())
 	if err != nil {
@@ -46,8 +48,9 @@ func (w HTMLInputElement[T]) checkValidity(cbCtx js.CallbackContext[T]) (res js.
 }
 
 func (w HTMLInputElement[T]) name(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: HTMLInputElement.name", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: HTMLInputElement.name", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: HTMLInputElement.name", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[html.HTMLInputElement](cbCtx.Instance())
 	if err != nil {
@@ -58,8 +61,9 @@ func (w HTMLInputElement[T]) name(cbCtx js.CallbackContext[T]) (res js.Value[T],
 }
 
 func (w HTMLInputElement[T]) setName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: HTMLInputElement.setName", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: HTMLInputElement.setName", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: HTMLInputElement.setName", js.LogAttr("res", res))
 	}()
 	instance, err0 := js.As[html.HTMLInputElement](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
@@ -72,8 +76,9 @@ func (w HTMLInputElement[T]) setName(cbCtx js.CallbackContext[T]) (res js.Value[
 }
 
 func (w HTMLInputElement[T]) type_(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: HTMLInputElement.type_", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: HTMLInputElement.type_", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: HTMLInputElement.type_", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[html.HTMLInputElement](cbCtx.Instance())
 	if err != nil {
@@ -84,8 +89,9 @@ func (w HTMLInputElement[T]) type_(cbCtx js.CallbackContext[T]) (res js.Value[T]
 }
 
 func (w HTMLInputElement[T]) setType(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: HTMLInputElement.setType", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: HTMLInputElement.setType", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: HTMLInputElement.setType", js.LogAttr("res", res))
 	}()
 	instance, err0 := js.As[html.HTMLInputElement](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
@@ -98,8 +104,9 @@ func (w HTMLInputElement[T]) setType(cbCtx js.CallbackContext[T]) (res js.Value[
 }
 
 func (w HTMLInputElement[T]) value(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: HTMLInputElement.value", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: HTMLInputElement.value", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: HTMLInputElement.value", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[html.HTMLInputElement](cbCtx.Instance())
 	if err != nil {
@@ -110,8 +117,9 @@ func (w HTMLInputElement[T]) value(cbCtx js.CallbackContext[T]) (res js.Value[T]
 }
 
 func (w HTMLInputElement[T]) setValue(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: HTMLInputElement.setValue", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: HTMLInputElement.setValue", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: HTMLInputElement.setValue", js.LogAttr("res", res))
 	}()
 	instance, err0 := js.As[html.HTMLInputElement](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)

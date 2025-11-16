@@ -25,15 +25,17 @@ func (w HTMLElement[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w HTMLElement[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: HTMLElement.Constructor", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: HTMLElement.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: HTMLElement.Constructor", js.LogAttr("res", res))
 	}()
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w HTMLElement[T]) click(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: HTMLElement.click", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: HTMLElement.click", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: HTMLElement.click", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[html.HTMLElement](cbCtx.Instance())
 	if err != nil {

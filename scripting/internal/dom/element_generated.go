@@ -69,29 +69,33 @@ func (w Element[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w Element[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.Constructor", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.Constructor", js.LogAttr("res", res))
 	}()
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w Element[T]) hasAttributes(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.hasAttributes", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.hasAttributes", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.hasAttributes", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.hasAttributes: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Element[T]) getAttributeNames(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.getAttributeNames", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.getAttributeNames", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.getAttributeNames", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.getAttributeNames: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Element[T]) getAttribute(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.getAttribute", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.getAttribute", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.getAttribute", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[dom.Element](cbCtx.Instance())
 	if errInst != nil {
@@ -106,15 +110,17 @@ func (w Element[T]) getAttribute(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 }
 
 func (w Element[T]) getAttributeNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.getAttributeNS", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.getAttributeNS", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.getAttributeNS", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.getAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Element[T]) setAttribute(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.setAttribute", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.setAttribute", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.setAttribute", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[dom.Element](cbCtx.Instance())
 	if errInst != nil {
@@ -131,15 +137,17 @@ func (w Element[T]) setAttribute(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 }
 
 func (w Element[T]) setAttributeNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.setAttributeNS", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.setAttributeNS", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.setAttributeNS", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.setAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Element[T]) removeAttribute(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.removeAttribute", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.removeAttribute", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.removeAttribute", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[dom.Element](cbCtx.Instance())
 	if errInst != nil {
@@ -154,22 +162,25 @@ func (w Element[T]) removeAttribute(cbCtx js.CallbackContext[T]) (res js.Value[T
 }
 
 func (w Element[T]) removeAttributeNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.removeAttributeNS", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.removeAttributeNS", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.removeAttributeNS", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.removeAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Element[T]) toggleAttribute(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.toggleAttribute", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.toggleAttribute", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.toggleAttribute", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.toggleAttribute: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Element[T]) hasAttribute(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.hasAttribute", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.hasAttribute", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.hasAttribute", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[dom.Element](cbCtx.Instance())
 	if errInst != nil {
@@ -184,57 +195,65 @@ func (w Element[T]) hasAttribute(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 }
 
 func (w Element[T]) hasAttributeNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.hasAttributeNS", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.hasAttributeNS", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.hasAttributeNS", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.hasAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Element[T]) getAttributeNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.getAttributeNode", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.getAttributeNode", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.getAttributeNode", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.getAttributeNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Element[T]) getAttributeNodeNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.getAttributeNodeNS", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.getAttributeNodeNS", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.getAttributeNodeNS", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.getAttributeNodeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Element[T]) setAttributeNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.setAttributeNode", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.setAttributeNode", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.setAttributeNode", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.setAttributeNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Element[T]) setAttributeNodeNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.setAttributeNodeNS", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.setAttributeNodeNS", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.setAttributeNodeNS", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.setAttributeNodeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Element[T]) removeAttributeNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.removeAttributeNode", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.removeAttributeNode", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.removeAttributeNode", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.removeAttributeNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Element[T]) attachShadow(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.attachShadow", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.attachShadow", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.attachShadow", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.attachShadow: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Element[T]) closest(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.closest", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.closest", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.closest", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[dom.Element](cbCtx.Instance())
 	if errInst != nil {
@@ -252,8 +271,9 @@ func (w Element[T]) closest(cbCtx js.CallbackContext[T]) (res js.Value[T], err e
 }
 
 func (w Element[T]) matches(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.matches", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.matches", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.matches", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[dom.Element](cbCtx.Instance())
 	if errInst != nil {
@@ -271,8 +291,9 @@ func (w Element[T]) matches(cbCtx js.CallbackContext[T]) (res js.Value[T], err e
 }
 
 func (w Element[T]) getElementsByTagName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.getElementsByTagName", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.getElementsByTagName", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.getElementsByTagName", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[dom.Element](cbCtx.Instance())
 	if errInst != nil {
@@ -287,22 +308,25 @@ func (w Element[T]) getElementsByTagName(cbCtx js.CallbackContext[T]) (res js.Va
 }
 
 func (w Element[T]) getElementsByTagNameNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.getElementsByTagNameNS", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.getElementsByTagNameNS", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.getElementsByTagNameNS", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.getElementsByTagNameNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Element[T]) getElementsByClassName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.getElementsByClassName", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.getElementsByClassName", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.getElementsByClassName", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.getElementsByClassName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Element[T]) insertAdjacentElement(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.insertAdjacentElement", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.insertAdjacentElement", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.insertAdjacentElement", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[dom.Element](cbCtx.Instance())
 	if errInst != nil {
@@ -322,8 +346,9 @@ func (w Element[T]) insertAdjacentElement(cbCtx js.CallbackContext[T]) (res js.V
 }
 
 func (w Element[T]) insertAdjacentText(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.insertAdjacentText", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.insertAdjacentText", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.insertAdjacentText", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[dom.Element](cbCtx.Instance())
 	if errInst != nil {
@@ -340,29 +365,33 @@ func (w Element[T]) insertAdjacentText(cbCtx js.CallbackContext[T]) (res js.Valu
 }
 
 func (w Element[T]) namespaceURI(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.namespaceURI", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.namespaceURI", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.namespaceURI", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.namespaceURI: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Element[T]) prefix(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.prefix", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.prefix", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.prefix", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.prefix: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Element[T]) localName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.localName", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.localName", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.localName", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.localName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Element[T]) tagName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.tagName", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.tagName", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.tagName", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[dom.Element](cbCtx.Instance())
 	if err != nil {
@@ -373,8 +402,9 @@ func (w Element[T]) tagName(cbCtx js.CallbackContext[T]) (res js.Value[T], err e
 }
 
 func (w Element[T]) id(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.id", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.id", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.id", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[dom.Element](cbCtx.Instance())
 	if err != nil {
@@ -385,8 +415,9 @@ func (w Element[T]) id(cbCtx js.CallbackContext[T]) (res js.Value[T], err error)
 }
 
 func (w Element[T]) setID(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.setID", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.setID", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.setID", js.LogAttr("res", res))
 	}()
 	instance, err0 := js.As[dom.Element](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
@@ -399,36 +430,41 @@ func (w Element[T]) setID(cbCtx js.CallbackContext[T]) (res js.Value[T], err err
 }
 
 func (w Element[T]) className(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.className", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.className", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.className", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.className: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Element[T]) setClassName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.setClassName", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.setClassName", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.setClassName", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.setClassName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Element[T]) slot(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.slot", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.slot", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.slot", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.slot: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Element[T]) setSlot(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.setSlot", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.setSlot", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.setSlot", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.setSlot: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Element[T]) attributes(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.attributes", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.attributes", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.attributes", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[dom.Element](cbCtx.Instance())
 	if err != nil {
@@ -439,8 +475,9 @@ func (w Element[T]) attributes(cbCtx js.CallbackContext[T]) (res js.Value[T], er
 }
 
 func (w Element[T]) shadowRoot(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Element.shadowRoot", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Element.shadowRoot", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: Element.shadowRoot", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.shadowRoot: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

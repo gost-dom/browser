@@ -29,6 +29,7 @@ func (cb CallbackMethods) CallbackFunction(name string, body g.Generator) g.Gene
 		),
 		Body: g.StatementList(
 			cb.LogCall(name, cb.CbCtx()),
+			cb.LogCallResult(name, cb.CbCtx()),
 			body,
 		),
 	}
@@ -165,9 +166,15 @@ func (cb CallbackMethods) ReturnNotImplementedError(
 }
 
 func (cb CallbackMethods) LogCall(name string, cbCtx g.Generator) g.Generator {
-	res := g.ValueOf(cbCtx).Field("Logger").Call().Field("Debug").Call(
+	return g.ValueOf(cbCtx).Field("Logger").Call().Field("Debug").Call(
 		g.Lit(fmt.Sprintf("JS Function call: %s.%s", cb.Data.Name(), name)),
 		jsThisLogAttr.Call(cbCtx),
+	)
+}
+
+func (cb CallbackMethods) LogCallResult(name string, cbCtx g.Generator) g.Generator {
+	res := g.ValueOf(cbCtx).Field("Logger").Call().Field("Debug").Call(
+		g.Lit(fmt.Sprintf("JS Function call return: %s.%s", cb.Data.Name(), name)),
 		jsLogAttr.Call(g.Lit("res"), g.Id("res")),
 	)
 	f := g.ValueOf(g.FunctionDefinition{Body: res})

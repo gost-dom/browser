@@ -26,36 +26,41 @@ func (w ChildNode[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w ChildNode[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: ChildNode.Constructor", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ChildNode.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: ChildNode.Constructor", js.LogAttr("res", res))
 	}()
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w ChildNode[T]) before(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: ChildNode.before", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ChildNode.before", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: ChildNode.before", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "ChildNode.before: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w ChildNode[T]) after(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: ChildNode.after", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ChildNode.after", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: ChildNode.after", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "ChildNode.after: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w ChildNode[T]) replaceWith(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: ChildNode.replaceWith", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ChildNode.replaceWith", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: ChildNode.replaceWith", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "ChildNode.replaceWith: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w ChildNode[T]) remove(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: ChildNode.remove", js.ThisLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ChildNode.remove", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call return: ChildNode.remove", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[dom.ChildNode](cbCtx.Instance())
 	if err != nil {
