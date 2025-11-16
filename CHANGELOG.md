@@ -1,6 +1,29 @@
 # Changelog - Gost-DOM
 
 
+## [0.9.2](https://github.com/gost-dom/browser/compare/v0.9.1...v0.9.2) (2025-11-16)
+
+
+### Features
+
+* **dom:** implement Element.closest ([261a348](https://github.com/gost-dom/browser/commit/261a34846a3960ca89c12b19fa71fe66722e8f18))
+* DOMTokenList.remove handles multiple arguments ([5e7c481](https://github.com/gost-dom/browser/commit/5e7c481d3276b253ee95a6070fe0cee4644fdeac))
+* **fetch:** Add Headers support ([2fbc1ec](https://github.com/gost-dom/browser/commit/2fbc1ec7e2b97936bf562036f78ac9b5965687b1))
+* **fetch:** support method and body options ([5db9672](https://github.com/gost-dom/browser/commit/5db967240681f5375bba485d7bc3e4dafcb108c7))
+* implement `node.isEqualNode` ([9f1ecf4](https://github.com/gost-dom/browser/commit/9f1ecf4b68c5d5968a01f40c386fc5ee9ee636f1))
+* **scripting:** Add SVGElement and MathMLElement to global scope ([c0e9c3d](https://github.com/gost-dom/browser/commit/c0e9c3dc46442541bacedfcc3c11a80208f2de8d))
+* **scripting:** Log all JS callback errors ([c246025](https://github.com/gost-dom/browser/commit/c2460259d1c643b71d3c196001fd9a412e81e0f0))
+* **scripting:** return explicit error on request init ([7536937](https://github.com/gost-dom/browser/commit/7536937fe7d086a55bfda063ffd1b187a01aae8f))
+* **scripting:** support fetch body option ([d94882d](https://github.com/gost-dom/browser/commit/d94882d4bf352c3bf2474dbb3861472d37e12a61))
+* **scripting:** support fetch method option ([5be6dc9](https://github.com/gost-dom/browser/commit/5be6dc93548d1acafb1b17e5f48e7fa124b604d0))
+
+
+### Bug Fixes
+
+* Don't panic if disconnecting flusher again ([3816f25](https://github.com/gost-dom/browser/commit/3816f251576458a75c3986c052aab99f72b272dd))
+* ignore unnamed form input fields ([742f6c8](https://github.com/gost-dom/browser/commit/742f6c8c61fe2658ca46e63042b1e90d500620e2))
+* use defualt timeout for `setTimeout` ([fdfd0d5](https://github.com/gost-dom/browser/commit/fdfd0d5f00338fe3c6f2737938d4b2ba45bf4d10))
+
 ## [0.9.1](https://github.com/gost-dom/browser/compare/v0.9.0...v0.9.1) (2025-10-23)
 
 
