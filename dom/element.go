@@ -39,6 +39,7 @@ type Element interface {
 	Attributes() NamedNodeMap
 	InsertAdjacentElement(position string, element Element) (Element, error)
 	InsertAdjacentHTML(position string, text string) error
+	InsertAdjacentText(position string, text string) error
 	OuterHTML() string
 	SetOuterHTML(string) error
 	InnerHTML() string
@@ -328,6 +329,11 @@ func (n *element) InsertAdjacentElement(position string, element Element) (res E
 		res = element
 	}
 	return
+}
+
+func (n *element) InsertAdjacentText(position string, text string) (err error) {
+	node := n.OwnerDocument().CreateTextNode(text)
+	return n.insertAdjacentNode(position, node)
 }
 
 func (n *element) InsertAdjacentHTML(position string, text string) error {

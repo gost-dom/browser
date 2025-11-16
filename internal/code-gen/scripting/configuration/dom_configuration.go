@@ -155,7 +155,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 		"getAttributeNodeNS",
 		"getElementsByTagNameNS",
 		"getElementsByClassName",
-		"insertAdjacentText",
 		"namespaceURI",
 		"prefix",
 		"localName",
