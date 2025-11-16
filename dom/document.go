@@ -12,8 +12,6 @@ import (
 
 type DocumentEvent = string
 
-type staticNodeList NodeList
-
 const (
 	DocumentEventDOMContentLoaded DocumentEvent = "DOMContentLoaded"
 	DocumentEventLoad             DocumentEvent = "load"
