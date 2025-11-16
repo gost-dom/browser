@@ -79,6 +79,8 @@ func configureDOMNode(specs *WebAPIConfig) {
 		// Custom Implementation
 		"createCDATASection",
 	)
+
+	// createElement has `is` option, relating to web components
 	document.Method("createElement").SetCustomImplementation()
 
 	nodeList := specs.Type("NodeList")
@@ -132,6 +134,9 @@ func configureDOMNode(specs *WebAPIConfig) {
 
 	domTokenList := specs.Type("DOMTokenList")
 	domTokenList.RunCustomCode = true
+
+	// Toggle has custom implementation, because the force option has behaviour that
+	// doesn't make supermuch sense to have in the internal DOM implementation
 	domTokenList.Method("toggle").SetCustomImplementation()
 	domTokenList.Method("supports").SetNotImplemented()
 
