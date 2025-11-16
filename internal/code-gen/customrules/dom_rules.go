@@ -9,6 +9,11 @@ var domRules = SpecRules{
 	"AbortSignal": {Operations: OperationRules{
 		"throwIfAborted": {HasError: true},
 	}},
+	"Document": {Operations: OperationRules{
+		"createElementNS": {Arguments: ArgumentRules{
+			"options": {Ignore: true, Variadic: true}, // TODO: Get this working
+		}},
+	}},
 	"Event": {OutputType: OutputTypeStruct},
 	"EventTarget": {Operations: OperationRules{
 		"addEventListener":    {Arguments: ArgumentRules{"options": {Variadic: true}}},

@@ -91,7 +91,18 @@ func (w Document[T]) createElementNS(cbCtx js.CallbackContext[T]) (res js.Value[
 	defer func() {
 		cbCtx.Logger().Debug("JS Function call: Document.createElementNS", js.LogAttr("res", res))
 	}()
-	return codec.EncodeCallbackErrorf(cbCtx, "Document.createElementNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	instance, errInst := js.As[dom.Document](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	namespace, errArg1 := js.ConsumeArgument(cbCtx, "namespace", codec.ZeroValue, codec.DecodeString)
+	qualifiedName, errArg2 := js.ConsumeArgument(cbCtx, "qualifiedName", nil, codec.DecodeString)
+	err = errors.Join(errArg1, errArg2)
+	if err != nil {
+		return nil, err
+	}
+	result := instance.CreateElementNS(namespace, qualifiedName)
+	return codec.EncodeEntity(cbCtx, result)
 }
 
 func (w Document[T]) createDocumentFragment(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

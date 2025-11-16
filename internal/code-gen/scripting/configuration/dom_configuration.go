@@ -74,7 +74,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 		"charset", "characterSet",
 		"compatMode", "URL",
 		"createAttributeNS",
-		"createElementNS",
 
 		// Custom Implementation
 		"createCDATASection",
