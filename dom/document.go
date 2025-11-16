@@ -39,6 +39,7 @@ type Document interface {
 	CreateDocumentType(name string) DocumentType
 	CreateElementNS(string, string) Element
 	CreateElement(string) Element
+	CreateProcessingInstruction(string, string) ProcessingInstruction
 	DocumentElement() Element
 	GetElementsByTagName(string) NodeList
 	ImportNode(Node, bool) Node
@@ -174,4 +175,8 @@ func (n *document) GetElementsByTagName(qualifiedName string) NodeList {
 		panic(fmt.Sprintf("document.GetElementsByTagName: %v", err))
 	}
 	return res
+}
+
+func (d *document) CreateProcessingInstruction(target string, data string) ProcessingInstruction {
+	return NewProcessingInstruction(target, data, d.document)
 }
