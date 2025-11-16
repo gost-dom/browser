@@ -30,8 +30,10 @@ func (w URL[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("hash", w.hash, w.setHash)
 }
 
-func (w URL[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: URL.Constructor")
+func (w URL[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: URL.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	url, errArg1 := js.ConsumeArgument(cbCtx, "url", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
@@ -46,8 +48,10 @@ func (w URL[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return w.CreateInstance(cbCtx, url)
 }
 
-func (w URL[T]) toJSON(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: URL.toJSON")
+func (w URL[T]) toJSON(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: URL.toJSON", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -59,8 +63,10 @@ func (w URL[T]) toJSON(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w URL[T]) href(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: URL.href")
+func (w URL[T]) href(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: URL.href", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -69,13 +75,17 @@ func (w URL[T]) href(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w URL[T]) setHref(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: URL.setHref")
+func (w URL[T]) setHref(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: URL.setHref", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "URL.setHref: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w URL[T]) origin(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: URL.origin")
+func (w URL[T]) origin(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: URL.origin", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -84,8 +94,10 @@ func (w URL[T]) origin(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w URL[T]) protocol(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: URL.protocol")
+func (w URL[T]) protocol(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: URL.protocol", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -94,33 +106,45 @@ func (w URL[T]) protocol(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w URL[T]) setProtocol(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: URL.setProtocol")
+func (w URL[T]) setProtocol(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: URL.setProtocol", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "URL.setProtocol: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w URL[T]) username(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: URL.username")
+func (w URL[T]) username(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: URL.username", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "URL.username: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w URL[T]) setUsername(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: URL.setUsername")
+func (w URL[T]) setUsername(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: URL.setUsername", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "URL.setUsername: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w URL[T]) password(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: URL.password")
+func (w URL[T]) password(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: URL.password", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "URL.password: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w URL[T]) setPassword(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: URL.setPassword")
+func (w URL[T]) setPassword(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: URL.setPassword", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "URL.setPassword: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w URL[T]) host(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: URL.host")
+func (w URL[T]) host(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: URL.host", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -129,13 +153,17 @@ func (w URL[T]) host(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w URL[T]) setHost(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: URL.setHost")
+func (w URL[T]) setHost(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: URL.setHost", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "URL.setHost: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w URL[T]) hostname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: URL.hostname")
+func (w URL[T]) hostname(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: URL.hostname", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -144,13 +172,17 @@ func (w URL[T]) hostname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w URL[T]) setHostname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: URL.setHostname")
+func (w URL[T]) setHostname(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: URL.setHostname", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "URL.setHostname: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w URL[T]) port(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: URL.port")
+func (w URL[T]) port(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: URL.port", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -159,13 +191,17 @@ func (w URL[T]) port(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w URL[T]) setPort(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: URL.setPort")
+func (w URL[T]) setPort(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: URL.setPort", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "URL.setPort: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w URL[T]) pathname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: URL.pathname")
+func (w URL[T]) pathname(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: URL.pathname", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -174,13 +210,17 @@ func (w URL[T]) pathname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w URL[T]) setPathname(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: URL.setPathname")
+func (w URL[T]) setPathname(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: URL.setPathname", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "URL.setPathname: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w URL[T]) search(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: URL.search")
+func (w URL[T]) search(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: URL.search", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -189,11 +229,13 @@ func (w URL[T]) search(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w URL[T]) setSearch(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: URL.setSearch")
+func (w URL[T]) setSearch(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: URL.setSearch", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err0 := js.As[*url.URL](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
-	err := errors.Join(err0, err1)
+	err = errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
 	}
@@ -201,13 +243,17 @@ func (w URL[T]) setSearch(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return nil, nil
 }
 
-func (w URL[T]) searchParams(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: URL.searchParams")
+func (w URL[T]) searchParams(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: URL.searchParams", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "URL.searchParams: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w URL[T]) hash(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: URL.hash")
+func (w URL[T]) hash(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: URL.hash", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*url.URL](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -216,7 +262,9 @@ func (w URL[T]) hash(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w URL[T]) setHash(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: URL.setHash")
+func (w URL[T]) setHash(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: URL.setHash", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "URL.setHash: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

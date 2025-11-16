@@ -114,8 +114,9 @@ type attrWriter struct {
 }
 
 func (w attrWriter) write(b *strings.Builder, a slog.Attr) {
-	if a.Value.Kind() == slog.KindGroup {
-		as := a.Value.Group()
+	value := a.Value.Resolve()
+	if value.Kind() == slog.KindGroup {
+		as := value.Group()
 		if len(as) == 0 {
 			return
 		}
@@ -125,7 +126,7 @@ func (w attrWriter) write(b *strings.Builder, a slog.Attr) {
 	w.writePrefix(b)
 	b.WriteString(a.Key)
 	b.WriteString(": ")
-	b.WriteString(a.Value.String())
+	b.WriteString(value.String())
 	b.WriteString("\n")
 }
 
@@ -169,7 +170,8 @@ func (w attrWriter) writeGroup(b *strings.Builder, a slog.Attr) {
 	w.groups = append(w.groups, a.Key)
 	defer func() { w.groups = g }()
 
-	for _, a := range a.Value.Group() {
+	value := a.Value.Resolve()
+	for _, a := range value.Group() {
 		w.write(b, a)
 	}
 }

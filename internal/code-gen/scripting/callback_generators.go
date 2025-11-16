@@ -3,6 +3,7 @@ package scripting
 import (
 	"fmt"
 
+	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/code-gen/scripting/model"
@@ -20,9 +21,12 @@ func (cb CallbackMethods) CallbackFunction(name string, body g.Generator) g.Gene
 			Name: cb.Receiver(),
 			Type: cb.WrapperStructType(),
 		},
-		Name:     name,
-		Args:     g.Arg(cb.CbCtx(), jsCbCtx),
-		RtnTypes: g.List(jsValue, g.NewType("error")),
+		Name: name,
+		Args: g.Arg(cb.CbCtx(), jsCbCtx),
+		RtnTypes: g.List(
+			g.Raw(jen.Id("res").Add(jsValue.Generate())),
+			g.Raw(jen.Id("err").Add(g.NewType("error").Generate())),
+		),
 		Body: g.StatementList(
 			cb.LogCall(name, cb.CbCtx()),
 			body,
@@ -158,8 +162,13 @@ func (cb CallbackMethods) ReturnNotImplementedError(
 }
 
 func (cb CallbackMethods) LogCall(name string, cbCtx g.Generator) g.Generator {
-	return g.ValueOf(cbCtx).Field("Logger").Call().Field("Debug").Call(
-		g.Lit(fmt.Sprintf("JS Function call: %s.%s", cb.Data.Name(), name)))
+	res := g.ValueOf(cbCtx).Field("Logger").Call().Field("Debug").Call(
+		g.Lit(fmt.Sprintf("JS Function call: %s.%s", cb.Data.Name(), name)),
+		jsThisLogAttr.Call(cbCtx),
+		jsLogAttr.Call(g.Lit("res"), g.Id("res")),
+	)
+	f := g.ValueOf(g.FunctionDefinition{Body: res})
+	return g.Raw(jen.Defer().Add(f.Call().Generate()))
 }
 
 func (cb CallbackMethods) assignInstance(

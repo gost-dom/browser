@@ -22,8 +22,10 @@ func (w MouseEvent[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("relatedTarget", w.relatedTarget, nil)
 }
 
-func (w MouseEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: MouseEvent.Constructor")
+func (w MouseEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: MouseEvent.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	type_, errArg1 := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
@@ -38,42 +40,58 @@ func (w MouseEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], er
 	return w.CreateInstance(cbCtx, type_)
 }
 
-func (w MouseEvent[T]) getModifierState(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: MouseEvent.getModifierState")
+func (w MouseEvent[T]) getModifierState(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: MouseEvent.getModifierState", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "MouseEvent.getModifierState: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w MouseEvent[T]) screenX(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: MouseEvent.screenX")
+func (w MouseEvent[T]) screenX(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: MouseEvent.screenX", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "MouseEvent.screenX: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w MouseEvent[T]) screenY(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: MouseEvent.screenY")
+func (w MouseEvent[T]) screenY(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: MouseEvent.screenY", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "MouseEvent.screenY: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w MouseEvent[T]) clientX(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: MouseEvent.clientX")
+func (w MouseEvent[T]) clientX(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: MouseEvent.clientX", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "MouseEvent.clientX: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w MouseEvent[T]) clientY(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: MouseEvent.clientY")
+func (w MouseEvent[T]) clientY(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: MouseEvent.clientY", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "MouseEvent.clientY: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w MouseEvent[T]) layerX(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: MouseEvent.layerX")
+func (w MouseEvent[T]) layerX(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: MouseEvent.layerX", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "MouseEvent.layerX: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w MouseEvent[T]) layerY(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: MouseEvent.layerY")
+func (w MouseEvent[T]) layerY(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: MouseEvent.layerY", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "MouseEvent.layerY: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w MouseEvent[T]) relatedTarget(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: MouseEvent.relatedTarget")
+func (w MouseEvent[T]) relatedTarget(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: MouseEvent.relatedTarget", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "MouseEvent.relatedTarget: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

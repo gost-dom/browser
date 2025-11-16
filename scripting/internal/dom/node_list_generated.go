@@ -24,13 +24,17 @@ func (w NodeList[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("length", w.length, nil)
 }
 
-func (w NodeList[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: NodeList.Constructor")
+func (w NodeList[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: NodeList.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w NodeList[T]) item(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: NodeList.item")
+func (w NodeList[T]) item(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: NodeList.item", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, errInst := js.As[dom.NodeList](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -43,8 +47,10 @@ func (w NodeList[T]) item(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w NodeList[T]) length(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: NodeList.length")
+func (w NodeList[T]) length(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: NodeList.length", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[dom.NodeList](cbCtx.Instance())
 	if err != nil {
 		return nil, err

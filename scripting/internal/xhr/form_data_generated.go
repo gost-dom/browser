@@ -29,8 +29,10 @@ func (w FormData[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("set", w.set)
 }
 
-func (w FormData[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: FormData.Constructor")
+func (w FormData[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: FormData.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	form, found, errArg := js.ConsumeOptionalArg(cbCtx, "form", w.decodeHTMLFormElement)
 	if found {
 		if errArg != nil {
@@ -48,15 +50,17 @@ func (w FormData[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], erro
 	return w.CreateInstance(cbCtx)
 }
 
-func (w FormData[T]) append(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: FormData.append")
+func (w FormData[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: FormData.append", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, errInst := js.As[*html.FormData](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
 	}
 	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
 	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, w.decodeFormDataValue)
-	err := errors.Join(errArg1, errArg2)
+	err = errors.Join(errArg1, errArg2)
 	if err != nil {
 		return nil, err
 	}
@@ -64,8 +68,10 @@ func (w FormData[T]) append(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return nil, nil
 }
 
-func (w FormData[T]) delete(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: FormData.delete")
+func (w FormData[T]) delete(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: FormData.delete", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, errInst := js.As[*html.FormData](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -78,8 +84,10 @@ func (w FormData[T]) delete(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return nil, nil
 }
 
-func (w FormData[T]) get(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: FormData.get")
+func (w FormData[T]) get(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: FormData.get", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, errInst := js.As[*html.FormData](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -92,8 +100,10 @@ func (w FormData[T]) get(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return w.toFormDataEntryValue(cbCtx, result)
 }
 
-func (w FormData[T]) getAll(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: FormData.getAll")
+func (w FormData[T]) getAll(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: FormData.getAll", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, errInst := js.As[*html.FormData](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -106,8 +116,10 @@ func (w FormData[T]) getAll(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return w.toSequenceFormDataEntryValue(cbCtx, result)
 }
 
-func (w FormData[T]) has(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: FormData.has")
+func (w FormData[T]) has(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: FormData.has", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, errInst := js.As[*html.FormData](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -120,15 +132,17 @@ func (w FormData[T]) has(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w FormData[T]) set(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: FormData.set")
+func (w FormData[T]) set(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: FormData.set", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, errInst := js.As[*html.FormData](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
 	}
 	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
 	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, w.decodeFormDataValue)
-	err := errors.Join(errArg1, errArg2)
+	err = errors.Join(errArg1, errArg2)
 	if err != nil {
 		return nil, err
 	}

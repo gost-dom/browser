@@ -26,13 +26,17 @@ func (w HTMLAnchorElement[T]) installPrototype(jsClass js.Class[T]) {
 	w.htmlHyperlinkElementUtils.installPrototype(jsClass)
 }
 
-func (w HTMLAnchorElement[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLAnchorElement.Constructor")
+func (w HTMLAnchorElement[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLAnchorElement.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w HTMLAnchorElement[T]) target(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLAnchorElement.target")
+func (w HTMLAnchorElement[T]) target(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLAnchorElement.target", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[html.HTMLAnchorElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -41,11 +45,13 @@ func (w HTMLAnchorElement[T]) target(cbCtx js.CallbackContext[T]) (js.Value[T], 
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w HTMLAnchorElement[T]) setTarget(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLAnchorElement.setTarget")
+func (w HTMLAnchorElement[T]) setTarget(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLAnchorElement.setTarget", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err0 := js.As[html.HTMLAnchorElement](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
-	err := errors.Join(err0, err1)
+	err = errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
 	}

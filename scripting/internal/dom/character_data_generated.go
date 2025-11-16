@@ -37,38 +37,52 @@ func (w CharacterData[T]) installPrototype(jsClass js.Class[T]) {
 	w.childNode.installPrototype(jsClass)
 }
 
-func (w CharacterData[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: CharacterData.Constructor")
+func (w CharacterData[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: CharacterData.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w CharacterData[T]) substringData(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: CharacterData.substringData")
+func (w CharacterData[T]) substringData(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: CharacterData.substringData", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "CharacterData.substringData: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w CharacterData[T]) appendData(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: CharacterData.appendData")
+func (w CharacterData[T]) appendData(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: CharacterData.appendData", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "CharacterData.appendData: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w CharacterData[T]) insertData(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: CharacterData.insertData")
+func (w CharacterData[T]) insertData(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: CharacterData.insertData", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "CharacterData.insertData: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w CharacterData[T]) deleteData(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: CharacterData.deleteData")
+func (w CharacterData[T]) deleteData(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: CharacterData.deleteData", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "CharacterData.deleteData: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w CharacterData[T]) replaceData(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: CharacterData.replaceData")
+func (w CharacterData[T]) replaceData(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: CharacterData.replaceData", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "CharacterData.replaceData: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w CharacterData[T]) data(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: CharacterData.data")
+func (w CharacterData[T]) data(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: CharacterData.data", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[dom.CharacterData](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -77,11 +91,13 @@ func (w CharacterData[T]) data(cbCtx js.CallbackContext[T]) (js.Value[T], error)
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w CharacterData[T]) setData(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: CharacterData.setData")
+func (w CharacterData[T]) setData(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: CharacterData.setData", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err0 := js.As[dom.CharacterData](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
-	err := errors.Join(err0, err1)
+	err = errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
 	}
@@ -89,8 +105,10 @@ func (w CharacterData[T]) setData(cbCtx js.CallbackContext[T]) (js.Value[T], err
 	return nil, nil
 }
 
-func (w CharacterData[T]) length(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: CharacterData.length")
+func (w CharacterData[T]) length(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: CharacterData.length", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[dom.CharacterData](cbCtx.Instance())
 	if err != nil {
 		return nil, err

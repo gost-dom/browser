@@ -30,13 +30,17 @@ func (w MutationRecord[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("oldValue", w.oldValue, nil)
 }
 
-func (w MutationRecord[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: MutationRecord.Constructor")
+func (w MutationRecord[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: MutationRecord.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w MutationRecord[T]) type_(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: MutationRecord.type_")
+func (w MutationRecord[T]) type_(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: MutationRecord.type_", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -45,8 +49,10 @@ func (w MutationRecord[T]) type_(cbCtx js.CallbackContext[T]) (js.Value[T], erro
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w MutationRecord[T]) target(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: MutationRecord.target")
+func (w MutationRecord[T]) target(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: MutationRecord.target", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -55,8 +61,10 @@ func (w MutationRecord[T]) target(cbCtx js.CallbackContext[T]) (js.Value[T], err
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w MutationRecord[T]) addedNodes(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: MutationRecord.addedNodes")
+func (w MutationRecord[T]) addedNodes(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: MutationRecord.addedNodes", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -65,8 +73,10 @@ func (w MutationRecord[T]) addedNodes(cbCtx js.CallbackContext[T]) (js.Value[T],
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w MutationRecord[T]) removedNodes(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: MutationRecord.removedNodes")
+func (w MutationRecord[T]) removedNodes(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: MutationRecord.removedNodes", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -75,8 +85,10 @@ func (w MutationRecord[T]) removedNodes(cbCtx js.CallbackContext[T]) (js.Value[T
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w MutationRecord[T]) previousSibling(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: MutationRecord.previousSibling")
+func (w MutationRecord[T]) previousSibling(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: MutationRecord.previousSibling", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -85,8 +97,10 @@ func (w MutationRecord[T]) previousSibling(cbCtx js.CallbackContext[T]) (js.Valu
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w MutationRecord[T]) nextSibling(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: MutationRecord.nextSibling")
+func (w MutationRecord[T]) nextSibling(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: MutationRecord.nextSibling", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -95,8 +109,10 @@ func (w MutationRecord[T]) nextSibling(cbCtx js.CallbackContext[T]) (js.Value[T]
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w MutationRecord[T]) attributeName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: MutationRecord.attributeName")
+func (w MutationRecord[T]) attributeName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: MutationRecord.attributeName", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -105,8 +121,10 @@ func (w MutationRecord[T]) attributeName(cbCtx js.CallbackContext[T]) (js.Value[
 	return codec.EncodeNullableString(cbCtx, result)
 }
 
-func (w MutationRecord[T]) attributeNamespace(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: MutationRecord.attributeNamespace")
+func (w MutationRecord[T]) attributeNamespace(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: MutationRecord.attributeNamespace", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -115,8 +133,10 @@ func (w MutationRecord[T]) attributeNamespace(cbCtx js.CallbackContext[T]) (js.V
 	return codec.EncodeNullableString(cbCtx, result)
 }
 
-func (w MutationRecord[T]) oldValue(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: MutationRecord.oldValue")
+func (w MutationRecord[T]) oldValue(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: MutationRecord.oldValue", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*dominterfaces.MutationRecord](cbCtx.Instance())
 	if err != nil {
 		return nil, err

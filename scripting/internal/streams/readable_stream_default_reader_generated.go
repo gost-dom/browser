@@ -23,8 +23,10 @@ func (w ReadableStreamDefaultReader[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("releaseLock", w.releaseLock)
 }
 
-func (w ReadableStreamDefaultReader[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: ReadableStreamDefaultReader.Constructor")
+func (w ReadableStreamDefaultReader[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: ReadableStreamDefaultReader.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	stream, errArg1 := js.ConsumeArgument(cbCtx, "stream", nil, w.decodeReadableStream)
 	if errArg1 != nil {
 		return nil, errArg1
@@ -32,8 +34,10 @@ func (w ReadableStreamDefaultReader[T]) Constructor(cbCtx js.CallbackContext[T])
 	return w.CreateInstance(cbCtx, stream)
 }
 
-func (w ReadableStreamDefaultReader[T]) read(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: ReadableStreamDefaultReader.read")
+func (w ReadableStreamDefaultReader[T]) read(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: ReadableStreamDefaultReader.read", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[streams.ReadableStreamDefaultReader](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -42,7 +46,9 @@ func (w ReadableStreamDefaultReader[T]) read(cbCtx js.CallbackContext[T]) (js.Va
 	return w.toPromiseReadableStreamReadResult(cbCtx, result)
 }
 
-func (w ReadableStreamDefaultReader[T]) releaseLock(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: ReadableStreamDefaultReader.releaseLock")
+func (w ReadableStreamDefaultReader[T]) releaseLock(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: ReadableStreamDefaultReader.releaseLock", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "ReadableStreamDefaultReader.releaseLock: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

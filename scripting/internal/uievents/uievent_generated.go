@@ -22,8 +22,10 @@ func (w UIEvent[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("detail", w.detail, nil)
 }
 
-func (w UIEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: UIEvent.Constructor")
+func (w UIEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: UIEvent.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	type_, errArg1 := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
@@ -38,12 +40,16 @@ func (w UIEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error
 	return w.CreateInstance(cbCtx, type_)
 }
 
-func (w UIEvent[T]) view(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: UIEvent.view")
+func (w UIEvent[T]) view(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: UIEvent.view", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "UIEvent.view: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w UIEvent[T]) detail(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: UIEvent.detail")
+func (w UIEvent[T]) detail(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: UIEvent.detail", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "UIEvent.detail: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

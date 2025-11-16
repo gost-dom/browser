@@ -15,6 +15,8 @@ var (
 	jsConsumeArg         = g.NewValuePackage("ConsumeArgument", packagenames.JS)
 	jsConsumeOptionalArg = g.NewValuePackage("ConsumeOptionalArg", packagenames.JS)
 	jsConsumeRestArgs    = g.NewValuePackage("ConsumeRestArguments", packagenames.JS)
+	jsThisLogAttr        = g.NewValuePackage("ThisLogAttr", packagenames.JS)
+	jsLogAttr            = g.NewValuePackage("LogAttr", packagenames.JS)
 
 	jsAs            = g.NewTypePackage("As", packagenames.JS)
 	jsValue         = g.NewTypePackage("Value", packagenames.JS).TypeParam(g.Id("T"))
@@ -30,6 +32,8 @@ var (
 
 	// Codecs
 	EncodeCallbackErrorf = g.NewValuePackage("EncodeCallbackErrorf", packagenames.Codec)
+
+	LogErrAttr = g.NewValuePackage("ErrAttr", packagenames.Log)
 )
 
 var IdlTypeUndefined = idl.Type{Name: "undefined", Kind: idl.KindSimple}

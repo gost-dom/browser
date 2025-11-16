@@ -32,28 +32,38 @@ func (w Response[T]) installPrototype(jsClass js.Class[T]) {
 	w.body.installPrototype(jsClass)
 }
 
-func (w Response[T]) clone(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Response.clone")
+func (w Response[T]) clone(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Response.clone", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Response.clone: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Response[T]) type_(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Response.type_")
+func (w Response[T]) type_(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Response.type_", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Response.type_: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Response[T]) url(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Response.url")
+func (w Response[T]) url(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Response.url", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Response.url: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Response[T]) redirected(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Response.redirected")
+func (w Response[T]) redirected(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Response.redirected", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Response.redirected: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Response[T]) status(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Response.status")
+func (w Response[T]) status(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Response.status", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*fetch.Response](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -62,18 +72,24 @@ func (w Response[T]) status(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeInt(cbCtx, result)
 }
 
-func (w Response[T]) ok(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Response.ok")
+func (w Response[T]) ok(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Response.ok", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Response.ok: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Response[T]) statusText(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Response.statusText")
+func (w Response[T]) statusText(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Response.statusText", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Response.statusText: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Response[T]) headers(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Response.headers")
+func (w Response[T]) headers(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Response.headers", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*fetch.Response](cbCtx.Instance())
 	if err != nil {
 		return nil, err

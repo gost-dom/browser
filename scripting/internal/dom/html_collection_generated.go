@@ -25,13 +25,17 @@ func (w HTMLCollection[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("length", w.length, nil)
 }
 
-func (w HTMLCollection[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLCollection.Constructor")
+func (w HTMLCollection[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLCollection.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w HTMLCollection[T]) item(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLCollection.item")
+func (w HTMLCollection[T]) item(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLCollection.item", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, errInst := js.As[dom.HTMLCollection](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -44,8 +48,10 @@ func (w HTMLCollection[T]) item(cbCtx js.CallbackContext[T]) (js.Value[T], error
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w HTMLCollection[T]) namedItem(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLCollection.namedItem")
+func (w HTMLCollection[T]) namedItem(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLCollection.namedItem", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, errInst := js.As[dom.HTMLCollection](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -58,8 +64,10 @@ func (w HTMLCollection[T]) namedItem(cbCtx js.CallbackContext[T]) (js.Value[T], 
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w HTMLCollection[T]) length(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLCollection.length")
+func (w HTMLCollection[T]) length(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLCollection.length", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[dom.HTMLCollection](cbCtx.Instance())
 	if err != nil {
 		return nil, err

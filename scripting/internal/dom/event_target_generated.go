@@ -25,13 +25,17 @@ func (w EventTarget[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("dispatchEvent", w.dispatchEvent)
 }
 
-func (w EventTarget[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: EventTarget.Constructor")
+func (w EventTarget[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: EventTarget.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return w.CreateInstance(cbCtx)
 }
 
-func (w EventTarget[T]) addEventListener(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: EventTarget.addEventListener")
+func (w EventTarget[T]) addEventListener(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: EventTarget.addEventListener", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, errInst := js.As[event.EventTarget](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -39,7 +43,7 @@ func (w EventTarget[T]) addEventListener(cbCtx js.CallbackContext[T]) (js.Value[
 	type_, errArg1 := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
 	callback, errArg2 := js.ConsumeArgument(cbCtx, "callback", codec.ZeroValue, w.decodeEventListener)
 	options, errArg3 := js.ConsumeArgument(cbCtx, "options", w.defaultEventListenerOptions, w.decodeEventListenerOptions)
-	err := errors.Join(errArg1, errArg2, errArg3)
+	err = errors.Join(errArg1, errArg2, errArg3)
 	if err != nil {
 		return nil, err
 	}
@@ -47,8 +51,10 @@ func (w EventTarget[T]) addEventListener(cbCtx js.CallbackContext[T]) (js.Value[
 	return nil, nil
 }
 
-func (w EventTarget[T]) removeEventListener(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: EventTarget.removeEventListener")
+func (w EventTarget[T]) removeEventListener(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: EventTarget.removeEventListener", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, errInst := js.As[event.EventTarget](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -56,7 +62,7 @@ func (w EventTarget[T]) removeEventListener(cbCtx js.CallbackContext[T]) (js.Val
 	type_, errArg1 := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
 	callback, errArg2 := js.ConsumeArgument(cbCtx, "callback", codec.ZeroValue, w.decodeEventListener)
 	options, errArg3 := js.ConsumeArgument(cbCtx, "options", w.defaultEventListenerOptions, w.decodeEventListenerOptions)
-	err := errors.Join(errArg1, errArg2, errArg3)
+	err = errors.Join(errArg1, errArg2, errArg3)
 	if err != nil {
 		return nil, err
 	}
@@ -64,8 +70,10 @@ func (w EventTarget[T]) removeEventListener(cbCtx js.CallbackContext[T]) (js.Val
 	return nil, nil
 }
 
-func (w EventTarget[T]) dispatchEvent(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: EventTarget.dispatchEvent")
+func (w EventTarget[T]) dispatchEvent(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: EventTarget.dispatchEvent", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, errInst := js.As[event.EventTarget](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst

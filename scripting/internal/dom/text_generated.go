@@ -22,17 +22,23 @@ func (w Text[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("wholeText", w.wholeText, nil)
 }
 
-func (w Text[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Text.Constructor")
+func (w Text[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Text.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w Text[T]) splitText(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Text.splitText")
+func (w Text[T]) splitText(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Text.splitText", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Text.splitText: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Text[T]) wholeText(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Text.wholeText")
+func (w Text[T]) wholeText(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Text.wholeText", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Text.wholeText: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

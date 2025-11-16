@@ -33,13 +33,17 @@ func (w DOMTokenList[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("toString", w.value)
 }
 
-func (w DOMTokenList[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: DOMTokenList.Constructor")
+func (w DOMTokenList[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: DOMTokenList.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w DOMTokenList[T]) item(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: DOMTokenList.item")
+func (w DOMTokenList[T]) item(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: DOMTokenList.item", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -52,8 +56,10 @@ func (w DOMTokenList[T]) item(cbCtx js.CallbackContext[T]) (js.Value[T], error) 
 	return codec.EncodeNillableString(cbCtx, result, hasValue)
 }
 
-func (w DOMTokenList[T]) contains(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: DOMTokenList.contains")
+func (w DOMTokenList[T]) contains(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: DOMTokenList.contains", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -66,8 +72,10 @@ func (w DOMTokenList[T]) contains(cbCtx js.CallbackContext[T]) (js.Value[T], err
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w DOMTokenList[T]) add(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: DOMTokenList.add")
+func (w DOMTokenList[T]) add(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: DOMTokenList.add", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -80,15 +88,17 @@ func (w DOMTokenList[T]) add(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return nil, errCall
 }
 
-func (w DOMTokenList[T]) replace(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: DOMTokenList.replace")
+func (w DOMTokenList[T]) replace(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: DOMTokenList.replace", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
 	}
 	token, errArg1 := js.ConsumeArgument(cbCtx, "token", nil, codec.DecodeString)
 	newToken, errArg2 := js.ConsumeArgument(cbCtx, "newToken", nil, codec.DecodeString)
-	err := errors.Join(errArg1, errArg2)
+	err = errors.Join(errArg1, errArg2)
 	if err != nil {
 		return nil, err
 	}
@@ -96,13 +106,17 @@ func (w DOMTokenList[T]) replace(cbCtx js.CallbackContext[T]) (js.Value[T], erro
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w DOMTokenList[T]) supports(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: DOMTokenList.supports")
+func (w DOMTokenList[T]) supports(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: DOMTokenList.supports", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "DOMTokenList.supports: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w DOMTokenList[T]) length(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: DOMTokenList.length")
+func (w DOMTokenList[T]) length(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: DOMTokenList.length", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -111,8 +125,10 @@ func (w DOMTokenList[T]) length(cbCtx js.CallbackContext[T]) (js.Value[T], error
 	return codec.EncodeInt(cbCtx, result)
 }
 
-func (w DOMTokenList[T]) value(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: DOMTokenList.value")
+func (w DOMTokenList[T]) value(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: DOMTokenList.value", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -121,11 +137,13 @@ func (w DOMTokenList[T]) value(cbCtx js.CallbackContext[T]) (js.Value[T], error)
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w DOMTokenList[T]) setValue(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: DOMTokenList.setValue")
+func (w DOMTokenList[T]) setValue(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: DOMTokenList.setValue", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err0 := js.As[dom.DOMTokenList](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
-	err := errors.Join(err0, err1)
+	err = errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
 	}

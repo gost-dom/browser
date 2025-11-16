@@ -42,29 +42,37 @@ func (w Request[T]) installPrototype(jsClass js.Class[T]) {
 	w.body.installPrototype(jsClass)
 }
 
-func (w Request[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Request.Constructor")
+func (w Request[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Request.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	input, errArg1 := js.ConsumeArgument(cbCtx, "input", nil, w.decodeRequestInfo)
 	init, errArg2 := js.ConsumeArgument(cbCtx, "init", nil, w.decodeRequestInit)
-	err := errors.Join(errArg1, errArg2)
+	err = errors.Join(errArg1, errArg2)
 	if err != nil {
 		return nil, err
 	}
 	return w.CreateInstance(cbCtx, input, init...)
 }
 
-func (w Request[T]) clone(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Request.clone")
+func (w Request[T]) clone(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Request.clone", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Request.clone: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) method(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Request.method")
+func (w Request[T]) method(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Request.method", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Request.method: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) url(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Request.url")
+func (w Request[T]) url(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Request.url", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*fetch.Request](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -73,72 +81,100 @@ func (w Request[T]) url(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w Request[T]) headers(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Request.headers")
+func (w Request[T]) headers(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Request.headers", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Request.headers: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) destination(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Request.destination")
+func (w Request[T]) destination(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Request.destination", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Request.destination: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) referrer(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Request.referrer")
+func (w Request[T]) referrer(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Request.referrer", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Request.referrer: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) referrerPolicy(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Request.referrerPolicy")
+func (w Request[T]) referrerPolicy(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Request.referrerPolicy", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Request.referrerPolicy: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) mode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Request.mode")
+func (w Request[T]) mode(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Request.mode", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Request.mode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) credentials(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Request.credentials")
+func (w Request[T]) credentials(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Request.credentials", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Request.credentials: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) cache(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Request.cache")
+func (w Request[T]) cache(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Request.cache", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Request.cache: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) redirect(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Request.redirect")
+func (w Request[T]) redirect(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Request.redirect", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Request.redirect: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) integrity(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Request.integrity")
+func (w Request[T]) integrity(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Request.integrity", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Request.integrity: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) keepalive(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Request.keepalive")
+func (w Request[T]) keepalive(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Request.keepalive", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Request.keepalive: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) isReloadNavigation(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Request.isReloadNavigation")
+func (w Request[T]) isReloadNavigation(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Request.isReloadNavigation", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Request.isReloadNavigation: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) isHistoryNavigation(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Request.isHistoryNavigation")
+func (w Request[T]) isHistoryNavigation(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Request.isHistoryNavigation", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Request.isHistoryNavigation: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) signal(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Request.signal")
+func (w Request[T]) signal(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Request.signal", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Request.signal: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) duplex(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Request.duplex")
+func (w Request[T]) duplex(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Request.duplex", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Request.duplex: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

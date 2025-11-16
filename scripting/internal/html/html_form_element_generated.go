@@ -38,13 +38,17 @@ func (w HTMLFormElement[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("length", w.length, nil)
 }
 
-func (w HTMLFormElement[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLFormElement.Constructor")
+func (w HTMLFormElement[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLFormElement.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w HTMLFormElement[T]) submit(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLFormElement.submit")
+func (w HTMLFormElement[T]) submit(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLFormElement.submit", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[html.HTMLFormElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -53,8 +57,10 @@ func (w HTMLFormElement[T]) submit(cbCtx js.CallbackContext[T]) (js.Value[T], er
 	return nil, errCall
 }
 
-func (w HTMLFormElement[T]) requestSubmit(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLFormElement.requestSubmit")
+func (w HTMLFormElement[T]) requestSubmit(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLFormElement.requestSubmit", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, errInst := js.As[html.HTMLFormElement](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -67,33 +73,45 @@ func (w HTMLFormElement[T]) requestSubmit(cbCtx js.CallbackContext[T]) (js.Value
 	return nil, errCall
 }
 
-func (w HTMLFormElement[T]) reset(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLFormElement.reset")
+func (w HTMLFormElement[T]) reset(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLFormElement.reset", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.reset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) checkValidity(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLFormElement.checkValidity")
+func (w HTMLFormElement[T]) checkValidity(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLFormElement.checkValidity", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.checkValidity: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) reportValidity(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLFormElement.reportValidity")
+func (w HTMLFormElement[T]) reportValidity(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLFormElement.reportValidity", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.reportValidity: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) acceptCharset(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLFormElement.acceptCharset")
+func (w HTMLFormElement[T]) acceptCharset(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLFormElement.acceptCharset", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.acceptCharset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) setAcceptCharset(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLFormElement.setAcceptCharset")
+func (w HTMLFormElement[T]) setAcceptCharset(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLFormElement.setAcceptCharset", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.setAcceptCharset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) action(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLFormElement.action")
+func (w HTMLFormElement[T]) action(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLFormElement.action", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[html.HTMLFormElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -102,11 +120,13 @@ func (w HTMLFormElement[T]) action(cbCtx js.CallbackContext[T]) (js.Value[T], er
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w HTMLFormElement[T]) setAction(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLFormElement.setAction")
+func (w HTMLFormElement[T]) setAction(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLFormElement.setAction", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err0 := js.As[html.HTMLFormElement](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
-	err := errors.Join(err0, err1)
+	err = errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
 	}
@@ -114,38 +134,52 @@ func (w HTMLFormElement[T]) setAction(cbCtx js.CallbackContext[T]) (js.Value[T],
 	return nil, nil
 }
 
-func (w HTMLFormElement[T]) autocomplete(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLFormElement.autocomplete")
+func (w HTMLFormElement[T]) autocomplete(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLFormElement.autocomplete", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.autocomplete: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) setAutocomplete(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLFormElement.setAutocomplete")
+func (w HTMLFormElement[T]) setAutocomplete(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLFormElement.setAutocomplete", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.setAutocomplete: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) enctype(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLFormElement.enctype")
+func (w HTMLFormElement[T]) enctype(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLFormElement.enctype", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.enctype: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) setEnctype(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLFormElement.setEnctype")
+func (w HTMLFormElement[T]) setEnctype(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLFormElement.setEnctype", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.setEnctype: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) encoding(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLFormElement.encoding")
+func (w HTMLFormElement[T]) encoding(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLFormElement.encoding", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.encoding: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) setEncoding(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLFormElement.setEncoding")
+func (w HTMLFormElement[T]) setEncoding(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLFormElement.setEncoding", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.setEncoding: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) method(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLFormElement.method")
+func (w HTMLFormElement[T]) method(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLFormElement.method", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[html.HTMLFormElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -154,11 +188,13 @@ func (w HTMLFormElement[T]) method(cbCtx js.CallbackContext[T]) (js.Value[T], er
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w HTMLFormElement[T]) setMethod(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLFormElement.setMethod")
+func (w HTMLFormElement[T]) setMethod(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLFormElement.setMethod", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err0 := js.As[html.HTMLFormElement](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
-	err := errors.Join(err0, err1)
+	err = errors.Join(err0, err1)
 	if err != nil {
 		return nil, err
 	}
@@ -166,33 +202,45 @@ func (w HTMLFormElement[T]) setMethod(cbCtx js.CallbackContext[T]) (js.Value[T],
 	return nil, nil
 }
 
-func (w HTMLFormElement[T]) target(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLFormElement.target")
+func (w HTMLFormElement[T]) target(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLFormElement.target", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.target: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) setTarget(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLFormElement.setTarget")
+func (w HTMLFormElement[T]) setTarget(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLFormElement.setTarget", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.setTarget: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) rel(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLFormElement.rel")
+func (w HTMLFormElement[T]) rel(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLFormElement.rel", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.rel: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) setRel(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLFormElement.setRel")
+func (w HTMLFormElement[T]) setRel(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLFormElement.setRel", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.setRel: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) relList(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLFormElement.relList")
+func (w HTMLFormElement[T]) relList(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLFormElement.relList", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.relList: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) elements(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLFormElement.elements")
+func (w HTMLFormElement[T]) elements(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLFormElement.elements", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[html.HTMLFormElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -201,7 +249,9 @@ func (w HTMLFormElement[T]) elements(cbCtx js.CallbackContext[T]) (js.Value[T], 
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w HTMLFormElement[T]) length(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLFormElement.length")
+func (w HTMLFormElement[T]) length(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: HTMLFormElement.length", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.length: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

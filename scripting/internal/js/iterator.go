@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"iter"
 	"slices"
+
+	"github.com/gost-dom/browser/internal/log"
 )
 
 // Iterator implements the iterator protocol for a Go iter.Seq[E]. Type
@@ -60,7 +62,10 @@ func (i Iterator[T, U]) InstallPrototype(class Class[U]) {
 	class.CreateIteratorMethod(i.entries)
 }
 
-func (i Iterator[T, U]) entries(cbCtx CallbackContext[U]) (Value[U], error) {
+func (i Iterator[T, U]) entries(cbCtx CallbackContext[U]) (res Value[U], err error) {
+	defer cbCtx.Logger().
+		Debug("JS Function call: Iterator.entries", ThisLogAttr(cbCtx), LogAttr("retVal", res), log.ErrAttr(err))
+
 	instance, err1 := As[iterable[T]](cbCtx.Instance())
 	if err1 == nil {
 		return i.NewIterator(cbCtx, instance.All())
@@ -126,7 +131,12 @@ func (i Iterator2[K, V, U]) newIterator(
 // - "keys" - Returns an iterator over all keys
 // - "values" - Returns an iterator over all values
 func (i Iterator2[K, V, U]) InstallPrototype(cls Class[U]) {
-	getEntries := func(cbCtx CallbackContext[U]) (Value[U], error) {
+	getEntries := func(cbCtx CallbackContext[U]) (res Value[U], err error) {
+		cbCtx.Logger().Debug("JS Function call: Iterator2.entries", ThisLogAttr(cbCtx))
+		defer func() {
+			cbCtx.Logger().
+				Debug("JS Function call: Iterator2.entries", ThisLogAttr(cbCtx), LogAttr("retVal", res), log.ErrAttr(err))
+		}()
 		instance, err := As[iterable2[K, V]](cbCtx.Instance())
 		if err != nil {
 			return nil, err
@@ -138,6 +148,7 @@ func (i Iterator2[K, V, U]) InstallPrototype(cls Class[U]) {
 	keys := NewIterator(i.keyLookup)
 	values := NewIterator(i.valueLookup)
 	cls.CreatePrototypeMethod("keys", func(cbCtx CallbackContext[U]) (Value[U], error) {
+		cbCtx.Logger().Debug("JS Function call: Iterator2.keys", ThisLogAttr(cbCtx))
 		instance, err := As[iterable2[K, V]](cbCtx.Instance())
 		if err != nil {
 			return nil, err
@@ -145,6 +156,7 @@ func (i Iterator2[K, V, U]) InstallPrototype(cls Class[U]) {
 		return keys.NewIterator(cbCtx, pairKeys(instance.All()))
 	})
 	cls.CreatePrototypeMethod("values", func(cbCtx CallbackContext[U]) (Value[U], error) {
+		cbCtx.Logger().Debug("JS Function call: Iterator2.values", ThisLogAttr(cbCtx))
 		instance, err := As[iterable2[K, V]](cbCtx.Instance())
 		if err != nil {
 			return nil, err

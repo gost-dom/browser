@@ -41,13 +41,17 @@ func (w Node[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("textContent", w.textContent, w.setTextContent)
 }
 
-func (w Node[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Node.Constructor")
+func (w Node[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Node.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w Node[T]) getRootNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Node.getRootNode")
+func (w Node[T]) getRootNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Node.getRootNode", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -60,8 +64,10 @@ func (w Node[T]) getRootNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w Node[T]) cloneNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Node.cloneNode")
+func (w Node[T]) cloneNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Node.cloneNode", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -74,8 +80,10 @@ func (w Node[T]) cloneNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w Node[T]) isEqualNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Node.isEqualNode")
+func (w Node[T]) isEqualNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Node.isEqualNode", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -88,8 +96,10 @@ func (w Node[T]) isEqualNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w Node[T]) isSameNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Node.isSameNode")
+func (w Node[T]) isSameNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Node.isSameNode", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -102,8 +112,10 @@ func (w Node[T]) isSameNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w Node[T]) contains(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Node.contains")
+func (w Node[T]) contains(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Node.contains", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -116,15 +128,17 @@ func (w Node[T]) contains(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w Node[T]) insertBefore(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Node.insertBefore")
+func (w Node[T]) insertBefore(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Node.insertBefore", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
 	}
 	node, errArg1 := js.ConsumeArgument(cbCtx, "node", nil, codec.DecodeNode)
 	child, errArg2 := js.ConsumeArgument(cbCtx, "child", codec.ZeroValue, codec.DecodeNode)
-	err := errors.Join(errArg1, errArg2)
+	err = errors.Join(errArg1, errArg2)
 	if err != nil {
 		return nil, err
 	}
@@ -135,8 +149,10 @@ func (w Node[T]) insertBefore(cbCtx js.CallbackContext[T]) (js.Value[T], error) 
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w Node[T]) appendChild(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Node.appendChild")
+func (w Node[T]) appendChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Node.appendChild", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -152,8 +168,10 @@ func (w Node[T]) appendChild(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w Node[T]) removeChild(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Node.removeChild")
+func (w Node[T]) removeChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Node.removeChild", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -169,8 +187,10 @@ func (w Node[T]) removeChild(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w Node[T]) nodeName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Node.nodeName")
+func (w Node[T]) nodeName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Node.nodeName", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -179,8 +199,10 @@ func (w Node[T]) nodeName(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w Node[T]) isConnected(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Node.isConnected")
+func (w Node[T]) isConnected(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Node.isConnected", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -189,8 +211,10 @@ func (w Node[T]) isConnected(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w Node[T]) ownerDocument(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Node.ownerDocument")
+func (w Node[T]) ownerDocument(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Node.ownerDocument", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -199,8 +223,10 @@ func (w Node[T]) ownerDocument(cbCtx js.CallbackContext[T]) (js.Value[T], error)
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w Node[T]) parentNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Node.parentNode")
+func (w Node[T]) parentNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Node.parentNode", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -209,8 +235,10 @@ func (w Node[T]) parentNode(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w Node[T]) parentElement(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Node.parentElement")
+func (w Node[T]) parentElement(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Node.parentElement", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -219,8 +247,10 @@ func (w Node[T]) parentElement(cbCtx js.CallbackContext[T]) (js.Value[T], error)
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w Node[T]) childNodes(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Node.childNodes")
+func (w Node[T]) childNodes(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Node.childNodes", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -229,8 +259,10 @@ func (w Node[T]) childNodes(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w Node[T]) firstChild(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Node.firstChild")
+func (w Node[T]) firstChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Node.firstChild", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -239,8 +271,10 @@ func (w Node[T]) firstChild(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w Node[T]) previousSibling(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Node.previousSibling")
+func (w Node[T]) previousSibling(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Node.previousSibling", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -249,8 +283,10 @@ func (w Node[T]) previousSibling(cbCtx js.CallbackContext[T]) (js.Value[T], erro
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w Node[T]) nextSibling(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Node.nextSibling")
+func (w Node[T]) nextSibling(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Node.nextSibling", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err

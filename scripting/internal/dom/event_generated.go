@@ -31,19 +31,23 @@ func (w Event[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("defaultPrevented", w.defaultPrevented, nil)
 }
 
-func (w Event[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Event.Constructor")
+func (w Event[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Event.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	type_, errArg1 := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
 	eventInitDict, errArg2 := js.ConsumeArgument(cbCtx, "eventInitDict", codec.ZeroValue, codec.DecodeEventInit)
-	err := errors.Join(errArg1, errArg2)
+	err = errors.Join(errArg1, errArg2)
 	if err != nil {
 		return nil, err
 	}
 	return w.CreateInstance(cbCtx, type_, eventInitDict)
 }
 
-func (w Event[T]) stopPropagation(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Event.stopPropagation")
+func (w Event[T]) stopPropagation(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Event.stopPropagation", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -52,8 +56,10 @@ func (w Event[T]) stopPropagation(cbCtx js.CallbackContext[T]) (js.Value[T], err
 	return nil, nil
 }
 
-func (w Event[T]) preventDefault(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Event.preventDefault")
+func (w Event[T]) preventDefault(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Event.preventDefault", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -62,8 +68,10 @@ func (w Event[T]) preventDefault(cbCtx js.CallbackContext[T]) (js.Value[T], erro
 	return nil, nil
 }
 
-func (w Event[T]) type_(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Event.type_")
+func (w Event[T]) type_(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Event.type_", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -72,8 +80,10 @@ func (w Event[T]) type_(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w Event[T]) target(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Event.target")
+func (w Event[T]) target(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Event.target", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -82,8 +92,10 @@ func (w Event[T]) target(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return w.toEventTarget(cbCtx, result)
 }
 
-func (w Event[T]) currentTarget(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Event.currentTarget")
+func (w Event[T]) currentTarget(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Event.currentTarget", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -92,8 +104,10 @@ func (w Event[T]) currentTarget(cbCtx js.CallbackContext[T]) (js.Value[T], error
 	return w.toEventTarget(cbCtx, result)
 }
 
-func (w Event[T]) bubbles(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Event.bubbles")
+func (w Event[T]) bubbles(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Event.bubbles", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -102,8 +116,10 @@ func (w Event[T]) bubbles(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w Event[T]) cancelable(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Event.cancelable")
+func (w Event[T]) cancelable(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Event.cancelable", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -112,8 +128,10 @@ func (w Event[T]) cancelable(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w Event[T]) defaultPrevented(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("JS Function call: Event.defaultPrevented")
+func (w Event[T]) defaultPrevented(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Event.defaultPrevented", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
