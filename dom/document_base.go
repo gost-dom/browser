@@ -30,6 +30,9 @@ func newRootNode(ownerDoc Document) rootNode {
 type rootNodeHelper struct{ RootNode }
 
 func (d rootNodeHelper) GetElementById(id string) Element {
+	if id == "" {
+		return nil
+	}
 	var search func(node Node) Element
 	search = func(node Node) Element {
 		if elm, ok := node.(Element); ok {

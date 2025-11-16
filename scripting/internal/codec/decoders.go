@@ -11,7 +11,10 @@ import (
 
 func ZeroValue[T any]() (res T) { return }
 
-func DecodeString[T any](_ js.Scope[T], v js.Value[T]) (string, error) {
+func DecodeString[T any](s js.Scope[T], v js.Value[T]) (string, error) {
+	if v == nil {
+		v = s.Undefined()
+	}
 	return v.String(), nil
 }
 
