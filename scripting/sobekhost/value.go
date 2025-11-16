@@ -1,6 +1,8 @@
 package sobekhost
 
 import (
+	"log/slog"
+
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/grafana/sobek"
 )
@@ -103,6 +105,21 @@ func (o gojaObject) SetNativeValue(value any) {
 		sobek.FLAG_FALSE, // Configurable
 		sobek.FLAG_FALSE, // Enumerable
 	)
+}
+
+func (o gojaObject) LogValue() slog.Value {
+	var (
+		protoAttr slog.Attr
+	)
+	if proto := o.obj.Prototype(); proto == nil {
+		protoAttr = slog.String("prototype", "null")
+	} else {
+		// proto.ClassName()
+		ctor := proto.Get("constructor")
+		name := ctor.ToObject(o.ctx.vm).Get("name").String()
+		protoAttr = slog.String("prototype", name)
+	}
+	return slog.GroupValue(protoAttr)
 }
 
 type gojaFunction struct {

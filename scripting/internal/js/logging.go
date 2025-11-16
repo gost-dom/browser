@@ -9,6 +9,7 @@ type jsValueLogger[T any] struct{ v Value[T] }
 
 func (l jsValueLogger[T]) LogValue() slog.Value {
 	val := l.v
+	valuer, isValuer := val.(slog.LogValuer)
 	if val == nil || val.IsUndefined() {
 		return slog.StringValue("undefined")
 	}
@@ -16,17 +17,29 @@ func (l jsValueLogger[T]) LogValue() slog.Value {
 		return slog.StringValue("null")
 	}
 	if obj, ok := val.AsObject(); ok {
+		values := make([]slog.Attr, 0, 3)
 		if native := obj.NativeValue(); native != nil {
-			return slog.GroupValue(
+			values = append(values,
 				slog.String("type", fmt.Sprintf("%T", native)),
 				slog.Any("val", native),
 			)
 		}
-		// Don't log the object directly, as custom toString() functions will
-		// stack overflow.
-		return slog.StringValue("JS Object")
+		if isValuer {
+			values = append(values, slog.Any("jsvalue", valuer))
+		}
+		if len(values) > 0 {
+			return slog.GroupValue(values...)
+		} else {
+			// Don't log the object directly, as custom toString() functions will
+			// stack overflow.
+			return slog.StringValue("JS Object")
+		}
 	}
-	return slog.AnyValue(val)
+	if isValuer {
+		return slog.AnyValue(valuer)
+	} else {
+		return slog.AnyValue(val)
+	}
 }
 
 type thisLogger[T any] struct{ ctx CallbackContext[T] }
