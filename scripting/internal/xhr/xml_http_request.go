@@ -3,10 +3,8 @@ package xhr
 import (
 	"errors"
 	"io"
-	"strings"
 
 	"github.com/gost-dom/browser/dom/event"
-	"github.com/gost-dom/browser/html"
 	inthtml "github.com/gost-dom/browser/internal/html"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
@@ -23,24 +21,10 @@ func (xhr XMLHttpRequest[T]) decodeDocument(
 }
 
 func (xhr XMLHttpRequest[T]) decodeXMLHttpRequestBodyInit(
-	_ js.Scope[T],
+	s js.Scope[T],
 	val js.Value[T],
 ) (io.Reader, error) {
-	if val == nil {
-		return nil, nil
-	}
-	if val.IsUndefined() || val.IsNull() {
-		return nil, nil
-	}
-	if val.IsString() {
-		return strings.NewReader(val.String()), nil
-	}
-	if obj, ok := val.AsObject(); ok {
-		if res, ok := obj.NativeValue().(*html.FormData); ok {
-			return res.GetReader(), nil
-		}
-	}
-	return nil, errors.New("XMLHTTPRequest only accepts FormData body yet")
+	return codec.DecodeRequestBody(s, val)
 }
 
 func (xhr XMLHttpRequest[T]) CreateInstance(

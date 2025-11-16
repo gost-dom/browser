@@ -1,9 +1,7 @@
 package fetch
 
 import (
-	"bytes"
 	"fmt"
-	"io"
 
 	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/internal/fetch"
@@ -39,7 +37,7 @@ func decodeRequestInit[T any](
 	options := codec.Options[T, fetch.RequestOption]{
 		"signal": codec.OptDecoder[T](codec.DecodeInnerObject, fetch.WithSignal),
 		"method": codec.OptDecoder[T](codec.DecodeString, fetch.WithMethod),
-		"body":   codec.OptDecoder[T](decodeBody, fetch.WithBody),
+		"body":   codec.OptDecoder[T](codec.DecodeRequestBody, fetch.WithBody),
 	}
 	for _, optName := range missingRequestOptions {
 		options[optName] = func(js.Scope[T], js.Value[T]) (fetch.RequestOption, error) {
@@ -57,15 +55,4 @@ var missingRequestOptions = []string{
 	"headers", "referrer", "referrerPolicy",
 	"mode", "credentials", "cache", "redirect", "integrity",
 	"keepalive", "duplex", "priority", "window",
-}
-
-func decodeBody[T any](_ js.Scope[T], v js.Value[T]) (io.Reader, error) {
-	if v.IsString() {
-		b := bytes.NewBufferString(v.String())
-		return b, nil
-	}
-	return nil, fmt.Errorf(
-		"gost-dom/fetch: decode RequestInit: %s body not yet supported. %s",
-		v, constants.MISSING_FEATURE_ISSUE_URL,
-	)
 }
