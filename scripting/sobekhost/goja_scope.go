@@ -8,6 +8,7 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/entity"
+	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/grafana/sobek"
 )
@@ -147,24 +148,31 @@ func (f gojaScope) NewIterator(
 		"next",
 		wrapJSCallback(
 			f.GojaContext,
-			func(cbCtx js.CallbackContext[jsTypeParam]) (js.Value[jsTypeParam], error) {
-				cbCtx.Logger().Debug("js function call: sobekhost/iterator.next")
+			func(cbCtx js.CallbackContext[jsTypeParam]) (res js.Value[jsTypeParam], err error) {
+				defer func() {
+					cbCtx.Logger().Debug("js function call: sobekhost/iterator.next",
+						js.ThisLogAttr(cbCtx),
+						js.LogAttr("res", res),
+						log.ErrAttr(err),
+					)
+				}()
 				instance, ok := (cbCtx.This().NativeValue()).(*gojaIteratorInstance)
 				if !ok {
 					return cbCtx.ReturnWithTypeError("Not an iterator instance")
 				}
-				res := f.vm.NewObject()
+				obj := f.vm.NewObject()
 				item, err, ok := instance.next()
 				cbCtx.Logger().Debug("sobek next", "item", item, "err", err, "ok", ok)
-				res.Set("done", instance.vm.ToValue(!ok))
+				obj.Set("done", instance.vm.ToValue(!ok))
 				if !ok {
 					instance.stop()
 				} else {
 					if err == nil {
-						res.Set("value", item.Self().value)
+						obj.Set("value", item.Self().value)
 					}
 				}
-				return newGojaObject(f.GojaContext, res), err
+				res = newGojaObject(f.GojaContext, obj)
+				return
 			},
 		),
 	)

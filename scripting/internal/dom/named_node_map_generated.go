@@ -39,7 +39,7 @@ func (w NamedNodeMap[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[
 
 func (w NamedNodeMap[T]) item(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: NamedNodeMap.item", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		// cbCtx.Logger().Debug("JS Function call: NamedNodeMap.item", js.ThisLogAttr(cbCtx))
 	}()
 	instance, errInst := js.As[dom.NamedNodeMap](cbCtx.Instance())
 	if errInst != nil {
