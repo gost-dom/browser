@@ -45,7 +45,7 @@ func configureWindow(htmlSpecs *WebAPIConfig) {
 	window.Method("window").SetCustomImplementation()
 
 	window.Method("location").Ignore()
-	window.Method("parent").Ignore() // On `Node`
+	window.Method("parent").SetCustomImplementation()
 	window.Method("history").SetCustomImplementation()
 	window.Method("prompt").Ignore()
 	window.Method("close").SetNotImplemented()

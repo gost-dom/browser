@@ -47,6 +47,7 @@ func (w Window[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("length", w.length, nil)
 	jsClass.CreatePrototypeAttribute("top", w.top, nil)
 	jsClass.CreatePrototypeAttribute("opener", w.opener, w.setOpener)
+	jsClass.CreatePrototypeAttribute("parent", w.parent, nil)
 	jsClass.CreatePrototypeAttribute("frameElement", w.frameElement, nil)
 	jsClass.CreatePrototypeAttribute("navigator", w.navigator, nil)
 	jsClass.CreatePrototypeAttribute("clientInformation", w.clientInformation, nil)

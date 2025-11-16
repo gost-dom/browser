@@ -20,3 +20,7 @@ func (w *Window[T]) history(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 func (w *Window[T]) self(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return cbCtx.This(), nil
 }
+
+func (w *Window[T]) parent(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	return cbCtx.This(), nil
+}
