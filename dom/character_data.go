@@ -129,3 +129,42 @@ func (n *textNode) createHtmlNode() *html.Node {
 
 func (n *textNode) NodeName() string    { return "#text" }
 func (n *textNode) TextContent() string { return n.Data() }
+
+/* -------- ProcessingInstruction -------- */
+
+type ProcessingInstruction interface {
+	CharacterData
+}
+
+type processingInstruction struct {
+	characterData
+	target string
+}
+
+func NewProcessingInstruction(target, data string, ownerDocument Document) Text {
+	result := &processingInstruction{newCharacterData(data, ownerDocument), target}
+	result.SetSelf(result)
+	return result
+}
+
+func (n *processingInstruction) cloneNode(doc Document, _ bool) Node {
+	return NewProcessingInstruction(n.target, n.characterData.data, doc)
+}
+
+func (n *processingInstruction) Render(builder *strings.Builder) {
+	builder.WriteString("<!")
+	builder.WriteString(n.Data())
+	builder.WriteString(">")
+}
+
+func (n *processingInstruction) NodeType() NodeType { return NodeTypeProcessingInstruction }
+
+func (n *processingInstruction) createHtmlNode() *html.Node {
+	return &html.Node{
+		Type: html.RawNode,
+		Data: n.Data(),
+	}
+}
+
+func (n *processingInstruction) NodeName() string    { return "#processingInstruction" }
+func (n *processingInstruction) TextContent() string { return "" }
