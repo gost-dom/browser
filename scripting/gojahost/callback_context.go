@@ -4,7 +4,6 @@ import (
 	"log/slog"
 
 	"github.com/dop251/goja"
-	g "github.com/dop251/goja"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -64,7 +63,7 @@ func newArgumentHelper(ctx *GojaContext, c goja.FunctionCall) *callbackContext {
 		c.Arguments, 0}
 }
 
-func (ctx *callbackContext) Argument(index int) g.Value {
+func (ctx *callbackContext) Argument(index int) goja.Value {
 	return ctx.args[index]
 }
 
