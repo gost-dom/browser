@@ -1,6 +1,7 @@
 package dom
 
 import (
+	"fmt"
 	"io"
 	"log/slog"
 
@@ -41,6 +42,7 @@ type Document interface {
 	CreateElementNS(string, string) Element
 	CreateElement(string) Element
 	DocumentElement() Element
+	GetElementsByTagName(string) NodeList
 	ImportNode(Node, bool) Node
 	parseFragment(reader io.Reader) (DocumentFragment, error)
 
@@ -166,4 +168,12 @@ func (d *document) NodeType() NodeType { return NodeTypeDocument }
 
 func (d *document) SetActiveElement(e Element) {
 	d.activeElement = e
+}
+
+func (n *document) GetElementsByTagName(qualifiedName string) NodeList {
+	res, err := n.QuerySelectorAll(qualifiedName)
+	if err != nil {
+		panic(fmt.Sprintf("document.GetElementsByTagName: %v", err))
+	}
+	return res
 }
