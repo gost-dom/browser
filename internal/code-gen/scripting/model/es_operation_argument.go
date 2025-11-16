@@ -26,7 +26,7 @@ func (a ESOperationArgument) OptionalInGo() bool {
 }
 
 func (a ESOperationArgument) VariadicInGo() bool {
-	return a.CustomRule.Variadic || a.Variadic
+	return (a.CustomRule.Variadic || a.Variadic) && !a.CustomRule.Ignore
 }
 
 func (a ESOperationArgument) idlType() idltransform.IdlType {

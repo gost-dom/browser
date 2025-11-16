@@ -114,6 +114,9 @@ func (gen OpCallbackMethods) CtorOrOperationCallback(
 	optArgsBlock := g.StatementList()
 	methodPostfix := ""
 	for _, a := range gen.Op.Arguments[noOfConsumed:] {
+		if a.CustomRule.Ignore {
+			continue
+		}
 		innerBlock := g.StatementList()
 		methodPostfix = methodPostfix + internal.UpperCaseFirstLetter(a.Name)
 
