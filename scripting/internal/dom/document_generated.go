@@ -174,7 +174,18 @@ func (w Document[T]) createProcessingInstruction(cbCtx js.CallbackContext[T]) (r
 	defer func() {
 		cbCtx.Logger().Debug("JS Function call: Document.createProcessingInstruction", js.LogAttr("res", res))
 	}()
-	return codec.EncodeCallbackErrorf(cbCtx, "Document.createProcessingInstruction: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	instance, errInst := js.As[dom.Document](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	target, errArg1 := js.ConsumeArgument(cbCtx, "target", nil, codec.DecodeString)
+	data, errArg2 := js.ConsumeArgument(cbCtx, "data", nil, codec.DecodeString)
+	err = errors.Join(errArg1, errArg2)
+	if err != nil {
+		return nil, err
+	}
+	result := instance.CreateProcessingInstruction(target, data)
+	return codec.EncodeEntity(cbCtx, result)
 }
 
 func (w Document[T]) importNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

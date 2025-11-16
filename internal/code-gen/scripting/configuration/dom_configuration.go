@@ -61,7 +61,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 		"createTreeWalker",
 		"getElementsByTagNameNS",
 		"getElementsByClassName",
-		"createProcessingInstruction",
 		"adoptNode",
 		"createRange",
 		"createEvent",
