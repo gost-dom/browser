@@ -47,8 +47,6 @@ type Document interface {
 	window() DocumentParentWindow
 }
 
-type elementConstructor func(doc *document) Element
-
 type document struct {
 	rootNode
 	logger        *slog.Logger
