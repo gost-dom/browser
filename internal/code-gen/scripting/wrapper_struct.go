@@ -25,13 +25,9 @@ func (ws WrapperStruct) TypeDefinition() g.Generator {
 
 func (ws WrapperStruct) IdlName() string { return ws.Data.Name() }
 
-func (ws WrapperStruct) generatedTypeName() string {
-	return TypeNameForInterface(ws.IdlName())
-}
-
 func (g WrapperStruct) WrapperStructTypeForName(name string) generators.Type {
 	return generators.Type{
-		Generator: generators.Raw(jen.Id(TypeNameForInterface(name)).Types(jen.Id("T"))),
+		Generator: generators.Raw(jen.Id(name).Types(jen.Id("T"))),
 	}
 }
 
@@ -42,7 +38,7 @@ func (g WrapperStruct) WrapperStructType() generators.Type {
 func (g WrapperStruct) TypeGenerator() g.Generator {
 	includes := g.Data.Includes()
 	wrapperStruct := gen.NewStruct(
-		generators.Raw(jen.Id(g.generatedTypeName()).Types(jen.Id("T").Any())),
+		generators.Raw(jen.Id(g.IdlName()).Types(jen.Id("T").Any())),
 	)
 
 	for _, i := range includes {
@@ -73,7 +69,7 @@ func (wrapper WrapperStruct) ConstructorGenerator() g.Generator {
 
 func (ws WrapperStruct) WrapperStructTypeRetDef() g.Type {
 	return generators.Type{
-		Generator: generators.Raw(jen.Id(ws.generatedTypeName()).Types(jen.Id("T"))),
+		Generator: generators.Raw(jen.Id(ws.IdlName()).Types(jen.Id("T"))),
 	}
 }
 

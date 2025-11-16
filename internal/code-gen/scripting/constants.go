@@ -34,11 +34,6 @@ var (
 
 var IdlTypeUndefined = idl.Type{Name: "undefined", Kind: idl.KindSimple}
 
-func TypeNameForInterface(name string) string {
-	return name
-	// return fmt.Sprintf("%sV8Wrapper", name)
-}
-
 func ConstructorNameForInterface(name string) string {
-	return fmt.Sprintf("New%s", TypeNameForInterface(name))
+	return fmt.Sprintf("New%s", name)
 }
