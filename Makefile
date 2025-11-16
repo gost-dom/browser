@@ -73,10 +73,13 @@ test-scripting:
 .PHONY: test-goja
 test-goja:
 	$(GOW) -c -e=go -e=js -e=html -w ./.. test -vet=off ./scripting/gojahost
- 
+
 .PHONY: ci ci-build release
 ci-build:
 	go build -v ./...
+
+wpt-watch:
+	$(GOW) run ./internal/test/wpt
 
 ci: codegen ci-build test codegen-test
 	git diff --quiet HEAD
