@@ -39,17 +39,3 @@ func (l DOMTokenList[T]) toggle(args js.CallbackContext[T]) (js.Value[T], error)
 	}
 	return args.NewBoolean(instance.Toggle(token)), nil
 }
-
-func (w DOMTokenList[T]) remove(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: DOMTokenList.remove")
-	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
-	if errInst != nil {
-		return nil, errInst
-	}
-	tokens, errArg1 := js.ConsumeArgument(cbCtx, "tokens", nil, codec.DecodeString)
-	if errArg1 != nil {
-		return nil, errArg1
-	}
-	instance.Remove(tokens)
-	return nil, nil
-}

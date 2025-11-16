@@ -88,6 +88,22 @@ func (w DOMTokenList[T]) add(cbCtx js.CallbackContext[T]) (res js.Value[T], err 
 	return nil, errCall
 }
 
+func (w DOMTokenList[T]) remove(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: DOMTokenList.remove", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
+	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	tokens, errArg1 := js.ConsumeRestArguments(cbCtx, "tokens", codec.DecodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	instance.Remove(tokens...)
+	return nil, nil
+}
+
 func (w DOMTokenList[T]) replace(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	defer func() {
 		cbCtx.Logger().Debug("JS Function call: DOMTokenList.replace", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))

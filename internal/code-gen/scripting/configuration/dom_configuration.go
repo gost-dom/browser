@@ -133,7 +133,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 	domTokenList := specs.Type("DOMTokenList")
 	domTokenList.RunCustomCode = true
 	domTokenList.Method("toggle").SetCustomImplementation()
-	domTokenList.Method("remove").SetCustomImplementation()
 	domTokenList.Method("supports").SetNotImplemented()
 
 	domNode := specs.Type("Node")
