@@ -59,7 +59,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 	document.MarkMembersAsNotImplemented(
 		"createNodeIterator",
 		"createTreeWalker",
-		"getElementsByTagName",
 		"getElementsByTagNameNS",
 		"getElementsByClassName",
 		"createProcessingInstruction",
@@ -154,7 +153,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 		"setAttributeNodeNS",
 		"getAttributeNode",
 		"getAttributeNodeNS",
-		"getElementsByTagName",
 		"getElementsByTagNameNS",
 		"getElementsByClassName",
 		"insertAdjacentText",

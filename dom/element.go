@@ -34,6 +34,7 @@ type Element interface {
 	RemoveAttribute(name string)
 	GetAttributeNode(string) Attr
 	SetAttributeNode(Attr) (Attr, error)
+	GetElementsByTagName(string) NodeList
 	RemoveAttributeNode(Attr) (Attr, error)
 	Attributes() NamedNodeMap
 	InsertAdjacentElement(position string, element Element) (Element, error)
@@ -444,4 +445,12 @@ func (e *element) PreviousElementSibling() Element {
 			return res
 		}
 	}
+}
+
+func (n *element) GetElementsByTagName(qualifiedName string) NodeList {
+	res, err := n.QuerySelectorAll(qualifiedName)
+	if err != nil {
+		panic(fmt.Sprintf("element.GetElementsByTagName: %v", err))
+	}
+	return res
 }

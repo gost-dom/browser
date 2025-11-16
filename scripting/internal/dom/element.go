@@ -26,3 +26,10 @@ func (e *Element[T]) toNamedNodeMap(
 func (e *Element[T]) decodeElement(s js.Scope[T], v js.Value[T]) (dom.Element, error) {
 	return codec.DecodeAs[dom.Element](s, v)
 }
+
+func (w *Element[T]) toHTMLCollection(
+	cbCtx js.CallbackContext[T],
+	c dom.NodeList,
+) (js.Value[T], error) {
+	return codec.EncodeEntity(cbCtx, c)
+}

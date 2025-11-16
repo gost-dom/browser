@@ -67,7 +67,16 @@ func (w Document[T]) getElementsByTagName(cbCtx js.CallbackContext[T]) (res js.V
 	defer func() {
 		cbCtx.Logger().Debug("JS Function call: Document.getElementsByTagName", js.LogAttr("res", res))
 	}()
-	return codec.EncodeCallbackErrorf(cbCtx, "Document.getElementsByTagName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	instance, errInst := js.As[dom.Document](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	qualifiedName, errArg1 := js.ConsumeArgument(cbCtx, "qualifiedName", nil, codec.DecodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result := instance.GetElementsByTagName(qualifiedName)
+	return w.toHTMLCollection(cbCtx, result)
 }
 
 func (w Document[T]) getElementsByTagNameNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
