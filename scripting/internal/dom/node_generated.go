@@ -36,6 +36,7 @@ func (w Node[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("parentElement", w.parentElement, nil)
 	jsClass.CreatePrototypeAttribute("childNodes", w.childNodes, nil)
 	jsClass.CreatePrototypeAttribute("firstChild", w.firstChild, nil)
+	jsClass.CreatePrototypeAttribute("lastChild", w.lastChild, nil)
 	jsClass.CreatePrototypeAttribute("previousSibling", w.previousSibling, nil)
 	jsClass.CreatePrototypeAttribute("nextSibling", w.nextSibling, nil)
 	jsClass.CreatePrototypeAttribute("textContent", w.textContent, w.setTextContent)
@@ -268,6 +269,18 @@ func (w Node[T]) firstChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err e
 		return nil, err
 	}
 	result := instance.FirstChild()
+	return codec.EncodeEntity(cbCtx, result)
+}
+
+func (w Node[T]) lastChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Node.lastChild", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
+	instance, err := js.As[dom.Node](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	result := instance.LastChild()
 	return codec.EncodeEntity(cbCtx, result)
 }
 

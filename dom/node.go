@@ -162,6 +162,7 @@ type Node interface {
 	NextSibling() Node
 	PreviousSibling() Node
 	FirstChild() Node
+	LastChild() Node
 	TextContent() string
 	SetTextContent(value string)
 	Connected()
@@ -513,6 +514,14 @@ func (n *node) FirstChild() Node {
 		return nil
 	}
 	return n.childNodes.Item(0)
+}
+
+func (n *node) LastChild() Node {
+	l := n.childNodes.Length()
+	if l == 0 {
+		return nil
+	}
+	return n.childNodes.Item(l - 1)
 }
 
 func (n *node) NextSibling() Node {
