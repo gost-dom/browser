@@ -248,20 +248,6 @@ func (w Window[T]) top(cbCtx js.CallbackContext[T]) (res js.Value[T], err error)
 	return codec.EncodeCallbackErrorf(cbCtx, "Window.top: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Window[T]) opener(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Window.opener", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
-	}()
-	return codec.EncodeCallbackErrorf(cbCtx, "Window.opener: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
-}
-
-func (w Window[T]) setOpener(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Window.setOpener", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
-	}()
-	return codec.EncodeCallbackErrorf(cbCtx, "Window.setOpener: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
-}
-
 func (w Window[T]) frameElement(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	defer func() {
 		cbCtx.Logger().Debug("JS Function call: Window.frameElement", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))

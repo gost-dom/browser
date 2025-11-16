@@ -1,6 +1,8 @@
 package html
 
 import (
+	"errors"
+
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -23,4 +25,12 @@ func (w *Window[T]) self(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 
 func (w *Window[T]) parent(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return cbCtx.This(), nil
+}
+
+func (w *Window[T]) opener(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	return cbCtx.Null(), nil
+}
+
+func (w *Window[T]) setOpener(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	return nil, errors.New("Not implemented")
 }

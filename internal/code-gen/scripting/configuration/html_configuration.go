@@ -72,7 +72,7 @@ func configureWindow(htmlSpecs *WebAPIConfig) {
 	window.Method("navigator").SetNotImplemented()
 	window.Method("frames").SetNotImplemented()
 	window.Method("top").SetNotImplemented()
-	window.Method("opener").SetNotImplemented()
+	window.Method("opener").SetCustomImplementation()
 	window.Method("frameElement").SetNotImplemented()
 	window.Method("clientInformation").SetNotImplemented()
 	window.Method("originAgentCluster").SetNotImplemented()
