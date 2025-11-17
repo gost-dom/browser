@@ -642,7 +642,7 @@ func (n *node) Logger() *slog.Logger {
 	if docLogger, ok := n.document.(log.LogSource); ok {
 		return docLogger.Logger()
 	}
-	return nil
+	return log.Default()
 }
 
 /* -------- observerCloser -------- */
