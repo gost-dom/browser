@@ -10,7 +10,7 @@ import (
 
 func (e *Element[T]) CustomInitializer(class js.Class[T]) {
 	class.CreatePrototypeMethod("insertAdjacentHTML", e.insertAdjacentHTML)
-	class.CreatePrototypeAttribute("outerHTML", e.outerHTML, nil)
+	class.CreatePrototypeAttribute("outerHTML", e.outerHTML, e.setOuterHTML)
 	class.CreatePrototypeAttribute("innerHTML", e.innerHTML, e.setInnerHTML)
 }
 
@@ -33,6 +33,17 @@ func (e *Element[T]) outerHTML(cbCtx js.CallbackContext[T]) (js.Value[T], error)
 	} else {
 		return nil, err
 	}
+}
+
+func (e *Element[T]) setOuterHTML(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	html, err1 := js.ConsumeArgument(cbCtx, "value", nil, codec.DecodeString)
+	element, errInstance := js.As[dom.Element](cbCtx.Instance())
+
+	err := errors.Join(err1, errInstance)
+	if err == nil {
+		err = element.SetOuterHTML(html)
+	}
+	return nil, err
 }
 
 func (e *Element[T]) innerHTML(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
