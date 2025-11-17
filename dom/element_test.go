@@ -263,11 +263,19 @@ func TestElementOuterHTML(t *testing.T) {
 func TestSetElementInnerHTML(t *testing.T) {
 	gomega := gomega.NewWithT(t)
 	doc := ParseHtmlString(`<body>body text</body>`)
+	t.Logf("Owner: %T", doc.Body().OwnerDocument())
+	t.Log("SetInnterHTML")
 	err := doc.Body().SetInnerHTML(`<div id="1">Foo</div>Bar<div id="2">Baz</div>`)
 	gomega.Expect(err).ToNot(HaveOccurred())
 	gomega.
 		Expect(doc.Body().InnerHTML()).
 		To(Equal(`<div id="1">Foo</div>Bar<div id="2">Baz</div>`))
+	gomega.
+		Expect(doc.Body().TagName()).
+		To(Equal("BODY"))
+	gomega.
+		Expect(doc.Body().FirstElementChild().TagName()).
+		To(Equal("DIV"))
 }
 
 // ParentElementTestSuite describes functionality in the ParentNode IDL

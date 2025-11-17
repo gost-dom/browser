@@ -91,7 +91,7 @@ func (d *document) cloneNode(doc Document, deep bool) Node {
 }
 
 func (d *document) parseFragment(reader io.Reader) (DocumentFragment, error) {
-	return d.ownerWindow.ParseFragment(d, reader)
+	return d.ownerWindow.ParseFragment(d.nodeDocument(), reader)
 }
 
 func (d *document) ImportNode(n Node, deep bool) Node {
