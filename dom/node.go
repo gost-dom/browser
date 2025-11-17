@@ -511,8 +511,8 @@ func (n *node) ReplaceChild(node, child Node) (Node, error) {
 		return nil, newDomError("NotFoundError")
 	}
 	for i, c := range n.childNodes.All() {
-		if c == child {
-			err := n.replaceNodes(i, 1, node)
+		if c == node {
+			err := n.replaceNodes(i, 1, child)
 			return c, err
 		}
 	}
