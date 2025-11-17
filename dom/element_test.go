@@ -5,6 +5,7 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	. "github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
@@ -262,12 +263,21 @@ func TestElementOuterHTML(t *testing.T) {
 
 func TestSetElementInnerHTML(t *testing.T) {
 	gomega := gomega.NewWithT(t)
-	doc := ParseHtmlString(`<body>body text</body>`)
+	doc := ParseHtmlString(`<body>body text</body>`,
+		html.WindowOptionLogger(gosttest.NewTestLogger(t)))
+	t.Logf("Owner: %T", doc.Body().OwnerDocument())
+	t.Log("SetInnterHTML")
 	err := doc.Body().SetInnerHTML(`<div id="1">Foo</div>Bar<div id="2">Baz</div>`)
 	gomega.Expect(err).ToNot(HaveOccurred())
 	gomega.
 		Expect(doc.Body().InnerHTML()).
 		To(Equal(`<div id="1">Foo</div>Bar<div id="2">Baz</div>`))
+	gomega.
+		Expect(doc.Body().TagName()).
+		To(Equal("BODY"))
+	gomega.
+		Expect(doc.Body().FirstElementChild().TagName()).
+		To(Equal("DIV"))
 }
 
 // ParentElementTestSuite describes functionality in the ParentNode IDL
