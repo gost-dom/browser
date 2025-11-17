@@ -71,7 +71,12 @@ func NewDocument(window DocumentParentWindow) Document {
 	return result
 }
 
-func (d document) Logger() *slog.Logger         { return d.logger }
+func (d document) Logger() *slog.Logger {
+	if d.logger != nil {
+		return d.logger
+	}
+	return log.Default()
+}
 func (d document) window() DocumentParentWindow { return d.ownerWindow }
 
 func (d document) ActiveElement() Element {
