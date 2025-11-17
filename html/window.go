@@ -434,6 +434,10 @@ type WindowOptionFunc func(*WindowOptions)
 
 func (f WindowOptionFunc) Apply(options *WindowOptions) { f(options) }
 
+func WindowOptionLogger(l *slog.Logger) WindowOptionFunc {
+	return func(options *WindowOptions) { options.Logger = l }
+}
+
 func WindowOptionLocation(location string) WindowOptionFunc {
 	return func(options *WindowOptions) { options.BaseLocation = location }
 }
