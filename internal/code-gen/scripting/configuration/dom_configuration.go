@@ -200,7 +200,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 	domNode.Method("lookupPrefix").Ignore()
 	domNode.Method("lookupNamespaceURI").Ignore()
 	domNode.Method("isDefaultNamespace").Ignore()
-	domNode.Method("replaceChild").Ignore()
 	domNode.Method("baseURI").Ignore()
 	domNode.Method("lastChild").Ignore()
 	domNode.Method("nodeValue").Ignore()
