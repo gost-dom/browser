@@ -7,6 +7,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/gost-dom/browser/internal/constants"
 	. "github.com/gost-dom/browser/internal/dom"
 
 	"golang.org/x/net/html"
@@ -40,6 +41,7 @@ type Element interface {
 	InsertAdjacentHTML(position string, text string) error
 	InsertAdjacentText(position string, text string) error
 	OuterHTML() string
+	SetOuterHTML(string) error
 	InnerHTML() string
 	SetInnerHTML(string) error
 	TagName() string
@@ -155,6 +157,27 @@ func (e *element) InnerHTML() string {
 	return writer.String()
 }
 
+func (e *element) SetOuterHTML(html string) error {
+	parent := e.ParentNode()
+	if parent == nil {
+		return nil
+	}
+	if parent.NodeType() == NodeTypeDocument {
+		return newDomError("NoModificationAllowed")
+	}
+	if parent.NodeType() == NodeTypeDocumentFragment {
+		return fmt.Errorf(
+			"SetOuterHTML not yet supported when parent is a fragment. %s",
+			constants.BUG_ISSUE_DETAILS,
+		)
+	}
+	fragment, err := e.nodeDocument().parseFragment(strings.NewReader(html))
+	if err == nil {
+		// err = e.ReplaceChildren(fragment)
+		_, err = parent.ReplaceChild(e.getSelf(), fragment)
+	}
+	return err
+}
 func (e *element) SetInnerHTML(html string) error {
 	fragment, err := e.nodeDocument().parseFragment(strings.NewReader(html))
 	if err == nil {
