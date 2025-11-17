@@ -27,8 +27,8 @@ func (s *DocumentSuite) Document() dom.Document {
 	return s.doc
 }
 
-func ParseHtmlString(s string) dom.Document {
-	win, err := html.NewWindowReader(strings.NewReader(s))
+func ParseHtmlString(s string, windowOptions ...html.WindowOption) dom.Document {
+	win, err := html.NewWindowReader(strings.NewReader(s), windowOptions...)
 	if err != nil {
 		panic(err)
 	}
