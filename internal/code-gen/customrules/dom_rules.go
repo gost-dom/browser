@@ -21,6 +21,7 @@ var domRules = SpecRules{
 		"insertBefore": {HasError: true},
 		"appendChild":  {HasError: true},
 		"removeChild":  {HasError: true},
+		"replaceChild": {HasError: true},
 	}},
 	"Element": {Operations: OperationRules{
 		"matches":               {HasError: true},

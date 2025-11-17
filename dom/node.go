@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/gost-dom/browser/dom/event"
+	"github.com/gost-dom/browser/internal/constants"
 	. "github.com/gost-dom/browser/internal/dom"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
@@ -159,6 +160,7 @@ type Node interface {
 	ParentNode() Node
 	ParentElement() Element
 	RemoveChild(node Node) (Node, error)
+	ReplaceChild(node, child Node) (Node, error)
 	NextSibling() Node
 	PreviousSibling() Node
 	FirstChild() Node
@@ -495,6 +497,31 @@ func (n *node) replaceNodes(index, count int, node Node) error {
 	})
 	return nil
 
+}
+
+func (n *node) ReplaceChild(node, child Node) (Node, error) {
+
+	_, isDocument := n.self.(Document)
+	_, isDocumentFragment := n.self.(DocumentFragment)
+	_, isElement := n.self.(Element)
+	if !isDocument && !isDocumentFragment && !isElement {
+		return nil, newDomError("HierarchyRequestError")
+	}
+	if node.ParentNode() != n.self {
+		return nil, newDomError("NotFoundError")
+	}
+	for i, c := range n.childNodes.All() {
+		if c == child {
+			err := n.replaceNodes(i, 1, node)
+			return c, err
+		}
+	}
+	panic(
+		fmt.Sprintf(
+			"gost-dom/dom: ReplaceChild: child not found in child list\n. %s",
+			constants.BUG_ISSUE_URL,
+		),
+	)
 }
 
 func (n *node) OwnerDocument() Document {
