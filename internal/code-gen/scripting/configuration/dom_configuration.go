@@ -139,7 +139,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 
 	domElement := specs.Type("Element")
 	// domElement.SkipWrapper = true
-	domElement.RunCustomCode = true
 	domElement.Method("classList").SetCustomImplementation()
 
 	domElement.MarkMembersAsNotImplemented(
@@ -174,11 +173,8 @@ func configureDOMNode(specs *WebAPIConfig) {
 		// HTMX fails if these exist but throw
 		"webkitMatchesSelector",
 
-		"outerHTML",
-		"innerHTML",
 		"setHTMLUnsafe",
 		"getHTML",
-		"insertAdjacentHTML",
 	)
 
 	domTokenList := specs.Type("DOMTokenList")

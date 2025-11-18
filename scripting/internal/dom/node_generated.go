@@ -178,8 +178,9 @@ func (w Node[T]) appendChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err 
 }
 
 func (w Node[T]) replaceChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Node.replaceChild - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Node.replaceChild", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: Node.replaceChild", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
