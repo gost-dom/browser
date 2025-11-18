@@ -17,6 +17,7 @@ import (
 func createData(
 	spec idl.Spec,
 	interfaceConfig *configuration.WebIDLConfig,
+	extra []idl.Spec,
 ) model.ESConstructorData {
 	idlName, ok := spec.GetType(interfaceConfig.TypeName)
 	if !ok {

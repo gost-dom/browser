@@ -33,11 +33,17 @@ func writePackageFiles(packagePath string, spec *configuration.WebAPIConfig) err
 	errs := make([]error, len(types))
 	for i, specType := range types {
 		outputFileName := fmt.Sprintf("%s_generated.go", typeNameToFileName(specType.TypeName))
+		extra := make([]idl.Spec, len(spec.PartialSearchModules))
+		for i, spec := range spec.PartialSearchModules {
+			if extra[i], err = idl.Load(spec); err != nil {
+				return err
+			}
+		}
 		if writer, err := os.Create(outputFileName); err != nil {
 			errs[i] = err
 		} else {
 			defer writer.Close()
-			typeGenerationInformation := createData(data, specType)
+			typeGenerationInformation := createData(data, specType, extra)
 			gen := ScriptingFileGenerator{
 				Data: typeGenerationInformation,
 			}

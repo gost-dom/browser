@@ -26,9 +26,15 @@ func Write(api string, specs configuration.WebIdlConfigurations) error {
 		if err != nil {
 			return err
 		}
+		extra := make([]idl.Spec, len(spec.PartialSearchModules))
+		for i, spec := range spec.PartialSearchModules {
+			if extra[i], err = idl.Load(spec); err != nil {
+				return err
+			}
+		}
 		types := spec.GetTypesSorted()
 		for _, specType := range types {
-			typeInfo := createData(data, specType)
+			typeInfo := createData(data, specType, extra)
 			statements.Append(
 				jsRegisterClass.Call(
 					registrator,

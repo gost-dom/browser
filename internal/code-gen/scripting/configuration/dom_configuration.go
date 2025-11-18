@@ -3,6 +3,7 @@ package configuration
 func ConfigureDOMSpecs(domSpecs *WebAPIConfig) {
 	configureDOMNode(domSpecs)
 	configureDOMEvent(domSpecs)
+	domSpecs.AddSearchModule("html")
 }
 
 func configureDOMNode(specs *WebAPIConfig) {

@@ -13,6 +13,12 @@ type WebAPIConfig struct {
 	// Interfaces defines the names of the specified interfaces for which to
 	// generate specifications
 	Interfaces map[string]*WebIDLConfig
+	// PartialSearchModules tells which "modules" or "web api specs" to search
+	// for partial interfaces.
+	//
+	// Example: "interface Element" is defined in dom.idl, but innerHTML and
+	// outerHTML is defined in a partial interface in html.idl.
+	PartialSearchModules []string
 }
 
 func NewWebAPIConfig(name string) *WebAPIConfig {
@@ -33,4 +39,8 @@ func (spec WebAPIConfig) GetTypesSorted() []*WebIDLConfig {
 		return cmp.Compare(x.TypeName, y.TypeName)
 	})
 	return types
+}
+
+func (c *WebAPIConfig) AddSearchModule(name string) {
+	c.PartialSearchModules = append(c.PartialSearchModules, name)
 }
