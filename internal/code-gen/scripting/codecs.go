@@ -33,7 +33,7 @@ func DecodersForArg(receiver g.Generator, arg model.ESOperationArgument) []g.Gen
 }
 
 // DecodersForType generates the decoders to be used for decoding an input of a
-// specific JavaScript type the corresponding Go value.
+// specific JavaScript type into Go based on the web IDL specification.
 func DecodersForType(receiver g.Generator, argType idl.Type) []g.Generator {
 	argType = idltransform.FilterType(argType)
 	if argType.Kind == idl.KindUnion {
