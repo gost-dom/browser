@@ -42,7 +42,7 @@ func (w EventTarget[T]) addEventListener(cbCtx js.CallbackContext[T]) (res js.Va
 	}
 	type_, errArg1 := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
 	callback, errArg2 := js.ConsumeArgument(cbCtx, "callback", codec.ZeroValue, w.decodeEventListener)
-	options, errArg3 := js.ConsumeArgument(cbCtx, "options", w.defaultEventListenerOptions, w.decodeEventListenerOptions)
+	options, errArg3 := js.ConsumeArgument(cbCtx, "options", w.defaultEventListenerOptions, decodeEventListenerOptions)
 	err = errors.Join(errArg1, errArg2, errArg3)
 	if err != nil {
 		return nil, err
@@ -61,7 +61,7 @@ func (w EventTarget[T]) removeEventListener(cbCtx js.CallbackContext[T]) (res js
 	}
 	type_, errArg1 := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
 	callback, errArg2 := js.ConsumeArgument(cbCtx, "callback", codec.ZeroValue, w.decodeEventListener)
-	options, errArg3 := js.ConsumeArgument(cbCtx, "options", w.defaultEventListenerOptions, w.decodeEventListenerOptions)
+	options, errArg3 := js.ConsumeArgument(cbCtx, "options", w.defaultEventListenerOptions, decodeEventListenerOptions)
 	err = errors.Join(errArg1, errArg2, errArg3)
 	if err != nil {
 		return nil, err

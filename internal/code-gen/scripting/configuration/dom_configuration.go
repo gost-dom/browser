@@ -34,11 +34,11 @@ func configureDOMNode(specs *WebAPIConfig) {
 
 	eventTarget := specs.Type("EventTarget")
 	addEventListenerOptions := eventTarget.Method("addEventListener").Argument("options")
-	addEventListenerOptions.SetDecoder("w.decodeEventListenerOptions")
+	addEventListenerOptions.SetDecoder("decodeEventListenerOptions")
 	addEventListenerOptions.HasDefault = true
 	addEventListenerOptions.DefaultValue = "defaultEventListenerOptions"
 	removeEventListenerOptions := eventTarget.Method("removeEventListener").Argument("options")
-	removeEventListenerOptions.SetDecoder("w.decodeEventListenerOptions")
+	removeEventListenerOptions.SetDecoder("decodeEventListenerOptions")
 	removeEventListenerOptions.HasDefault = true
 	removeEventListenerOptions.DefaultValue = "defaultEventListenerOptions"
 

@@ -54,7 +54,7 @@ func (w EventTarget[T]) defaultEventListenerOptions() []event.EventListenerOptio
 	return nil
 }
 
-func (w EventTarget[T]) decodeEventListenerOptions(
+func decodeEventListenerOptions[T any](
 	_ js.Scope[T], v js.Value[T],
 ) ([]event.EventListenerOption, error) {
 	var options []func(*event.EventListener)
