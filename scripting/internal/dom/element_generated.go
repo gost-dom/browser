@@ -25,7 +25,6 @@ func NewElement[T any](scriptHost js.ScriptEngine[T]) *Element[T] {
 
 func (wrapper Element[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
-	wrapper.CustomInitializer(jsClass)
 }
 
 func (w Element[T]) installPrototype(jsClass js.Class[T]) {
@@ -53,6 +52,7 @@ func (w Element[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("getElementsByClassName", w.getElementsByClassName)
 	jsClass.CreatePrototypeMethod("insertAdjacentElement", w.insertAdjacentElement)
 	jsClass.CreatePrototypeMethod("insertAdjacentText", w.insertAdjacentText)
+	jsClass.CreatePrototypeMethod("insertAdjacentHTML", w.insertAdjacentHTML)
 	jsClass.CreatePrototypeAttribute("namespaceURI", w.namespaceURI, nil)
 	jsClass.CreatePrototypeAttribute("prefix", w.prefix, nil)
 	jsClass.CreatePrototypeAttribute("localName", w.localName, nil)
@@ -63,6 +63,8 @@ func (w Element[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("slot", w.slot, w.setSlot)
 	jsClass.CreatePrototypeAttribute("attributes", w.attributes, nil)
 	jsClass.CreatePrototypeAttribute("shadowRoot", w.shadowRoot, nil)
+	jsClass.CreatePrototypeAttribute("innerHTML", w.innerHTML, w.setInnerHTML)
+	jsClass.CreatePrototypeAttribute("outerHTML", w.outerHTML, w.setOuterHTML)
 	w.parentNode.installPrototype(jsClass)
 	w.nonDocumentTypeChildNode.installPrototype(jsClass)
 	w.childNode.installPrototype(jsClass)
@@ -319,6 +321,24 @@ func (w Element[T]) insertAdjacentText(cbCtx js.CallbackContext[T]) (res js.Valu
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.insertAdjacentText: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
+func (w Element[T]) insertAdjacentHTML(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Element.insertAdjacentHTML", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
+	instance, errInst := js.As[dom.Element](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	position, errArg1 := js.ConsumeArgument(cbCtx, "position", nil, codec.DecodeString)
+	string, errArg2 := js.ConsumeArgument(cbCtx, "string", nil, codec.DecodeString)
+	err = errors.Join(errArg1, errArg2)
+	if err != nil {
+		return nil, err
+	}
+	instance.InsertAdjacentHTML(position, string)
+	return nil, nil
+}
+
 func (w Element[T]) namespaceURI(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	defer func() {
 		cbCtx.Logger().Debug("JS Function call: Element.namespaceURI", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
@@ -423,4 +443,56 @@ func (w Element[T]) shadowRoot(cbCtx js.CallbackContext[T]) (res js.Value[T], er
 		cbCtx.Logger().Debug("JS Function call: Element.shadowRoot", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.shadowRoot: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+}
+
+func (w Element[T]) innerHTML(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Element.innerHTML", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
+	instance, err := js.As[dom.Element](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	result := instance.InnerHTML()
+	return codec.EncodeString(cbCtx, result)
+}
+
+func (w Element[T]) setInnerHTML(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Element.setInnerHTML", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
+	instance, err0 := js.As[dom.Element](cbCtx.Instance())
+	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
+	err = errors.Join(err0, err1)
+	if err != nil {
+		return nil, err
+	}
+	instance.SetInnerHTML(val)
+	return nil, nil
+}
+
+func (w Element[T]) outerHTML(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Element.outerHTML", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
+	instance, err := js.As[dom.Element](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	result := instance.OuterHTML()
+	return codec.EncodeString(cbCtx, result)
+}
+
+func (w Element[T]) setOuterHTML(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Element.setOuterHTML", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+	}()
+	instance, err0 := js.As[dom.Element](cbCtx.Instance())
+	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
+	err = errors.Join(err0, err1)
+	if err != nil {
+		return nil, err
+	}
+	instance.SetOuterHTML(val)
+	return nil, nil
 }
