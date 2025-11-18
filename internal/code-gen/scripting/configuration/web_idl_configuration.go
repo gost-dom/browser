@@ -3,6 +3,8 @@ package configuration
 import (
 	"cmp"
 	"slices"
+
+	"github.com/gost-dom/webref/idl"
 )
 
 // WebAPIConfig configures the generation of JavaScript bindings for a specific
@@ -43,4 +45,20 @@ func (spec WebAPIConfig) GetTypesSorted() []*WebIDLConfig {
 
 func (c *WebAPIConfig) AddSearchModule(name string) {
 	c.PartialSearchModules = append(c.PartialSearchModules, name)
+}
+
+// LoadSpec loads relevant [idl.Spec] for the configured package. The main spec
+// is returned in the spec return value. Extra specs, e.g., to search for
+// partial interfaces are returned in the extra return value.
+func LoadSpecs(c *WebAPIConfig) (spec idl.Spec, extra []idl.Spec, err error) {
+	if spec, err = idl.Load(c.Name); err != nil {
+		return
+	}
+	extra = make([]idl.Spec, len(c.PartialSearchModules))
+	for i, e := range c.PartialSearchModules {
+		if extra[i], err = idl.Load(e); err != nil {
+			break
+		}
+	}
+	return
 }

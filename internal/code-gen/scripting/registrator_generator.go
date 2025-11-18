@@ -10,7 +10,6 @@ import (
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/code-gen/scripting/configuration"
 	g "github.com/gost-dom/generators"
-	"github.com/gost-dom/webref/idl"
 )
 
 func Write(api string, specs configuration.WebIdlConfigurations) error {
@@ -22,15 +21,9 @@ func Write(api string, specs configuration.WebIdlConfigurations) error {
 		func(x, y *configuration.WebAPIConfig) int { return cmp.Compare(x.Name, y.Name) },
 	)
 	for _, spec := range s {
-		data, err := idl.Load(spec.Name)
+		data, extra, err := configuration.LoadSpecs(spec)
 		if err != nil {
 			return err
-		}
-		extra := make([]idl.Spec, len(spec.PartialSearchModules))
-		for i, spec := range spec.PartialSearchModules {
-			if extra[i], err = idl.Load(spec); err != nil {
-				return err
-			}
 		}
 		types := spec.GetTypesSorted()
 		for _, specType := range types {
