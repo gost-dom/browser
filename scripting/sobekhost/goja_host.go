@@ -1,6 +1,8 @@
 package sobekhost
 
 import (
+	"log/slog"
+	"net/http"
 	"reflect"
 	"strings"
 
@@ -12,11 +14,23 @@ import (
 
 const internal_symbol_name = "__go_dom_internal_value__"
 
+type GojaEngine struct{}
+
+func (e GojaEngine) NewHost(opts html.ScriptEngineOptions) html.ScriptHost {
+	res := gojaScriptHost(opts)
+	return &res
+}
+
 func New() html.ScriptHost {
 	return &gojaScriptHost{}
 }
 
-type gojaScriptHost struct{}
+type gojaScriptHost struct {
+	// TODO: Unexport
+	HttpClient *http.Client
+	// TODO: Unexport
+	Logger *slog.Logger
+}
 
 type propertyNameMapper struct{}
 
@@ -42,6 +56,7 @@ func (d *gojaScriptHost) NewContext(window html.Window) html.ScriptContext {
 	vm := sobek.New()
 	vm.SetFieldNameMapper(propertyNameMapper{})
 	result := &GojaContext{
+		host:         d,
 		vm:           vm,
 		clock:        clock.New(),
 		window:       window,
