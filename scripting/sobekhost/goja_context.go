@@ -13,6 +13,7 @@ import (
 )
 
 type GojaContext struct {
+	host         *gojaScriptHost
 	vm           *sobek.Runtime
 	clock        *clock.Clock
 	window       html.Window
@@ -238,8 +239,19 @@ func (c *GojaContext) DownloadScript(script string) (html.Script, error) {
 	return nil, errors.New("TODO")
 }
 
-func (c *GojaContext) DownloadModule(script string) (html.Script, error) {
-	return nil, errors.New("gojahost: ECMAScript modules not supported by gojehost")
+func (c *GojaContext) DownloadModule(script string) (result html.Script, err error) {
+	resolver := sobekResolver{
+		c.host,
+		c,
+		make(map[sobek.ModuleRecord]string),
+		make(map[string]sobek.ModuleRecord),
+	}
+	rec, err := resolver.resolveModule(c.window.LocationHREF(), script)
+	if err == nil {
+		result = sobekModule{c, rec}
+	}
+	return
+	// return nil, errors.New("gojahost: ECMAScript modules not supported by gojehost")
 }
 
 /* -------- GojaScript -------- */
