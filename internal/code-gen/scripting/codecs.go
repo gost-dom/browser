@@ -13,8 +13,6 @@ import (
 var decodeString = g.NewValuePackage("DecodeString", packagenames.Codec)
 var decodeBoolean = g.NewValuePackage("DecodeBoolean", packagenames.Codec)
 var decodeInt = g.NewValuePackage("DecodeInt", packagenames.Codec)
-var decodeNode = g.NewValuePackage("DecodeNode", packagenames.Codec)
-var decodeHTMLElement = g.NewValuePackage("DecodeHTMLElement", packagenames.Codec)
 
 func decode(s string) g.Generator {
 	return g.NewValuePackage(fmt.Sprintf("Decode%s", s), packagenames.Codec)
