@@ -15,6 +15,13 @@ type WebAPIConfig struct {
 	Interfaces map[string]*WebIDLConfig
 }
 
+func NewWebAPIConfig(name string) *WebAPIConfig {
+	return &WebAPIConfig{
+		Name:       name,
+		Interfaces: make(map[string]*WebIDLConfig),
+	}
+}
+
 func (spec WebAPIConfig) GetTypesSorted() []*WebIDLConfig {
 	types := make([]*WebIDLConfig, len(spec.Interfaces))
 	idx := 0

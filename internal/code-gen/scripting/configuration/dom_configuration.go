@@ -1,7 +1,6 @@
 package configuration
 
-func ConfigureDOMSpecs(specs *WebIdlConfigurations) {
-	domSpecs := specs.Module("dom")
+func ConfigureDOMSpecs(domSpecs *WebAPIConfig) {
 	configureDOMNode(domSpecs)
 	configureDOMEvent(domSpecs)
 }

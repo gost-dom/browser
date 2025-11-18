@@ -14,10 +14,7 @@ func (c WebIdlConfigurations) Module(spec string) *WebAPIConfig {
 	if mod, ok := c[spec]; ok {
 		return mod
 	}
-	mod := &WebAPIConfig{
-		Name:       spec,
-		Interfaces: make(map[string]*WebIDLConfig),
-	}
+	mod := NewWebAPIConfig(spec)
 	c[spec] = mod
 	return mod
 }

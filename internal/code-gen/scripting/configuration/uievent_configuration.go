@@ -1,7 +1,6 @@
 package configuration
 
-func ConfigureEventSpecs(specs *WebIdlConfigurations) {
-	s := specs.Module("uievents")
+func ConfigureEventSpecs(s *WebAPIConfig) {
 	uiEvent := s.Type("UIEvent")
 	uiEvent.Method("view").SetNotImplemented()
 	uiEvent.Method("detail").SetNotImplemented()
@@ -36,12 +35,9 @@ func ConfigureEventSpecs(specs *WebIdlConfigurations) {
 	keyboardEvent.Method("metaKey").SetNotImplemented()
 	keyboardEvent.Method("repeat").SetNotImplemented()
 	keyboardEvent.Method("isComposing").SetNotImplemented()
-
-	ConfigurePointerEventSpecs(specs)
 }
 
-func ConfigurePointerEventSpecs(specs *WebIdlConfigurations) {
-	s := specs.Module("pointerevents4")
+func ConfigurePointerEventSpecs(s *WebAPIConfig) {
 	pointerEvent := s.Type("PointerEvent")
 	pointerEvent.SkipWrapper = true
 	pointerEvent.Method("getCoalescedEvents").Ignore()

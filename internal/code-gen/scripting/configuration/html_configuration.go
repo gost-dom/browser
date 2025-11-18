@@ -2,9 +2,7 @@ package configuration
 
 import "github.com/gost-dom/code-gen/packagenames"
 
-func ConfigureHTMLSpecs(specs *WebIdlConfigurations) {
-	htmlSpecs := specs.Module("html")
-
+func ConfigureHTMLSpecs(htmlSpecs *WebAPIConfig) {
 	configureHTMLTemplateElement(htmlSpecs)
 	configureHTMLElement(htmlSpecs)
 	configureHTMLFormElement(htmlSpecs)

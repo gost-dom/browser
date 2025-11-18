@@ -9,11 +9,12 @@ func CreateV8SpecsForSpec(spec string) WebIdlConfigurations {
 
 	switch spec {
 	case "dom":
-		ConfigureDOMSpecs(&specs)
+		ConfigureDOMSpecs(specs.Module("dom"))
 	case "uievents":
-		ConfigureEventSpecs(&specs)
+		ConfigureEventSpecs(specs.Module("uievents"))
+		ConfigurePointerEventSpecs(specs.Module("pointerevents4"))
 	case "html":
-		ConfigureHTMLSpecs(&specs)
+		ConfigureHTMLSpecs(specs.Module("html"))
 	case "xhr":
 		configureXHRSpecs(specs.Module("xhr"))
 	case "url":
