@@ -76,7 +76,9 @@ type ArgumentRule struct {
 	ZeroAsDefault bool // Whether the "zero" value, e.g. empty string, is default
 }
 
-func (r ArgumentRule) OverridesType() bool { return !reflect.ValueOf(r.Type).IsZero() }
+func (r ArgumentRule) OverridesType() bool {
+	return !reflect.ValueOf(r.Type).IsZero()
+}
 
 var rules = CustomRules{
 	"dom":     domRules,

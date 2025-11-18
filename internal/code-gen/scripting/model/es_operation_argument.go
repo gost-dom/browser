@@ -57,18 +57,6 @@ func (a ESOperationArgument) NullableInIDL() bool {
 	return a.IdlArg.Type.Nullable
 }
 
-func (a ESOperationArgument) GoTypeName() string {
-	if a.CustomRule.OverridesType() {
-		return a.CustomRule.Type.Name
-	}
-	switch a.IdlArg.Type.Name {
-	case "DOMString", "USVString", "ByteString":
-		return "string"
-	default:
-		return a.IdlArg.Type.Name
-	}
-}
-
 func (a ESOperationArgument) HasDefault() bool {
 	return a.ArgumentSpec.HasDefault
 }

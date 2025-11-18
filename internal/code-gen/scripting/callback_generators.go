@@ -122,9 +122,12 @@ func (cb CallbackMethods) AttributeSetterCallbackBody(attr model.ESAttribute) g.
 		field    = g.ValueOf(instance).Field(name)
 	)
 
+	if attr.Name == "innerHTML" {
+		fmt.Printf("setInnerHTML *****\n%v\n", attr.Spec.Type)
+	}
 	args := append(
 		[]g.Generator{cb.CbCtx()},
-		DecodersForArg(cb.Receiver(), attr.Setter.Arguments[0])...,
+		DecodersForType(cb.Receiver(), attr.Spec.Type)...,
 	)
 	parsedArg := jsParseSetterArg.Call(args...)
 

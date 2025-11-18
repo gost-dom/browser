@@ -107,7 +107,7 @@ func (o ESOperation) Encoder(
 	if e := o.MethodCustomization.Encoder; e != "" {
 		return internal.BindValues(receiver.Field(e))
 	}
-	t := o.RetType
+	t := idltransform.FilterType(o.RetType)
 	idlType := idltransform.NewIdlType(t)
 	switch {
 	case idlType.IsInt():

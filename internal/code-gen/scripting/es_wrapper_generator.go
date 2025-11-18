@@ -27,6 +27,9 @@ func createData(
 	if idlInterface.Name != interfaceConfig.TypeName {
 		panic(fmt.Sprintf("createData error: %s = %s", idlInterface.Name, interfaceConfig.TypeName))
 	}
+	for _, e := range extra {
+		idlInterface = idlInterface.MergePartials(e)
+	}
 	specRules := customrules.GetSpecRules(interfaceConfig.DomSpec.Name)
 	intfRules := specRules[interfaceConfig.TypeName]
 	return model.ESConstructorData{
@@ -35,8 +38,8 @@ func createData(
 		RunCustomCode: interfaceConfig.RunCustomCode,
 		IdlInterface:  idlInterface,
 		Constructor:   CreateConstructor(idlInterface, intfRules, interfaceConfig, idlName),
-		Operations:    CreateInstanceMethods(idlInterface, intfRules, interfaceConfig, idlName),
-		Attributes:    CreateAttributes(idlInterface, intfRules, interfaceConfig, idlName),
+		Operations:    CreateInstanceMethods(idlInterface, intfRules, interfaceConfig),
+		Attributes:    CreateAttributes(idlInterface, intfRules, interfaceConfig),
 	}
 }
 
@@ -67,7 +70,7 @@ func CreateInstanceMethods(
 	idlInterface idl.Interface,
 	intfRule customrules.InterfaceRule,
 	interfaceConfig *configuration.WebIDLConfig,
-	idlName idl.TypeSpec) (result []model.ESOperation) {
+) (result []model.ESOperation) {
 	// TODO: Handle overloads, e.g. of XHR.open
 	visited := make(map[string]bool)
 	for _, operation := range idlInterface.Operations {
@@ -87,9 +90,8 @@ func CreateAttributes(
 	idlInterface idl.Interface,
 	intfRules customrules.InterfaceRule,
 	interfaceConfig *configuration.WebIDLConfig,
-	idlName idl.TypeSpec,
 ) (res []model.ESAttribute) {
-	for attribute := range idlName.IdlInterface.AllAttributes(interfaceConfig.IncludeIncludes) {
+	for attribute := range idlInterface.AllAttributes(interfaceConfig.IncludeIncludes) {
 		methodCustomization := interfaceConfig.GetMethodCustomization(attribute.Name)
 		customRule := intfRules.Attributes[attribute.Name]
 		if methodCustomization.Ignored || attribute.Type.Name == "EventHandler" {

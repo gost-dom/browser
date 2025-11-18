@@ -29,3 +29,5 @@ require (
 )
 
 tool github.com/mitranim/gow
+
+replace github.com/gost-dom/webref => ../../../webref
