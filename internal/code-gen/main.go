@@ -39,6 +39,9 @@ func main() {
 	switch *generatorType {
 	case "script":
 		exitOnError(scripting.CreateJavaScriptMappings(*packageName))
+		os.Exit(0)
+		return
+	case "script-bootstrap":
 		exitOnError(scripting.GenerateRegisterFunctions(*packageName))
 		os.Exit(0)
 		return
