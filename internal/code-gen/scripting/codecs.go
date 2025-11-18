@@ -3,6 +3,7 @@ package scripting
 import (
 	"fmt"
 
+	"github.com/gost-dom/code-gen/idltransform"
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/code-gen/scripting/model"
 	g "github.com/gost-dom/generators"
@@ -20,38 +21,48 @@ func decode(s string) g.Generator {
 }
 
 func DecodersForArg(receiver g.Generator, arg model.ESOperationArgument) []g.Generator {
-	var convertNames []string
-
 	if d := arg.ArgumentSpec.Decoder; d != "" {
 		return g.List(g.Id(d))
 	}
 
 	argType := arg.IdlArg.Type
+	if arg.CustomRule.OverridesType() {
+		argType = arg.CustomRule.Type
+	}
+	return DecodersForType(receiver, argType)
+}
+
+// DecodersForType generates the decoders to be used for decoding an input of a
+// specific JavaScript type the corresponding Go value.
+func DecodersForType(receiver g.Generator, argType idl.Type) []g.Generator {
+	var convertNames []string
 	if argType.Kind == idl.KindUnion {
 		convertNames = make([]string, len(argType.Types))
+		res := make([]g.Generator, len(argType.Types))
 		for i, t := range argType.Types {
 			convertNames[i] = fmt.Sprintf("decode%s", model.IdlNameToGoName(t.Name))
+			res[i] = decoderForType(receiver, t)
 		}
+		return res
 	} else {
-		switch {
-		case arg.CustomRule.OverridesType():
-		case arg.IsString():
-			return g.List(decodeString)
-		case arg.IsBoolean():
-			return g.List(decodeBoolean)
-		case arg.IsInt():
-			return g.List(decodeInt)
-		}
-		switch arg.GoTypeName() {
-		case "Node", "HTMLElement", "EventInit":
-			return g.List(decode(arg.GoTypeName()))
-		}
-		convertNames = []string{fmt.Sprintf("decode%s", model.IdlNameToGoName(arg.GoTypeName()))}
+		return []g.Generator{decoderForType(receiver, argType)}
 	}
+}
 
-	res := make([]g.Generator, len(convertNames))
-	for i, n := range convertNames {
-		res[i] = g.ValueOf(receiver).Field(n)
+func decoderForType(receiver g.Generator, argType idl.Type) g.Generator {
+	idlType := idltransform.NewIdlType(argType)
+	switch {
+	case idlType.IsString():
+		return decodeString
+	case idlType.IsBoolean():
+		return decodeBoolean
+	case idlType.IsInt():
+		return decodeInt
 	}
-	return res
+	switch argType.Name {
+	case "Node", "HTMLElement", "EventInit":
+		return decode(argType.Name)
+	}
+	name := fmt.Sprintf("decode%s", model.IdlNameToGoName(argType.Name))
+	return g.ValueOf(receiver).Field(name)
 }
