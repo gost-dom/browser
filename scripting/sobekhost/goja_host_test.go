@@ -20,3 +20,7 @@ func TestSobekHost(t *testing.T) {
 	t.Parallel()
 	scripttests.RunSuites(t, scriptHostFactory{})
 }
+
+func TestESMSupport(t *testing.T) {
+	scripttests.RunModuleSuite(t, scriptHostFactory{})
+}

@@ -19,6 +19,7 @@ type GojaContext struct {
 	classes      map[string]*gojaClass
 	wrappedGoObj *sobek.Symbol
 	cachedNodes  map[int32]sobek.Value
+	resolver     gojaResolver
 }
 
 func (c *GojaContext) Clock() html.Clock { return c.clock }
@@ -239,7 +240,8 @@ func (c *GojaContext) DownloadScript(script string) (html.Script, error) {
 }
 
 func (c *GojaContext) DownloadModule(script string) (html.Script, error) {
-	return nil, errors.New("gojahost: ECMAScript modules not supported by gojehost")
+	return sobekModule{c.vm}, nil
+	// return nil, errors.New("gojahost: ECMAScript modules not supported by gojehost")
 }
 
 /* -------- GojaScript -------- */
