@@ -80,6 +80,49 @@ func configureDOMNode(specs *WebAPIConfig) {
 		"createCDATASection",
 	)
 
+	document.MarkMembersAsIgnored(
+		"fgColor", "linkColor", "vlinkColor", "alinkColor", "bgColor", "anchors", "applets", "all",
+		"readyState",
+
+		// HTML spec
+		"clear",
+		"captureEvents",
+		"releaseEvents",
+		"getElementsByName",
+		"open",
+		"close",
+		"write",
+		"writeln",
+		"hasFocus",
+		"execCommand",
+		"queryCommandEnabled", "queryCommandIndeterm",
+		"queryCommandState",
+		"queryCommandSupported",
+		"queryCommandValue",
+		"domain",
+		"referrer",
+		"cookie",
+		"dir",
+
+		// TODO: Use these
+		"location",
+		"title",
+		"body",
+		"head",
+		"images",
+		"embeds",
+		"plugins",
+		"forms",
+		"links",
+		"scripts",
+		"currentScript",
+		"defaultView",
+		"designMode",
+		"hidden",
+		"visibilityState",
+		"lastModified",
+	)
+
 	// createElement has `is` option, relating to web components
 	document.Method("createElement").SetCustomImplementation()
 
@@ -130,6 +173,12 @@ func configureDOMNode(specs *WebAPIConfig) {
 	domElement.MarkMembersAsIgnored(
 		// HTMX fails if these exist but throw
 		"webkitMatchesSelector",
+
+		"outerHTML",
+		"innerHTML",
+		"setHTMLUnsafe",
+		"getHTML",
+		"insertAdjacentHTML",
 	)
 
 	domTokenList := specs.Type("DOMTokenList")

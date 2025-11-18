@@ -124,7 +124,7 @@ func (cb CallbackMethods) AttributeSetterCallbackBody(attr model.ESAttribute) g.
 
 	args := append(
 		[]g.Generator{cb.CbCtx()},
-		DecodersForArg(cb.Receiver(), attr.Setter.Arguments[0])...,
+		DecodersForType(cb.Receiver(), attr.Spec.Type)...,
 	)
 	parsedArg := jsParseSetterArg.Call(args...)
 

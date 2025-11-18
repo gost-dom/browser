@@ -35,12 +35,10 @@ func DecodersForArg(receiver g.Generator, arg model.ESOperationArgument) []g.Gen
 // DecodersForType generates the decoders to be used for decoding an input of a
 // specific JavaScript type the corresponding Go value.
 func DecodersForType(receiver g.Generator, argType idl.Type) []g.Generator {
-	var convertNames []string
+	argType = idltransform.FilterType(argType)
 	if argType.Kind == idl.KindUnion {
-		convertNames = make([]string, len(argType.Types))
 		res := make([]g.Generator, len(argType.Types))
 		for i, t := range argType.Types {
-			convertNames[i] = fmt.Sprintf("decode%s", model.IdlNameToGoName(t.Name))
 			res[i] = decoderForType(receiver, t)
 		}
 		return res

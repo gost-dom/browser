@@ -1,6 +1,8 @@
 package idltransform
 
 import (
+	"slices"
+
 	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/packagenames"
 	g "github.com/gost-dom/generators"
@@ -119,4 +121,29 @@ func (t IdlType) generateSequence() *jen.Statement {
 		panic("IdlType.generateSequence: TypeParameter is nil for sequence type")
 	}
 	return jen.Op("[]").Add(IdlType{*t.TypeParam, t.TargetPackage}.Generate())
+}
+
+func FilterType(t idl.Type) idl.Type {
+	if t.Kind != idl.KindUnion {
+		return t
+	}
+	t.Types = slices.DeleteFunc(slices.Clone(t.Types), unsupportedType)
+	if len(t.Types) > 1 {
+		return t
+	}
+	if len(t.Types) == 0 {
+		panic("Filtering type resulted in nothing")
+	}
+	return t.Types[0]
+}
+
+func unsupportedType(t idl.Type) bool {
+	switch t.Name {
+	case "TrustedHTML":
+		// TrustedHTML isn't prioritized and isn't widely supported yet
+		// https://github.com/gost-dom/browser/issues/151
+		return true
+	default:
+		return false
+	}
 }
