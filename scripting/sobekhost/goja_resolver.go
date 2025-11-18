@@ -60,7 +60,7 @@ func (m *sobekResolver) resolveModule(
 func (r *sobekResolver) download(url string) (string, error) {
 	resp, err := r.host.HttpClient.Get(url)
 	if err != nil {
-		return "", fmt.Errorf("gost: v8host: download errors: %w", err)
+		return "", fmt.Errorf("gost-dom/sobekhost: download errors: %w", err)
 	}
 	defer resp.Body.Close()
 	var buf strings.Builder
@@ -69,7 +69,7 @@ func (r *sobekResolver) download(url string) (string, error) {
 
 	if resp.StatusCode != 200 {
 		err := fmt.Errorf(
-			"gost: v8host: ScriptContext: bad status code: %d, downloading %s",
+			"gost-dom/sobekhost: ScriptContext: bad status code: %d, downloading %s",
 			resp.StatusCode,
 			url,
 		)
