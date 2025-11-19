@@ -8,6 +8,6 @@ type scriptError struct {
 }
 
 func newScriptError(ctx *scriptContext, err error) js.Error[jsTypeParam] {
-	obj := newGojaObject(ctx, ctx.vm.NewGoError(err))
+	obj := newObject(ctx, ctx.vm.NewGoError(err))
 	return scriptError{obj, err}
 }

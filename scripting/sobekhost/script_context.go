@@ -116,7 +116,7 @@ func (m *scriptContext) createLocationInstance() *sobek.Object {
 	if err != nil {
 		panic(err)
 	}
-	return location.(gojaObject).obj
+	return location.(object).obj
 }
 
 func (c *scriptContext) CreateFunction(name string, cb js.FunctionCallback[jsTypeParam]) {

@@ -35,7 +35,7 @@ func (v value) AsFunction() (js.Function[jsTypeParam], bool) {
 
 func (v value) AsObject() (js.Object[jsTypeParam], bool) {
 	if o := v.value.ToObject(v.ctx.vm); o != nil {
-		return newGojaObject(v.ctx, o), true
+		return newObject(v.ctx, o), true
 	}
 	return nil, false
 }
@@ -63,16 +63,16 @@ func (v value) Boolean() bool  { return v.value.ToBoolean() }
 func (v value) Int32() int32   { return int32(v.value.ToInteger()) }
 func (v value) Uint32() uint32 { return uint32(v.value.ToInteger()) }
 
-type gojaObject struct {
+type object struct {
 	value
 	obj *sobek.Object
 }
 
-func newGojaObject(c *scriptContext, o *sobek.Object) js.Object[jsTypeParam] {
-	return gojaObject{value{c, o}, o}
+func newObject(c *scriptContext, o *sobek.Object) js.Object[jsTypeParam] {
+	return object{value{c, o}, o}
 }
 
-func (o gojaObject) Get(key string) (js.Value[jsTypeParam], error) {
+func (o object) Get(key string) (js.Value[jsTypeParam], error) {
 	v := o.obj.Get(key)
 	if v == nil {
 		v = sobek.Undefined()
@@ -80,14 +80,14 @@ func (o gojaObject) Get(key string) (js.Value[jsTypeParam], error) {
 	return newValue(o.ctx, v), nil
 }
 
-func (o gojaObject) Set(key string, v js.Value[jsTypeParam]) error {
+func (o object) Set(key string, v js.Value[jsTypeParam]) error {
 	o.obj.Set(key, v.Self().value)
 	return nil
 }
 
-func (o gojaObject) Keys() ([]string, error) { return o.obj.Keys(), nil }
+func (o object) Keys() ([]string, error) { return o.obj.Keys(), nil }
 
-func (o gojaObject) NativeValue() any {
+func (o object) NativeValue() any {
 	instance := o.obj.GetSymbol(o.ctx.wrappedGoObj)
 	if instance == nil {
 		return nil
@@ -95,7 +95,7 @@ func (o gojaObject) NativeValue() any {
 	return instance.Export()
 }
 
-func (o gojaObject) SetNativeValue(value any) {
+func (o object) SetNativeValue(value any) {
 	o.obj.DefineDataPropertySymbol(
 		o.ctx.wrappedGoObj,
 		o.ctx.vm.ToValue(value),

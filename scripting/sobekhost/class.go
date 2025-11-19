@@ -82,7 +82,7 @@ func (c *class) NewInstance(native any) (js.Object[jsTypeParam], error) {
 	c.ctx.storeInternal(native, obj)
 	c.installInstance(&obj, native)
 
-	return newGojaObject(c.ctx, obj), nil
+	return newObject(c.ctx, obj), nil
 }
 
 // gojaDynamicArray implements [sobek.DynamicArray], serving as an indexed
