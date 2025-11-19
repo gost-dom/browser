@@ -34,9 +34,9 @@ type InputEventInit struct {
 }
 
 func NewUIEvent(type_ string) *event.Event {
-	return event.New(type_, UIEventInit{})
+	return &event.Event{Type: type_, Data: UIEventInit{}}
 }
 
 func NewPointerEvent(type_ string, init PointerEventInit) *event.Event {
-	return event.New(type_, init)
+	return &event.Event{Type: type_, Data: init}
 }
