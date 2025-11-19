@@ -23,7 +23,7 @@ func newCallbackScope(ctx *scriptContext, this *sobek.Object, instance any) call
 }
 
 func (s callbackScope) This() js.Object[jsTypeParam] {
-	return newGojaObject(s.scriptContext, s.this)
+	return newObject(s.scriptContext, s.this)
 }
 
 func (s callbackScope) Instance() (any, error) {
