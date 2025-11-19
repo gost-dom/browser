@@ -50,17 +50,5 @@ type Event struct {
 	CurrentTarget    EventTarget
 }
 
-// New creates a new Event object passing a specific event type and event data.
-//
-// Deprecated: Calling New was originally necessary to handle object
-// initialization, but this is no longer necessary, and it's suggested to just
-// create an Event objects directly
-func New(eventType string, eventInit any) *Event {
-	return &Event{
-		Data: eventInit,
-		Type: eventType,
-	}
-}
-
 func (e *Event) StopPropagation() { e.stopped = true }
 func (e *Event) PreventDefault()  { e.DefaultPrevented = true }
