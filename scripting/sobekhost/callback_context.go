@@ -8,32 +8,32 @@ import (
 	"github.com/grafana/sobek"
 )
 
-type gojaCallbackScope struct {
+type callbackScope struct {
 	gojaScope
 	this     *sobek.Object
 	instance any
 }
 
-func newCallbackScope(ctx *scriptContext, this *sobek.Object, instance any) gojaCallbackScope {
-	return gojaCallbackScope{
+func newCallbackScope(ctx *scriptContext, this *sobek.Object, instance any) callbackScope {
+	return callbackScope{
 		gojaScope: newGojaScope(ctx),
 		this:      this,
 		instance:  instance,
 	}
 }
 
-func (s gojaCallbackScope) This() js.Object[jsTypeParam] {
+func (s callbackScope) This() js.Object[jsTypeParam] {
 	return newGojaObject(s.scriptContext, s.this)
 }
 
-func (s gojaCallbackScope) Instance() (any, error) {
+func (s callbackScope) Instance() (any, error) {
 	if s.instance == nil {
 		panic(s.vm.NewTypeError("No embedded value"))
 	}
 	return s.instance, nil
 }
 
-func (s gojaCallbackScope) Logger() *slog.Logger {
+func (s callbackScope) Logger() *slog.Logger {
 	if l := s.logger(); l != nil {
 		return l
 	}
@@ -41,7 +41,7 @@ func (s gojaCallbackScope) Logger() *slog.Logger {
 }
 
 type callbackContext struct {
-	gojaCallbackScope
+	callbackScope
 	args     []sobek.Value
 	argIndex int
 }
