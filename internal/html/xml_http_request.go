@@ -39,8 +39,6 @@ type XmlHttpRequest interface {
 	Open(string, string, ...RequestOption)
 
 	Send(body io.Reader) error
-	// Deprecated: Call Send instead.
-	SendBody(body io.Reader) error
 	Status() int
 	StatusText() string
 	ResponseText() string
