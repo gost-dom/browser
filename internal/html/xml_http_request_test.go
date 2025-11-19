@@ -135,7 +135,7 @@ func (s *XMLHTTPRequestTestSuite) TestFormdataEncoding() {
 	formData.Append("key1", "Value%42")
 	formData.Append("key2", "Value&=42")
 	formData.Append("key3", "International? æøå")
-	s.xhr.SendBody(formData.GetReader())
+	s.xhr.Send(formData.GetReader())
 	s.Expect(s.reqErr).ToNot(HaveOccurred())
 	s.Expect(s.actualMethod).To(Equal("POST"))
 	actualReqContentType := s.actualHeader.Get("Content-Type")
