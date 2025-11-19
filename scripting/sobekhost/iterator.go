@@ -5,7 +5,7 @@ import (
 	"github.com/grafana/sobek"
 )
 
-type gojaIteratorInstance struct {
+type iterator struct {
 	vm   *sobek.Runtime
 	next func() (js.Value[jsTypeParam], error, bool)
 	stop func()

@@ -138,7 +138,7 @@ func (f scope) NewIterator(
 	items iter.Seq2[js.Value[jsTypeParam], error],
 ) js.Value[jsTypeParam] {
 	next, stop := iter.Pull2(items)
-	iter := &gojaIteratorInstance{next: next, stop: stop}
+	iter := &iterator{next: next, stop: stop}
 	gojaObj := f.vm.NewObject()
 	obj := newGojaObject(f.scriptContext, gojaObj)
 	obj.SetNativeValue(iter)
@@ -148,7 +148,7 @@ func (f scope) NewIterator(
 		wrapJSCallback(
 			f.scriptContext,
 			func(cbCtx js.CallbackContext[jsTypeParam]) (js.Value[jsTypeParam], error) {
-				instance, ok := (cbCtx.This().NativeValue()).(*gojaIteratorInstance)
+				instance, ok := (cbCtx.This().NativeValue()).(*iterator)
 				if !ok {
 					return cbCtx.ReturnWithTypeError("Not an iterator instance")
 				}
