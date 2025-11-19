@@ -105,7 +105,7 @@ func (o gojaDynamicArray) Get(index int) sobek.Value {
 	if err != nil {
 		panic(err)
 	}
-	return toGojaValue(res)
+	return toValue(res)
 }
 
 func (o gojaDynamicArray) Set(index int, value sobek.Value) bool {
@@ -151,7 +151,7 @@ func (o gojaDynamicObject) Get(key string) sobek.Value {
 	if err != nil {
 		panic(err)
 	}
-	return toGojaValue(res)
+	return toValue(res)
 }
 
 func (o gojaDynamicObject) Delete(key string) (res bool) {
@@ -204,7 +204,7 @@ func (o gojaDynamicObject) Set(key string, val sobek.Value) bool {
 	if o.cbs.Setter == nil {
 		return false
 	}
-	err := o.cbs.Setter(o.scope, o.scope.NewString(key), newGojaValue(o.ctx, val))
+	err := o.cbs.Setter(o.scope, o.scope.NewString(key), newValue(o.ctx, val))
 	if err == js.NotIntercepted {
 		return false
 	}

@@ -74,7 +74,7 @@ func wrapJSCallback(ctx *scriptContext, cb js.FunctionCallback[jsTypeParam]) sob
 		if err != nil {
 			panic(ctx.vm.ToValue(err))
 		}
-		return toGojaValue(res)
+		return toValue(res)
 	})
 }
 
@@ -84,7 +84,7 @@ func (c *callbackContext) ConsumeArg() (js.Value[jsTypeParam], bool) {
 	if index >= len(c.args) {
 		return nil, false
 	}
-	return newGojaValue(c.scriptContext, c.args[index]), true
+	return newValue(c.scriptContext, c.args[index]), true
 }
 
 func (c *callbackContext) ReturnWithTypeError(msg string) (js.Value[jsTypeParam], error) {

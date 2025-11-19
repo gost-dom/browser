@@ -13,7 +13,7 @@ type promise struct {
 func newPromise(ctx *scriptContext) promise {
 	p, resolve, reject := ctx.vm.NewPromise()
 	return promise{
-		newGojaValue(ctx, ctx.vm.ToValue(p)),
+		newValue(ctx, ctx.vm.ToValue(p)),
 		resolve, reject,
 	}
 }

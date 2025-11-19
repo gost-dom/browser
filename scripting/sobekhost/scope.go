@@ -36,7 +36,7 @@ func (s scope) Constructor(name string) js.Constructor[jsTypeParam] {
 
 func (s scope) GetValue(e entity.ObjectIder) (js.Value[jsTypeParam], bool) {
 	v, ok := s.cachedNodes[e.ObjectId()]
-	return newGojaValue(s.scriptContext, v), ok
+	return newValue(s.scriptContext, v), ok
 }
 func (s scope) SetValue(e entity.ObjectIder, v js.Value[jsTypeParam]) {
 	s.cachedNodes[e.ObjectId()] = v.Self().value
@@ -52,7 +52,7 @@ func (f scope) JSONParse(s string) (js.Value[jsTypeParam], error) {
 		return nil, errors.New("Goja error, retrieving JSON.parse")
 	}
 	res, err := fn(f.vm.GlobalObject(), f.vm.ToValue(s))
-	return newGojaValue(f.scriptContext, res), err
+	return newValue(f.scriptContext, res), err
 }
 
 func (f scope) JSONStringify(v js.Value[jsTypeParam]) string {
@@ -69,37 +69,37 @@ func (f scope) JSONStringify(v js.Value[jsTypeParam]) string {
 func (f scope) NewArray(v ...js.Value[jsTypeParam]) js.Value[jsTypeParam] {
 	arr := make([]any, len(v))
 	for i, val := range v {
-		arr[i] = toGojaValue(val)
+		arr[i] = toValue(val)
 	}
 	return newGojaObject(f.scriptContext, f.vm.NewArray(arr...))
 }
 
 func (f scope) NewBoolean(v bool) js.Value[jsTypeParam] {
-	return newGojaValue(f.scriptContext, f.vm.ToValue(v))
+	return newValue(f.scriptContext, f.vm.ToValue(v))
 }
 
 func (f scope) Undefined() js.Value[jsTypeParam] {
-	return newGojaValue(f.scriptContext, sobek.Undefined())
+	return newValue(f.scriptContext, sobek.Undefined())
 }
 
 func (f scope) Null() js.Value[jsTypeParam] {
-	return newGojaValue(f.scriptContext, sobek.Null())
+	return newValue(f.scriptContext, sobek.Null())
 }
 
 func (f scope) NewUint32(v uint32) js.Value[jsTypeParam] {
-	return newGojaValue(f.scriptContext, f.vm.ToValue(v))
+	return newValue(f.scriptContext, f.vm.ToValue(v))
 }
 
 func (f scope) NewInt32(v int32) js.Value[jsTypeParam] {
-	return newGojaValue(f.scriptContext, f.vm.ToValue(v))
+	return newValue(f.scriptContext, f.vm.ToValue(v))
 }
 
 func (f scope) NewInt64(v int64) js.Value[jsTypeParam] {
-	return newGojaValue(f.scriptContext, f.vm.ToValue(v))
+	return newValue(f.scriptContext, f.vm.ToValue(v))
 }
 
 func (f scope) NewString(v string) js.Value[jsTypeParam] {
-	return newGojaValue(f.scriptContext, f.vm.ToValue(v))
+	return newValue(f.scriptContext, f.vm.ToValue(v))
 }
 
 func (f scope) NewTypeError(v string) error {
@@ -127,7 +127,7 @@ func (c scope) NewUint8Array(data []byte) js.Value[jsTypeParam] {
 	if err != nil {
 		panic(fmt.Sprintf("gost-dom/gojahost: Uint8Array call: %v", err))
 	}
-	return newGojaValue(c.scriptContext, value)
+	return newValue(c.scriptContext, value)
 }
 
 func (c scope) NewError(err error) js.Error[jsTypeParam] {
