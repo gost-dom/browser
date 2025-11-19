@@ -7,7 +7,7 @@ type gojaError struct {
 	error
 }
 
-func newGojaError(ctx *GojaContext, err error) js.Error[jsTypeParam] {
+func newGojaError(ctx *scriptContext, err error) js.Error[jsTypeParam] {
 	obj := newGojaObject(ctx, ctx.vm.NewGoError(err))
 	return gojaError{obj, err}
 }

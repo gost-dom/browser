@@ -12,7 +12,7 @@ import (
 	"github.com/grafana/sobek"
 )
 
-type GojaContext struct {
+type scriptContext struct {
 	host         *gojaScriptHost
 	vm           *sobek.Runtime
 	clock        *clock.Clock
@@ -22,39 +22,39 @@ type GojaContext struct {
 	cachedNodes  map[int32]sobek.Value
 }
 
-func (c *GojaContext) Clock() html.Clock { return c.clock }
+func (c *scriptContext) Clock() html.Clock { return c.clock }
 
-func (i *GojaContext) Close() {}
+func (i *scriptContext) Close() {}
 
-func (i *GojaContext) logger() *slog.Logger {
+func (i *scriptContext) logger() *slog.Logger {
 	if i.window == nil {
 		return nil
 	}
 	return i.window.Logger()
 }
 
-func (i *GojaContext) run(str string) (sobek.Value, error) {
+func (i *scriptContext) run(str string) (sobek.Value, error) {
 	res, err := i.vm.RunString(str)
 	i.clock.Tick()
 	return res, err
 }
 
-func (i *GojaContext) Run(str string) error {
+func (i *scriptContext) Run(str string) error {
 	s, e1 := i.Compile(str)
 	return errors.Join(e1, s.Run())
 }
 
-func (i *GojaContext) Eval(str string) (res any, err error) {
+func (i *scriptContext) Eval(str string) (res any, err error) {
 	s, e1 := i.Compile(str)
 	r, e2 := s.Eval()
 	return r, errors.Join(e1, e2)
 }
 
-func (i *GojaContext) EvalCore(str string) (res any, err error) {
+func (i *scriptContext) EvalCore(str string) (res any, err error) {
 	return i.vm.RunString(str)
 }
 
-func (c *GojaContext) storeInternal(value any, obj *sobek.Object) {
+func (c *scriptContext) storeInternal(value any, obj *sobek.Object) {
 	obj.DefineDataPropertySymbol(
 		c.wrappedGoObj,
 		c.vm.ToValue(value),
@@ -67,7 +67,7 @@ func (c *GojaContext) storeInternal(value any, obj *sobek.Object) {
 	}
 }
 
-func (i *GojaContext) RunFunction(str string, arguments ...any) (res any, err error) {
+func (i *scriptContext) RunFunction(str string, arguments ...any) (res any, err error) {
 	var f sobek.Value
 	if f, err = i.vm.RunString(str); err == nil {
 		if c, ok := sobek.AssertFunction(f); !ok {
@@ -97,7 +97,7 @@ func (i *GojaContext) RunFunction(str string, arguments ...any) (res any, err er
 //
 // An error will be returned if the value is not a goja Value, or the value
 // could not be converted to a native Go object
-func (i *GojaContext) Export(value any) (res any, err error) {
+func (i *scriptContext) Export(value any) (res any, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("GojaContext.Export: %v", r)
@@ -111,7 +111,7 @@ func (i *GojaContext) Export(value any) (res any, err error) {
 	return
 }
 
-func (m *GojaContext) createLocationInstance() *sobek.Object {
+func (m *scriptContext) createLocationInstance() *sobek.Object {
 	location, err := m.classes["Location"].NewInstance(m.window.Location())
 	if err != nil {
 		panic(err)
@@ -119,11 +119,11 @@ func (m *GojaContext) createLocationInstance() *sobek.Object {
 	return location.(gojaObject).obj
 }
 
-func (c *GojaContext) CreateFunction(name string, cb js.FunctionCallback[jsTypeParam]) {
+func (c *scriptContext) CreateFunction(name string, cb js.FunctionCallback[jsTypeParam]) {
 	c.vm.Set(name, wrapJSCallback(c, cb))
 }
 
-func (c *GojaContext) RunScript(script, src string) {
+func (c *scriptContext) RunScript(script, src string) {
 	_, err := c.vm.RunScript(src, script)
 	if err != nil {
 		fmt.Println("RUN SCRIPT FAIL", script, src)
@@ -131,7 +131,7 @@ func (c *GojaContext) RunScript(script, src string) {
 	}
 }
 
-func (c *GojaContext) CreateClass(
+func (c *scriptContext) CreateClass(
 	name string, extends js.Class[jsTypeParam],
 	cb js.FunctionCallback[jsTypeParam],
 ) js.Class[jsTypeParam] {
@@ -201,7 +201,7 @@ func (class *class) installInstance(this **sobek.Object, native any) {
 }
 
 type attributeHandler struct {
-	ctx    *GojaContext
+	ctx    *scriptContext
 	name   string
 	getter js.FunctionCallback[jsTypeParam]
 	setter js.FunctionCallback[jsTypeParam]
@@ -222,7 +222,7 @@ func (h attributeHandler) install(object *sobek.Object) {
 }
 
 func newGojaCallbackContext(
-	ctx *GojaContext,
+	ctx *scriptContext,
 	call sobek.ConstructorCall,
 ) *callbackContext {
 	return &callbackContext{
@@ -231,15 +231,15 @@ func newGojaCallbackContext(
 	}
 }
 
-func (c *GojaContext) Compile(script string) (html.Script, error) {
+func (c *scriptContext) Compile(script string) (html.Script, error) {
 	return GojaScript{c, script}, nil
 }
 
-func (c *GojaContext) DownloadScript(script string) (html.Script, error) {
+func (c *scriptContext) DownloadScript(script string) (html.Script, error) {
 	return nil, errors.New("TODO")
 }
 
-func (c *GojaContext) DownloadModule(script string) (result html.Script, err error) {
+func (c *scriptContext) DownloadModule(script string) (result html.Script, err error) {
 	resolver := sobekResolver{
 		c.host,
 		c,
@@ -257,7 +257,7 @@ func (c *GojaContext) DownloadModule(script string) (result html.Script, err err
 /* -------- GojaScript -------- */
 
 type GojaScript struct {
-	context *GojaContext
+	context *scriptContext
 	script  string
 }
 

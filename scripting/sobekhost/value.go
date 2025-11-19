@@ -6,7 +6,7 @@ import (
 )
 
 type value struct {
-	ctx   *GojaContext
+	ctx   *scriptContext
 	value sobek.Value
 }
 
@@ -21,7 +21,7 @@ func toGojaValue(val js.Value[jsTypeParam]) sobek.Value {
 
 // newGojaValue createa a js.Value[T] wrapping goja value v. This is safe to use
 // on nil values, returning nil if v is nil.
-func newGojaValue(ctx *GojaContext, v sobek.Value) js.Value[jsTypeParam] {
+func newGojaValue(ctx *scriptContext, v sobek.Value) js.Value[jsTypeParam] {
 	if v == nil {
 		return nil
 	}
@@ -68,7 +68,7 @@ type gojaObject struct {
 	obj *sobek.Object
 }
 
-func newGojaObject(c *GojaContext, o *sobek.Object) js.Object[jsTypeParam] {
+func newGojaObject(c *scriptContext, o *sobek.Object) js.Object[jsTypeParam] {
 	return gojaObject{value{c, o}, o}
 }
 

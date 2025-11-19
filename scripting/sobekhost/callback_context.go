@@ -14,7 +14,7 @@ type gojaCallbackScope struct {
 	instance any
 }
 
-func newCallbackScope(ctx *GojaContext, this *sobek.Object, instance any) gojaCallbackScope {
+func newCallbackScope(ctx *scriptContext, this *sobek.Object, instance any) gojaCallbackScope {
 	return gojaCallbackScope{
 		gojaScope: newGojaScope(ctx),
 		this:      this,
@@ -23,7 +23,7 @@ func newCallbackScope(ctx *GojaContext, this *sobek.Object, instance any) gojaCa
 }
 
 func (s gojaCallbackScope) This() js.Object[jsTypeParam] {
-	return newGojaObject(s.GojaContext, s.this)
+	return newGojaObject(s.scriptContext, s.this)
 }
 
 func (s gojaCallbackScope) Instance() (any, error) {
@@ -46,7 +46,7 @@ type callbackContext struct {
 	argIndex int
 }
 
-func newArgumentHelper(ctx *GojaContext, c sobek.FunctionCall) *callbackContext {
+func newArgumentHelper(ctx *scriptContext, c sobek.FunctionCall) *callbackContext {
 	// BUG: Consider if this is still an issue
 	// I would consider this a bug in sobek. When calling a function in global
 	// scope, `this` is "undefined". It should have been `globalThis`.
@@ -68,7 +68,7 @@ func (ctx *callbackContext) Argument(index int) sobek.Value {
 	return ctx.args[index]
 }
 
-func wrapJSCallback(ctx *GojaContext, cb js.FunctionCallback[jsTypeParam]) sobek.Value {
+func wrapJSCallback(ctx *scriptContext, cb js.FunctionCallback[jsTypeParam]) sobek.Value {
 	return ctx.vm.ToValue(func(c sobek.FunctionCall) sobek.Value {
 		res, err := cb(newArgumentHelper(ctx, c))
 		if err != nil {
@@ -81,7 +81,7 @@ func wrapJSCallback(ctx *GojaContext, cb js.FunctionCallback[jsTypeParam]) sobek
 func (c *callbackContext) Args() []js.Value[jsTypeParam] {
 	res := make([]js.Value[jsTypeParam], len(c.args))
 	for i, a := range c.args {
-		res[i] = newGojaValue(c.GojaContext, a)
+		res[i] = newGojaValue(c.scriptContext, a)
 	}
 	return res
 }
@@ -92,7 +92,7 @@ func (c *callbackContext) ConsumeArg() (js.Value[jsTypeParam], bool) {
 	if index >= len(c.args) {
 		return nil, false
 	}
-	return newGojaValue(c.GojaContext, c.args[index]), true
+	return newGojaValue(c.scriptContext, c.args[index]), true
 }
 
 func (c *callbackContext) ReturnWithTypeError(msg string) (js.Value[jsTypeParam], error) {
