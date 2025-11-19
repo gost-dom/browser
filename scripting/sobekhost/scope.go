@@ -131,7 +131,7 @@ func (c scope) NewUint8Array(data []byte) js.Value[jsTypeParam] {
 }
 
 func (c scope) NewError(err error) js.Error[jsTypeParam] {
-	return newGojaError(c.scriptContext, err)
+	return newScriptError(c.scriptContext, err)
 }
 
 func (f scope) NewIterator(
