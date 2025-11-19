@@ -106,7 +106,7 @@ func (f scope) NewTypeError(v string) error {
 	panic(f.vm.NewTypeError(v))
 }
 
-func (c scope) NewPromise() js.Promise[jsTypeParam] { return newGojaPromise(c.scriptContext) }
+func (c scope) NewPromise() js.Promise[jsTypeParam] { return newPromise(c.scriptContext) }
 
 func (c scope) NewObject() js.Object[jsTypeParam] {
 	return newGojaObject(c.scriptContext, c.vm.NewObject())
