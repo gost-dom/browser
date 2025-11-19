@@ -6,7 +6,7 @@ import (
 )
 
 type class struct {
-	ctx            *GojaContext
+	ctx            *scriptContext
 	cb             js.FunctionCallback[jsTypeParam]
 	prototype      *sobek.Object
 	indexedHandler *js.IndexedHandlerCallbacks[jsTypeParam]
@@ -88,7 +88,7 @@ func (c *class) NewInstance(native any) (js.Object[jsTypeParam], error) {
 // gojaDynamicArray implements [sobek.DynamicArray], serving as an indexed
 // property handler.
 type gojaDynamicArray struct {
-	ctx   *GojaContext
+	ctx   *scriptContext
 	this  *sobek.Object
 	scope gojaCallbackScope
 	cbs   js.IndexedHandlerCallbacks[jsTypeParam]
@@ -133,7 +133,7 @@ func (o gojaDynamicArray) SetLen(int) bool {
 // gojaDynamicObject implements [sobek.DynamicObject], serving as a named
 // property handler.
 type gojaDynamicObject struct {
-	ctx   *GojaContext
+	ctx   *scriptContext
 	this  *sobek.Object
 	scope gojaCallbackScope
 	cbs   js.NamedHandlerCallbacks[jsTypeParam]

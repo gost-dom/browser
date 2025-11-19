@@ -7,7 +7,7 @@ import (
 )
 
 type sobekModule struct {
-	ctx    *GojaContext
+	ctx    *scriptContext
 	record sobek.ModuleRecord
 }
 

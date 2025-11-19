@@ -13,11 +13,11 @@ import (
 )
 
 type gojaScope struct {
-	*GojaContext
+	*scriptContext
 	global js.Object[jsTypeParam]
 }
 
-func newGojaScope(ctx *GojaContext) gojaScope {
+func newGojaScope(ctx *scriptContext) gojaScope {
 	return gojaScope{
 		ctx, newGojaObject(ctx, ctx.vm.GlobalObject()),
 	}
@@ -36,7 +36,7 @@ func (s gojaScope) Constructor(name string) js.Constructor[jsTypeParam] {
 
 func (s gojaScope) GetValue(e entity.ObjectIder) (js.Value[jsTypeParam], bool) {
 	v, ok := s.cachedNodes[e.ObjectId()]
-	return newGojaValue(s.GojaContext, v), ok
+	return newGojaValue(s.scriptContext, v), ok
 }
 func (s gojaScope) SetValue(e entity.ObjectIder, v js.Value[jsTypeParam]) {
 	s.cachedNodes[e.ObjectId()] = v.Self().value
@@ -52,7 +52,7 @@ func (f gojaScope) JSONParse(s string) (js.Value[jsTypeParam], error) {
 		return nil, errors.New("Goja error, retrieving JSON.parse")
 	}
 	res, err := fn(f.vm.GlobalObject(), f.vm.ToValue(s))
-	return newGojaValue(f.GojaContext, res), err
+	return newGojaValue(f.scriptContext, res), err
 }
 
 func (f gojaScope) JSONStringify(v js.Value[jsTypeParam]) string {
@@ -71,49 +71,49 @@ func (f gojaScope) NewArray(v ...js.Value[jsTypeParam]) js.Value[jsTypeParam] {
 	for i, val := range v {
 		arr[i] = toGojaValue(val)
 	}
-	return newGojaObject(f.GojaContext, f.vm.NewArray(arr...))
+	return newGojaObject(f.scriptContext, f.vm.NewArray(arr...))
 }
 
 func (f gojaScope) NewBoolean(v bool) js.Value[jsTypeParam] {
-	return newGojaValue(f.GojaContext, f.vm.ToValue(v))
+	return newGojaValue(f.scriptContext, f.vm.ToValue(v))
 }
 
 func (f gojaScope) Undefined() js.Value[jsTypeParam] {
-	return newGojaValue(f.GojaContext, sobek.Undefined())
+	return newGojaValue(f.scriptContext, sobek.Undefined())
 }
 
 func (f gojaScope) Null() js.Value[jsTypeParam] {
-	return newGojaValue(f.GojaContext, sobek.Null())
+	return newGojaValue(f.scriptContext, sobek.Null())
 }
 
 func (f gojaScope) NewUint32(v uint32) js.Value[jsTypeParam] {
-	return newGojaValue(f.GojaContext, f.vm.ToValue(v))
+	return newGojaValue(f.scriptContext, f.vm.ToValue(v))
 }
 
 func (f gojaScope) NewInt32(v int32) js.Value[jsTypeParam] {
-	return newGojaValue(f.GojaContext, f.vm.ToValue(v))
+	return newGojaValue(f.scriptContext, f.vm.ToValue(v))
 }
 
 func (f gojaScope) NewInt64(v int64) js.Value[jsTypeParam] {
-	return newGojaValue(f.GojaContext, f.vm.ToValue(v))
+	return newGojaValue(f.scriptContext, f.vm.ToValue(v))
 }
 
 func (f gojaScope) NewString(v string) js.Value[jsTypeParam] {
-	return newGojaValue(f.GojaContext, f.vm.ToValue(v))
+	return newGojaValue(f.scriptContext, f.vm.ToValue(v))
 }
 
 func (f gojaScope) NewTypeError(v string) error {
 	panic(f.vm.NewTypeError(v))
 }
 
-func (c gojaScope) NewPromise() js.Promise[jsTypeParam] { return newGojaPromise(c.GojaContext) }
+func (c gojaScope) NewPromise() js.Promise[jsTypeParam] { return newGojaPromise(c.scriptContext) }
 
 func (c gojaScope) NewObject() js.Object[jsTypeParam] {
-	return newGojaObject(c.GojaContext, c.vm.NewObject())
+	return newGojaObject(c.scriptContext, c.vm.NewObject())
 }
 
 func (c gojaScope) NewUint8Array(data []byte) js.Value[jsTypeParam] {
-	vm := c.GojaContext.vm
+	vm := c.scriptContext.vm
 	arrayBuf := vm.NewArrayBuffer(data)
 	fVal, err := vm.RunScript("gost-dom/gojahost:NewUint8Array", "Uint8Array")
 	if err != nil {
@@ -127,11 +127,11 @@ func (c gojaScope) NewUint8Array(data []byte) js.Value[jsTypeParam] {
 	if err != nil {
 		panic(fmt.Sprintf("gost-dom/gojahost: Uint8Array call: %v", err))
 	}
-	return newGojaValue(c.GojaContext, value)
+	return newGojaValue(c.scriptContext, value)
 }
 
 func (c gojaScope) NewError(err error) js.Error[jsTypeParam] {
-	return newGojaError(c.GojaContext, err)
+	return newGojaError(c.scriptContext, err)
 }
 
 func (f gojaScope) NewIterator(
@@ -140,13 +140,13 @@ func (f gojaScope) NewIterator(
 	next, stop := iter.Pull2(items)
 	iter := &gojaIteratorInstance{next: next, stop: stop}
 	gojaObj := f.vm.NewObject()
-	obj := newGojaObject(f.GojaContext, gojaObj)
+	obj := newGojaObject(f.scriptContext, gojaObj)
 	obj.SetNativeValue(iter)
 
 	gojaObj.Set(
 		"next",
 		wrapJSCallback(
-			f.GojaContext,
+			f.scriptContext,
 			func(cbCtx js.CallbackContext[jsTypeParam]) (js.Value[jsTypeParam], error) {
 				instance, ok := (cbCtx.This().NativeValue()).(*gojaIteratorInstance)
 				if !ok {
@@ -162,14 +162,14 @@ func (f gojaScope) NewIterator(
 						res.Set("value", item.Self().value)
 					}
 				}
-				return newGojaObject(f.GojaContext, res), err
+				return newGojaObject(f.scriptContext, res), err
 			},
 		),
 	)
 	gojaObj.SetSymbol(
 		sobek.SymIterator,
 		wrapJSCallback(
-			f.GojaContext,
+			f.scriptContext,
 			func(cbCtx js.CallbackContext[jsTypeParam]) (js.Value[jsTypeParam], error) {
 				return f.NewIterator(items), nil
 			},
