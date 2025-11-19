@@ -11,6 +11,7 @@ import (
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/scripting/v8host"
+	"github.com/gost-dom/browser/v8browser"
 	"github.com/onsi/gomega"
 )
 
@@ -39,7 +40,7 @@ func TestScriptHostUnhandledPromiseRejection(t *testing.T) {
 	// script is evaluated; but before returning from `run`.
 	var recorder gosttest.LogRecorder
 	g := gomega.NewWithT(t)
-	b := browser.New(browser.WithLogger(slog.New(&recorder)))
+	b := v8browser.New(browser.WithLogger(slog.New(&recorder)))
 	defer b.Close()
 	win := b.NewWindow()
 

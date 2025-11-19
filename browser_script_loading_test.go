@@ -6,6 +6,7 @@ import (
 
 	"github.com/gost-dom/browser"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
+	"github.com/gost-dom/browser/v8browser"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -57,7 +58,7 @@ func TestBrowserScriptLoading(t *testing.T) {
 				})
 			`),
 	}
-	b := browser.New(
+	b := v8browser.New(
 		browser.WithHandler(server),
 		browser.WithLogger(gosttest.NewTestLogger(t)),
 	)
