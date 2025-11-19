@@ -74,14 +74,14 @@ func wrapJSCallback(ctx *scriptContext, cb js.FunctionCallback[jsTypeParam]) sob
 		if err != nil {
 			panic(ctx.vm.ToValue(err))
 		}
-		return toGojaValue(res)
+		return toValue(res)
 	})
 }
 
 func (c *callbackContext) Args() []js.Value[jsTypeParam] {
 	res := make([]js.Value[jsTypeParam], len(c.args))
 	for i, a := range c.args {
-		res[i] = newGojaValue(c.scriptContext, a)
+		res[i] = newValue(c.scriptContext, a)
 	}
 	return res
 }
@@ -92,7 +92,7 @@ func (c *callbackContext) ConsumeArg() (js.Value[jsTypeParam], bool) {
 	if index >= len(c.args) {
 		return nil, false
 	}
-	return newGojaValue(c.scriptContext, c.args[index]), true
+	return newValue(c.scriptContext, c.args[index]), true
 }
 
 func (c *callbackContext) ReturnWithTypeError(msg string) (js.Value[jsTypeParam], error) {

@@ -12,16 +12,16 @@ type value struct {
 
 type jsTypeParam = value
 
-func toGojaValue(val js.Value[jsTypeParam]) sobek.Value {
+func toValue(val js.Value[jsTypeParam]) sobek.Value {
 	if val == nil {
 		return sobek.Undefined()
 	}
 	return val.Self().value
 }
 
-// newGojaValue createa a js.Value[T] wrapping goja value v. This is safe to use
+// newValue createa a js.Value[T] wrapping sobek value v. This is safe to use
 // on nil values, returning nil if v is nil.
-func newGojaValue(ctx *scriptContext, v sobek.Value) js.Value[jsTypeParam] {
+func newValue(ctx *scriptContext, v sobek.Value) js.Value[jsTypeParam] {
 	if v == nil {
 		return nil
 	}
@@ -77,7 +77,7 @@ func (o gojaObject) Get(key string) (js.Value[jsTypeParam], error) {
 	if v == nil {
 		v = sobek.Undefined()
 	}
-	return newGojaValue(o.ctx, v), nil
+	return newValue(o.ctx, v), nil
 }
 
 func (o gojaObject) Set(key string, v js.Value[jsTypeParam]) error {
@@ -119,5 +119,5 @@ func (f gojaFunction) Call(
 		v[i] = a.Self().value
 	}
 	res, err := f.f(this.Self().value, v...)
-	return newGojaValue(f.ctx, res), err
+	return newValue(f.ctx, res), err
 }
