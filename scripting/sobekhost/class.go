@@ -90,7 +90,7 @@ func (c *class) NewInstance(native any) (js.Object[jsTypeParam], error) {
 type gojaDynamicArray struct {
 	ctx   *scriptContext
 	this  *sobek.Object
-	scope gojaCallbackScope
+	scope callbackScope
 	cbs   js.IndexedHandlerCallbacks[jsTypeParam]
 }
 
@@ -135,7 +135,7 @@ func (o gojaDynamicArray) SetLen(int) bool {
 type gojaDynamicObject struct {
 	ctx   *scriptContext
 	this  *sobek.Object
-	scope gojaCallbackScope
+	scope callbackScope
 	cbs   js.NamedHandlerCallbacks[jsTypeParam]
 }
 

@@ -161,7 +161,7 @@ func (c *scriptContext) CreateClass(
 
 func (class *class) constructorCb(call sobek.ConstructorCall, r *sobek.Runtime) *sobek.Object {
 	class.installInstance(&call.This, nil)
-	class.cb(newGojaCallbackContext(class.ctx, call))
+	class.cb(newCallbackContext(class.ctx, call))
 	return nil
 }
 
@@ -221,7 +221,7 @@ func (h attributeHandler) install(object *sobek.Object) {
 	)
 }
 
-func newGojaCallbackContext(
+func newCallbackContext(
 	ctx *scriptContext,
 	call sobek.ConstructorCall,
 ) *callbackContext {
