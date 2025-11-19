@@ -11,8 +11,6 @@ import (
 
 type DocumentEvent = string
 
-type staticNodeList NodeList
-
 const (
 	DocumentEventDOMContentLoaded DocumentEvent = "DOMContentLoaded"
 	DocumentEventLoad             DocumentEvent = "load"
@@ -46,8 +44,6 @@ type Document interface {
 
 	window() DocumentParentWindow
 }
-
-type elementConstructor func(doc *document) Element
 
 type document struct {
 	rootNode
