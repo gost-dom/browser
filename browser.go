@@ -39,14 +39,6 @@ func WithHandler(h http.Handler) BrowserOption {
 	return func(b *browserConfig) { b.client = NewHttpClientFromHandler(h) }
 }
 
-type staticHostEngine struct{ host html.ScriptHost }
-
-// Deprecated: This will be removed in the next release
-func (e staticHostEngine) NewHost(html.ScriptEngineOptions) html.ScriptHost {
-	host := html.ScriptHost(e.host)
-	return host
-}
-
 func WithScriptEngine(engine html.ScriptEngine) BrowserOption {
 	return func(b *browserConfig) { b.engine = engine }
 }

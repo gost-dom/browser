@@ -24,8 +24,8 @@ func TestEmptyHTMLDocumentStructure(t *testing.T) {
 	assert.Equal("HEAD", head.TagName(), "Document.Head() is a <head>")
 	assert.Equal("BODY", body.TagName(), "Document.Body() is a <body>")
 
-	assert.Equal(docElm, head.Parent(), "<head> is child of <html>")
-	assert.Equal(docElm, body.Parent(), "<body> is child of <html>")
+	assert.Equal(docElm, head.ParentNode(), "<head> is child of <html>")
+	assert.Equal(docElm, body.ParentNode(), "<body> is child of <html>")
 }
 
 func TestHTMLDocumentCreateElement(t *testing.T) {

@@ -155,8 +155,6 @@ type Node interface {
 	NodeName() string
 	NodeType() NodeType
 	OwnerDocument() Document
-	// Deprecated: Call ParentNode() instead.
-	Parent() Node
 	ParentNode() Node
 	ParentElement() Element
 	RemoveChild(node Node) (Node, error)
@@ -305,12 +303,10 @@ func (n *node) Contains(node Node) bool {
 	return false
 }
 
-// Deprecated: Use [node.ParentNode] instead
-func (n *node) Parent() Node     { return n.ParentNode() }
 func (n *node) ParentNode() Node { return n.parent }
 
 func (n *node) ParentElement() Element {
-	r, _ := n.Parent().(Element)
+	r, _ := n.ParentNode().(Element)
 	return r
 }
 
@@ -335,7 +331,7 @@ func (n *node) setParent(parent Node) {
 }
 
 func (n *node) Connected() {
-	if p := n.getSelf().Parent(); p != nil {
+	if p := n.getSelf().ParentNode(); p != nil {
 		p.Connected()
 	}
 }
@@ -552,7 +548,7 @@ func (n *node) LastChild() Node {
 }
 
 func (n *node) NextSibling() Node {
-	children := n.Parent().nodes()
+	children := n.ParentNode().nodes()
 	idx := slices.IndexFunc(
 		children,
 		func(child Node) bool { return n.ObjectId() == child.ObjectId() },
@@ -566,7 +562,7 @@ func (n *node) NextSibling() Node {
 	return children[idx]
 }
 func (n *node) PreviousSibling() Node {
-	parent := n.Parent()
+	parent := n.ParentNode()
 	if parent == nil {
 		return nil
 	}

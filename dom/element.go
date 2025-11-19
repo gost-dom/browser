@@ -218,7 +218,7 @@ func (e *element) GetAttributeNode(name string) Attr {
 }
 
 func (e *element) SetAttributeNode(node Attr) (Attr, error) {
-	if node.Parent() != nil {
+	if node.ParentNode() != nil {
 		return nil, newDomError("Attribute already in use")
 	}
 	for i, a := range e.attributes {
@@ -305,7 +305,7 @@ func (n *element) insertAdjacentNode(position string, node Node) error {
 	)
 	switch position {
 	case "beforebegin":
-		parent = n.Parent()
+		parent = n.ParentNode()
 		reference = n.getSelf()
 	case "afterbegin":
 		parent = n
@@ -314,7 +314,7 @@ func (n *element) insertAdjacentNode(position string, node Node) error {
 		parent = n
 		reference = nil
 	case "afterend":
-		parent = n.Parent()
+		parent = n.ParentNode()
 		reference = n.NextSibling()
 	default:
 		return errors.New("Invalid position")

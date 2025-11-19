@@ -56,7 +56,7 @@ func (s *ElementTestSuite) TestAttributeNodesAreMutable() {
 	attr := elm.GetAttributeNode("class")
 	s.Expect(attr).ToNot(BeNil())
 	s.Expect(attr.Value()).To(Equal("foo"), "Attribute value before mutation")
-	s.Expect(attr.Parent()).To(Equal(elm), "Parent on attribute node")
+	s.Expect(attr.ParentNode()).To(Equal(elm), "Parent on attribute node")
 	attr.SetValue("bar")
 	actual := elm.GetAttributeNode("class")
 	s.Expect(actual.Value()).To(Equal("bar"), "Attribute value after mutation")
@@ -110,7 +110,7 @@ func (s *ElementTestSuite) TestRemoveExistingAttribute() {
 	s.Expect(err).ToNot(HaveOccurred())
 	s.Expect(elm.Attributes().Length()).To(Equal(0))
 	s.Expect(removedNode).To(Equal(nodeToRemove))
-	s.Expect(removedNode.Parent()).To(BeNil(), "Attribute parent")
+	s.Expect(removedNode.ParentNode()).To(BeNil(), "Attribute parent")
 }
 
 func (s *ElementTestSuite) TestRemoveNonExistingAttributeNode() {
