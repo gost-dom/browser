@@ -17,7 +17,7 @@ type GojaContext struct {
 	vm           *sobek.Runtime
 	clock        *clock.Clock
 	window       html.Window
-	classes      map[string]*gojaClass
+	classes      map[string]*class
 	wrappedGoObj *sobek.Symbol
 	cachedNodes  map[int32]sobek.Value
 }
@@ -135,8 +135,8 @@ func (c *GojaContext) CreateClass(
 	name string, extends js.Class[jsTypeParam],
 	cb js.FunctionCallback[jsTypeParam],
 ) js.Class[jsTypeParam] {
-	class := &gojaClass{ctx: c, cb: cb, instanceAttrs: make(map[string]attributeHandler)}
-	constructor := c.vm.ToValue(class.constructorCb).(*sobek.Object)
+	cls := &class{ctx: c, cb: cb, instanceAttrs: make(map[string]attributeHandler)}
+	constructor := c.vm.ToValue(cls.constructorCb).(*sobek.Object)
 	constructor.DefineDataProperty(
 		"name",
 		c.vm.ToValue(name),
@@ -144,28 +144,28 @@ func (c *GojaContext) CreateClass(
 		sobek.FLAG_NOT_SET,
 		sobek.FLAG_NOT_SET,
 	)
-	class.prototype = constructor.Get("prototype").(*sobek.Object)
+	cls.prototype = constructor.Get("prototype").(*sobek.Object)
 	c.vm.Set(name, constructor)
-	c.classes[name] = class
+	c.classes[name] = cls
 
 	if extends != nil {
-		if superclass, ok := extends.(*gojaClass); ok {
-			class.prototype.SetPrototype(superclass.prototype)
+		if superclass, ok := extends.(*class); ok {
+			cls.prototype.SetPrototype(superclass.prototype)
 		} else {
 			panic(fmt.Sprintf("Superclass not installed for %s. extends: %+v", name, extends))
 		}
 	}
 
-	return class
+	return cls
 }
 
-func (class *gojaClass) constructorCb(call sobek.ConstructorCall, r *sobek.Runtime) *sobek.Object {
+func (class *class) constructorCb(call sobek.ConstructorCall, r *sobek.Runtime) *sobek.Object {
 	class.installInstance(&call.This, nil)
 	class.cb(newGojaCallbackContext(class.ctx, call))
 	return nil
 }
 
-func (class *gojaClass) installInstance(this **sobek.Object, native any) {
+func (class *class) installInstance(this **sobek.Object, native any) {
 	for _, v := range class.instanceAttrs {
 		v.install(*this)
 	}

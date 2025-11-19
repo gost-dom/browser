@@ -5,7 +5,7 @@ import (
 	"github.com/grafana/sobek"
 )
 
-type gojaClass struct {
+type class struct {
 	ctx            *GojaContext
 	cb             js.FunctionCallback[jsTypeParam]
 	prototype      *sobek.Object
@@ -15,7 +15,7 @@ type gojaClass struct {
 	namedHandlerCallbacks *js.NamedHandlerCallbacks[jsTypeParam]
 }
 
-func (c *gojaClass) assertValid() {
+func (c *class) assertValid() {
 	if c.indexedHandler != nil || c.namedHandlerCallbacks != nil {
 		if c.indexedHandler != nil && c.namedHandlerCallbacks != nil {
 			panic("Goja mapper doesn't support both a named and indexed handler on the same class")
@@ -28,7 +28,7 @@ func (c *gojaClass) assertValid() {
 	}
 }
 
-func (c *gojaClass) CreateIndexedHandler(opts ...js.IndexedHandlerOption[jsTypeParam]) {
+func (c *class) CreateIndexedHandler(opts ...js.IndexedHandlerOption[jsTypeParam]) {
 	var oo js.IndexedHandlerCallbacks[jsTypeParam]
 	for _, o := range opts {
 		o(&oo)
@@ -37,7 +37,7 @@ func (c *gojaClass) CreateIndexedHandler(opts ...js.IndexedHandlerOption[jsTypeP
 	c.assertValid()
 }
 
-func (c *gojaClass) CreateNamedHandler(opts ...js.NamedHandlerOption[jsTypeParam]) {
+func (c *class) CreateNamedHandler(opts ...js.NamedHandlerOption[jsTypeParam]) {
 	var cbs js.NamedHandlerCallbacks[jsTypeParam]
 	for _, o := range opts {
 		o(&cbs)
@@ -46,7 +46,7 @@ func (c *gojaClass) CreateNamedHandler(opts ...js.NamedHandlerOption[jsTypeParam
 	c.assertValid()
 }
 
-func (c *gojaClass) CreateInstanceAttribute(
+func (c *class) CreateInstanceAttribute(
 	name string,
 	getter js.FunctionCallback[jsTypeParam],
 	setter js.FunctionCallback[jsTypeParam],
@@ -55,7 +55,7 @@ func (c *gojaClass) CreateInstanceAttribute(
 	c.assertValid()
 }
 
-func (c gojaClass) CreatePrototypeMethod(
+func (c class) CreatePrototypeMethod(
 	name string,
 	cb js.FunctionCallback[jsTypeParam],
 ) {
@@ -64,7 +64,7 @@ func (c gojaClass) CreatePrototypeMethod(
 	}
 }
 
-func (c gojaClass) CreatePrototypeAttribute(
+func (c class) CreatePrototypeAttribute(
 	name string,
 	getter js.FunctionCallback[jsTypeParam],
 	setter js.FunctionCallback[jsTypeParam],
@@ -73,11 +73,11 @@ func (c gojaClass) CreatePrototypeAttribute(
 	attr.install(c.prototype)
 }
 
-func (c gojaClass) CreateIteratorMethod(cb js.FunctionCallback[jsTypeParam]) {
+func (c class) CreateIteratorMethod(cb js.FunctionCallback[jsTypeParam]) {
 	c.prototype.SetSymbol(sobek.SymIterator, wrapJSCallback(c.ctx, cb))
 }
 
-func (c *gojaClass) NewInstance(native any) (js.Object[jsTypeParam], error) {
+func (c *class) NewInstance(native any) (js.Object[jsTypeParam], error) {
 	obj := c.ctx.vm.CreateObject(c.prototype)
 	c.ctx.storeInternal(native, obj)
 	c.installInstance(&obj, native)

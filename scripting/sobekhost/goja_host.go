@@ -62,7 +62,7 @@ func (d *gojaScriptHost) NewContext(window html.Window) html.ScriptContext {
 		window:       window,
 		wrappedGoObj: sobek.NewSymbol(internal_symbol_name),
 		cachedNodes:  make(map[int32]sobek.Value),
-		classes:      make(map[string]*gojaClass),
+		classes:      make(map[string]*class),
 	}
 
 	globalThis := vm.GlobalObject()
