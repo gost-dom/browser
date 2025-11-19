@@ -13,7 +13,7 @@ import (
 )
 
 type scriptContext struct {
-	host         *gojaScriptHost
+	host         *scriptHost
 	vm           *sobek.Runtime
 	clock        *clock.Clock
 	window       html.Window

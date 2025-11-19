@@ -10,7 +10,7 @@ import (
 )
 
 type sobekResolver struct {
-	host    *gojaScriptHost
+	host    *scriptHost
 	ctx     *scriptContext
 	modules map[sobek.ModuleRecord]string
 	cache   map[string]sobek.ModuleRecord
