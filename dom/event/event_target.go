@@ -193,7 +193,7 @@ func (e *eventTarget) dispatchEvent(event *Event, capture bool) {
 }
 
 func (e *eventTarget) handleError(event *Event, err error) {
-	log.Error(e.logger(),
+	e.logger().Error(
 		"eventTarget.dispatchEvent: Error occurred in event handler",
 		"eventType", event.Type,
 		log.ErrAttr(err),
@@ -224,9 +224,12 @@ func (e *eventTarget) dispatchError(err error) {
 	}
 }
 
-func (e *eventTarget) logger() *slog.Logger {
+func (e *eventTarget) logger() (res *slog.Logger) {
 	if source, ok := e.self.(log.LogSource); ok {
-		return source.Logger()
+		res = source.Logger()
 	}
-	return nil
+	if res == nil {
+		res = log.Default()
+	}
+	return
 }

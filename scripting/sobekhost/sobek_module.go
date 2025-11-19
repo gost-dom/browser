@@ -7,12 +7,21 @@ import (
 )
 
 type sobekModule struct {
-	vm *sobek.Runtime
+	ctx    *GojaContext
+	record sobek.ModuleRecord
 }
 
 func (m sobekModule) Eval() (any, error) {
 	return nil, errors.New("Not implemented")
 }
+
 func (m sobekModule) Run() error {
-	return errors.New("sobekhost.Run not implemented")
+	m.ctx.logger().Debug("Evaluate module", "vm", m.ctx.vm)
+	// TODO: Handle promise return value
+
+	// if err := m.record.Link(); err != nil {
+	// 	return err
+	// }
+	m.record.Evaluate(m.ctx.vm)
+	return nil
 }

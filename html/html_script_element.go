@@ -30,20 +30,20 @@ func (e *htmlScriptElement) Connected() {
 	window, _ := e.htmlDocument.getWindow().(*window)
 	if !hasSrc {
 		if e.script, err = window.scriptContext.Compile(e.TextContent()); err != nil {
-			log.Error(e.Logger(), "HTMLScriptElement: compile error", "src", src, "err", err)
+			e.Logger().Error("HTMLScriptElement: compile error", "src", src, "err", err)
 			return
 		}
 	} else {
 		src = window.resolveHref(src).Href()
 		if scriptType == "module" {
 			if e.script, err = window.scriptContext.DownloadModule(src); err != nil {
-				log.Error(e.Logger(), "HTMLScriptElement: download script error", "src", src, "err", err)
+				e.Logger().Error("HTMLScriptElement: download script error", "src", src, "err", err)
 				return
 			}
 			deferScript = true
 		} else {
 			if e.script, err = window.scriptContext.DownloadScript(src); err != nil {
-				log.Error(e.Logger(), "HTMLScriptElement: download script error", "src", src, "err", err)
+				e.Logger().Error("HTMLScriptElement: download script error", "src", src, "err", err)
 				return
 			}
 			_, deferScript = e.GetAttribute("defer")
@@ -59,7 +59,7 @@ func (e *htmlScriptElement) Connected() {
 func (e *htmlScriptElement) run() {
 	if err := e.script.Run(); err != nil {
 		// TODO: Dispatch "error" event
-		log.Error(e.Logger(), "Script error", "src", e.src, log.ErrAttr(err))
+		e.Logger().Error("Script error", "src", e.src, log.ErrAttr(err))
 	}
 	log.Debug(e.Logger(), "Script execution completed", "src", e.src, "hasSource", e.src != "")
 }
