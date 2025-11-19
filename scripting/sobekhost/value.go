@@ -30,7 +30,7 @@ func newValue(ctx *scriptContext, v sobek.Value) js.Value[jsTypeParam] {
 
 func (v value) AsFunction() (js.Function[jsTypeParam], bool) {
 	f, ok := sobek.AssertFunction(v.value)
-	return gojaFunction{v, f}, ok
+	return function{v, f}, ok
 }
 
 func (v value) AsObject() (js.Object[jsTypeParam], bool) {
@@ -105,12 +105,12 @@ func (o gojaObject) SetNativeValue(value any) {
 	)
 }
 
-type gojaFunction struct {
+type function struct {
 	value
 	f sobek.Callable
 }
 
-func (f gojaFunction) Call(
+func (f function) Call(
 	this js.Object[jsTypeParam],
 	args ...js.Value[jsTypeParam],
 ) (js.Value[jsTypeParam], error) {
