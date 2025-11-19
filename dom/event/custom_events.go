@@ -7,8 +7,7 @@ type CustomEventInit struct {
 }
 
 func NewCustomEvent(eventType string, init CustomEventInit) *Event {
-	e := New(eventType, init)
-	return e
+	return &Event{Type: eventType, Data: init}
 }
 
 /* -------- errorEvent -------- */

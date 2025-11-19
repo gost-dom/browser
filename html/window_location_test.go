@@ -55,7 +55,7 @@ func (s *WindowLocationTestSuite) TestNavigateClearsEventHandlers() {
 		}))
 
 	s.Expect(s.window.Navigate("/index")).To(Succeed())
-	s.window.DispatchEvent(event.New("gost-event", nil))
+	s.window.DispatchEvent(&event.Event{Type: "gost-event"})
 	s.Expect(count).To(Equal(0))
 }
 

@@ -278,10 +278,10 @@ func (w *window) parseReader(reader io.Reader) error {
 		s.run()
 	}
 	if err == nil {
-		w.document.DispatchEvent(event.New(dom.DocumentEventDOMContentLoaded, nil))
+		w.document.DispatchEvent(&event.Event{Type: dom.DocumentEventDOMContentLoaded})
 		// 'load' is emitted when css and images are loaded, not relevant yet, so
 		// just emit it right await
-		w.document.DispatchEvent(event.New(dom.DocumentEventLoad, nil))
+		w.document.DispatchEvent(&event.Event{Type: dom.DocumentEventLoad})
 	}
 	if el, _ := w.document.QuerySelector("[autofocus]"); el != nil {
 		if el, ok := el.(HTMLElement); ok {

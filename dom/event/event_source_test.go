@@ -25,7 +25,7 @@ func TestEventsAreReceivedInOrder(t *testing.T) {
 
 		for i := range buf << 1 {
 			// Dispatch twice as many events as the buffer size
-			src.DispatchEvent(event.New("gost-event", i))
+			src.DispatchEvent(&event.Event{Type: "gost-event", Data: i})
 		}
 		synctest.Wait()
 
@@ -82,7 +82,7 @@ func TestEventStreamSource(t *testing.T) {
 
 			events := src.Listen(ctx, "gost-event")
 
-			e := event.New("gost-event", nil)
+			e := &event.Event{Type: "gost-event"}
 			target.DispatchEvent(e)
 
 			var got *event.Event
