@@ -13,9 +13,6 @@ const (
 	EventPhaseNone     EventPhase = 0
 	EventPhaseCapture  EventPhase = 1
 	EventPhaseAtTarget EventPhase = 2
-	// Deprecated: This was a typo, and will be removed, use EventPhaseBubbling
-	// instead.
-	EventPhaseBubbline EventPhase = 3
 	EventPhaseBubbling EventPhase = 3
 )
 
