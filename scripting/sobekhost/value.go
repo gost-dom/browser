@@ -5,12 +5,12 @@ import (
 	"github.com/grafana/sobek"
 )
 
-type gojaValue struct {
+type value struct {
 	ctx   *GojaContext
 	value sobek.Value
 }
 
-type jsTypeParam = gojaValue
+type jsTypeParam = value
 
 func toGojaValue(val js.Value[jsTypeParam]) sobek.Value {
 	if val == nil {
@@ -25,51 +25,51 @@ func newGojaValue(ctx *GojaContext, v sobek.Value) js.Value[jsTypeParam] {
 	if v == nil {
 		return nil
 	}
-	return gojaValue{ctx, v}
+	return value{ctx, v}
 }
 
-func (v gojaValue) AsFunction() (js.Function[jsTypeParam], bool) {
+func (v value) AsFunction() (js.Function[jsTypeParam], bool) {
 	f, ok := sobek.AssertFunction(v.value)
 	return gojaFunction{v, f}, ok
 }
 
-func (v gojaValue) AsObject() (js.Object[jsTypeParam], bool) {
+func (v value) AsObject() (js.Object[jsTypeParam], bool) {
 	if o := v.value.ToObject(v.ctx.vm); o != nil {
 		return newGojaObject(v.ctx, o), true
 	}
 	return nil, false
 }
 
-func (v gojaValue) IsNull() bool { return sobek.IsNull(v.value) }
+func (v value) IsNull() bool { return sobek.IsNull(v.value) }
 
-func (v gojaValue) IsUndefined() bool { return sobek.IsUndefined(v.value) }
-func (v gojaValue) IsString() bool    { return sobek.IsString(v.value) }
-func (v gojaValue) IsObject() bool    { return sobek.IsNull(v.value) }
+func (v value) IsUndefined() bool { return sobek.IsUndefined(v.value) }
+func (v value) IsString() bool    { return sobek.IsString(v.value) }
+func (v value) IsObject() bool    { return sobek.IsNull(v.value) }
 
-func (v gojaValue) IsBoolean() bool { _, ok := v.AsObject(); return ok }
-func (v gojaValue) Self() gojaValue { return v }
+func (v value) IsBoolean() bool { _, ok := v.AsObject(); return ok }
+func (v value) Self() value     { return v }
 
-func (v gojaValue) StrictEquals(other js.Value[jsTypeParam]) bool {
+func (v value) StrictEquals(other js.Value[jsTypeParam]) bool {
 	return v.value.StrictEquals(other.Self().value)
 }
 
-func (v gojaValue) IsFunction() bool {
+func (v value) IsFunction() bool {
 	_, ok := sobek.AssertFunction(v.value)
 	return ok
 }
 
-func (v gojaValue) String() string { return v.value.String() }
-func (v gojaValue) Boolean() bool  { return v.value.ToBoolean() }
-func (v gojaValue) Int32() int32   { return int32(v.value.ToInteger()) }
-func (v gojaValue) Uint32() uint32 { return uint32(v.value.ToInteger()) }
+func (v value) String() string { return v.value.String() }
+func (v value) Boolean() bool  { return v.value.ToBoolean() }
+func (v value) Int32() int32   { return int32(v.value.ToInteger()) }
+func (v value) Uint32() uint32 { return uint32(v.value.ToInteger()) }
 
 type gojaObject struct {
-	gojaValue
+	value
 	obj *sobek.Object
 }
 
 func newGojaObject(c *GojaContext, o *sobek.Object) js.Object[jsTypeParam] {
-	return gojaObject{gojaValue{c, o}, o}
+	return gojaObject{value{c, o}, o}
 }
 
 func (o gojaObject) Get(key string) (js.Value[jsTypeParam], error) {
@@ -106,7 +106,7 @@ func (o gojaObject) SetNativeValue(value any) {
 }
 
 type gojaFunction struct {
-	gojaValue
+	value
 	f sobek.Callable
 }
 
