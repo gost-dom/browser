@@ -2,12 +2,12 @@ package sobekhost
 
 import "github.com/gost-dom/browser/scripting/internal/js"
 
-type gojaError struct {
+type scriptError struct {
 	js.Value[jsTypeParam]
 	error
 }
 
-func newGojaError(ctx *scriptContext, err error) js.Error[jsTypeParam] {
+func newScriptError(ctx *scriptContext, err error) js.Error[jsTypeParam] {
 	obj := newGojaObject(ctx, ctx.vm.NewGoError(err))
-	return gojaError{obj, err}
+	return scriptError{obj, err}
 }
