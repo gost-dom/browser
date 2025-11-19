@@ -46,7 +46,7 @@ func (s *NodeTestSuite) TestInsertBeforeOfNewElement() {
 	s.Expect(
 		doc.Body(),
 	).To(HaveOuterHTML(`<body><div>First</div><p></p><div id="1">1</div></body>`))
-	s.Expect(newElm.Parent()).To(Equal(doc.Body()))
+	s.Expect(newElm.ParentNode()).To(Equal(doc.Body()))
 }
 
 func (s *NodeTestSuite) TestInsertBeforeAppendsWithNilReference() {
@@ -56,7 +56,7 @@ func (s *NodeTestSuite) TestInsertBeforeAppendsWithNilReference() {
 	s.Expect(
 		doc.Body(),
 	).To(HaveOuterHTML(`<body><div>First</div><div id="1">1</div><p></p></body>`))
-	s.Expect(newElm.Parent()).To(Equal(doc.Body()))
+	s.Expect(newElm.ParentNode()).To(Equal(doc.Body()))
 }
 
 func (s *NodeTestSuite) TestInsertDocumentFragmentOrder() {

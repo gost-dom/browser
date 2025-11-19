@@ -75,7 +75,7 @@ func (e *htmlInputElement) Click() {
 
 func (e *htmlInputElement) trySubmitForm() {
 	var form HTMLFormElement
-	parent := e.Parent()
+	parent := e.ParentNode()
 	for {
 		if parent == nil {
 			break
@@ -84,7 +84,7 @@ func (e *htmlInputElement) trySubmitForm() {
 			form = f
 			break
 		}
-		parent = parent.Parent()
+		parent = parent.ParentNode()
 	}
 	if form != nil {
 		form.RequestSubmit(e)
