@@ -9,9 +9,9 @@ import (
 
 func TestSobekHost(t *testing.T) {
 	t.Parallel()
-	scripttests.RunSuites(t, sobekhost.GojaEngine{})
+	scripttests.RunSuites(t, sobekhost.DefaultEngine())
 }
 
 func TestESMSupport(t *testing.T) {
-	scripttests.RunModuleSuite(t, sobekhost.GojaEngine{})
+	scripttests.RunModuleSuite(t, sobekhost.DefaultEngine())
 }
