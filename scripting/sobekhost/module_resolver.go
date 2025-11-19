@@ -9,14 +9,14 @@ import (
 	"github.com/grafana/sobek"
 )
 
-type sobekResolver struct {
+type moduleResolver struct {
 	host    *scriptHost
 	ctx     *scriptContext
 	modules map[sobek.ModuleRecord]string
 	cache   map[string]sobek.ModuleRecord
 }
 
-func (m *sobekResolver) resolveModule(
+func (m *moduleResolver) resolveModule(
 	referencingScriptOrModule interface{},
 	specifier string,
 ) (sobek.ModuleRecord, error) {
@@ -57,7 +57,7 @@ func (m *sobekResolver) resolveModule(
 	return mod, err
 }
 
-func (r *sobekResolver) download(url string) (string, error) {
+func (r *moduleResolver) download(url string) (string, error) {
 	resp, err := r.host.HttpClient.Get(url)
 	if err != nil {
 		return "", fmt.Errorf("gost-dom/sobekhost: download errors: %w", err)

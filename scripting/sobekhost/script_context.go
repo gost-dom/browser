@@ -240,7 +240,7 @@ func (c *scriptContext) DownloadScript(script string) (html.Script, error) {
 }
 
 func (c *scriptContext) DownloadModule(script string) (result html.Script, err error) {
-	resolver := sobekResolver{
+	resolver := moduleResolver{
 		c.host,
 		c,
 		make(map[sobek.ModuleRecord]string),
