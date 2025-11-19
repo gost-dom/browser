@@ -17,15 +17,15 @@ const internal_symbol_name = "__go_dom_internal_value__"
 type GojaEngine struct{}
 
 func (e GojaEngine) NewHost(opts html.ScriptEngineOptions) html.ScriptHost {
-	res := gojaScriptHost(opts)
+	res := scriptHost(opts)
 	return &res
 }
 
 func New() html.ScriptHost {
-	return &gojaScriptHost{}
+	return &scriptHost{}
 }
 
-type gojaScriptHost struct {
+type scriptHost struct {
 	// TODO: Unexport
 	HttpClient *http.Client
 	// TODO: Unexport
@@ -52,7 +52,7 @@ func (_ propertyNameMapper) MethodName(t reflect.Type, m reflect.Method) string 
 	}
 }
 
-func (d *gojaScriptHost) NewContext(window html.Window) html.ScriptContext {
+func (d *scriptHost) NewContext(window html.Window) html.ScriptContext {
 	vm := sobek.New()
 	vm.SetFieldNameMapper(propertyNameMapper{})
 	result := &scriptContext{
@@ -90,4 +90,4 @@ func (d *gojaScriptHost) NewContext(window html.Window) html.ScriptContext {
 	return result
 }
 
-func (d *gojaScriptHost) Close() {}
+func (d *scriptHost) Close() {}
