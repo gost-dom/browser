@@ -19,7 +19,7 @@ type scope struct {
 
 func newScope(ctx *scriptContext) scope {
 	return scope{
-		ctx, newGojaObject(ctx, ctx.vm.GlobalObject()),
+		ctx, newObject(ctx, ctx.vm.GlobalObject()),
 	}
 }
 
@@ -71,7 +71,7 @@ func (f scope) NewArray(v ...js.Value[jsTypeParam]) js.Value[jsTypeParam] {
 	for i, val := range v {
 		arr[i] = toValue(val)
 	}
-	return newGojaObject(f.scriptContext, f.vm.NewArray(arr...))
+	return newObject(f.scriptContext, f.vm.NewArray(arr...))
 }
 
 func (f scope) NewBoolean(v bool) js.Value[jsTypeParam] {
@@ -109,7 +109,7 @@ func (f scope) NewTypeError(v string) error {
 func (c scope) NewPromise() js.Promise[jsTypeParam] { return newPromise(c.scriptContext) }
 
 func (c scope) NewObject() js.Object[jsTypeParam] {
-	return newGojaObject(c.scriptContext, c.vm.NewObject())
+	return newObject(c.scriptContext, c.vm.NewObject())
 }
 
 func (c scope) NewUint8Array(data []byte) js.Value[jsTypeParam] {
@@ -140,7 +140,7 @@ func (f scope) NewIterator(
 	next, stop := iter.Pull2(items)
 	iter := &iterator{next: next, stop: stop}
 	gojaObj := f.vm.NewObject()
-	obj := newGojaObject(f.scriptContext, gojaObj)
+	obj := newObject(f.scriptContext, gojaObj)
 	obj.SetNativeValue(iter)
 
 	gojaObj.Set(
@@ -162,7 +162,7 @@ func (f scope) NewIterator(
 						res.Set("value", item.Self().value)
 					}
 				}
-				return newGojaObject(f.scriptContext, res), err
+				return newObject(f.scriptContext, res), err
 			},
 		),
 	)
