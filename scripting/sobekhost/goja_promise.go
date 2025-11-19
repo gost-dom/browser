@@ -10,7 +10,7 @@ type gojaPromise struct {
 	reject  func(any) error
 }
 
-func newGojaPromise(ctx *GojaContext) gojaPromise {
+func newGojaPromise(ctx *scriptContext) gojaPromise {
 	p, resolve, reject := ctx.vm.NewPromise()
 	return gojaPromise{
 		newGojaValue(ctx, ctx.vm.ToValue(p)),

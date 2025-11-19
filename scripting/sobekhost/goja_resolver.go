@@ -11,7 +11,7 @@ import (
 
 type sobekResolver struct {
 	host    *gojaScriptHost
-	ctx     *GojaContext
+	ctx     *scriptContext
 	modules map[sobek.ModuleRecord]string
 	cache   map[string]sobek.ModuleRecord
 }

@@ -55,7 +55,7 @@ func (_ propertyNameMapper) MethodName(t reflect.Type, m reflect.Method) string 
 func (d *gojaScriptHost) NewContext(window html.Window) html.ScriptContext {
 	vm := sobek.New()
 	vm.SetFieldNameMapper(propertyNameMapper{})
-	result := &GojaContext{
+	result := &scriptContext{
 		host:         d,
 		vm:           vm,
 		clock:        clock.New(),
