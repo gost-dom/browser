@@ -11,7 +11,6 @@ import (
 	. "github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/internal/gosthttp"
 	"github.com/gost-dom/browser/internal/log"
-	"github.com/gost-dom/browser/scripting/v8host"
 )
 
 type browserConfig struct {
@@ -121,19 +120,12 @@ type Browser struct {
 //
 // Script engine defaults to V8. This will change in the future, but a migration
 // path is not ready.
-//
-// Deprecated: This function WILL change behaviour. Previous behaviour was to
-// default to use V8 if nothing was specified. New default will be to have not
-// script engine
 func New(options ...BrowserOption) *Browser {
 	config := &browserConfig{client: NewHttpClient()}
 	for _, o := range options {
 		o(config)
 	}
 	engine := config.engine
-	if engine == nil {
-		engine = v8host.DefaultEngine()
-	}
 	b := &Browser{
 		Client: config.client,
 		Logger: config.logger,
