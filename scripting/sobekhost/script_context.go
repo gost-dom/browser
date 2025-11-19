@@ -247,6 +247,10 @@ func (c *scriptContext) DownloadModule(script string) (result html.Script, err e
 		make(map[string]sobek.ModuleRecord),
 	}
 	rec, err := resolver.resolveModule(c.window.LocationHREF(), script)
+
+	if err == nil {
+		err = rec.Link()
+	}
 	if err == nil {
 		result = sobekModule{c, rec}
 	}

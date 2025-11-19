@@ -51,9 +51,6 @@ func (m *moduleResolver) resolveModule(
 		m.modules[mod] = name
 		m.cache[name] = mod
 	}
-	if err == nil {
-		err = mod.Link()
-	}
 	return mod, err
 }
 
