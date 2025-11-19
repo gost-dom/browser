@@ -9,16 +9,16 @@ import (
 )
 
 type callbackScope struct {
-	gojaScope
+	scope
 	this     *sobek.Object
 	instance any
 }
 
 func newCallbackScope(ctx *scriptContext, this *sobek.Object, instance any) callbackScope {
 	return callbackScope{
-		gojaScope: newGojaScope(ctx),
-		this:      this,
-		instance:  instance,
+		scope:    newScope(ctx),
+		this:     this,
+		instance: instance,
 	}
 }
 
