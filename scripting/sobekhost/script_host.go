@@ -9,17 +9,11 @@ import (
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
+	"github.com/gost-dom/browser/scripting/internal"
 	"github.com/grafana/sobek"
 )
 
 const internal_symbol_name = "__go_dom_internal_value__"
-
-type GojaEngine struct{}
-
-func (e GojaEngine) NewHost(opts html.ScriptEngineOptions) html.ScriptHost {
-	res := scriptHost(opts)
-	return &res
-}
 
 func New() html.ScriptHost {
 	return &scriptHost{}
@@ -29,7 +23,8 @@ type scriptHost struct {
 	// TODO: Unexport
 	HttpClient *http.Client
 	// TODO: Unexport
-	Logger *slog.Logger
+	Logger      *slog.Logger
+	initializer *internal.ScriptEngineConfigurer[jsTypeParam]
 }
 
 type propertyNameMapper struct{}
@@ -52,11 +47,11 @@ func (_ propertyNameMapper) MethodName(t reflect.Type, m reflect.Method) string 
 	}
 }
 
-func (d *scriptHost) NewContext(window html.Window) html.ScriptContext {
+func (h *scriptHost) NewContext(window html.Window) html.ScriptContext {
 	vm := sobek.New()
 	vm.SetFieldNameMapper(propertyNameMapper{})
 	result := &scriptContext{
-		host:         d,
+		host:         h,
 		vm:           vm,
 		clock:        clock.New(),
 		window:       window,
@@ -74,7 +69,7 @@ func (d *scriptHost) NewContext(window html.Window) html.ScriptContext {
 		sobek.FLAG_FALSE,
 	)
 	globalThis.Set("window", globalThis)
-	initializer.Configure(result)
+	h.initializer.Configure(result)
 	location := result.createLocationInstance()
 	globalThis.DefineAccessorProperty(
 		"location",
