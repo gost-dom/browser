@@ -32,8 +32,6 @@ type Document interface {
 	Head() Element
 	CreateDocumentFragment() DocumentFragment
 	CreateAttribute(string) Attr
-	// Deprecated: Use CreateTextNode instead.
-	CreateText(data string) Text
 	CreateTextNode(data string) Text
 	CreateComment(data string) Comment
 	CreateDocumentType(name string) DocumentType
