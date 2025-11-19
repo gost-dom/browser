@@ -7,6 +7,7 @@ import (
 	"github.com/gost-dom/browser"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
+	"github.com/gost-dom/browser/v8browser"
 )
 
 // InitBrowser creates a browser with a V8 engine and a default set of options.
@@ -14,7 +15,7 @@ import (
 // This browser will be configured to log to the t instance. As a consequence,
 // uncaught JavaScript errors will result in a test error.
 func InitBrowser(t testing.TB, handler http.Handler) *browser.Browser {
-	b := browser.New(
+	b := v8browser.New(
 		browser.WithHandler(handler),
 		browser.WithLogger(gosttest.NewTestLogger(t)),
 	)

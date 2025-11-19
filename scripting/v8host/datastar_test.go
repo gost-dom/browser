@@ -12,6 +12,7 @@ import (
 	app "github.com/gost-dom/browser/internal/test/integration/test-app"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
 	"github.com/gost-dom/browser/testing/gosttest"
+	"github.com/gost-dom/browser/v8browser"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -35,7 +36,7 @@ func TestDatastar(t *testing.T) {
 	// the test to fail.
 	b := htmltest.NewBrowserHelper(t,
 		// browser.New is the primary entry point to creating a Gost-DOM browser
-		browser.New(
+		v8browser.New(
 			// By passing a context, the browser automatically disposes
 			// resources when the context cancels. By deriving contexts from
 			// t.Context(), the context will automatically cancel when the test
@@ -87,7 +88,7 @@ func TestDatastarSignals(t *testing.T) {
 	defer cancel()
 
 	b := htmltest.NewBrowserHelper(t,
-		browser.New(
+		v8browser.New(
 			browser.WithContext(ctx),
 			browser.WithHandler(app.CreateServer()),
 			browser.WithLogger(

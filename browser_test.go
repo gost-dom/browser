@@ -15,6 +15,7 @@ import (
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
+	"github.com/gost-dom/browser/v8browser"
 
 	"github.com/onsi/gomega"
 	"github.com/stretchr/testify/assert"
@@ -26,7 +27,7 @@ type BrowserTestSuite struct {
 }
 
 func (s *BrowserTestSuite) TestReadFromHTTPHandler() {
-	browser := browser.New(browser.WithHandler(gosttest.StaticHTML("<html></html>")))
+	browser := v8browser.New(browser.WithHandler(gosttest.StaticHTML("<html></html>")))
 	defer browser.Close()
 
 	result, err := browser.Open("/")
@@ -40,7 +41,7 @@ func (s *BrowserTestSuite) TestReadFromHTTPHandler() {
 func TestBrowserClosedOnCancel(t *testing.T) {
 	synctest.Test(t, func(t *testing.T) {
 		ctx, cancel := context.WithCancel(t.Context())
-		browser := browser.New(browser.WithContext(ctx))
+		browser := v8browser.New(browser.WithContext(ctx))
 		cancel()
 		synctest.Wait()
 		assert.True(t, browser.Closed())
@@ -59,7 +60,7 @@ func (s *BrowserTestSuite) TestExecuteScript() {
 				</script>
 			</body>`),
 	}
-	browser := browser.New(browser.WithHandler(server))
+	browser := v8browser.New(browser.WithHandler(server))
 	s.T().Cleanup(browser.Close)
 
 	win, err := browser.Open("/index.html")
@@ -79,7 +80,7 @@ func (s *BrowserTestSuite) TestCancellation() {
 		}
 
 		ctx, cancel := context.WithCancel(t.Context())
-		b := browser.New(
+		b := v8browser.New(
 			browser.WithHandler(h),
 			browser.WithContext(ctx),
 		)
@@ -113,7 +114,7 @@ func (s *BrowserNavigationTestSuite) SetupTest() {
 
 func (s *BrowserNavigationTestSuite) loadPageA() htmltest.WindowHelper {
 	server := newBrowserNavigateTestServer()
-	browser := htmltest.NewBrowserHelper(s.T(), browser.New(browser.WithHandler(server)))
+	browser := htmltest.NewBrowserHelper(s.T(), v8browser.New(browser.WithHandler(server)))
 	window := browser.OpenWindow("/a.html")
 	return window
 }
@@ -160,7 +161,7 @@ type CookiesTestSuite struct {
 
 func (s *CookiesTestSuite) TestCookiesArePersistedInSameBrowser() {
 	Expect := gomega.NewWithT(s.T()).Expect
-	browser := browser.New(browser.WithHandler(http.HandlerFunc(cookieHandler)))
+	browser := v8browser.New(browser.WithHandler(http.HandlerFunc(cookieHandler)))
 	win, err := browser.Open("http://localhost/")
 	Expect(err).ToNot(HaveOccurred())
 	el := win.Document().GetElementById("gost")
@@ -173,13 +174,13 @@ func (s *CookiesTestSuite) TestCookiesArePersistedInSameBrowser() {
 
 func (s *CookiesTestSuite) TestCookiesAreNotReusedInNewBrowser() {
 	Expect := gomega.NewWithT(s.T()).Expect
-	b := browser.New(browser.WithHandler(http.HandlerFunc(cookieHandler)))
+	b := v8browser.New(browser.WithHandler(http.HandlerFunc(cookieHandler)))
 	win, err := b.Open("http://localhost/")
 	Expect(err).ToNot(HaveOccurred())
 	el := win.Document().GetElementById("gost")
 	Expect(el).To(HaveTextContent(""))
 
-	b = browser.New(browser.WithHandler(http.HandlerFunc(cookieHandler)))
+	b = v8browser.New(browser.WithHandler(http.HandlerFunc(cookieHandler)))
 	win, err = b.Open("http://localhost/")
 	Expect(err).ToNot(HaveOccurred())
 	el = win.Document().GetElementById("gost")
@@ -196,7 +197,7 @@ func TestLogOutput(t *testing.T) {
 	logger := slog.New(slog.NewTextHandler(&buf, &slog.HandlerOptions{
 		Level: slog.LevelDebug,
 	}))
-	b := browser.New(
+	b := v8browser.New(
 		browser.WithHandler(http.HandlerFunc(cookieHandler)),
 		browser.WithLogger(logger),
 	)
@@ -244,7 +245,7 @@ func newBrowserNavigateTestServer() http.Handler {
 }
 
 func TestBrowserOpenRedirect(t *testing.T) {
-	b := browser.New(browser.WithHandler(
+	b := v8browser.New(browser.WithHandler(
 		gosttest.HttpHandlerMap{
 			"/old-location": http.RedirectHandler("/new-location", 301),
 			"/new-location": gosttest.StaticHTML("<body><h1>Hello</h1></body>"),

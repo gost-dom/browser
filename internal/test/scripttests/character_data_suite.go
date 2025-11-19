@@ -7,6 +7,7 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
+	"github.com/gost-dom/browser/v8browser"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -20,7 +21,7 @@ type characterDataSuite struct {
 }
 
 func (s characterDataSuite) testTextNode(t *testing.T) {
-	b := browser.New(
+	b := v8browser.New(
 		browser.WithScriptEngine(s.engine),
 		browser.WithLogger(gosttest.NewTestLogger(t)),
 	)

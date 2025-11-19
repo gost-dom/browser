@@ -43,6 +43,7 @@ func WithHandler(h http.Handler) BrowserOption {
 
 type staticHostEngine struct{ host html.ScriptHost }
 
+// Deprecated: This will be removed in the next release
 func (e staticHostEngine) NewHost(html.ScriptEngineOptions) html.ScriptHost {
 	host := html.ScriptHost(e.host)
 	return host
@@ -115,6 +116,10 @@ type Browser struct {
 //
 // Script engine defaults to V8. This will change in the future, but a migration
 // path is not ready.
+//
+// Deprecated: This function WILL change behaviour. Previous behaviour was to
+// default to use V8 if nothing was specified. New default will be to have not
+// script engine
 func New(options ...BrowserOption) *Browser {
 	config := &browserConfig{client: NewHttpClient()}
 	for _, o := range options {
