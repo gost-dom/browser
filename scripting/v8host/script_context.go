@@ -1,15 +1,15 @@
 package v8host
 
 import (
+	"context"
 	"fmt"
-	"io"
 	"runtime/debug"
-	"strings"
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/internal/entity"
+	"github.com/gost-dom/browser/internal/gosthttp"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/browser/url"
@@ -31,8 +31,9 @@ type V8ScriptContext struct {
 	resolver   moduleResolver
 }
 
-func (c *V8ScriptContext) iso() *v8.Isolate    { return c.host.iso }
-func (c *V8ScriptContext) Window() html.Window { return c.window }
+func (c *V8ScriptContext) iso() *v8.Isolate         { return c.host.iso }
+func (c *V8ScriptContext) Window() html.Window      { return c.window }
+func (c *V8ScriptContext) context() context.Context { return c.window.Context() }
 
 func (h *V8ScriptHost) getContext(v8ctx *v8.Context) (*V8ScriptContext, bool) {
 	h.mu.Lock()
@@ -165,7 +166,7 @@ func (ctx *V8ScriptContext) Compile(script string) (html.Script, error) {
 }
 
 func (ctx *V8ScriptContext) DownloadScript(url string) (html.Script, error) {
-	script, err := ctx.resolver.download(url)
+	script, err := gosthttp.Download(ctx.window.Context(), url, ctx.host.httpClient)
 	if err != nil {
 		return nil, err
 	}
@@ -173,7 +174,7 @@ func (ctx *V8ScriptContext) DownloadScript(url string) (html.Script, error) {
 }
 
 func (ctx *V8ScriptContext) DownloadModule(url string) (html.Script, error) {
-	module, err := ctx.resolver.downloadAndCompile(url)
+	module, err := ctx.resolver.downloadAndCompile(ctx.context(), url)
 	if err = module.InstantiateModule(ctx.v8ctx, &ctx.resolver); err != nil {
 		return nil, fmt.Errorf("gost: v8host: module instantiation: %w", err)
 	}
@@ -191,28 +192,6 @@ type moduleResolver struct {
 	modules []resolvedModule
 }
 
-func (r *moduleResolver) download(url string) (string, error) {
-	resp, err := r.host.httpClient.Get(url)
-	if err != nil {
-		return "", fmt.Errorf("gost: v8host: download errors: %w", err)
-	}
-	defer resp.Body.Close()
-	var buf strings.Builder
-	io.Copy(&buf, resp.Body)
-	script := buf.String()
-
-	if resp.StatusCode != 200 {
-		err := fmt.Errorf(
-			"gost: v8host: ScriptContext: bad status code: %d, downloading %s",
-			resp.StatusCode,
-			url,
-		)
-		r.host.logger.Error("Script download error", "err", err, "body", script)
-		return "", err
-	}
-	return script, nil
-}
-
 func (r *moduleResolver) cached(url string) *v8go.Module {
 	for _, m := range r.modules {
 		if m.location == url {
@@ -222,12 +201,12 @@ func (r *moduleResolver) cached(url string) *v8go.Module {
 	return nil
 }
 
-func (r *moduleResolver) downloadAndCompile(url string) (*v8go.Module, error) {
+func (r *moduleResolver) downloadAndCompile(ctx context.Context, url string) (*v8go.Module, error) {
 	if cached := r.cached(url); cached != nil {
 		return cached, nil
 	}
 
-	script, err := r.download(url)
+	script, err := gosthttp.Download(ctx, url, r.host.httpClient)
 	if err != nil {
 		return nil, err
 	}
@@ -254,6 +233,10 @@ func (r *moduleResolver) ResolveModule(
 	attr v8go.ImportAttributes,
 	ref *v8go.Module,
 ) (*v8go.Module, error) {
+	v8ScriptContext, ok := r.host.getContext(v8ctx)
+	if !ok {
+		panic("gost-dom/v8host: bad context")
+	}
 	refModule, found := r.get(ref.ScriptID())
 	if !found {
 		return nil, fmt.Errorf(
@@ -262,5 +245,5 @@ func (r *moduleResolver) ResolveModule(
 		)
 	}
 	url := url.ParseURLBase(spec, refModule.location).Href()
-	return r.downloadAndCompile(url)
+	return r.downloadAndCompile(v8ScriptContext.context(), url)
 }
