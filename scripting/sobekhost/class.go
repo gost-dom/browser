@@ -132,16 +132,16 @@ func (o dynamicArray) SetLen(int) bool {
 	panic("gost-dom/sobek: dynamicArray.SetLen: not implemented")
 }
 
-// gojaDynamicObject implements [sobek.DynamicObject], serving as a named
+// dynamicObject implements [sobek.DynamicObject], serving as a named
 // property handler.
-type gojaDynamicObject struct {
+type dynamicObject struct {
 	ctx   *scriptContext
 	this  *sobek.Object
 	scope callbackScope
 	cbs   js.NamedHandlerCallbacks[jsTypeParam]
 }
 
-func (o gojaDynamicObject) Get(key string) sobek.Value {
+func (o dynamicObject) Get(key string) sobek.Value {
 	if o.cbs.Getter == nil {
 		return nil
 	}
@@ -156,7 +156,7 @@ func (o gojaDynamicObject) Get(key string) sobek.Value {
 	return toValue(res)
 }
 
-func (o gojaDynamicObject) Delete(key string) (res bool) {
+func (o dynamicObject) Delete(key string) (res bool) {
 	var err error
 	if o.cbs.Deleter != nil {
 		res, err = o.cbs.Deleter(o.scope, o.scope.NewString(key))
@@ -170,7 +170,7 @@ func (o gojaDynamicObject) Delete(key string) (res bool) {
 	return res
 }
 
-func (o gojaDynamicObject) Has(key string) (res bool) {
+func (o dynamicObject) Has(key string) (res bool) {
 	if o.cbs.Getter == nil {
 		panic("Must have a getter")
 	}
@@ -184,7 +184,7 @@ func (o gojaDynamicObject) Has(key string) (res bool) {
 	return true
 }
 
-func (o gojaDynamicObject) Keys() []string {
+func (o dynamicObject) Keys() []string {
 	if o.cbs.Enumerator == nil {
 		return nil
 	}
@@ -202,7 +202,7 @@ func (o gojaDynamicObject) Keys() []string {
 	return res
 }
 
-func (o gojaDynamicObject) Set(key string, val sobek.Value) bool {
+func (o dynamicObject) Set(key string, val sobek.Value) bool {
 	if o.cbs.Setter == nil {
 		return false
 	}
