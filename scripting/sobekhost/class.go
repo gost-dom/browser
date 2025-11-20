@@ -18,11 +18,13 @@ type class struct {
 func (c *class) assertValid() {
 	if c.indexedHandler != nil || c.namedHandlerCallbacks != nil {
 		if c.indexedHandler != nil && c.namedHandlerCallbacks != nil {
-			panic("Goja mapper doesn't support both a named and indexed handler on the same class")
+			panic(
+				"gost-dom/sobek: Sobek doesn't support both a named and indexed handler on the same class",
+			)
 		}
 		if len(c.instanceAttrs) > 0 {
 			panic(
-				"Goja mapper doesn't support instance attribute accessors or methods when handlers are defined",
+				"gost-dom/sobek: Sobek doesn't support instance attribute accessors or methods when handlers are defined",
 			)
 		}
 	}

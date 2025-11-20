@@ -49,7 +49,7 @@ func (f scope) JSONParse(s string) (js.Value[jsTypeParam], error) {
 	}
 	fn, ok := sobek.AssertFunction(parse)
 	if !ok {
-		return nil, errors.New("Goja error, retrieving JSON.parse")
+		return nil, errors.New("sobek: JSON.parse not in global scope")
 	}
 	res, err := fn(f.vm.GlobalObject(), f.vm.ToValue(s))
 	return newValue(f.scriptContext, res), err
@@ -59,11 +59,11 @@ func (f scope) JSONStringify(v js.Value[jsTypeParam]) string {
 	if o := v.Self().value.ToObject(f.vm); o != nil {
 		b, err := o.MarshalJSON()
 		if err == nil {
-			panic(fmt.Sprintf("Goja JSON marshalling failed: %v", err))
+			panic(fmt.Sprintf("gost-dom/sobekhost: JSONStringify: %v", err))
 		}
 		return string(b)
 	}
-	panic("Goja only support JSON for objects")
+	panic(fmt.Sprintf("gost-dom/sobekhost: JSONStringify only supports objects. Got: %v", v))
 }
 
 func (f scope) NewArray(v ...js.Value[jsTypeParam]) js.Value[jsTypeParam] {
@@ -115,17 +115,17 @@ func (c scope) NewObject() js.Object[jsTypeParam] {
 func (c scope) NewUint8Array(data []byte) js.Value[jsTypeParam] {
 	vm := c.scriptContext.vm
 	arrayBuf := vm.NewArrayBuffer(data)
-	fVal, err := vm.RunScript("gost-dom/gojahost:NewUint8Array", "Uint8Array")
+	fVal, err := vm.RunScript("gost-dom/sobekhost:NewUint8Array", "Uint8Array")
 	if err != nil {
-		panic(fmt.Sprintf("gost-dom/gojahost: Uint8Array: %v", err))
+		panic(fmt.Sprintf("gost-dom/sobekhost: Uint8Array: %v", err))
 	}
 	ctor, ok := sobek.AssertConstructor(fVal)
 	if !ok {
-		panic(fmt.Sprintf("gost-dom/gojahost: Uint8Array as constructor: %v", err))
+		panic(fmt.Sprintf("gost-dom/sobekhost: Uint8Array as constructor: %v", err))
 	}
 	value, err := ctor(nil, vm.ToValue(arrayBuf))
 	if err != nil {
-		panic(fmt.Sprintf("gost-dom/gojahost: Uint8Array call: %v", err))
+		panic(fmt.Sprintf("gost-dom/sobekhost: Uint8Array call: %v", err))
 	}
 	return newValue(c.scriptContext, value)
 }
@@ -139,11 +139,11 @@ func (f scope) NewIterator(
 ) js.Value[jsTypeParam] {
 	next, stop := iter.Pull2(items)
 	iter := &iterator{next: next, stop: stop}
-	gojaObj := f.vm.NewObject()
-	obj := newObject(f.scriptContext, gojaObj)
+	jsIterator := f.vm.NewObject()
+	obj := newObject(f.scriptContext, jsIterator)
 	obj.SetNativeValue(iter)
 
-	gojaObj.Set(
+	jsIterator.Set(
 		"next",
 		wrapJSCallback(
 			f.scriptContext,
@@ -166,7 +166,7 @@ func (f scope) NewIterator(
 			},
 		),
 	)
-	gojaObj.SetSymbol(
+	jsIterator.SetSymbol(
 		sobek.SymIterator,
 		wrapJSCallback(
 			f.scriptContext,

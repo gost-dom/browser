@@ -71,13 +71,13 @@ func (i *scriptContext) RunFunction(str string, arguments ...any) (res any, err 
 	var f sobek.Value
 	if f, err = i.vm.RunString(str); err == nil {
 		if c, ok := sobek.AssertFunction(f); !ok {
-			err = errors.New("GojaContext.RunFunction: script is not a function")
+			err = errors.New("gost-dom/sobek: scriptContext.RunFunction: script is not a function")
 		} else {
 			values := make([]sobek.Value, len(arguments))
 			for i, a := range arguments {
 				var ok bool
 				if values[i], ok = a.(sobek.Value); !ok {
-					err = fmt.Errorf("GojaContext.RunFunction: argument %d was not a goja Value", i)
+					err = fmt.Errorf("gost-dom/sobek: scriptContext.RunFunction: argument %d was not a js Value", i)
 				}
 			}
 			res, err = c(sobek.Undefined(), values...)
@@ -95,18 +95,18 @@ func (i *scriptContext) RunFunction(str string, arguments ...any) (res any, err 
 //
 // The value is expected to be the ourput of [RunFunction] or [EvalCore]
 //
-// An error will be returned if the value is not a goja Value, or the value
+// An error will be returned if the value is not a sobak Value, or the value
 // could not be converted to a native Go object
 func (i *scriptContext) Export(value any) (res any, err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = fmt.Errorf("GojaContext.Export: %v", r)
+			err = fmt.Errorf("gost-dom/sobek: scriptContext.Export: %v", r)
 		}
 	}()
 	if gv, ok := value.(sobek.Value); ok {
 		res = gv.Export()
 	} else {
-		err = fmt.Errorf("GojaContext.Export: Value not a goja value: %v", value)
+		err = fmt.Errorf("gost-dom/sobek: scriptContext.Export: Value not a JS value: %v", value)
 	}
 	return
 }
@@ -185,7 +185,7 @@ func (class *class) installInstance(this **sobek.Object, native any) {
 	}
 	if class.indexedHandler != nil {
 		// TODO: Fix prototype for indexed property handlers. Due to lack of
-		// support for internal values in goja, and because a "Dynamic Object"
+		// support for internal values in sobek, and because a "Dynamic Object"
 		// cannot have own symbol properties, an artificial prototype is
 		// inserted between the instance and the correct prototype, in order to
 		// be able to retrieve the internal instance.
@@ -255,7 +255,6 @@ func (c *scriptContext) DownloadModule(script string) (result html.Script, err e
 		result = sobekModule{c, rec}
 	}
 	return
-	// return nil, errors.New("gojahost: ECMAScript modules not supported by gojehost")
 }
 
 /* -------- GojaScript -------- */
@@ -271,18 +270,18 @@ func (s GojaScript) Run() error {
 }
 
 func (s GojaScript) Eval() (res any, err error) {
-	if gojaVal, err := s.context.run(s.script); err == nil {
-		if sobek.IsNull(gojaVal) || sobek.IsUndefined(gojaVal) {
+	if val, err := s.context.run(s.script); err == nil {
+		if sobek.IsNull(val) || sobek.IsUndefined(val) {
 			return nil, nil
 		}
-		if obj := gojaVal.ToObject(s.context.vm); obj != nil {
+		if obj := val.ToObject(s.context.vm); obj != nil {
 			if v := obj.GetSymbol(s.context.wrappedGoObj); v != nil {
 				if e := v.Export(); e != nil {
 					return e, nil
 				}
 			}
 		}
-		return gojaVal.Export(), nil
+		return val.Export(), nil
 	} else {
 		return nil, err
 	}
