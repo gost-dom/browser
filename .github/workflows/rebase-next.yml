@@ -26,8 +26,9 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
     - uses: actions/checkout@v5
-      ref: 'next'
-      fetch-depth: 0
+      with:
+        ref: 'next'
+        fetch-depth: 0
 
     - name: Rebase to main
       run: git rebase main
