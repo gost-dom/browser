@@ -2,9 +2,8 @@ package sobekhost
 
 import (
 	"fmt"
-	"io"
-	"strings"
 
+	"github.com/gost-dom/browser/internal/gosthttp"
 	"github.com/gost-dom/browser/url"
 	"github.com/grafana/sobek"
 )
@@ -40,7 +39,7 @@ func (m *moduleResolver) resolveModule(
 	if cached, ok := m.cache[name]; ok {
 		return cached, nil
 	}
-	code, err := m.download(name)
+	code, err := gosthttp.Download(m.ctx.window.Context(), name, m.host.HttpClient)
 	if err != nil {
 		return nil, err
 	}
@@ -52,26 +51,4 @@ func (m *moduleResolver) resolveModule(
 		m.cache[name] = mod
 	}
 	return mod, err
-}
-
-func (r *moduleResolver) download(url string) (string, error) {
-	resp, err := r.host.HttpClient.Get(url)
-	if err != nil {
-		return "", fmt.Errorf("gost-dom/sobekhost: download errors: %w", err)
-	}
-	defer resp.Body.Close()
-	var buf strings.Builder
-	io.Copy(&buf, resp.Body)
-	script := buf.String()
-
-	if resp.StatusCode != 200 {
-		err := fmt.Errorf(
-			"gost-dom/sobekhost: ScriptContext: bad status code: %d, downloading %s",
-			resp.StatusCode,
-			url,
-		)
-		r.host.Logger.Error("Script download error", "err", err, "body", script)
-		return "", err
-	}
-	return script, nil
 }
