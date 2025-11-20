@@ -175,7 +175,7 @@ func (class *class) installInstance(this **sobek.Object, native any) {
 		// properties. See comment below.
 		obj := *this
 		proto := *this
-		*this = class.ctx.vm.NewDynamicObject(&gojaDynamicObject{
+		*this = class.ctx.vm.NewDynamicObject(&dynamicObject{
 			ctx:   class.ctx,
 			cbs:   *class.namedHandlerCallbacks,
 			this:  obj,
