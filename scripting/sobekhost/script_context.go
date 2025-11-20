@@ -190,7 +190,7 @@ func (class *class) installInstance(this **sobek.Object, native any) {
 		// inserted between the instance and the correct prototype, in order to
 		// be able to retrieve the internal instance.
 		proto := *this
-		*this = class.ctx.vm.NewDynamicArray(&gojaDynamicArray{
+		*this = class.ctx.vm.NewDynamicArray(&dynamicArray{
 			ctx:   class.ctx,
 			cbs:   *class.indexedHandler,
 			this:  *this,

@@ -87,16 +87,16 @@ func (c *class) NewInstance(native any) (js.Object[jsTypeParam], error) {
 	return newObject(c.ctx, obj), nil
 }
 
-// gojaDynamicArray implements [sobek.DynamicArray], serving as an indexed
+// dynamicArray implements [sobek.DynamicArray], serving as an indexed
 // property handler.
-type gojaDynamicArray struct {
+type dynamicArray struct {
 	ctx   *scriptContext
 	this  *sobek.Object
 	scope callbackScope
 	cbs   js.IndexedHandlerCallbacks[jsTypeParam]
 }
 
-func (o gojaDynamicArray) Get(index int) sobek.Value {
+func (o dynamicArray) Get(index int) sobek.Value {
 	if o.cbs.Getter == nil {
 		return nil
 	}
@@ -110,11 +110,11 @@ func (o gojaDynamicArray) Get(index int) sobek.Value {
 	return toValue(res)
 }
 
-func (o gojaDynamicArray) Set(index int, value sobek.Value) bool {
-	panic("gojaDynamicArray.Set: not implemented")
+func (o dynamicArray) Set(index int, value sobek.Value) bool {
+	panic("gost-dom/sobek: dynamicArray.Set: not implemented")
 }
 
-func (o gojaDynamicArray) Len() int {
+func (o dynamicArray) Len() int {
 	if o.cbs.Len == nil {
 		return 0
 	}
@@ -128,8 +128,8 @@ func (o gojaDynamicArray) Len() int {
 	return res
 }
 
-func (o gojaDynamicArray) SetLen(int) bool {
-	panic("gojaDynamicArray.SetLen: not implemented")
+func (o dynamicArray) SetLen(int) bool {
+	panic("gost-dom/sobek: dynamicArray.SetLen: not implemented")
 }
 
 // gojaDynamicObject implements [sobek.DynamicObject], serving as a named
