@@ -238,7 +238,7 @@ func (r *moduleResolver) ResolveModule(
 	refModule, found := r.get(ref.ScriptID())
 	if !found {
 		return nil, fmt.Errorf(
-			"gost: referrer not cached. This is a bug in Gost-DOM. Please file an issue at: %s",
+			"gost: referrer not cached. %s",
 			constants.BUG_ISSUE_URL,
 		)
 	}
