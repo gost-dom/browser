@@ -1,0 +1,49 @@
+# The branch: next is the branch for next "breaking change" release.
+#
+# This branch removes features marked as deprecated in the main branch. When a
+# feature is deprecated in main, it will be removed here. This workflow keeps
+# the branch up-to-date on push to main, detecting incompatibilities early.
+name: Rebase next
+
+on:
+  push:
+    branches: [ "main"]
+
+jobs:
+  build:
+    name: Tests on ${{ matrix.os }} ${{ matrix.arch }} with Go ${{ matrix.go-version }}
+    strategy:
+      matrix:
+        os: 
+          - darwin
+          - linux
+        arch: [amd64, arm64]
+        include:
+        - os: darwin
+          platform: macos-latest
+        - os: linux
+          platform: ubuntu-latest
+    runs-on: ${{ matrix.platform }}
+    steps:
+    - uses: actions/checkout@v5
+      ref: 'next'
+      fetch-depth: 0
+
+    - name: Rebase to main
+      run: git rebase main
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: stable
+        cache-dependency-path: |
+          go.sum
+
+    - name: Add GOPATH to GITHUB_ENV
+      run: echo "GOPATH=$(go env GOPATH)" >>"$GITHUB_ENV"
+
+    - name: Build
+      run: |
+        make ci
+
+    - name: 
