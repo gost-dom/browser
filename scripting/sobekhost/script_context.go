@@ -231,8 +231,8 @@ func newCallbackContext(
 	}
 }
 
-func (c *scriptContext) Compile(script string) (html.Script, error) {
-	return GojaScript{c, script}, nil
+func (c *scriptContext) Compile(src string) (html.Script, error) {
+	return script{c, src}, nil
 }
 
 func (c *scriptContext) DownloadScript(script string) (html.Script, error) {
@@ -257,19 +257,19 @@ func (c *scriptContext) DownloadModule(script string) (result html.Script, err e
 	return
 }
 
-/* -------- GojaScript -------- */
+/* -------- script -------- */
 
-type GojaScript struct {
+type script struct {
 	context *scriptContext
 	script  string
 }
 
-func (s GojaScript) Run() error {
+func (s script) Run() error {
 	_, err := s.context.run(s.script)
 	return err
 }
 
-func (s GojaScript) Eval() (res any, err error) {
+func (s script) Eval() (res any, err error) {
 	if val, err := s.context.run(s.script); err == nil {
 		if sobek.IsNull(val) || sobek.IsUndefined(val) {
 			return nil, nil
