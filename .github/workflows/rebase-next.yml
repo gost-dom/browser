@@ -47,4 +47,6 @@ jobs:
       run: |
         make ci
 
-    - name: 
+    - name: Push
+      run: |
+        git push -f
