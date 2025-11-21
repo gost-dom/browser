@@ -8,7 +8,7 @@ import (
 )
 
 func TestCustomEvent(t *testing.T) {
-	win := browsertest.InitWindow(t)
+	win := browsertest.InitWindow(t, nil)
 	assert.Equal(t, "foo", win.MustEval(`
 		const e = new CustomEvent("foo", { detail: { f: "foo", b: "bar" }})
 		const d = e.detail

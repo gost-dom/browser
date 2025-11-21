@@ -79,7 +79,7 @@ func (s *ElementTestSuite) TestQuerySelector() {
 
 func TestElementSiblings(t *testing.T) {
 	g := gomega.NewWithT(t)
-	win := browsertest.InitBrowser(t, nil).NewWindow()
+	win := browsertest.InitWindow(t, nil)
 	win.LoadHTML(`
   	<body>
 		<div id="e-1"></div>

@@ -11,7 +11,7 @@ import (
 )
 
 func TestMutationObserver(t *testing.T) {
-	win := browsertest.InitBrowser(t, nil).NewWindow()
+	win := browsertest.InitWindow(t, nil)
 	assert.NoError(t, win.LoadHTML(`<body>
 		<div id="parent"><div id="child"></div><div>
 	</body>`))

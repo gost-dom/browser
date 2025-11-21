@@ -5,16 +5,22 @@ import (
 	"testing"
 
 	"github.com/gost-dom/browser"
+	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
+	"github.com/gost-dom/browser/scripting/v8host"
 	"github.com/gost-dom/browser/v8browser"
 )
 
-// InitBrowser creates a browser with a V8 engine and a default set of options.
+// InitBrowser creates a browser with a script engine and a default set of
+// options. If no engine is passed, V8 will be used.
 //
 // This browser will be configured to log to the t instance. As a consequence,
 // uncaught JavaScript errors will result in a test error.
-func InitBrowser(t testing.TB, handler http.Handler) *browser.Browser {
+func InitBrowser(t testing.TB, handler http.Handler, engine html.ScriptEngine) *browser.Browser {
+	if engine == nil {
+		engine = v8host.DefaultEngine()
+	}
 	b := v8browser.New(
 		browser.WithHandler(handler),
 		browser.WithLogger(gosttest.NewTestLogger(t)),
@@ -23,11 +29,11 @@ func InitBrowser(t testing.TB, handler http.Handler) *browser.Browser {
 	return b
 }
 
-// InitBrowser creates a browser and an empty window with a V8 engine and a
+// InitBrowser creates a browser and an empty window with a script engine and a
 // default set of options.
 //
 // See also: [InitBrowser]
-func InitWindow(t testing.TB) htmltest.WindowHelper {
-	b := InitBrowser(t, nil)
+func InitWindow(t testing.TB, engine html.ScriptEngine) htmltest.WindowHelper {
+	b := InitBrowser(t, nil, engine)
 	return htmltest.NewWindowHelper(t, b.NewWindow())
 }
