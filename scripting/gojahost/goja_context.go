@@ -159,6 +159,15 @@ func (c *GojaContext) CreateClass(
 	return class
 }
 
+// CreateGlobalObject implements [js/ScriptEngine.CreateGlobalObject]
+func (c *GojaContext) CreateGlobalObject(name string) js.GlobalObject[jsTypeParam] {
+	obj := c.vm.NewObject()
+	res := &globalObject{ctx: c, obj: obj}
+	c.vm.Set(name, obj)
+
+	return res
+}
+
 func (class *gojaClass) constructorCb(call goja.ConstructorCall, r *goja.Runtime) *goja.Object {
 	class.installInstance(&call.This, nil)
 	class.cb(newGojaCallbackContext(class.ctx, call))

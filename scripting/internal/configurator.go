@@ -17,6 +17,7 @@ import (
 func Configure[T any](host js.ScriptEngine[T]) {
 	dom.Configure(host)
 	fetch.Configure(host)
+	configureConsole(host)
 }
 
 func Bootstrap[T any](reg js.ClassBuilder[T]) {
