@@ -15,3 +15,7 @@ func TestSobekHost(t *testing.T) {
 func TestESMSupport(t *testing.T) {
 	scripttests.RunModuleSuite(t, sobekhost.DefaultEngine())
 }
+
+func TestScriptFileSupport(t *testing.T) {
+	scripttests.RunDownloadScriptSuite(t, sobekhost.DefaultEngine())
+}
