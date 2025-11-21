@@ -19,3 +19,7 @@ func TestESMSupport(t *testing.T) {
 func TestScriptFileSupport(t *testing.T) {
 	scripttests.RunDownloadScriptSuite(t, sobekhost.DefaultEngine())
 }
+
+func TestHTMX(t *testing.T) {
+	scripttests.RunHtmxTests(t, sobekhost.DefaultEngine())
+}
