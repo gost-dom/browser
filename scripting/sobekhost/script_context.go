@@ -1,6 +1,7 @@
 package sobekhost
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -8,7 +9,9 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/entity"
+	"github.com/gost-dom/browser/internal/gosthttp"
 	"github.com/gost-dom/browser/scripting/internal/js"
+	"github.com/gost-dom/browser/url"
 	"github.com/grafana/sobek"
 )
 
@@ -22,7 +25,8 @@ type scriptContext struct {
 	cachedNodes  map[int32]sobek.Value
 }
 
-func (c *scriptContext) Clock() html.Clock { return c.clock }
+func (c *scriptContext) Clock() html.Clock        { return c.clock }
+func (c *scriptContext) Context() context.Context { return c.window.Context() }
 
 func (i *scriptContext) Close() {}
 
@@ -236,7 +240,12 @@ func (c *scriptContext) Compile(src string) (html.Script, error) {
 }
 
 func (c *scriptContext) DownloadScript(script string) (html.Script, error) {
-	return nil, errors.New("TODO")
+	u := url.ParseURLBase(script, c.window.LocationHREF()).Href()
+	if script, err := gosthttp.Download(c.Context(), u, c.host.HttpClient); err != nil {
+		return nil, err
+	} else {
+		return c.Compile(script)
+	}
 }
 
 func (c *scriptContext) DownloadModule(script string) (result html.Script, err error) {
