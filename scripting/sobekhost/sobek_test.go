@@ -23,3 +23,7 @@ func TestScriptFileSupport(t *testing.T) {
 func TestHTMX(t *testing.T) {
 	scripttests.RunHtmxTests(t, sobekhost.DefaultEngine())
 }
+
+func TestDatastar(t *testing.T) {
+	scripttests.RunDataStarTests(t, sobekhost.DefaultEngine())
+}
