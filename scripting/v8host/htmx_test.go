@@ -14,85 +14,91 @@ import (
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 )
 
-func TestHTMXIncrementCounted(t *testing.T) {
-	t.Parallel()
-
-	expect := gomega.NewWithT(t).Expect
-	server := app.CreateServer()
-	b := htmltest.NewBrowserHelper(t, browsertest.InitBrowser(t, server, v8host.DefaultEngine()))
-	win, err := b.Open("/counter/index.html")
-	expect(err).ToNot(HaveOccurred())
-	counter := win.Document().GetElementById("counter").(html.HTMLElement)
-	expect(counter).To(HaveInnerHTML(Equal("Count: 1")))
-	counter.Click()
-	counter = win.Document().GetElementById("counter").(html.HTMLElement)
-	expect(counter).To(HaveInnerHTML(Equal("Count: 2")))
+func TestHTMX(t *testing.T) {
+	htmxSuite(t, v8host.DefaultEngine())
 }
 
-func TestHTMXClickHXGetLink(t *testing.T) {
-	t.Parallel()
+func htmxSuite(t *testing.T, e html.ScriptEngine) {
+	t.Run("Click to increment counter", func(t *testing.T) {
+		t.Parallel()
 
-	expect := gomega.NewWithT(t).Expect
-	server := app.CreateServer()
-	b := htmltest.NewBrowserHelper(t, browsertest.InitBrowser(t, server, v8host.DefaultEngine()))
-	win := b.OpenWindow("/navigation/page-a.html")
-	expect(win.ScriptContext().Eval("window.pageA")).To(BeTrue())
-	expect(win.ScriptContext().Eval("window.pageB")).To(BeNil())
+		expect := gomega.NewWithT(t).Expect
+		server := app.CreateServer()
+		b := htmltest.NewBrowserHelper(t, browsertest.InitBrowser(t, server, e))
+		win, err := b.Open("/counter/index.html")
+		expect(err).ToNot(HaveOccurred())
+		counter := win.Document().GetElementById("counter").(html.HTMLElement)
+		expect(counter).To(HaveInnerHTML(Equal("Count: 1")))
+		counter.Click()
+		counter = win.Document().GetElementById("counter").(html.HTMLElement)
+		expect(counter).To(HaveInnerHTML(Equal("Count: 2")))
+	})
 
-	// Click an hx-get link
-	win.HTMLDocument().GetHTMLElementById("link-to-b").Click()
+	t.Run("Click hx-get link", func(t *testing.T) {
+		t.Parallel()
 
-	expect(
-		win.ScriptContext().Eval("window.pageA"),
-	).To(BeTrue(), "Script context cleared from first page")
-	expect(win.ScriptContext().Eval("window.pageB")).To(
-		BeTrue(), "Scripts executed on second page")
-	expect(win.Document()).To(
-		HaveH1("Page B"), "Page heading", "Heading updated, i.e. htmx swapped")
-	expect(win.Location().Pathname()).To(Equal("/navigation/page-a.html"), "Location updated")
-}
+		expect := gomega.NewWithT(t).Expect
+		server := app.CreateServer()
+		b := htmltest.NewBrowserHelper(t, browsertest.InitBrowser(t, server, e))
+		win := b.OpenWindow("/navigation/page-a.html")
+		expect(win.ScriptContext().Eval("window.pageA")).To(BeTrue())
+		expect(win.ScriptContext().Eval("window.pageB")).To(BeNil())
 
-func TestHTMXLocationOnBoostedLink(t *testing.T) {
-	t.Parallel()
+		// Click an hx-get link
+		win.HTMLDocument().GetHTMLElementById("link-to-b").Click()
 
-	expect := gomega.NewWithT(t).Expect
-	server := app.CreateServer()
-	b := htmltest.NewBrowserHelper(t, browsertest.InitBrowser(t, server, v8host.DefaultEngine()))
-	win, err := b.Open("/navigation/page-a.html")
-	expect(err).ToNot(HaveOccurred())
+		expect(
+			win.ScriptContext().Eval("window.pageA"),
+		).To(BeTrue(), "Script context cleared from first page")
+		expect(win.ScriptContext().Eval("window.pageB")).To(
+			BeTrue(), "Scripts executed on second page")
+		expect(win.Document()).To(
+			HaveH1("Page B"), "Page heading", "Heading updated, i.e. htmx swapped")
+		expect(win.Location().Pathname()).To(Equal("/navigation/page-a.html"), "Location updated")
+	})
 
-	// Click an hx-boost link
-	expect(win.ScriptContext().Eval("window.pageA")).ToNot(BeNil())
-	expect(win.ScriptContext().Eval("window.pageA")).To(BeTrue())
-	expect(win.ScriptContext().Eval("window.pageB")).To(BeNil())
-	win.Document().GetElementById("link-to-b-boosted").(html.HTMLElement).Click()
+	t.Run("Clock boosted link", func(t *testing.T) {
+		t.Parallel()
 
-	expect(win.ScriptContext().Eval("window.pageA")).ToNot(BeNil(), "A")
-	expect(win.ScriptContext().Eval("window.pageB")).ToNot(BeNil(), "B")
-	expect(win.ScriptContext().Eval("window.pageA")).To(
-		BeTrue(), "Script context cleared from first page")
-	expect(win.ScriptContext().Eval("window.pageB")).To(
-		BeTrue(), "Scripts executed on second page")
-	expect(win.Document()).To(
-		HaveH1("Page B"), "Page heading", "Heading updated, i.e. htmx swapped")
-	expect(win.Location().Pathname()).To(Equal("/navigation/page-b.html"), "Location updated")
-}
+		expect := gomega.NewWithT(t).Expect
+		server := app.CreateServer()
+		b := htmltest.NewBrowserHelper(t, browsertest.InitBrowser(t, server, e))
+		win, err := b.Open("/navigation/page-a.html")
+		expect(err).ToNot(HaveOccurred())
 
-func TestFormSubmit(t *testing.T) {
-	t.Parallel()
+		// Click an hx-boost link
+		expect(win.ScriptContext().Eval("window.pageA")).ToNot(BeNil())
+		expect(win.ScriptContext().Eval("window.pageA")).To(BeTrue())
+		expect(win.ScriptContext().Eval("window.pageB")).To(BeNil())
+		win.Document().GetElementById("link-to-b-boosted").(html.HTMLElement).Click()
 
-	expect := gomega.NewWithT(t).Expect
-	server := app.CreateServer()
-	b := htmltest.NewBrowserHelper(t, browsertest.InitBrowser(t, server, v8host.DefaultEngine()))
-	win, err := b.Open("/forms/form-1.html")
-	expect(err).ToNot(HaveOccurred())
-	i1 := win.Document().GetElementById("field-1")
-	i1.SetAttribute("value", "Foo")
+		expect(win.ScriptContext().Eval("window.pageA")).ToNot(BeNil(), "A")
+		expect(win.ScriptContext().Eval("window.pageB")).ToNot(BeNil(), "B")
+		expect(win.ScriptContext().Eval("window.pageA")).To(
+			BeTrue(), "Script context cleared from first page")
+		expect(win.ScriptContext().Eval("window.pageB")).To(
+			BeTrue(), "Scripts executed on second page")
+		expect(win.Document()).To(
+			HaveH1("Page B"), "Page heading", "Heading updated, i.e. htmx swapped")
+		expect(win.Location().Pathname()).To(Equal("/navigation/page-b.html"), "Location updated")
+	})
 
-	btn := win.Document().GetElementById("submit-btn").(html.HTMLElement)
-	expect(len(server.Requests)).To(Equal(2), "No of requests _before_ click")
-	btn.Click()
-	expect(len(server.Requests)).To(Equal(3), "No of requests _after_ click")
-	elm := win.Document().GetElementById("field-value-1")
-	expect(elm).To(HaveTextContent("Foo"))
+	t.Run("Form submit", func(t *testing.T) {
+		t.Parallel()
+
+		expect := gomega.NewWithT(t).Expect
+		server := app.CreateServer()
+		b := htmltest.NewBrowserHelper(t, browsertest.InitBrowser(t, server, e))
+		win, err := b.Open("/forms/form-1.html")
+		expect(err).ToNot(HaveOccurred())
+		i1 := win.Document().GetElementById("field-1")
+		i1.SetAttribute("value", "Foo")
+
+		btn := win.Document().GetElementById("submit-btn").(html.HTMLElement)
+		expect(len(server.Requests)).To(Equal(2), "No of requests _before_ click")
+		btn.Click()
+		expect(len(server.Requests)).To(Equal(3), "No of requests _after_ click")
+		elm := win.Document().GetElementById("field-value-1")
+		expect(elm).To(HaveTextContent("Foo"))
+	})
 }
