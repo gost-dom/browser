@@ -216,6 +216,19 @@ func (o *v8Object) Keys() ([]string, error) {
 	return result.Bind1(keysAsSlice, mapSlice, asString).Unwrap()
 }
 
+type v8GlobalObject struct {
+	host *V8ScriptHost
+	tmpl *v8go.ObjectTemplate
+}
+
+func newV8GlobalObject(host *V8ScriptHost, tmpl *v8go.ObjectTemplate) v8GlobalObject {
+	return v8GlobalObject{host, tmpl}
+}
+
+func (o v8GlobalObject) CreateFunction(name string, cb js.FunctionCallback[jsTypeParam]) {
+	o.tmpl.Set(name, wrapV8Callback(o.host, cb))
+}
+
 type v8Class struct {
 	host  *V8ScriptHost
 	ft    *v8go.FunctionTemplate

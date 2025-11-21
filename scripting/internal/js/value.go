@@ -65,6 +65,12 @@ type Class[T any] interface {
 	CreateNamedHandler(opts ...NamedHandlerOption[T])
 }
 
+// GlobalObject represents an object that will be present in global scope. The
+// JavaScript console object is an example of a global object.
+type GlobalObject[T any] interface {
+	CreateFunction(name string, cb FunctionCallback[T])
+}
+
 // Constructor represents a JavaScript "class" that wraps a Go object.
 //
 // This package has two separate abstractions for a class serving two different

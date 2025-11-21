@@ -10,6 +10,7 @@ import (
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/gosthttp"
+	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/browser/url"
 	"github.com/grafana/sobek"
@@ -31,10 +32,14 @@ func (c *scriptContext) Context() context.Context { return c.window.Context() }
 func (i *scriptContext) Close() {}
 
 func (i *scriptContext) logger() *slog.Logger {
-	if i.window == nil {
-		return nil
+	l := i.window.Logger()
+	if l == nil {
+		l = i.host.Logger
 	}
-	return i.window.Logger()
+	if l == nil {
+		l = log.Default()
+	}
+	return l
 }
 
 func (i *scriptContext) run(str string) (sobek.Value, error) {
@@ -163,6 +168,15 @@ func (c *scriptContext) CreateClass(
 	return cls
 }
 
+// CreateGlobalObject implements [js/ScriptEngine.CreateGlobalObject]
+func (c *scriptContext) CreateGlobalObject(name string) js.GlobalObject[jsTypeParam] {
+	obj := c.vm.NewObject()
+	res := &globalObject{ctx: c, obj: obj}
+	c.vm.Set(name, obj)
+
+	return res
+}
+
 func (class *class) constructorCb(call sobek.ConstructorCall, r *sobek.Runtime) *sobek.Object {
 	class.installInstance(&call.This, nil)
 	class.cb(newCallbackContext(class.ctx, call))
@@ -239,8 +253,8 @@ func (c *scriptContext) Compile(src string) (html.Script, error) {
 	return script{c, src}, nil
 }
 
-func (c *scriptContext) DownloadScript(script string) (html.Script, error) {
-	u := url.ParseURLBase(script, c.window.LocationHREF()).Href()
+func (c *scriptContext) DownloadScript(src string) (html.Script, error) {
+	u := url.ParseURLBase(src, c.window.LocationHREF()).Href()
 	if script, err := gosthttp.Download(c.Context(), u, c.host.HttpClient); err != nil {
 		return nil, err
 	} else {
