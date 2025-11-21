@@ -9,7 +9,7 @@ import (
 )
 
 func TestDomParser(t *testing.T) {
-	win := browsertest.InitWindow(t)
+	win := browsertest.InitWindow(t, nil)
 	g := gomega.NewWithT(t)
 	g.Expect(win.Eval(`
 		const parser = new DOMParser()

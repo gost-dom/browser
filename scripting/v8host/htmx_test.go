@@ -10,6 +10,7 @@ import (
 	"github.com/gost-dom/browser/internal/testing/browsertest"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
+	"github.com/gost-dom/browser/scripting/v8host"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 )
 
@@ -18,7 +19,7 @@ func TestHTMXIncrementCounted(t *testing.T) {
 
 	expect := gomega.NewWithT(t).Expect
 	server := app.CreateServer()
-	b := htmltest.NewBrowserHelper(t, browsertest.InitBrowser(t, server))
+	b := htmltest.NewBrowserHelper(t, browsertest.InitBrowser(t, server, v8host.DefaultEngine()))
 	win, err := b.Open("/counter/index.html")
 	expect(err).ToNot(HaveOccurred())
 	counter := win.Document().GetElementById("counter").(html.HTMLElement)
@@ -33,7 +34,7 @@ func TestHTMXClickHXGetLink(t *testing.T) {
 
 	expect := gomega.NewWithT(t).Expect
 	server := app.CreateServer()
-	b := htmltest.NewBrowserHelper(t, browsertest.InitBrowser(t, server))
+	b := htmltest.NewBrowserHelper(t, browsertest.InitBrowser(t, server, v8host.DefaultEngine()))
 	win := b.OpenWindow("/navigation/page-a.html")
 	expect(win.ScriptContext().Eval("window.pageA")).To(BeTrue())
 	expect(win.ScriptContext().Eval("window.pageB")).To(BeNil())
@@ -56,7 +57,7 @@ func TestHTMXLocationOnBoostedLink(t *testing.T) {
 
 	expect := gomega.NewWithT(t).Expect
 	server := app.CreateServer()
-	b := htmltest.NewBrowserHelper(t, browsertest.InitBrowser(t, server))
+	b := htmltest.NewBrowserHelper(t, browsertest.InitBrowser(t, server, v8host.DefaultEngine()))
 	win, err := b.Open("/navigation/page-a.html")
 	expect(err).ToNot(HaveOccurred())
 
@@ -82,7 +83,7 @@ func TestFormSubmit(t *testing.T) {
 
 	expect := gomega.NewWithT(t).Expect
 	server := app.CreateServer()
-	b := htmltest.NewBrowserHelper(t, browsertest.InitBrowser(t, server))
+	b := htmltest.NewBrowserHelper(t, browsertest.InitBrowser(t, server, v8host.DefaultEngine()))
 	win, err := b.Open("/forms/form-1.html")
 	expect(err).ToNot(HaveOccurred())
 	i1 := win.Document().GetElementById("field-1")
