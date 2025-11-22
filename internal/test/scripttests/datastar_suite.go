@@ -101,10 +101,12 @@ func RunDataStarTests(t *testing.T, e html.ScriptEngine) {
 		win.HTMLDocument().GetHTMLElementById("echo-input-field").Focus()
 		ctrl := controller.KeyboardController{Window: win}
 		ctrl.SendKey(key.RuneToKey('a'))
+		ctrl.SendKey(key.RuneToKey('b'))
+		ctrl.SendKey(key.RuneToKey('c'))
 		win.Clock().RunAll()
 
 		output := win.HTMLDocument().GetHTMLElementById("echo-output")
-		assert.Equal(t, "a", output.TextContent())
+		assert.Equal(t, "abc", output.TextContent())
 
 	})
 }
