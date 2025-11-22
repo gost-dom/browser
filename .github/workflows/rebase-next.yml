@@ -5,9 +5,10 @@
 # the branch up-to-date on push to main, detecting incompatibilities early.
 name: Rebase next
 
+
 on:
   push:
-    branches: [ "main"]
+    branches: [ "main", "tmp" ]
 
 jobs:
   build:
@@ -31,7 +32,10 @@ jobs:
         fetch-depth: 0
 
     - name: Rebase to main
-      run: git rebase main
+      run: |
+        git config --global user.name "${GITHUB_ACTOR}"
+        git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+        git rebase origin/main
 
     - name: Set up Go
       uses: actions/setup-go@v5
