@@ -21,7 +21,7 @@ func (m *moduleResolver) resolveModule(
 ) (sobek.ModuleRecord, error) {
 	ref := referencingScriptOrModule
 	m.ctx.logger().
-		Debug("SobekModule.ResolveModule", "ref", ref, "spec", specifier)
+		Info("SobekModule.ResolveModule", "ref", ref, "spec", specifier)
 	var src string
 	switch v := ref.(type) {
 	case string:
@@ -43,10 +43,8 @@ func (m *moduleResolver) resolveModule(
 	if err != nil {
 		return nil, err
 	}
-	m.ctx.logger().Debug("ParseModule", "name", name, "code", code)
 	mod, err := sobek.ParseModule(name, code, m.resolveModule)
 	if err == nil {
-		m.ctx.logger().Info("Adding src", "mod", sobek.ModuleRecord(mod), "name", name)
 		m.modules[mod] = name
 		m.cache[name] = mod
 	}
