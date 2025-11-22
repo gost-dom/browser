@@ -337,7 +337,7 @@ func (c *Clock) processEventsWhile(ctx context.Context, f func() bool, name stri
 			c.logger().
 				Debug("clock.ProcessEvent: processed", "pendingCount", c.pendingEvents, log.ErrAttr(err))
 			errs = append(errs, err)
-			errs = append(errs, c.RunAll())
+			// errs = append(errs, c.RunAll())
 		case <-ctx.Done():
 			return fmt.Errorf("Clock.%s: timeout waiting for event", name)
 		}

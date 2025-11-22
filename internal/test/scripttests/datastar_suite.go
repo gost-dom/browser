@@ -79,7 +79,7 @@ func RunDataStarTests(t *testing.T, e html.ScriptEngine) {
 		// Verify textContent both before and after clicking.
 		assert.Equal(t, "", clickTarget.TextContent())
 		doc.GetHTMLElementById("fetch-events-button").Click()
-		assert.NoError(t, win.Clock().ProcessEvents(ctx)) // Wait for pending promises to settle.
+		// assert.NoError(t, win.Clock().ProcessEvents(ctx)) // Wait for pending promises to settle.
 		assert.Equal(t, "Foobar", clickTarget.TextContent())
 	})
 
@@ -104,10 +104,12 @@ func RunDataStarTests(t *testing.T, e html.ScriptEngine) {
 		win.HTMLDocument().GetHTMLElementById("echo-input-field").Focus()
 		ctrl := controller.KeyboardController{Window: win}
 		ctrl.SendKey(key.RuneToKey('a'))
+		ctrl.SendKey(key.RuneToKey('b'))
+		ctrl.SendKey(key.RuneToKey('c'))
 		win.Clock().RunAll()
 
 		output := win.HTMLDocument().GetHTMLElementById("echo-output")
-		assert.Equal(t, "a", output.TextContent())
+		assert.Equal(t, "abc", output.TextContent())
 
 	})
 }

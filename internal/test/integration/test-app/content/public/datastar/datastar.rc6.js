@@ -1532,12 +1532,14 @@ p({
     let s = e;
     n.has("window") && (s = window);
     let i = (c) => {
-      (c &&
-        (n.has("prevent") && c.preventDefault(),
-        n.has("stop") && c.stopPropagation()),
+      console.log("Event: " + c.type, c)(
+        c &&
+          (n.has("prevent") && c.preventDefault(),
+          n.has("stop") && c.stopPropagation()),
         w(),
         r(c),
-        M());
+        M(),
+      );
     };
     ((i = J(i, n)), (i = le(i, n)));
     let a = {
@@ -1879,4 +1881,3 @@ export {
   I as stopPeeking,
   he as watcher,
 };
-//# sourceMappingURL=datastar.js.map

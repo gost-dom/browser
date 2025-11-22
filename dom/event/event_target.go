@@ -137,7 +137,7 @@ func (e *eventTarget) SetCatchAllHandler(handler EventHandler) {
 }
 
 func (e *eventTarget) DispatchEvent(event *Event) bool {
-	log.Debug(e.logger(), "Dispatch event", "EventType", event.Type)
+	e.logger().Info("Dispatch event", "EventType", event.Type)
 	event.Target = e.self
 	event.stopped = false
 	event.DefaultPrevented = false
@@ -173,11 +173,9 @@ func (e *eventTarget) dispatchEvent(event *Event, capture bool) {
 	listeners := e.lmap[event.Type]
 	for i := 0; i < len(listeners); i++ {
 		l := listeners[i]
-		log.Debug(
-			e.logger(),
+		e.logger().Info(
 			"eventTarget.dispatchEvent: Calling event handler",
-			"type",
-			event.Type,
+			"type", event.Type,
 		)
 		if l.Capture == capture {
 			if err := l.Handler.HandleEvent(event); err != nil {
