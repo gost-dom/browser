@@ -3,6 +3,7 @@ package v8engine
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"runtime/debug"
 
 	"github.com/gost-dom/browser/html"
@@ -172,7 +173,7 @@ func (ctx *V8ScriptContext) DownloadScript(url string) (html.Script, error) {
 }
 
 func (ctx *V8ScriptContext) DownloadModule(url string) (html.Script, error) {
-	module, err := ctx.resolver.downloadAndCompile(ctx.context(), url)
+	module, err := ctx.resolver.downloadAndCompile(ctx.context(), ctx.logger(), url)
 	if err = module.InstantiateModule(ctx.v8ctx, &ctx.resolver); err != nil {
 		return nil, fmt.Errorf("gost: v8host: module instantiation: %w", err)
 	}
@@ -199,7 +200,12 @@ func (r *moduleResolver) cached(url string) *v8go.Module {
 	return nil
 }
 
-func (r *moduleResolver) downloadAndCompile(ctx context.Context, url string) (*v8go.Module, error) {
+func (r *moduleResolver) downloadAndCompile(
+	ctx context.Context,
+	l *slog.Logger,
+	url string,
+) (*v8go.Module, error) {
+	l.Info("v8host: ResolveModule", "url", url)
 	if cached := r.cached(url); cached != nil {
 		return cached, nil
 	}
@@ -242,6 +248,9 @@ func (r *moduleResolver) ResolveModule(
 			constants.BUG_ISSUE_URL,
 		)
 	}
+	scriptCtx := r.host.mustGetContext(v8ctx)
+	l := scriptCtx.logger()
+	l.Info("v8host: ResolveModule", "referrer", refModule.location, "src", spec)
 	url := url.ParseURLBase(spec, refModule.location).Href()
-	return r.downloadAndCompile(v8ScriptContext.context(), url)
+	return r.downloadAndCompile(v8ScriptContext.context(), l, url)
 }
