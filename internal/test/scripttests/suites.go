@@ -37,4 +37,5 @@ func RunSuites(t *testing.T, e html.ScriptEngine) {
 	t.Run("Fetch", func(t *testing.T) { testFetch(t, e) })
 	t.Run("Streams", func(t *testing.T) { testStreams(t, e) })
 	t.Run("CharacterData", func(t *testing.T) { testCharacterData(t, e) })
+	t.Run("ParentNode", func(t *testing.T) { testParentNode(t, e) })
 }
