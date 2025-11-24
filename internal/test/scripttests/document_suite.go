@@ -71,3 +71,14 @@ func (s *DocumentTestSuite) TestNewDocument() {
 		s.MustEval("Object.getPrototypeOf(actual).constructor.name"),
 		"Actual constructor")
 }
+
+func (s *DocumentTestSuite) TestQuerySelectorAll() {
+	s.MustLoadHTML(
+		`<body><div>0</div><div data-key="1">1</div><div data-key="2">2</div><body>`,
+	)
+	s.Expect(
+		s.MustEval(
+			"Array.from(document.querySelectorAll('[data-key]')).map(x => x.outerHTML).join(',')",
+		),
+	).To(Equal(`<div data-key="1">1</div>,<div data-key="2">2</div>`))
+}
