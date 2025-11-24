@@ -2,7 +2,6 @@ package scripttests
 
 import (
 	"context"
-	"log/slog"
 	"testing"
 	"time"
 
@@ -60,10 +59,9 @@ func RunDataStarTests(t *testing.T, e html.ScriptEngine) {
 					// Error level logs are piped to t.Error() though (this is
 					// configurable). This will cause tests to fail if a JavaScript
 					// error is thrown, even if the assertions in Go code succeed.
-					gosttest.NewTestingLogger(t,
-						// You don't need this. Logs all JS->Go calls
-						gosttest.MinLogLevel(slog.LevelDebug),
-					),
+					gosttest.NewTestingLogger(t), // You don't need this. Logs all JS->Go calls
+					// gosttest.MinLogLevel(slog.LevelDebug),
+
 				),
 			))
 		// The host name is ignored, but the server serves a Datastar test page on
@@ -95,9 +93,8 @@ func RunDataStarTests(t *testing.T, e html.ScriptEngine) {
 				browser.WithContext(ctx),
 				browser.WithHandler(app.CreateServer()),
 				browser.WithLogger(
-					gosttest.NewTestingLogger(t,
-						gosttest.MinLogLevel(slog.LevelDebug),
-					),
+					gosttest.NewTestingLogger(t), // gosttest.MinLogLevel(slog.LevelDebug),
+
 				),
 			))
 		win := b.OpenWindow("https://example.com/ds/")
