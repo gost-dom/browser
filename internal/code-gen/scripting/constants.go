@@ -16,6 +16,7 @@ var (
 	jsConsumeOptionalArg = g.NewValuePackage("ConsumeOptionalArg", packagenames.JS)
 	jsConsumeRestArgs    = g.NewValuePackage("ConsumeRestArguments", packagenames.JS)
 	jsThisLogAttr        = g.NewValuePackage("ThisLogAttr", packagenames.JS)
+	jsArgsLogAttr        = g.NewValuePackage("ArgsLogAttr", packagenames.JS)
 	jsLogAttr            = g.NewValuePackage("LogAttr", packagenames.JS)
 
 	jsAs            = g.NewTypePackage("As", packagenames.JS)

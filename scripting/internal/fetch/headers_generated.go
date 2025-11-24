@@ -29,8 +29,9 @@ func (w Headers[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w Headers[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Headers.Constructor - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Headers.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: Headers.Constructor", js.LogAttr("res", res))
 	}()
 	init, errArg1 := js.ConsumeArgument(cbCtx, "init", nil, w.decodeHeadersInit)
 	if errArg1 != nil {
@@ -40,8 +41,9 @@ func (w Headers[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 }
 
 func (w Headers[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Headers.append - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Headers.append", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: Headers.append", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[fetch.Headers](cbCtx.Instance())
 	if errInst != nil {
@@ -58,8 +60,9 @@ func (w Headers[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err er
 }
 
 func (w Headers[T]) delete(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Headers.delete - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Headers.delete", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: Headers.delete", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[fetch.Headers](cbCtx.Instance())
 	if errInst != nil {
@@ -74,8 +77,9 @@ func (w Headers[T]) delete(cbCtx js.CallbackContext[T]) (res js.Value[T], err er
 }
 
 func (w Headers[T]) get(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Headers.get - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Headers.get", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: Headers.get", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[fetch.Headers](cbCtx.Instance())
 	if errInst != nil {
@@ -90,15 +94,17 @@ func (w Headers[T]) get(cbCtx js.CallbackContext[T]) (res js.Value[T], err error
 }
 
 func (w Headers[T]) getSetCookie(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Headers.getSetCookie - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Headers.getSetCookie", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: Headers.getSetCookie", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Headers.getSetCookie: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Headers[T]) has(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Headers.has - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Headers.has", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: Headers.has", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[fetch.Headers](cbCtx.Instance())
 	if errInst != nil {
@@ -113,8 +119,9 @@ func (w Headers[T]) has(cbCtx js.CallbackContext[T]) (res js.Value[T], err error
 }
 
 func (w Headers[T]) set(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Headers.set - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Headers.set", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: Headers.set", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[fetch.Headers](cbCtx.Instance())
 	if errInst != nil {

@@ -26,15 +26,17 @@ func (w EventTarget[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w EventTarget[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: EventTarget.Constructor - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: EventTarget.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: EventTarget.Constructor", js.LogAttr("res", res))
 	}()
 	return w.CreateInstance(cbCtx)
 }
 
 func (w EventTarget[T]) addEventListener(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: EventTarget.addEventListener - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: EventTarget.addEventListener", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: EventTarget.addEventListener", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[event.EventTarget](cbCtx.Instance())
 	if errInst != nil {
@@ -52,8 +54,9 @@ func (w EventTarget[T]) addEventListener(cbCtx js.CallbackContext[T]) (res js.Va
 }
 
 func (w EventTarget[T]) removeEventListener(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: EventTarget.removeEventListener - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: EventTarget.removeEventListener", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: EventTarget.removeEventListener", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[event.EventTarget](cbCtx.Instance())
 	if errInst != nil {
@@ -71,8 +74,9 @@ func (w EventTarget[T]) removeEventListener(cbCtx js.CallbackContext[T]) (res js
 }
 
 func (w EventTarget[T]) dispatchEvent(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: EventTarget.dispatchEvent - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: EventTarget.dispatchEvent", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: EventTarget.dispatchEvent", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[event.EventTarget](cbCtx.Instance())
 	if errInst != nil {

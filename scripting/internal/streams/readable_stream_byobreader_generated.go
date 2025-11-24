@@ -23,8 +23,9 @@ func (w ReadableStreamBYOBReader[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w ReadableStreamBYOBReader[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: ReadableStreamBYOBReader.Constructor - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ReadableStreamBYOBReader.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: ReadableStreamBYOBReader.Constructor", js.LogAttr("res", res))
 	}()
 	stream, errArg1 := js.ConsumeArgument(cbCtx, "stream", nil, w.decodeReadableStream)
 	if errArg1 != nil {
@@ -34,15 +35,17 @@ func (w ReadableStreamBYOBReader[T]) Constructor(cbCtx js.CallbackContext[T]) (r
 }
 
 func (w ReadableStreamBYOBReader[T]) read(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: ReadableStreamBYOBReader.read - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ReadableStreamBYOBReader.read", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: ReadableStreamBYOBReader.read", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "ReadableStreamBYOBReader.read: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w ReadableStreamBYOBReader[T]) releaseLock(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: ReadableStreamBYOBReader.releaseLock - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ReadableStreamBYOBReader.releaseLock", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: ReadableStreamBYOBReader.releaseLock", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "ReadableStreamBYOBReader.releaseLock: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

@@ -30,15 +30,17 @@ func (w History[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w History[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: History.Constructor - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: History.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: History.Constructor", js.LogAttr("res", res))
 	}()
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w History[T]) go_(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: History.go_ - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: History.go_", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: History.go_", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if errInst != nil {
@@ -53,8 +55,9 @@ func (w History[T]) go_(cbCtx js.CallbackContext[T]) (res js.Value[T], err error
 }
 
 func (w History[T]) back(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: History.back - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: History.back", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: History.back", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if err != nil {
@@ -65,8 +68,9 @@ func (w History[T]) back(cbCtx js.CallbackContext[T]) (res js.Value[T], err erro
 }
 
 func (w History[T]) forward(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: History.forward - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: History.forward", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: History.forward", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if err != nil {
@@ -77,8 +81,9 @@ func (w History[T]) forward(cbCtx js.CallbackContext[T]) (res js.Value[T], err e
 }
 
 func (w History[T]) pushState(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: History.pushState - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: History.pushState", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: History.pushState", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if errInst != nil {
@@ -96,8 +101,9 @@ func (w History[T]) pushState(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 }
 
 func (w History[T]) replaceState(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: History.replaceState - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: History.replaceState", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: History.replaceState", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if errInst != nil {
@@ -115,8 +121,9 @@ func (w History[T]) replaceState(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 }
 
 func (w History[T]) length(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: History.length - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: History.length", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: History.length", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if err != nil {
@@ -127,8 +134,9 @@ func (w History[T]) length(cbCtx js.CallbackContext[T]) (res js.Value[T], err er
 }
 
 func (w History[T]) state(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: History.state - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: History.state", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: History.state", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if err != nil {

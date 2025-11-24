@@ -77,6 +77,15 @@ func wrapJSCallback(ctx *GojaContext, cb js.FunctionCallback[jsTypeParam]) goja.
 	})
 }
 
+func (c *callbackContext) Args() []js.Value[jsTypeParam] {
+	args := c.args
+	res := make([]js.Value[jsTypeParam], len(args))
+	for i, arg := range args {
+		res[i] = newGojaValue(c.GojaContext, arg)
+	}
+	return res
+}
+
 func (c *callbackContext) ConsumeArg() (js.Value[jsTypeParam], bool) {
 	index := c.argIndex
 	c.argIndex++

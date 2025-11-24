@@ -24,15 +24,17 @@ func (w AbortController[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w AbortController[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: AbortController.Constructor - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: AbortController.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: AbortController.Constructor", js.LogAttr("res", res))
 	}()
 	return w.CreateInstance(cbCtx)
 }
 
 func (w AbortController[T]) abort(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: AbortController.abort - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: AbortController.abort", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: AbortController.abort", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[dominterfaces.AbortController](cbCtx.Instance())
 	if errInst != nil {
@@ -47,8 +49,9 @@ func (w AbortController[T]) abort(cbCtx js.CallbackContext[T]) (res js.Value[T],
 }
 
 func (w AbortController[T]) signal(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: AbortController.signal - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: AbortController.signal", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: AbortController.signal", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[dominterfaces.AbortController](cbCtx.Instance())
 	if err != nil {

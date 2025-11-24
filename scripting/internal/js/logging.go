@@ -29,10 +29,18 @@ func (l jsValueLogger[T]) LogValue() slog.Value {
 	return slog.AnyValue(val)
 }
 
-type thisLogger[T any] struct{ ctx CallbackContext[T] }
+// thisLogValuer implements [slog.Valuer] rendering the "this" argument
+type thisLogValuer[T any] struct{ ctx CallbackContext[T] }
 
-func (l thisLogger[T]) LogValue() slog.Value {
+func (l thisLogValuer[T]) LogValue() slog.Value {
 	return jsValueLogger[T]{l.ctx.This()}.LogValue()
+}
+
+// argsLogValuer implements [slog.Valuer] rendering the called arguments
+type argsLogValuer[T any] struct{ ctx CallbackContext[T] }
+
+func (l argsLogValuer[T]) LogValue() slog.Value {
+	return slog.AnyValue(l.ctx.Args())
 }
 
 func LogAttr[T any](key string, val Value[T]) slog.Attr {
@@ -42,6 +50,9 @@ func LogAttr[T any](key string, val Value[T]) slog.Attr {
 // ThisLogAttr creates an [slog.Attr] representing the JavaScript this value in
 // a callback.
 func ThisLogAttr[T any](cbCtx CallbackContext[T]) slog.Attr {
-	var valuer slog.LogValuer = thisLogger[T]{cbCtx}
-	return slog.Any("this", valuer)
+	return slog.Any("this", thisLogValuer[T]{cbCtx})
+}
+
+func ArgsLogAttr[T any](cbCtx CallbackContext[T]) slog.Attr {
+	return slog.Any("args", argsLogValuer[T]{cbCtx})
 }

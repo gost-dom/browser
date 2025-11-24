@@ -74,6 +74,16 @@ func (h *v8CallbackContext) ReturnWithTypeError(msg string) (jsValue, error) {
 	return nil, v8.NewTypeError(h.iso(), msg)
 }
 
+func (h *v8CallbackContext) Args() []jsValue {
+	ctx := h.host.mustGetContext(h.v8Info.Context())
+	v8Args := h.v8Info.Args()
+	res := make([]jsValue, len(v8Args))
+	for i, arg := range v8Args {
+		res[i] = newV8Value(ctx, arg)
+	}
+	return res
+}
+
 func (h *v8CallbackContext) ConsumeArg() (jsValue, bool) {
 	index := h.currentIndex
 	h.currentIndex++

@@ -162,13 +162,21 @@ func (cb CallbackMethods) ReturnNotImplementedError(
 }
 
 func (cb CallbackMethods) LogCall(name string, cbCtx g.Generator) g.Generator {
-	res := g.ValueOf(cbCtx).Field("Logger").Call().Field("Debug").Call(
-		g.Lit(fmt.Sprintf("JS Function call: %s.%s", cb.Data.Name(), name)),
-		jsThisLogAttr.Call(cbCtx),
+	msg := fmt.Sprintf("JS Function call: %s.%s", cb.Data.Name(), name)
+	logDebug := g.ValueOf(cbCtx).Field("Logger").Call().Field("Debug")
+	res := logDebug.Call(
+		g.Lit(msg),
 		jsLogAttr.Call(g.Lit("res"), g.Id("res")),
 	)
 	f := g.ValueOf(g.FunctionDefinition{Body: res})
-	return g.Raw(jen.Defer().Add(f.Call().Generate()))
+	return g.StatementList(
+		logDebug.Call(
+			g.Lit(fmt.Sprintf("%s - completed", msg)),
+			jsThisLogAttr.Call(cbCtx),
+			jsArgsLogAttr.Call(cbCtx),
+		),
+		g.Raw(jen.Defer().Add(f.Call().Generate())),
+	)
 }
 
 func (cb CallbackMethods) assignInstance(

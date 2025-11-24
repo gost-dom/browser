@@ -27,15 +27,17 @@ func (w Attr[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w Attr[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Attr.Constructor - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Attr.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: Attr.Constructor", js.LogAttr("res", res))
 	}()
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w Attr[T]) localName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Attr.localName - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Attr.localName", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: Attr.localName", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[dom.Attr](cbCtx.Instance())
 	if err != nil {
@@ -46,8 +48,9 @@ func (w Attr[T]) localName(cbCtx js.CallbackContext[T]) (res js.Value[T], err er
 }
 
 func (w Attr[T]) name(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Attr.name - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Attr.name", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: Attr.name", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[dom.Attr](cbCtx.Instance())
 	if err != nil {
@@ -58,8 +61,9 @@ func (w Attr[T]) name(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) 
 }
 
 func (w Attr[T]) value(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Attr.value - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Attr.value", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: Attr.value", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[dom.Attr](cbCtx.Instance())
 	if err != nil {
@@ -70,8 +74,9 @@ func (w Attr[T]) value(cbCtx js.CallbackContext[T]) (res js.Value[T], err error)
 }
 
 func (w Attr[T]) setValue(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Attr.setValue - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Attr.setValue", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: Attr.setValue", js.LogAttr("res", res))
 	}()
 	instance, err0 := js.As[dom.Attr](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
@@ -84,8 +89,9 @@ func (w Attr[T]) setValue(cbCtx js.CallbackContext[T]) (res js.Value[T], err err
 }
 
 func (w Attr[T]) ownerElement(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Attr.ownerElement - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Attr.ownerElement", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: Attr.ownerElement", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[dom.Attr](cbCtx.Instance())
 	if err != nil {

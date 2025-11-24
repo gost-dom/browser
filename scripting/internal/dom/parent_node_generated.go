@@ -31,15 +31,17 @@ func (w ParentNode[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w ParentNode[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: ParentNode.Constructor - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ParentNode.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: ParentNode.Constructor", js.LogAttr("res", res))
 	}()
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w ParentNode[T]) prepend(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: ParentNode.prepend - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ParentNode.prepend", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: ParentNode.prepend", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
@@ -54,8 +56,9 @@ func (w ParentNode[T]) prepend(cbCtx js.CallbackContext[T]) (res js.Value[T], er
 }
 
 func (w ParentNode[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: ParentNode.append - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ParentNode.append", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: ParentNode.append", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
@@ -70,8 +73,9 @@ func (w ParentNode[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 }
 
 func (w ParentNode[T]) replaceChildren(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: ParentNode.replaceChildren - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ParentNode.replaceChildren", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: ParentNode.replaceChildren", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
@@ -86,8 +90,9 @@ func (w ParentNode[T]) replaceChildren(cbCtx js.CallbackContext[T]) (res js.Valu
 }
 
 func (w ParentNode[T]) querySelector(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: ParentNode.querySelector - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ParentNode.querySelector", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: ParentNode.querySelector", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
@@ -105,8 +110,9 @@ func (w ParentNode[T]) querySelector(cbCtx js.CallbackContext[T]) (res js.Value[
 }
 
 func (w ParentNode[T]) querySelectorAll(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: ParentNode.querySelectorAll - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ParentNode.querySelectorAll", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: ParentNode.querySelectorAll", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
@@ -124,8 +130,9 @@ func (w ParentNode[T]) querySelectorAll(cbCtx js.CallbackContext[T]) (res js.Val
 }
 
 func (w ParentNode[T]) children(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: ParentNode.children - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ParentNode.children", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: ParentNode.children", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
@@ -136,8 +143,9 @@ func (w ParentNode[T]) children(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 }
 
 func (w ParentNode[T]) firstElementChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: ParentNode.firstElementChild - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ParentNode.firstElementChild", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: ParentNode.firstElementChild", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
@@ -148,8 +156,9 @@ func (w ParentNode[T]) firstElementChild(cbCtx js.CallbackContext[T]) (res js.Va
 }
 
 func (w ParentNode[T]) lastElementChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: ParentNode.lastElementChild - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ParentNode.lastElementChild", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: ParentNode.lastElementChild", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
@@ -160,8 +169,9 @@ func (w ParentNode[T]) lastElementChild(cbCtx js.CallbackContext[T]) (res js.Val
 }
 
 func (w ParentNode[T]) childElementCount(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: ParentNode.childElementCount - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ParentNode.childElementCount", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: ParentNode.childElementCount", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {

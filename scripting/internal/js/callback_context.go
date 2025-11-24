@@ -53,6 +53,7 @@ type ArgumentConsumer[T any] interface {
 	//
 	// [Element.append]: https://developer.mozilla.org/en-US/docs/Web/API/Element/append
 	ConsumeArg() (arg Value[T], ok bool)
+	Args() []Value[T]
 }
 
 type CallbackScope[T any] interface {

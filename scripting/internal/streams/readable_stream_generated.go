@@ -29,8 +29,9 @@ func (w ReadableStream[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w ReadableStream[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: ReadableStream.Constructor - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ReadableStream.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: ReadableStream.Constructor", js.LogAttr("res", res))
 	}()
 	underlyingSource, errArg1 := js.ConsumeArgument(cbCtx, "underlyingSource", codec.ZeroValue, w.decodeObject)
 	strategy, errArg2 := js.ConsumeArgument(cbCtx, "strategy", nil, w.decodeQueuingStrategy)
@@ -42,15 +43,17 @@ func (w ReadableStream[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Valu
 }
 
 func (w ReadableStream[T]) cancel(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: ReadableStream.cancel - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ReadableStream.cancel", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: ReadableStream.cancel", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "ReadableStream.cancel: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w ReadableStream[T]) getReader(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: ReadableStream.getReader - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ReadableStream.getReader", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: ReadableStream.getReader", js.LogAttr("res", res))
 	}()
 	instance, errInst := js.As[streams.ReadableStream](cbCtx.Instance())
 	if errInst != nil {
@@ -65,29 +68,33 @@ func (w ReadableStream[T]) getReader(cbCtx js.CallbackContext[T]) (res js.Value[
 }
 
 func (w ReadableStream[T]) pipeThrough(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: ReadableStream.pipeThrough - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ReadableStream.pipeThrough", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: ReadableStream.pipeThrough", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "ReadableStream.pipeThrough: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w ReadableStream[T]) pipeTo(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: ReadableStream.pipeTo - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ReadableStream.pipeTo", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: ReadableStream.pipeTo", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "ReadableStream.pipeTo: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w ReadableStream[T]) tee(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: ReadableStream.tee - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ReadableStream.tee", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: ReadableStream.tee", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "ReadableStream.tee: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w ReadableStream[T]) locked(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: ReadableStream.locked - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ReadableStream.locked", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: ReadableStream.locked", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "ReadableStream.locked: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

@@ -25,15 +25,17 @@ func (w AbortSignal[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w AbortSignal[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: AbortSignal.Constructor - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: AbortSignal.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: AbortSignal.Constructor", js.LogAttr("res", res))
 	}()
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w AbortSignal[T]) throwIfAborted(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: AbortSignal.throwIfAborted - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: AbortSignal.throwIfAborted", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: AbortSignal.throwIfAborted", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[dominterfaces.AbortSignal](cbCtx.Instance())
 	if err != nil {
@@ -44,8 +46,9 @@ func (w AbortSignal[T]) throwIfAborted(cbCtx js.CallbackContext[T]) (res js.Valu
 }
 
 func (w AbortSignal[T]) aborted(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: AbortSignal.aborted - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: AbortSignal.aborted", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: AbortSignal.aborted", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[dominterfaces.AbortSignal](cbCtx.Instance())
 	if err != nil {
@@ -56,8 +59,9 @@ func (w AbortSignal[T]) aborted(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 }
 
 func (w AbortSignal[T]) reason(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: AbortSignal.reason - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: AbortSignal.reason", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: AbortSignal.reason", js.LogAttr("res", res))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "AbortSignal.reason: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

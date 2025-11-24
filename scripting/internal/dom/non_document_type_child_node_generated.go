@@ -24,15 +24,17 @@ func (w NonDocumentTypeChildNode[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w NonDocumentTypeChildNode[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: NonDocumentTypeChildNode.Constructor - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: NonDocumentTypeChildNode.Constructor", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: NonDocumentTypeChildNode.Constructor", js.LogAttr("res", res))
 	}()
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w NonDocumentTypeChildNode[T]) previousElementSibling(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: NonDocumentTypeChildNode.previousElementSibling - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: NonDocumentTypeChildNode.previousElementSibling", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: NonDocumentTypeChildNode.previousElementSibling", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[dom.NonDocumentTypeChildNode](cbCtx.Instance())
 	if err != nil {
@@ -43,8 +45,9 @@ func (w NonDocumentTypeChildNode[T]) previousElementSibling(cbCtx js.CallbackCon
 }
 
 func (w NonDocumentTypeChildNode[T]) nextElementSibling(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: NonDocumentTypeChildNode.nextElementSibling - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: NonDocumentTypeChildNode.nextElementSibling", js.ThisLogAttr(cbCtx), js.LogAttr("res", res))
+		cbCtx.Logger().Debug("JS Function call: NonDocumentTypeChildNode.nextElementSibling", js.LogAttr("res", res))
 	}()
 	instance, err := js.As[dom.NonDocumentTypeChildNode](cbCtx.Instance())
 	if err != nil {
