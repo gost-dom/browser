@@ -1,3 +1,4 @@
 # Temporary files while running tests
 *.test
 node_modules/
+*.log
