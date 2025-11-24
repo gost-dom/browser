@@ -124,12 +124,21 @@ func New(options ...NewClockOption) *Clock {
 	return c
 }
 
-func (c *Clock) logger() *slog.Logger {
-	l := c.Logger
+func (c *Clock) setLogger(l *slog.Logger) *slog.Logger {
 	if l == nil {
 		l = log.Default()
 	}
-	return l.With("pkg", "gost-dom/clock")
+	l = l.With("pkg", "gost-dom/clock")
+	c.Logger = l
+	return l
+}
+
+func (c *Clock) logger() *slog.Logger {
+	l := c.Logger
+	if l == nil {
+		l = c.setLogger(nil)
+	}
+	return l
 }
 
 // runMicrotasksAndFlush runs first microtasks, e.g., tasks added using
@@ -198,6 +207,7 @@ func (c *Clock) runWhile(predicate func() bool) []error {
 // Returns an error if any of the added tasks generate an error. Panics if the
 // task list doesn't decrease in size. See [Clock] documentation for more info.
 func (c *Clock) Advance(d time.Duration) error {
+	c.logger().Debug("Clock.Advance", "duration", d, "clock", c)
 	endTime := c.Time.Add(d)
 	errs := c.runMicrotasksAndFlush()
 	errs = append(errs, c.runWhile(func() bool {
@@ -205,6 +215,13 @@ func (c *Clock) Advance(d time.Duration) error {
 	})...)
 	c.Time = endTime
 	return errors.Join(errs...)
+}
+
+func (c *Clock) LogValue() slog.Value {
+	return slog.GroupValue(
+		slog.Int("noMicrotasks", len(c.microtasks)),
+		slog.Int("noTasks", len(c.tasks)),
+	)
 }
 
 // Tick runs all tasks scheduled for immediate execution. This is synonymous
@@ -421,7 +438,9 @@ func (c *Clock) RunAll() error {
 // NewClockOption are used to initialize a new [Clock]
 type NewClockOption func(*Clock)
 
-func WithLogger(l *slog.Logger) NewClockOption { return func(c *Clock) { c.Logger = l } }
+func WithLogger(l *slog.Logger) NewClockOption {
+	return func(c *Clock) { c.setLogger(l) }
+}
 
 // Initializes the clock's simulated time from a concrete [time.Time] value.
 func OfTime(t time.Time) NewClockOption {
