@@ -157,7 +157,7 @@ func (f scope) NewIterator(
 				}
 				res := f.vm.NewObject()
 				item, err, ok := instance.next()
-				res.Set("done", instance.vm.ToValue(!ok))
+				res.Set("done", f.vm.ToValue(!ok))
 				if !ok {
 					instance.stop()
 				} else {
