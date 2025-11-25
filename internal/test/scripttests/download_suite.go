@@ -22,7 +22,6 @@ func RunDownloadScriptSuite(t *testing.T, e html.ScriptEngine) {
 			</body>
 		</html>`
 		const moduleJS = `
-			// Verify that compilation doesn't fail on export
 			document.addEventListener("DOMContentLoaded", () => {
 				document.getElementById("tgt").textContent="CONTENT";
 			})
