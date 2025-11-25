@@ -10,6 +10,13 @@ type value struct {
 	value sobek.Value
 }
 
+func toSobekValue(v js.Value[jsTypeParam]) sobek.Value {
+	if v == nil {
+		return sobek.Undefined()
+	}
+	return v.Self().value
+}
+
 type jsTypeParam = value
 
 func toValue(val js.Value[jsTypeParam]) sobek.Value {
@@ -48,7 +55,7 @@ func (v value) IsString() bool    { return sobek.IsString(v.value) }
 func (v value) Self() value { return v }
 
 func (v value) StrictEquals(other js.Value[jsTypeParam]) bool {
-	return v.value.StrictEquals(other.Self().value)
+	return v.value.StrictEquals(toSobekValue(other))
 }
 
 func (v value) IsFunction() bool {
@@ -79,7 +86,7 @@ func (o object) Get(key string) (js.Value[jsTypeParam], error) {
 }
 
 func (o object) Set(key string, v js.Value[jsTypeParam]) error {
-	o.obj.Set(key, v.Self().value)
+	o.obj.Set(key, unwrapValue(v))
 	return nil
 }
 
@@ -114,8 +121,8 @@ func (f function) Call(
 ) (js.Value[jsTypeParam], error) {
 	v := make([]sobek.Value, len(args))
 	for i, a := range args {
-		v[i] = a.Self().value
+		v[i] = toSobekValue(a)
 	}
-	res, err := f.f(this.Self().value, v...)
+	res, err := f.f(toSobekValue(this), v...)
 	return newValue(f.ctx, res), err
 }
