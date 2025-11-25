@@ -74,7 +74,7 @@ func wrapJSCallback(ctx *scriptContext, cb js.FunctionCallback[jsTypeParam]) sob
 		if err != nil {
 			panic(ctx.vm.ToValue(err))
 		}
-		return toValue(res)
+		return unwrapValue(res)
 	})
 }
 

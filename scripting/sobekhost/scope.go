@@ -69,7 +69,7 @@ func (f scope) JSONStringify(v js.Value[jsTypeParam]) string {
 func (f scope) NewArray(v ...js.Value[jsTypeParam]) js.Value[jsTypeParam] {
 	arr := make([]any, len(v))
 	for i, val := range v {
-		arr[i] = toValue(val)
+		arr[i] = unwrapValue(val)
 	}
 	return newObject(f.scriptContext, f.vm.NewArray(arr...))
 }

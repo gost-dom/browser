@@ -10,20 +10,15 @@ type value struct {
 	value sobek.Value
 }
 
-func toSobekValue(v js.Value[jsTypeParam]) sobek.Value {
+type jsTypeParam = value
+
+// unwrapValue returns the underlying JS value of v. Returns undefined if v is
+// nil.
+func unwrapValue(v js.Value[jsTypeParam]) sobek.Value {
 	if v == nil {
 		return sobek.Undefined()
 	}
 	return v.Self().value
-}
-
-type jsTypeParam = value
-
-func toValue(val js.Value[jsTypeParam]) sobek.Value {
-	if val == nil {
-		return sobek.Undefined()
-	}
-	return val.Self().value
 }
 
 // newValue createa a js.Value[T] wrapping sobek value v. This is safe to use
@@ -55,7 +50,7 @@ func (v value) IsString() bool    { return sobek.IsString(v.value) }
 func (v value) Self() value { return v }
 
 func (v value) StrictEquals(other js.Value[jsTypeParam]) bool {
-	return v.value.StrictEquals(toSobekValue(other))
+	return v.value.StrictEquals(unwrapValue(other))
 }
 
 func (v value) IsFunction() bool {
@@ -121,8 +116,8 @@ func (f function) Call(
 ) (js.Value[jsTypeParam], error) {
 	v := make([]sobek.Value, len(args))
 	for i, a := range args {
-		v[i] = toSobekValue(a)
+		v[i] = unwrapValue(a)
 	}
-	res, err := f.f(toSobekValue(this), v...)
+	res, err := f.f(unwrapValue(this), v...)
 	return newValue(f.ctx, res), err
 }
