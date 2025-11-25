@@ -171,8 +171,7 @@ func (e *element) SetOuterHTML(html string) error {
 	}
 	fragment, err := e.nodeDocument().parseFragment(strings.NewReader(html))
 	if err == nil {
-		// err = e.ReplaceChildren(fragment)
-		_, err = parent.ReplaceChild(e.getSelf(), fragment)
+		_, err = parent.ReplaceChild(fragment, e.getSelf())
 	}
 	return err
 }

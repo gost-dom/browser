@@ -507,12 +507,12 @@ func (n *node) ReplaceChild(node, child Node) (Node, error) {
 	if !isDocument && !isDocumentFragment && !isElement {
 		return nil, newDomError("HierarchyRequestError")
 	}
-	if node.ParentNode() != n.self {
+	if child.ParentNode() != n.self {
 		return nil, newDomError("NotFoundError")
 	}
 	for i, c := range n.childNodes.All() {
-		if c == node {
-			err := n.replaceNodes(i, 1, child)
+		if c == child {
+			err := n.replaceNodes(i, 1, node)
 			return c, err
 		}
 	}
