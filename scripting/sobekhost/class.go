@@ -107,7 +107,7 @@ func (o dynamicArray) Get(index int) sobek.Value {
 	if err != nil {
 		panic(err)
 	}
-	return toValue(res)
+	return unwrapValue(res)
 }
 
 func (o dynamicArray) Set(index int, value sobek.Value) bool {
@@ -153,7 +153,7 @@ func (o dynamicObject) Get(key string) sobek.Value {
 	if err != nil {
 		panic(err)
 	}
-	return toValue(res)
+	return unwrapValue(res)
 }
 
 func (o dynamicObject) Delete(key string) (res bool) {
