@@ -24,7 +24,7 @@ func (e *htmlScriptElement) Connected() {
 		err         error
 		deferScript bool
 	)
-	window, _ := e.htmlDocument.getWindow().(*window)
+	window := e.htmlDocument.window()
 	e.script, deferScript, err = e.compile()
 	if err != nil {
 		e.logger().Error("HTMLScriptElement: script error", log.ErrAttr(err))
@@ -39,7 +39,7 @@ func (e *htmlScriptElement) Connected() {
 
 func (e *htmlScriptElement) compile() (script Script, deferred bool, err error) {
 	src, hasSrc := e.GetAttribute("src")
-	window, _ := e.htmlDocument.getWindow().(*window)
+	window := e.htmlDocument.window()
 	if !hasSrc {
 		script, err = window.scriptContext.Compile(e.TextContent())
 		if err != nil {

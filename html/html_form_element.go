@@ -128,7 +128,7 @@ func (e *htmlFormElement) submitFormData(formData *FormData) error {
 	if err != nil {
 		return err
 	}
-	return e.htmlDocument.getWindow().fetchRequest(req)
+	return e.htmlDocument.window().fetchRequest(req)
 }
 
 func (e *htmlFormElement) RequestSubmit(submitter dom.Element) error {

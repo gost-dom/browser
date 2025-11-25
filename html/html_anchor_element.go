@@ -53,7 +53,7 @@ func (e *htmlAnchorElement) getUrl(f func(*url.URL) string) string {
 }
 
 func (e *htmlAnchorElement) SetHref(val string) {
-	window := e.getHTMLDocument().getWindow()
+	window := e.getHTMLDocument().window()
 	newUrl := window.resolveHref(val)
 	e.URL = newUrl
 	e.updateDataAttribute()

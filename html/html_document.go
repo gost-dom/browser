@@ -9,13 +9,13 @@ import (
 type HTMLDocument interface {
 	dom.Document
 	// unexported
-	getWindow() Window
+	window() *window
 	setActiveElement(e dom.Element)
 }
 
 type htmlDocument struct {
 	dom.Document
-	window Window
+	win Window
 }
 
 func mustAppendChild(p, c dom.Node) dom.Node {
@@ -85,7 +85,12 @@ func (d *htmlDocument) CreateElement(name string) dom.Element {
 	return NewHTMLElement(name, d)
 }
 
-func (d *htmlDocument) getWindow() Window { return d.window }
+func (d *htmlDocument) window() *window {
+	if d.win == nil {
+		return nil
+	}
+	return d.win.window()
+}
 
 type SetActiveElementer interface {
 	SetActiveElement(e dom.Element)

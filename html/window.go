@@ -149,6 +149,7 @@ type Window interface {
 
 	fetchRequest(req *http.Request) error
 	resolveHref(string) *url.URL
+	window() *window
 }
 
 type window struct {
@@ -411,6 +412,8 @@ func (w *window) Logger() log.Logger {
 	}
 	return log.Default()
 }
+
+func (w *window) window() *window { return w }
 
 type WindowOptions struct {
 	ScriptHost

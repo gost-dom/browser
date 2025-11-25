@@ -36,7 +36,7 @@ func (e *htmlTemplateElement) RenderChildren(builder *strings.Builder) {
 
 func (e *htmlTemplateElement) SetInnerHTML(html string) error {
 	doc := e.htmlDocument
-	fragment, err := doc.getWindow().ParseFragment(doc, strings.NewReader(html))
+	fragment, err := doc.window().ParseFragment(doc, strings.NewReader(html))
 	if err == nil {
 		e.content = fragment
 	}
