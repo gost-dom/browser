@@ -37,27 +37,26 @@ func (e *htmlScriptElement) Connected() {
 	}
 }
 
-func (e *htmlScriptElement) compile() (script Script, defer_ bool, err error) {
+func (e *htmlScriptElement) compile() (script Script, deferred bool, err error) {
 	src, hasSrc := e.GetAttribute("src")
 	window, _ := e.htmlDocument.getWindow().(*window)
 	if !hasSrc {
-		script, err := window.scriptContext.Compile(e.TextContent())
+		script, err = window.scriptContext.Compile(e.TextContent())
 		if err != nil {
 			e.logger().Debug("HTMLScriptElement: compile error", "script", e.TextContent())
 		}
-		return script, false, err
 	} else {
 		src = window.resolveHref(src).Href()
 		scriptType, _ := e.GetAttribute("type")
 		if scriptType == "module" {
-			script, err := window.scriptContext.DownloadModule(src)
-			return script, true, err
+			script, err = window.scriptContext.DownloadModule(src)
+			deferred = true
 		} else {
-			script, err := window.scriptContext.DownloadScript(src)
-			_, deferScript := e.GetAttribute("defer")
-			return script, deferScript, err
+			script, err = window.scriptContext.DownloadScript(src)
+			_, deferred = e.GetAttribute("defer")
 		}
 	}
+	return
 }
 
 func (e *htmlScriptElement) run() {
