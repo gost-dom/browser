@@ -44,10 +44,8 @@ func (v value) IsNull() bool { return sobek.IsNull(v.value) }
 
 func (v value) IsUndefined() bool { return sobek.IsUndefined(v.value) }
 func (v value) IsString() bool    { return sobek.IsString(v.value) }
-func (v value) IsObject() bool    { return sobek.IsNull(v.value) }
 
-func (v value) IsBoolean() bool { _, ok := v.AsObject(); return ok }
-func (v value) Self() value     { return v }
+func (v value) Self() value { return v }
 
 func (v value) StrictEquals(other js.Value[jsTypeParam]) bool {
 	return v.value.StrictEquals(other.Self().value)
