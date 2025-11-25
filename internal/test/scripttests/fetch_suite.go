@@ -96,9 +96,14 @@ func testFetch(t *testing.T, e html.ScriptEngine) {
 }
 
 func testFetchAbortSignal(t *testing.T, e html.ScriptEngine) {
+	// This test has been seen failing on the build server.
+	// Add some random logging to try to diagnose the issue
+	t.Log("testFetchAbortSignal: start")
+
 	g := gomega.NewWithT(t)
 	ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
 	defer cancel()
+	t.Log("testFetchAbortSignal: child context")
 
 	delayedHandler := &gosttest.PipeHandler{T: t}
 	handler := gosttest.HttpHandlerMap{
@@ -106,6 +111,7 @@ func testFetchAbortSignal(t *testing.T, e html.ScriptEngine) {
 		"/slow-data.json": delayedHandler,
 	}
 	win := initWindow(t, e, handler, WithMinLogLevel(slog.LevelDebug), WithContext(ctx))
+	t.Log("testFetchAbortSignal: window initialized")
 	win.MustRun(`
 		let resolved;
 		let rejected;
@@ -116,11 +122,17 @@ func testFetchAbortSignal(t *testing.T, e html.ScriptEngine) {
 			.then(r => { resolved = r }, r => { rejected = r })
 		ctrl.abort("abort-reason")
 	`)
-	win.Clock().ProcessEvents(ctx)
 
+	t.Log("testFetchAbortSignal: script run")
+	win.Clock().ProcessEvents(ctx)
+	t.Log("testFetchAbortSignal: events processed")
+
+	t.Log("testFetchAbortSignal: eval ctrl")
 	ctrl := win.MustEval("ctrl").(dominterfaces.AbortController)
 	assert.NotNil(t, ctrl, "AbortController nil")
+	t.Log("testFetchAbortSignal: eval typeof signal")
 	g.Expect(win.Eval(`typeof signal`)).To(Equal("object"), "signal is an object")
+	t.Log("testFetchAbortSignal: eval rejected")
 	g.Expect(win.Eval(`rejected`)).To(Equal("abort-reason"))
 }
 
