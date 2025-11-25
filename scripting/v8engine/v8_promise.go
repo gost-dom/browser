@@ -1,4 +1,4 @@
-package v8host
+package v8engine
 
 import (
 	"fmt"

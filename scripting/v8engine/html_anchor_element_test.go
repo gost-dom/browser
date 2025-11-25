@@ -1,15 +1,15 @@
-package v8host_test
+package v8engine_test
 
 import (
 	"testing"
 
 	"github.com/gost-dom/browser/html"
-	"github.com/gost-dom/browser/scripting/v8host"
+	"github.com/gost-dom/browser/scripting/v8engine"
 	"github.com/onsi/gomega"
 )
 
 func TestHtmlAnchorElement(t *testing.T) {
-	host := v8host.New()
+	host := v8engine.New()
 	t.Cleanup(host.Close)
 	win := html.NewWindow(html.WindowOptions{ScriptHost: host})
 	defer win.Close()

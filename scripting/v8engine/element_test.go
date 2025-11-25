@@ -1,4 +1,4 @@
-package v8host_test
+package v8engine_test
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 	"github.com/gost-dom/browser/internal/test/scripttests"
 	"github.com/gost-dom/browser/internal/testing/browsertest"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
-	"github.com/gost-dom/browser/scripting/v8host"
+	"github.com/gost-dom/browser/scripting/v8engine"
 	"github.com/onsi/gomega"
 	"github.com/stretchr/testify/suite"
 )
@@ -18,7 +18,7 @@ type ElementTestSuite struct {
 
 func TestElement(t *testing.T) {
 	suite.Run(t,
-		&ElementTestSuite{scripttests.NewScriptHostSuite(v8host.DefaultEngine())},
+		&ElementTestSuite{scripttests.NewScriptHostSuite(v8engine.DefaultEngine())},
 	)
 }
 

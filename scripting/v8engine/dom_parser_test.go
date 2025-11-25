@@ -1,4 +1,4 @@
-package v8host_test
+package v8engine_test
 
 import (
 	"testing"
