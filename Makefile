@@ -44,9 +44,12 @@ codegen-build-watch:
 codegen: codegen-clean codegen-build
 	go generate ./...
 
-.PHONY: test test-watch test-browser test-v8 test-goja
+.PHONY: test test-watch test-browser test-v8 test-goja test-wpt
 test: 
 	$(GO_TEST) -v -vet=all ./...
+
+test-wpt:
+	$(MAKE) -C internal/test/wpt test
 
 test-watch: 
 	gotestsum --format dots ./... -- vet=off || echo "Error"
@@ -81,7 +84,7 @@ ci-build:
 wpt-watch:
 	$(GOW) run ./internal/test/wpt
 
-ci: codegen ci-build test codegen-test
+ci: codegen ci-build test test-wpt codegen-test
 	git diff --quiet HEAD
 
 release: ci
