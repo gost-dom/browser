@@ -362,8 +362,8 @@ func (w Element[T]) insertAdjacentText(cbCtx js.CallbackContext[T]) (res js.Valu
 	if err != nil {
 		return nil, err
 	}
-	instance.InsertAdjacentText(where, data)
-	return nil, nil
+	errCall := instance.InsertAdjacentText(where, data)
+	return nil, errCall
 }
 
 func (w Element[T]) insertAdjacentHTML(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

@@ -34,6 +34,7 @@ var domRules = SpecRules{
 			"closest":               {HasError: true},
 			"insertAdjacentElement": {HasError: true},
 			"insertAdjacentHTML":    {HasError: true},
+			"insertAdjacentText":    {HasError: true},
 		},
 		Attributes: AttributeRules{
 			"outerHTML": {SetterHasError: true},
