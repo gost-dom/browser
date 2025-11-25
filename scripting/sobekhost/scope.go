@@ -124,7 +124,7 @@ func (c scope) NewUint8Array(data []byte) js.Value[jsTypeParam] {
 	}
 	ctor, ok := sobek.AssertConstructor(fVal)
 	if !ok {
-		panic(fmt.Sprintf("gost-dom/sobekhost: Uint8Array as constructor: %v", err))
+		panic("gost-dom/sobekhost: Uint8Array is not a constructor")
 	}
 	value, err := ctor(nil, vm.ToValue(arrayBuf))
 	if err != nil {
