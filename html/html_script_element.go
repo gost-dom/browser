@@ -8,13 +8,12 @@ import (
 type htmlScriptElement struct {
 	htmlElement
 	script Script
-	src    string
 }
 
 type HTMLScriptElement = HTMLElement
 
 func NewHTMLScriptElement(ownerDocument HTMLDocument) HTMLElement {
-	var result HTMLScriptElement = &htmlScriptElement{newHTMLElement("script", ownerDocument), nil, ""}
+	var result HTMLScriptElement = &htmlScriptElement{newHTMLElement("script", ownerDocument), nil}
 	result.SetSelf(result)
 	return result
 }
@@ -65,7 +64,12 @@ func (e *htmlScriptElement) run() {
 	if err := e.script.Run(); err != nil {
 		e.logger().Error("Script error", "src", e.src, log.ErrAttr(err))
 	}
-	e.logger().Debug("Script execution completed", "src", e.src, "hasSource", e.src != "")
+	e.logger().Debug("Script execution completed", "src", e.src)
+}
+
+func (e *htmlScriptElement) src() string {
+	res, _ := e.GetAttribute("src")
+	return res
 }
 
 func (e *htmlScriptElement) AppendChild(n dom.Node) (dom.Node, error) {
