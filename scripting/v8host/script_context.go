@@ -10,7 +10,6 @@ import (
 	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/gosthttp"
-	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/browser/url"
 	"github.com/gost-dom/v8go"
@@ -131,7 +130,6 @@ func (ctx *V8ScriptContext) Close() {
 	ctx.disposed = true
 
 	ctx.host.inspector.ContextDestroyed(ctx.v8ctx)
-	log.Debug(ctx.host.logger, "ScriptContext: Dispose")
 	for _, dispose := range ctx.disposers {
 		dispose.Dispose()
 	}

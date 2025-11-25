@@ -95,7 +95,7 @@ func (e *eventTarget) AddEventListener(
 	options ...func(*EventListener),
 ) {
 	listener := e.createListener(handler, options)
-	log.Debug(e.logger(), "AddEventListener", "EventType", eventType)
+	e.logger().Debug("AddEventListener", "EventType", eventType)
 	// TODO: Handle options
 	// - passive. Defaults to false,
 	// - signal - TODO: Implement AbortSignal
@@ -137,7 +137,7 @@ func (e *eventTarget) SetCatchAllHandler(handler EventHandler) {
 }
 
 func (e *eventTarget) DispatchEvent(event *Event) bool {
-	log.Debug(e.logger(), "Dispatch event", "EventType", event.Type)
+	e.logger().Debug("Dispatch event", "EventType", event.Type)
 	event.Target = e.self
 	event.stopped = false
 	event.DefaultPrevented = false
@@ -165,7 +165,7 @@ func (e *eventTarget) dispatchEvent(event *Event, capture bool) {
 	defer func() { event.CurrentTarget = nil }()
 	if e.catchAllHandler != nil && !capture {
 		if err := e.catchAllHandler.HandleEvent(event); err != nil {
-			log.Debug(e.logger(), "Error occurred", "error", err.Error())
+			e.logger().Debug("Error occurred", "error", err.Error())
 			e.dispatchError(err)
 		}
 	}
@@ -173,8 +173,7 @@ func (e *eventTarget) dispatchEvent(event *Event, capture bool) {
 	listeners := e.lmap[event.Type]
 	for i := 0; i < len(listeners); i++ {
 		l := listeners[i]
-		log.Debug(
-			e.logger(),
+		e.logger().Debug(
 			"eventTarget.dispatchEvent: Calling event handler",
 			"type",
 			event.Type,
@@ -193,7 +192,7 @@ func (e *eventTarget) dispatchEvent(event *Event, capture bool) {
 }
 
 func (e *eventTarget) handleError(event *Event, err error) {
-	log.Error(e.logger(),
+	e.logger().Error(
 		"eventTarget.dispatchEvent: Error occurred in event handler",
 		"eventType", event.Type,
 		log.ErrAttr(err),
@@ -224,9 +223,12 @@ func (e *eventTarget) dispatchError(err error) {
 	}
 }
 
-func (e *eventTarget) logger() *slog.Logger {
+func (e *eventTarget) logger() (res *slog.Logger) {
 	if source, ok := e.self.(log.LogSource); ok {
-		return source.Logger()
+		res = source.Logger()
 	}
-	return nil
+	if res == nil {
+		res = log.Default()
+	}
+	return res
 }
