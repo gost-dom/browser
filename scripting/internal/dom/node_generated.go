@@ -27,6 +27,7 @@ func (w Node[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("contains", w.contains)
 	jsClass.CreatePrototypeMethod("insertBefore", w.insertBefore)
 	jsClass.CreatePrototypeMethod("appendChild", w.appendChild)
+	jsClass.CreatePrototypeMethod("replaceChild", w.replaceChild)
 	jsClass.CreatePrototypeMethod("removeChild", w.removeChild)
 	jsClass.CreatePrototypeAttribute("nodeType", w.nodeType, nil)
 	jsClass.CreatePrototypeAttribute("nodeName", w.nodeName, nil)
@@ -170,6 +171,28 @@ func (w Node[T]) appendChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err 
 		return nil, errArg1
 	}
 	result, errCall := instance.AppendChild(node)
+	if errCall != nil {
+		return nil, errCall
+	}
+	return codec.EncodeEntity(cbCtx, result)
+}
+
+func (w Node[T]) replaceChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	cbCtx.Logger().Debug("JS Function call: Node.replaceChild - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	defer func() {
+		cbCtx.Logger().Debug("JS Function call: Node.replaceChild", js.LogAttr("res", res))
+	}()
+	instance, errInst := js.As[dom.Node](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	node, errArg1 := js.ConsumeArgument(cbCtx, "node", nil, codec.DecodeNode)
+	child, errArg2 := js.ConsumeArgument(cbCtx, "child", nil, codec.DecodeNode)
+	err = errors.Join(errArg1, errArg2)
+	if err != nil {
+		return nil, err
+	}
+	result, errCall := instance.ReplaceChild(node, child)
 	if errCall != nil {
 		return nil, errCall
 	}

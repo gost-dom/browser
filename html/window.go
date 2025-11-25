@@ -293,13 +293,13 @@ func (w *window) parseReader(reader io.Reader) error {
 }
 
 func (w *window) Navigate(href string) (err error) {
-	log.Info(w.Logger(), "Window.navigate:", "href", href)
+	w.Logger().Info("Window.navigate:", "href", href)
 	if w.baseLocation != "about:blank" {
 		href = w.resolveHref(href).String()
 	}
 	defer func() {
 		if err != nil {
-			log.Warn(w.logger, "Window.navigate: Error response", log.ErrAttr(err))
+			w.Logger().Warn("Window.navigate: Error response", log.ErrAttr(err))
 		}
 	}()
 	w.History().pushLoad(href)
@@ -316,7 +316,7 @@ func (w *window) Navigate(href string) (err error) {
 // reload is used internally to load a page into the browser, but without
 // affecting the history
 func (w *window) reload(href string) error {
-	log.Debug(w.Logger(), "Window.reload:", "href", href)
+	w.Logger().Debug("Window.reload:", "href", href)
 	w.initScriptEngine()
 	w.baseLocation = href
 	if href == "about:blank" {
@@ -405,7 +405,12 @@ func (w *window) resolveHref(href string) *url.URL {
 	return r
 }
 
-func (w *window) Logger() log.Logger { return w.logger }
+func (w *window) Logger() log.Logger {
+	if w.logger != nil {
+		return w.logger
+	}
+	return log.Default()
+}
 
 type WindowOptions struct {
 	ScriptHost

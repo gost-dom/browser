@@ -72,14 +72,14 @@ func (f consoleAPIMessageFunc) ConsoleAPIMessage(message v8go.ConsoleAPIMessage)
 func (host *V8ScriptHost) consoleAPIMessage(message v8go.ConsoleAPIMessage) {
 	switch message.ErrorLevel {
 	case v8go.ErrorLevelDebug:
-		log.Debug(host.logger, message.Message)
+		host.Logger().Debug(message.Message)
 	case v8go.ErrorLevelInfo:
 	case v8go.ErrorLevelLog:
-		log.Info(host.logger, message.Message)
+		host.Logger().Info(message.Message)
 	case v8go.ErrorLevelWarning:
-		log.Warn(host.logger, message.Message)
+		host.Logger().Warn(message.Message)
 	case v8go.ErrorLevelError:
-		log.Error(host.logger, message.Message)
+		host.Logger().Error(message.Message)
 	}
 }
 
@@ -140,8 +140,7 @@ func (host *V8ScriptHost) Close() {
 	undisposedCount := len(undisposedContexts)
 
 	if undisposedCount > 0 {
-		log.Warn(
-			host.logger,
+		host.Logger().Warn(
 			"Closing script host with undisposed contexts",
 			"count",
 			undisposedCount,

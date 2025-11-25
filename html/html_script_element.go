@@ -8,60 +8,68 @@ import (
 type htmlScriptElement struct {
 	htmlElement
 	script Script
-	src    string
 }
 
 type HTMLScriptElement = HTMLElement
 
 func NewHTMLScriptElement(ownerDocument HTMLDocument) HTMLElement {
-	var result HTMLScriptElement = &htmlScriptElement{newHTMLElement("script", ownerDocument), nil, ""}
+	var result HTMLScriptElement = &htmlScriptElement{newHTMLElement("script", ownerDocument), nil}
 	result.SetSelf(result)
 	return result
 }
 
 func (e *htmlScriptElement) Connected() {
-	log.Debug(e.logger(), "<script> connected", "element", e)
+	e.logger().Debug("<script> connected", "element", e)
 	var (
 		err         error
 		deferScript bool
 	)
+	window, _ := e.htmlDocument.getWindow().(*window)
+	e.script, deferScript, err = e.compile()
+	if err != nil {
+		e.logger().Error("HTMLScriptElement: script error", log.ErrAttr(err))
+		return
+	}
+	if deferScript {
+		window.deferScript(e)
+	} else {
+		e.run()
+	}
+}
+
+func (e *htmlScriptElement) compile() (script Script, defer_ bool, err error) {
 	src, hasSrc := e.GetAttribute("src")
-	scriptType, _ := e.GetAttribute("type")
 	window, _ := e.htmlDocument.getWindow().(*window)
 	if !hasSrc {
-		if e.script, err = window.scriptContext.Compile(e.TextContent()); err != nil {
-			log.Error(e.Logger(), "HTMLScriptElement: compile error", "src", src, "err", err)
-			return
+		script, err := window.scriptContext.Compile(e.TextContent())
+		if err != nil {
+			e.logger().Debug("HTMLScriptElement: compile error", "script", e.TextContent())
 		}
+		return script, false, err
 	} else {
 		src = window.resolveHref(src).Href()
+		scriptType, _ := e.GetAttribute("type")
 		if scriptType == "module" {
-			if e.script, err = window.scriptContext.DownloadModule(src); err != nil {
-				log.Error(e.Logger(), "HTMLScriptElement: download script error", "src", src, "err", err)
-				return
-			}
-			deferScript = true
+			script, err := window.scriptContext.DownloadModule(src)
+			return script, true, err
 		} else {
-			if e.script, err = window.scriptContext.DownloadScript(src); err != nil {
-				log.Error(e.Logger(), "HTMLScriptElement: download script error", "src", src, "err", err)
-				return
-			}
-			_, deferScript = e.GetAttribute("defer")
-		}
-		if deferScript {
-			window.deferScript(e)
-			return
+			script, err := window.scriptContext.DownloadScript(src)
+			_, deferScript := e.GetAttribute("defer")
+			return script, deferScript, err
 		}
 	}
-	e.run()
 }
 
 func (e *htmlScriptElement) run() {
 	if err := e.script.Run(); err != nil {
-		// TODO: Dispatch "error" event
-		log.Error(e.Logger(), "Script error", "src", e.src, log.ErrAttr(err))
+		e.logger().Error("Script error", "src", e.src, log.ErrAttr(err))
 	}
-	log.Debug(e.Logger(), "Script execution completed", "src", e.src, "hasSource", e.src != "")
+	e.logger().Debug("Script execution completed", "src", e.src)
+}
+
+func (e *htmlScriptElement) src() string {
+	res, _ := e.GetAttribute("src")
+	return res
 }
 
 func (e *htmlScriptElement) AppendChild(n dom.Node) (dom.Node, error) {

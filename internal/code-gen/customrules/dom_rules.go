@@ -21,12 +21,20 @@ var domRules = SpecRules{
 		"insertBefore": {HasError: true},
 		"appendChild":  {HasError: true},
 		"removeChild":  {HasError: true},
+		"replaceChild": {HasError: true},
 	}},
-	"Element": {Operations: OperationRules{
-		"matches":               {HasError: true},
-		"closest":               {HasError: true},
-		"insertAdjacentElement": {HasError: true},
-	}},
+	"Element": {
+		Operations: OperationRules{
+			"matches":               {HasError: true},
+			"closest":               {HasError: true},
+			"insertAdjacentElement": {HasError: true},
+			"insertAdjacentHTML":    {HasError: true},
+		},
+		Attributes: AttributeRules{
+			"outerHTML": {SetterHasError: true},
+			"innerHTML": {SetterHasError: true},
+		},
+	},
 	"ParentNode": {Operations: OperationRules{
 		"append":           parentNodeOperation,
 		"prepend":          parentNodeOperation,

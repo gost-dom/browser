@@ -8,7 +8,6 @@ import (
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/dom"
-	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/internal/promise"
 	"github.com/gost-dom/browser/internal/streams"
 	"github.com/gost-dom/browser/url"
@@ -76,7 +75,7 @@ func (r *Request) do(ctx context.Context) (*http.Response, error) {
 		method = "GET"
 	}
 	url := r.URL()
-	log.Info(r.bc.Logger(), "gost-dom/fetch: Request.do", "method", method, "url", url)
+	r.bc.Logger().Info("gost-dom/fetch: Request.do", "method", method, "url", url)
 	req, err := http.NewRequestWithContext(ctx, method, url, r.body)
 	if err != nil {
 		return nil, err

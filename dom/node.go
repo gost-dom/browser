@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/gost-dom/browser/dom/event"
+	"github.com/gost-dom/browser/internal/constants"
 	. "github.com/gost-dom/browser/internal/dom"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
@@ -159,6 +160,7 @@ type Node interface {
 	ParentNode() Node
 	ParentElement() Element
 	RemoveChild(node Node) (Node, error)
+	ReplaceChild(node, child Node) (Node, error)
 	NextSibling() Node
 	PreviousSibling() Node
 	FirstChild() Node
@@ -235,7 +237,7 @@ func (n *node) cloneChildren() []Node {
 //
 // [MDN docs for appendChild]: https://developer.mozilla.org/en-US/docs/Web/API/Node/appendChild
 func (n *node) AppendChild(node Node) (Node, error) {
-	log.Debug(n.Logger(), "Node.AppendChild", "target", n.String(), "child", node.NodeName())
+	n.Logger().Debug("Node.AppendChild", "target", n.String(), "child", node.NodeName())
 	_, err := n.self.InsertBefore(node, nil)
 	return node, err
 }
@@ -284,7 +286,7 @@ func (n *node) removeObserver(o observer) {
 
 func (n *node) GetRootNode(options ...GetRootNodeOptions) Node {
 	if len(options) > 1 {
-		log.Warn(n.Logger(), "Node.GetRootNode: composed not yet implemented")
+		n.Logger().Warn("Node.GetRootNode: composed not yet implemented")
 	}
 	if n.parent == nil {
 		return n.self
@@ -497,6 +499,31 @@ func (n *node) replaceNodes(index, count int, node Node) error {
 
 }
 
+func (n *node) ReplaceChild(node, child Node) (Node, error) {
+
+	_, isDocument := n.self.(Document)
+	_, isDocumentFragment := n.self.(DocumentFragment)
+	_, isElement := n.self.(Element)
+	if !isDocument && !isDocumentFragment && !isElement {
+		return nil, newDomError("HierarchyRequestError")
+	}
+	if child.ParentNode() != n.self {
+		return nil, newDomError("NotFoundError")
+	}
+	for i, c := range n.childNodes.All() {
+		if c == child {
+			err := n.replaceNodes(i, 1, node)
+			return c, err
+		}
+	}
+	panic(
+		fmt.Sprintf(
+			"gost-dom/dom: ReplaceChild: child not found in child list\n. %s",
+			constants.BUG_ISSUE_URL,
+		),
+	)
+}
+
 func (n *node) OwnerDocument() Document {
 	if _, isDoc := n.getSelf().(Document); isDoc {
 		return nil
@@ -602,11 +629,14 @@ func (n *node) notify(event ChangeEvent) {
 	}
 }
 
-func (n *node) Logger() *slog.Logger {
+func (n *node) Logger() (res *slog.Logger) {
 	if docLogger, ok := n.document.(log.LogSource); ok {
-		return docLogger.Logger()
+		res = docLogger.Logger()
 	}
-	return nil
+	if res == nil {
+		res = log.Default()
+	}
+	return res
 }
 
 /* -------- observerCloser -------- */

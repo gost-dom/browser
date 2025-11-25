@@ -103,6 +103,7 @@ type AttributeRule struct {
 	// Go.
 	NotImplemented bool
 	OverrideType   IdlTyper
+	SetterHasError bool
 }
 
 // IdlTyper is the interface with the IdlType() method that can generate an

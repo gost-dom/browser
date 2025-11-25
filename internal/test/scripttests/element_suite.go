@@ -5,6 +5,7 @@ import (
 
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
+	. "github.com/gost-dom/browser/testing/gomega-matchers"
 	"github.com/onsi/gomega/types"
 )
 
@@ -34,6 +35,28 @@ func (s *ElementSuite) TestAppendMultipleElements() {
 			document.createElement("p"),
 		);
 		d2.outerHTML`)).To(Equal("<div><p></p>Foobar<p></p></div>"))
+}
+
+func (s *ElementSuite) TestSetOuterHTML() {
+	s.Expect(
+		s.Eval(`
+			const d = document.createElement("div")
+			document.body.replaceChildren(d)
+			d.outerHTML = "<div id='TEST'>Data</div>"
+
+			document.body.innerHTML`)).
+		To(Equal(`<div id="TEST">Data</div>`))
+	s.Expect(
+		s.Window.Document().GetElementById("TEST"),
+	).To(HaveTextContent("Data"))
+
+	s.Expect(
+		s.Eval(`
+			document.body.replaceChildren(d)
+			d.outerHTML = "<div id='TEST'>Data</div>"
+
+			document.body.innerHTML`)).
+		To(Equal(`<div id="TEST">Data</div>`))
 }
 
 func (s *ElementSuite) TestAttributes() {
