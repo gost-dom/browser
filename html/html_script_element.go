@@ -25,35 +25,40 @@ func (e *htmlScriptElement) Connected() {
 		err         error
 		deferScript bool
 	)
+	window, _ := e.htmlDocument.getWindow().(*window)
+	e.script, deferScript, err = e.compile()
+	if err != nil {
+		e.logger().Error("HTMLScriptElement: script error", log.ErrAttr(err))
+		return
+	}
+	if deferScript {
+		window.deferScript(e)
+	} else {
+		e.run()
+	}
+}
+
+func (e *htmlScriptElement) compile() (script Script, defer_ bool, err error) {
 	src, hasSrc := e.GetAttribute("src")
-	scriptType, _ := e.GetAttribute("type")
 	window, _ := e.htmlDocument.getWindow().(*window)
 	if !hasSrc {
-		if e.script, err = window.scriptContext.Compile(e.TextContent()); err != nil {
-			e.logger().Error("HTMLScriptElement: compile error", "src", src, "err", err)
-			return
+		script, err := window.scriptContext.Compile(e.TextContent())
+		if err != nil {
+			e.logger().Debug("HTMLScriptElement: compile error", "script", e.TextContent())
 		}
+		return script, false, err
 	} else {
 		src = window.resolveHref(src).Href()
+		scriptType, _ := e.GetAttribute("type")
 		if scriptType == "module" {
-			if e.script, err = window.scriptContext.DownloadModule(src); err != nil {
-				e.logger().Error("HTMLScriptElement: download script error", "src", src, "err", err)
-				return
-			}
-			deferScript = true
+			script, err := window.scriptContext.DownloadModule(src)
+			return script, true, err
 		} else {
-			if e.script, err = window.scriptContext.DownloadScript(src); err != nil {
-				e.logger().Error("HTMLScriptElement: download script error", "src", src, "err", err)
-				return
-			}
-			_, deferScript = e.GetAttribute("defer")
-		}
-		if deferScript {
-			window.deferScript(e)
-			return
+			script, err := window.scriptContext.DownloadScript(src)
+			_, deferScript := e.GetAttribute("defer")
+			return script, deferScript, err
 		}
 	}
-	e.run()
 }
 
 func (e *htmlScriptElement) run() {
