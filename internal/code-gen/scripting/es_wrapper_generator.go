@@ -121,6 +121,7 @@ func CreateAttributes(
 			setter.CustomImplementation = setter.CustomImplementation ||
 				methodCustomization.CustomImplementation
 			setter.RetType = IdlTypeUndefined
+			setter.HasError = customRule.SetterHasError
 			setter.Arguments = []model.ESOperationArgument{{
 				Name: "val",
 				Type: model.IdlNameToGoName(attribute.Type.Name),

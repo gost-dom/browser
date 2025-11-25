@@ -141,10 +141,21 @@ func (cb CallbackMethods) AttributeSetterCallbackBody(attr model.ESAttribute) g.
 		),
 		renderIfElse(
 			cb.Data.CustomRule.OutputType == customrules.OutputTypeStruct,
-			g.Reassign(field, val),
-			field.Call(val),
+			g.StatementList(
+				g.Reassign(field, val),
+				g.Return(g.Nil, g.Nil),
+			),
+			renderIfElse(
+				attr.Setter.HasError,
+				g.StatementList(
+					g.Return(g.Nil, field.Call(val)),
+				),
+				g.StatementList(
+					field.Call(val),
+					g.Return(g.Nil, g.Nil),
+				),
+			),
 		),
-		g.Return(g.Nil, g.Nil),
 	)
 }
 

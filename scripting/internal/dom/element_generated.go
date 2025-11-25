@@ -361,8 +361,8 @@ func (w Element[T]) insertAdjacentHTML(cbCtx js.CallbackContext[T]) (res js.Valu
 	if err != nil {
 		return nil, err
 	}
-	instance.InsertAdjacentHTML(position, string)
-	return nil, nil
+	errCall := instance.InsertAdjacentHTML(position, string)
+	return nil, errCall
 }
 
 func (w Element[T]) namespaceURI(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
@@ -507,8 +507,7 @@ func (w Element[T]) setInnerHTML(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 	if err != nil {
 		return nil, err
 	}
-	instance.SetInnerHTML(val)
-	return nil, nil
+	return nil, instance.SetInnerHTML(val)
 }
 
 func (w Element[T]) outerHTML(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
@@ -535,6 +534,5 @@ func (w Element[T]) setOuterHTML(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 	if err != nil {
 		return nil, err
 	}
-	instance.SetOuterHTML(val)
-	return nil, nil
+	return nil, instance.SetOuterHTML(val)
 }
