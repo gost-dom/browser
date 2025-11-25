@@ -36,30 +36,6 @@ func Default() *slog.Logger {
 	return defaultLogger
 }
 
-func logger(source Logger) *slog.Logger {
-	if source != nil {
-		return source
-	} else {
-		return Default()
-	}
-}
-
-func Info(source Logger, msg string, args ...any) {
-	logger(source).Info(msg, args...)
-}
-
-func Warn(source Logger, msg string, args ...any) {
-	logger(source).Warn(msg, args...)
-}
-
-func Debug(source Logger, msg string, args ...any) {
-	logger(source).Debug(msg, args...)
-}
-
-func Error(source Logger, msg string, args ...any) {
-	logger(source).Error(msg, args...)
-}
-
 // ErrAttr creates a log record attribute representing an error.
 //
 // If the error originates from V8, the relevant JavaScript location and stack

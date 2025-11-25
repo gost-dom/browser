@@ -235,7 +235,7 @@ func (n *node) cloneChildren() []Node {
 //
 // [MDN docs for appendChild]: https://developer.mozilla.org/en-US/docs/Web/API/Node/appendChild
 func (n *node) AppendChild(node Node) (Node, error) {
-	log.Debug(n.Logger(), "Node.AppendChild", "target", n.String(), "child", node.NodeName())
+	n.Logger().Debug("Node.AppendChild", "target", n.String(), "child", node.NodeName())
 	_, err := n.self.InsertBefore(node, nil)
 	return node, err
 }
@@ -284,7 +284,7 @@ func (n *node) removeObserver(o observer) {
 
 func (n *node) GetRootNode(options ...GetRootNodeOptions) Node {
 	if len(options) > 1 {
-		log.Warn(n.Logger(), "Node.GetRootNode: composed not yet implemented")
+		n.Logger().Warn("Node.GetRootNode: composed not yet implemented")
 	}
 	if n.parent == nil {
 		return n.self
@@ -602,11 +602,14 @@ func (n *node) notify(event ChangeEvent) {
 	}
 }
 
-func (n *node) Logger() *slog.Logger {
+func (n *node) Logger() (res *slog.Logger) {
 	if docLogger, ok := n.document.(log.LogSource); ok {
-		return docLogger.Logger()
+		res = docLogger.Logger()
 	}
-	return nil
+	if res == nil {
+		res = log.Default()
+	}
+	return res
 }
 
 /* -------- observerCloser -------- */

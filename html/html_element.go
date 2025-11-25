@@ -7,6 +7,7 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	. "github.com/gost-dom/browser/internal/dom"
+	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/internal/uievents"
 )
 
@@ -108,9 +109,12 @@ func (e *htmlElement) SetAutofocus(val bool) {
 	}
 }
 
-func (e *htmlElement) logger() *slog.Logger {
+func (e *htmlElement) logger() (res *slog.Logger) {
 	if win := e.window(); win != nil {
-		return win.Logger()
+		res = win.Logger()
 	}
-	return nil
+	if res == nil {
+		res = log.Default()
+	}
+	return
 }

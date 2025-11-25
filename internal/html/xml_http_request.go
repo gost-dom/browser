@@ -89,7 +89,7 @@ func NewXmlHttpRequest(ctx html.BrowsingContext, clock *clock.Clock) XmlHttpRequ
 		async:       true,
 	}
 	event.SetEventTargetSelf(result)
-	log.Info(result.logSource.Logger(), "NewXmlHttpRequest", "location", location)
+	result.logSource.Logger().Info("NewXmlHttpRequest", "location", location)
 	return result
 }
 func (r *xmlHttpRequest) logger() log.Logger {
@@ -105,7 +105,7 @@ func (req *xmlHttpRequest) Open(
 	// binding layer? Or different methods?
 	url string,
 	options ...RequestOption) {
-	log.Info(req.logger(), "XmlHttpRequest.Open", "method", method, "url", url)
+	req.logger().Info("XmlHttpRequest.Open", "method", method, "url", url)
 
 	req.method = method
 	req.url = url
@@ -120,7 +120,7 @@ func (req *xmlHttpRequest) send(body io.Reader) error {
 	if u := url.ParseURLBase(req.url, req.location); u != nil {
 		reqUrl = u.Href()
 	}
-	log.Info(req.logger(), "XmlHttpRequest.send", "url", reqUrl)
+	req.logger().Info("XmlHttpRequest.send", "url", reqUrl)
 	httpRequest, err := http.NewRequest(req.method, reqUrl, body)
 	if err != nil {
 		return err
@@ -135,7 +135,7 @@ func (req *xmlHttpRequest) send(body io.Reader) error {
 	b := new(bytes.Buffer) // TODO, branch out depending on content-type
 	_, err = b.ReadFrom(res.Body)
 	req.response = b.Bytes()
-	log.Debug(req.logger(), "Response received", "Status", res.StatusCode)
+	req.logger().Debug("Response received", "Status", res.StatusCode)
 	req.DispatchEvent(&event.Event{Type: XHREventLoad})
 	return err
 }
@@ -156,8 +156,7 @@ func (req *xmlHttpRequest) Send(body io.Reader) error {
 }
 
 func (req *xmlHttpRequest) SendBody(body io.Reader) error {
-	log.Warn(
-		req.logger(),
+	req.logger().Warn(
 		"Using deprecated method XMLHttpRequest.SendBody(io.Reader). Use Send(io.Reader) instead",
 	)
 	return req.Send(body)
