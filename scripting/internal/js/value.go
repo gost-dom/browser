@@ -21,9 +21,11 @@ type Value[T any] interface {
 
 	IsUndefined() bool
 	IsNull() bool
-	IsBoolean() bool
 	IsString() bool
-	IsObject() bool
+	// Not used, and we cannot ask Sobek this question, so commented from the
+	// interface for now
+	// IsObject() bool
+	// IsBoolean() bool
 	IsFunction() bool
 
 	AsFunction() (Function[T], bool)
