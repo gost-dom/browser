@@ -7,7 +7,7 @@ import (
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
-	"github.com/gost-dom/browser/scripting/v8host"
+	"github.com/gost-dom/browser/scripting/v8engine"
 	"github.com/onsi/gomega"
 	"github.com/stretchr/testify/assert"
 )
@@ -17,7 +17,7 @@ func TestFetch(t *testing.T) {
 	rec := gosttest.NewHTTPRequestRecorder(t, gosttest.HttpHandlerMap{
 		"/file.json": gosttest.StaticJSON(`{"foo": "Foo value", "bar": "Bar value"}`),
 	})
-	b := browsertest.InitBrowser(t, rec, v8host.DefaultEngine())
+	b := browsertest.InitBrowser(t, rec, v8engine.DefaultEngine())
 	w := htmltest.NewWindowHelper(t, b.NewWindow())
 	g.Expect(w.Eval("typeof fetch")).To(Equal("function"))
 

@@ -1,4 +1,4 @@
-package v8host_test
+package v8engine_test
 
 import (
 	"log/slog"
@@ -10,7 +10,7 @@ import (
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
-	"github.com/gost-dom/browser/scripting/v8host"
+	"github.com/gost-dom/browser/scripting/v8engine"
 	"github.com/gost-dom/browser/v8browser"
 	"github.com/onsi/gomega"
 )
@@ -22,7 +22,7 @@ func TestScriptHostDocumentScriptLoading(t *testing.T) {
     <div>I should not be in the output</div>
   </body></html>
 `)
-	host := v8host.New()
+	host := v8engine.New()
 	t.Cleanup(host.Close)
 	options := html.WindowOptions{ScriptHost: host}
 	win, err := html.NewWindowReader(reader, options)

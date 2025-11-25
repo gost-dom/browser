@@ -1,4 +1,4 @@
-package v8host_test
+package v8engine_test
 
 import (
 	"testing"
@@ -10,12 +10,12 @@ import (
 	"github.com/gost-dom/browser/internal/testing/browsertest"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
-	"github.com/gost-dom/browser/scripting/v8host"
+	"github.com/gost-dom/browser/scripting/v8engine"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 )
 
 func TestHTMX(t *testing.T) {
-	htmxSuite(t, v8host.DefaultEngine())
+	htmxSuite(t, v8engine.DefaultEngine())
 }
 
 func htmxSuite(t *testing.T, e html.ScriptEngine) {

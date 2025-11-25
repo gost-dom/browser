@@ -8,7 +8,7 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
-	"github.com/gost-dom/browser/scripting/v8host"
+	"github.com/gost-dom/browser/scripting/v8engine"
 	"github.com/gost-dom/browser/v8browser"
 )
 
@@ -19,7 +19,7 @@ import (
 // uncaught JavaScript errors will result in a test error.
 func InitBrowser(t testing.TB, handler http.Handler, engine html.ScriptEngine) *browser.Browser {
 	if engine == nil {
-		engine = v8host.DefaultEngine()
+		engine = v8engine.DefaultEngine()
 	}
 	b := v8browser.New(
 		browser.WithHandler(handler),

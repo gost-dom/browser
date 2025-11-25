@@ -8,4 +8,4 @@
 // gojahost package
 //
 // See also: https://github.com/tommie/v8go
-package v8host
+package v8engine
