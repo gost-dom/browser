@@ -222,7 +222,7 @@ func (host *V8ScriptHost) CreateClass(
 	return result
 }
 
-// CreateObject implements [js/ScriptEngine.CreateGlobalObject]
+// CreateGlobalObject implements [js/ScriptEngine.CreateGlobalObject]
 func (h *V8ScriptHost) CreateGlobalObject(name string) js.GlobalObject[jsTypeParam] {
 	tmpl := v8go.NewObjectTemplate(h.iso)
 	result := newV8GlobalObject(h, tmpl)
