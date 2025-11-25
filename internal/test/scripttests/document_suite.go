@@ -74,7 +74,7 @@ func (s *DocumentTestSuite) TestNewDocument() {
 
 func (s *DocumentTestSuite) TestQuerySelectorAll() {
 	s.MustLoadHTML(
-		`<body><div>0</div><div data-key="1">1</div><div data-key="2">2</div><body>`,
+		`<body><div>0</div><div data-key="1">1</div><div data-key="2">2</div></body>`,
 	)
 	s.Expect(
 		s.MustEval(
