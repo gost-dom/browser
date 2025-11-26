@@ -40,4 +40,5 @@ func RunSuites(t *testing.T, e html.ScriptEngine) {
 	t.Run("ParentNode", func(t *testing.T) { testParentNode(t, e) })
 	t.Run("CustomEvent", func(t *testing.T) { testCustomEvent(t, e) })
 	t.Run("URL", func(t *testing.T) { testURLSuite(t, e) })
+	t.Run("DOMParser", func(t *testing.T) { testDomParser(t, e) })
 }

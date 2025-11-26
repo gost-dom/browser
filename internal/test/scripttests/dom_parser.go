@@ -1,15 +1,17 @@
-package v8engine_test
+package scripttests
 
 import (
 	"testing"
 
+	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/testing/browsertest"
+
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/onsi/gomega"
 )
 
-func TestDomParser(t *testing.T) {
-	win := browsertest.InitWindow(t, nil)
+func testDomParser(t *testing.T, e html.ScriptEngine) {
+	win := browsertest.InitWindow(t, e)
 	g := gomega.NewWithT(t)
 	g.Expect(win.Eval(`
 		const parser = new DOMParser()
@@ -24,4 +26,5 @@ func TestDomParser(t *testing.T) {
 	g.Expect(
 		win.Eval("doc.getElementById('target') instanceof HTMLDivElement"),
 	).To(BeTrue(), "Element is a div")
+
 }
