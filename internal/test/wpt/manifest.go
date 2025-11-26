@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"iter"
 	"maps"
 	"path"
@@ -81,9 +80,7 @@ type TestCase struct {
 }
 
 func (m Manifest) All() iter.Seq[TestCase] {
-	fmt.Println("ALL")
 	return func(yield func(TestCase) bool) {
-		fmt.Println("Yield")
 		keys := slices.Collect(maps.Keys(m.Items.Testharness))
 		sort.Strings(keys)
 		for _, api := range keys {
