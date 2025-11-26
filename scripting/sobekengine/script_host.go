@@ -1,23 +1,31 @@
-package gojahost
+package sobekengine
 
 import (
+	"log/slog"
+	"net/http"
 	"reflect"
 	"strings"
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
-
-	"github.com/dop251/goja"
+	"github.com/gost-dom/browser/scripting/internal"
+	"github.com/grafana/sobek"
 )
 
 const internal_symbol_name = "__go_dom_internal_value__"
 
 func New() html.ScriptHost {
-	return &gojaScriptHost{}
+	return &scriptHost{}
 }
 
-type gojaScriptHost struct{}
+type scriptHost struct {
+	// TODO: Unexport
+	HttpClient *http.Client
+	// TODO: Unexport
+	Logger      *slog.Logger
+	initializer *internal.ScriptEngineConfigurer[jsTypeParam]
+}
 
 type propertyNameMapper struct{}
 
@@ -39,35 +47,42 @@ func (_ propertyNameMapper) MethodName(t reflect.Type, m reflect.Method) string 
 	}
 }
 
-func (d *gojaScriptHost) NewContext(window html.Window) html.ScriptContext {
-	vm := goja.New()
+func (h *scriptHost) NewContext(window html.Window) html.ScriptContext {
+	vm := sobek.New()
 	vm.SetFieldNameMapper(propertyNameMapper{})
-	result := &GojaContext{
+	result := &scriptContext{
+		host:         h,
 		vm:           vm,
 		clock:        clock.New(),
 		window:       window,
-		wrappedGoObj: goja.NewSymbol(internal_symbol_name),
-		cachedNodes:  make(map[int32]goja.Value),
-		classes:      make(map[string]*gojaClass),
+		wrappedGoObj: sobek.NewSymbol(internal_symbol_name),
+		cachedNodes:  make(map[int32]sobek.Value),
+		classes:      make(map[string]*class),
 	}
 
 	globalThis := vm.GlobalObject()
 	globalThis.DefineDataPropertySymbol(
 		result.wrappedGoObj,
 		vm.ToValue(window),
-		goja.FLAG_FALSE,
-		goja.FLAG_FALSE,
-		goja.FLAG_FALSE,
+		sobek.FLAG_FALSE,
+		sobek.FLAG_FALSE,
+		sobek.FLAG_FALSE,
 	)
 	globalThis.Set("window", globalThis)
-	initializer.Configure(result)
+	h.initializer.Configure(result)
 	location := result.createLocationInstance()
-	globalThis.DefineAccessorProperty("location", vm.ToValue(func(c *goja.FunctionCall) goja.Value {
-		return location
-	}), nil, goja.FLAG_FALSE, goja.FLAG_TRUE)
+	globalThis.DefineAccessorProperty(
+		"location",
+		vm.ToValue(func(c *sobek.FunctionCall) sobek.Value {
+			return location
+		}),
+		nil,
+		sobek.FLAG_FALSE,
+		sobek.FLAG_TRUE,
+	)
 	globalThis.SetPrototype(result.classes["Window"].prototype)
 
 	return result
 }
 
-func (d *gojaScriptHost) Close() {}
+func (d *scriptHost) Close() {}

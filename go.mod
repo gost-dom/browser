@@ -7,6 +7,7 @@ require (
 	github.com/gost-dom/css v0.1.0
 	github.com/gost-dom/fixture v0.1.0
 	github.com/gost-dom/v8go v0.0.0-20250712111039-fd213ddc42d7
+	github.com/grafana/sobek v0.0.0-20251113105955-976a34df9c09
 	github.com/onsi/gomega v1.38.2
 	github.com/stretchr/testify v1.11.1
 	golang.org/x/net v0.47.0

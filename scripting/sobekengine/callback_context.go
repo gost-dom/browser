@@ -1,39 +1,39 @@
-package gojahost
+package sobekengine
 
 import (
 	"log/slog"
 
-	"github.com/dop251/goja"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting/internal/js"
+	"github.com/grafana/sobek"
 )
 
-type gojaCallbackScope struct {
-	gojaScope
-	this     *goja.Object
+type callbackScope struct {
+	scope
+	this     *sobek.Object
 	instance any
 }
 
-func newCallbackScope(ctx *GojaContext, this *goja.Object, instance any) gojaCallbackScope {
-	return gojaCallbackScope{
-		gojaScope: newGojaScope(ctx),
-		this:      this,
-		instance:  instance,
+func newCallbackScope(ctx *scriptContext, this *sobek.Object, instance any) callbackScope {
+	return callbackScope{
+		scope:    newScope(ctx),
+		this:     this,
+		instance: instance,
 	}
 }
 
-func (s gojaCallbackScope) This() js.Object[jsTypeParam] {
-	return newGojaObject(s.GojaContext, s.this)
+func (s callbackScope) This() js.Object[jsTypeParam] {
+	return newObject(s.scriptContext, s.this)
 }
 
-func (s gojaCallbackScope) Instance() (any, error) {
+func (s callbackScope) Instance() (any, error) {
 	if s.instance == nil {
 		panic(s.vm.NewTypeError("No embedded value"))
 	}
 	return s.instance, nil
 }
 
-func (s gojaCallbackScope) Logger() *slog.Logger {
+func (s callbackScope) Logger() *slog.Logger {
 	if l := s.logger(); l != nil {
 		return l
 	}
@@ -41,13 +41,14 @@ func (s gojaCallbackScope) Logger() *slog.Logger {
 }
 
 type callbackContext struct {
-	gojaCallbackScope
-	args     []goja.Value
+	callbackScope
+	args     []sobek.Value
 	argIndex int
 }
 
-func newArgumentHelper(ctx *GojaContext, c goja.FunctionCall) *callbackContext {
-	// I would consider this a bug in goja. When calling a function in global
+func newArgumentHelper(ctx *scriptContext, c sobek.FunctionCall) *callbackContext {
+	// BUG: Consider if this is still an issue
+	// I would consider this a bug in sobek. When calling a function in global
 	// scope, `this` is "undefined". It should have been `globalThis`.
 	callThis := c.This
 	if !callThis.ToBoolean() {
@@ -63,25 +64,24 @@ func newArgumentHelper(ctx *GojaContext, c goja.FunctionCall) *callbackContext {
 		c.Arguments, 0}
 }
 
-func (ctx *callbackContext) Argument(index int) goja.Value {
+func (ctx *callbackContext) Argument(index int) sobek.Value {
 	return ctx.args[index]
 }
 
-func wrapJSCallback(ctx *GojaContext, cb js.FunctionCallback[jsTypeParam]) goja.Value {
-	return ctx.vm.ToValue(func(c goja.FunctionCall) goja.Value {
+func wrapJSCallback(ctx *scriptContext, cb js.FunctionCallback[jsTypeParam]) sobek.Value {
+	return ctx.vm.ToValue(func(c sobek.FunctionCall) sobek.Value {
 		res, err := cb(newArgumentHelper(ctx, c))
 		if err != nil {
 			panic(ctx.vm.ToValue(err))
 		}
-		return toGojaValue(res)
+		return unwrapValue(res)
 	})
 }
 
 func (c *callbackContext) Args() []js.Value[jsTypeParam] {
-	args := c.args
-	res := make([]js.Value[jsTypeParam], len(args))
-	for i, arg := range args {
-		res[i] = newGojaValue(c.GojaContext, arg)
+	res := make([]js.Value[jsTypeParam], len(c.args))
+	for i, a := range c.args {
+		res[i] = newValue(c.scriptContext, a)
 	}
 	return res
 }
@@ -92,7 +92,7 @@ func (c *callbackContext) ConsumeArg() (js.Value[jsTypeParam], bool) {
 	if index >= len(c.args) {
 		return nil, false
 	}
-	return newGojaValue(c.GojaContext, c.args[index]), true
+	return newValue(c.scriptContext, c.args[index]), true
 }
 
 func (c *callbackContext) ReturnWithTypeError(msg string) (js.Value[jsTypeParam], error) {

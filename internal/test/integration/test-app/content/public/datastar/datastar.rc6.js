@@ -1879,4 +1879,3 @@ export {
   I as stopPeeking,
   he as watcher,
 };
-//# sourceMappingURL=datastar.js.map

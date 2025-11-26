@@ -1,34 +1,36 @@
-package gojahost
+package sobekengine
 
 import (
-	"github.com/dop251/goja"
 	"github.com/gost-dom/browser/scripting/internal/js"
+	"github.com/grafana/sobek"
 )
 
-type gojaClass struct {
-	ctx            *GojaContext
+type class struct {
+	ctx            *scriptContext
 	cb             js.FunctionCallback[jsTypeParam]
-	prototype      *goja.Object
+	prototype      *sobek.Object
 	indexedHandler *js.IndexedHandlerCallbacks[jsTypeParam]
 	instanceAttrs  map[string]attributeHandler
 
 	namedHandlerCallbacks *js.NamedHandlerCallbacks[jsTypeParam]
 }
 
-func (c *gojaClass) assertValid() {
+func (c *class) assertValid() {
 	if c.indexedHandler != nil || c.namedHandlerCallbacks != nil {
 		if c.indexedHandler != nil && c.namedHandlerCallbacks != nil {
-			panic("Goja mapper doesn't support both a named and indexed handler on the same class")
+			panic(
+				"gost-dom/sobek: Sobek doesn't support both a named and indexed handler on the same class",
+			)
 		}
 		if len(c.instanceAttrs) > 0 {
 			panic(
-				"Goja mapper doesn't support instance attribute accessors or methods when handlers are defined",
+				"gost-dom/sobek: Sobek doesn't support instance attribute accessors or methods when handlers are defined",
 			)
 		}
 	}
 }
 
-func (c *gojaClass) CreateIndexedHandler(opts ...js.IndexedHandlerOption[jsTypeParam]) {
+func (c *class) CreateIndexedHandler(opts ...js.IndexedHandlerOption[jsTypeParam]) {
 	var oo js.IndexedHandlerCallbacks[jsTypeParam]
 	for _, o := range opts {
 		o(&oo)
@@ -37,7 +39,7 @@ func (c *gojaClass) CreateIndexedHandler(opts ...js.IndexedHandlerOption[jsTypeP
 	c.assertValid()
 }
 
-func (c *gojaClass) CreateNamedHandler(opts ...js.NamedHandlerOption[jsTypeParam]) {
+func (c *class) CreateNamedHandler(opts ...js.NamedHandlerOption[jsTypeParam]) {
 	var cbs js.NamedHandlerCallbacks[jsTypeParam]
 	for _, o := range opts {
 		o(&cbs)
@@ -46,7 +48,7 @@ func (c *gojaClass) CreateNamedHandler(opts ...js.NamedHandlerOption[jsTypeParam
 	c.assertValid()
 }
 
-func (c *gojaClass) CreateInstanceAttribute(
+func (c *class) CreateInstanceAttribute(
 	name string,
 	getter js.FunctionCallback[jsTypeParam],
 	setter js.FunctionCallback[jsTypeParam],
@@ -55,7 +57,7 @@ func (c *gojaClass) CreateInstanceAttribute(
 	c.assertValid()
 }
 
-func (c gojaClass) CreatePrototypeMethod(
+func (c class) CreatePrototypeMethod(
 	name string,
 	cb js.FunctionCallback[jsTypeParam],
 ) {
@@ -64,7 +66,7 @@ func (c gojaClass) CreatePrototypeMethod(
 	}
 }
 
-func (c gojaClass) CreatePrototypeAttribute(
+func (c class) CreatePrototypeAttribute(
 	name string,
 	getter js.FunctionCallback[jsTypeParam],
 	setter js.FunctionCallback[jsTypeParam],
@@ -73,28 +75,28 @@ func (c gojaClass) CreatePrototypeAttribute(
 	attr.install(c.prototype)
 }
 
-func (c gojaClass) CreateIteratorMethod(cb js.FunctionCallback[jsTypeParam]) {
-	c.prototype.SetSymbol(goja.SymIterator, wrapJSCallback(c.ctx, cb))
+func (c class) CreateIteratorMethod(cb js.FunctionCallback[jsTypeParam]) {
+	c.prototype.SetSymbol(sobek.SymIterator, wrapJSCallback(c.ctx, cb))
 }
 
-func (c *gojaClass) NewInstance(native any) (js.Object[jsTypeParam], error) {
+func (c *class) NewInstance(native any) (js.Object[jsTypeParam], error) {
 	obj := c.ctx.vm.CreateObject(c.prototype)
 	c.ctx.storeInternal(native, obj)
 	c.installInstance(&obj, native)
 
-	return newGojaObject(c.ctx, obj), nil
+	return newObject(c.ctx, obj), nil
 }
 
-// gojaDynamicArray implements [goja.DynamicArray], serving as an indexed
+// dynamicArray implements [sobek.DynamicArray], serving as an indexed
 // property handler.
-type gojaDynamicArray struct {
-	ctx   *GojaContext
-	this  *goja.Object
-	scope gojaCallbackScope
+type dynamicArray struct {
+	ctx   *scriptContext
+	this  *sobek.Object
+	scope callbackScope
 	cbs   js.IndexedHandlerCallbacks[jsTypeParam]
 }
 
-func (o gojaDynamicArray) Get(index int) goja.Value {
+func (o dynamicArray) Get(index int) sobek.Value {
 	if o.cbs.Getter == nil {
 		return nil
 	}
@@ -105,14 +107,14 @@ func (o gojaDynamicArray) Get(index int) goja.Value {
 	if err != nil {
 		panic(err)
 	}
-	return toGojaValue(res)
+	return unwrapValue(res)
 }
 
-func (o gojaDynamicArray) Set(index int, value goja.Value) bool {
-	panic("gojaDynamicArray.Set: not implemented")
+func (o dynamicArray) Set(index int, value sobek.Value) bool {
+	panic("gost-dom/sobek: dynamicArray.Set: not implemented")
 }
 
-func (o gojaDynamicArray) Len() int {
+func (o dynamicArray) Len() int {
 	if o.cbs.Len == nil {
 		return 0
 	}
@@ -126,20 +128,20 @@ func (o gojaDynamicArray) Len() int {
 	return res
 }
 
-func (o gojaDynamicArray) SetLen(int) bool {
-	panic("gojaDynamicArray.SetLen: not implemented")
+func (o dynamicArray) SetLen(int) bool {
+	panic("gost-dom/sobek: dynamicArray.SetLen: not implemented")
 }
 
-// gojaDynamicObject implements [goja.DynamicObject], serving as a named
+// dynamicObject implements [sobek.DynamicObject], serving as a named
 // property handler.
-type gojaDynamicObject struct {
-	ctx   *GojaContext
-	this  *goja.Object
-	scope gojaCallbackScope
+type dynamicObject struct {
+	ctx   *scriptContext
+	this  *sobek.Object
+	scope callbackScope
 	cbs   js.NamedHandlerCallbacks[jsTypeParam]
 }
 
-func (o gojaDynamicObject) Get(key string) goja.Value {
+func (o dynamicObject) Get(key string) sobek.Value {
 	if o.cbs.Getter == nil {
 		return nil
 	}
@@ -151,10 +153,10 @@ func (o gojaDynamicObject) Get(key string) goja.Value {
 	if err != nil {
 		panic(err)
 	}
-	return toGojaValue(res)
+	return unwrapValue(res)
 }
 
-func (o gojaDynamicObject) Delete(key string) (res bool) {
+func (o dynamicObject) Delete(key string) (res bool) {
 	var err error
 	if o.cbs.Deleter != nil {
 		res, err = o.cbs.Deleter(o.scope, o.scope.NewString(key))
@@ -168,7 +170,7 @@ func (o gojaDynamicObject) Delete(key string) (res bool) {
 	return res
 }
 
-func (o gojaDynamicObject) Has(key string) (res bool) {
+func (o dynamicObject) Has(key string) (res bool) {
 	if o.cbs.Getter == nil {
 		panic("Must have a getter")
 	}
@@ -182,7 +184,7 @@ func (o gojaDynamicObject) Has(key string) (res bool) {
 	return true
 }
 
-func (o gojaDynamicObject) Keys() []string {
+func (o dynamicObject) Keys() []string {
 	if o.cbs.Enumerator == nil {
 		return nil
 	}
@@ -200,11 +202,11 @@ func (o gojaDynamicObject) Keys() []string {
 	return res
 }
 
-func (o gojaDynamicObject) Set(key string, val goja.Value) bool {
+func (o dynamicObject) Set(key string, val sobek.Value) bool {
 	if o.cbs.Setter == nil {
 		return false
 	}
-	err := o.cbs.Setter(o.scope, o.scope.NewString(key), newGojaValue(o.ctx, val))
+	err := o.cbs.Setter(o.scope, o.scope.NewString(key), newValue(o.ctx, val))
 	if err == js.NotIntercepted {
 		return false
 	}

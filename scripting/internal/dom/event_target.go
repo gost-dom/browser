@@ -58,7 +58,7 @@ func decodeEventListenerOptions[T any](
 	_ js.Scope[T], v js.Value[T],
 ) ([]event.EventListenerOption, error) {
 	var options []func(*event.EventListener)
-	if v.IsBoolean() && v.Boolean() {
+	if v.Boolean() {
 		options = append(options, event.Capture)
 	}
 	if obj, ok := v.AsObject(); ok {

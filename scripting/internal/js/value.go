@@ -21,9 +21,11 @@ type Value[T any] interface {
 
 	IsUndefined() bool
 	IsNull() bool
-	IsBoolean() bool
 	IsString() bool
-	IsObject() bool
+	// Not used, and we cannot ask Sobek this question, so commented from the
+	// interface for now
+	// IsObject() bool
+	// IsBoolean() bool
 	IsFunction() bool
 
 	AsFunction() (Function[T], bool)
@@ -63,6 +65,12 @@ type Class[T any] interface {
 	CreateInstanceAttribute(name string, getter FunctionCallback[T], setter FunctionCallback[T])
 	CreateIndexedHandler(getter ...IndexedHandlerOption[T])
 	CreateNamedHandler(opts ...NamedHandlerOption[T])
+}
+
+// GlobalObject represents an object that will be present in global scope. The
+// JavaScript console object is an example of a global object.
+type GlobalObject[T any] interface {
+	CreateFunction(name string, cb FunctionCallback[T])
 }
 
 // Constructor represents a JavaScript "class" that wraps a Go object.

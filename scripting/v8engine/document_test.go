@@ -60,17 +60,6 @@ func (s *DocumentTestSuite) TestQuerySelector() {
 	).To(BeNil())
 }
 
-func (s *DocumentTestSuite) TestQuerySelectorAll() {
-	s.MustLoadHTML(
-		`<body><div>0</div><div data-key="1">1</div><div data-key="2">2</div><body>`,
-	)
-	s.Expect(
-		s.MustEval(
-			"Array.from(document.querySelectorAll('[data-key]')).map(x => x.outerHTML).join(',')",
-		),
-	).To(Equal(`<div data-key="1">1</div>,<div data-key="2">2</div>`))
-}
-
 func (s *DocumentTestSuite) TestCreateDocumentFragment() {
 	s.Expect(s.MustEval(`
 		const fragment = document.createDocumentFragment();

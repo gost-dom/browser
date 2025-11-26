@@ -227,5 +227,5 @@ func (e *eventTarget) logger() (res *slog.Logger) {
 	if res == nil {
 		res = log.Default()
 	}
-	return res
+	return
 }
