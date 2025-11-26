@@ -58,7 +58,7 @@ func (f scope) JSONParse(s string) (js.Value[jsTypeParam], error) {
 func (f scope) JSONStringify(v js.Value[jsTypeParam]) string {
 	if o := v.Self().value.ToObject(f.vm); o != nil {
 		b, err := o.MarshalJSON()
-		if err == nil {
+		if err != nil {
 			panic(fmt.Sprintf("gost-dom/sobekhost: JSONStringify: %v", err))
 		}
 		return string(b)

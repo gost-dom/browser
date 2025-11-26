@@ -9,7 +9,6 @@ import (
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
 	"github.com/gost-dom/browser/scripting/v8engine"
-	"github.com/gost-dom/browser/v8browser"
 )
 
 // InitBrowser creates a browser with a script engine and a default set of
@@ -21,7 +20,8 @@ func InitBrowser(t testing.TB, handler http.Handler, engine html.ScriptEngine) *
 	if engine == nil {
 		engine = v8engine.DefaultEngine()
 	}
-	b := v8browser.New(
+	b := browser.New(
+		browser.WithScriptEngine(engine),
 		browser.WithHandler(handler),
 		browser.WithLogger(gosttest.NewTestLogger(t)),
 	)
