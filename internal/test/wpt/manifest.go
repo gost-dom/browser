@@ -34,7 +34,9 @@ func (i ManifestItem) All(p string) iter.Seq[TestCase] {
 	return func(yield func(TestCase) bool) {
 		switch i.Kind {
 		case KindItem:
-			yield(TestCase{p})
+			if !yield(TestCase{p}) {
+				return
+			}
 		case KindItems:
 			keys := slices.Collect(maps.Keys(i.Items))
 			sort.Strings(keys)
