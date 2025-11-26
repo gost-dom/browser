@@ -178,6 +178,6 @@ func (n *processingInstruction) createHtmlNode() *html.Node {
 	}
 }
 
-func (n *processingInstruction) NodeName() string { return "#processingInstruction" }
+func (n *processingInstruction) NodeName() string { return n.target }
 
 func (n *processingInstruction) TextContent() string { return "" }
