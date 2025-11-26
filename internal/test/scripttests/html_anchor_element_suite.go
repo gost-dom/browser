@@ -1,18 +1,15 @@
-package v8engine_test
+package scripttests
 
 import (
 	"testing"
 
 	"github.com/gost-dom/browser/html"
-	"github.com/gost-dom/browser/scripting/v8engine"
+	"github.com/gost-dom/browser/internal/testing/browsertest"
 	"github.com/onsi/gomega"
 )
 
-func TestHtmlAnchorElement(t *testing.T) {
-	host := v8engine.New()
-	t.Cleanup(host.Close)
-	win := html.NewWindow(html.WindowOptions{ScriptHost: host})
-	defer win.Close()
+func testHtmlAnchorElement(t *testing.T, e html.ScriptEngine) {
+	win := browsertest.InitWindow(t, e)
 
 	g := gomega.NewWithT(t)
 	g.Expect(win.Eval(`
