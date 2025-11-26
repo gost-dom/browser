@@ -3,7 +3,6 @@ module github.com/gost-dom/browser
 go 1.25
 
 require (
-	github.com/dop251/goja v0.0.0-20251103141225-af2ceb9156d7
 	github.com/gost-dom/css v0.1.0
 	github.com/gost-dom/fixture v0.1.0
 	github.com/gost-dom/v8go v0.0.0-20250712111039-fd213ddc42d7
@@ -19,7 +18,7 @@ require (
 	github.com/go-sourcemap/sourcemap v2.1.4+incompatible // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/google/pprof v0.0.0-20251114195745-4902fdda35c8 // indirect
-	github.com/kr/text v0.2.0 // indirect
+	github.com/kr/pretty v0.3.0 // indirect
 	github.com/mitranim/gg v0.1.29 // indirect
 	github.com/mitranim/gow v0.0.0-20250926091427-aad163e590a8 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
