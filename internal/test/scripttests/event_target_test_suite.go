@@ -90,7 +90,7 @@ func (s *EventTargetTestSuite) TestPropagateGoEventToJS() {
 	s.Assert().Equal("custom", s.MustEval(`event.type`), "type of actual event")
 }
 
-func (s *EventTargetTestSuite) TestV8EventTargetAddRemoveListeners() {
+func (s *EventTargetTestSuite) TestEventTargetAddRemoveListeners() {
 	win := s.Window
 	s.Expect(win.Eval(`
 		let events = [];
@@ -113,7 +113,7 @@ func (s *EventTargetTestSuite) TestV8EventTargetAddRemoveListeners() {
 	}))
 }
 
-func (s *EventTargetTestSuite) TestV8EventCapture() {
+func (s *EventTargetTestSuite) TestEventCapture() {
 	win := s.Window
 	s.Expect(win.Eval(`
 		let events = [];
