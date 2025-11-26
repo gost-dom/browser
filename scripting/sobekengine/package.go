@@ -10,4 +10,4 @@
 // and relies on CGo.
 //
 // See also: https://github.com/grafana/sobek
-package sobekhost
+package sobekengine

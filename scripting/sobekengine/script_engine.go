@@ -1,4 +1,4 @@
-package sobekhost
+package sobekengine
 
 import (
 	"github.com/gost-dom/browser/html"
