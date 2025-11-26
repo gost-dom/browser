@@ -1,6 +1,35 @@
 # Changelog - Gost-DOM
 
 
+## [0.10.0](https://github.com/gost-dom/browser/compare/v0.9.3...v0.10.0) (2025-11-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* Implement sobek script engine
+* Remove XHR.SendBody - just call Send(body)
+* Remove Document.CreateText
+* Remove event.New
+* Remove constant with typo
+* Remove Node.Parent()
+* browser.New will no longer by default include a V8
+script engine. You will need to explicitly choose a script engine.
+
+v8browser.New is a simple replacement
+* Remove deprecated functions
+
+### Features
+
+* Implement console logging function for sobek host ([ab90c5a](https://github.com/gost-dom/browser/commit/ab90c5a02661b1c9aca95dc006af7b529d4636d1))
+* Implement sobek script engine ([c49336a](https://github.com/gost-dom/browser/commit/c49336af888866257df319036875404b2bc1b4c6))
+* Remove constant with typo ([cd9a294](https://github.com/gost-dom/browser/commit/cd9a294ad4d7cc0852e7c8e4d69f4e0512154acd))
+* Remove deprecated functions ([f0a526b](https://github.com/gost-dom/browser/commit/f0a526b96cc27593d2f8b5e7b8e38f2fdc8d7bd9))
+* Remove Document.CreateText ([c938091](https://github.com/gost-dom/browser/commit/c938091a5f97a33e632ca2869465c6f5ebd55814))
+* Remove event.New ([fbfb32e](https://github.com/gost-dom/browser/commit/fbfb32eca6bb25836ca40c39e4bf1938a9c57292))
+* Remove Node.Parent() ([2a762d2](https://github.com/gost-dom/browser/commit/2a762d2c89c85a9bf44af29c88062b4e9929ff42))
+* Remove v8 as the default script engine ([d0529b8](https://github.com/gost-dom/browser/commit/d0529b83ccdcdd25aa02450174a375e911d7fc22))
+* Remove XHR.SendBody - just call Send(body) ([b4da7ab](https://github.com/gost-dom/browser/commit/b4da7ab4695e3ef610896b07ab745fe1e50ea20f))
+
 ## [0.9.3](https://github.com/gost-dom/browser/compare/v0.9.2...v0.9.3) (2025-11-26)
 
 
