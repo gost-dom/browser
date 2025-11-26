@@ -1,6 +1,28 @@
 # Changelog - Gost-DOM
 
 
+## [0.9.3](https://github.com/gost-dom/browser/compare/v0.9.2...v0.9.3) (2025-11-26)
+
+
+### Features
+
+* `element.insertAdjacentText` ([c871936](https://github.com/gost-dom/browser/commit/c87193607e1e1e5b860e1259ccb87f2fa6a7beaa))
+* `node.lastChild` ([02f4a28](https://github.com/gost-dom/browser/commit/02f4a28c49d6aff273a48c494b9e099520fb21a2))
+* `Node.replaceChild` ([cd57546](https://github.com/gost-dom/browser/commit/cd5754687cbc27ecc6781b29ca0da7ba5fbc63a1))
+* Allow setting `element.outerHTML` ([bd7b77b](https://github.com/gost-dom/browser/commit/bd7b77bc37afb74d7df214797c44196df363caa1))
+* Create v8browser.New ([41a4856](https://github.com/gost-dom/browser/commit/41a48565703263d4a2ca2da3d8ee514c5fbe94cd))
+* document.CreateElementNS ([371293a](https://github.com/gost-dom/browser/commit/371293a536e5607b0cd828cf323f9467f3cd0479))
+* dummy `window.opener`. ([649c5a8](https://github.com/gost-dom/browser/commit/649c5a84014438c1a30f13047acadf662c1ea2a7))
+* Implement document/element getElementsByTagName ([6f2d3e6](https://github.com/gost-dom/browser/commit/6f2d3e61a8926d0fc68701178b27fc0f49adf1fe))
+* Implement outerHTML setter ([2d404fe](https://github.com/gost-dom/browser/commit/2d404fe4db9272e026ec4163f44d19d827c6e8ce))
+* window.parent ([a23cd07](https://github.com/gost-dom/browser/commit/a23cd07670bf7438939fc9f826fe9431a33ce094))
+
+
+### Bug Fixes
+
+* Fix potential race condition when closing browser ([8e333d0](https://github.com/gost-dom/browser/commit/8e333d0bfc0bde348694385694df7de517e254da))
+* Parse fragment error ([3ba2ce9](https://github.com/gost-dom/browser/commit/3ba2ce98e61606504207bdb825e2ecbcc4559158))
+
 ## [0.9.2](https://github.com/gost-dom/browser/compare/v0.9.1...v0.9.2) (2025-11-16)
 
 
