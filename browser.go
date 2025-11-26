@@ -187,6 +187,10 @@ func (b *Browser) Open(location string) (window Window, err error) {
 	b.closeLock.Lock()
 	defer b.closeLock.Unlock()
 
+	if b.Closed() {
+		panic("Open window on a closed browser")
+	}
+
 	// log.Debug("Browser: OpenWindow", "URL", location)
 	resp, err := b.Client.Get(location)
 	if err != nil {
@@ -245,16 +249,21 @@ func (b *Browser) createOptions(location string) WindowOptions {
 // Note: If a browser is initialized by passing a [context.Context] to the
 // [WithContext] option, it will be closed if the context is cancelled.
 func (b *Browser) Close() {
+	b.logger().Info("Browser: Close()")
 	b.closeLock.Lock()
 	defer b.closeLock.Unlock()
+	if b.Closed() {
+		return
+	}
 
-	b.logger().Info("Browser: Close()")
 	for _, win := range b.windows {
 		win.Close()
 	}
 	if b.ScriptHost != nil && b.ownsHost {
 		b.ScriptHost.Close()
 	}
+	b.windows = nil
+	b.ScriptHost = nil
 	b.closed = true
 }
 
