@@ -109,9 +109,6 @@ type Browser struct {
 //   - [WithLogger]
 //   - [WithHandler]
 //   - [WithContext]
-//
-// Script engine defaults to V8. This will change in the future, but a migration
-// path is not ready.
 func New(options ...BrowserOption) *Browser {
 	config := &browserConfig{client: NewHttpClient()}
 	for _, o := range options {
