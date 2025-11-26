@@ -71,7 +71,7 @@ type ManifestRootItems struct {
 
 type Manifest struct {
 	Items   ManifestRootItems `json:"items"`
-	UrlBase string            `json:"url_base"`
+	URLBase string            `json:"url_base"`
 	Version int
 }
 
