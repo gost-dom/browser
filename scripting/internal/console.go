@@ -13,6 +13,7 @@ func configureConsole[T any](host js.ScriptEngine[T]) {
 	console.CreateFunction("info", consoleInfo)
 	console.CreateFunction("warn", consoleWarn)
 	console.CreateFunction("error", consoleError)
+	console.CreateFunction("assert", consoleAssert)
 }
 
 func consoleDebug[T any](ctx js.CallbackContext[T]) (js.Value[T], error) {
@@ -29,6 +30,15 @@ func consoleWarn[T any](ctx js.CallbackContext[T]) (js.Value[T], error) {
 }
 func consoleError[T any](ctx js.CallbackContext[T]) (js.Value[T], error) {
 	return consoleWrite(ctx, slog.LevelError)
+}
+
+func consoleAssert[T any](ctx js.CallbackContext[T]) (js.Value[T], error) {
+	if arg, ok := ctx.ConsumeArg(); ok {
+		if !arg.Boolean() {
+			return consoleWrite(ctx, slog.LevelError)
+		}
+	}
+	return nil, nil
 }
 
 func consoleWrite[T any](ctx js.CallbackContext[T], level slog.Level) (js.Value[T], error) {
