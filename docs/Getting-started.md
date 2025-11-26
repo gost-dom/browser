@@ -43,6 +43,10 @@ import (
 func TestWebBrowser(t *testing.T) {
     t.Parallel() 
     b := browser.New(
+        browser.WithScriptEngine(v8engine.DefaultEngine()),
+        // Alternatively (adjust imports accordingly), using Sobek, a pure Go
+        // JavaScript engine:
+        // browser.WithScriptEngine(sobekengine.DefaultEngine()),
         browser.WithHandler(server.RootHttpHandler),
         browser.WithLogger(gosttest.NewTestingLogger(t)),
         browser.WithContext(t.Context()),
@@ -60,6 +64,7 @@ Breakdown of the code:
 
 - `browser.New` obviously creates a new browser instance. By default, this will
   be configured with a V8 script engine.
+  - `browser.WithScriptEngine` passes a script engine to use.
   - `browser.WithHandler` is the recommended way, connect the browser directly
     to the root HTTP handler, bypassing the TCP stack. This is not necessary.
     Without it, you need to start the server on a TCP port, as well as remember
