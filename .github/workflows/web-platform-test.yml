@@ -22,4 +22,6 @@ jobs:
       uses: actions/setup-go@v5
       with:
         go-version-file: 'internal/test/wpt/go.work'
-    - run: go run .
+    - name: Run Web Platform Tests
+      run: go run .
+      working-directory: internal/test/wpt
