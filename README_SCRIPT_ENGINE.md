@@ -1,38 +1,74 @@
 # Script engine
 
-There are two script hosts in the code base
+JavaScript execution is performed by an _optional script engine_. I.e., you can
+create a browser without one, and it'll just execute behaviour for `<script>`
+blocks.
 
-- v8 - Default engine
-- goja - WORK IN PROGRESS
+There are two script engines in the code base
 
-V8 is the JavaScript engine in Chrome. It is a C++ API, and requires a lot of
-CGo code to work, making this library troublesome for some. However, this
-library is only intended for _testing_, not production. So your production
-system does not inherit a CGo dependency.
+- `scripting/v8engine` - Uses V8
+- `scripting/sobekengine` - 
 
-[Goja](https://github.com/dop251/goja) is a pure Go JavaScript engine. I didn't
-know about this when I started. I wish I had. I'm slowly implementing support
-for existing features to Goja. Had I known about it, I would have used it
-instead of v8.
+## Pros and cons
 
-### Default engine
+> [!NOTE]
+> While the pros and cons measures factors affecting performance, both build and
+> runtime, nothing has been measured yet.
 
-The _default_ host is currently v8. When the goja host is ready, and all
-features are supported, it will become the new default.
+### V8
 
-V8 will continue to be supported. As long as V8 powers Chrome, you woulndn't use
-JavaScript features that are not supported in the engine.
+- Pros
+  - Based on Chrome's V8 JavaScript engine, this is more or less guaranteed to
+    be maintained, supporting new JavaScript features
+  - Supports creating "templates", avoiding recreating global scope for every
+    test or when the browser navigates/reloads
+- Cons
+  - Requires CGo (although only for test code, not production code for the
+    intended use case)
+  - JavaScript objects to not integrate to Go's garbage collector. As a Go
+    object can keep a reference to a JS Object, and a JS object can keep a
+    reference to a Go object, the v8 engine effectively leaks object _in the
+    context of a script context_. It shouldn't be a problem for the intended use
+    case where contexts are created repeatedly.
+  - V8 is a massive project, causing longer build times
 
-## About v8go
+### Sobek
+
+[Sobek], a fork of [Goja] is a pure Go JavaScript engine. While Goja doesn't
+have ESM support, Sobek was forked for this purpose.
+
+- Pros
+  - As JS objects are implemented by Go objects, garbage collection works as it
+    should.
+  - Pure Go dependency makes for significantly less build-time headaches,
+    including potential future updates, thay may require CGo build changes.
+  - Build times should _potentially_ be much faster, but this hasn't been
+    measured.
+- Cons
+  - No support for creating a "template" of global scope. Every new JS scope
+    needs to be initialized with all global scope.
+    - The runtime cust of this setup hasn't been measured.
+
+[Goja]: https://github.com/dop251/goja
+[Sobak]: https://github.com/grafana/sobek
+
+---
+
+## Appendix
+
+### About v8go
+
+V8 is the JavaScript engine in Chrome. It has a C++ API, and requires a lot of
+CGo code to work. However, this library is only intended for _testing_, not
+production. So your production system does not inherit a CGo dependency.
 
 V8 is based on the v8go project, Originally created by [Github user
-rogchap](https://github.com/rogchap/v8go). It wasn't kept up to date, and now
-[Tommie's branch](https://github.com/tommie/v8go) is the best maintained. This
-fork is automatically updated with the latest v8 versions from the chromium
-repository.
+rogchap](https://github.com/rogchap/v8go), but left unmaintaind. Now
+[Tommie's branch](https://github.com/tommie/v8go) is the best maintained, e.g.,
+it automatically pulls latest V8 sources from the chromium repository
 
-However, many v8 necessary v8 features were not implemented. I have added
-support for  these in [my own
-fork](https://github.com/stroiman/v8go/tree/go-dom-feature-dev), and working
-with Tommie to get them merged into his.
+Unfortunately, many v8 necessary v8 features were not implemented. I have added
+support for  these in [my own v8go fork], and working with Tommie to get them
+merged into his.
 
+[my own v8go fork]: (https://github.com/stroiman/v8go/tree/go-dom-feature-dev)
