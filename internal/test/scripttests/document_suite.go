@@ -82,3 +82,40 @@ func (s *DocumentTestSuite) TestQuerySelectorAll() {
 		),
 	).To(Equal(`<div data-key="1">1</div>,<div data-key="2">2</div>`))
 }
+
+func (s *DocumentTestSuite) TestQuerySelector() {
+	s.MustLoadHTML(
+		`<body><div>0</div><div data-key="1">1</div><div data-key="2">2</div><body>`,
+	)
+	s.Assert().Equal(
+		`<div data-key="1">1</div>`,
+		s.MustEval("document.querySelector('[data-key]').outerHTML"))
+	s.Expect(
+		s.MustEval(`document.querySelector('[data-key="2"]').outerHTML`),
+	).To(Equal(`<div data-key="2">2</div>`))
+	s.Expect(
+		s.MustEval(`document.querySelector('script')`),
+	).To(BeNil())
+}
+
+func (s *DocumentTestSuite) TestDocumentStructure() {
+	s.Assert().Equal("BODY", s.MustEval("document.body.tagName"), "<body> tagName")
+	s.Assert().Equal("HEAD", s.MustEval("document.head.tagName"), "<head> tagName")
+}
+
+func (s *DocumentTestSuite) TestDocumentElement() {
+	s.Assert().Equal(
+		"HTMLHtmlElement",
+		s.MustEval("Object.getPrototypeOf(document.documentElement).constructor.name"))
+}
+
+func (s *DocumentTestSuite) TestLocationAttribute() {
+	s.Assert().
+		Equal(true,
+			s.MustEval("document.location instanceof Location"),
+			"document.location instanceof Location")
+	s.Assert().
+		Equal(true,
+			s.MustEval("document.location === location"),
+			"document.location is same as global location object")
+}
