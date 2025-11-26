@@ -3,8 +3,7 @@ package scripttests
 import (
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
-	"github.com/onsi/gomega"
-	. "github.com/onsi/gomega"
+	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 )
 
 type EventTargetTestSuite struct {
@@ -108,9 +107,9 @@ func (s *EventTargetTestSuite) TestV8EventTargetAddRemoveListeners() {
 		noOfEvents.push(events.length)
 		noOfEvents
 	`)).To(HaveExactElements([]any{
-		gomega.BeEquivalentTo(1),
-		gomega.BeEquivalentTo(1),
-		gomega.BeEquivalentTo(2),
+		BeEquivalentTo(1),
+		BeEquivalentTo(1),
+		BeEquivalentTo(2),
 	}))
 }
 
@@ -128,7 +127,7 @@ func (s *EventTargetTestSuite) TestV8EventCapture() {
 		div.dispatchEvent(new CustomEvent("gost", { bubbles: true }))
 
 		events
-	`)).To(gomega.HaveExactElements(
+	`)).To(HaveExactElements(
 		"Window capture. Phase: 1",
 		"Div capture. Phase: 2",
 		"Div bubble. Phase: 2",
