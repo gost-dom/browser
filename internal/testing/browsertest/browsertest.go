@@ -8,7 +8,6 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
-	"github.com/gost-dom/browser/scripting/v8engine"
 )
 
 // InitBrowser creates a browser with a script engine and a default set of
@@ -17,9 +16,6 @@ import (
 // This browser will be configured to log to the t instance. As a consequence,
 // uncaught JavaScript errors will result in a test error.
 func InitBrowser(t testing.TB, handler http.Handler, engine html.ScriptEngine) *browser.Browser {
-	if engine == nil {
-		engine = v8engine.DefaultEngine()
-	}
 	b := browser.New(
 		browser.WithScriptEngine(engine),
 		browser.WithHandler(handler),
