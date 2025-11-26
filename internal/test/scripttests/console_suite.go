@@ -13,7 +13,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func testLogging(t *testing.T, e html.ScriptEngine) {
+func testConsole(t *testing.T, e html.ScriptEngine) {
 	var buf bytes.Buffer
 	Expect := gomega.NewWithT(t).Expect
 	logger := slog.New(slog.NewTextHandler(&buf, &slog.HandlerOptions{
