@@ -1,6 +1,13 @@
 # Changelog - Gost-DOM
 
 
+## [0.10.1](https://github.com/gost-dom/browser/compare/v0.10.0...v0.10.1) (2025-11-26)
+
+
+### Bug Fixes
+
+* **sobek:** Add a console.assert function in JS ([dd10643](https://github.com/gost-dom/browser/commit/dd10643b240b1e2aebf740de68ad127b5be2280f))
+
 ## [0.10.0](https://github.com/gost-dom/browser/compare/v0.9.3...v0.10.0) (2025-11-26)
 
 
