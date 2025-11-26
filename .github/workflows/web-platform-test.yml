@@ -1,0 +1,21 @@
+name: Build
+
+on:
+  workflow_call:
+  push:
+    branches: ["main", "test/web-platform-test"]
+
+jobs:
+  build:
+    name: Run Web Platform Tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version-file: 'internal/test/wpt/go.work'
+    - name: Run Web Platform Tests
+      run: go run .
+      working-directory: internal/test/wpt
