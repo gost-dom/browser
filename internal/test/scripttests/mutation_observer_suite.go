@@ -1,4 +1,4 @@
-package v8engine_test
+package scripttests
 
 import (
 	"testing"
@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMutationObserver(t *testing.T) {
+func testMutationObserver(t *testing.T, e html.ScriptEngine) {
 	win := browsertest.InitWindow(t, nil)
 	assert.NoError(t, win.LoadHTML(`<body>
 		<div id="parent"><div id="child"></div><div>
