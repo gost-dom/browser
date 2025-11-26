@@ -267,6 +267,9 @@ func (w *window) ParseFragment(
 //
 // If this function returns without an error, the DOM will have been parsed and
 // the DOMContentLoaded event has been dispached on the [dom.Document]
+//
+// Experimental: This function will likely be removed in favour of other ways of
+// creating an initialized window
 func NewWindowReader(reader io.Reader, windowOptions ...WindowOption) (Window, error) {
 	window := newWindow(windowOptions...)
 	err := window.parseReader(reader)

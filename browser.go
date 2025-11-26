@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"sync"
 
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/html"
@@ -105,6 +106,7 @@ type Browser struct {
 	windows    []Window
 	closed     bool
 	ownsHost   bool
+	mu         sync.Mutex
 }
 
 // New initialises a new [Browser]. Options can be one of
@@ -151,8 +153,11 @@ func New(options ...BrowserOption) *Browser {
 
 // NewWindow creates a new window. Panics if the browser has been closed
 func (b *Browser) NewWindow() Window {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+
 	if b.closed {
-		panic("gost-dom/browser: browser closed")
+		panic("gost-dom/browser: NewWindow(): browser closed")
 	}
 	window := html.NewWindow(b.createOptions(""))
 	b.windows = append(b.windows, window)
@@ -166,6 +171,9 @@ func (b *Browser) NewWindow() Window {
 // See [html.NewWindowReader] about the return value, and when the window
 // returns.
 func (b *Browser) Open(location string) (window Window, err error) {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+
 	// log.Debug("Browser: OpenWindow", "URL", location)
 	resp, err := b.Client.Get(location)
 	if err != nil {
@@ -224,6 +232,9 @@ func (b *Browser) createOptions(location string) WindowOptions {
 // Note: If a browser is initialized by passing a [context.Context] to the
 // [WithContext] option, it will be closed if the context is cancelled.
 func (b *Browser) Close() {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+
 	b.logger().Info("Browser: Close()")
 	for _, win := range b.windows {
 		win.Close()
