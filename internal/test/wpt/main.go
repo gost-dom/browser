@@ -16,7 +16,7 @@ import (
 	"github.com/gost-dom/browser"
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
-	"github.com/gost-dom/browser/v8browser"
+	"github.com/gost-dom/browser/scripting/sobekengine"
 )
 
 //go:embed manifest.json
@@ -28,7 +28,8 @@ func (s WebPlatformTest) Run(
 	ctx context.Context,
 	l *slog.Logger,
 ) (res []WebPlatformTestCase, err error) {
-	b := v8browser.New(
+	b := browser.New(
+		browser.WithScriptEngine(sobekengine.DefaultEngine()),
 		browser.WithContext(ctx),
 		browser.WithLogger(l),
 	)
