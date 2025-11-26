@@ -106,7 +106,20 @@ type Browser struct {
 	windows    []Window
 	closed     bool
 	ownsHost   bool
-	mu         sync.Mutex
+
+	// closeLock protects the windows slice and closed field. When creating a
+	// new window, browser should panic if closed - as it may have a reference
+	// to a script host that can be recycled (maybe the script host should be
+	// made less likely to a use-after-free issue).
+	// Also, the window list is protected, as closing needs to close each
+	// window, releasing script contexts. So e.g., creating a new window in
+	// parallel with closing could result in an orphaned window, holding a
+	// script context.
+	// TODO: There are multiple places creating new windows. This makes it easy
+	// to create race conditions, as multiple places need to be lock-aware;
+	// making it easy to overlook when working with code. Create a more
+	// resilient design less likely to break
+	closeLock sync.Mutex
 }
 
 // New initialises a new [Browser]. Options can be one of
@@ -153,8 +166,8 @@ func New(options ...BrowserOption) *Browser {
 
 // NewWindow creates a new window. Panics if the browser has been closed
 func (b *Browser) NewWindow() Window {
-	b.mu.Lock()
-	defer b.mu.Unlock()
+	b.closeLock.Lock()
+	defer b.closeLock.Unlock()
 
 	if b.closed {
 		panic("gost-dom/browser: NewWindow(): browser closed")
@@ -171,8 +184,8 @@ func (b *Browser) NewWindow() Window {
 // See [html.NewWindowReader] about the return value, and when the window
 // returns.
 func (b *Browser) Open(location string) (window Window, err error) {
-	b.mu.Lock()
-	defer b.mu.Unlock()
+	b.closeLock.Lock()
+	defer b.closeLock.Unlock()
 
 	// log.Debug("Browser: OpenWindow", "URL", location)
 	resp, err := b.Client.Get(location)
@@ -232,8 +245,8 @@ func (b *Browser) createOptions(location string) WindowOptions {
 // Note: If a browser is initialized by passing a [context.Context] to the
 // [WithContext] option, it will be closed if the context is cancelled.
 func (b *Browser) Close() {
-	b.mu.Lock()
-	defer b.mu.Unlock()
+	b.closeLock.Lock()
+	defer b.closeLock.Unlock()
 
 	b.logger().Info("Browser: Close()")
 	for _, win := range b.windows {

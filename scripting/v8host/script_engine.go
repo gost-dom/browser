@@ -43,6 +43,11 @@ func (e *v8ScriptEngine) NewHost(options html.ScriptEngineOptions) html.ScriptHo
 }
 
 func (e *v8ScriptEngine) newHost(options html.ScriptEngineOptions) *V8ScriptHost {
+	// WARN: There's a potential use-after-free issue here. When closed, a
+	// script host can be recycled, but if buggy code holds on to a script host
+	// after close, it can use it in a wrong context. Consider creating a proxy
+	// around a script host. When the proxy is closed, it's host-pointer is set
+	// to nil, effectively causing a panic if trying to use it after free.
 	host, found := e.tryGet()
 	if found {
 		host.disposed = false
