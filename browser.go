@@ -118,15 +118,19 @@ func New(options ...BrowserOption) *Browser {
 		o(config)
 	}
 	engine := config.engine
-	b := &Browser{
-		Client: config.client,
-		Logger: config.logger,
-		ScriptHost: engine.NewHost(
+	var host html.ScriptHost
+	if engine != nil {
+		host = engine.NewHost(
 			html.ScriptEngineOptions{
 				Logger:     config.logger,
 				HttpClient: &config.client,
-			}),
-		ctx: config.ctx,
+			})
+	}
+	b := &Browser{
+		Client:     config.client,
+		Logger:     config.logger,
+		ScriptHost: host,
+		ctx:        config.ctx,
 	}
 	if config.ctx != nil {
 		context.AfterFunc(config.ctx, b.Close)
