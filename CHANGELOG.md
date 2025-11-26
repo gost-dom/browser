@@ -1,6 +1,13 @@
 # Changelog - Gost-DOM
 
 
+## [0.10.2](https://github.com/gost-dom/browser/compare/v0.10.1...v0.10.2) (2025-11-26)
+
+
+### Bug Fixes
+
+* **sobek:** Fix bad JSONStringify ([cc11861](https://github.com/gost-dom/browser/commit/cc11861bb2eb18a26eae670378da8894200c2b4c))
+
 ## [0.10.1](https://github.com/gost-dom/browser/compare/v0.10.0...v0.10.1) (2025-11-26)
 
 
