@@ -150,7 +150,7 @@ type processingInstruction struct {
 // NewProcessingInstruction creates a new ProcessingInstruction.
 //
 // Deprecated: This only exists to support Web Platform Tests
-func NewProcessingInstruction(target, data string, ownerDocument Document) Text {
+func NewProcessingInstruction(target, data string, ownerDocument Document) ProcessingInstruction {
 	result := &processingInstruction{newCharacterData(data, ownerDocument), target}
 	result.SetSelf(result)
 	return result
