@@ -4,8 +4,10 @@ package dom
 
 import (
 	dom "github.com/gost-dom/browser/dom"
+	log "github.com/gost-dom/browser/internal/log"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
+	"log/slog"
 )
 
 type ParentNode[T any] struct{}
@@ -31,17 +33,19 @@ func (w ParentNode[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w ParentNode[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: ParentNode.Constructor - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "ParentNode"), slog.String("Method", "Constructor"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ParentNode.Constructor", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w ParentNode[T]) prepend(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: ParentNode.prepend - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "ParentNode"), slog.String("Method", "prepend"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ParentNode.prepend", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
@@ -56,9 +60,10 @@ func (w ParentNode[T]) prepend(cbCtx js.CallbackContext[T]) (res js.Value[T], er
 }
 
 func (w ParentNode[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: ParentNode.append - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "ParentNode"), slog.String("Method", "append"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ParentNode.append", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
@@ -73,9 +78,10 @@ func (w ParentNode[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 }
 
 func (w ParentNode[T]) replaceChildren(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: ParentNode.replaceChildren - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "ParentNode"), slog.String("Method", "replaceChildren"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ParentNode.replaceChildren", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
@@ -90,9 +96,10 @@ func (w ParentNode[T]) replaceChildren(cbCtx js.CallbackContext[T]) (res js.Valu
 }
 
 func (w ParentNode[T]) querySelector(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: ParentNode.querySelector - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "ParentNode"), slog.String("Method", "querySelector"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ParentNode.querySelector", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
@@ -110,9 +117,10 @@ func (w ParentNode[T]) querySelector(cbCtx js.CallbackContext[T]) (res js.Value[
 }
 
 func (w ParentNode[T]) querySelectorAll(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: ParentNode.querySelectorAll - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "ParentNode"), slog.String("Method", "querySelectorAll"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ParentNode.querySelectorAll", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
@@ -130,9 +138,10 @@ func (w ParentNode[T]) querySelectorAll(cbCtx js.CallbackContext[T]) (res js.Val
 }
 
 func (w ParentNode[T]) children(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: ParentNode.children - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "ParentNode"), slog.String("Method", "children"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ParentNode.children", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
@@ -143,9 +152,10 @@ func (w ParentNode[T]) children(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 }
 
 func (w ParentNode[T]) firstElementChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: ParentNode.firstElementChild - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "ParentNode"), slog.String("Method", "firstElementChild"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ParentNode.firstElementChild", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
@@ -156,9 +166,10 @@ func (w ParentNode[T]) firstElementChild(cbCtx js.CallbackContext[T]) (res js.Va
 }
 
 func (w ParentNode[T]) lastElementChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: ParentNode.lastElementChild - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "ParentNode"), slog.String("Method", "lastElementChild"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ParentNode.lastElementChild", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
@@ -169,9 +180,10 @@ func (w ParentNode[T]) lastElementChild(cbCtx js.CallbackContext[T]) (res js.Val
 }
 
 func (w ParentNode[T]) childElementCount(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: ParentNode.childElementCount - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "ParentNode"), slog.String("Method", "childElementCount"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: ParentNode.childElementCount", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {

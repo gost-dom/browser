@@ -29,6 +29,8 @@ const (
 	URL            = BASE_PKG + "/url"
 	V8go           = "github.com/gost-dom/v8go"
 	Goja           = "github.com/dop251/goja"
+
+	StdSlog = "log/slog"
 )
 
 func ScriptPackageName(api string) string {

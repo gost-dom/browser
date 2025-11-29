@@ -4,8 +4,10 @@ package fetch
 
 import (
 	fetch "github.com/gost-dom/browser/internal/fetch"
+	log "github.com/gost-dom/browser/internal/log"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
+	"log/slog"
 )
 
 type Body[T any] struct{}
@@ -30,57 +32,64 @@ func (w Body[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w Body[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: Body.Constructor - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "Body"), slog.String("Method", "Constructor"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Body.Constructor", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w Body[T]) arrayBuffer(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: Body.arrayBuffer - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "Body"), slog.String("Method", "arrayBuffer"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Body.arrayBuffer", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Body.arrayBuffer: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Body[T]) blob(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: Body.blob - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "Body"), slog.String("Method", "blob"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Body.blob", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Body.blob: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Body[T]) bytes(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: Body.bytes - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "Body"), slog.String("Method", "bytes"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Body.bytes", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Body.bytes: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Body[T]) formData(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: Body.formData - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "Body"), slog.String("Method", "formData"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Body.formData", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Body.formData: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Body[T]) text(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: Body.text - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "Body"), slog.String("Method", "text"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Body.text", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Body.text: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Body[T]) body(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: Body.body - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "Body"), slog.String("Method", "body"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Body.body", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, err := js.As[fetch.Body](cbCtx.Instance())
 	if err != nil {
@@ -91,9 +100,10 @@ func (w Body[T]) body(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) 
 }
 
 func (w Body[T]) bodyUsed(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: Body.bodyUsed - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "Body"), slog.String("Method", "bodyUsed"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: Body.bodyUsed", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Body.bodyUsed: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

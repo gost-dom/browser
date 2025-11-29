@@ -3,8 +3,10 @@
 package uievents
 
 import (
+	log "github.com/gost-dom/browser/internal/log"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
+	"log/slog"
 )
 
 func (wrapper PointerEvent[T]) Initialize(jsClass js.Class[T]) {
@@ -19,9 +21,10 @@ func (w PointerEvent[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w PointerEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: PointerEvent.Constructor - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "PointerEvent"), slog.String("Method", "Constructor"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: PointerEvent.Constructor", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	type_, errArg1 := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
 	if errArg1 != nil {
@@ -38,33 +41,37 @@ func (w PointerEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[
 }
 
 func (w PointerEvent[T]) width(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: PointerEvent.width - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "PointerEvent"), slog.String("Method", "width"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: PointerEvent.width", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "PointerEvent.width: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w PointerEvent[T]) height(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: PointerEvent.height - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "PointerEvent"), slog.String("Method", "height"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: PointerEvent.height", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "PointerEvent.height: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w PointerEvent[T]) pressure(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: PointerEvent.pressure - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "PointerEvent"), slog.String("Method", "pressure"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: PointerEvent.pressure", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "PointerEvent.pressure: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w PointerEvent[T]) tangentialPressure(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: PointerEvent.tangentialPressure - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "PointerEvent"), slog.String("Method", "tangentialPressure"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: PointerEvent.tangentialPressure", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "PointerEvent.tangentialPressure: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

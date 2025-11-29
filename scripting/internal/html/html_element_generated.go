@@ -4,7 +4,9 @@ package html
 
 import (
 	html "github.com/gost-dom/browser/html"
+	log "github.com/gost-dom/browser/internal/log"
 	js "github.com/gost-dom/browser/scripting/internal/js"
+	"log/slog"
 )
 
 type HTMLElement[T any] struct {
@@ -25,17 +27,19 @@ func (w HTMLElement[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w HTMLElement[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLElement.Constructor - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "HTMLElement"), slog.String("Method", "Constructor"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: HTMLElement.Constructor", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w HTMLElement[T]) click(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLElement.click - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "HTMLElement"), slog.String("Method", "click"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: HTMLElement.click", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, err := js.As[html.HTMLElement](cbCtx.Instance())
 	if err != nil {

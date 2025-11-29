@@ -4,8 +4,10 @@ package dom
 
 import (
 	dom "github.com/gost-dom/browser/dom"
+	log "github.com/gost-dom/browser/internal/log"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
+	"log/slog"
 )
 
 type HTMLCollection[T any] struct{}
@@ -26,17 +28,19 @@ func (w HTMLCollection[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w HTMLCollection[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLCollection.Constructor - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "HTMLCollection"), slog.String("Method", "Constructor"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: HTMLCollection.Constructor", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w HTMLCollection[T]) item(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLCollection.item - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "HTMLCollection"), slog.String("Method", "item"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: HTMLCollection.item", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, errInst := js.As[dom.HTMLCollection](cbCtx.Instance())
 	if errInst != nil {
@@ -51,9 +55,10 @@ func (w HTMLCollection[T]) item(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 }
 
 func (w HTMLCollection[T]) namedItem(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLCollection.namedItem - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "HTMLCollection"), slog.String("Method", "namedItem"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: HTMLCollection.namedItem", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, errInst := js.As[dom.HTMLCollection](cbCtx.Instance())
 	if errInst != nil {
@@ -68,9 +73,10 @@ func (w HTMLCollection[T]) namedItem(cbCtx js.CallbackContext[T]) (res js.Value[
 }
 
 func (w HTMLCollection[T]) length(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: HTMLCollection.length - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "HTMLCollection"), slog.String("Method", "length"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: HTMLCollection.length", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, err := js.As[dom.HTMLCollection](cbCtx.Instance())
 	if err != nil {
