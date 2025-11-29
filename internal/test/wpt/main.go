@@ -2,12 +2,11 @@ package main
 
 import (
 	"context"
-	_ "embed"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"iter"
+	"io"
 	"log/slog"
+	"net/http"
 	"os"
 	"strings"
 	"time"
@@ -17,10 +16,9 @@ import (
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/scripting/sobekengine"
+	xhtml "golang.org/x/net/html"
+	"golang.org/x/net/html/atom"
 )
-
-//go:embed manifest.json
-var manifest []byte
 
 type WebPlatformTest string
 
@@ -48,14 +46,21 @@ func (s WebPlatformTest) Run(
 	r, _ := win.Document().QuerySelectorAll("#results > tbody > tr")
 	rows := r.All()
 	res = make([]WebPlatformTestCase, len(rows))
+	var errs []error
 	for i, row := range rows {
 		tds, _ := row.(dom.Element).QuerySelectorAll("td")
-		res[i] = WebPlatformTestCase{
+
+		result := WebPlatformTestCase{
 			Success: tds.Item(0).TextContent() == "Pass",
 			Name:    tds.Item(1).TextContent(),
 			Msg:     tds.Item(2).(dom.Element).OuterHTML(),
 		}
+		res[i] = result
+		if !result.Success {
+			errs = append(errs, fmt.Errorf("fail: %s", result.Name))
+		}
 	}
+	err = errors.Join(errs...)
 	return
 }
 
@@ -65,12 +70,10 @@ type WebPlatformTestCase struct {
 	Msg     string
 }
 
-func LoadManifest() (m Manifest, err error) {
-	err = json.Unmarshal(manifest, &m)
-	return
+type TestCaseResult struct {
 }
 
-func RunTestCase(tc TestCase, log *slog.Logger) error {
+func RunTestCase(tc TestCase, log *slog.Logger) ([]WebPlatformTestCase, error) {
 	path := tc.Path
 	log = log.With(slog.String("TestCase", path))
 	log.Info("Start test")
@@ -80,36 +83,28 @@ func RunTestCase(tc TestCase, log *slog.Logger) error {
 	defer cancel()
 
 	suite := WebPlatformTest(url)
-	res, err := suite.Run(ctx, log)
-	if err != nil {
-		return fmt.Errorf("%s: %w", path, err)
-	}
-
-	var errs []error
-	for _, row := range res {
-		if row.Success {
-			log.Info("PASS", "test", row.Name)
-		} else {
-			log.Error("FAIL", "test", row.Name)
-			errs = append(errs, fmt.Errorf("FAIL: %s: %s", path, row.Name))
-		}
-	}
-	return errors.Join(errs...)
+	return suite.Run(ctx, log)
 }
 
+// includeList specifies the subpaths of the "testharness" tests that will be
+// included.
 var includeList = []string{
 	"dom/nodes/Document-getElementById",
 }
 
+// excludeList filters individual subpaths that would have been included from
+// the includeList.
 var excludeList = []string{
 	// "dom/abort/",
 	// "dom/attributes-are-nodes",
 }
 
-func filteredTests(m Manifest) iter.Seq[TestCase] {
-	return func(yield func(TestCase) bool) {
+func filteredTests(ctx context.Context, r io.Reader) <-chan TestCase {
+	ch := make(chan TestCase)
+	go func() {
+		defer func() { close(ch) }()
 	testCaseLoop:
-		for testCase := range m.All() {
+		for testCase := range ParseManifest(ctx, r) {
 			path := testCase.Path
 			for _, include := range includeList {
 				if strings.HasPrefix(path, include) {
@@ -118,40 +113,114 @@ func filteredTests(m Manifest) iter.Seq[TestCase] {
 							continue testCaseLoop
 						}
 					}
-					if !yield(testCase) {
-						return
-					}
+
+					ch <- testCase
 					continue testCaseLoop
 				}
 			}
-			// if strings.HasPrefix(testCase.Path, "dom/") {
-			// }
+
 		}
-	}
+	}()
+	return ch
 }
 
 func main() {
-	opts := slogpretty.DefaultOptions()
-	opts.Multiline = true
-	// opts.Level = slog.LevelDebug
-	h := slogpretty.New(os.Stdout, opts)
-	log := slog.New(h)
-
-	manifest, err := LoadManifest()
+	log := newLogger()
+	res, err := http.Get("https://wpt.live/MANIFEST.json")
 	if err != nil {
-		log.Error("Error", "err", err)
+		panic(fmt.Sprintf("load manifest: %v", err))
 	}
+	defer res.Body.Close()
+
+	body := element("body")
+	body.AppendChild(element("h1", "Web Application Test Report"))
+
 	var errs []error
 
-	for testCase := range filteredTests(manifest) {
-		if err := RunTestCase(testCase, log); err != nil {
-			// For now, bail early.
+	for testCase := range filteredTests(context.Background(), res.Body) {
+		body.AppendChild(element("h2", testCase.Path))
+
+		res, err := RunTestCase(testCase, log)
+		if err != nil {
 			log.Error("ERROR", "err", err)
-			os.Exit(1)
 			errs = append(errs, err)
 		}
+
+		tbl := element("table")
+		thead := element("thead")
+		tr := element("tr")
+		tbody := element("tbody")
+		body.AppendChild(tbl)
+		tbl.AppendChild(thead)
+		tbl.AppendChild(tbody)
+		thead.AppendChild(tr)
+		tr.AppendChild(element("th", "Success"))
+		tr.AppendChild(element("th", "Test"))
+		tr.AppendChild(element("th", "Msg"))
+
+		for _, row := range res {
+			tr := element("tr")
+			pass := "FAIL"
+			if row.Success {
+				pass = "PASS"
+			}
+			tr.AppendChild(element("td", pass))
+			tr.AppendChild(element("td", row.Name))
+			if nodes, err := xhtml.ParseFragment(strings.NewReader(row.Msg), tr); err != nil {
+				log.Error("Error parsing node", "err", err, "fragment", row.Msg)
+			} else {
+				for _, node := range nodes {
+					tr.AppendChild(node)
+				}
+			}
+
+			tbody.AppendChild(tr)
+		}
+	}
+	if err := save(body); err != nil {
+		errs = append(errs, err)
 	}
 	if err := errors.Join(errs...); err != nil {
 		os.Exit(1)
 	}
+}
+
+func save(body *xhtml.Node) (err error) {
+	f, err := os.Create("report.html")
+	if err == nil {
+		doc := &xhtml.Node{Type: xhtml.DocumentNode}
+		html := element("html")
+		doc.AppendChild(html)
+		html.AppendChild(body)
+		err = xhtml.Render(f, doc)
+	}
+	return err
+}
+
+func newLogger() *slog.Logger {
+	opts := slogpretty.DefaultOptions()
+	opts.Multiline = true
+	opts.Level = slog.LevelWarn
+	h := slogpretty.New(os.Stdout, opts)
+	return slog.New(h)
+}
+
+func element(tag string, opts ...any) *xhtml.Node {
+	res := &xhtml.Node{
+		Type:     xhtml.ElementNode,
+		DataAtom: atom.Lookup([]byte(tag)),
+		Data:     tag,
+	}
+	for _, opt := range opts {
+		switch t := opt.(type) {
+		case string:
+			res.AppendChild(&xhtml.Node{
+				Type: xhtml.TextNode,
+				Data: t,
+			})
+		default:
+			panic(fmt.Sprintf("invalid element option: %v", opt))
+		}
+	}
+	return res
 }

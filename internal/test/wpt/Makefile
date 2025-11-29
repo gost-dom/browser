@@ -1,3 +1,3 @@
 .PHONY: test
 test:
-	go run .
+	GOEXPERIMENT=jsonv2 go run .

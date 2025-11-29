@@ -3,6 +3,7 @@ package main_test
 import (
 	"bytes"
 	_ "embed"
+	"encoding/json"
 	"strings"
 	"testing"
 
@@ -13,6 +14,12 @@ import (
 
 //go:embed manifest.json
 var manifest []byte
+
+// TODO: Delete?
+func LoadManifest() (m Manifest, err error) {
+	err = json.Unmarshal(manifest, &m)
+	return
+}
 
 func TestManifestFile(t *testing.T) {
 	// This isn't a _test_ - it was merely a tool to get feedback while
