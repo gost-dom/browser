@@ -1,6 +1,8 @@
 package main_test
 
 import (
+	"bytes"
+	_ "embed"
 	"strings"
 	"testing"
 
@@ -8,6 +10,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 )
+
+//go:embed manifest.json
+var manifest []byte
 
 func TestManifestFile(t *testing.T) {
 	// This isn't a _test_ - it was merely a tool to get feedback while
@@ -20,6 +25,23 @@ func TestManifestFile(t *testing.T) {
 	actual := make([]string, 100)
 	i := 0
 	for testCase := range data.All() {
+		if !strings.HasPrefix(testCase.Path, "dom") {
+			continue
+		}
+		actual[i] = testCase.Path
+		i++
+		if i >= 100 {
+			break
+		}
+	}
+
+	assert.Equal(t, expected, actual)
+}
+
+func TestManifestFile2(t *testing.T) {
+	actual := make([]string, 100)
+	i := 0
+	for testCase := range ParseManifest(t.Context(), bytes.NewReader(manifest)) {
 		if !strings.HasPrefix(testCase.Path, "dom") {
 			continue
 		}
