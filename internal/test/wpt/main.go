@@ -71,9 +71,6 @@ type WebPlatformTestCase struct {
 	Msg     string
 }
 
-type TestCaseResult struct {
-}
-
 func RunTestCase(tc TestCase, log *slog.Logger) ([]WebPlatformTestCase, error) {
 	path := tc.Path
 	log = log.With(slog.String("TestCase", path))
