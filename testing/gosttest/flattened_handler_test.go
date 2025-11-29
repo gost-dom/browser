@@ -1,4 +1,4 @@
-package gosttest_test
+package gosttest
 
 import (
 	"context"
@@ -7,7 +7,6 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/gost-dom/browser/testing/gosttest"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -24,7 +23,7 @@ func (r *logRecordRecorder) Enabled(ctx context.Context, lvl slog.Level) bool { 
 
 func TestWithAttributes(t *testing.T) {
 	recorder := &logRecordRecorder{}
-	handler := &gosttest.FlattenedHandler{Handler: recorder}
+	handler := &flattenedHandler{Handler: recorder}
 	l := slog.New(handler)
 	l = l.With(slog.String("foo", "foo-value"))
 	l.Info("Hello", "bar", "bar-value")
@@ -42,7 +41,7 @@ func TestWithAttributes(t *testing.T) {
 
 func TestWithGroup(t *testing.T) {
 	recorder := &logRecordRecorder{}
-	handler := &gosttest.FlattenedHandler{Handler: recorder}
+	handler := &flattenedHandler{Handler: recorder}
 	l := slog.New(handler)
 	l = l.WithGroup("grp")
 	l.Info("Hello", "bar", "bar-value")

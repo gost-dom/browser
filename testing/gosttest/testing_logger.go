@@ -98,7 +98,7 @@ func NewTestingLogger(t testing.TB, opts ...TestingLogHandlerOption) *slog.Logge
 	t.Cleanup(func() {
 		handler.close()
 	})
-	return slog.New(FlattenedHandler{handler, "", nil})
+	return slog.New(flattenedHandler{handler, "", nil})
 }
 
 // attrWrite writes a single [slog.Attr] to a [strings.Builder] in the form
@@ -169,53 +169,3 @@ func (w attrWriter) writeGroup(b *strings.Builder, a slog.Attr) {
 		w.write(b, a)
 	}
 }
-
-type FlatLogHandler interface {
-	Enabled(context.Context, slog.Level) bool
-	Handle(context.Context, slog.Record) error
-}
-
-type FlattenedHandler struct {
-	Handler FlatLogHandler
-	group   string
-	attrs   []slog.Attr
-}
-
-func (l FlattenedHandler) Handle(ctx context.Context, r slog.Record) error {
-	if len(l.attrs) > 0 {
-		r = r.Clone()
-		r.AddAttrs(l.attrs...)
-	}
-
-	if l.group != "" {
-		attrs := make([]slog.Attr, r.NumAttrs())
-		i := 0
-		r.Attrs(func(a slog.Attr) bool {
-			attrs[i] = a
-			i++
-			return true
-		})
-		r = slog.NewRecord(r.Time, r.Level, r.Message, r.PC)
-		r.Add(slog.GroupAttrs(l.group, attrs...))
-	}
-	return l.Handler.Handle(ctx, r)
-}
-
-func (l FlattenedHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
-	return FlattenedHandler{
-		l.Handler,
-		l.group,
-		append(l.attrs, attrs...),
-	}
-}
-
-// Enabled implemented [slog.Handler]
-func (h FlattenedHandler) Enabled(ctx context.Context, lvl slog.Level) bool {
-	return h.Handler.Enabled(ctx, lvl)
-}
-
-func (l FlattenedHandler) WithGroup(name string) slog.Handler {
-	return FlattenedHandler{l, name, nil}
-}
-
-var _ slog.Handler = FlattenedHandler{}
