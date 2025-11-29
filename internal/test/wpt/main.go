@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/Marlliton/slogpretty"
@@ -90,6 +91,7 @@ func RunTestCase(tc TestCase, log *slog.Logger) ([]WebPlatformTestCase, error) {
 // included.
 var includeList = []string{
 	"dom/nodes/Document-getElementById",
+	// "fetch/api",
 }
 
 // excludeList filters individual subpaths that would have been included from
@@ -99,8 +101,14 @@ var excludeList = []string{
 	// "dom/attributes-are-nodes",
 }
 
+type result struct {
+	testCase TestCase
+	res      []WebPlatformTestCase
+	err      error
+}
+
 func filteredTests(ctx context.Context, r io.Reader) <-chan TestCase {
-	ch := make(chan TestCase)
+	ch := make(chan TestCase, 8)
 	go func() {
 		defer func() { close(ch) }()
 	testCaseLoop:
@@ -124,6 +132,32 @@ func filteredTests(ctx context.Context, r io.Reader) <-chan TestCase {
 	return ch
 }
 
+func testResults(tests <-chan TestCase, log *slog.Logger) <-chan chan result {
+	res := make(chan chan result, 64)
+	go func() {
+		var grp sync.WaitGroup
+		defer func() { close(res) }()
+
+		for testCase := range tests {
+			grp.Add(1)
+			resultChan := make(chan result)
+			res <- resultChan
+			go func() {
+				defer grp.Add(-1)
+
+				testCaseRes, err := RunTestCase(testCase, log)
+				resultChan <- result{
+					testCase: testCase,
+					res:      testCaseRes,
+					err:      err,
+				}
+			}()
+		}
+		grp.Wait()
+	}()
+	return res
+}
+
 func main() {
 	log := newLogger()
 	res, err := http.Get("https://wpt.live/MANIFEST.json")
@@ -137,14 +171,22 @@ func main() {
 
 	var errs []error
 
-	for testCase := range filteredTests(context.Background(), res.Body) {
+	testCaseSource := filteredTests(context.Background(), res.Body)
+	for testCaseResultCh := range testResults(testCaseSource, log) {
+		testCaseResult := <-testCaseResultCh
+		var (
+			testCase = testCaseResult.testCase
+			res      = testCaseResult.res
+			err      = testCaseResult.err
+		)
 		body.AppendChild(element("h2", testCase.Path))
-
-		res, err := RunTestCase(testCase, log)
-		if err != nil {
-			log.Error("ERROR", "err", err)
-			errs = append(errs, err)
+		if err == nil {
+			body.AppendChild(element("p", "All tests pass"))
+			continue
 		}
+
+		log.Error("ERROR", "err", err)
+		errs = append(errs, err)
 
 		tbl := element("table")
 		thead := element("thead")
