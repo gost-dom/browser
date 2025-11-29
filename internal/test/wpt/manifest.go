@@ -33,7 +33,7 @@ func (i ManifestItem) All(p string) iter.Seq[TestCase] {
 	return func(yield func(TestCase) bool) {
 		switch i.Kind {
 		case KindItem:
-			if !yield(TestCase{p}) {
+			if !yield(TestCase{Path: p}) {
 				return
 			}
 		case KindItems:
@@ -76,7 +76,8 @@ type Manifest struct {
 }
 
 type TestCase struct {
-	Path string
+	PathElements []string
+	Path         string
 }
 
 func (m Manifest) All() iter.Seq[TestCase] {

@@ -172,6 +172,8 @@ func main() {
 	var errs []error
 
 	testCaseSource := filteredTests(context.Background(), res.Body)
+	var prevHeaders []string
+
 	for testCaseResultCh := range testResults(testCaseSource, log) {
 		testCaseResult := <-testCaseResultCh
 		var (
@@ -179,7 +181,22 @@ func main() {
 			res      = testCaseResult.res
 			err      = testCaseResult.err
 		)
-		body.AppendChild(element("h2", testCase.Path))
+
+		for i, e := range testCase.PathElements {
+			fmt.Printf("i: %d, prev: %v\n", i, prevHeaders)
+			if len(prevHeaders) > i && prevHeaders[i] == e {
+				if i != len(testCase.PathElements)-1 {
+					continue
+				}
+			}
+			prevHeaders = nil
+			if i > 4 {
+				i = 4 // There's no such thing as an H7
+			}
+			body.AppendChild(element(fmt.Sprintf("h%d", i+2), e))
+		}
+		prevHeaders = testCase.PathElements
+
 		if err == nil {
 			body.AppendChild(element("p", "All tests pass"))
 			continue

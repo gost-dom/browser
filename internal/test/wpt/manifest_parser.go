@@ -60,8 +60,9 @@ func (p parser) makeTestCase() (res TestCase, ok bool) {
 		return
 	}
 	if path.Ext(p.prefix[len(p.prefix)-1]) == ".html" {
-		name := path.Join(p.prefix[2:]...)
-		return TestCase{Path: name}, true
+		elements := p.prefix[2:]
+		name := path.Join(elements...)
+		return TestCase{Path: name, PathElements: elements}, true
 	}
 	return
 }
