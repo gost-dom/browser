@@ -104,12 +104,12 @@ type result struct {
 	err      error
 }
 
-func filteredTests(ctx context.Context, r io.Reader) <-chan TestCase {
+func filteredTests(ctx context.Context, r io.Reader, l *slog.Logger) <-chan TestCase {
 	ch := make(chan TestCase, 8)
 	go func() {
 		defer func() { close(ch) }()
 	testCaseLoop:
-		for testCase := range ParseManifest(ctx, r) {
+		for testCase := range ParseManifest(ctx, r, l) {
 			path := testCase.Path
 			for _, include := range includeList {
 				if strings.HasPrefix(path, include) {
@@ -156,7 +156,7 @@ func testResults(tests <-chan TestCase, log *slog.Logger) <-chan chan result {
 }
 
 func main() {
-	log := newLogger()
+	logger := newLogger()
 	res, err := http.Get("https://wpt.live/MANIFEST.json")
 	if err != nil {
 		panic(fmt.Sprintf("load manifest: %v", err))
@@ -168,10 +168,10 @@ func main() {
 
 	var errs []error
 
-	testCaseSource := filteredTests(context.Background(), res.Body)
+	testCaseSource := filteredTests(context.Background(), res.Body, logger)
 	var prevHeaders []string
 
-	for testCaseResultCh := range testResults(testCaseSource, log) {
+	for testCaseResultCh := range testResults(testCaseSource, logger) {
 		testCaseResult := <-testCaseResultCh
 		var (
 			testCase = testCaseResult.testCase
@@ -180,7 +180,6 @@ func main() {
 		)
 
 		for i, e := range testCase.PathElements {
-			fmt.Printf("i: %d, prev: %v\n", i, prevHeaders)
 			if len(prevHeaders) > i && prevHeaders[i] == e {
 				if i != len(testCase.PathElements)-1 {
 					continue
@@ -199,7 +198,7 @@ func main() {
 			continue
 		}
 
-		log.Error("ERROR", "err", err)
+		logger.Error("ERROR", "err", err)
 		errs = append(errs, err)
 
 		tbl := element("table")
@@ -223,7 +222,7 @@ func main() {
 			tr.AppendChild(element("td", pass))
 			tr.AppendChild(element("td", row.Name))
 			if nodes, err := xhtml.ParseFragment(strings.NewReader(row.Msg), tr); err != nil {
-				log.Error("Error parsing node", "err", err, "fragment", row.Msg)
+				logger.Error("Error parsing node", "err", err, "fragment", row.Msg)
 			} else {
 				for _, node := range nodes {
 					tr.AppendChild(node)

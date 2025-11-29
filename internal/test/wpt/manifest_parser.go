@@ -4,14 +4,16 @@ import (
 	"context"
 	"encoding/json/jsontext"
 	"io"
+	"log/slog"
 	"path"
+	"strings"
 )
 
-func ParseManifest(ctx context.Context, m io.Reader) <-chan TestCase {
+func ParseManifest(ctx context.Context, m io.Reader, l *slog.Logger) <-chan TestCase {
 	ch := make(chan TestCase)
 	go func() {
 		d := jsontext.NewDecoder(m)
-		var p parser
+		var p = parser{logger: l}
 		p.parse(ctx, ch, d)
 		close(ch)
 	}()
@@ -19,6 +21,7 @@ func ParseManifest(ctx context.Context, m io.Reader) <-chan TestCase {
 }
 
 type parser struct {
+	logger *slog.Logger
 	ignore bool
 	prefix []string
 }
@@ -30,25 +33,34 @@ func (p *parser) parse(ctx context.Context, ch chan TestCase, d *jsontext.Decode
 	}
 	switch t.Kind() {
 	case '[':
-		for d.PeekKind() != ']' {
-			if err := d.SkipValue(); err != nil {
-				panic(err)
-			}
-		}
-		t, err := d.ReadToken()
-		if err != nil {
-			panic(err)
-		}
-		if t.Kind() != ']' {
-			panic("wtf")
-		}
-		if testCase, ok := p.makeTestCase(); ok {
-			ch <- testCase
-		}
+		p.parseArray(ctx, ch, d)
 	case '{':
 		p.parseObject(ctx, ch, d)
 	case '"':
 		p.prefix = append(p.prefix, t.String())
+	}
+}
+
+func (p *parser) parseArray(ctx context.Context, ch chan TestCase, d *jsontext.Decoder) {
+	for {
+		t, err := d.ReadToken()
+		if err != nil {
+			panic(err)
+		}
+		switch t.Kind() {
+		case ']':
+			return
+		case '[':
+			p.parseArray(ctx, ch, d)
+		case '"':
+			name := t.String()
+			if isTestFile(name) {
+				ch <- TestCase{
+					Path:         name,
+					PathElements: strings.Split(name, "/"),
+				}
+			}
+		}
 	}
 }
 
@@ -67,6 +79,10 @@ func (p parser) makeTestCase() (res TestCase, ok bool) {
 	return
 }
 
+func isTestFile(fileName string) bool {
+	return path.Ext(fileName) == ".html"
+}
+
 func (p parser) parseObject(ctx context.Context, ch chan TestCase, d *jsontext.Decoder) {
 	for {
 		t, err := d.ReadToken()
@@ -77,11 +93,22 @@ func (p parser) parseObject(ctx context.Context, ch chan TestCase, d *jsontext.D
 		case '}':
 			return
 		case '"':
+			logger := p.logger
 			prefix := p.prefix
-			p.prefix = append(prefix, t.String())
+			name := t.String()
+
+			p.prefix = append(prefix, name)
+			p.logger = p.logger.WithGroup(name)
+			if isTestFile(name) {
+				if testCase, ok := p.makeTestCase(); ok {
+					ch <- testCase
+				}
+			} else {
+			}
 			p.parse(ctx, ch, d)
+
 			p.prefix = prefix
+			p.logger = logger
 		}
 	}
-
 }

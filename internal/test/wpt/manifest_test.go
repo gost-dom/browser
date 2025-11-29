@@ -3,7 +3,8 @@ package main_test
 import (
 	"bytes"
 	_ "embed"
-	"encoding/json"
+	"io"
+	"log/slog"
 	"strings"
 	"testing"
 
@@ -15,40 +16,11 @@ import (
 //go:embed manifest.json
 var manifest []byte
 
-// TODO: Delete?
-func LoadManifest() (m Manifest, err error) {
-	err = json.Unmarshal(manifest, &m)
-	return
-}
-
-func TestManifestFile(t *testing.T) {
-	// This isn't a _test_ - it was merely a tool to get feedback while
-	// implementing JSON deserialization of the manifest
-	data, err := LoadManifest()
-	if !assert.NoError(t, err) {
-		return
-	}
-
-	actual := make([]string, 100)
-	i := 0
-	for testCase := range data.All() {
-		if !strings.HasPrefix(testCase.Path, "dom") {
-			continue
-		}
-		actual[i] = testCase.Path
-		i++
-		if i >= 100 {
-			break
-		}
-	}
-
-	assert.Equal(t, expected, actual)
-}
-
 func TestManifestFile2(t *testing.T) {
 	actual := make([]string, 100)
 	i := 0
-	for testCase := range ParseManifest(t.Context(), bytes.NewReader(manifest)) {
+	nullLog := slog.New(slog.NewTextHandler(io.Discard, nil))
+	for testCase := range ParseManifest(t.Context(), bytes.NewReader(manifest), nullLog) {
 		if !strings.HasPrefix(testCase.Path, "dom") {
 			continue
 		}
@@ -59,27 +31,62 @@ func TestManifestFile2(t *testing.T) {
 		}
 	}
 
-	assert.Equal(t, expected, actual)
+	assert.Equal(t, expected2, actual)
 }
 
-var expected = []string{
+var expected2 = []string{
+	"dom/abort/AbortSignal.any.html",
+	"dom/abort/AbortSignal.any.shadowrealm-in-dedicatedworker.html",
+	"dom/abort/AbortSignal.any.shadowrealm-in-shadowrealm.html",
+	"dom/abort/AbortSignal.any.shadowrealm-in-sharedworker.html",
+	"dom/abort/AbortSignal.any.shadowrealm-in-window.html",
+	"dom/abort/AbortSignal.any.worker.html",
+	"dom/abort/AbortSignal.https.any.shadowrealm-in-audioworklet.html",
+	"dom/abort/AbortSignal.https.any.shadowrealm-in-serviceworker.html",
+	"dom/abort/abort-signal-any.any.html",
+	"dom/abort/abort-signal-any.any.worker.html",
 	"dom/abort/abort-signal-timeout.html",
+	"dom/abort/event.any.html",
+	"dom/abort/event.any.shadowrealm-in-dedicatedworker.html",
+	"dom/abort/event.any.shadowrealm-in-shadowrealm.html",
+	"dom/abort/event.any.shadowrealm-in-sharedworker.html",
+	"dom/abort/event.any.shadowrealm-in-window.html",
+	"dom/abort/event.any.worker.html",
+	"dom/abort/event.https.any.shadowrealm-in-audioworklet.html",
+	"dom/abort/event.https.any.shadowrealm-in-serviceworker.html",
 	"dom/abort/reason-constructor.html",
+	"dom/abort/timeout-shadowrealm.any.shadowrealm-in-dedicatedworker.html",
+	"dom/abort/timeout-shadowrealm.any.shadowrealm-in-shadowrealm.html",
+	"dom/abort/timeout-shadowrealm.any.shadowrealm-in-sharedworker.html",
+	"dom/abort/timeout-shadowrealm.any.shadowrealm-in-window.html",
+	"dom/abort/timeout-shadowrealm.https.any.shadowrealm-in-audioworklet.html",
+	"dom/abort/timeout-shadowrealm.https.any.shadowrealm-in-serviceworker.html",
+	"dom/abort/timeout.any.html",
+	"dom/abort/timeout.any.worker.html",
 	"dom/attributes-are-nodes.html",
 	"dom/collections/HTMLCollection-as-prototype.html",
 	"dom/collections/HTMLCollection-delete.html",
 	"dom/collections/HTMLCollection-empty-name.html",
 	"dom/collections/HTMLCollection-iterator.html",
+	"dom/collections/HTMLCollection-live-mutations.window.html",
 	"dom/collections/HTMLCollection-own-props.html",
 	"dom/collections/HTMLCollection-supported-property-indices.html",
 	"dom/collections/HTMLCollection-supported-property-names.html",
 	"dom/collections/domstringmap-supported-property-names.html",
 	"dom/collections/namednodemap-supported-property-names.html",
 	"dom/eventPathRemoved.html",
+	"dom/events/AddEventListenerOptions-once.any.html",
+	"dom/events/AddEventListenerOptions-once.any.worker.html",
+	"dom/events/AddEventListenerOptions-passive.any.html",
+	"dom/events/AddEventListenerOptions-passive.any.worker.html",
+	"dom/events/AddEventListenerOptions-signal.any.html",
+	"dom/events/AddEventListenerOptions-signal.any.worker.html",
 	"dom/events/Body-FrameSet-Event-Handlers.html",
 	"dom/events/CustomEvent.html",
 	"dom/events/Event-cancelBubble.html",
 	"dom/events/Event-constants.html",
+	"dom/events/Event-constructors.any.html",
+	"dom/events/Event-constructors.any.worker.html",
 	"dom/events/Event-defaultPrevented-after-dispatch.html",
 	"dom/events/Event-defaultPrevented.html",
 	"dom/events/Event-dispatch-bubble-canceled.html",
@@ -90,6 +97,7 @@ var expected = []string{
 	"dom/events/Event-dispatch-detached-click.html",
 	"dom/events/Event-dispatch-detached-input-and-change.html",
 	"dom/events/Event-dispatch-handlers-changed.html",
+	"dom/events/Event-dispatch-listener-order.window.html",
 	"dom/events/Event-dispatch-multiple-cancelBubble.html",
 	"dom/events/Event-dispatch-multiple-stopPropagation.html",
 	"dom/events/Event-dispatch-omitted-capture.html",
@@ -107,6 +115,8 @@ var expected = []string{
 	"dom/events/Event-dispatch-throwing.html",
 	"dom/events/Event-init-while-dispatching.html",
 	"dom/events/Event-initEvent.html",
+	"dom/events/Event-isTrusted.any.html",
+	"dom/events/Event-isTrusted.any.worker.html",
 	"dom/events/Event-propagation.html",
 	"dom/events/Event-returnValue.html",
 	"dom/events/Event-stopImmediatePropagation.html",
@@ -118,49 +128,11 @@ var expected = []string{
 	"dom/events/Event-timestamp-safe-resolution.html",
 	"dom/events/Event-type-empty.html",
 	"dom/events/Event-type.html",
+	"dom/events/EventListener-addEventListener.sub.window.html",
 	"dom/events/EventListener-handleEvent-cross-realm.html",
 	"dom/events/EventListener-handleEvent.html",
 	"dom/events/EventListener-incumbent-global-1.sub.html",
 	"dom/events/EventListener-incumbent-global-2.sub.html",
 	"dom/events/EventListener-invoke-legacy.html",
 	"dom/events/EventListenerOptions-capture.html",
-	"dom/events/EventTarget-add-listener-platform-object.html",
-	"dom/events/EventTarget-dispatchEvent-returnvalue.html",
-	"dom/events/EventTarget-dispatchEvent.html",
-	"dom/events/EventTarget-this-of-listener.html",
-	"dom/events/KeyEvent-initKeyEvent.html",
-	"dom/events/event-disabled-dynamic.html",
-	"dom/events/event-global-is-still-set-when-coercing-beforeunload-result.html",
-	"dom/events/event-global-is-still-set-when-reporting-exception-onerror.html",
-	"dom/events/event-global.html",
-	"dom/events/event-src-element-nullable.html",
-	"dom/events/focus-event-document-move.html",
-	"dom/events/handler-count.html",
-	"dom/events/mouse-event-retarget.html",
-	"dom/events/no-focus-events-at-clicking-editable-content-in-link.html",
-	"dom/events/non-cancelable-when-passive/generic-events-stay-cancelable.html",
-	"dom/events/non-cancelable-when-passive/non-passive-mousewheel-event-listener-on-body.html",
-	"dom/events/non-cancelable-when-passive/non-passive-mousewheel-event-listener-on-div.html",
-	"dom/events/non-cancelable-when-passive/non-passive-mousewheel-event-listener-on-document.html",
-	"dom/events/non-cancelable-when-passive/non-passive-mousewheel-event-listener-on-root.html",
-	"dom/events/non-cancelable-when-passive/non-passive-mousewheel-event-listener-on-window.html",
-	"dom/events/non-cancelable-when-passive/non-passive-touchmove-event-listener-on-body.html",
-	"dom/events/non-cancelable-when-passive/non-passive-touchmove-event-listener-on-div.html",
-	"dom/events/non-cancelable-when-passive/non-passive-touchmove-event-listener-on-document.html",
-	"dom/events/non-cancelable-when-passive/non-passive-touchmove-event-listener-on-root.html",
-	"dom/events/non-cancelable-when-passive/non-passive-touchmove-event-listener-on-window.html",
-	"dom/events/non-cancelable-when-passive/non-passive-touchstart-event-listener-on-body.html",
-	"dom/events/non-cancelable-when-passive/non-passive-touchstart-event-listener-on-div.html",
-	"dom/events/non-cancelable-when-passive/non-passive-touchstart-event-listener-on-document.html",
-	"dom/events/non-cancelable-when-passive/non-passive-touchstart-event-listener-on-root.html",
-	"dom/events/non-cancelable-when-passive/non-passive-touchstart-event-listener-on-window.html",
-	"dom/events/non-cancelable-when-passive/non-passive-wheel-event-listener-on-body.html",
-	"dom/events/non-cancelable-when-passive/non-passive-wheel-event-listener-on-div.html",
-	"dom/events/non-cancelable-when-passive/non-passive-wheel-event-listener-on-document.html",
-	"dom/events/non-cancelable-when-passive/non-passive-wheel-event-listener-on-root.html",
-	"dom/events/non-cancelable-when-passive/non-passive-wheel-event-listener-on-window.html",
-	"dom/events/non-cancelable-when-passive/passive-mousewheel-event-listener-on-body.html",
-	"dom/events/non-cancelable-when-passive/passive-mousewheel-event-listener-on-div.html",
-	"dom/events/non-cancelable-when-passive/passive-mousewheel-event-listener-on-document.html",
-	"dom/events/non-cancelable-when-passive/passive-mousewheel-event-listener-on-root.html",
 }
