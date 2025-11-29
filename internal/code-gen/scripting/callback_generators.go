@@ -173,20 +173,24 @@ func (cb CallbackMethods) ReturnNotImplementedError(
 }
 
 func (cb CallbackMethods) LogCall(name string, cbCtx g.Generator) g.Generator {
-	msg := fmt.Sprintf("JS Function call: %s.%s", cb.Data.Name(), name)
-	logDebug := g.ValueOf(cbCtx).Field("Logger").Call().Field("Debug")
-	res := logDebug.Call(
-		g.Lit(msg),
-		jsLogAttr.Call(g.Lit("res"), g.Id("res")),
-	)
-	f := g.ValueOf(g.FunctionDefinition{Body: res})
+	c := CallbackContext{g.ValueOf(cbCtx)}
+	log := Logger{g.NewValue("l")}
 	return g.StatementList(
-		logDebug.Call(
-			g.Lit(fmt.Sprintf("%s - completed", msg)),
+		g.Assign(log, c.Logger().With(
+			slogString.Call(g.Lit("IdlInterface"), g.Lit(cb.IdlName())),
+			slogString.Call(g.Lit("Method"), g.Lit(name)),
+		)),
+		log.Debug("JS function callback enter",
 			jsThisLogAttr.Call(cbCtx),
 			jsArgsLogAttr.Call(cbCtx),
 		),
-		g.Raw(jen.Defer().Add(f.Call().Generate())),
+		g.Raw(
+			jen.Defer().
+				Add(g.ValueOf(g.FunctionDefinition{Body: log.Debug("JS function callback exit",
+					jsLogAttr.Call(g.Lit("res"), g.Id("res")),
+					logErrAttr.Call(g.Id("err")),
+				)}).Call().Generate()),
+		),
 	)
 }
 

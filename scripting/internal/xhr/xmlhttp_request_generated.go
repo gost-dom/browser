@@ -5,8 +5,10 @@ package xhr
 import (
 	"errors"
 	html "github.com/gost-dom/browser/internal/html"
+	log "github.com/gost-dom/browser/internal/log"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
+	"log/slog"
 )
 
 type XMLHttpRequest[T any] struct{}
@@ -41,17 +43,19 @@ func (w XMLHttpRequest[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w XMLHttpRequest[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.Constructor - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "XMLHttpRequest"), slog.String("Method", "Constructor"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.Constructor", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	return w.CreateInstance(cbCtx)
 }
 
 func (w XMLHttpRequest[T]) setRequestHeader(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.setRequestHeader - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "XMLHttpRequest"), slog.String("Method", "setRequestHeader"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.setRequestHeader", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, errInst := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if errInst != nil {
@@ -68,9 +72,10 @@ func (w XMLHttpRequest[T]) setRequestHeader(cbCtx js.CallbackContext[T]) (res js
 }
 
 func (w XMLHttpRequest[T]) send(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.send - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "XMLHttpRequest"), slog.String("Method", "send"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.send", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, errInst := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if errInst != nil {
@@ -85,9 +90,10 @@ func (w XMLHttpRequest[T]) send(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 }
 
 func (w XMLHttpRequest[T]) abort(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.abort - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "XMLHttpRequest"), slog.String("Method", "abort"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.abort", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
@@ -98,9 +104,10 @@ func (w XMLHttpRequest[T]) abort(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 }
 
 func (w XMLHttpRequest[T]) getResponseHeader(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.getResponseHeader - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "XMLHttpRequest"), slog.String("Method", "getResponseHeader"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.getResponseHeader", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, errInst := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if errInst != nil {
@@ -115,9 +122,10 @@ func (w XMLHttpRequest[T]) getResponseHeader(cbCtx js.CallbackContext[T]) (res j
 }
 
 func (w XMLHttpRequest[T]) getAllResponseHeaders(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.getAllResponseHeaders - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "XMLHttpRequest"), slog.String("Method", "getAllResponseHeaders"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.getAllResponseHeaders", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
@@ -131,9 +139,10 @@ func (w XMLHttpRequest[T]) getAllResponseHeaders(cbCtx js.CallbackContext[T]) (r
 }
 
 func (w XMLHttpRequest[T]) overrideMimeType(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.overrideMimeType - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "XMLHttpRequest"), slog.String("Method", "overrideMimeType"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.overrideMimeType", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, errInst := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if errInst != nil {
@@ -148,17 +157,19 @@ func (w XMLHttpRequest[T]) overrideMimeType(cbCtx js.CallbackContext[T]) (res js
 }
 
 func (w XMLHttpRequest[T]) readyState(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.readyState - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "XMLHttpRequest"), slog.String("Method", "readyState"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.readyState", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "XMLHttpRequest.readyState: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w XMLHttpRequest[T]) timeout(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.timeout - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "XMLHttpRequest"), slog.String("Method", "timeout"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.timeout", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
@@ -169,9 +180,10 @@ func (w XMLHttpRequest[T]) timeout(cbCtx js.CallbackContext[T]) (res js.Value[T]
 }
 
 func (w XMLHttpRequest[T]) setTimeout(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.setTimeout - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "XMLHttpRequest"), slog.String("Method", "setTimeout"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.setTimeout", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, err0 := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeInt)
@@ -184,9 +196,10 @@ func (w XMLHttpRequest[T]) setTimeout(cbCtx js.CallbackContext[T]) (res js.Value
 }
 
 func (w XMLHttpRequest[T]) withCredentials(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.withCredentials - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "XMLHttpRequest"), slog.String("Method", "withCredentials"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.withCredentials", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
@@ -197,9 +210,10 @@ func (w XMLHttpRequest[T]) withCredentials(cbCtx js.CallbackContext[T]) (res js.
 }
 
 func (w XMLHttpRequest[T]) setWithCredentials(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.setWithCredentials - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "XMLHttpRequest"), slog.String("Method", "setWithCredentials"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.setWithCredentials", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, err0 := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeBoolean)
@@ -212,9 +226,10 @@ func (w XMLHttpRequest[T]) setWithCredentials(cbCtx js.CallbackContext[T]) (res 
 }
 
 func (w XMLHttpRequest[T]) responseURL(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.responseURL - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "XMLHttpRequest"), slog.String("Method", "responseURL"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.responseURL", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
@@ -225,9 +240,10 @@ func (w XMLHttpRequest[T]) responseURL(cbCtx js.CallbackContext[T]) (res js.Valu
 }
 
 func (w XMLHttpRequest[T]) status(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.status - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "XMLHttpRequest"), slog.String("Method", "status"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.status", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
@@ -238,9 +254,10 @@ func (w XMLHttpRequest[T]) status(cbCtx js.CallbackContext[T]) (res js.Value[T],
 }
 
 func (w XMLHttpRequest[T]) statusText(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.statusText - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "XMLHttpRequest"), slog.String("Method", "statusText"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.statusText", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
@@ -251,9 +268,10 @@ func (w XMLHttpRequest[T]) statusText(cbCtx js.CallbackContext[T]) (res js.Value
 }
 
 func (w XMLHttpRequest[T]) responseType(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.responseType - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "XMLHttpRequest"), slog.String("Method", "responseType"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.responseType", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
@@ -264,9 +282,10 @@ func (w XMLHttpRequest[T]) responseType(cbCtx js.CallbackContext[T]) (res js.Val
 }
 
 func (w XMLHttpRequest[T]) setResponseType(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.setResponseType - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "XMLHttpRequest"), slog.String("Method", "setResponseType"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.setResponseType", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, err0 := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, w.decodeXMLHttpRequestResponseType)
@@ -279,9 +298,10 @@ func (w XMLHttpRequest[T]) setResponseType(cbCtx js.CallbackContext[T]) (res js.
 }
 
 func (w XMLHttpRequest[T]) response(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.response - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "XMLHttpRequest"), slog.String("Method", "response"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.response", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
@@ -292,9 +312,10 @@ func (w XMLHttpRequest[T]) response(cbCtx js.CallbackContext[T]) (res js.Value[T
 }
 
 func (w XMLHttpRequest[T]) responseText(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.responseText - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "XMLHttpRequest"), slog.String("Method", "responseText"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.responseText", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	instance, err := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	if err != nil {
@@ -305,9 +326,10 @@ func (w XMLHttpRequest[T]) responseText(cbCtx js.CallbackContext[T]) (res js.Val
 }
 
 func (w XMLHttpRequest[T]) responseXML(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.responseXML - completed", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
+	l := cbCtx.Logger().With(slog.String("IdlInterface", "XMLHttpRequest"), slog.String("Method", "responseXML"))
+	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
 	defer func() {
-		cbCtx.Logger().Debug("JS Function call: XMLHttpRequest.responseXML", js.LogAttr("res", res))
+		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
 	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "XMLHttpRequest.responseXML: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

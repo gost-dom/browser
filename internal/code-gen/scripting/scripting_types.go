@@ -57,10 +57,18 @@ func (c CallbackContext) ReturnWithError(val g.Generator) g.Generator {
 	return c.Field("ReturnWithError").Call(val)
 }
 
-func (c CallbackContext) ConsumeArg() g.Generator {
-	return c.Field("ConsumeArg").Call()
+func (c CallbackContext) ConsumeArg() g.Generator { return c.Field("ConsumeArg").Call() }
+func (c CallbackContext) Scope() g.Generator      { return c.Field("Scope").Call() }
+func (c CallbackContext) Logger() Logger          { return Logger{c.Field("Logger").Call()} }
+
+/* -------- Logger -------- */
+
+type Logger struct{ g.Value }
+
+func (l Logger) With(args ...g.Generator) g.Generator {
+	return Logger{l.Field("With").Call(args...)}
 }
 
-func (c CallbackContext) Scope() g.Generator {
-	return c.Field("Scope").Call()
+func (l Logger) Debug(msg string, args ...g.Generator) g.Generator {
+	return l.Field("Debug").Call(append([]g.Generator{g.Lit(msg)}, args...)...)
 }

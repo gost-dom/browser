@@ -19,6 +19,8 @@ var (
 	jsArgsLogAttr        = g.NewValuePackage("ArgsLogAttr", packagenames.JS)
 	jsLogAttr            = g.NewValuePackage("LogAttr", packagenames.JS)
 
+	logErrAttr = g.NewValuePackage("ErrAttr", packagenames.Log)
+
 	jsAs            = g.NewTypePackage("As", packagenames.JS)
 	jsValue         = g.NewTypePackage("Value", packagenames.JS).TypeParam(g.Id("T"))
 	jsClass         = g.NewTypePackage("Class", packagenames.JS).TypeParam(g.Id("T"))
@@ -27,14 +29,14 @@ var (
 	jsRegisterClass = g.NewValuePackage("RegisterClass", packagenames.JS)
 	jsClassBuilder  = g.NewValuePackage("ClassBuilder", packagenames.JS)
 
+	slogString = g.NewValuePackage("String", packagenames.StdSlog)
+
 	// Exported values from: scripting/internal/codec
 
 	zeroValue = g.NewValuePackage("ZeroValue", packagenames.Codec)
 
 	// Codecs
 	EncodeCallbackErrorf = g.NewValuePackage("EncodeCallbackErrorf", packagenames.Codec)
-
-	LogErrAttr = g.NewValuePackage("ErrAttr", packagenames.Log)
 )
 
 var IdlTypeUndefined = idl.Type{Name: "undefined", Kind: idl.KindSimple}
