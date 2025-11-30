@@ -29,11 +29,7 @@ func TestWithAttributes(t *testing.T) {
 	l.Info("Hello", "bar", "bar-value")
 
 	assert.Equal(t, 1, len(recorder.records))
-	m := make(map[string]slog.Value)
-	recorder.records[0].Attrs(func(a slog.Attr) bool {
-		m[a.Key] = a.Value
-		return true
-	})
+	m := getRecordAttrMap(recorder.records[0])
 
 	assert.Equal(t, "foo-value", m["foo"].String())
 	assert.Equal(t, "bar-value", m["bar"].String())
@@ -47,11 +43,7 @@ func TestWithGroup(t *testing.T) {
 	l.Info("Hello", "bar", "bar-value")
 
 	assert.Equal(t, 1, len(recorder.records))
-	m := make(map[string]slog.Value)
-	recorder.records[0].Attrs(func(a slog.Attr) bool {
-		m[a.Key] = a.Value
-		return true
-	})
+	m := getRecordAttrMap(recorder.records[0])
 
 	t.Log("Keys", slices.Collect(maps.Keys(m)))
 	grpAttr, ok := m["grp"]
@@ -62,4 +54,15 @@ func TestWithGroup(t *testing.T) {
 	assert.Equal(t, 1, len(grp))
 	assert.Equal(t, "bar", grp[0].Key)
 	assert.Equal(t, "bar-value", grp[0].Value.String())
+}
+
+// getRecordAttrMap creates a Key/Value map of the attributes in an
+// [slog.Record]
+func getRecordAttrMap(r slog.Record) map[string]slog.Value {
+	m := make(map[string]slog.Value)
+	r.Attrs(func(a slog.Attr) bool {
+		m[a.Key] = a.Value
+		return true
+	})
+	return m
 }

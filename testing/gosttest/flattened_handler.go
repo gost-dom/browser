@@ -30,21 +30,18 @@ type flattenedHandler struct {
 
 // Enabled implements [slog.Handler]
 func (l flattenedHandler) Handle(ctx context.Context, r slog.Record) error {
+	if l.attrs == nil && l.group == "" {
+		return l.Handler.Handle(ctx, r)
+	}
 	if len(l.attrs) > 0 {
 		r = r.Clone()
 		r.AddAttrs(l.attrs...)
 	}
 
 	if l.group != "" {
-		attrs := make([]slog.Attr, r.NumAttrs())
-		i := 0
-		r.Attrs(func(a slog.Attr) bool {
-			attrs[i] = a
-			i++
-			return true
-		})
+		attrs := getRecordAttrs(r)
 		r = slog.NewRecord(r.Time, r.Level, r.Message, r.PC)
-		r.Add(slog.GroupAttrs(l.group, attrs...))
+		r.AddAttrs(slog.GroupAttrs(l.group, attrs...))
 	}
 	return l.Handler.Handle(ctx, r)
 }
@@ -66,4 +63,18 @@ func (h flattenedHandler) Enabled(ctx context.Context, lvl slog.Level) bool {
 // Enabled implements [slog.Handler]
 func (l flattenedHandler) WithGroup(name string) slog.Handler {
 	return flattenedHandler{l, name, nil}
+}
+
+// getRecordAttrs iterates the attributes of an [slog.Record] and creates a new
+// slice of the log attributes.
+func getRecordAttrs(r slog.Record) []slog.Attr {
+	attrs := make([]slog.Attr, r.NumAttrs())
+	i := 0
+
+	r.Attrs(func(a slog.Attr) bool {
+		attrs[i] = a
+		i++
+		return true
+	})
+	return attrs
 }
