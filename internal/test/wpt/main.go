@@ -98,7 +98,7 @@ var excludeList = []string{
 	// "dom/attributes-are-nodes",
 }
 
-type result struct {
+type testResult struct {
 	testCase TestCase
 	res      []WebPlatformTestCase
 	err      error
@@ -129,21 +129,32 @@ func filteredTests(ctx context.Context, r io.Reader, l *slog.Logger) <-chan Test
 	return ch
 }
 
-func testResults(tests <-chan TestCase, log *slog.Logger) <-chan chan result {
-	res := make(chan chan result, 64)
+// pendingTest represent a test that was started. When the test has completed,
+// the result can be read from the channel.
+type pendingTest <-chan testResult
+
+func (t pendingTest) result() testResult {
+	return <-t
+}
+
+// testResults return a channel of pending test results. The return type is a
+// channel of channels in order to have the channel reflect the order in which
+// tests were started, not when they were completed.
+func testResults(tests <-chan TestCase, log *slog.Logger) <-chan pendingTest {
+	res := make(chan pendingTest, 64)
 	go func() {
 		var grp sync.WaitGroup
 		defer func() { close(res) }()
 
 		for testCase := range tests {
 			grp.Add(1)
-			resultChan := make(chan result)
+			resultChan := make(chan testResult)
 			res <- resultChan
 			go func() {
 				defer grp.Add(-1)
 
 				testCaseRes, err := RunTestCase(testCase, log)
-				resultChan <- result{
+				resultChan <- testResult{
 					testCase: testCase,
 					res:      testCaseRes,
 					err:      err,
@@ -171,8 +182,8 @@ func main() {
 	testCaseSource := filteredTests(context.Background(), res.Body, logger)
 	var prevHeaders []string
 
-	for testCaseResultCh := range testResults(testCaseSource, logger) {
-		testCaseResult := <-testCaseResultCh
+	for pending := range testResults(testCaseSource, logger) {
+		testCaseResult := pending.result()
 		var (
 			testCase = testCaseResult.testCase
 			res      = testCaseResult.res
