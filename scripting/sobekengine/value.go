@@ -72,6 +72,14 @@ func newObject(c *scriptContext, o *sobek.Object) js.Object[jsTypeParam] {
 	return object{value{c, o}, o}
 }
 
+func (o object) Iterator() (js.Value[jsTypeParam], error) {
+	v := o.obj.GetSymbol(sobek.SymIterator)
+	if v == nil {
+		v = sobek.Undefined()
+	}
+	return newValue(o.ctx, v), nil
+}
+
 func (o object) Get(key string) (js.Value[jsTypeParam], error) {
 	v := o.obj.Get(key)
 	if v == nil {

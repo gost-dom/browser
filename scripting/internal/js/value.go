@@ -47,6 +47,7 @@ type Object[T any] interface {
 	Keys() ([]string, error)
 	Get(name string) (Value[T], error)
 	Set(name string, val Value[T]) error
+	Iterator() (Value[T], error)
 }
 
 // Class represents a JavaScript "class" that wraps a Go object.

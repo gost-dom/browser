@@ -160,6 +160,14 @@ func (o *v8Object) Dispose() {
 	}
 }
 
+func (o *v8Object) Iterator() (jsValue, error) {
+	res, err := o.Object.GetSymbol(v8go.SymbolIterator(o.iso()))
+	if err != nil {
+		return nil, err
+	}
+	return newV8Value(o.ctx, res), nil
+}
+
 func (o *v8Object) Get(name string) (jsValue, error) {
 	res, err := o.Object.Get(name)
 	if err != nil {
