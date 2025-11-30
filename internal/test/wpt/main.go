@@ -18,7 +18,6 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/scripting/v8engine"
 	xhtml "golang.org/x/net/html"
-	"golang.org/x/net/html/atom"
 )
 
 type WebPlatformTest string
@@ -256,46 +255,10 @@ func main() {
 	}
 }
 
-func save(body *xhtml.Node) (err error) {
-	f, err := os.Create("report.html")
-	if err == nil {
-		doc := &xhtml.Node{Type: xhtml.DocumentNode}
-		html := element("html")
-		doc.AppendChild(html)
-		html.AppendChild(body)
-		err = xhtml.Render(f, doc)
-	}
-	return err
-}
-
 func newLogger() *slog.Logger {
 	opts := slogpretty.DefaultOptions()
 	opts.Multiline = true
 	opts.Level = slog.LevelWarn
 	h := slogpretty.New(os.Stdout, opts)
 	return slog.New(h)
-}
-
-func element(tag string, opts ...any) *xhtml.Node {
-	res := &xhtml.Node{
-		Type:     xhtml.ElementNode,
-		DataAtom: atom.Lookup([]byte(tag)),
-		Data:     tag,
-	}
-	for _, opt := range opts {
-		switch t := opt.(type) {
-		case string:
-			res.AppendChild(&xhtml.Node{
-				Type: xhtml.TextNode,
-				Data: t,
-			})
-		case xhtml.Attribute:
-			res.Attr = append(res.Attr, t)
-		case *xhtml.Node:
-			res.AppendChild(t)
-		default:
-			panic(fmt.Sprintf("invalid element option: %v", opt))
-		}
-	}
-	return res
 }
