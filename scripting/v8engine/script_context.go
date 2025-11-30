@@ -67,6 +67,19 @@ func (context *V8ScriptContext) initializeGlobals() error {
 	context.global = newV8Object(context, context.v8ctx.Global())
 	context.global.SetNativeValue(win)
 	{
+		// For some reason ... type errors created in Go scope are not the same
+		// prototype as in JS scope.
+		typeError, err := v8go.NewTypeError(context.host.iso, "").AsObject()
+		if err != nil {
+			panic(err)
+		}
+		typeErrorCons, err := typeError.GetPrototype().Get("constructor")
+		if err != nil {
+			panic(err)
+		}
+		context.v8ctx.Global().Set("TypeError", typeErrorCons)
+	}
+	{
 		// Install window.location as a "data property".
 		//
 		// A better solution could have been an accessor property that
