@@ -3,6 +3,8 @@ package js
 import (
 	"errors"
 	"fmt"
+
+	"github.com/gost-dom/browser/internal/log"
 )
 
 // ConsumeArgument pulls one of the passed arguments and tries to convert it to
@@ -40,8 +42,8 @@ func ConsumeArgument[T, U any](
 		if errCount == 1 {
 			return result, lastErr
 		}
-		// TODO: This should eventually become a TypeError in JS
-		err = fmt.Errorf("tryParseArg: %s: %w", name, errors.Join(errs...))
+		err = args.NewTypeError(fmt.Sprintf("invalid argument: %v", value))
+		args.Logger().Warn("Error parsing JS argument", "name", name, log.ErrAttr(errors.Join(errs...)))
 		return
 	}
 }

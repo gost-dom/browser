@@ -165,7 +165,9 @@ func testResults(tests <-chan TestCase, log *slog.Logger) <-chan pendingTest {
 
 func main() {
 	logger := newLogger()
+	logger.Info("Start")
 	res, err := http.Get("https://wpt.live/MANIFEST.json")
+	logger.Info("Got WPT manifest")
 	if err != nil {
 		panic(fmt.Sprintf("load manifest: %v", err))
 	}
@@ -258,7 +260,7 @@ func main() {
 func newLogger() *slog.Logger {
 	opts := slogpretty.DefaultOptions()
 	opts.Multiline = true
-	opts.Level = slog.LevelWarn
+	opts.Level = slog.LevelInfo
 	h := slogpretty.New(os.Stdout, opts)
 	return slog.New(h)
 }

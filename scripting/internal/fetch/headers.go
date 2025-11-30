@@ -24,8 +24,11 @@ func (w Headers[T]) decodeHeadersInit(
 	scope js.Scope[T],
 	v js.Value[T],
 ) (res [][2]string, err error) {
-	if v == nil {
+	if v == nil || v.IsUndefined() {
 		return nil, nil
+	}
+	if v.IsNull() {
+		return nil, scope.NewTypeError("invalid value: null")
 	}
 	res, err = w.parseHeaderIterator2(scope, v)
 	if err == nil || (!errors.Is(err, ErrNotIterable)) {
@@ -149,3 +152,16 @@ func (w Headers[T]) CustomInitializer(jsClass js.Class[T]) {
 	iterator := js.NewIterator2(codec.EncodeStringScoped[T], codec.EncodeStringScoped[T])
 	iterator.InstallPrototype(jsClass)
 }
+
+/*
+func (w Headers[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	var init [][2]string
+	if arg, ok := cbCtx.ConsumeArg(); ok {
+		init, err = w.decodeHeadersInit(cbCtx, arg)
+		if err != nil {
+			return
+		}
+	}
+	return w.CreateInstance(cbCtx, init...)
+}
+*/

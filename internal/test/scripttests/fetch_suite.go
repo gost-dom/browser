@@ -343,4 +343,15 @@ func testHeaders(t *testing.T, e html.ScriptEngine) {
 		assert.Equal(t, "Bar,Foo", win.MustEval("keys.join(',')"))
 		assert.Equal(t, "bar-value,foo-value", win.MustEval("values.join(',')"))
 	})
+
+	t.Run("Construct with null is a TypeError", func(t *testing.T) {
+		b := browser.New(browser.WithScriptEngine(e))
+		win := htmltest.NewWindowHelper(t, b.NewWindow())
+		win.MustRun(`
+			var err
+			try { new Headers(null) } catch(e) { err = e }
+		`)
+		assert.True(t, win.MustEval("err instanceof TypeError").(bool))
+		assert.Equal(t, "TypeError", win.MustEval("Object.getPrototypeOf(err).constructor.name"))
+	})
 }
