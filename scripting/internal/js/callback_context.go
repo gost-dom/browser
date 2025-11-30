@@ -8,6 +8,7 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/entity"
+	"github.com/gost-dom/browser/internal/log"
 )
 
 var ErrMissingArgument = errors.New("missing argument")
@@ -85,6 +86,23 @@ type CallbackContext[T any] interface {
 }
 
 type FunctionCallback[T any] func(CallbackContext[T]) (Value[T], error)
+
+func (c FunctionCallback[T]) WithLog(class, method string) FunctionCallback[T] {
+	attrs := make([]any, 0, 2)
+	if class != "" {
+		attrs = append(attrs, slog.String("class", class))
+	}
+	attrs = append(attrs, slog.String("method", method))
+	return func(cbCtx CallbackContext[T]) (res Value[T], err error) {
+		l := cbCtx.Logger().With(attrs...)
+		l.Debug("JS function callback enter", ThisLogAttr(cbCtx), ArgsLogAttr(cbCtx))
+		defer func() {
+			l.Debug("JS function callback exit", LogAttr("res", res), log.ErrAttr(err))
+		}()
+		return c(cbCtx)
+
+	}
+}
 
 type HandlerGetterCallback[T, U any] func(scope CallbackScope[T], key U) (Value[T], error)
 type HandlerSetterCallback[T, U any] func(scope CallbackScope[T], key U, value Value[T]) error

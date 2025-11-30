@@ -8,6 +8,7 @@ import (
 type class struct {
 	ctx            *scriptContext
 	cb             js.FunctionCallback[jsTypeParam]
+	name           string
 	prototype      *sobek.Object
 	indexedHandler *js.IndexedHandlerCallbacks[jsTypeParam]
 	instanceAttrs  map[string]attributeHandler
@@ -61,7 +62,8 @@ func (c class) CreatePrototypeMethod(
 	name string,
 	cb js.FunctionCallback[jsTypeParam],
 ) {
-	if err := c.prototype.Set(name, wrapJSCallback(c.ctx, cb)); err != nil {
+
+	if err := c.prototype.Set(name, wrapJSCallback(c.ctx, cb.WithLog(c.name, name))); err != nil {
 		panic(err)
 	}
 }
@@ -76,7 +78,10 @@ func (c class) CreatePrototypeAttribute(
 }
 
 func (c class) CreateIteratorMethod(cb js.FunctionCallback[jsTypeParam]) {
-	c.prototype.SetSymbol(sobek.SymIterator, wrapJSCallback(c.ctx, cb))
+	c.prototype.SetSymbol(
+		sobek.SymIterator,
+		wrapJSCallback(c.ctx, cb.WithLog(c.name, "Symbol.Iterator")),
+	)
 }
 
 func (c *class) NewInstance(native any) (js.Object[jsTypeParam], error) {

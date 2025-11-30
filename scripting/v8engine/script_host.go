@@ -211,8 +211,8 @@ func (host *V8ScriptHost) CreateClass(
 	extends js.Class[jsTypeParam],
 	callback js.FunctionCallback[jsTypeParam],
 ) js.Class[jsTypeParam] {
-	ft := wrapV8Callback(host, callback)
-	result := newV8Class(host, ft)
+	ft := wrapV8Callback(host, callback.WithLog(name, "Constructor"))
+	result := newV8Class(host, name, ft)
 	result.inst.SetInternalFieldCount(1)
 	if extends != nil {
 		ft.Inherit(extends.(v8Class).ft)
@@ -234,7 +234,7 @@ func (host *V8ScriptHost) CreateFunction(
 	name string,
 	callback js.FunctionCallback[jsTypeParam],
 ) {
-	ft := wrapV8Callback(host, callback)
+	ft := wrapV8Callback(host, callback.WithLog("", name))
 	host.windowTemplate.Set(name, ft)
 }
 

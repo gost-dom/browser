@@ -226,7 +226,7 @@ func newV8GlobalObject(host *V8ScriptHost, tmpl *v8go.ObjectTemplate) v8GlobalOb
 }
 
 func (o v8GlobalObject) CreateFunction(name string, cb js.FunctionCallback[jsTypeParam]) {
-	o.tmpl.Set(name, wrapV8Callback(o.host, cb))
+	o.tmpl.Set(name, wrapV8Callback(o.host, cb.WithLog("", name)))
 }
 
 type v8Class struct {
@@ -234,19 +234,21 @@ type v8Class struct {
 	ft    *v8go.FunctionTemplate
 	proto *v8go.ObjectTemplate
 	inst  *v8go.ObjectTemplate
+
+	name string
 }
 
-func newV8Class(host *V8ScriptHost, ft *v8go.FunctionTemplate) v8Class {
-	return v8Class{host, ft, ft.PrototypeTemplate(), ft.InstanceTemplate()}
+func newV8Class(host *V8ScriptHost, name string, ft *v8go.FunctionTemplate) v8Class {
+	return v8Class{host, ft, ft.PrototypeTemplate(), ft.InstanceTemplate(), name}
 }
 
 func (c v8Class) CreateIteratorMethod(cb js.FunctionCallback[jsTypeParam]) {
-	v8cb := wrapV8Callback(c.host, cb)
+	v8cb := wrapV8Callback(c.host, cb.WithLog(c.name, "Symbol.iterator"))
 	it := v8go.SymbolIterator(c.host.iso)
 	c.proto.SetSymbol(it, v8cb, v8go.ReadOnly)
 }
 func (c v8Class) CreatePrototypeMethod(name string, cb js.FunctionCallback[jsTypeParam]) {
-	v8cb := wrapV8Callback(c.host, cb)
+	v8cb := wrapV8Callback(c.host, cb.WithLog(c.name, name))
 	c.proto.Set(name, v8cb, v8go.ReadOnly)
 }
 
@@ -255,8 +257,8 @@ func (c v8Class) CreatePrototypeAttribute(
 	getter js.FunctionCallback[jsTypeParam],
 	setter js.FunctionCallback[jsTypeParam],
 ) {
-	v8Getter := wrapV8Callback(c.host, getter)
-	v8Setter := wrapV8Callback(c.host, setter)
+	v8Getter := wrapV8Callback(c.host, getter.WithLog(c.name, fmt.Sprintf("%s get", name)))
+	v8Setter := wrapV8Callback(c.host, setter.WithLog(c.name, fmt.Sprintf("%s set", name)))
 	c.proto.SetAccessorProperty(name, v8Getter, v8Setter, v8go.None)
 }
 

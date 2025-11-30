@@ -129,7 +129,7 @@ func (m *scriptContext) createLocationInstance() *sobek.Object {
 }
 
 func (c *scriptContext) CreateFunction(name string, cb js.FunctionCallback[jsTypeParam]) {
-	c.vm.Set(name, wrapJSCallback(c, cb))
+	c.vm.Set(name, wrapJSCallback(c, cb.WithLog("", name)))
 }
 
 func (c *scriptContext) RunScript(script, src string) {
@@ -144,7 +144,7 @@ func (c *scriptContext) CreateClass(
 	name string, extends js.Class[jsTypeParam],
 	cb js.FunctionCallback[jsTypeParam],
 ) js.Class[jsTypeParam] {
-	cls := &class{ctx: c, cb: cb, instanceAttrs: make(map[string]attributeHandler)}
+	cls := &class{ctx: c, cb: cb, name: name, instanceAttrs: make(map[string]attributeHandler)}
 	constructor := c.vm.ToValue(cls.constructorCb).(*sobek.Object)
 	constructor.DefineDataProperty(
 		"name",

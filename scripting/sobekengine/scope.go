@@ -146,37 +146,32 @@ func (f scope) NewIterator(
 	obj := newObject(f.scriptContext, jsIterator)
 	obj.SetNativeValue(iter)
 
-	jsIterator.Set(
-		"next",
-		wrapJSCallback(
-			f.scriptContext,
-			func(cbCtx js.CallbackContext[jsTypeParam]) (js.Value[jsTypeParam], error) {
-				instance, ok := (cbCtx.This().NativeValue()).(*iterator)
-				if !ok {
-					return cbCtx.ReturnWithTypeError("Not an iterator instance")
-				}
-				res := f.vm.NewObject()
-				item, err, ok := instance.next()
-				res.Set("done", f.vm.ToValue(!ok))
-				if !ok {
-					instance.stop()
-				} else {
-					if err == nil {
-						res.Set("value", item.Self().value)
-					}
-				}
-				return newObject(f.scriptContext, res), err
-			},
-		),
-	)
+	var nextJs js.FunctionCallback[jsTypeParam] = func(cbCtx js.CallbackContext[jsTypeParam]) (js.Value[jsTypeParam], error) {
+		instance, ok := (cbCtx.This().NativeValue()).(*iterator)
+		if !ok {
+			return cbCtx.ReturnWithTypeError("Not an iterator instance")
+		}
+		res := f.vm.NewObject()
+		item, err, ok := instance.next()
+		res.Set("done", f.vm.ToValue(!ok))
+		if !ok {
+			instance.stop()
+		} else {
+			if err == nil {
+				res.Set("value", item.Self().value)
+			}
+		}
+		return newObject(f.scriptContext, res), err
+	}
+
+	var iteratorJS js.FunctionCallback[jsTypeParam] = func(cbCtx js.CallbackContext[jsTypeParam]) (js.Value[jsTypeParam], error) {
+		return f.NewIterator(items), nil
+	}
+
+	jsIterator.Set("next", wrapJSCallback(f.scriptContext, nextJs.WithLog("Iterator", "next")))
 	jsIterator.SetSymbol(
 		sobek.SymIterator,
-		wrapJSCallback(
-			f.scriptContext,
-			func(cbCtx js.CallbackContext[jsTypeParam]) (js.Value[jsTypeParam], error) {
-				return f.NewIterator(items), nil
-			},
-		),
+		wrapJSCallback(f.scriptContext, iteratorJS.WithLog("Iterator", "Symbol.iterator")),
 	)
 
 	return obj

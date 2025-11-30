@@ -25,10 +25,12 @@ func newV8Iterator(host *V8ScriptHost) v8Iterator {
 		v8go.NewObjectTemplate(host.iso),
 		v8go.NewObjectTemplate(host.iso),
 	}
-	iterator.ot.Set("next", wrapV8Callback(host, iterator.next))
+	var nextJs js.FunctionCallback[jsTypeParam] = iterator.next
+	var iteratorJs js.FunctionCallback[jsTypeParam] = iterator.cloneIterator
+	iterator.ot.Set("next", wrapV8Callback(host, nextJs.WithLog("Iterator", "next")))
 	iterator.ot.SetSymbol(
 		v8go.SymbolIterator(iso),
-		wrapV8Callback(host, iterator.cloneIterator),
+		wrapV8Callback(host, iteratorJs.WithLog("Iterator", "Symbol.iterator")),
 	)
 	iterator.ot.SetInternalFieldCount(1)
 	return iterator
