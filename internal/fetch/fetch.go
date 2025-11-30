@@ -3,6 +3,7 @@ package fetch
 import (
 	"context"
 	"io"
+	"iter"
 	"net/http"
 	"strings"
 
@@ -17,7 +18,6 @@ type Fetch struct {
 	BrowsingContext html.BrowsingContext
 }
 
-type HeaderOption interface{}
 type Headers http.Header
 
 func (h Headers) Append(name, val string) {
@@ -42,6 +42,18 @@ func (h Headers) Has(name string) bool {
 
 func (h Headers) Set(name, value string) {
 	h[name] = []string{value}
+}
+
+func (h Headers) All() iter.Seq2[string, string] {
+	return func(yield func(string, string) bool) {
+		for n, v := range h {
+			if len(v) > 0 {
+				if !yield(n, v[0]) {
+					return
+				}
+			}
+		}
+	}
 }
 
 func New(bc html.BrowsingContext) Fetch { return Fetch{bc} }

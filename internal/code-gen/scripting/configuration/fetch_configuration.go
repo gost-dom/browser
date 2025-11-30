@@ -27,4 +27,5 @@ func configureFetchSpecs(specs *WebAPIConfig) {
 
 	headers := specs.Type("Headers")
 	headers.MarkMembersAsNotImplemented("getSetCookie")
+	headers.RunCustomCode = true
 }

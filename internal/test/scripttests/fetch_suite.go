@@ -99,6 +99,7 @@ func testFetch(t *testing.T, e html.ScriptEngine) {
 	t.Run("404 for not found resource", func(t *testing.T) { testNotFound(t, e) })
 	t.Run("ReadableStream body", func(t *testing.T) { testReadableStream(t, e) })
 	t.Run("Header", func(t *testing.T) { testHeaders(t, e) })
+	t.Run("Headers are iterable", func(t *testing.T) { testHeadersAreIterable(t, e) })
 }
 
 func testFetchAbortSignal(t *testing.T, e html.ScriptEngine) {
@@ -299,4 +300,28 @@ func testHeaders(t *testing.T, e html.ScriptEngine) {
 		`)
 		assert.True(t, res.(bool), "TypeError is thrown on set")
 	})
+}
+
+func testHeadersAreIterable(t *testing.T, e html.ScriptEngine) {
+	win := initWindow(t, e, nil)
+	if !(assert.Equal(
+		t, "true",
+		win.MustEval("Headers.prototype.hasOwnProperty(Symbol.iterator).toString()"),
+		"Headers are iterable") &&
+		assert.Equal(t, "function", win.MustEval("typeof (new Headers().keys)"))) {
+		return
+	}
+
+	win.MustRun(`
+		const h = new Headers(new Proxy({ Foo: "foo-value", Bar: "bar-value" },{}))
+		var keys = []
+		var values = []
+		for(const [key,val] of h.entries()) {
+			keys.push(key)
+			values.push(val)
+		}
+	`)
+
+	assert.Equal(t, "Foo,Bar", win.MustEval("keys.join(',')"))
+	assert.Equal(t, "foo-value,bar-value", win.MustEval("values.join(',')"))
 }

@@ -17,6 +17,7 @@ func NewHeaders[T any](scriptHost js.ScriptEngine[T]) *Headers[T] {
 
 func (wrapper Headers[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
+	wrapper.CustomInitializer(jsClass)
 }
 
 func (w Headers[T]) installPrototype(jsClass js.Class[T]) {
