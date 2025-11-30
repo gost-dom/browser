@@ -19,6 +19,11 @@ func NewBrowserHelper(t testing.TB, b *browser.Browser) BrowserHelper {
 	return BrowserHelper{b, t}
 }
 
+func (b BrowserHelper) NewWindow() WindowHelper {
+	b.t.Helper()
+	return NewWindowHelper(b.t, b.Browser.NewWindow())
+}
+
 func (b BrowserHelper) OpenWindow(url string) WindowHelper {
 	b.t.Helper()
 	win, err := b.Open(url)

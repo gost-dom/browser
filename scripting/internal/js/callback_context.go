@@ -88,6 +88,9 @@ type CallbackContext[T any] interface {
 type FunctionCallback[T any] func(CallbackContext[T]) (Value[T], error)
 
 func (c FunctionCallback[T]) WithLog(class, method string) FunctionCallback[T] {
+	if c == nil {
+		return nil
+	}
 	attrs := make([]any, 0, 2)
 	if class != "" {
 		attrs = append(attrs, slog.String("class", class))

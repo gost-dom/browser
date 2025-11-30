@@ -79,7 +79,12 @@ func initWindow(
 		browser.WithHandler(h),
 		browser.WithScriptEngine(e),
 	))
-	return b.OpenWindow("https://example.com/index.html")
+	if h == nil {
+		t.Cleanup(b.Close)
+		return b.NewWindow()
+	} else {
+		return b.OpenWindow("https://example.com/index.html")
+	}
 }
 
 func testFetch(t *testing.T, e html.ScriptEngine) {

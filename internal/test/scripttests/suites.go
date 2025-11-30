@@ -15,6 +15,7 @@ func runSuite(s suite.TestingSuite) func(t *testing.T) {
 }
 
 func RunSuites(t *testing.T, e html.ScriptEngine) {
+	t.Run("ScriptEngineBehaviour", func(t *testing.T) { testScriptEngineBehaviour(t, e) })
 	t.Run("SharowRoot", runSuite(NewShadowRootSuite(e)))
 	t.Run("DocumentFragment", runSuite(NewDocumentFragmentSuite(e)))
 	t.Run("XMLHttpRequest", runSuite(NewXMLHttpRequestSuite(e)))
