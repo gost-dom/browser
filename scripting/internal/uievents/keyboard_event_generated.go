@@ -3,10 +3,8 @@
 package uievents
 
 import (
-	log "github.com/gost-dom/browser/internal/log"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
-	"log/slog"
 )
 
 func (wrapper KeyboardEvent[T]) Initialize(jsClass js.Class[T]) {
@@ -27,11 +25,6 @@ func (w KeyboardEvent[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w KeyboardEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "KeyboardEvent"), slog.String("Method", "Constructor"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	type_, errArg1 := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
@@ -47,82 +40,37 @@ func (w KeyboardEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value
 }
 
 func (w KeyboardEvent[T]) getModifierState(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "KeyboardEvent"), slog.String("Method", "getModifierState"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.getModifierState: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w KeyboardEvent[T]) code(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "KeyboardEvent"), slog.String("Method", "code"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.code: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w KeyboardEvent[T]) location(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "KeyboardEvent"), slog.String("Method", "location"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.location: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w KeyboardEvent[T]) ctrlKey(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "KeyboardEvent"), slog.String("Method", "ctrlKey"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.ctrlKey: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w KeyboardEvent[T]) shiftKey(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "KeyboardEvent"), slog.String("Method", "shiftKey"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.shiftKey: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w KeyboardEvent[T]) altKey(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "KeyboardEvent"), slog.String("Method", "altKey"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.altKey: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w KeyboardEvent[T]) metaKey(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "KeyboardEvent"), slog.String("Method", "metaKey"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.metaKey: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w KeyboardEvent[T]) repeat(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "KeyboardEvent"), slog.String("Method", "repeat"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.repeat: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w KeyboardEvent[T]) isComposing(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "KeyboardEvent"), slog.String("Method", "isComposing"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.isComposing: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

@@ -5,10 +5,8 @@ package dom
 import (
 	"errors"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
-	log "github.com/gost-dom/browser/internal/log"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
-	"log/slog"
 )
 
 type MutationObserver[T any] struct{}
@@ -28,11 +26,6 @@ func (w MutationObserver[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w MutationObserver[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "MutationObserver"), slog.String("Method", "Constructor"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	callback, errArg1 := js.ConsumeArgument(cbCtx, "callback", nil, w.decodeMutationCallback)
 	if errArg1 != nil {
 		return nil, errArg1
@@ -41,11 +34,6 @@ func (w MutationObserver[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Va
 }
 
 func (w MutationObserver[T]) observe(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "MutationObserver"), slog.String("Method", "observe"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, errInst := js.As[dominterfaces.MutationObserver](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -61,11 +49,6 @@ func (w MutationObserver[T]) observe(cbCtx js.CallbackContext[T]) (res js.Value[
 }
 
 func (w MutationObserver[T]) disconnect(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "MutationObserver"), slog.String("Method", "disconnect"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, err := js.As[dominterfaces.MutationObserver](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -75,11 +58,6 @@ func (w MutationObserver[T]) disconnect(cbCtx js.CallbackContext[T]) (res js.Val
 }
 
 func (w MutationObserver[T]) takeRecords(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "MutationObserver"), slog.String("Method", "takeRecords"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, err := js.As[dominterfaces.MutationObserver](cbCtx.Instance())
 	if err != nil {
 		return nil, err

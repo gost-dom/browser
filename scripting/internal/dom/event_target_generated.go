@@ -5,10 +5,8 @@ package dom
 import (
 	"errors"
 	event "github.com/gost-dom/browser/dom/event"
-	log "github.com/gost-dom/browser/internal/log"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
-	"log/slog"
 )
 
 type EventTarget[T any] struct{}
@@ -28,20 +26,10 @@ func (w EventTarget[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w EventTarget[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "EventTarget"), slog.String("Method", "Constructor"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	return w.CreateInstance(cbCtx)
 }
 
 func (w EventTarget[T]) addEventListener(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "EventTarget"), slog.String("Method", "addEventListener"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, errInst := js.As[event.EventTarget](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -58,11 +46,6 @@ func (w EventTarget[T]) addEventListener(cbCtx js.CallbackContext[T]) (res js.Va
 }
 
 func (w EventTarget[T]) removeEventListener(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "EventTarget"), slog.String("Method", "removeEventListener"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, errInst := js.As[event.EventTarget](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -79,11 +62,6 @@ func (w EventTarget[T]) removeEventListener(cbCtx js.CallbackContext[T]) (res js
 }
 
 func (w EventTarget[T]) dispatchEvent(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "EventTarget"), slog.String("Method", "dispatchEvent"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, errInst := js.As[event.EventTarget](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst

@@ -5,10 +5,8 @@ package dom
 import (
 	"errors"
 	dom "github.com/gost-dom/browser/dom"
-	log "github.com/gost-dom/browser/internal/log"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
-	"log/slog"
 )
 
 type Node[T any] struct{}
@@ -46,20 +44,10 @@ func (w Node[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w Node[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Node"), slog.String("Method", "Constructor"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w Node[T]) getRootNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Node"), slog.String("Method", "getRootNode"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -73,11 +61,6 @@ func (w Node[T]) getRootNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err 
 }
 
 func (w Node[T]) cloneNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Node"), slog.String("Method", "cloneNode"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -91,11 +74,6 @@ func (w Node[T]) cloneNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err er
 }
 
 func (w Node[T]) isEqualNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Node"), slog.String("Method", "isEqualNode"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -109,11 +87,6 @@ func (w Node[T]) isEqualNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err 
 }
 
 func (w Node[T]) isSameNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Node"), slog.String("Method", "isSameNode"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -127,11 +100,6 @@ func (w Node[T]) isSameNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err e
 }
 
 func (w Node[T]) contains(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Node"), slog.String("Method", "contains"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -145,11 +113,6 @@ func (w Node[T]) contains(cbCtx js.CallbackContext[T]) (res js.Value[T], err err
 }
 
 func (w Node[T]) insertBefore(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Node"), slog.String("Method", "insertBefore"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -168,11 +131,6 @@ func (w Node[T]) insertBefore(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 }
 
 func (w Node[T]) appendChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Node"), slog.String("Method", "appendChild"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -189,11 +147,6 @@ func (w Node[T]) appendChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err 
 }
 
 func (w Node[T]) replaceChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Node"), slog.String("Method", "replaceChild"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -212,11 +165,6 @@ func (w Node[T]) replaceChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 }
 
 func (w Node[T]) removeChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Node"), slog.String("Method", "removeChild"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -233,11 +181,6 @@ func (w Node[T]) removeChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err 
 }
 
 func (w Node[T]) nodeName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Node"), slog.String("Method", "nodeName"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -247,11 +190,6 @@ func (w Node[T]) nodeName(cbCtx js.CallbackContext[T]) (res js.Value[T], err err
 }
 
 func (w Node[T]) isConnected(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Node"), slog.String("Method", "isConnected"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -261,11 +199,6 @@ func (w Node[T]) isConnected(cbCtx js.CallbackContext[T]) (res js.Value[T], err 
 }
 
 func (w Node[T]) ownerDocument(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Node"), slog.String("Method", "ownerDocument"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -275,11 +208,6 @@ func (w Node[T]) ownerDocument(cbCtx js.CallbackContext[T]) (res js.Value[T], er
 }
 
 func (w Node[T]) parentNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Node"), slog.String("Method", "parentNode"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -289,11 +217,6 @@ func (w Node[T]) parentNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err e
 }
 
 func (w Node[T]) parentElement(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Node"), slog.String("Method", "parentElement"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -303,11 +226,6 @@ func (w Node[T]) parentElement(cbCtx js.CallbackContext[T]) (res js.Value[T], er
 }
 
 func (w Node[T]) childNodes(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Node"), slog.String("Method", "childNodes"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -317,11 +235,6 @@ func (w Node[T]) childNodes(cbCtx js.CallbackContext[T]) (res js.Value[T], err e
 }
 
 func (w Node[T]) firstChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Node"), slog.String("Method", "firstChild"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -331,11 +244,6 @@ func (w Node[T]) firstChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err e
 }
 
 func (w Node[T]) lastChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Node"), slog.String("Method", "lastChild"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -345,11 +253,6 @@ func (w Node[T]) lastChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err er
 }
 
 func (w Node[T]) previousSibling(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Node"), slog.String("Method", "previousSibling"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -359,11 +262,6 @@ func (w Node[T]) previousSibling(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 }
 
 func (w Node[T]) nextSibling(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Node"), slog.String("Method", "nextSibling"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {
 		return nil, err

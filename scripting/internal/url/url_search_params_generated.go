@@ -5,10 +5,8 @@ package url
 import (
 	"errors"
 	urlinterfaces "github.com/gost-dom/browser/internal/interfaces/url-interfaces"
-	log "github.com/gost-dom/browser/internal/log"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
-	"log/slog"
 )
 
 type URLSearchParams[T any] struct{}
@@ -35,11 +33,6 @@ func (w URLSearchParams[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w URLSearchParams[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "URLSearchParams"), slog.String("Method", "append"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -55,11 +48,6 @@ func (w URLSearchParams[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T]
 }
 
 func (w URLSearchParams[T]) delete(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "URLSearchParams"), slog.String("Method", "delete"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -81,11 +69,6 @@ func (w URLSearchParams[T]) delete(cbCtx js.CallbackContext[T]) (res js.Value[T]
 }
 
 func (w URLSearchParams[T]) get(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "URLSearchParams"), slog.String("Method", "get"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -99,11 +82,6 @@ func (w URLSearchParams[T]) get(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 }
 
 func (w URLSearchParams[T]) getAll(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "URLSearchParams"), slog.String("Method", "getAll"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -117,11 +95,6 @@ func (w URLSearchParams[T]) getAll(cbCtx js.CallbackContext[T]) (res js.Value[T]
 }
 
 func (w URLSearchParams[T]) has(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "URLSearchParams"), slog.String("Method", "has"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -143,11 +116,6 @@ func (w URLSearchParams[T]) has(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 }
 
 func (w URLSearchParams[T]) set(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "URLSearchParams"), slog.String("Method", "set"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -163,11 +131,6 @@ func (w URLSearchParams[T]) set(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 }
 
 func (w URLSearchParams[T]) sort(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "URLSearchParams"), slog.String("Method", "sort"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, err := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -177,11 +140,6 @@ func (w URLSearchParams[T]) sort(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 }
 
 func (w URLSearchParams[T]) toString(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "URLSearchParams"), slog.String("Method", "toString"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, err := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -191,11 +149,6 @@ func (w URLSearchParams[T]) toString(cbCtx js.CallbackContext[T]) (res js.Value[
 }
 
 func (w URLSearchParams[T]) size(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "URLSearchParams"), slog.String("Method", "size"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, err := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if err != nil {
 		return nil, err

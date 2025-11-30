@@ -5,10 +5,8 @@ package dom
 import (
 	"errors"
 	dom "github.com/gost-dom/browser/dom"
-	log "github.com/gost-dom/browser/internal/log"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
-	"log/slog"
 )
 
 type Attr[T any] struct{}
@@ -29,20 +27,10 @@ func (w Attr[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w Attr[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Attr"), slog.String("Method", "Constructor"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
 func (w Attr[T]) localName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Attr"), slog.String("Method", "localName"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, err := js.As[dom.Attr](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -52,11 +40,6 @@ func (w Attr[T]) localName(cbCtx js.CallbackContext[T]) (res js.Value[T], err er
 }
 
 func (w Attr[T]) name(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Attr"), slog.String("Method", "name"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, err := js.As[dom.Attr](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -66,11 +49,6 @@ func (w Attr[T]) name(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) 
 }
 
 func (w Attr[T]) value(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Attr"), slog.String("Method", "value"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, err := js.As[dom.Attr](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -80,11 +58,6 @@ func (w Attr[T]) value(cbCtx js.CallbackContext[T]) (res js.Value[T], err error)
 }
 
 func (w Attr[T]) setValue(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Attr"), slog.String("Method", "setValue"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, err0 := js.As[dom.Attr](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err = errors.Join(err0, err1)
@@ -96,11 +69,6 @@ func (w Attr[T]) setValue(cbCtx js.CallbackContext[T]) (res js.Value[T], err err
 }
 
 func (w Attr[T]) ownerElement(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Attr"), slog.String("Method", "ownerElement"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, err := js.As[dom.Attr](cbCtx.Instance())
 	if err != nil {
 		return nil, err

@@ -5,10 +5,8 @@ package fetch
 import (
 	"errors"
 	fetch "github.com/gost-dom/browser/internal/fetch"
-	log "github.com/gost-dom/browser/internal/log"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
-	"log/slog"
 )
 
 type Headers[T any] struct{}
@@ -31,11 +29,6 @@ func (w Headers[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w Headers[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Headers"), slog.String("Method", "Constructor"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	init, errArg1 := js.ConsumeArgument(cbCtx, "init", nil, w.decodeHeadersInit)
 	if errArg1 != nil {
 		return nil, errArg1
@@ -44,11 +37,6 @@ func (w Headers[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 }
 
 func (w Headers[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Headers"), slog.String("Method", "append"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, errInst := js.As[fetch.Headers](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -64,11 +52,6 @@ func (w Headers[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err er
 }
 
 func (w Headers[T]) delete(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Headers"), slog.String("Method", "delete"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, errInst := js.As[fetch.Headers](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -82,11 +65,6 @@ func (w Headers[T]) delete(cbCtx js.CallbackContext[T]) (res js.Value[T], err er
 }
 
 func (w Headers[T]) get(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Headers"), slog.String("Method", "get"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, errInst := js.As[fetch.Headers](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -100,20 +78,10 @@ func (w Headers[T]) get(cbCtx js.CallbackContext[T]) (res js.Value[T], err error
 }
 
 func (w Headers[T]) getSetCookie(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Headers"), slog.String("Method", "getSetCookie"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	return codec.EncodeCallbackErrorf(cbCtx, "Headers.getSetCookie: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func (w Headers[T]) has(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Headers"), slog.String("Method", "has"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, errInst := js.As[fetch.Headers](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -127,11 +95,6 @@ func (w Headers[T]) has(cbCtx js.CallbackContext[T]) (res js.Value[T], err error
 }
 
 func (w Headers[T]) set(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	l := cbCtx.Logger().With(slog.String("IdlInterface", "Headers"), slog.String("Method", "set"))
-	l.Debug("JS function callback enter", js.ThisLogAttr(cbCtx), js.ArgsLogAttr(cbCtx))
-	defer func() {
-		l.Debug("JS function callback exit", js.LogAttr("res", res), log.ErrAttr(err))
-	}()
 	instance, errInst := js.As[fetch.Headers](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst

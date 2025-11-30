@@ -28,7 +28,7 @@ func (cb CallbackMethods) CallbackFunction(name string, body g.Generator) g.Gene
 			g.Raw(jen.Id("err").Add(g.NewType("error").Generate())),
 		),
 		Body: g.StatementList(
-			cb.LogCall(name, cb.CbCtx()),
+			// cb.LogCall(name, cb.CbCtx()),
 			body,
 		),
 	}
