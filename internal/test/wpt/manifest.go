@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"iter"
 	"maps"
 	"path"
@@ -78,6 +79,10 @@ type Manifest struct {
 type TestCase struct {
 	PathElements []string
 	Path         string
+}
+
+func (c TestCase) URL() string {
+	return fmt.Sprintf("https://wpt.live/%s", c.Path)
 }
 
 func (m Manifest) All() iter.Seq[TestCase] {

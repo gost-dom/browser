@@ -76,11 +76,10 @@ func RunTestCase(tc TestCase, log *slog.Logger) ([]WebPlatformTestCase, error) {
 	log = log.With(slog.String("TestCase", path))
 	log.Info("Start test")
 
-	url := fmt.Sprintf("https://wpt.live/%s", path)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
-	suite := WebPlatformTest(url)
+	suite := WebPlatformTest(tc.URL())
 	return suite.Run(ctx, log)
 }
 
@@ -88,7 +87,6 @@ func RunTestCase(tc TestCase, log *slog.Logger) ([]WebPlatformTestCase, error) {
 // included.
 var includeList = []string{
 	"dom/nodes/Document-getElementById",
-	// "fetch/api",
 }
 
 // excludeList filters individual subpaths that would have been included from
@@ -209,6 +207,13 @@ func main() {
 			continue
 		}
 
+		body.AppendChild(
+			element("div", element("span", "Full path: "), element("a",
+				xhtml.Attribute{Key: "href", Val: testCase.URL()},
+				xhtml.Attribute{Key: "target", Val: "_blank"},
+				testCase.URL())),
+		)
+
 		logger.Error("ERROR", "err", err)
 		errs = append(errs, err)
 
@@ -284,6 +289,10 @@ func element(tag string, opts ...any) *xhtml.Node {
 				Type: xhtml.TextNode,
 				Data: t,
 			})
+		case xhtml.Attribute:
+			res.Attr = append(res.Attr, t)
+		case *xhtml.Node:
+			res.AppendChild(t)
 		default:
 			panic(fmt.Sprintf("invalid element option: %v", opt))
 		}
