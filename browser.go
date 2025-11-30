@@ -199,12 +199,13 @@ func (b *Browser) createOptions(location string) WindowOptions {
 // Note: If a browser is initialized by passing a [context.Context] to the
 // [WithContext] option, it will be closed if the context is cancelled.
 func (b *Browser) Close() {
-	b.logger().Info("Browser: Close()")
 	b.closeLock.Lock()
 	defer b.closeLock.Unlock()
 	if b.Closed() {
 		return
 	}
+
+	b.logger().Info("Browser: Close()")
 
 	for _, win := range b.windows {
 		win.Close()
