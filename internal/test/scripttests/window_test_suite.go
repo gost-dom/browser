@@ -29,6 +29,7 @@ func (s *WindowTestSuite) TestWindowConstructor() {
 		}
 		error && Object.getPrototypeOf(error).constructor.name
 	`)).To(Equal("TypeError"))
+	s.Expect(s.Eval("error instanceof TypeError")).To(BeTrue())
 }
 
 func (s *WindowTestSuite) TestDocumentProperty() {
