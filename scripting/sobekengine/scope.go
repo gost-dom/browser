@@ -104,9 +104,7 @@ func (f scope) NewString(v string) js.Value[jsTypeParam] {
 
 // NewTypeError implements [js.ValueFactory].
 func (f scope) NewTypeError(v string) error {
-	// TODO: Don't throw, create some kind of _wrapper_ type.
-	// https://github.com/gost-dom/browser/issues/156
-	panic(f.vm.NewTypeError(v))
+	return sobekError{f.vm.NewTypeError(v)}
 }
 
 func (c scope) NewPromise() js.Promise[jsTypeParam] { return newPromise(c.scriptContext) }

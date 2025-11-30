@@ -71,11 +71,20 @@ func (ctx *callbackContext) Argument(index int) sobek.Value {
 func wrapJSCallback(ctx *scriptContext, cb js.FunctionCallback[jsTypeParam]) sobek.Value {
 	return ctx.vm.ToValue(func(c sobek.FunctionCall) sobek.Value {
 		res, err := cb(newArgumentHelper(ctx, c))
-		if err != nil {
-			panic(ctx.vm.ToValue(err))
-		}
+		panicIfError(ctx, err)
 		return unwrapValue(res)
 	})
+}
+
+func panicIfError(ctx *scriptContext, err error) {
+	if err != nil {
+		if sobekErr, ok := err.(sobekError); ok {
+			panic(sobekErr.Object)
+		} else {
+			panic(ctx.vm.ToValue(err))
+		}
+	}
+
 }
 
 func (c *callbackContext) Args() []js.Value[jsTypeParam] {
