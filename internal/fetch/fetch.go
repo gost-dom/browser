@@ -43,9 +43,13 @@ func (h Headers) Append(name, val string) error {
 	return err
 }
 
-func (h Headers) Delete(name string) {
-	httpH := http.Header(h)
-	httpH.Del(name)
+func (h Headers) Delete(name string) error {
+	err := validateHeaderName(name)
+	if err == nil {
+		httpH := http.Header(h)
+		httpH.Del(name)
+	}
+	return err
 }
 
 func (h Headers) Get(name string) (string, bool) {
