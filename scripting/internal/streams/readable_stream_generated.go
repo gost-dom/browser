@@ -3,7 +3,7 @@
 package streams
 
 import (
-	"errors"
+	gosterror "github.com/gost-dom/browser/internal/gosterror"
 	streams "github.com/gost-dom/browser/internal/streams"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
@@ -31,7 +31,7 @@ func (w ReadableStream[T]) installPrototype(jsClass js.Class[T]) {
 func (w ReadableStream[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	underlyingSource, errArg1 := js.ConsumeArgument(cbCtx, "underlyingSource", codec.ZeroValue, w.decodeObject)
 	strategy, errArg2 := js.ConsumeArgument(cbCtx, "strategy", nil, w.decodeQueuingStrategy)
-	err = errors.Join(errArg1, errArg2)
+	err = gosterror.First(errArg1, errArg2)
 	if err != nil {
 		return nil, err
 	}

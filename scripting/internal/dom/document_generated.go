@@ -3,8 +3,8 @@
 package dom
 
 import (
-	"errors"
 	dom "github.com/gost-dom/browser/dom"
+	gosterror "github.com/gost-dom/browser/internal/gosterror"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -86,7 +86,7 @@ func (w Document[T]) createElementNS(cbCtx js.CallbackContext[T]) (res js.Value[
 	}
 	namespace, errArg1 := js.ConsumeArgument(cbCtx, "namespace", codec.ZeroValue, codec.DecodeString)
 	qualifiedName, errArg2 := js.ConsumeArgument(cbCtx, "qualifiedName", nil, codec.DecodeString)
-	err = errors.Join(errArg1, errArg2)
+	err = gosterror.First(errArg1, errArg2)
 	if err != nil {
 		return nil, err
 	}
@@ -140,7 +140,7 @@ func (w Document[T]) createProcessingInstruction(cbCtx js.CallbackContext[T]) (r
 	}
 	target, errArg1 := js.ConsumeArgument(cbCtx, "target", nil, codec.DecodeString)
 	data, errArg2 := js.ConsumeArgument(cbCtx, "data", nil, codec.DecodeString)
-	err = errors.Join(errArg1, errArg2)
+	err = gosterror.First(errArg1, errArg2)
 	if err != nil {
 		return nil, err
 	}
@@ -155,7 +155,7 @@ func (w Document[T]) importNode(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 	}
 	node, errArg1 := js.ConsumeArgument(cbCtx, "node", nil, codec.DecodeNode)
 	subtree, errArg2 := js.ConsumeArgument(cbCtx, "subtree", codec.ZeroValue, codec.DecodeBoolean)
-	err = errors.Join(errArg1, errArg2)
+	err = gosterror.First(errArg1, errArg2)
 	if err != nil {
 		return nil, err
 	}

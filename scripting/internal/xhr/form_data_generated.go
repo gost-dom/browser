@@ -3,8 +3,8 @@
 package xhr
 
 import (
-	"errors"
 	html "github.com/gost-dom/browser/html"
+	gosterror "github.com/gost-dom/browser/internal/gosterror"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -54,7 +54,7 @@ func (w FormData[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err e
 	}
 	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
 	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, w.decodeFormDataValue)
-	err = errors.Join(errArg1, errArg2)
+	err = gosterror.First(errArg1, errArg2)
 	if err != nil {
 		return nil, err
 	}
@@ -121,7 +121,7 @@ func (w FormData[T]) set(cbCtx js.CallbackContext[T]) (res js.Value[T], err erro
 	}
 	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
 	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, w.decodeFormDataValue)
-	err = errors.Join(errArg1, errArg2)
+	err = gosterror.First(errArg1, errArg2)
 	if err != nil {
 		return nil, err
 	}

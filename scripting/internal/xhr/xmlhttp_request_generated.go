@@ -3,7 +3,7 @@
 package xhr
 
 import (
-	"errors"
+	gosterror "github.com/gost-dom/browser/internal/gosterror"
 	html "github.com/gost-dom/browser/internal/html"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
@@ -49,9 +49,9 @@ func (w XMLHttpRequest[T]) setRequestHeader(cbCtx js.CallbackContext[T]) (res js
 	if errInst != nil {
 		return nil, errInst
 	}
-	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
-	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, codec.DecodeString)
-	err = errors.Join(errArg1, errArg2)
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeByteString)
+	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, codec.DecodeByteString)
+	err = gosterror.First(errArg1, errArg2)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +86,7 @@ func (w XMLHttpRequest[T]) getResponseHeader(cbCtx js.CallbackContext[T]) (res j
 	if errInst != nil {
 		return nil, errInst
 	}
-	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeByteString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -135,7 +135,7 @@ func (w XMLHttpRequest[T]) timeout(cbCtx js.CallbackContext[T]) (res js.Value[T]
 func (w XMLHttpRequest[T]) setTimeout(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeInt)
-	err = errors.Join(err0, err1)
+	err = gosterror.First(err0, err1)
 	if err != nil {
 		return nil, err
 	}
@@ -155,7 +155,7 @@ func (w XMLHttpRequest[T]) withCredentials(cbCtx js.CallbackContext[T]) (res js.
 func (w XMLHttpRequest[T]) setWithCredentials(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeBoolean)
-	err = errors.Join(err0, err1)
+	err = gosterror.First(err0, err1)
 	if err != nil {
 		return nil, err
 	}
@@ -202,7 +202,7 @@ func (w XMLHttpRequest[T]) responseType(cbCtx js.CallbackContext[T]) (res js.Val
 func (w XMLHttpRequest[T]) setResponseType(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.XMLHttpRequest](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, w.decodeXMLHttpRequestResponseType)
-	err = errors.Join(err0, err1)
+	err = gosterror.First(err0, err1)
 	if err != nil {
 		return nil, err
 	}

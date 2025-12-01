@@ -3,7 +3,7 @@
 package url
 
 import (
-	"errors"
+	gosterror "github.com/gost-dom/browser/internal/gosterror"
 	urlinterfaces "github.com/gost-dom/browser/internal/interfaces/url-interfaces"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
@@ -39,7 +39,7 @@ func (w URLSearchParams[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T]
 	}
 	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
 	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, codec.DecodeString)
-	err = errors.Join(errArg1, errArg2)
+	err = gosterror.First(errArg1, errArg2)
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +122,7 @@ func (w URLSearchParams[T]) set(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 	}
 	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
 	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, codec.DecodeString)
-	err = errors.Join(errArg1, errArg2)
+	err = gosterror.First(errArg1, errArg2)
 	if err != nil {
 		return nil, err
 	}

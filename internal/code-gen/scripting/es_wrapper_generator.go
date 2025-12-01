@@ -200,7 +200,7 @@ func IfAnyError(errNames []g.Generator, block Transformer) g.Generator {
 	default:
 		err := g.Id("err")
 		return g.StatementList(
-			g.Reassign(err, stdgen.ErrorsJoin(errNames...)),
+			g.Reassign(err, errorsFirst.Call(errNames...)),
 			IfError(err, block),
 		)
 	}

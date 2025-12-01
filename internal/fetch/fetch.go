@@ -35,12 +35,9 @@ func validateHeaderName(name string) error {
 }
 
 func (h Headers) Append(name, val string) error {
-	err := validateHeaderName(name)
-	if err == nil {
-		httpH := http.Header(h)
-		httpH.Add(name, val)
-	}
-	return err
+	httpH := http.Header(h)
+	httpH.Add(name, val)
+	return nil
 }
 
 func (h Headers) Delete(name string) error {

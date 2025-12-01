@@ -29,6 +29,8 @@ var (
 	jsRegisterClass = g.NewValuePackage("RegisterClass", packagenames.JS)
 	jsClassBuilder  = g.NewValuePackage("ClassBuilder", packagenames.JS)
 
+	errorsFirst = g.NewValuePackage("First", packagenames.Errors)
+
 	slogString = g.NewValuePackage("String", packagenames.StdSlog)
 
 	// Exported values from: scripting/internal/codec

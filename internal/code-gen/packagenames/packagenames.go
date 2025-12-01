@@ -27,6 +27,7 @@ const (
 	JS             = BASE_PKG + "/scripting/internal/js"
 	Codec          = BASE_PKG + "/scripting/internal/codec"
 	URL            = BASE_PKG + "/url"
+	Errors         = BASE_PKG + "/internal/gosterror"
 	V8go           = "github.com/gost-dom/v8go"
 	Goja           = "github.com/dop251/goja"
 

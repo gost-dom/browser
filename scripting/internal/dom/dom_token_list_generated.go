@@ -3,8 +3,8 @@
 package dom
 
 import (
-	"errors"
 	dom "github.com/gost-dom/browser/dom"
+	gosterror "github.com/gost-dom/browser/internal/gosterror"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -96,7 +96,7 @@ func (w DOMTokenList[T]) replace(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 	}
 	token, errArg1 := js.ConsumeArgument(cbCtx, "token", nil, codec.DecodeString)
 	newToken, errArg2 := js.ConsumeArgument(cbCtx, "newToken", nil, codec.DecodeString)
-	err = errors.Join(errArg1, errArg2)
+	err = gosterror.First(errArg1, errArg2)
 	if err != nil {
 		return nil, err
 	}
@@ -129,7 +129,7 @@ func (w DOMTokenList[T]) value(cbCtx js.CallbackContext[T]) (res js.Value[T], er
 func (w DOMTokenList[T]) setValue(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[dom.DOMTokenList](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
-	err = errors.Join(err0, err1)
+	err = gosterror.First(err0, err1)
 	if err != nil {
 		return nil, err
 	}

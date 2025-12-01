@@ -24,3 +24,12 @@ func NewTypeError(msg string) error {
 }
 
 var ErrTypeError = NewTypeError("TypeError")
+
+func First(errs ...error) error {
+	for _, err := range errs {
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}

@@ -3,8 +3,8 @@
 package dom
 
 import (
-	"errors"
 	event "github.com/gost-dom/browser/dom/event"
+	gosterror "github.com/gost-dom/browser/internal/gosterror"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -34,7 +34,7 @@ func (w Event[T]) installPrototype(jsClass js.Class[T]) {
 func (w Event[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	type_, errArg1 := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
 	eventInitDict, errArg2 := js.ConsumeArgument(cbCtx, "eventInitDict", codec.ZeroValue, codec.DecodeEventInit)
-	err = errors.Join(errArg1, errArg2)
+	err = gosterror.First(errArg1, errArg2)
 	if err != nil {
 		return nil, err
 	}

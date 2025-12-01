@@ -3,7 +3,7 @@
 package html
 
 import (
-	"errors"
+	gosterror "github.com/gost-dom/browser/internal/gosterror"
 	htmlinterfaces "github.com/gost-dom/browser/internal/interfaces/html-interfaces"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
@@ -72,7 +72,7 @@ func (w History[T]) pushState(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 	data, errArg1 := js.ConsumeArgument(cbCtx, "data", nil, w.decodeHistoryState)
 	cbCtx.ConsumeArg()
 	url, errArg3 := js.ConsumeArgument(cbCtx, "url", codec.ZeroValue, codec.DecodeString)
-	err = errors.Join(errArg1, errArg3)
+	err = gosterror.First(errArg1, errArg3)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +88,7 @@ func (w History[T]) replaceState(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 	data, errArg1 := js.ConsumeArgument(cbCtx, "data", nil, w.decodeHistoryState)
 	cbCtx.ConsumeArg()
 	url, errArg3 := js.ConsumeArgument(cbCtx, "url", codec.ZeroValue, codec.DecodeString)
-	err = errors.Join(errArg1, errArg3)
+	err = gosterror.First(errArg1, errArg3)
 	if err != nil {
 		return nil, err
 	}

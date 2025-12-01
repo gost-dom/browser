@@ -3,8 +3,8 @@
 package html
 
 import (
-	"errors"
 	html "github.com/gost-dom/browser/html"
+	gosterror "github.com/gost-dom/browser/internal/gosterror"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -51,7 +51,7 @@ func (w HTMLInputElement[T]) name(cbCtx js.CallbackContext[T]) (res js.Value[T],
 func (w HTMLInputElement[T]) setName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.HTMLInputElement](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
-	err = errors.Join(err0, err1)
+	err = gosterror.First(err0, err1)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func (w HTMLInputElement[T]) type_(cbCtx js.CallbackContext[T]) (res js.Value[T]
 func (w HTMLInputElement[T]) setType(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.HTMLInputElement](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
-	err = errors.Join(err0, err1)
+	err = gosterror.First(err0, err1)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +91,7 @@ func (w HTMLInputElement[T]) value(cbCtx js.CallbackContext[T]) (res js.Value[T]
 func (w HTMLInputElement[T]) setValue(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.HTMLInputElement](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
-	err = errors.Join(err0, err1)
+	err = gosterror.First(err0, err1)
 	if err != nil {
 		return nil, err
 	}

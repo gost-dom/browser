@@ -11,6 +11,7 @@ import (
 )
 
 var decodeString = g.NewValuePackage("DecodeString", packagenames.Codec)
+var decodeByteString = g.NewValuePackage("DecodeByteString", packagenames.Codec)
 var decodeBoolean = g.NewValuePackage("DecodeBoolean", packagenames.Codec)
 var decodeInt = g.NewValuePackage("DecodeInt", packagenames.Codec)
 
@@ -48,6 +49,8 @@ func DecodersForType(receiver g.Generator, argType idl.Type) []g.Generator {
 func decoderForType(receiver g.Generator, argType idl.Type) g.Generator {
 	idlType := idltransform.NewIdlType(argType)
 	switch {
+	case idlType.Name == "ByteString":
+		return decodeByteString
 	case idlType.IsString():
 		return decodeString
 	case idlType.IsBoolean():

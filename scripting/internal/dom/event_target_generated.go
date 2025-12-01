@@ -3,8 +3,8 @@
 package dom
 
 import (
-	"errors"
 	event "github.com/gost-dom/browser/dom/event"
+	gosterror "github.com/gost-dom/browser/internal/gosterror"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -37,7 +37,7 @@ func (w EventTarget[T]) addEventListener(cbCtx js.CallbackContext[T]) (res js.Va
 	type_, errArg1 := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
 	callback, errArg2 := js.ConsumeArgument(cbCtx, "callback", codec.ZeroValue, w.decodeEventListener)
 	options, errArg3 := js.ConsumeArgument(cbCtx, "options", w.defaultEventListenerOptions, decodeEventListenerOptions)
-	err = errors.Join(errArg1, errArg2, errArg3)
+	err = gosterror.First(errArg1, errArg2, errArg3)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func (w EventTarget[T]) removeEventListener(cbCtx js.CallbackContext[T]) (res js
 	type_, errArg1 := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
 	callback, errArg2 := js.ConsumeArgument(cbCtx, "callback", codec.ZeroValue, w.decodeEventListener)
 	options, errArg3 := js.ConsumeArgument(cbCtx, "options", w.defaultEventListenerOptions, decodeEventListenerOptions)
-	err = errors.Join(errArg1, errArg2, errArg3)
+	err = gosterror.First(errArg1, errArg2, errArg3)
 	if err != nil {
 		return nil, err
 	}

@@ -3,7 +3,7 @@
 package dom
 
 import (
-	"errors"
+	gosterror "github.com/gost-dom/browser/internal/gosterror"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
@@ -40,7 +40,7 @@ func (w MutationObserver[T]) observe(cbCtx js.CallbackContext[T]) (res js.Value[
 	}
 	target, errArg1 := js.ConsumeArgument(cbCtx, "target", nil, codec.DecodeNode)
 	options, errArg2 := js.ConsumeArgument(cbCtx, "options", nil, w.decodeObserveOption)
-	err = errors.Join(errArg1, errArg2)
+	err = gosterror.First(errArg1, errArg2)
 	if err != nil {
 		return nil, err
 	}

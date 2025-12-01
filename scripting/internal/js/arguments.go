@@ -27,11 +27,18 @@ func ConsumeArgument[T, U any](
 		return defaultValue(), nil
 	} else {
 		errs := make([]error, len(decoders))
+		var lastErr error
+		noErrs := 0
 		for i, parser := range decoders {
 			result, errs[i] = parser(args, value)
 			if errs[i] == nil {
 				return
 			}
+			noErrs++
+			lastErr = errs[i]
+		}
+		if noErrs == 1 {
+			return result, lastErr
 		}
 		// TODO: This should eventually become a TypeError in JS
 		err = fmt.Errorf("tryParseArg: %s: %w", name, errors.Join(errs...))

@@ -11,6 +11,20 @@ import (
 
 func ZeroValue[T any]() (res T) { return }
 
+func DecodeByteString[T any](s js.Scope[T], v js.Value[T]) (string, error) {
+	if v == nil {
+		v = s.Undefined()
+	}
+	res := v.String()
+	b := []byte(res)
+	for _, bb := range b {
+		if bb < 0x20 || bb > 0x7E {
+			return "", s.NewTypeError("cannot decode bytestring")
+		}
+	}
+	return res, nil
+}
+
 func DecodeString[T any](s js.Scope[T], v js.Value[T]) (string, error) {
 	if v == nil {
 		v = s.Undefined()

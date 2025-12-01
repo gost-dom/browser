@@ -3,8 +3,8 @@
 package html
 
 import (
-	"errors"
 	html "github.com/gost-dom/browser/html"
+	gosterror "github.com/gost-dom/browser/internal/gosterror"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -87,7 +87,7 @@ func (w Location[T]) href(cbCtx js.CallbackContext[T]) (res js.Value[T], err err
 func (w Location[T]) setHref(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.Location](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
-	err = errors.Join(err0, err1)
+	err = gosterror.First(err0, err1)
 	if err != nil {
 		return nil, err
 	}
@@ -116,7 +116,7 @@ func (w Location[T]) protocol(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 func (w Location[T]) setProtocol(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.Location](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
-	err = errors.Join(err0, err1)
+	err = gosterror.First(err0, err1)
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +136,7 @@ func (w Location[T]) host(cbCtx js.CallbackContext[T]) (res js.Value[T], err err
 func (w Location[T]) setHost(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.Location](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
-	err = errors.Join(err0, err1)
+	err = gosterror.First(err0, err1)
 	if err != nil {
 		return nil, err
 	}
@@ -156,7 +156,7 @@ func (w Location[T]) hostname(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 func (w Location[T]) setHostname(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.Location](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
-	err = errors.Join(err0, err1)
+	err = gosterror.First(err0, err1)
 	if err != nil {
 		return nil, err
 	}
@@ -176,7 +176,7 @@ func (w Location[T]) port(cbCtx js.CallbackContext[T]) (res js.Value[T], err err
 func (w Location[T]) setPort(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.Location](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
-	err = errors.Join(err0, err1)
+	err = gosterror.First(err0, err1)
 	if err != nil {
 		return nil, err
 	}
@@ -196,7 +196,7 @@ func (w Location[T]) pathname(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 func (w Location[T]) setPathname(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.Location](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
-	err = errors.Join(err0, err1)
+	err = gosterror.First(err0, err1)
 	if err != nil {
 		return nil, err
 	}
@@ -216,7 +216,7 @@ func (w Location[T]) search(cbCtx js.CallbackContext[T]) (res js.Value[T], err e
 func (w Location[T]) setSearch(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.Location](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
-	err = errors.Join(err0, err1)
+	err = gosterror.First(err0, err1)
 	if err != nil {
 		return nil, err
 	}
@@ -236,7 +236,7 @@ func (w Location[T]) hash(cbCtx js.CallbackContext[T]) (res js.Value[T], err err
 func (w Location[T]) setHash(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.Location](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
-	err = errors.Join(err0, err1)
+	err = gosterror.First(err0, err1)
 	if err != nil {
 		return nil, err
 	}

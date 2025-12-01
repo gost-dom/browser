@@ -3,8 +3,8 @@
 package html
 
 import (
-	"errors"
 	html "github.com/gost-dom/browser/html"
+	gosterror "github.com/gost-dom/browser/internal/gosterror"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -42,7 +42,7 @@ func (w HTMLAnchorElement[T]) target(cbCtx js.CallbackContext[T]) (res js.Value[
 func (w HTMLAnchorElement[T]) setTarget(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.HTMLAnchorElement](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
-	err = errors.Join(err0, err1)
+	err = gosterror.First(err0, err1)
 	if err != nil {
 		return nil, err
 	}

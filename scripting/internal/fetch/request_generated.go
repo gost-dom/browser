@@ -3,8 +3,8 @@
 package fetch
 
 import (
-	"errors"
 	fetch "github.com/gost-dom/browser/internal/fetch"
+	gosterror "github.com/gost-dom/browser/internal/gosterror"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -45,7 +45,7 @@ func (w Request[T]) installPrototype(jsClass js.Class[T]) {
 func (w Request[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	input, errArg1 := js.ConsumeArgument(cbCtx, "input", nil, w.decodeRequestInfo)
 	init, errArg2 := js.ConsumeArgument(cbCtx, "init", nil, w.decodeRequestInit)
-	err = errors.Join(errArg1, errArg2)
+	err = gosterror.First(errArg1, errArg2)
 	if err != nil {
 		return nil, err
 	}

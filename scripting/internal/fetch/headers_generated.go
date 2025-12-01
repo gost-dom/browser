@@ -3,8 +3,8 @@
 package fetch
 
 import (
-	"errors"
 	fetch "github.com/gost-dom/browser/internal/fetch"
+	gosterror "github.com/gost-dom/browser/internal/gosterror"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -41,9 +41,9 @@ func (w Headers[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err er
 	if errInst != nil {
 		return nil, errInst
 	}
-	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
-	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, codec.DecodeString)
-	err = errors.Join(errArg1, errArg2)
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeByteString)
+	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, codec.DecodeByteString)
+	err = gosterror.First(errArg1, errArg2)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (w Headers[T]) delete(cbCtx js.CallbackContext[T]) (res js.Value[T], err er
 	if errInst != nil {
 		return nil, errInst
 	}
-	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeByteString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -69,7 +69,7 @@ func (w Headers[T]) get(cbCtx js.CallbackContext[T]) (res js.Value[T], err error
 	if errInst != nil {
 		return nil, errInst
 	}
-	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeByteString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -86,7 +86,7 @@ func (w Headers[T]) has(cbCtx js.CallbackContext[T]) (res js.Value[T], err error
 	if errInst != nil {
 		return nil, errInst
 	}
-	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeByteString)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -99,9 +99,9 @@ func (w Headers[T]) set(cbCtx js.CallbackContext[T]) (res js.Value[T], err error
 	if errInst != nil {
 		return nil, errInst
 	}
-	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
-	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, codec.DecodeString)
-	err = errors.Join(errArg1, errArg2)
+	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeByteString)
+	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, codec.DecodeByteString)
+	err = gosterror.First(errArg1, errArg2)
 	if err != nil {
 		return nil, err
 	}

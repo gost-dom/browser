@@ -3,8 +3,8 @@
 package dom
 
 import (
-	"errors"
 	dom "github.com/gost-dom/browser/dom"
+	gosterror "github.com/gost-dom/browser/internal/gosterror"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -119,7 +119,7 @@ func (w Node[T]) insertBefore(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 	}
 	node, errArg1 := js.ConsumeArgument(cbCtx, "node", nil, codec.DecodeNode)
 	child, errArg2 := js.ConsumeArgument(cbCtx, "child", codec.ZeroValue, codec.DecodeNode)
-	err = errors.Join(errArg1, errArg2)
+	err = gosterror.First(errArg1, errArg2)
 	if err != nil {
 		return nil, err
 	}
@@ -153,7 +153,7 @@ func (w Node[T]) replaceChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 	}
 	node, errArg1 := js.ConsumeArgument(cbCtx, "node", nil, codec.DecodeNode)
 	child, errArg2 := js.ConsumeArgument(cbCtx, "child", nil, codec.DecodeNode)
-	err = errors.Join(errArg1, errArg2)
+	err = gosterror.First(errArg1, errArg2)
 	if err != nil {
 		return nil, err
 	}
