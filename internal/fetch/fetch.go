@@ -20,9 +20,10 @@ type Fetch struct {
 type HeaderOption interface{}
 type Headers http.Header
 
-func (h Headers) Append(name, val string) {
+func (h Headers) Append(name, val string) error {
 	httpH := http.Header(h)
 	httpH.Add(name, val)
+	return nil
 }
 
 func (h Headers) Delete(name string) {
@@ -40,8 +41,9 @@ func (h Headers) Has(name string) bool {
 	return ok
 }
 
-func (h Headers) Set(name, value string) {
+func (h Headers) Set(name, value string) error {
 	h[name] = []string{value}
+	return nil
 }
 
 func New(bc html.BrowsingContext) Fetch { return Fetch{bc} }
