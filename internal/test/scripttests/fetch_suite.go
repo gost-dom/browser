@@ -98,6 +98,7 @@ func testFetch(t *testing.T, e html.ScriptEngine) {
 	t.Run("Fetch invalid JSON", func(t *testing.T) { testFetchInvalidJSON(t, e) })
 	t.Run("404 for not found resource", func(t *testing.T) { testNotFound(t, e) })
 	t.Run("ReadableStream body", func(t *testing.T) { testReadableStream(t, e) })
+	t.Run("Header", func(t *testing.T) { testHeaders(t, e) })
 }
 
 func testFetchAbortSignal(t *testing.T, e html.ScriptEngine) {
@@ -278,4 +279,17 @@ func testReadableStream(t *testing.T, e html.ScriptEngine) {
 	win.Clock().ProcessEvents(ctx)
 
 	assert.Equal(t, "Hello, world!", win.MustEval("readResult"))
+}
+
+func testHeaders(t *testing.T, e html.ScriptEngine) {
+	t.Run("Throws on invalid value", func(t *testing.T) {
+		win := initWindow(t, e, nil, WithMinLogLevel(slog.LevelDebug))
+		res := win.MustEval(`
+			var err
+			const h = new Headers()
+			try { h.append("\uFFFF", "value") } catch(e) { err = e }
+			!!err
+		`)
+		assert.True(t, res.(bool))
+	})
 }

@@ -2,8 +2,10 @@ package fetch
 
 import (
 	"context"
+	"errors"
 	"io"
 	"net/http"
+	"net/textproto"
 	"strings"
 
 	"github.com/gost-dom/browser/html"
@@ -20,10 +22,25 @@ type Fetch struct {
 type HeaderOption interface{}
 type Headers http.Header
 
+func validateHeaderName(name string) error {
+	// Instead of validating, take advantags of CacnincalMIMEHeaderKey which
+	// will return the original name if invalid. Add a lowercase letter first,
+	// it should be capitalized. If it isn't the original name was invalid
+	res := textproto.CanonicalMIMEHeaderKey("x" + name)[0]
+	if res == 'x' {
+		return errors.New("Invalid header")
+	} else {
+		return nil
+	}
+}
+
 func (h Headers) Append(name, val string) error {
-	httpH := http.Header(h)
-	httpH.Add(name, val)
-	return nil
+	err := validateHeaderName(name)
+	if err == nil {
+		httpH := http.Header(h)
+		httpH.Add(name, val)
+	}
+	return err
 }
 
 func (h Headers) Delete(name string) {
@@ -32,8 +49,8 @@ func (h Headers) Delete(name string) {
 }
 
 func (h Headers) Get(name string) (string, bool) {
-	res, ok := h[name]
-	return strings.Join(res, ","), ok
+	res := (http.Header(h)).Values(name)
+	return strings.Join(res, ","), len(res) > 0
 }
 
 func (h Headers) Has(name string) bool {
