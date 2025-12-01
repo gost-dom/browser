@@ -59,8 +59,11 @@ func (h Headers) Has(name string) bool {
 }
 
 func (h Headers) Set(name, value string) error {
-	h[name] = []string{value}
-	return nil
+	err := validateHeaderName(name)
+	if err == nil {
+		h[name] = []string{value}
+	}
+	return err
 }
 
 func New(bc html.BrowsingContext) Fetch { return Fetch{bc} }

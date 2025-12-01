@@ -290,6 +290,13 @@ func testHeaders(t *testing.T, e html.ScriptEngine) {
 			try { h.append("\uFFFF", "value") } catch(e) { err = e }
 			err instanceof TypeError
 		`)
-		assert.True(t, res.(bool))
+		assert.True(t, res.(bool), "TypeError is thrown on append")
+
+		res = win.MustEval(`
+			err = null
+			try { h.set("\uFFFF", "value") } catch(e) { err = e }
+			err instanceof TypeError
+		`)
+		assert.True(t, res.(bool), "TypeError is thrown on set")
 	})
 }
