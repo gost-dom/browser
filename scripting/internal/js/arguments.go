@@ -28,16 +28,16 @@ func ConsumeArgument[T, U any](
 	} else {
 		errs := make([]error, len(decoders))
 		var lastErr error
-		noErrs := 0
+		errCount := 0
 		for i, parser := range decoders {
 			result, errs[i] = parser(args, value)
 			if errs[i] == nil {
 				return
 			}
-			noErrs++
+			errCount++
 			lastErr = errs[i]
 		}
-		if noErrs == 1 {
+		if errCount == 1 {
 			return result, lastErr
 		}
 		// TODO: This should eventually become a TypeError in JS
