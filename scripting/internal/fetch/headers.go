@@ -90,13 +90,12 @@ func iterate[T any](v js.Value[T]) (iter.Seq2[js.Value[T], error], error) {
 	if !ok {
 		return nil, ErrNotIterable
 	}
-	iteratorVal, err := obj.Iterator()
+	symIter, ok, err := js.ObjectGetIterator(obj)
+	if err == nil && !ok {
+		err = ErrNotIterable
+	}
 	if err != nil {
 		return nil, err
-	}
-	symIter, ok := iteratorVal.AsFunction()
-	if !ok {
-		return nil, ErrNotIterable
 	}
 	iterVal, err := symIter.Call(obj)
 	if err != nil {
@@ -106,12 +105,11 @@ func iterate[T any](v js.Value[T]) (iter.Seq2[js.Value[T], error], error) {
 	if !ok {
 		return nil, ErrNotIterable
 	}
-	nextVal, err := iter.Get("next")
-	if err != nil {
-		return nil, err
+	next, ok, err := js.ObjectGetFunction(iter, "next")
+	if err == nil && !ok {
+		err = ErrNotIterable
 	}
-	next, ok := nextVal.AsFunction()
-	if !ok {
+	if err != nil {
 		return nil, errNotIterable("next is not a function")
 	}
 	return func(yield func(js.Value[T], error) bool) {

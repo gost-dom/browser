@@ -40,16 +40,6 @@ type Function[T any] interface {
 	Call(this Object[T], args ...Value[T]) (Value[T], error)
 }
 
-type Object[T any] interface {
-	Value[T]
-	NativeValue() any
-	SetNativeValue(any)
-	Keys() ([]string, error)
-	Get(name string) (Value[T], error)
-	Set(name string, val Value[T]) error
-	Iterator() (Value[T], error)
-}
-
 // Class represents a JavaScript "class" that wraps a Go object.
 //
 // This package has two separate abstractions for a class serving two different
