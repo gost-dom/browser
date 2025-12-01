@@ -5,6 +5,7 @@ import (
 	"io"
 	"iter"
 	"net/http"
+	"slices"
 	"strings"
 
 	"github.com/gost-dom/browser/html"
@@ -18,37 +19,60 @@ type Fetch struct {
 	BrowsingContext html.BrowsingContext
 }
 
-type Headers http.Header
-
-func (h Headers) Append(name, val string) {
-	httpH := http.Header(h)
-	httpH.Add(name, val)
+type Header struct {
+	key string
+	val []string
 }
 
-func (h Headers) Delete(name string) {
-	httpH := http.Header(h)
-	httpH.Del(name)
+type Headers struct{ headers []Header }
+
+func parseHeaders(h http.Header) Headers {
+	res := Headers{headers: make([]Header, 0, len(h))}
+	for k, v := range h {
+		res.headers = append(res.headers, Header{key: k, val: v})
+	}
+	return res
 }
 
-func (h Headers) Get(name string) (string, bool) {
-	res := (http.Header(h)).Values(name)
-	return strings.Join(res, ","), len(res) > 0
+func (h *Headers) Append(name, val string) {
+	idx := slices.IndexFunc(h.headers, func(h Header) bool { return h.key == name })
+	if idx == -1 {
+		idx = len(h.headers)
+		h.headers = append(h.headers, Header{key: name})
+	}
+	h.headers[idx].val = append(h.headers[idx].val, val)
 }
 
-func (h Headers) Has(name string) bool {
-	_, ok := h[name]
+func (h *Headers) Delete(name string) {
+	h.headers = slices.DeleteFunc(h.headers, func(h Header) bool { return h.key == name })
+}
+
+func (h *Headers) Get(name string) (string, bool) {
+	idx := slices.IndexFunc(h.headers, func(h Header) bool { return h.key == name })
+	if idx == -1 {
+		return "", false
+	}
+	return strings.Join(h.headers[idx].val, ","), true
+}
+
+func (h *Headers) Has(name string) bool {
+	_, ok := h.Get(name)
 	return ok
 }
 
-func (h Headers) Set(name, value string) {
-	h[name] = []string{value}
+func (h *Headers) Set(name, value string) {
+	idx := slices.IndexFunc(h.headers, func(h Header) bool { return h.key == name })
+	if idx != -1 {
+		h.headers[idx].val = nil
+	}
+	h.Append(name, value)
 }
 
 func (h Headers) All() iter.Seq2[string, string] {
 	return func(yield func(string, string) bool) {
-		for n, v := range h {
-			if len(v) > 0 {
-				if !yield(n, v[0]) {
+		for _, v := range h.headers {
+			if len(v.val) > 0 {
+				if !yield(v.key, v.val[0]) {
 					return
 				}
 			}
@@ -124,10 +148,7 @@ func (f Fetch) FetchAsync(req Request) promise.Promise[*Response] {
 		if err != nil {
 			return nil, err
 		}
-		headers := Headers(resp.Header)
-		if headers == nil {
-			headers = make(Headers)
-		}
+		headers := parseHeaders(resp.Header)
 		return &Response{
 			Reader:       resp.Body,
 			Status:       resp.StatusCode,
