@@ -2,9 +2,7 @@ package gosttest
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
-	"os"
 	"strings"
 	"testing"
 )
@@ -18,10 +16,9 @@ import (
 type testingLogHandler struct {
 	testing.TB
 
-	allowErrors     bool
-	minLogLevel     slog.Level
-	fallbackHandler slog.Handler
-	testCompleted   bool
+	allowErrors   bool
+	minLogLevel   slog.Level
+	testCompleted bool
 }
 
 // Enabled implements slog.Handler.
@@ -38,11 +35,7 @@ func (h testingLogHandler) testDone() bool {
 
 func (l testingLogHandler) Handle(ctx context.Context, r slog.Record) error {
 	if l.testDone() {
-		if l.fallbackHandler == nil {
-			l.fallbackHandler = slog.NewTextHandler(os.Stderr, nil)
-		}
-		fmt.Fprintf(os.Stderr, "gost-dom/gosttest: testlogger closed: %s\n", r.Message)
-		return l.fallbackHandler.Handle(ctx, r)
+		return nil
 	}
 	l.TB.Helper()
 	var b strings.Builder
