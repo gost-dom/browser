@@ -42,11 +42,6 @@ func EncodeInt[T any](s js.CallbackScope[T], i int) (js.Value[T], error) {
 	return s.NewInt32(int32(i)), nil
 }
 
-// TODO: Embed scope in CallbackScope, so only one function is necessary
-func EncodeStringScoped[T any](scope js.Scope[T], s string) (js.Value[T], error) {
-	return scope.NewString(s), nil
-}
-
 func EncodeString[T any](scope js.Scope[T], s string) (js.Value[T], error) {
 	return scope.NewString(s), nil
 }
