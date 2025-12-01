@@ -6,12 +6,14 @@ import (
 	"iter"
 
 	"github.com/gost-dom/browser/internal/fetch"
+	gosterror "github.com/gost-dom/browser/internal/gosterror"
+	"github.com/gost-dom/browser/internal/types"
 	"github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
 func (w Headers[T]) CreateInstance(
-	cbCtx js.CallbackContext[T], options ...[2]string,
+	cbCtx js.CallbackContext[T], options ...[2]types.ByteString,
 ) (js.Value[T], error) {
 	res := fetch.Headers{}
 	for _, h := range options {
@@ -23,7 +25,7 @@ func (w Headers[T]) CreateInstance(
 func (w Headers[T]) decodeHeadersInit(
 	scope js.Scope[T],
 	v js.Value[T],
-) (res [][2]string, err error) {
+) (res [][2]types.ByteString, err error) {
 	if v == nil || v.IsUndefined() {
 		return nil, nil
 	}
@@ -37,13 +39,18 @@ func (w Headers[T]) decodeHeadersInit(
 	if obj, ok := v.AsObject(); ok {
 		var keys []string
 		if keys, err = obj.Keys(); err == nil {
-			res = make([][2]string, len(keys))
+			res = make([][2]types.ByteString, len(keys))
 			for i, key := range keys {
+				if res[i][0], err = types.ToByteString(key); err != nil {
+					return
+				}
 				var val js.Value[T]
 				if val, err = obj.Get(key); err != nil {
 					return
 				}
-				res[i] = [2]string{key, val.String()}
+				if res[i][1], err = codec.DecodeByteString(scope, val); err != nil {
+					return
+				}
 			}
 		}
 		return
@@ -53,7 +60,7 @@ func (w Headers[T]) decodeHeadersInit(
 
 func (w Headers[T]) parseHeaderIterator2(
 	scope js.Scope[T], val js.Value[T],
-) (res [][2]string, err error) {
+) (res [][2]types.ByteString, err error) {
 	var seq iter.Seq2[js.Value[T], error]
 	if seq, err = iterate(val); err != nil {
 		return
@@ -68,13 +75,12 @@ func (w Headers[T]) parseHeaderIterator2(
 		}
 		v1, err1 := obj.Get("0")
 		v2, err2 := obj.Get("1")
-		if err = errors.Join(err1, err2); err != nil {
+		s1, err3 := codec.DecodeByteString(scope, v1)
+		s2, err4 := codec.DecodeByteString(scope, v2)
+		if err = gosterror.First(err1, err2, err3, err4); err != nil {
 			return nil, err
 		}
-		res = append(res, [2]string{
-			v1.String(),
-			v2.String(),
-		})
+		res = append(res, [2]types.ByteString{s1, s2})
 	}
 	return
 }
@@ -149,7 +155,7 @@ func errNotIterable(msg string) error {
 }
 
 func (w Headers[T]) CustomInitializer(jsClass js.Class[T]) {
-	iterator := js.NewIterator2(codec.EncodeStringScoped[T], codec.EncodeStringScoped[T])
+	iterator := js.NewIterator2(codec.EncodeByteString[T], codec.EncodeByteString[T])
 	iterator.InstallPrototype(jsClass)
 }
 

@@ -1,0 +1,25 @@
+// Package types defines fundamental web types such as ByteString
+package types
+
+import "github.com/gost-dom/browser/internal/gosterror"
+
+// ByteString is a sequence of ASCII characters, i.e., characters in the range
+// 0x20-0x7E
+type ByteString string
+
+func ToByteString(s string) (ByteString, error) {
+	for _, b := range []byte(s) {
+		if b < 0x20 || b > 0x7E {
+			return "", gosterror.NewTypeError("cannot decode bytestring")
+		}
+	}
+	return ByteString(s), nil
+}
+
+func ByteStringsToStrings(s []ByteString) []string {
+	res := make([]string, len(s))
+	for i, ss := range s {
+		res[i] = string(ss)
+	}
+	return res
+}

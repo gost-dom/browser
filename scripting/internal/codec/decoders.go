@@ -6,23 +6,17 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/types"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
 func ZeroValue[T any]() (res T) { return }
 
-func DecodeByteString[T any](s js.Scope[T], v js.Value[T]) (string, error) {
+func DecodeByteString[T any](s js.Scope[T], v js.Value[T]) (types.ByteString, error) {
 	if v == nil {
 		v = s.Undefined()
 	}
-	res := v.String()
-	b := []byte(res)
-	for _, bb := range b {
-		if bb < 0x20 || bb > 0x7E {
-			return "", s.NewTypeError("cannot decode bytestring")
-		}
-	}
-	return res, nil
+	return types.ToByteString(v.String())
 }
 
 func DecodeString[T any](s js.Scope[T], v js.Value[T]) (string, error) {

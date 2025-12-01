@@ -5,6 +5,7 @@ import (
 
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/promise"
+	"github.com/gost-dom/browser/internal/types"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -48,6 +49,10 @@ func EncodeStringScoped[T any](scope js.Scope[T], s string) (js.Value[T], error)
 
 func EncodeString[T any](scope js.Scope[T], s string) (js.Value[T], error) {
 	return scope.NewString(s), nil
+}
+
+func EncodeByteString[T any](scope js.Scope[T], s types.ByteString) (js.Value[T], error) {
+	return scope.NewString(string(s)), nil
 }
 
 func EncodeNullableString[T any](scope js.CallbackScope[T], s *string) (js.Value[T], error) {

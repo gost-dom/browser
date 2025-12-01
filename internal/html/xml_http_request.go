@@ -12,6 +12,7 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/log"
+	"github.com/gost-dom/browser/internal/types"
 	"github.com/gost-dom/browser/url"
 )
 
@@ -42,10 +43,10 @@ type XmlHttpRequest interface {
 	Status() int
 	StatusText() string
 	ResponseText() string
-	SetRequestHeader(name string, value string)
+	SetRequestHeader(name types.ByteString, value types.ByteString)
 	GetAllResponseHeaders() (res string, err error)
 	OverrideMimeType(mimeType string) error
-	GetResponseHeader(headerName string) (string, bool)
+	GetResponseHeader(headerName types.ByteString) (string, bool)
 	SetWithCredentials(val bool) error
 	WithCredentials() bool
 	ResponseURL() string
@@ -174,8 +175,8 @@ func (req *xmlHttpRequest) Response() string { return req.ResponseText() }
 
 func (req *xmlHttpRequest) ResponseText() string { return string(req.response) }
 
-func (req *xmlHttpRequest) SetRequestHeader(name string, value string) {
-	req.headers.Add(name, value)
+func (req *xmlHttpRequest) SetRequestHeader(name types.ByteString, value types.ByteString) {
+	req.headers.Add(string(name), string(value))
 }
 
 func (req *xmlHttpRequest) ResponseType() string     { return req.responseType }
@@ -210,11 +211,11 @@ func (req *xmlHttpRequest) OverrideMimeType(mimeType string) error {
 	return nil
 }
 
-func (req *xmlHttpRequest) GetResponseHeader(headerName string) (string, bool) {
+func (req *xmlHttpRequest) GetResponseHeader(headerName types.ByteString) (string, bool) {
 	if req.res == nil {
 		return "", false
 	}
-	key := http.CanonicalHeaderKey(headerName)
+	key := http.CanonicalHeaderKey(string(headerName))
 	if val, ok := req.res.Header[key]; ok && len(val) > 0 {
 		return strings.Join(val, ", "), true
 

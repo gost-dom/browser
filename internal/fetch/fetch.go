@@ -12,6 +12,7 @@ import (
 	"github.com/gost-dom/browser/internal/dom"
 	"github.com/gost-dom/browser/internal/promise"
 	"github.com/gost-dom/browser/internal/streams"
+	"github.com/gost-dom/browser/internal/types"
 	"github.com/gost-dom/browser/url"
 )
 
@@ -20,8 +21,8 @@ type Fetch struct {
 }
 
 type Header struct {
-	key string
-	val []string
+	key types.ByteString
+	val []types.ByteString
 }
 
 type Headers struct{ headers []Header }
@@ -29,12 +30,22 @@ type Headers struct{ headers []Header }
 func parseHeaders(h http.Header) Headers {
 	res := Headers{headers: make([]Header, 0, len(h))}
 	for k, v := range h {
-		res.headers = append(res.headers, Header{key: k, val: v})
+		vv := make([]types.ByteString, len(v))
+		for i, val := range v {
+			vv[i] = types.ByteString(val)
+		}
+		res.headers = append(
+			res.headers,
+			// We assume that HTTP headeres received from a server contains
+			// valid values
+
+			Header{key: types.ByteString(k), val: vv},
+		)
 	}
 	return res
 }
 
-func (h *Headers) Append(name, val string) {
+func (h *Headers) Append(name, val types.ByteString) {
 	idx := slices.IndexFunc(h.headers, func(h Header) bool { return h.key == name })
 	if idx == -1 {
 		idx = len(h.headers)
@@ -43,24 +54,24 @@ func (h *Headers) Append(name, val string) {
 	h.headers[idx].val = append(h.headers[idx].val, val)
 }
 
-func (h *Headers) Delete(name string) {
+func (h *Headers) Delete(name types.ByteString) {
 	h.headers = slices.DeleteFunc(h.headers, func(h Header) bool { return h.key == name })
 }
 
-func (h *Headers) Get(name string) (string, bool) {
+func (h *Headers) Get(name types.ByteString) (string, bool) {
 	idx := slices.IndexFunc(h.headers, func(h Header) bool { return h.key == name })
 	if idx == -1 {
 		return "", false
 	}
-	return strings.Join(h.headers[idx].val, ","), true
+	return strings.Join(types.ByteStringsToStrings(h.headers[idx].val), ","), true
 }
 
-func (h *Headers) Has(name string) bool {
+func (h *Headers) Has(name types.ByteString) bool {
 	_, ok := h.Get(name)
 	return ok
 }
 
-func (h *Headers) Set(name, value string) {
+func (h *Headers) Set(name, value types.ByteString) {
 	idx := slices.IndexFunc(h.headers, func(h Header) bool { return h.key == name })
 	if idx != -1 {
 		h.headers[idx].val = nil
@@ -68,8 +79,8 @@ func (h *Headers) Set(name, value string) {
 	h.Append(name, value)
 }
 
-func (h Headers) All() iter.Seq2[string, string] {
-	return func(yield func(string, string) bool) {
+func (h Headers) All() iter.Seq2[types.ByteString, types.ByteString] {
+	return func(yield func(types.ByteString, types.ByteString) bool) {
 		for _, v := range h.headers {
 			if len(v.val) > 0 {
 				if !yield(v.key, v.val[0]) {
