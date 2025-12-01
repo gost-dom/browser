@@ -4,12 +4,10 @@ import (
 	"context"
 	"io"
 	"net/http"
-	"net/textproto"
 	"strings"
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/dom"
-	"github.com/gost-dom/browser/internal/gosterror"
 	"github.com/gost-dom/browser/internal/promise"
 	"github.com/gost-dom/browser/internal/streams"
 	"github.com/gost-dom/browser/url"
@@ -22,31 +20,14 @@ type Fetch struct {
 type HeaderOption interface{}
 type Headers http.Header
 
-func validateHeaderName(name string) error {
-	// Instead of validating, take advantags of CacnincalMIMEHeaderKey which
-	// will return the original name if invalid. Add a lowercase letter first,
-	// it should be capitalized. If it isn't the original name was invalid
-	res := textproto.CanonicalMIMEHeaderKey("x" + name)[0]
-	if res == 'x' {
-		return gosterror.NewTypeError("Invalid header")
-	} else {
-		return nil
-	}
-}
-
-func (h Headers) Append(name, val string) error {
+func (h Headers) Append(name, val string) {
 	httpH := http.Header(h)
 	httpH.Add(name, val)
-	return nil
 }
 
-func (h Headers) Delete(name string) error {
-	err := validateHeaderName(name)
-	if err == nil {
-		httpH := http.Header(h)
-		httpH.Del(name)
-	}
-	return err
+func (h Headers) Delete(name string) {
+	httpH := http.Header(h)
+	httpH.Del(name)
 }
 
 func (h Headers) Get(name string) (string, bool) {
@@ -59,12 +40,8 @@ func (h Headers) Has(name string) bool {
 	return ok
 }
 
-func (h Headers) Set(name, value string) error {
-	err := validateHeaderName(name)
-	if err == nil {
-		h[name] = []string{value}
-	}
-	return err
+func (h Headers) Set(name, value string) {
+	h[name] = []string{value}
 }
 
 func New(bc html.BrowsingContext) Fetch { return Fetch{bc} }

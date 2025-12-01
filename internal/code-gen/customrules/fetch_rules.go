@@ -17,8 +17,6 @@ var fetchRules = SpecRules{
 					"init": {Variadic: true},
 				},
 			},
-			"append": {HasError: true},
-			"set":    {HasError: true},
 		},
 	},
 	"Response": {OutputType: OutputTypeStruct},

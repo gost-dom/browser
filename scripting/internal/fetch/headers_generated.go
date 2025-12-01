@@ -47,8 +47,8 @@ func (w Headers[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err er
 	if err != nil {
 		return nil, err
 	}
-	errCall := instance.Append(name, value)
-	return nil, errCall
+	instance.Append(name, value)
+	return nil, nil
 }
 
 func (w Headers[T]) delete(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
@@ -105,6 +105,6 @@ func (w Headers[T]) set(cbCtx js.CallbackContext[T]) (res js.Value[T], err error
 	if err != nil {
 		return nil, err
 	}
-	errCall := instance.Set(name, value)
-	return nil, errCall
+	instance.Set(name, value)
+	return nil, nil
 }
