@@ -283,12 +283,12 @@ func testReadableStream(t *testing.T, e html.ScriptEngine) {
 
 func testHeaders(t *testing.T, e html.ScriptEngine) {
 	t.Run("Throws on invalid value", func(t *testing.T) {
-		win := initWindow(t, e, nil, WithMinLogLevel(slog.LevelDebug))
+		win := initWindow(t, e, nil)
 		res := win.MustEval(`
 			var err
 			const h = new Headers()
 			try { h.append("\uFFFF", "value") } catch(e) { err = e }
-			!!err
+			err instanceof TypeError
 		`)
 		assert.True(t, res.(bool))
 	})

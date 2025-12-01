@@ -2,7 +2,6 @@ package fetch
 
 import (
 	"context"
-	"errors"
 	"io"
 	"net/http"
 	"net/textproto"
@@ -10,6 +9,7 @@ import (
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/dom"
+	"github.com/gost-dom/browser/internal/gosterror"
 	"github.com/gost-dom/browser/internal/promise"
 	"github.com/gost-dom/browser/internal/streams"
 	"github.com/gost-dom/browser/url"
@@ -28,7 +28,7 @@ func validateHeaderName(name string) error {
 	// it should be capitalized. If it isn't the original name was invalid
 	res := textproto.CanonicalMIMEHeaderKey("x" + name)[0]
 	if res == 'x' {
-		return errors.New("Invalid header")
+		return gosterror.NewTypeError("Invalid header")
 	} else {
 		return nil
 	}

@@ -2,6 +2,7 @@ package log
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 
@@ -42,19 +43,22 @@ func Default() *slog.Logger {
 // trace are included in the log record.
 func ErrAttr(err error) slog.Attr {
 	var jsError *v8go.JSError
+	var errType = fmt.Sprintf("%T", err)
 	if errors.As(err, &jsError) {
 		return slog.Group("err",
 			"message", jsError.Message,
 			"location", jsError.Location,
 			"stackTrace", jsError.StackTrace,
+			"errType", errType,
 		)
 	}
 	var exception *v8go.Exception
 	if errors.As(err, &exception) {
 		obj, isObj := exception.Value.AsObject()
 		if isObj == nil {
-			attrs := make([]any, 1, 8)
-			attrs[0] = slog.Any("error", exception.Error())
+			attrs := make([]any, 2, 9)
+			attrs[0] = slog.Any("message", exception.Error())
+			attrs[1] = slog.String("errType", errType)
 			addValue := func(key string) {
 				if val, err := obj.Get(key); err == nil {
 					attrs = append(attrs, slog.Any(key, val))
@@ -71,5 +75,5 @@ func ErrAttr(err error) slog.Attr {
 			return slog.Group("err", attrs...)
 		}
 	}
-	return slog.Any("err", err)
+	return slog.Group("err", "message", err, "errType", errType)
 }

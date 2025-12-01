@@ -179,8 +179,9 @@ func (c *scriptContext) CreateGlobalObject(name string) js.GlobalObject[jsTypePa
 
 func (class *class) constructorCb(call sobek.ConstructorCall, r *sobek.Runtime) *sobek.Object {
 	class.installInstance(&call.This, nil)
-	_, err := class.cb(newCallbackContext(class.ctx, call))
-	panicIfError(class.ctx, err)
+	cbCtx := newCallbackContext(class.ctx, call)
+	_, err := class.cb(cbCtx)
+	panicIfError(cbCtx, err)
 	return nil
 }
 

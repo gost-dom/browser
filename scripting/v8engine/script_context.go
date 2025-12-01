@@ -2,6 +2,7 @@ package v8engine
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"runtime/debug"
@@ -62,6 +63,21 @@ func (c *V8ScriptContext) SetValue(entity entity.ObjectIder, value jsValue) {
 	c.v8nodes[entity.ObjectId()] = value
 }
 
+func (context *V8ScriptContext) installError(
+	name string,
+	ctor func(*v8go.Isolate, string) *v8.Exception,
+) error {
+	exception, err := ctor(context.host.iso, "").AsObject()
+	if err != nil {
+		return err
+	}
+	constructor, err := exception.GetPrototype().Get("constructor")
+	if err != nil {
+		return err
+	}
+	return context.v8ctx.Global().Set(name, constructor)
+}
+
 func (context *V8ScriptContext) initializeGlobals() error {
 	win := context.window
 	context.global = newV8Object(context, context.v8ctx.Global())
@@ -69,16 +85,10 @@ func (context *V8ScriptContext) initializeGlobals() error {
 	{
 		// For some reason ... type errors created in Go scope are not the same
 		// prototype as in JS scope.
-		typeError, err := v8go.NewTypeError(context.host.iso, "").AsObject()
-		if err != nil {
-			return err
-		}
-		typeErrorCons, err := typeError.GetPrototype().Get("constructor")
-		if err != nil {
-			return err
-		}
-		err = context.v8ctx.Global().Set("TypeError", typeErrorCons)
-		if err != nil {
+		if err := errors.Join(
+			context.installError("Error", v8go.NewError),
+			context.installError("TypeError", v8go.NewTypeError),
+		); err != nil {
 			return err
 		}
 	}

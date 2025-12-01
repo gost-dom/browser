@@ -267,8 +267,8 @@ func (c v8Class) CreateInstanceAttribute(
 	getter js.FunctionCallback[jsTypeParam],
 	setter js.FunctionCallback[jsTypeParam],
 ) {
-	v8Getter := wrapV8Callback(c.host, getter)
-	v8Setter := wrapV8Callback(c.host, setter)
+	v8Getter := wrapV8Callback(c.host, getter.WithLog(c.name, fmt.Sprintf("%s get", name)))
+	v8Setter := wrapV8Callback(c.host, setter.WithLog(c.name, fmt.Sprintf("%s set", name)))
 	c.inst.SetAccessorProperty(name, v8Getter, v8Setter, v8go.None)
 }
 

@@ -121,13 +121,3 @@ func (f function) Call(
 	res, err := f.f(unwrapValue(this), v...)
 	return newValue(f.ctx, res), err
 }
-
-/* -------- sobekError -------- */
-
-type sobekError struct {
-	*sobek.Object
-}
-
-func (e sobekError) Error() string {
-	return e.Get("message").String()
-}

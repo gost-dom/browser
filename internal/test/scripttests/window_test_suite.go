@@ -22,8 +22,8 @@ func (s *WindowTestSuite) TestWindowInheritance() {
 func (s *WindowTestSuite) TestWindowConstructor() {
 	s.Expect(s.Eval("Window && typeof Window")).To(Equal("function"))
 	s.Expect(s.RunScript("Window()")).ToNot(Succeed())
-	s.Expect(s.Eval(
-		`let error;
+	s.Expect(s.Eval(`
+		let error;
 		try { new Window() } catch(err) { 
 			error = err;
 		}

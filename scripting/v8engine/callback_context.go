@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"iter"
 	"log/slog"
-	"runtime/debug"
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/constants"
+	"github.com/gost-dom/browser/internal/gosterror"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
 	v8 "github.com/gost-dom/v8go"
@@ -62,7 +62,7 @@ type v8CallbackContext struct {
 	currentIndex int
 }
 
-func newCallbackContext(host *V8ScriptHost, info *v8.FunctionCallbackInfo) jsCallbackContext {
+func newCallbackContext(host *V8ScriptHost, info *v8.FunctionCallbackInfo) *v8CallbackContext {
 	return &v8CallbackContext{
 		v8CallbackScope: newV8CallbackScope(host, info),
 		v8Info:          info,
@@ -165,10 +165,30 @@ func (s v8Scope) NewPromise() js.Promise[jsTypeParam] {
 	return newV8Promise(s.V8ScriptContext)
 }
 
-func (s v8Scope) NewError(
-	err error,
-) js.Error[jsTypeParam] {
+func (s v8Scope) NewError(err error) js.Error[jsTypeParam] {
+	return s.newError(err)
+}
+
+func (s v8Scope) newError(err error) *V8Error {
+	if v8err, ok := err.(*V8Error); ok {
+		return v8err
+	}
+	if v8excption, ok := err.(*v8go.Exception); ok {
+		return s.errorOfV8Exception(v8excption)
+	}
+	if errors.Is(err, gosterror.ErrTypeError) {
+		return s.errorOfV8Exception(v8go.NewTypeError(s.iso(), err.Error()))
+	}
 	return newV8Error(s.V8ScriptContext, err)
+}
+
+func (s v8Scope) errorOfV8Exception(e *v8go.Exception) *V8Error {
+	return &V8Error{
+		&v8Value{s.V8ScriptContext, e.Value},
+		e,
+		e,
+	}
+
 }
 
 func (f v8Scope) JSONStringify(val jsValue) string {
@@ -248,13 +268,12 @@ func wrapV8Callback(
 	return v8go.NewFunctionTemplateWithError(
 		host.iso,
 		func(info *v8go.FunctionCallbackInfo) (res *v8go.Value, err error) {
-			defer func() {
-				if r := recover(); r != nil {
-					err = fmt.Errorf("PANIC in callback: %v\n%s", r, debug.Stack())
-				}
-			}()
 			cbCtx := newCallbackContext(host, info)
-			result, err := callback(cbCtx)
+			var result jsValue
+			result, err = callback(cbCtx)
+			if err != nil {
+				err = cbCtx.newError(err).exception
+			}
 			return toV8Value(result), err
 		},
 	)
