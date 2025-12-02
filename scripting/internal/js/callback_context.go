@@ -4,6 +4,7 @@ import (
 	"errors"
 	"iter"
 	"log/slog"
+	"runtime/debug"
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
@@ -66,6 +67,8 @@ type CallbackScope[T any] interface {
 	Instance() (any, error)
 
 	This() Object[T]
+
+	Eval(script, location string) (Value[T], error)
 }
 
 // CallbackContext represents the execution context of a JavaScript function
@@ -100,7 +103,12 @@ func (c FunctionCallback[T]) WithLog(class, method string) FunctionCallback[T] {
 		l := cbCtx.Logger().With(attrs...)
 		l.Debug("JS function callback enter", ThisLogAttr(cbCtx), ArgsLogAttr(cbCtx))
 		defer func() {
-			l.Debug("JS function callback exit", LogAttr("res", res), log.ErrAttr(err))
+			if err == nil {
+				l.Debug("JS function callback exit", LogAttr("res", res))
+			} else {
+				stack := string(debug.Stack())
+				l.Warn("JS function callback exit", LogAttr("res", res), log.ErrAttr(err), slog.Any("stack", stack))
+			}
 		}()
 		return c(cbCtx)
 

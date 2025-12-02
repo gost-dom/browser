@@ -70,6 +70,12 @@ func newCallbackContext(host *V8ScriptHost, info *v8.FunctionCallbackInfo) *v8Ca
 	}
 }
 
+func (c v8CallbackScope) Eval(script, location string) (jsValue, error) {
+	// TODO: Add location/source
+	v8Value, err := c.ScriptCtx().runScript(script)
+	return newV8Value(c.ScriptCtx(), v8Value), err
+}
+
 func (h *v8CallbackContext) ReturnWithTypeError(msg string) (jsValue, error) {
 	return nil, v8.NewTypeError(h.iso(), msg)
 }

@@ -14,6 +14,11 @@ type callbackScope struct {
 	instance any
 }
 
+func (c callbackScope) Eval(script, location string) (js.Value[jsTypeParam], error) {
+	val, err := c.scriptContext.run(script)
+	return newValue(c.scriptContext, val), err
+}
+
 func newCallbackScope(ctx *scriptContext, this *sobek.Object, instance any) callbackScope {
 	return callbackScope{
 		scope:    newScope(ctx),
