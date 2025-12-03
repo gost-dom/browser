@@ -36,38 +36,28 @@ func (w Headers[T]) decodeHeadersInit(
 		return
 	}
 	if obj, ok := v.AsObject(); ok {
-		var keys js.Value[T]
-		keys, err = js.ObjectKeys(scope, obj)
-		if err != nil {
-			return nil, scope.NewTypeError(err.Error())
-		}
-		for key, err := range js.Iterate(keys) {
+		var key js.Value[T]
+		for key, err = range js.ObjectEnumerableOwnPropertyKeys(scope, obj) {
+			if err == nil && !key.IsString() {
+				err = scope.NewTypeError("Non-string key")
+			}
 			if err != nil {
+				break
+			}
+
+			var item [2]types.ByteString
+			if item[0], err = types.ToByteString(key.String()); err != nil {
 				return nil, err
 			}
-			var desc js.PropertyDescriptor[T]
-			desc, err = js.ObjectOwnPropertyDescriptor(scope, obj, key)
+
+			var val js.Value[T]
+			if val, err = obj.Get(key.String()); err == nil {
+				item[1], err = types.ToByteString(val.String())
+			}
 			if err != nil {
-				return nil, err
+				return
 			}
-			if desc != nil && desc.Enumerable() {
-				if !key.IsString() {
-					return nil, scope.NewTypeError("Non-string key")
-				}
-				var item [2]types.ByteString
-				var val js.Value[T]
-				if item[0], err = types.ToByteString(key.String()); err != nil {
-					return nil, err
-				}
-				val, err = obj.Get(key.String())
-				if err == nil {
-					item[1], err = types.ToByteString(val.String())
-				}
-				if err != nil {
-					return nil, err
-				}
-				res = append(res, item)
-			}
+			res = append(res, item)
 		}
 		return
 	}

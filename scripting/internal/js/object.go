@@ -188,3 +188,44 @@ func (d propertyDescriptor[T]) Enumerable() bool {
 	val, err := d.Get("enumerable")
 	return err == nil && val.Boolean()
 }
+
+type PropertyDescriptorIter[T any] struct {
+	PropertyDescriptor[T]
+	Key Value[T]
+}
+
+// ObjectEnumerableOwnPropertyKeys iterates over all enumerable [[OwnPropertyKeys]]
+func ObjectEnumerableOwnPropertyKeys[T any](
+	scope CallbackScope[T],
+	obj Object[T],
+) iter.Seq2[Value[T], error] {
+	return func(yield func(Value[T], error) bool) {
+		keys, err := ObjectKeys(scope, obj)
+		if err != nil {
+			yield(nil, scope.NewTypeError(err.Error()))
+			return
+		}
+
+		var (
+			key Value[T]
+			pd  PropertyDescriptor[T]
+		)
+		for key, err = range Iterate(keys) {
+			if err != nil {
+				break
+			}
+			if pd, err = ObjectOwnPropertyDescriptor(scope, obj, key); err != nil {
+				break
+			}
+			if pd == nil {
+				continue
+			}
+			if pd.Enumerable() && !yield(key, nil) {
+				return
+			}
+		}
+		if err != nil {
+			yield(nil, err)
+		}
+	}
+}
