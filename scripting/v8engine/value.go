@@ -65,6 +65,7 @@ func (v v8Value) IsUndefined() bool { return v.Value.IsUndefined() }
 func (v v8Value) IsNull() bool      { return v.Value.IsNull() }
 func (v v8Value) IsBoolean() bool   { return v.Value.IsBoolean() }
 func (v v8Value) IsString() bool    { return v.Value.IsString() }
+func (v v8Value) IsSymbol() bool    { return v.Value.IsSymbol() }
 func (v v8Value) IsObject() bool    { return v.Value.IsObject() }
 func (v v8Value) IsFunction() bool  { return v.Value.IsFunction() }
 

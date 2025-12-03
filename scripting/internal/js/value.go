@@ -21,6 +21,7 @@ type Value[T any] interface {
 
 	IsUndefined() bool
 	IsNull() bool
+	IsSymbol() bool
 	IsString() bool
 	// Not used, and we cannot ask Sobek this question, so commented from the
 	// interface for now
