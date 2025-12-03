@@ -2,7 +2,6 @@ package fetch
 
 import (
 	"errors"
-	"iter"
 
 	"github.com/gost-dom/browser/internal/fetch"
 	gosterror "github.com/gost-dom/browser/internal/gosterror"
@@ -37,28 +36,39 @@ func (w Headers[T]) decodeHeadersInit(
 		return
 	}
 	if obj, ok := v.AsObject(); ok {
-		var entries js.Value[T]
-		entries, err = js.ObjectEntries(scope, obj)
+		var keys js.Value[T]
+		keys, err = js.ObjectKeys(scope, obj)
 		if err != nil {
-			return nil, err
+			return nil, scope.NewTypeError(err.Error())
 		}
-		res, err = w.parseHeaderIterator2(scope, entries)
-		// var keys []string
-		// if keys, err = obj.Keys(); err == nil {
-		// 	res = make([][2]types.ByteString, len(keys))
-		// 	for i, key := range keys {
-		// 		if res[i][0], err = types.ToByteString(key); err != nil {
-		// 			return
-		// 		}
-		// 		var val js.Value[T]
-		// 		if val, err = obj.Get(key); err != nil {
-		// 			return
-		// 		}
-		// 		if res[i][1], err = codec.DecodeByteString(scope, val); err != nil {
-		// 			return
-		// 		}
-		// 	}
-		// }
+		for key, err := range js.Iterate(keys) {
+			if err != nil {
+				return nil, err
+			}
+			var desc js.PropertyDescriptor[T]
+			desc, err = js.ObjectOwnPropertyDescriptor(scope, obj, key)
+			if err != nil {
+				return nil, err
+			}
+			if desc != nil && desc.Enumerable() {
+				if !key.IsString() {
+					return nil, scope.NewTypeError("Non-string key")
+				}
+				var item [2]types.ByteString
+				var val js.Value[T]
+				if item[0], err = types.ToByteString(key.String()); err != nil {
+					return nil, err
+				}
+				val, err = obj.Get(key.String())
+				if err == nil {
+					item[1], err = types.ToByteString(val.String())
+				}
+				if err != nil {
+					return nil, err
+				}
+				res = append(res, item)
+			}
+		}
 		return
 	}
 	return nil, nil
@@ -67,11 +77,7 @@ func (w Headers[T]) decodeHeadersInit(
 func (w Headers[T]) parseHeaderIterator2(
 	scope js.Scope[T], val js.Value[T],
 ) (res [][2]types.ByteString, err error) {
-	var seq iter.Seq2[js.Value[T], error]
-	if seq, err = js.Iterate(val); err != nil {
-		return
-	}
-	for v, err := range seq {
+	for v, err := range js.Iterate(val) {
 		if err != nil {
 			return nil, err
 		}
@@ -95,16 +101,3 @@ func (w Headers[T]) CustomInitializer(jsClass js.Class[T]) {
 	iterator := js.NewIterator2(codec.EncodeByteString[T], codec.EncodeByteString[T])
 	iterator.InstallPrototype(jsClass)
 }
-
-/*
-func (w Headers[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	var init [][2]string
-	if arg, ok := cbCtx.ConsumeArg(); ok {
-		init, err = w.decodeHeadersInit(cbCtx, arg)
-		if err != nil {
-			return
-		}
-	}
-	return w.CreateInstance(cbCtx, init...)
-}
-*/

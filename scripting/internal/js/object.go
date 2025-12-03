@@ -60,6 +60,42 @@ func ObjectGetIterator[T any](o Object[T]) (res Function[T], ok bool, err error)
 	return ObjectGetFunctionx(o, IteratorKey[T]{})
 }
 
+func ObjectKeys[T any](ctx CallbackScope[T], o Object[T]) (Value[T], error) {
+	entries, err := ctx.Eval("Reflect.ownKeys", "")
+	if err != nil {
+		return nil, err
+	}
+	fn, ok := entries.AsFunction()
+	if !ok {
+		return nil, errors.New("Object.keys is not a function")
+	}
+	return fn.Call(ctx.GlobalThis(), o)
+}
+
+func ObjectOwnPropertyDescriptor[T any](
+	ctx CallbackScope[T],
+	o Object[T],
+	p Value[T],
+) (PropertyDescriptor[T], error) {
+	entries, err := ctx.Eval("Object.getOwnPropertyDescriptor", "")
+	if err != nil {
+		return nil, err
+	}
+	fn, ok := entries.AsFunction()
+	if !ok {
+		return nil, errors.New("Object.keys is not a function")
+	}
+	v, err := fn.Call(ctx.GlobalThis(), o, p)
+	if err != nil {
+		return nil, err
+	}
+	if v == nil || v.IsUndefined() {
+		return nil, nil
+	}
+	obj, _ := v.AsObject()
+	return propertyDescriptor[T]{obj}, nil
+}
+
 func ObjectEntries[T any](ctx CallbackScope[T], o Object[T]) (Value[T], error) {
 	entries, err := ctx.Eval("Object.entries", "")
 	if err != nil {
@@ -73,42 +109,44 @@ func ObjectEntries[T any](ctx CallbackScope[T], o Object[T]) (Value[T], error) {
 }
 
 // iterate returns a seq.Iter2 exposing a JavaScript iterable as a Go iterator.
-// It will return an ErrNotIterable error if the JavaScript value is not an
-// object implementing the [Iterable] protocol. An error is returned if
-// obtaining the [Iterator] itself resulted in an error. The returned Seq will
-// return yield an error value if the JavaScript iterator throws an error during
-// iteration.
+// The returned Seq will yield an error value if the value is not an Iterable,
+// or JavaScript iterator throws an error during iteration.
 //
 // [Iterable]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol
 // [Iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterator_protocol
-func Iterate[T any](v Value[T]) (iter.Seq2[Value[T], error], error) {
-	obj, ok := v.AsObject()
-	if !ok {
-		return nil, ErrNotIterable
-	}
-	symIter, ok, err := ObjectGetIterator(obj)
-	if err == nil && !ok {
-		err = ErrNotIterable
-	}
-	if err != nil {
-		return nil, err
-	}
-	iterVal, err := symIter.Call(obj)
-	if err != nil {
-		return nil, err
-	}
-	iter, ok := iterVal.AsObject()
-	if !ok {
-		return nil, ErrNotIterable
-	}
-	next, ok, err := ObjectGetFunction(iter, "next")
-	if err == nil && !ok {
-		err = ErrNotIterable
-	}
-	if err != nil {
-		return nil, errNotIterable("next is not a function")
-	}
+func Iterate[T any](v Value[T]) iter.Seq2[Value[T], error] {
 	return func(yield func(Value[T], error) bool) {
+		obj, ok := v.AsObject()
+		if !ok {
+			yield(nil, ErrNotIterable)
+			return
+		}
+		symIter, ok, err := ObjectGetIterator(obj)
+		if err == nil && !ok {
+			err = ErrNotIterable
+		}
+		if err != nil {
+			yield(nil, err)
+			return
+		}
+		iterVal, err := symIter.Call(obj)
+		if err != nil {
+			yield(nil, err)
+			return
+		}
+		iter, ok := iterVal.AsObject()
+		if !ok {
+			yield(nil, ErrNotIterable)
+			return
+		}
+		next, ok, err := ObjectGetFunction(iter, "next")
+		if err == nil && !ok {
+			err = ErrNotIterable
+		}
+		if err != nil {
+			yield(nil, errNotIterable("next is not a function"))
+			return
+		}
 		for {
 			result, err := next.Call(iter)
 			if err != nil {
@@ -132,5 +170,21 @@ func Iterate[T any](v Value[T]) (iter.Seq2[Value[T], error], error) {
 				return
 			}
 		}
-	}, nil
+	}
+}
+
+/* -------- PropertyDescriptor -------- */
+
+type PropertyDescriptor[T any] interface {
+	Object[T]
+	Enumerable() bool
+}
+
+type propertyDescriptor[T any] struct {
+	Object[T]
+}
+
+func (d propertyDescriptor[T]) Enumerable() bool {
+	val, err := d.Get("enumerable")
+	return err == nil && val.Boolean()
 }

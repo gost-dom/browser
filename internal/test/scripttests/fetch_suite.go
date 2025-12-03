@@ -354,4 +354,27 @@ func testHeaders(t *testing.T, e html.ScriptEngine) {
 		assert.True(t, win.MustEval("err instanceof TypeError").(bool))
 		assert.Equal(t, "TypeError", win.MustEval("Object.getPrototypeOf(err).constructor.name"))
 	})
+
+	t.Run("Construct with invalid key", func(t *testing.T) {
+		t.Run("Key is outside ASCII range", func(t *testing.T) {
+			win := initWindow(t, e, nil)
+			res := win.MustEval(`
+				var err
+				try { new Headers({ "\uFFFF": "foo" }) } catch(e) { err = e }
+				err instanceof TypeError
+		`)
+			assert.True(t, res.(bool))
+		})
+
+		t.Run("Key is a symbol", func(t *testing.T) {
+			win := initWindow(t, e, nil)
+			res := win.MustEval(`
+				var err
+				const sym = Symbol()
+				try { new Headers({ [sym]: "foo" }) } catch(e) { err = e }
+				err instanceof TypeError
+		`)
+			assert.True(t, res.(bool))
+		})
+	})
 }
