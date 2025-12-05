@@ -19,9 +19,19 @@ var encodeInt = g.NewValuePackage("EncodeInt", packagenames.Codec)
 var encodeBoolean = g.NewValuePackage("EncodeBoolean", packagenames.Codec)
 var encodeEntity = g.NewValuePackage("EncodeEntity", packagenames.Codec)
 
+type ESOperationType int
+
+const (
+	OperationTypeConstructor ESOperationType = iota
+	OperationTypeOperation
+	OperationTypeGetter
+	OperationTypeSetter
+)
+
 type ESOperation struct {
 	Name                 string
 	Spec                 idl.Operation
+	Kind                 ESOperationType
 	NotImplemented       bool
 	RetType              idl.Type
 	HasError             bool
@@ -116,7 +126,8 @@ func (o ESOperation) Encoder(
 		return internal.BindValues(encodeBoolean, cbCtx)
 	case idlType.IsString():
 		if t.Nullable {
-			if data.CustomRule.OutputType == customrules.OutputTypeStruct {
+			if data.CustomRule.OutputType == customrules.OutputTypeStruct &&
+				o.Kind == OperationTypeGetter {
 				return internal.BindValues(encodeNullableString, cbCtx)
 			} else {
 				return internal.BindValues(encodeNillableString, cbCtx)
@@ -155,7 +166,8 @@ func (o ESOperation) RetValues(data ESConstructorData) []g.Generator {
 	res := g.Id("result")
 	hasValue := g.Id("hasValue")
 	if t.Nullable && !idltransform.NewIdlType(t).Nillable() {
-		if data.CustomRule.OutputType == customrules.OutputTypeStruct {
+		if data.CustomRule.OutputType == customrules.OutputTypeStruct &&
+			o.Kind == OperationTypeGetter {
 			return g.List(res)
 		} else {
 			return g.List(res, hasValue)

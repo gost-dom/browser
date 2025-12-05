@@ -52,6 +52,7 @@ func CreateConstructor(
 		c.Name = "constructor"
 		// TODO: Fix for constructor overloads
 		result := createOperation(
+			model.OperationTypeConstructor,
 			idl.Operation{
 				InterfaceMember: idl.InterfaceMember{Name: "constructor"},
 				Arguments:       idlInterface.Constructors[0].Arguments,
@@ -75,11 +76,29 @@ func CreateInstanceMethods(
 	visited := make(map[string]bool)
 	for _, operation := range idlInterface.Operations {
 		if operation.Name != "" && !visited[operation.Name] && !operation.Static {
-			result = append(result, createOperation(operation, intfRule, interfaceConfig, false))
+			result = append(
+				result,
+				createOperation(
+					model.OperationTypeOperation,
+					operation,
+					intfRule,
+					interfaceConfig,
+					false,
+				),
+			)
 		}
 		if operation.Name == "" && operation.Stringifier {
 			operation.ReturnType.Name = "USVString"
-			result = append(result, createOperation(operation, intfRule, interfaceConfig, true))
+			result = append(
+				result,
+				createOperation(
+					model.OperationTypeOperation,
+					operation,
+					intfRule,
+					interfaceConfig,
+					true,
+				),
+			)
 		}
 		visited[operation.Name] = true
 	}
@@ -107,6 +126,7 @@ func CreateAttributes(
 		}
 		getter = &model.ESOperation{
 			Name:                 attribute.Name,
+			Kind:                 model.OperationTypeGetter,
 			NotImplemented:       methodCustomization.NotImplemented,
 			CustomImplementation: methodCustomization.CustomImplementation,
 			RetType:              attrType,
@@ -116,6 +136,7 @@ func CreateAttributes(
 			setter = new(model.ESOperation)
 			*setter = *getter
 			setter.Name = fmt.Sprintf("set%s", model.IdlNameToGoName(getter.Name))
+			setter.Kind = model.OperationTypeSetter
 			methodCustomization := interfaceConfig.GetMethodCustomization(setter.Name)
 			setter.NotImplemented = setter.NotImplemented || methodCustomization.NotImplemented
 			setter.CustomImplementation = setter.CustomImplementation ||
@@ -147,6 +168,7 @@ func CreateAttributes(
 }
 
 func createOperation(
+	kind model.ESOperationType,
 	idlOperation idl.Operation,
 	intfRules customrules.InterfaceRule,
 	typeSpec *configuration.WebIDLConfig,
@@ -158,6 +180,7 @@ func createOperation(
 	op := model.ESOperation{
 		Name:                 idlOperation.Name,
 		Spec:                 idlOperation,
+		Kind:                 kind,
 		NotImplemented:       methodCustomization.NotImplemented,
 		CustomImplementation: methodCustomization.CustomImplementation,
 		RetType:              idlOperation.ReturnType,

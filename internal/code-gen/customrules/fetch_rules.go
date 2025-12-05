@@ -11,6 +11,7 @@ var fetchRules = SpecRules{
 		},
 	},
 	"Headers": {
+		OutputType: OutputTypeStruct,
 		Operations: OperationRules{
 			"constructor": {
 				Arguments: ArgumentRules{
