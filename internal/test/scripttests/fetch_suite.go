@@ -99,6 +99,7 @@ func testFetch(t *testing.T, e html.ScriptEngine) {
 	t.Run("404 for not found resource", func(t *testing.T) { testNotFound(t, e) })
 	t.Run("ReadableStream body", func(t *testing.T) { testReadableStream(t, e) })
 	t.Run("Headers", func(t *testing.T) { testHeaders(t, e) })
+	t.Run("Request", func(t *testing.T) { testRequest(t, e) })
 }
 
 func testFetchAbortSignal(t *testing.T, e html.ScriptEngine) {
@@ -281,6 +282,18 @@ func testReadableStream(t *testing.T, e html.ScriptEngine) {
 	assert.Equal(t, "Hello, world!", win.MustEval("readResult"))
 }
 
+func testRequest(t *testing.T, e html.ScriptEngine) {
+	t.Run("Headers return SameObject", func(t *testing.T) {
+		win := initWindow(t, e, nil)
+		res := win.MustEval(`
+			const h = new Request("http://example.com")
+			const a = h.headers
+			const b = h.headers
+			a === b
+	  `)
+		assert.True(t, res.(bool))
+	})
+}
 func testHeaders(t *testing.T, e html.ScriptEngine) {
 	t.Run("Throws on invalid value", func(t *testing.T) {
 		win := initWindow(t, e, nil)

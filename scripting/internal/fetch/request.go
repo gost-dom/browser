@@ -40,5 +40,8 @@ func (w Request[T]) CreateInstance(
 }
 
 func (w Request[T]) toHeaders(cbCtx js.CallbackContext[T], h *fetch.Headers) (js.Value[T], error) {
-	return cbCtx.Constructor("Headers").NewInstance(h)
+	if val, ok := cbCtx.GetValue(h); ok {
+		return val, nil
+	}
+	return codec.EncodeEntityScopedWithPrototype(cbCtx, h, "Headers")
 }

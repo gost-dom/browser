@@ -11,6 +11,7 @@ import (
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/dom"
+	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/promise"
 	"github.com/gost-dom/browser/internal/streams"
 	"github.com/gost-dom/browser/internal/types"
@@ -30,7 +31,10 @@ type Header struct {
 	val types.ByteString
 }
 
-type Headers struct{ headers []Header }
+type Headers struct {
+	entity.Entity
+	headers []Header
+}
 
 func parseHeaders(h http.Header) Headers {
 	res := Headers{}

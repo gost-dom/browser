@@ -35,6 +35,27 @@ func EncodeEntityScoped[T any](scope js.Scope[T], e entity.ObjectIder) (js.Value
 	return value, err
 }
 
+func EncodeEntityScopedWithPrototype[T any](
+	scope js.Scope[T],
+	e entity.ObjectIder,
+	protoName string,
+) (js.Value[T], error) {
+	if e == nil {
+		return scope.Null(), nil
+	}
+
+	if cached, ok := scope.GetValue(e); ok {
+		return cached, nil
+	}
+
+	prototype := scope.Constructor(protoName)
+	value, err := prototype.NewInstance(e)
+	if err == nil {
+		scope.SetValue(e, value)
+	}
+	return value, err
+}
+
 func EncodeBoolean[T any](s js.CallbackScope[T], b bool) (js.Value[T], error) {
 	return s.NewBoolean(b), nil
 }

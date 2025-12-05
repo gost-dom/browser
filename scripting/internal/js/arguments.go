@@ -25,7 +25,7 @@ func ConsumeArgument[T, U any](
 	decoders ...func(Scope[U], Value[U]) (T, error),
 ) (result T, err error) {
 	value, _ := args.ConsumeArg()
-	if value == nil && defaultValue != nil {
+	if IsUndefined(value) && defaultValue != nil {
 		return defaultValue(), nil
 	} else {
 		errs := make([]error, len(decoders))
@@ -47,6 +47,8 @@ func ConsumeArgument[T, U any](
 		return
 	}
 }
+
+func IsUndefined[T any](v Value[T]) bool { return v == nil || v.IsUndefined() }
 
 func ConsumeRestArguments[T, U any](
 	args CallbackContext[U],
