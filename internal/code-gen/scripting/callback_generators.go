@@ -46,7 +46,7 @@ func (cb CallbackMethods) ConstructorCallbackBody() g.Generator {
 	return cb.OpCallbackGenerators(cons).ConstructorCallbackBody()
 }
 
-func (cb CallbackMethods) MethodCallback(op model.ESOperation) g.Generator {
+func (cb CallbackMethods) MethodCallback(op model.Callback) g.Generator {
 	cbCtx := NewCallbackContext(g.Id("cbCtx"))
 	name := op.CallbackMethodName()
 	return cb.CallbackFunction(
@@ -58,7 +58,7 @@ func (cb CallbackMethods) MethodCallback(op model.ESOperation) g.Generator {
 	)
 }
 
-func (cb CallbackMethods) OpCallbackGenerators(op model.ESOperation) OpCallbackMethods {
+func (cb CallbackMethods) OpCallbackGenerators(op model.Callback) OpCallbackMethods {
 	return OpCallbackMethods{cb, op}
 }
 

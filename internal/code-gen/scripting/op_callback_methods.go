@@ -16,7 +16,7 @@ import (
 // optional or variadic.
 type OpCallbackMethods struct {
 	CallbackMethods
-	Op model.ESOperation
+	Op model.Callback
 }
 
 func (gen OpCallbackMethods) ConstructorCallbackBody() g.Generator {
@@ -24,7 +24,7 @@ func (gen OpCallbackMethods) ConstructorCallbackBody() g.Generator {
 }
 
 func (gen OpCallbackMethods) NativeConstructorCall(
-	op model.ESOperation,
+	op model.Callback,
 	methodPostFix string,
 	args []g.Generator,
 ) g.Generator {
@@ -45,7 +45,7 @@ func (b OpCallbackMethods) MethodCallbackBody() g.Generator {
 }
 
 func (gen OpCallbackMethods) NativeMethodCall(
-	op model.ESOperation,
+	op model.Callback,
 	methodPostFix string,
 	args []g.Generator,
 ) g.Generator {
@@ -60,7 +60,7 @@ func (gen OpCallbackMethods) NativeMethodCall(
 }
 
 func (gen OpCallbackMethods) CtorOrOperationCallback(
-	callNativeFunc func(op model.ESOperation, methodPostFix string, args []g.Generator) g.Generator,
+	callNativeFunc func(op model.Callback, methodPostFix string, args []g.Generator) g.Generator,
 ) g.Generator {
 
 	// reqArgs are "required" args on the Go side. This include optional args in

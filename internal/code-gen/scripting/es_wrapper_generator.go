@@ -47,12 +47,12 @@ func CreateConstructor(
 	idlInterface idl.Interface,
 	intfRule customrules.InterfaceRule,
 	interfaceConfig *configuration.WebIDLConfig,
-	idlName idl.TypeSpec) *model.ESOperation {
+	idlName idl.TypeSpec) *model.Callback {
 	if c, ok := idlName.Constructor(); ok {
 		c.Name = "constructor"
 		// TODO: Fix for constructor overloads
 		result := createOperation(
-			model.OperationTypeConstructor,
+			model.CallbackKindCtor,
 			idl.Operation{
 				InterfaceMember: idl.InterfaceMember{Name: "constructor"},
 				Arguments:       idlInterface.Constructors[0].Arguments,
@@ -71,7 +71,7 @@ func CreateInstanceMethods(
 	idlInterface idl.Interface,
 	intfRule customrules.InterfaceRule,
 	interfaceConfig *configuration.WebIDLConfig,
-) (result []model.ESOperation) {
+) (result []model.Callback) {
 	// TODO: Handle overloads, e.g. of XHR.open
 	visited := make(map[string]bool)
 	for _, operation := range idlInterface.Operations {
@@ -79,7 +79,7 @@ func CreateInstanceMethods(
 			result = append(
 				result,
 				createOperation(
-					model.OperationTypeOperation,
+					model.CallbackKindOperation,
 					operation,
 					intfRule,
 					interfaceConfig,
@@ -92,7 +92,7 @@ func CreateInstanceMethods(
 			result = append(
 				result,
 				createOperation(
-					model.OperationTypeOperation,
+					model.CallbackKindOperation,
 					operation,
 					intfRule,
 					interfaceConfig,
@@ -117,26 +117,26 @@ func CreateAttributes(
 			continue
 		}
 		var (
-			getter *model.ESOperation
-			setter *model.ESOperation
+			getter *model.Callback
+			setter *model.Callback
 		)
 		attrType := attribute.Type
 		if customRule.OverrideType != nil {
 			attrType = customRule.OverrideType.IdlType()
 		}
-		getter = &model.ESOperation{
+		getter = &model.Callback{
 			Name:                 attribute.Name,
-			Kind:                 model.OperationTypeGetter,
+			Kind:                 model.CallbackKindGetter,
 			NotImplemented:       methodCustomization.NotImplemented,
 			CustomImplementation: methodCustomization.CustomImplementation,
 			RetType:              attrType,
 			MethodCustomization:  methodCustomization,
 		}
 		if !attribute.Readonly {
-			setter = new(model.ESOperation)
+			setter = new(model.Callback)
 			*setter = *getter
 			setter.Name = fmt.Sprintf("set%s", model.IdlNameToGoName(getter.Name))
-			setter.Kind = model.OperationTypeSetter
+			setter.Kind = model.CallbackKindSetter
 			methodCustomization := interfaceConfig.GetMethodCustomization(setter.Name)
 			setter.NotImplemented = setter.NotImplemented || methodCustomization.NotImplemented
 			setter.CustomImplementation = setter.CustomImplementation ||
@@ -168,16 +168,16 @@ func CreateAttributes(
 }
 
 func createOperation(
-	kind model.ESOperationType,
+	kind model.CallbackKind,
 	idlOperation idl.Operation,
 	intfRules customrules.InterfaceRule,
 	typeSpec *configuration.WebIDLConfig,
 	stringifier bool,
-) model.ESOperation {
+) model.Callback {
 	opRules := intfRules.Operations[idlOperation.Name]
 	methodCustomization := typeSpec.GetMethodCustomization(idlOperation.Name)
 
-	op := model.ESOperation{
+	op := model.Callback{
 		Name:                 idlOperation.Name,
 		Spec:                 idlOperation,
 		Kind:                 kind,

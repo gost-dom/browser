@@ -19,19 +19,20 @@ var encodeInt = g.NewValuePackage("EncodeInt", packagenames.Codec)
 var encodeBoolean = g.NewValuePackage("EncodeBoolean", packagenames.Codec)
 var encodeEntity = g.NewValuePackage("EncodeEntity", packagenames.Codec)
 
-type ESOperationType int
+type CallbackKind int
 
 const (
-	OperationTypeConstructor ESOperationType = iota
-	OperationTypeOperation
-	OperationTypeGetter
-	OperationTypeSetter
+	CallbackKindCtor CallbackKind = iota
+	CallbackKindOperation
+	CallbackKindGetter
+	CallbackKindSetter
 )
 
-type ESOperation struct {
+// Callback represents a Go function callback implementing a JS function.
+type Callback struct {
 	Name                 string
 	Spec                 idl.Operation
-	Kind                 ESOperationType
+	Kind                 CallbackKind
 	NotImplemented       bool
 	RetType              idl.Type
 	HasError             bool
@@ -43,24 +44,24 @@ type ESOperation struct {
 // CallbackMethodName gets the name for the unexported function that serves as a
 // function callback, i.e. the Go function to be executed when JavaScript code
 // calls a native function.
-func (o ESOperation) CallbackMethodName() string {
+func (o Callback) CallbackMethodName() string {
 	return idl.SanitizeName(o.Name)
 }
 
 // NativeFunctionName gets the name of the method in Go that implements the
 // behaviour.
-func (o ESOperation) NativeFunctionName() string {
+func (o Callback) NativeFunctionName() string {
 	if o.Name == "toString" {
 		return "String"
 	}
 	return IdlNameToGoName(o.Name)
 }
 
-func (op ESOperation) GetHasError() bool {
+func (op Callback) GetHasError() bool {
 	return op.HasError
 }
 
-func (op ESOperation) HasResult() bool {
+func (op Callback) HasResult() bool {
 	if op.Name == "" {
 		return false
 	}
@@ -94,7 +95,7 @@ func idlTypeNameToGoName(t idl.Type) string {
 	}
 }
 
-func (o ESOperation) EncodeAsSimpleJSLookup() bool {
+func (o Callback) EncodeAsSimpleJSLookup() bool {
 	if IsNodeType(o.RetType.Name) {
 		return true
 	}
@@ -106,7 +107,7 @@ func (o ESOperation) EncodeAsSimpleJSLookup() bool {
 	}
 }
 
-func (o ESOperation) Encoder(
+func (o Callback) Encoder(
 	receiver g.Value,
 	cbCtx g.Generator,
 	data ESConstructorData,
@@ -127,7 +128,7 @@ func (o ESOperation) Encoder(
 	case idlType.IsString():
 		if t.Nullable {
 			if data.CustomRule.OutputType == customrules.OutputTypeStruct &&
-				o.Kind == OperationTypeGetter {
+				o.Kind == CallbackKindGetter {
 				return internal.BindValues(encodeNullableString, cbCtx)
 			} else {
 				return internal.BindValues(encodeNillableString, cbCtx)
@@ -158,7 +159,7 @@ func (o ESOperation) Encoder(
 	return internal.BindValues(receiver.Field(converter), cbCtx)
 }
 
-func (o ESOperation) RetValues(data ESConstructorData) []g.Generator {
+func (o Callback) RetValues(data ESConstructorData) []g.Generator {
 	if !o.HasResult() {
 		return nil
 	}
@@ -167,7 +168,7 @@ func (o ESOperation) RetValues(data ESConstructorData) []g.Generator {
 	hasValue := g.Id("hasValue")
 	if t.Nullable && !idltransform.NewIdlType(t).Nillable() {
 		if data.CustomRule.OutputType == customrules.OutputTypeStruct &&
-			o.Kind == OperationTypeGetter {
+			o.Kind == CallbackKindGetter {
 			return g.List(res)
 		} else {
 			return g.List(res, hasValue)
@@ -176,6 +177,6 @@ func (o ESOperation) RetValues(data ESConstructorData) []g.Generator {
 	return g.List(res)
 }
 
-func (o ESOperation) RetTypeName() string {
+func (o Callback) RetTypeName() string {
 	return o.RetType.Name
 }

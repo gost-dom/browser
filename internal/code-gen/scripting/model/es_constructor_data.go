@@ -15,9 +15,9 @@ type ESConstructorData struct {
 	Spec          *configuration.WebIDLConfig
 	CustomRule    customrules.InterfaceRule
 	IdlInterface  idl.Interface
-	Operations    []ESOperation
+	Operations    []Callback
 	Attributes    []ESAttribute
-	Constructor   *ESOperation
+	Constructor   *Callback
 	RunCustomCode bool
 }
 
@@ -67,8 +67,8 @@ func (d ESConstructorData) GetInternalPackage() string {
 	}
 }
 
-func (d ESConstructorData) WrapperFunctionsToInstall() iter.Seq[ESOperation] {
-	return func(yield func(ESOperation) bool) {
+func (d ESConstructorData) WrapperFunctionsToInstall() iter.Seq[Callback] {
+	return func(yield func(Callback) bool) {
 		for _, op := range d.Operations {
 			if !op.MethodCustomization.Ignored && !yield(op) {
 				return
@@ -87,8 +87,8 @@ func (d ESConstructorData) AttributesToInstall() iter.Seq[ESAttribute] {
 	}
 }
 
-func (d ESConstructorData) OperationCallbackInfos() iter.Seq[ESOperation] {
-	return func(yield func(ESOperation) bool) {
+func (d ESConstructorData) OperationCallbackInfos() iter.Seq[Callback] {
+	return func(yield func(Callback) bool) {
 		for op := range d.WrapperFunctionsToInstall() {
 			if !op.MethodCustomization.CustomImplementation && !yield(op) {
 				return

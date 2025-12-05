@@ -7,7 +7,7 @@ import (
 
 type ReturnValueGenerator struct {
 	Data     model.ESConstructorData
-	Op       model.ESOperation
+	Op       model.Callback
 	Ctx      CallbackContext
 	Receiver g.Generator
 }
