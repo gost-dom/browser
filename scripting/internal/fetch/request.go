@@ -1,9 +1,6 @@
 package fetch
 
 import (
-	"fmt"
-
-	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/internal/fetch"
 	"github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
@@ -17,16 +14,10 @@ func (w Request[T]) decodeRequestInfo(
 }
 
 func (w Request[T]) decodeRequestInit(
-	_ js.Scope[T],
+	s js.Scope[T],
 	v js.Value[T],
 ) ([]fetch.RequestOption, error) {
-	if v != nil {
-		return nil, fmt.Errorf(
-			"gost-dom/fetch: Request: requestInit not yet supported. %s",
-			constants.MISSING_FEATURE_ISSUE_URL,
-		)
-	}
-	return nil, nil
+	return decodeRequestInit(s, v)
 }
 
 func (w Request[T]) CreateInstance(
@@ -35,7 +26,7 @@ func (w Request[T]) CreateInstance(
 	options ...fetch.RequestOption,
 ) (js.Value[T], error) {
 	f := fetch.New(cbCtx.Window())
-	req := f.NewRequest(url)
+	req := f.NewRequest(url, options...)
 	return codec.EncodeConstrucedValue(cbCtx, &req)
 }
 

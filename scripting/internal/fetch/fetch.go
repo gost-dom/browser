@@ -34,10 +34,14 @@ func Fetch[T any](info js.CallbackContext[T]) (js.Value[T], error) {
 func decodeRequestInit[T any](
 	scope js.Scope[T], val js.Value[T],
 ) ([]fetch.RequestOption, error) {
+	if js.IsUndefined(val) {
+		return nil, nil
+	}
 	options := codec.Options[T, fetch.RequestOption]{
-		"signal": codec.OptDecoder[T](codec.DecodeInnerObject, fetch.WithSignal),
-		"method": codec.OptDecoder[T](codec.DecodeString, fetch.WithMethod),
-		"body":   codec.OptDecoder[T](codec.DecodeRequestBody, fetch.WithBody),
+		"signal":  codec.OptDecoder[T](codec.DecodeInnerObject, fetch.WithSignal),
+		"method":  codec.OptDecoder[T](codec.DecodeString, fetch.WithMethod),
+		"body":    codec.OptDecoder[T](codec.DecodeRequestBody, fetch.WithBody),
+		"headers": codec.OptDecoder[T](decodeHeadersInit, fetch.WithHeaders),
 	}
 	for _, optName := range missingRequestOptions {
 		options[optName] = func(js.Scope[T], js.Value[T]) (fetch.RequestOption, error) {
@@ -52,7 +56,7 @@ func decodeRequestInit[T any](
 }
 
 var missingRequestOptions = []string{
-	"headers", "referrer", "referrerPolicy",
+	"referrer", "referrerPolicy",
 	"mode", "credentials", "cache", "redirect", "integrity",
 	"keepalive", "duplex", "priority", "window",
 }

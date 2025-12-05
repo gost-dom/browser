@@ -198,6 +198,14 @@ func WithBody(b io.Reader) RequestOption {
 	return func(opt *Request) { opt.body = b }
 }
 
+func WithHeaders(h [][2]types.ByteString) RequestOption {
+	return func(opt *Request) {
+		for _, kv := range h {
+			opt.Headers.Append(kv[0], kv[1])
+		}
+	}
+}
+
 func (f Fetch) Fetch(req Request) (*Response, error) {
 	res := <-f.FetchAsync(req)
 	return res.Value, res.Err

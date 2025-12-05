@@ -293,6 +293,17 @@ func testRequest(t *testing.T, e html.ScriptEngine) {
 	  `)
 		assert.True(t, res.(bool))
 	})
+
+	t.Run("Request parse headers", func(t *testing.T) {
+		win := initWindow(t, e, nil)
+		res := win.MustEval(`
+			const h = new Request("http://example.com", { headers: {"foo":"bar"} })
+			h.headers.get("foo")
+		`)
+		if assert.NotNil(t, res) {
+			assert.Equal(t, "bar", res.(string))
+		}
+	})
 }
 func testHeaders(t *testing.T, e html.ScriptEngine) {
 	t.Run("Throws on invalid value", func(t *testing.T) {

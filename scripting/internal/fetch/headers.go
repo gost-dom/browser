@@ -24,6 +24,13 @@ func (w Headers[T]) decodeHeadersInit(
 	s js.Scope[T],
 	v js.Value[T],
 ) (res [][2]types.ByteString, err error) {
+	return decodeHeadersInit(s, v)
+}
+
+func decodeHeadersInit[T any](
+	s js.Scope[T],
+	v js.Value[T],
+) (res [][2]types.ByteString, err error) {
 	scope := s.(js.CallbackScope[T])
 	if v == nil || v.IsUndefined() {
 		return nil, nil
@@ -31,7 +38,7 @@ func (w Headers[T]) decodeHeadersInit(
 	if v.IsNull() {
 		return nil, scope.NewTypeError("invalid value: null")
 	}
-	res, err = w.parseHeaderIterator2(scope, v)
+	res, err = parseHeaderIterator2(scope, v)
 	if err == nil || (!errors.Is(err, js.ErrNotIterable)) {
 		return
 	}
@@ -63,7 +70,7 @@ func (w Headers[T]) decodeHeadersInit(
 	return
 }
 
-func (w Headers[T]) parseHeaderIterator2(
+func parseHeaderIterator2[T any](
 	scope js.Scope[T], val js.Value[T],
 ) (res [][2]types.ByteString, err error) {
 	for v, err := range js.Iterate(val) {
