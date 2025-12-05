@@ -13,7 +13,7 @@ func (wrapper Response[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T]
 
 func (wrapper Response[T]) toHeaders(
 	ctx js.CallbackContext[T],
-	headers fetch.Headers,
+	headers *fetch.Headers,
 ) (js.Value[T], error) {
 	ctor := ctx.Constructor("Headers")
 	return ctor.NewInstance(headers)

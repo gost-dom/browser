@@ -4,6 +4,7 @@ import (
 	"iter"
 	"testing"
 
+	"github.com/gost-dom/browser/internal/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,10 +19,49 @@ func TestHeadersReturnSeparateSetCookieValues(t *testing.T) {
 	}
 
 	assert.Equal(t, "set-cookie", string(pairs[0].first))
-	assert.Equal(t, "foo=bar", string(pairs[0].second))
+	assert.Equal(t, "foo=bar", string(pairs[0].second), "first cookie")
 
 	assert.Equal(t, "set-cookie", string(pairs[1].first))
-	assert.Equal(t, "fizz=buzz; domain=example.com", string(pairs[1].second))
+	assert.Equal(t, "fizz=buzz; domain=example.com", string(pairs[1].second), "second cookie")
+}
+
+func TestHeaderIterWhenModified(t *testing.T) {
+	h := &Headers{}
+	h.Append("fizz", "buzz")
+	h.Append("X-Header", "test")
+	next, stop := iter.Pull2(h.All())
+	defer stop()
+
+	var key types.ByteString
+	var val types.ByteString
+	var ok bool
+
+	key, val, ok = next()
+	assert.True(t, ok)
+	assert.Equal(t, "fizz", string(key))
+	assert.Equal(t, "buzz", string(val))
+
+	h.Append("set-cookie", "a=b")
+	key, val, ok = next()
+	assert.True(t, ok)
+	assert.Equal(t, "set-cookie", string(key))
+
+	key, val, ok = next()
+	assert.True(t, ok)
+	assert.Equal(t, "x-header", string(key))
+
+	_, _, ok = next()
+	assert.False(t, ok)
+}
+
+func TestHeadersIterateSameValue(t *testing.T) {
+	h := &Headers{}
+	h.Append("fizz", "buzz")
+	h.Append("foo", "bar")
+	h.Append("foo", "baz")
+
+	pairs := collectPairs(h.All())
+	assert.Len(t, pairs, 2)
 }
 
 type pair[T, U any] struct {

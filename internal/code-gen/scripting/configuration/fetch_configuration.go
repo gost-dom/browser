@@ -26,6 +26,11 @@ func configureFetchSpecs(specs *WebAPIConfig) {
 	body.Method("json").SetCustomImplementation()
 
 	headers := specs.Type("Headers")
+	headers.OverrideWrappedType = &GoType{
+		Package: packagenames.Fetch,
+		Name:    "Headers",
+		Pointer: true,
+	}
 	headers.MarkMembersAsNotImplemented("getSetCookie")
 	headers.RunCustomCode = true
 }

@@ -38,7 +38,7 @@ func (w Headers[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 }
 
 func (w Headers[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	instance, errInst := js.As[fetch.Headers](cbCtx.Instance())
+	instance, errInst := js.As[*fetch.Headers](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
 	}
@@ -53,7 +53,7 @@ func (w Headers[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err er
 }
 
 func (w Headers[T]) delete(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	instance, errInst := js.As[fetch.Headers](cbCtx.Instance())
+	instance, errInst := js.As[*fetch.Headers](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
 	}
@@ -66,7 +66,7 @@ func (w Headers[T]) delete(cbCtx js.CallbackContext[T]) (res js.Value[T], err er
 }
 
 func (w Headers[T]) get(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	instance, errInst := js.As[fetch.Headers](cbCtx.Instance())
+	instance, errInst := js.As[*fetch.Headers](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
 	}
@@ -83,7 +83,7 @@ func (w Headers[T]) getSetCookie(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 }
 
 func (w Headers[T]) has(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	instance, errInst := js.As[fetch.Headers](cbCtx.Instance())
+	instance, errInst := js.As[*fetch.Headers](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
 	}
@@ -96,7 +96,7 @@ func (w Headers[T]) has(cbCtx js.CallbackContext[T]) (res js.Value[T], err error
 }
 
 func (w Headers[T]) set(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	instance, errInst := js.As[fetch.Headers](cbCtx.Instance())
+	instance, errInst := js.As[*fetch.Headers](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
 	}

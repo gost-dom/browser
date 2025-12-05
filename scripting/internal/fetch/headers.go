@@ -13,7 +13,7 @@ import (
 func (w Headers[T]) CreateInstance(
 	cbCtx js.CallbackContext[T], options ...[2]types.ByteString,
 ) (js.Value[T], error) {
-	res := fetch.Headers{}
+	res := &fetch.Headers{}
 	for _, h := range options {
 		res.Append(h[0], h[1])
 	}

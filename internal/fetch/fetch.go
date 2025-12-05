@@ -22,37 +22,27 @@ type Fetch struct {
 
 type Header struct {
 	key types.ByteString
-	val []types.ByteString
+	val types.ByteString
 }
 
 type Headers struct{ headers []Header }
 
-func parseHeaders(h http.Header) Headers {
-	res := Headers{headers: make([]Header, 0, len(h))}
+func parseHeaders(h http.Header) *Headers {
+	res := &Headers{}
 	for k, v := range h {
-		vv := make([]types.ByteString, len(v))
-		for i, val := range v {
-			vv[i] = types.ByteString(val)
+		for _, val := range v {
+			res.Append(types.ByteString(k), types.ByteString(val))
 		}
-		res.headers = append(
-			res.headers,
-			// We assume that HTTP headeres received from a server contains
-			// valid values
-
-			Header{key: types.ByteString(k).ToLower(), val: vv},
-		)
 	}
 	return res
 }
 
 func (h *Headers) Append(name, val types.ByteString) {
 	name = name.ToLower()
-	idx := slices.IndexFunc(h.headers, func(h Header) bool { return h.key == name })
-	if idx == -1 {
-		idx = len(h.headers)
-		h.headers = append(h.headers, Header{key: name})
-	}
-	h.headers[idx].val = append(h.headers[idx].val, val)
+	h.headers = append(h.headers, Header{key: name, val: val})
+	slices.SortStableFunc(h.headers, func(a, b Header) int {
+		return strings.Compare(string(a.key), string(b.key))
+	})
 }
 
 func (h *Headers) Delete(name types.ByteString) {
@@ -62,11 +52,21 @@ func (h *Headers) Delete(name types.ByteString) {
 
 func (h *Headers) Get(name types.ByteString) (string, bool) {
 	name = name.ToLower()
-	idx := slices.IndexFunc(h.headers, func(h Header) bool { return h.key == name })
-	if idx == -1 {
-		return "", false
+	var res []types.ByteString
+	for _, hh := range h.headers {
+		cmp := strings.Compare(string(hh.key), string(hh.val))
+		if cmp == 1 {
+			res = append(res, hh.val)
+		}
+		if cmp > 1 {
+			break
+		}
 	}
-	return strings.Join(types.ByteStringsToStrings(h.headers[idx].val), ", "), true
+	return h.formatValue(res), len(res) > 0
+}
+
+func (h *Headers) formatValue(val []types.ByteString) string {
+	return strings.Join(types.ByteStringsToStrings(val), ", ")
 }
 
 func (h *Headers) Has(name types.ByteString) bool {
@@ -79,28 +79,36 @@ func (h *Headers) Set(name, value types.ByteString) {
 	name = name.ToLower()
 	idx := slices.IndexFunc(h.headers, func(h Header) bool { return h.key == name })
 	if idx != -1 {
-		h.headers[idx].val = nil
+		h.headers[idx].val = value
+	} else {
+		h.Append(name, value)
 	}
-	h.Append(name, value)
 }
 
-func (h Headers) All() iter.Seq2[types.ByteString, types.ByteString] {
+func (h *Headers) All() iter.Seq2[types.ByteString, types.ByteString] {
 	return func(yield func(types.ByteString, types.ByteString) bool) {
-		for _, v := range h.headers {
-			if len(v.val) > 0 {
-				if v.key == "set-cookie" {
-					for _, val := range v.val {
-						if !yield(v.key, val) {
-							return
-						}
-					}
-				} else {
-					val, _ := h.Get(v.key)
-					if !yield(v.key, types.ByteString(val)) {
-						return
+		var collect []types.ByteString
+		var i = 0
+		for i < len(h.headers) {
+			v := h.headers[i]
+			if i > 1000 {
+				return
+			}
+			var nextI = i + 1
+			collect = append(collect, v.val)
+			if v.key != "set-cookie" {
+				if len(h.headers) > nextI {
+					if h.headers[nextI].key == v.key {
+						i++
+						continue
 					}
 				}
 			}
+			if !yield(v.key, types.ByteString(h.formatValue(collect))) {
+				return
+			}
+			i++
+			collect = nil
 		}
 	}
 }
@@ -186,7 +194,7 @@ func (f Fetch) FetchAsync(req Request) promise.Promise[*Response] {
 type Response struct {
 	io.Reader
 	Status  int
-	Headers Headers
+	Headers *Headers
 
 	httpResponse *http.Response
 }
