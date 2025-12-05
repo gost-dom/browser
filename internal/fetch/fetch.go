@@ -146,8 +146,9 @@ func New(bc html.BrowsingContext) Fetch { return Fetch{bc} }
 
 func (f Fetch) NewRequest(url string, opts ...RequestOption) Request {
 	req := Request{
-		url: url,
-		bc:  f.BrowsingContext,
+		Headers: &Headers{},
+		url:     url,
+		bc:      f.BrowsingContext,
 	}
 	for _, o := range opts {
 		o(&req)
@@ -158,11 +159,12 @@ func (f Fetch) NewRequest(url string, opts ...RequestOption) Request {
 type RequestOption func(*Request)
 
 type Request struct {
-	url    string
-	bc     html.BrowsingContext
-	method string
-	signal *dom.AbortSignal
-	body   io.Reader
+	Headers *Headers
+	url     string
+	bc      html.BrowsingContext
+	method  string
+	signal  *dom.AbortSignal
+	body    io.Reader
 }
 
 func (r *Request) URL() string { return url.ParseURLBase(r.url, r.bc.LocationHREF()).Href() }

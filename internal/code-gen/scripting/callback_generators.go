@@ -27,10 +27,7 @@ func (cb CallbackMethods) CallbackFunction(name string, body g.Generator) g.Gene
 			g.Raw(jen.Id("res").Add(jsValue.Generate())),
 			g.Raw(jen.Id("err").Add(g.NewType("error").Generate())),
 		),
-		Body: g.StatementList(
-			// cb.LogCall(name, cb.CbCtx()),
-			body,
-		),
+		Body: body,
 	}
 }
 
@@ -82,7 +79,8 @@ func (cb CallbackMethods) AttributeGetterCallbackBody(
 	var call g.Generator
 	name := model.IdlNameToGoName(attr.Getter.Name)
 	field := g.ValueOf(instance).Field(name)
-	if cb.Data.CustomRule.OutputType == customrules.OutputTypeStruct {
+	attrRule := cb.Data.CustomRule.Attributes[attr.Name]
+	if cb.Data.CustomRule.OutputType == customrules.OutputTypeStruct && !attrRule.Callable {
 		call = field
 	} else {
 		call = field.Call()

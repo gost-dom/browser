@@ -70,7 +70,12 @@ func (w Request[T]) url(cbCtx js.CallbackContext[T]) (res js.Value[T], err error
 }
 
 func (w Request[T]) headers(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Request.headers: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	instance, err := js.As[*fetch.Request](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	result := instance.Headers
+	return w.toHeaders(cbCtx, result)
 }
 
 func (w Request[T]) destination(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
