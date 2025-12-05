@@ -66,7 +66,7 @@ func (h *Headers) Get(name types.ByteString) (string, bool) {
 	if idx == -1 {
 		return "", false
 	}
-	return strings.Join(types.ByteStringsToStrings(h.headers[idx].val), ","), true
+	return strings.Join(types.ByteStringsToStrings(h.headers[idx].val), ", "), true
 }
 
 func (h *Headers) Has(name types.ByteString) bool {
@@ -88,8 +88,17 @@ func (h Headers) All() iter.Seq2[types.ByteString, types.ByteString] {
 	return func(yield func(types.ByteString, types.ByteString) bool) {
 		for _, v := range h.headers {
 			if len(v.val) > 0 {
-				if !yield(v.key, v.val[0]) {
-					return
+				if v.key == "set-cookie" {
+					for _, val := range v.val {
+						if !yield(v.key, val) {
+							return
+						}
+					}
+				} else {
+					val, _ := h.Get(v.key)
+					if !yield(v.key, types.ByteString(val)) {
+						return
+					}
 				}
 			}
 		}
