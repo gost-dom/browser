@@ -311,7 +311,7 @@ func testHeaders(t *testing.T, e html.ScriptEngine) {
 		}
 
 		win.MustRun(`
-			const h = new Headers(new Proxy({ Foo: "foo-value", Bar: "bar-value" },{}))
+			const h = new Headers(new Proxy({ foo: "foo-value", bar: "bar-value" },{}))
 			var keys = []
 			var values = []
 			for(const [key,val] of h.entries()) {
@@ -322,7 +322,7 @@ func testHeaders(t *testing.T, e html.ScriptEngine) {
 			values.sort()
 		`)
 
-		assert.Equal(t, "Bar,Foo", win.MustEval("keys.join(',')"))
+		assert.Equal(t, "bar,foo", win.MustEval("keys.join(',')"))
 		assert.Equal(t, "bar-value,foo-value", win.MustEval("values.join(',')"))
 	})
 

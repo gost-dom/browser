@@ -1,7 +1,11 @@
 // Package types defines fundamental web types such as ByteString
 package types
 
-import "github.com/gost-dom/browser/internal/gosterror"
+import (
+	"strings"
+
+	"github.com/gost-dom/browser/internal/gosterror"
+)
 
 // ByteString is a sequence of ASCII characters, i.e., characters in the range
 // 0x20-0x7E
@@ -23,3 +27,5 @@ func ByteStringsToStrings(s []ByteString) []string {
 	}
 	return res
 }
+
+func (b ByteString) ToLower() ByteString { return ByteString(strings.ToLower(string(b))) }

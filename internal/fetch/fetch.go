@@ -39,13 +39,14 @@ func parseHeaders(h http.Header) Headers {
 			// We assume that HTTP headeres received from a server contains
 			// valid values
 
-			Header{key: types.ByteString(k), val: vv},
+			Header{key: types.ByteString(k).ToLower(), val: vv},
 		)
 	}
 	return res
 }
 
 func (h *Headers) Append(name, val types.ByteString) {
+	name = name.ToLower()
 	idx := slices.IndexFunc(h.headers, func(h Header) bool { return h.key == name })
 	if idx == -1 {
 		idx = len(h.headers)
@@ -55,10 +56,12 @@ func (h *Headers) Append(name, val types.ByteString) {
 }
 
 func (h *Headers) Delete(name types.ByteString) {
+	name = name.ToLower()
 	h.headers = slices.DeleteFunc(h.headers, func(h Header) bool { return h.key == name })
 }
 
 func (h *Headers) Get(name types.ByteString) (string, bool) {
+	name = name.ToLower()
 	idx := slices.IndexFunc(h.headers, func(h Header) bool { return h.key == name })
 	if idx == -1 {
 		return "", false
@@ -67,11 +70,13 @@ func (h *Headers) Get(name types.ByteString) (string, bool) {
 }
 
 func (h *Headers) Has(name types.ByteString) bool {
+	name = name.ToLower()
 	_, ok := h.Get(name)
 	return ok
 }
 
 func (h *Headers) Set(name, value types.ByteString) {
+	name = name.ToLower()
 	idx := slices.IndexFunc(h.headers, func(h Header) bool { return h.key == name })
 	if idx != -1 {
 		h.headers[idx].val = nil
