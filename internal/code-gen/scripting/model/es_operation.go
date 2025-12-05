@@ -107,6 +107,12 @@ func (o Callback) EncodeAsSimpleJSLookup() bool {
 	}
 }
 
+func hasStringOkReturn(data ESConstructorData, cb Callback) bool {
+	return data.CustomRule.OutputType == customrules.OutputTypeStruct &&
+		cb.Kind == CallbackKindGetter
+
+}
+
 func (o Callback) Encoder(
 	receiver g.Value,
 	cbCtx g.Generator,
@@ -127,8 +133,7 @@ func (o Callback) Encoder(
 		return internal.BindValues(encodeBoolean, cbCtx)
 	case idlType.IsString():
 		if t.Nullable {
-			if data.CustomRule.OutputType == customrules.OutputTypeStruct &&
-				o.Kind == CallbackKindGetter {
+			if hasStringOkReturn(data, o) {
 				return internal.BindValues(encodeNullableString, cbCtx)
 			} else {
 				return internal.BindValues(encodeNillableString, cbCtx)
@@ -167,8 +172,7 @@ func (o Callback) RetValues(data ESConstructorData) []g.Generator {
 	res := g.Id("result")
 	hasValue := g.Id("hasValue")
 	if t.Nullable && !idltransform.NewIdlType(t).Nillable() {
-		if data.CustomRule.OutputType == customrules.OutputTypeStruct &&
-			o.Kind == CallbackKindGetter {
+		if hasStringOkReturn(data, o) {
 			return g.List(res)
 		} else {
 			return g.List(res, hasValue)
