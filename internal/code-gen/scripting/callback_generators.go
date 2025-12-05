@@ -81,7 +81,12 @@ func (cb CallbackMethods) AttributeGetterCallbackBody(
 	field := g.ValueOf(instance).Field(name)
 	attrRule := cb.Data.CustomRule.Attributes[attr.Name]
 	if cb.Data.CustomRule.OutputType == customrules.OutputTypeStruct && !attrRule.Callable {
-		call = field
+		targetTypeRule := customrules.AllRules[attr.Spec.Type.Name]
+		if targetTypeRule.OutputType == customrules.OutputTypeStruct {
+			call = field.Reference()
+		} else {
+			call = field
+		}
 	} else {
 		call = field.Call()
 	}

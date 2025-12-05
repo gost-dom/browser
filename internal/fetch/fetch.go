@@ -32,8 +32,8 @@ type Header struct {
 
 type Headers struct{ headers []Header }
 
-func parseHeaders(h http.Header) *Headers {
-	res := &Headers{}
+func parseHeaders(h http.Header) Headers {
+	res := Headers{}
 	for k, v := range h {
 		for _, val := range v {
 			res.Append(types.ByteString(k), types.ByteString(val))
@@ -94,7 +94,6 @@ func (h *Headers) formatValue(val []Header) string {
 }
 
 func (h *Headers) Has(name types.ByteString) bool {
-	name = name.ToLower()
 	_, ok := h.Get(name)
 	return ok
 }
@@ -146,9 +145,8 @@ func New(bc html.BrowsingContext) Fetch { return Fetch{bc} }
 
 func (f Fetch) NewRequest(url string, opts ...RequestOption) Request {
 	req := Request{
-		Headers: &Headers{},
-		url:     url,
-		bc:      f.BrowsingContext,
+		url: url,
+		bc:  f.BrowsingContext,
 	}
 	for _, o := range opts {
 		o(&req)
@@ -159,7 +157,7 @@ func (f Fetch) NewRequest(url string, opts ...RequestOption) Request {
 type RequestOption func(*Request)
 
 type Request struct {
-	Headers *Headers
+	Headers Headers
 	url     string
 	bc      html.BrowsingContext
 	method  string
@@ -225,7 +223,7 @@ func (f Fetch) FetchAsync(req Request) promise.Promise[*Response] {
 type Response struct {
 	io.Reader
 	Status  int
-	Headers *Headers
+	Headers Headers
 
 	httpResponse *http.Response
 }

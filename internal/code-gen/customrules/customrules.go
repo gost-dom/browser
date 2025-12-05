@@ -89,6 +89,18 @@ var rules = CustomRules{
 	"streams": streamsRules,
 }
 
+func makeAllRules() map[string]InterfaceRule {
+	res := make(map[string]InterfaceRule)
+	for _, v := range rules {
+		for n, r := range v {
+			res[n] = r
+		}
+	}
+	return res
+}
+
+var AllRules = makeAllRules()
+
 func GetSpecRules(specName string) SpecRules {
 	if res, ok := rules[specName]; ok {
 		return res
