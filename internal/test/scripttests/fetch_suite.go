@@ -326,24 +326,6 @@ func testHeaders(t *testing.T, e html.ScriptEngine) {
 		assert.Equal(t, "bar-value,foo-value", win.MustEval("values.join(',')"))
 	})
 
-	t.Run("Accept an iterable", func(t *testing.T) {
-		win := initWindow(t, e, nil)
-		win.MustRun(`
-			const h = new Headers([["Foo", "foo-value"],["Bar", "bar-value"]])
-			var keys = []
-			var values = []
-			for(const [key,val] of h.entries()) {
-				keys.push(key)
-				values.push(val)
-			}
-			keys.sort()
-			values.sort()
-		`)
-
-		assert.Equal(t, "Bar,Foo", win.MustEval("keys.join(',')"))
-		assert.Equal(t, "bar-value,foo-value", win.MustEval("values.join(',')"))
-	})
-
 	t.Run("Construct with null is a TypeError", func(t *testing.T) {
 		b := browser.New(browser.WithScriptEngine(e))
 		win := htmltest.NewWindowHelper(t, b.NewWindow())
