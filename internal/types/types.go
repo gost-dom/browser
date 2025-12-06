@@ -12,7 +12,8 @@ import (
 type ByteString string
 
 func ToByteString(s string) (ByteString, error) {
-	for _, b := range []byte(s) {
+	for i := 0; i < len(s); i++ {
+		b := s[i]
 		if b < 0x20 || b > 0x7E {
 			return "", gosterror.NewTypeError("cannot decode bytestring")
 		}
