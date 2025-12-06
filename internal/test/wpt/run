@@ -1,0 +1,2 @@
+#!/bin/sh
+GOEXPERIMENT=jsonv2 go run . -- $*

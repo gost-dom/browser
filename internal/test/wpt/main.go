@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"flag"
 	"fmt"
 	"log/slog"
 	"os"
@@ -126,6 +127,7 @@ func testResults(tests <-chan TestCase, log *slog.Logger) <-chan pendingTest {
 
 type options struct {
 	logger *slog.Logger
+	files  []string
 }
 
 func (o options) Logger() (res *slog.Logger) {
@@ -140,7 +142,7 @@ func loadTestSource(o options) testCaseLoader {
 		href:    "https://wpt.live/MANIFEST.json",
 		options: o,
 		filter: pathFilter{
-			included: []string{"dom/nodes/Document-getElementById"},
+			included: o.files,
 			excluded: []string{}}.isMatch,
 	}
 }
@@ -153,8 +155,10 @@ type testCaseLoader interface {
 }
 
 func parseOptions() options {
+	flag.Parse()
 	return options{
 		logger: newLogger(),
+		files:  flag.Args(),
 	}
 }
 
