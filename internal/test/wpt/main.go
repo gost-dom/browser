@@ -69,12 +69,16 @@ type WebPlatformTestCase struct {
 	Msg     string
 }
 
-func RunTestCase(tc TestCase, log *slog.Logger) ([]WebPlatformTestCase, error) {
+func RunTestCase(
+	ctx context.Context,
+	tc TestCase,
+	log *slog.Logger,
+) ([]WebPlatformTestCase, error) {
 	path := tc.Path
 	log = log.With(slog.String("TestCase", path))
 	log.Info("Start test")
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
 	defer cancel()
 
 	suite := WebPlatformTest(tc.URL())
@@ -98,7 +102,7 @@ func (t pendingTest) result() testResult {
 // testResults return a channel of pending test results. The return type is a
 // channel of channels in order to have the channel reflect the order in which
 // tests were started, not when they were completed.
-func testResults(tests <-chan TestCase, log *slog.Logger) <-chan pendingTest {
+func testResults(ctx context.Context, tests <-chan TestCase, log *slog.Logger) <-chan pendingTest {
 	res := make(chan pendingTest, 64)
 	go func() {
 		var grp sync.WaitGroup
@@ -111,7 +115,7 @@ func testResults(tests <-chan TestCase, log *slog.Logger) <-chan pendingTest {
 			go func() {
 				defer grp.Add(-1)
 
-				testCaseRes, err := RunTestCase(testCase, log)
+				testCaseRes, err := RunTestCase(ctx, testCase, log)
 				resultChan <- testResult{
 					testCase: testCase,
 					res:      testCaseRes,
@@ -174,7 +178,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	for pending := range testResults(source.testCases(ctx), logger) {
+	for pending := range testResults(ctx, source.testCases(ctx), logger) {
 		testCaseResult := pending.result()
 		var (
 			testCase = testCaseResult.testCase
