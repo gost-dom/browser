@@ -54,29 +54,40 @@ func (h *Headers) Delete(name types.ByteString) {
 	h.headers = slices.DeleteFunc(h.headers, func(h Header) bool { return h.key == name })
 }
 
-func (h *Headers) Get(name types.ByteString) (string, bool) {
-	name = name.ToLower()
-	var res []types.ByteString
-	header := Header{key: name}
-	if i, found := slices.BinarySearchFunc(h.headers, header, compareHeaders); found {
-		l := len(h.headers)
-		for {
-			curr := h.headers[i]
-			res = append(res, curr.val)
-			i++
-			if i >= l {
-				break
-			}
-			if compareHeaders(header, h.headers[i]) < 0 {
-				break
-			}
+func (h *Headers) getRange(name types.ByteString) (first int, last int, found bool) {
+	first = -1
+	last = -1
+	header := Header{key: name.ToLower()}
+	first, found = slices.BinarySearchFunc(h.headers, header, compareHeaders)
+	if !found {
+		first = -1
+		last = first
+		return
+	}
+	l := len(h.headers)
+	last = first
+	for {
+		last++
+		if last >= l {
+			return
+		}
+		if compareHeaders(header, h.headers[last]) < 0 {
+			return
 		}
 	}
-	return h.formatValue(res), len(res) > 0
 }
 
-func (h *Headers) formatValue(val []types.ByteString) string {
-	return strings.Join(types.ByteStringsToStrings(val), ", ")
+func (h *Headers) Get(name types.ByteString) (string, bool) {
+	first, last, found := h.getRange(name)
+	return h.formatValue(h.headers[first:last]), found
+}
+
+func (h *Headers) formatValue(val []Header) string {
+	vv := make([]types.ByteString, len(val))
+	for i, v := range val {
+		vv[i] = v.val
+	}
+	return strings.Join(types.ByteStringsToStrings(vv), ", ")
 }
 
 func (h *Headers) Has(name types.ByteString) bool {
@@ -88,7 +99,9 @@ func (h *Headers) Has(name types.ByteString) bool {
 func (h *Headers) Set(name, value types.ByteString) {
 	name = name.ToLower()
 	idx := slices.IndexFunc(h.headers, func(h Header) bool { return h.key == name })
-	if idx != -1 {
+	first, last, found := h.getRange(name)
+	if found {
+		h.headers = slices.Delete(h.headers, first+1, last)
 		h.headers[idx].val = value
 	} else {
 		h.Append(name, value)
@@ -97,7 +110,7 @@ func (h *Headers) Set(name, value types.ByteString) {
 
 func (h *Headers) All() iter.Seq2[types.ByteString, types.ByteString] {
 	return func(yield func(types.ByteString, types.ByteString) bool) {
-		var collect []types.ByteString
+		var collect []Header
 		var i = 0
 		for i < len(h.headers) {
 			v := h.headers[i]
@@ -105,7 +118,7 @@ func (h *Headers) All() iter.Seq2[types.ByteString, types.ByteString] {
 				return
 			}
 			var nextI = i + 1
-			collect = append(collect, v.val)
+			collect = append(collect, v)
 			if v.key != "set-cookie" {
 				if len(h.headers) > nextI {
 					if h.headers[nextI].key == v.key {

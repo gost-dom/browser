@@ -35,6 +35,11 @@ func TestHeadersGetWithMultipleSameKeyedValues(t *testing.T) {
 
 	foo, _ := h.Get("foo")
 	assert.Equal(t, "bar, baz", foo)
+
+	h.Set("foo", "barbaz")
+
+	foo, _ = h.Get("foo")
+	assert.Equal(t, "barbaz", foo)
 }
 
 func TestHeaderIterWhenModified(t *testing.T) {
