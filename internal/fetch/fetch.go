@@ -40,6 +40,8 @@ func parseHeaders(h http.Header) Headers {
 	res := Headers{}
 	for k, v := range h {
 		for _, val := range v {
+			// Cast the string values to ByteString without validation. This
+			// assumes HTTP headers received from a server are valid headers.
 			res.Append(types.ByteString(k), types.ByteString(val))
 		}
 	}
