@@ -23,7 +23,7 @@ func (s manifestTestCaseSource) filteredTests(ctx context.Context) <-chan TestCa
 	go func() {
 		defer func() { close(ch) }()
 		for testCase := range s.loadManifest(ctx) {
-			if s.filter(testCase) {
+			if s.filter == nil || s.filter(testCase) {
 				select {
 				case ch <- testCase:
 				case <-ctx.Done():
