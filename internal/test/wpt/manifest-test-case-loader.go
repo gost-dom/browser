@@ -34,7 +34,11 @@ func (s manifestTestCaseSource) filteredTests(ctx context.Context) <-chan TestCa
 func (s manifestTestCaseSource) loadManifest(
 	ctx context.Context,
 ) <-chan TestCase {
-	res, err := http.Get(s.href)
+	req, err := http.NewRequestWithContext(ctx, "", s.href, nil)
+	if err != nil {
+		panic(fmt.Sprintf("load manifest: create request: %v", err))
+	}
+	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		panic(fmt.Sprintf("load manifest: %v", err))
 	}
