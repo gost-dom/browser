@@ -39,12 +39,9 @@ func (v *v8Value) global() *v8go.Object { return v.ctx.v8ctx.Global() }
 func (v *v8Value) Self() *v8Value { return v }
 
 // newV8Value creates a v8Value wrapping a v8go value. This is safe to use for
-// for mapping values that can be nil. If the v8go value is nil, this will
-// return nil.
+// for mapping values that can be nil. A nil input value will be treated as
+// undefined.
 func newV8Value(ctx *V8ScriptContext, v *v8go.Value) jsValue {
-	if v == nil {
-		return nil
-	}
 	return &v8Value{ctx, v}
 }
 
