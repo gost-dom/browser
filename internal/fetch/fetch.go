@@ -2,6 +2,7 @@ package fetch
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"iter"
 	"net/http"
@@ -37,12 +38,15 @@ func parseHeaders(h http.Header) *Headers {
 	return res
 }
 
+func compareHeaders(a, b Header) int {
+	fmt.Println("Compare", a.key, b.key)
+	return strings.Compare(string(a.key), string(b.key))
+}
+
 func (h *Headers) Append(name, val types.ByteString) {
-	name = name.ToLower()
-	h.headers = append(h.headers, Header{key: name, val: val})
-	slices.SortStableFunc(h.headers, func(a, b Header) int {
-		return strings.Compare(string(a.key), string(b.key))
-	})
+	// In order to have correct iteration behaviour, it's imperative that the
+	// list is kept sorted.
+	h.headers = insertSorted(h.headers, Header{key: name.ToLower(), val: val}, compareHeaders)
 }
 
 func (h *Headers) Delete(name types.ByteString) {

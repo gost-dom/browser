@@ -86,6 +86,7 @@ func RunTestCase(tc TestCase, log *slog.Logger) ([]WebPlatformTestCase, error) {
 // included.
 var includeList = []string{
 	"dom/nodes/Document-getElementById",
+	"fetch/api/headers/headers-record.any.html",
 }
 
 // excludeList filters individual subpaths that would have been included from
