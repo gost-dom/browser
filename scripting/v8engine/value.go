@@ -3,7 +3,6 @@ package v8engine
 import (
 	"errors"
 	"fmt"
-	"runtime/cgo"
 
 	"github.com/gost-dom/browser/internal/monads/result"
 	"github.com/gost-dom/browser/scripting/internal/js"
@@ -61,7 +60,7 @@ func (v v8Value) Int32() int32   { return v.Value.Int32() }
 func (v v8Value) Uint32() uint32 { return v.Value.Uint32() }
 func (v v8Value) Boolean() bool  { return v.Value.Boolean() }
 
-func (v v8Value) IsUndefined() bool { return v.Value.IsUndefined() }
+func (v v8Value) IsUndefined() bool { return v.Value == nil || v.Value.IsUndefined() }
 func (v v8Value) IsNull() bool      { return v.Value.IsNull() }
 func (v v8Value) IsBoolean() bool   { return v.Value.IsBoolean() }
 func (v v8Value) IsString() bool    { return v.Value.IsString() }
@@ -107,78 +106,6 @@ func (f v8Function) Call(this jsObject, args ...jsValue) (jsValue, error) {
 		res = newV8Value(f.ctx, v)
 	}
 	return res, err
-}
-
-/* -------- v8Object -------- */
-
-type v8Object struct {
-	v8Value
-	Object *v8go.Object
-	handle cgo.Handle
-}
-
-// newV8Object returns a jsObject wrapping o, a v8go *Object value. The function
-// returns nil when o is nil.
-func newV8Object(ctx *V8ScriptContext, o *v8go.Object) jsObject {
-	if o == nil {
-		return nil
-	}
-	return &v8Object{v8Value{ctx, o.Value}, o, 0}
-}
-
-// NativeValue returns the native Go value if any that this JS object is
-// wrapping. I.e., for a JS HTMLFormElement, this will return the Go
-// HTMLFormElement implementation. Returns nil when no native value is being
-// wrapped by this object.
-func (o *v8Object) NativeValue() any {
-	if o.Object.InternalFieldCount() == 0 {
-		return nil
-	}
-	internal := o.Object.GetInternalField(0)
-	defer internal.Release()
-
-	if !internal.IsExternal() {
-		return nil
-	}
-
-	return internal.ExternalHandle().Value()
-}
-
-func (o *v8Object) SetNativeValue(v any) {
-	if o.handle != 0 {
-		o.handle.Delete()
-	}
-	o.handle = cgo.NewHandle(v)
-	ext := v8go.NewValueExternalHandle(o.iso(), o.handle)
-	defer ext.Release()
-	o.Object.SetInternalField(0, ext)
-}
-
-func (o *v8Object) Dispose() {
-	if o.handle != 0 {
-		o.handle.Delete()
-		o.handle = 0
-	}
-}
-
-func (o *v8Object) Iterator() (jsValue, error) {
-	res, err := o.Object.GetSymbol(v8go.SymbolIterator(o.iso()))
-	if err != nil {
-		return nil, err
-	}
-	return newV8Value(o.ctx, res), nil
-}
-
-func (o *v8Object) Get(name string) (jsValue, error) {
-	res, err := o.Object.Get(name)
-	if err != nil {
-		return nil, err
-	}
-	return newV8Value(o.ctx, res), nil
-}
-
-func (o *v8Object) Set(name string, val jsValue) error {
-	return o.Object.Set(name, val.Self().v8Value())
 }
 
 func callV8Function(f *v8go.Function, arg0 *v8go.Value, arg *v8go.Value) (*v8go.Value, error) {
