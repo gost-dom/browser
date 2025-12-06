@@ -87,6 +87,9 @@ func (h *Headers) getRange(name types.ByteString) (first int, last int, found bo
 }
 
 func (h *Headers) Get(name types.ByteString) (string, bool) {
+	if h.headers == nil {
+		return "", false
+	}
 	first, last, found := h.getRange(name)
 	return h.formatValue(h.headers[first:last]), found
 }
