@@ -9,9 +9,9 @@ import (
 // manifestTestCaseSource is a testCaseSource implementation loading a
 // MANIFEST.json from the WPT server
 type manifestTestCaseSource struct {
-	o      options
-	href   string
-	filter func(t TestCase) bool
+	options options
+	href    string
+	filter  func(t TestCase) bool
 }
 
 func (s manifestTestCaseSource) testCases() <-chan TestCase {
@@ -44,7 +44,7 @@ func (s manifestTestCaseSource) loadManifest(
 			res.Body.Close()
 			close(ch)
 		}()
-		ParseManifestTo(ctx, res.Body, ch, s.o.Logger())
+		ParseManifestTo(ctx, res.Body, ch, s.options.Logger())
 	}()
 	return ch
 }

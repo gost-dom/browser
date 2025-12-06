@@ -135,6 +135,16 @@ func (o options) Logger() (res *slog.Logger) {
 	return
 }
 
+func loadTestSource(o options) testCaseLoader {
+	return manifestTestCaseSource{
+		href:    "https://wpt.live/MANIFEST.json",
+		options: o,
+		filter: pathFilter{
+			included: []string{"dom/nodes/Document-getElementById"},
+			excluded: []string{}}.isMatch,
+	}
+}
+
 // testCaseLoader is the interface for the method testCases() that return a
 // channel of TestCases. The source should ideally return a buffered channel.
 // The buffer size determines how many test cases can run in parallel
@@ -142,20 +152,21 @@ type testCaseLoader interface {
 	testCases() <-chan TestCase
 }
 
-func main() {
-	logger := newLogger()
+func parseOptions() options {
+	return options{
+		logger: newLogger(),
+	}
+}
 
+func main() {
+	var o = parseOptions()
+	var source = loadTestSource(o)
+
+	var logger = o.Logger()
 	body := element("body")
 	body.AppendChild(element("h1", "Web Application Test Report"))
-
 	var errs []error
 	var prevHeaders []string
-
-	var source testCaseLoader = manifestTestCaseSource{href: "https://wpt.live/MANIFEST.json",
-		filter: pathFilter{
-			included: []string{"dom/nodes/Document-getElementById"},
-			excluded: []string{}}.isMatch,
-	}
 
 	for pending := range testResults(source.testCases(), logger) {
 		testCaseResult := pending.result()
