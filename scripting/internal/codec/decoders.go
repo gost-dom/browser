@@ -35,7 +35,7 @@ func DecodeInt[T any](_ js.Scope[T], v js.Value[T]) (int, error) {
 }
 
 func DecodeNode[T any](s js.Scope[T], v js.Value[T]) (dom.Node, error) {
-	if v.IsNull() {
+	if js.IsNullish(v) {
 		return nil, nil
 	}
 	if obj, ok := v.AsObject(); ok {

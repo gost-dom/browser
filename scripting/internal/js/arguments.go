@@ -81,7 +81,7 @@ func ConsumeOptionalArg[T, U any](
 	decoders ...func(Scope[T], Value[T]) (U, error),
 ) (result U, found bool, err error) {
 	value, _ := cbCtx.ConsumeArg()
-	if value == nil {
+	if IsUndefined(value) {
 		return
 	}
 	found = true
