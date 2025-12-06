@@ -56,9 +56,7 @@ func (p *parser) parseArray(ctx context.Context, ch chan<- TestCase, d *jsontext
 					PathElements: strings.Split(name, "/"),
 				}:
 				case <-ctx.Done():
-					{
-						return
-					}
+					return
 				}
 			}
 		}
