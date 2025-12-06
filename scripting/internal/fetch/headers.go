@@ -38,7 +38,7 @@ func (w Headers[T]) decodeHeadersInit(
 	if obj, ok := v.AsObject(); ok {
 		var key js.Value[T]
 		for key, err = range js.ObjectEnumerableOwnPropertyKeys(scope, obj) {
-			if err == nil && !key.IsString() {
+			if err == nil && key.IsSymbol() {
 				err = scope.NewTypeError("Non-string key")
 			}
 			if err != nil {

@@ -46,7 +46,12 @@ func (v value) IsNull() bool { return sobek.IsNull(v.value) }
 
 func (v value) IsUndefined() bool { return sobek.IsUndefined(v.value) }
 func (v value) IsString() bool    { return sobek.IsString(v.value) }
-func (v value) IsSymbol() bool    { return v.value == sobek.SymIterator }
+
+func (v value) IsSymbol() bool {
+	// TODO: Sobek doesn't expose an IsSymbol function, so resort to calling
+	// 'typeof' in JS.
+	return v.ctx.typeOf(v) == "symbol"
+}
 
 func (v value) Self() value { return v }
 
@@ -63,70 +68,3 @@ func (v value) String() string { return v.value.String() }
 func (v value) Boolean() bool  { return v.value.ToBoolean() }
 func (v value) Int32() int32   { return int32(v.value.ToInteger()) }
 func (v value) Uint32() uint32 { return uint32(v.value.ToInteger()) }
-
-type object struct {
-	value
-	obj *sobek.Object
-}
-
-func newObject(c *scriptContext, o *sobek.Object) js.Object[jsTypeParam] {
-	return object{value{c, o}, o}
-}
-
-func (o object) Iterator() (js.Value[jsTypeParam], error) {
-	v := o.obj.GetSymbol(sobek.SymIterator)
-	if v == nil {
-		v = sobek.Undefined()
-	}
-	return newValue(o.ctx, v), nil
-}
-
-func (o object) Get(key string) (js.Value[jsTypeParam], error) {
-	v := o.obj.Get(key)
-	if v == nil {
-		v = sobek.Undefined()
-	}
-	return newValue(o.ctx, v), nil
-}
-
-func (o object) Set(key string, v js.Value[jsTypeParam]) error {
-	o.obj.Set(key, unwrapValue(v))
-	return nil
-}
-
-func (o object) Keys() ([]string, error) { return o.obj.Keys(), nil }
-
-func (o object) NativeValue() any {
-	instance := o.obj.GetSymbol(o.ctx.wrappedGoObj)
-	if instance == nil {
-		return nil
-	}
-	return instance.Export()
-}
-
-func (o object) SetNativeValue(value any) {
-	o.obj.DefineDataPropertySymbol(
-		o.ctx.wrappedGoObj,
-		o.ctx.vm.ToValue(value),
-		sobek.FLAG_FALSE, // Writable
-		sobek.FLAG_FALSE, // Configurable
-		sobek.FLAG_FALSE, // Enumerable
-	)
-}
-
-type function struct {
-	value
-	f sobek.Callable
-}
-
-func (f function) Call(
-	this js.Object[jsTypeParam],
-	args ...js.Value[jsTypeParam],
-) (js.Value[jsTypeParam], error) {
-	v := make([]sobek.Value, len(args))
-	for i, a := range args {
-		v[i] = unwrapValue(a)
-	}
-	res, err := f.f(unwrapValue(this), v...)
-	return newValue(f.ctx, res), err
-}

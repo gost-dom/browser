@@ -282,6 +282,18 @@ func (c *scriptContext) DownloadModule(script string) (result html.Script, err e
 	return
 }
 
+func (c *scriptContext) typeOf(v value) string {
+	vm := c.vm
+	fn, _ := vm.RunString("x => typeof x")
+	fnn, _ := sobek.AssertFunction(fn)
+	res, err := fnn(vm.GlobalObject(), v.value)
+	if err != nil {
+		panic(err)
+	}
+	return res.String()
+
+}
+
 /* -------- script -------- */
 
 type script struct {
