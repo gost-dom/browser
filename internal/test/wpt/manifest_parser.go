@@ -108,7 +108,6 @@ func (p parser) parseObject(ctx context.Context, ch chan<- TestCase, d *jsontext
 						return
 					}
 				}
-			} else {
 			}
 			p.parse(ctx, ch, d)
 
