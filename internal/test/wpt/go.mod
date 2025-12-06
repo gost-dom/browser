@@ -6,6 +6,7 @@ require (
 	github.com/Marlliton/slogpretty v0.1.3
 	github.com/gost-dom/browser v0.10.2
 	github.com/stretchr/testify v1.11.1
+	golang.org/x/net v0.47.0
 )
 
 require (
@@ -24,7 +25,6 @@ require (
 	github.com/tommie/v8go/deps/darwin_arm64 v0.0.0-20251007175045-97bcf8e7d6ed // indirect
 	github.com/tommie/v8go/deps/linux_amd64 v0.0.0-20251007175045-97bcf8e7d6ed // indirect
 	github.com/tommie/v8go/deps/linux_arm64 v0.0.0-20251007175045-97bcf8e7d6ed // indirect
-	golang.org/x/net v0.47.0 // indirect
 	golang.org/x/text v0.31.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
