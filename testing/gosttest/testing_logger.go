@@ -54,12 +54,6 @@ func (l testingLogHandler) Handle(ctx context.Context, r slog.Record) error {
 	return nil
 }
 
-// close prevents further log messages from being written to the wrapped
-// [testing.TB] instance. Once a test has completed, logging will cause a panic.
-func (l *testingLogHandler) close() {
-	l.testCompleted = true
-}
-
 // TestingLogHandlerOption is the type of for functional options when creating
 // test loggers using [NewTestingLogger]
 type TestingLogHandlerOption = func(*testingLogHandler)
@@ -89,7 +83,7 @@ func NewTestingLogger(t testing.TB, opts ...TestingLogHandlerOption) *slog.Logge
 		o(&handler)
 	}
 	t.Cleanup(func() {
-		handler.close()
+		handler.testCompleted = true
 	})
 	return slog.New(flattenedHandler{handler, "", nil})
 }
