@@ -42,8 +42,8 @@ func (i *scriptContext) logger() *slog.Logger {
 	return l
 }
 
-func (i *scriptContext) run(str string) (sobek.Value, error) {
-	res, err := i.vm.RunString(str)
+func (i *scriptContext) run(script, location string) (sobek.Value, error) {
+	res, err := i.vm.RunScript(location, script)
 	i.clock.Tick()
 	return res, err
 }
@@ -252,15 +252,15 @@ func newCallbackContext(
 }
 
 func (c *scriptContext) Compile(src string) (html.Script, error) {
-	return script{c, src}, nil
+	return script{c, src, ""}, nil
 }
 
 func (c *scriptContext) DownloadScript(src string) (html.Script, error) {
 	u := url.ParseURLBase(src, c.window.LocationHREF()).Href()
-	if script, err := gosthttp.Download(c.Context(), u, c.host.HttpClient); err != nil {
+	if scr, err := gosthttp.Download(c.Context(), u, c.host.HttpClient); err != nil {
 		return nil, err
 	} else {
-		return c.Compile(script)
+		return script{c, scr, src}, nil // c.Compile(script)
 	}
 }
 
@@ -297,17 +297,18 @@ func (c *scriptContext) typeOf(v value) string {
 /* -------- script -------- */
 
 type script struct {
-	context *scriptContext
-	script  string
+	context  *scriptContext
+	script   string
+	location string
 }
 
 func (s script) Run() error {
-	_, err := s.context.run(s.script)
+	_, err := s.context.run(s.script, s.location)
 	return err
 }
 
 func (s script) Eval() (res any, err error) {
-	if val, err := s.context.run(s.script); err == nil {
+	if val, err := s.context.run(s.script, s.location); err == nil {
 		if sobek.IsNull(val) || sobek.IsUndefined(val) {
 			return nil, nil
 		}

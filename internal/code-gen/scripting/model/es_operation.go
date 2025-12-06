@@ -110,7 +110,6 @@ func (o Callback) EncodeAsSimpleJSLookup() bool {
 func hasStringOkReturn(data ESConstructorData, cb Callback) bool {
 	return data.CustomRule.OutputType == customrules.OutputTypeStruct &&
 		cb.Kind == CallbackKindGetter
-
 }
 
 func (o Callback) Encoder(

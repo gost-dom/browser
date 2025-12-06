@@ -15,7 +15,7 @@ type callbackScope struct {
 }
 
 func (c callbackScope) Eval(script, location string) (js.Value[jsTypeParam], error) {
-	val, err := c.scriptContext.run(script)
+	val, err := c.scriptContext.run(script, location)
 	return newValue(c.scriptContext, val), err
 }
 
