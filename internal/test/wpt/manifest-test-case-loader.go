@@ -4,14 +4,14 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strings"
 )
 
 // manifestTestCaseSource is a testCaseSource implementation loading a
 // MANIFEST.json from the WPT server
 type manifestTestCaseSource struct {
-	o    options
-	href string
+	o      options
+	href   string
+	filter func(t TestCase) bool
 }
 
 func (s manifestTestCaseSource) testCases() <-chan TestCase {
@@ -22,22 +22,10 @@ func (s manifestTestCaseSource) filteredTests(ctx context.Context) <-chan TestCa
 	ch := make(chan TestCase, 8)
 	go func() {
 		defer func() { close(ch) }()
-	testCaseLoop:
 		for testCase := range s.loadManifest(ctx) {
-			path := testCase.Path
-			for _, include := range includeList {
-				if strings.HasPrefix(path, include) {
-					for _, exclude := range excludeList {
-						if strings.HasPrefix(path, exclude) {
-							continue testCaseLoop
-						}
-					}
-
-					ch <- testCase
-					continue testCaseLoop
-				}
+			if s.filter(testCase) {
+				ch <- testCase
 			}
-
 		}
 	}()
 	return ch

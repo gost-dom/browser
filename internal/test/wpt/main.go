@@ -80,20 +80,6 @@ func RunTestCase(tc TestCase, log *slog.Logger) ([]WebPlatformTestCase, error) {
 	return suite.Run(ctx, log)
 }
 
-// includeList specifies the subpaths of the "testharness" tests that will be
-// included.
-var includeList = []string{
-	"dom/nodes/Document-getElementById",
-	"fetch/api/headers/headers-record.any.html",
-}
-
-// excludeList filters individual subpaths that would have been included from
-// the includeList.
-var excludeList = []string{
-	// "dom/abort/",
-	// "dom/attributes-are-nodes",
-}
-
 type testResult struct {
 	testCase TestCase
 	res      []WebPlatformTestCase
@@ -165,7 +151,11 @@ func main() {
 	var errs []error
 	var prevHeaders []string
 
-	var source testCaseLoader = manifestTestCaseSource{href: "https://wpt.live/MANIFEST.json"}
+	var source testCaseLoader = manifestTestCaseSource{href: "https://wpt.live/MANIFEST.json",
+		filter: pathFilter{
+			included: []string{"dom/nodes/Document-getElementById"},
+			excluded: []string{}}.isMatch,
+	}
 
 	for pending := range testResults(source.testCases(), logger) {
 		testCaseResult := pending.result()

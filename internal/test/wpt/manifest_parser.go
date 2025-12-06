@@ -15,15 +15,6 @@ func ParseManifestTo(ctx context.Context, m io.Reader, ch chan<- TestCase, l *sl
 	p.parse(ctx, ch, d)
 }
 
-func ParseManifest(ctx context.Context, m io.Reader, l *slog.Logger) <-chan TestCase {
-	ch := make(chan TestCase)
-	go func() {
-		ParseManifestTo(ctx, m, ch, l)
-		close(ch)
-	}()
-	return ch
-}
-
 type parser struct {
 	logger *slog.Logger
 	ignore bool
