@@ -43,7 +43,6 @@ func parseHeaders(h http.Header) *Headers {
 }
 
 func compareHeaders(a, b Header) int {
-	fmt.Println("Compare", a.key, b.key)
 	return strings.Compare(string(a.key), string(b.key))
 }
 
