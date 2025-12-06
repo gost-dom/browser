@@ -44,14 +44,14 @@ func ObjectGetFunctionx[T any](
 ) (res Function[T], ok bool, err error) {
 	val, err := getter.objectGet(o)
 	if err == nil {
-		res, ok = val.AsFunction()
+		res, ok = AsFunction(val)
 	}
 	return
 }
 func ObjectGetFunction[T any](o Object[T], name string) (res Function[T], ok bool, err error) {
 	val, err := o.Get(name)
 	if err == nil {
-		res, ok = val.AsFunction()
+		res, ok = AsFunction(val)
 	}
 	return
 }
