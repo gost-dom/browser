@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -35,6 +36,10 @@ func element(tag string, opts ...any) *xhtml.Node {
 func save(body *xhtml.Node) (err error) {
 	f, err := os.Create("report.html")
 	if err == nil {
+		defer func() {
+			closeErr := f.Close()
+			err = errors.Join(err, closeErr)
+		}()
 		doc := &xhtml.Node{Type: xhtml.DocumentNode}
 		html := element("html")
 		doc.AppendChild(html)
