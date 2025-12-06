@@ -15,7 +15,7 @@ const (
 	Html           = BASE_PKG + "/html"
 	Scripting      = BASE_PKG + "/scripting"
 	V8engine       = BASE_PKG + "/scripting/v8engine"
-	Sobekengine    = BASE_PKG + "/scripting/soberkengine"
+	Sobekengine    = BASE_PKG + "/scripting/sobekengine"
 	JSDom          = BASE_PKG + "/scripting/internal/dom"
 	Log            = BASE_PKG + "/internal/log"
 	Fetch          = BASE_PKG + "/internal/fetch"
