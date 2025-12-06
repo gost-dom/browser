@@ -70,9 +70,7 @@ type WebPlatformTestCase struct {
 }
 
 func RunTestCase(
-	ctx context.Context,
-	tc TestCase,
-	log *slog.Logger,
+	ctx context.Context, tc TestCase, log *slog.Logger,
 ) ([]WebPlatformTestCase, error) {
 	path := tc.Path
 	log = log.With(slog.String("TestCase", path))
@@ -129,8 +127,9 @@ func testResults(ctx context.Context, tests <-chan TestCase, log *slog.Logger) <
 }
 
 type options struct {
-	logger *slog.Logger
-	files  []string
+	logger   *slog.Logger
+	file     string
+	includes []string
 }
 
 func (o options) Logger() (res *slog.Logger) {
@@ -140,13 +139,39 @@ func (o options) Logger() (res *slog.Logger) {
 	return
 }
 
+type staticTestCaseSource struct {
+	files    []string
+	baseHref string
+}
+
+func (s staticTestCaseSource) testCases(ctx context.Context) <-chan TestCase {
+	res := make(chan TestCase)
+	go func() {
+		defer close(res)
+		for _, file := range s.files {
+			res <- TestCase{
+				PathElements: strings.Split(file, "/"),
+				Path:         file,
+			}
+		}
+	}()
+	return res
+}
+
 func loadTestSource(o options) testCaseLoader {
-	return manifestTestCaseSource{
-		href:    "https://wpt.live/MANIFEST.json",
-		options: o,
-		filter: pathFilter{
-			included: o.files,
-			excluded: []string{}}.isMatch,
+	if o.file != "" {
+		return staticTestCaseSource{
+			baseHref: "https://wpt.live/",
+			files:    []string{o.file},
+		}
+	} else {
+		return manifestTestCaseSource{
+			href:    "https://wpt.live/MANIFEST.json",
+			options: o,
+			filter: pathFilter{
+				included: o.includes,
+				excluded: []string{}}.isMatch,
+		}
 	}
 }
 
@@ -158,11 +183,13 @@ type testCaseLoader interface {
 }
 
 func parseOptions() options {
-	flag.Parse()
-	return options{
+	var o = options{
 		logger: newLogger(),
-		files:  flag.Args(),
 	}
+	flag.StringVar(&o.file, "file", "", "")
+	flag.Parse()
+	o.includes = flag.Args()
+	return o
 }
 
 func main() {
