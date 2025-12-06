@@ -57,13 +57,19 @@ func (h *Headers) Delete(name types.ByteString) {
 func (h *Headers) Get(name types.ByteString) (string, bool) {
 	name = name.ToLower()
 	var res []types.ByteString
-	for _, hh := range h.headers {
-		cmp := strings.Compare(string(hh.key), string(hh.val))
-		if cmp == 1 {
-			res = append(res, hh.val)
-		}
-		if cmp > 1 {
-			break
+	header := Header{key: name}
+	if i, found := slices.BinarySearchFunc(h.headers, header, compareHeaders); found {
+		l := len(h.headers)
+		for {
+			curr := h.headers[i]
+			res = append(res, curr.val)
+			i++
+			if i >= l {
+				break
+			}
+			if compareHeaders(header, h.headers[i]) < 0 {
+				break
+			}
 		}
 	}
 	return h.formatValue(res), len(res) > 0

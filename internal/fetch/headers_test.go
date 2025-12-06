@@ -25,6 +25,18 @@ func TestHeadersReturnSeparateSetCookieValues(t *testing.T) {
 	assert.Equal(t, "fizz=buzz; domain=example.com", string(pairs[1].second), "second cookie")
 }
 
+func TestHeadersGetWithMultipleSameKeyedValues(t *testing.T) {
+	h := &Headers{}
+	h.Append("foo", "bar")
+	// Insert both a header _before_ and _after_
+	h.Append("accept-encoding", "text/html")
+	h.Append("x-stuff", "buzz")
+	h.Append("foo", "baz")
+
+	foo, _ := h.Get("foo")
+	assert.Equal(t, "bar, baz", foo)
+}
+
 func TestHeaderIterWhenModified(t *testing.T) {
 	h := &Headers{}
 	h.Append("fizz", "buzz")
