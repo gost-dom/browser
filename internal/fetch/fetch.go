@@ -27,8 +27,9 @@ func New(bc html.BrowsingContext) Fetch { return Fetch{bc} }
 
 func (f Fetch) NewRequest(url string, opts ...RequestOption) Request {
 	req := Request{
-		url: url,
-		bc:  f.BrowsingContext,
+		url:     url,
+		bc:      f.BrowsingContext,
+		Headers: Headers{invalidHeaders: invalidRequestHeaders},
 	}
 	for _, o := range opts {
 		o(&req)

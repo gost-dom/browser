@@ -16,7 +16,8 @@ const MAX_HEADER_COUNT = 10000
 
 type Headers struct {
 	entity.Entity
-	headers []Header
+	headers        []Header
+	invalidHeaders []types.ByteString
 }
 
 func parseHeaders(h http.Header) Headers {
@@ -38,6 +39,9 @@ func compareHeaders(a, b Header) int {
 func (h *Headers) Append(name, val types.ByteString) {
 	// In order to have correct iteration behaviour, it's imperative that the
 	// list is kept sorted.
+	if slices.Index(h.invalidHeaders, name) != -1 {
+		return
+	}
 	h.headers = insertSorted(h.headers, Header{key: name.ToLower(), val: val}, compareHeaders)
 }
 
@@ -70,10 +74,10 @@ func (h *Headers) getRange(name types.ByteString) (first int, last int, found bo
 }
 
 func (h *Headers) Get(name types.ByteString) (string, bool) {
-	if h.headers == nil {
+	first, last, found := h.getRange(name)
+	if h.headers == nil || !found {
 		return "", false
 	}
-	first, last, found := h.getRange(name)
 	return h.formatValue(h.headers[first:last]), found
 }
 
@@ -131,4 +135,32 @@ func (h *Headers) All() iter.Seq2[types.ByteString, types.ByteString] {
 			collect = nil
 		}
 	}
+}
+
+var invalidRequestHeaders = []types.ByteString{
+	"accept-charset",
+	"accept-encoding",
+	"access-control-request-headers",
+	"access-control-request-method",
+	"connection",
+	"content-length",
+	"cookie",
+	"cookie2",
+	"date",
+	"dnt",
+	"expect",
+	"host",
+	"keep-alive",
+	"origin",
+	"referer",
+	"set-cookie",
+	"te",
+	"trailer",
+	"transfer-encoding",
+	"upgrade",
+	"via",
+	"proxy-",
+	"proxy-a",
+	"sec-",
+	"sec-b",
 }
