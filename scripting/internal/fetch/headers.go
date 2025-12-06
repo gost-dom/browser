@@ -59,9 +59,8 @@ func (w Headers[T]) decodeHeadersInit(
 			}
 			res = append(res, item)
 		}
-		return
 	}
-	return nil, nil
+	return
 }
 
 func (w Headers[T]) parseHeaderIterator2(
