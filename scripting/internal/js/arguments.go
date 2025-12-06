@@ -40,7 +40,7 @@ func ConsumeArgument[T, U any](
 			lastErr = errs[i]
 		}
 		if errCount == 1 {
-			return result, lastErr
+			return result, fmt.Errorf("%s: %w", name, lastErr)
 		}
 		err = args.NewTypeError(fmt.Sprintf("invalid argument: %v", value))
 		args.Logger().Warn("Error parsing JS argument", "name", name, log.ErrAttr(errors.Join(errs...)))

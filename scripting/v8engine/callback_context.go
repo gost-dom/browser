@@ -237,7 +237,8 @@ func (f v8Scope) NewIterator(
 }
 
 func (f v8Scope) NewTypeError(msg string) error {
-	return v8go.NewTypeError(f.iso(), msg)
+	// TODO: Should we wrap a V8 type error?
+	return gosterror.NewTypeError(msg)
 }
 
 func (f v8Scope) toJSValue(val *v8go.Value) jsValue {
