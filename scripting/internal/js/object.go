@@ -144,7 +144,7 @@ func Iterate[T any](v Value[T]) iter.Seq2[Value[T], error] {
 			err = ErrNotIterable
 		}
 		if err != nil {
-			yield(nil, errNotIterable("next is not a function"))
+			yield(nil, fmt.Errorf("%w: %w", errNotIterable("itererator.next: "), err))
 			return
 		}
 		for {
