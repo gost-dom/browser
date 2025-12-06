@@ -4,9 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
 	"log/slog"
-	"net/http"
 	"os"
 	"strings"
 	"sync"
@@ -102,31 +100,6 @@ type testResult struct {
 	err      error
 }
 
-func filteredTests(ctx context.Context, r io.Reader, l *slog.Logger) <-chan TestCase {
-	ch := make(chan TestCase, 8)
-	go func() {
-		defer func() { close(ch) }()
-	testCaseLoop:
-		for testCase := range ParseManifest(ctx, r, l) {
-			path := testCase.Path
-			for _, include := range includeList {
-				if strings.HasPrefix(path, include) {
-					for _, exclude := range excludeList {
-						if strings.HasPrefix(path, exclude) {
-							continue testCaseLoop
-						}
-					}
-
-					ch <- testCase
-					continue testCaseLoop
-				}
-			}
-
-		}
-	}()
-	return ch
-}
-
 // pendingTest represent a test that was started. When the test has completed,
 // the result can be read from the channel.
 type pendingTest <-chan testResult
@@ -162,27 +135,39 @@ func testResults(tests <-chan TestCase, log *slog.Logger) <-chan pendingTest {
 		grp.Wait()
 	}()
 	return res
+
+}
+
+type options struct {
+	logger *slog.Logger
+}
+
+func (o options) Logger() (res *slog.Logger) {
+	if res = o.logger; res == nil {
+		res = slog.Default()
+	}
+	return
+}
+
+// testCaseLoader is the interface for the method testCases() that return a
+// channel of TestCases. The source should ideally return a buffered channel.
+// The buffer size determines how many test cases can run in parallel
+type testCaseLoader interface {
+	testCases() <-chan TestCase
 }
 
 func main() {
 	logger := newLogger()
-	logger.Info("Start")
-	res, err := http.Get("https://wpt.live/MANIFEST.json")
-	logger.Info("Got WPT manifest")
-	if err != nil {
-		panic(fmt.Sprintf("load manifest: %v", err))
-	}
-	defer res.Body.Close()
 
 	body := element("body")
 	body.AppendChild(element("h1", "Web Application Test Report"))
 
 	var errs []error
-
-	testCaseSource := filteredTests(context.Background(), res.Body, logger)
 	var prevHeaders []string
 
-	for pending := range testResults(testCaseSource, logger) {
+	var source testCaseLoader = manifestTestCaseSource{href: "https://wpt.live/MANIFEST.json"}
+
+	for pending := range testResults(source.testCases(), logger) {
 		testCaseResult := pending.result()
 		var (
 			testCase = testCaseResult.testCase

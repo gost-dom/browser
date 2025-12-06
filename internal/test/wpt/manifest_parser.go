@@ -9,12 +9,16 @@ import (
 	"strings"
 )
 
+func ParseManifestTo(ctx context.Context, m io.Reader, ch chan<- TestCase, l *slog.Logger) {
+	d := jsontext.NewDecoder(m)
+	var p = parser{logger: l}
+	p.parse(ctx, ch, d)
+}
+
 func ParseManifest(ctx context.Context, m io.Reader, l *slog.Logger) <-chan TestCase {
 	ch := make(chan TestCase)
 	go func() {
-		d := jsontext.NewDecoder(m)
-		var p = parser{logger: l}
-		p.parse(ctx, ch, d)
+		ParseManifestTo(ctx, m, ch, l)
 		close(ch)
 	}()
 	return ch
@@ -26,7 +30,7 @@ type parser struct {
 	prefix []string
 }
 
-func (p *parser) parse(ctx context.Context, ch chan TestCase, d *jsontext.Decoder) {
+func (p *parser) parse(ctx context.Context, ch chan<- TestCase, d *jsontext.Decoder) {
 	t, err := d.ReadToken()
 	if err != nil {
 		panic(err)
@@ -41,7 +45,7 @@ func (p *parser) parse(ctx context.Context, ch chan TestCase, d *jsontext.Decode
 	}
 }
 
-func (p *parser) parseArray(ctx context.Context, ch chan TestCase, d *jsontext.Decoder) {
+func (p *parser) parseArray(ctx context.Context, ch chan<- TestCase, d *jsontext.Decoder) {
 	for {
 		t, err := d.ReadToken()
 		if err != nil {
@@ -83,7 +87,7 @@ func isTestFile(fileName string) bool {
 	return path.Ext(fileName) == ".html"
 }
 
-func (p parser) parseObject(ctx context.Context, ch chan TestCase, d *jsontext.Decoder) {
+func (p parser) parseObject(ctx context.Context, ch chan<- TestCase, d *jsontext.Decoder) {
 	for {
 		t, err := d.ReadToken()
 		if err != nil {

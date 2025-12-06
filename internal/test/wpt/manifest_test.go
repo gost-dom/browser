@@ -15,12 +15,17 @@ import (
 
 //go:embed manifest.json
 var manifest []byte
+var nullLog = slog.New(slog.NewTextHandler(io.Discard, nil))
 
 func TestManifestFile2(t *testing.T) {
 	actual := make([]string, 100)
 	i := 0
-	nullLog := slog.New(slog.NewTextHandler(io.Discard, nil))
-	for testCase := range ParseManifest(t.Context(), bytes.NewReader(manifest), nullLog) {
+	ch := make(chan TestCase)
+	go func() {
+		defer close(ch)
+		ParseManifestTo(t.Context(), bytes.NewReader(manifest), ch, nullLog)
+	}()
+	for testCase := range ch {
 		if !strings.HasPrefix(testCase.Path, "dom") {
 			continue
 		}
