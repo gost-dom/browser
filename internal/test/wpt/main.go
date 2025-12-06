@@ -151,7 +151,7 @@ func loadTestSource(o options) testCaseLoader {
 // channel of TestCases. The source should ideally return a buffered channel.
 // The buffer size determines how many test cases can run in parallel
 type testCaseLoader interface {
-	testCases() <-chan TestCase
+	testCases(ctx context.Context) <-chan TestCase
 }
 
 func parseOptions() options {
@@ -171,8 +171,10 @@ func main() {
 	body.AppendChild(element("h1", "Web Application Test Report"))
 	var errs []error
 	var prevHeaders []string
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
 
-	for pending := range testResults(source.testCases(), logger) {
+	for pending := range testResults(source.testCases(ctx), logger) {
 		testCaseResult := pending.result()
 		var (
 			testCase = testCaseResult.testCase

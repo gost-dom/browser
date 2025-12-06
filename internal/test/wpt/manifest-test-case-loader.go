@@ -14,8 +14,8 @@ type manifestTestCaseSource struct {
 	filter  func(t TestCase) bool
 }
 
-func (s manifestTestCaseSource) testCases() <-chan TestCase {
-	return s.filteredTests(context.Background())
+func (s manifestTestCaseSource) testCases(ctx context.Context) <-chan TestCase {
+	return s.filteredTests(ctx)
 }
 
 func (s manifestTestCaseSource) filteredTests(ctx context.Context) <-chan TestCase {
@@ -24,7 +24,11 @@ func (s manifestTestCaseSource) filteredTests(ctx context.Context) <-chan TestCa
 		defer func() { close(ch) }()
 		for testCase := range s.loadManifest(ctx) {
 			if s.filter(testCase) {
-				ch <- testCase
+				select {
+				case ch <- testCase:
+				case <-ctx.Done():
+					return
+				}
 			}
 		}
 	}()

@@ -50,9 +50,15 @@ func (p *parser) parseArray(ctx context.Context, ch chan<- TestCase, d *jsontext
 		case '"':
 			name := t.String()
 			if isTestFile(name) {
-				ch <- TestCase{
+				select {
+				case ch <- TestCase{
 					Path:         name,
 					PathElements: strings.Split(name, "/"),
+				}:
+				case <-ctx.Done():
+					{
+						return
+					}
 				}
 			}
 		}
@@ -96,7 +102,11 @@ func (p parser) parseObject(ctx context.Context, ch chan<- TestCase, d *jsontext
 			p.logger = p.logger.WithGroup(name)
 			if isTestFile(name) {
 				if testCase, ok := p.makeTestCase(); ok {
-					ch <- testCase
+					select {
+					case ch <- testCase:
+					case <-ctx.Done():
+						return
+					}
 				}
 			} else {
 			}
