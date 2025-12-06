@@ -36,7 +36,7 @@ script elements will not be executed.
 
 The code uses virtual time that will not proceed until client code tells to
 clock to move forward. All JavaScript `setTimeout` or `setInterval` callbacks
-will therefore not execute, until test code explicitly 
+will therefore not execute, until test code explicitly
 
 
 ## Scripting
@@ -44,7 +44,7 @@ will therefore not execute, until test code explicitly
 Two independent script engines exist, but only one is complete.
 
 - V8, based on v8go - this is the working script engine.
-- Goja is a pure Go JavaScript engine. This isn't yet working, but being worked
+- Sobek is a pure Go JavaScript engine. This isn't yet working, but being worked
   on to get up to date.
 
 ## Browser

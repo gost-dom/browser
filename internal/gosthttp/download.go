@@ -33,7 +33,7 @@ func Download(ctx context.Context, url string, doer HttpDoer) (res string, err e
 
 	if resp.StatusCode != 200 {
 		err = fmt.Errorf(
-			"gost: v8host: ScriptContext: bad status code: %d, downloading %s",
+			"gost: v8engine: ScriptContext: bad status code: %d, downloading %s",
 			resp.StatusCode,
 			url,
 		)

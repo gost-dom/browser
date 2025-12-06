@@ -68,5 +68,5 @@ func v8ValueToGoValue(result *v8go.Value) (any, error) {
 		}
 		return result, errors.Join(errs...)
 	}
-	return nil, fmt.Errorf("v8host: toGoValue: %v", *result)
+	return nil, fmt.Errorf("v8engine: toGoValue: %v", *result)
 }

@@ -137,22 +137,22 @@ func (f v8Scope) NewUint8Array(data []byte) jsValue {
 		bytes[i] = f.NewInt32(int32(b))
 	}
 	byteArray := f.NewArray(bytes...)
-	from, err := f.v8ctx.RunScript("(data) => Uint8Array.from(data)", "gost-dom/v8host/uint8array")
+	from, err := f.v8ctx.RunScript("(data) => Uint8Array.from(data)", "gost-dom/v8engine/uint8array")
 	if err != nil {
-		panic(fmt.Sprintf("gost-dom/v8host: Uint8Array.from: %v", err))
+		panic(fmt.Sprintf("gost-dom/v8engine: Uint8Array.from: %v", err))
 	}
 	fn, err := from.AsFunction()
 	if err != nil {
 		panic(
 			fmt.Sprintf(
-				"gost-dom/v8host: Uint8Array.from: asFunction: %v (%v)",
+				"gost-dom/v8engine: Uint8Array.from: asFunction: %v (%v)",
 				err, from,
 			),
 		)
 	}
 	res, err := fn.Call(f.v8ctx.Global(), byteArray.Self().Value)
 	if err != nil {
-		panic(fmt.Sprintf("gost-dom/v8host: Uint8Array.from: call: %v", err))
+		panic(fmt.Sprintf("gost-dom/v8engine: Uint8Array.from: call: %v", err))
 	}
 	return f.toJSValue(res)
 }
