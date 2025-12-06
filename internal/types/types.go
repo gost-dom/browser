@@ -7,8 +7,8 @@ import (
 	"github.com/gost-dom/browser/internal/gosterror"
 )
 
-// ByteString is a sequence of ASCII characters, i.e., characters in the range
-// 0x20-0x7E
+// ByteString is a sequence of printable ASCII characters. This includes
+// characters in the range 0x20-0x7E.
 type ByteString string
 
 func ToByteString(s string) (ByteString, error) {
