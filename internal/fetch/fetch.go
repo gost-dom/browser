@@ -17,6 +17,10 @@ import (
 	"github.com/gost-dom/browser/url"
 )
 
+// When iterating headers, have a max header count, to prevent overflow if
+// client code continuously add new headers while iterating.
+const MAX_HEADER_COUNT = 10000
+
 type Fetch struct {
 	BrowsingContext html.BrowsingContext
 }
@@ -108,26 +112,29 @@ func (h *Headers) Set(name, value types.ByteString) {
 	}
 }
 
+// All() returns an iterator of key/value pairs of header keys and values.
+// The same key may appear multiple times in the output. The returned order is
+// guaranteed to be sorted by name. The iterator operates on a live list, i.e.
+// new headers can be inserted while iterating. Panics if the number of headers
+// iterated exceed MAX_HEADER_COUNT.
 func (h *Headers) All() iter.Seq2[types.ByteString, types.ByteString] {
 	return func(yield func(types.ByteString, types.ByteString) bool) {
 		var collect []Header
-		var i = 0
+		i := 0
 		for i < len(h.headers) {
-			v := h.headers[i]
-			if i > 1000 {
-				return
-			}
-			var nextI = i + 1
-			collect = append(collect, v)
-			if v.key != "set-cookie" {
+			assertHeaderCountWithinLimit(i)
+			curr := h.headers[i]
+			collect = append(collect, curr)
+			if curr.key != "set-cookie" {
+				var nextI = i + 1
 				if len(h.headers) > nextI {
-					if h.headers[nextI].key == v.key {
+					if h.headers[nextI].key == curr.key {
 						i++
 						continue
 					}
 				}
 			}
-			if !yield(v.key, types.ByteString(h.formatValue(collect))) {
+			if !yield(curr.key, types.ByteString(h.formatValue(collect))) {
 				return
 			}
 			i++
@@ -261,3 +268,13 @@ func (r *Reader) Read() promise.Promise[streams.ReadResult] {
 }
 
 func (r Response) Body() streams.ReadableStream { return ReadableStream{r.Reader} }
+
+func assertHeaderCountWithinLimit(count int) {
+	if count > MAX_HEADER_COUNT {
+		msg := fmt.Sprintf(
+			"gost-dom/fetch: exceeded header count limit during iteration: %d",
+			MAX_HEADER_COUNT,
+		)
+		panic(msg)
+	}
+}
