@@ -126,7 +126,6 @@ func testResults(ctx context.Context, tests <-chan TestCase, log *slog.Logger) <
 		grp.Wait()
 	}()
 	return res
-
 }
 
 type options struct {
