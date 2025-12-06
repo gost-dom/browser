@@ -67,7 +67,7 @@ func ObjectKeys[T any](ctx CallbackScope[T], o Object[T]) (Value[T], error) {
 	}
 	fn, ok := entries.AsFunction()
 	if !ok {
-		return nil, errors.New("Object.keys is not a function")
+		return nil, errors.New("Reflect.ownKeys is not a function")
 	}
 	return fn.Call(ctx.GlobalThis(), o)
 }
@@ -83,7 +83,7 @@ func ObjectOwnPropertyDescriptor[T any](
 	}
 	fn, ok := entries.AsFunction()
 	if !ok {
-		return nil, errors.New("Object.keys is not a function")
+		return nil, errors.New("Object.getOwnPropertyDescriptor is not a function")
 	}
 	v, err := fn.Call(ctx.GlobalThis(), o, p)
 	if err != nil {
