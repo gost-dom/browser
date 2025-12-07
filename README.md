@@ -96,16 +96,6 @@ There is much to do, which includes (but this is not a full list):
 - Implement default browser behaviour for user interaction, e.g. pressing
   <key>enter</key> when an input field has focus should submit the form.
 
-#### Pure Go script engine
-
-V8 is a "feature complete" JavaScript environment, so V8 support will never go
-away. But it has some overhead, and it depends on Cgo. Also, the current V8
-layer [leaks memory in the scope of a browsing context](./docs/V8.md).
-
-[Sobek](https://github.com/grafana/sobek) is a pure Go JavaScript engine, and is
-almost fully supported as an alternative. JavaScript bindings in code target a
-layer of abstraction, allowing the script engine to be replaced.
-
 #### CSS Parsing
 
 Parsing CSS woule be nice, allowing test code to verify the style properties of

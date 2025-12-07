@@ -41,11 +41,13 @@ will therefore not execute, until test code explicitly
 
 ## Scripting
 
-Two independent script engines exist, but only one is complete.
+JavaScript is executed by a "script engine". Two implementations exist
 
-- V8, based on v8go - this is the working script engine.
-- Sobek is a pure Go JavaScript engine. This isn't yet working, but being worked
-  on to get up to date.
+- `v8engine`, based on v8go. Uses the V8 engine powering the Chrome browser.
+- `sobek`, based on [sobek][^1], a JavaScript engine written in Go. Less battle
+  tested, but avoids some headaches of V8 linking C++ code.
+
+[sobek]: https://github.com/grafana/sobek
 
 ## Browser
 
@@ -78,3 +80,6 @@ build times down for the TDD loop.
 It also provides the option of alternate implementations. E.g., for location
 services, the simple implementation can provide a single function to set the
 current location / accuracy. The advanced implementation can replay a GPX track.
+
+[^1]: Sobek is a fork of [Goja](https://github.com/dop251/goja) aiming to bring
+    ESM suport, which Goja doesn't support.
