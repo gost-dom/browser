@@ -119,7 +119,7 @@ func (context *V8ScriptContext) initializeGlobals() error {
 		_, err := context.v8ctx.RunScript(script, src)
 		context.clock.Tick()
 		if err != nil {
-			return fmt.Errorf("v8engine: install globals (%s): %w", src, err)
+			return fmt.Errorf("gost-dom/v8engine: install globals (%s): %w", src, err)
 		}
 	}
 
@@ -244,7 +244,7 @@ func (r *moduleResolver) downloadAndCompile(
 	}
 	module, err := v8.CompileModule(r.host.iso, script, url)
 	if err != nil {
-		return nil, fmt.Errorf("gost: v8engine: module compilation: %w", err)
+		return nil, fmt.Errorf("gost-dom/v8engine: module compilation: %w", err)
 	}
 	r.modules = append(r.modules, resolvedModule{module.ScriptID(), url, module})
 	return module, nil
@@ -272,7 +272,7 @@ func (r *moduleResolver) ResolveModule(
 	refModule, found := r.get(ref.ScriptID())
 	if !found {
 		return nil, fmt.Errorf(
-			"gost: referrer not cached. %s",
+			"gost-dom/v8engine: referrer not cached. %s",
 			constants.BUG_ISSUE_URL,
 		)
 	}

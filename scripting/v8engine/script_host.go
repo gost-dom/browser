@@ -202,7 +202,7 @@ func (host *V8ScriptHost) assertUndisposed() {
 	defer host.mu.Unlock()
 
 	if host.disposed {
-		panic("v8engine: V8ScriptHost.NewContext: script host disposed")
+		panic("gost-dom/v8engine: V8ScriptHost.NewContext: script host disposed")
 	}
 }
 

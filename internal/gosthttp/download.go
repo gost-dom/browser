@@ -24,7 +24,7 @@ func Download(ctx context.Context, url string, doer HttpDoer) (res string, err e
 	}
 	resp, err := doer.Do(req)
 	if err != nil {
-		return "", fmt.Errorf("gost-dom: download errors: %w", err)
+		return "", fmt.Errorf("gost-dom/gosthttp: download errors: %w", err)
 	}
 	defer resp.Body.Close()
 	var buf strings.Builder
@@ -33,7 +33,7 @@ func Download(ctx context.Context, url string, doer HttpDoer) (res string, err e
 
 	if resp.StatusCode != 200 {
 		err = fmt.Errorf(
-			"gost: v8engine: ScriptContext: bad status code: %d, downloading %s",
+			"gost-dom/gosthttp: bad status code: %d, downloading %s",
 			resp.StatusCode,
 			url,
 		)
