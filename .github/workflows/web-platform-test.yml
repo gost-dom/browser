@@ -17,5 +17,5 @@ jobs:
       with:
         go-version-file: 'internal/test/wpt/go.work'
     - name: Run Web Platform Tests
-      run: go run .
+      run: ./run
       working-directory: internal/test/wpt
