@@ -11,33 +11,25 @@ APIs](https://developer.mozilla.org/en-US/docs/Web/API)
 
 ## DOM
 
-The DOM is the core of the code base. This describes the tree of elements that
-exists in a document.
-
-This includes the core event dispatching mechanism, including bubbling, event
-capture.
+The DOM represents the fundamental document structure of elements, attributes,
+and text content. It also includes core event dispatch behaviour, including
+bubbling, cancallation, and event capture.
 
 Everything else is build on top of the DOM.
 
-## HTML
+## HTML DOM
 
-The DOM defines the basic `Element` type, but all the concrete interactible
-elements exist in the `html` package.
+The HTML DOM adds HTML specific behaviour, such as form submission. It includes
+the `Window` object, loading HTML documents from an HTTP server,
 
-This also includes the `Window` object itself.
-
-The HTML package defines an interface the script host must implement.
-
-This decouples the DOM and HTML implementation from the actual JavaScript
-engine. It is possible to create a window without a script engine, in which case
-script elements will not be executed.
+The HTML package also orchestrates execution of client-side script code provided
+by an optional script engine.
 
 ## Clock
 
 The code uses virtual time that will not proceed until client code tells to
 clock to move forward. All JavaScript `setTimeout` or `setInterval` callbacks
 will therefore not execute, until test code explicitly
-
 
 ## Scripting
 
