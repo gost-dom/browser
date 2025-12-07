@@ -79,7 +79,7 @@ func toSequenceMutationRecord[T any](
 	for i, r := range records {
 		rec, err := prototype.NewInstance(&r)
 		if err != nil {
-			return nil, fmt.Errorf("v8host: constructing mutation record: %w", err)
+			return nil, fmt.Errorf("gost-dom/scripting/dom: constructing mutation record: %w", err)
 		}
 		res[i] = rec
 	}

@@ -44,38 +44,38 @@ codegen-build-watch:
 codegen: codegen-clean codegen-build
 	go generate ./...
 
-.PHONY: test test-watch test-browser test-v8 test-goja test-wpt
-test: 
+.PHONY: test test-watch test-browser test-v8 test-sobek test-wpt
+test:
 	$(GO_TEST) -v -vet=all ./...
 
 test-wpt:
 	$(MAKE) -C internal/test/wpt test
 
-test-watch: 
+test-watch:
 	gotestsum --format dots ./... -- vet=off || echo "Error"
 	gotestsum --format dots --watch ./... -- vet=off
 
 .PHONY: test-browser test-dom
-test-dom: 
+test-dom:
 	gotestsum --packages "`go list -deps ./dom | ./deps`" --format dots --watch
 
-test-browser: 
+test-browser:
 	gotestsum --packages "`go list -deps ./html | ./deps`" --format dots --watch
 
 .PHONY: test-html
-test-html: 
+test-html:
 	gotestsum --format dots --watch --packages "./scripting/html" -- -vet=off
 
 .PHONY: test-v8
-test-v8: 
-	gotestsum --format dots --watch --packages "./scripting/v8host ./internal/test/scripttests" -- -vet=off
+test-v8:
+	gotestsum --format dots --watch --packages "./scripting/v8engine ./internal/test/scripttests" -- -vet=off
 
-test-scripting: 
+test-scripting:
 	gotestsum --format dots --watch --packages "./scripting/... ./internal/test/scripttests" -- -vet=off
 
-.PHONY: test-goja
-test-goja:
-	$(GOW) -c -e=go -e=js -e=html -w ./.. test -vet=off ./scripting/gojahost
+.PHONY: test-sobek
+test-sobek:
+	$(GOW) -c -e=go -e=js -e=html -w ./.. test -vet=off ./scripting/sobekengine
 
 .PHONY: ci ci-build release
 ci-build:

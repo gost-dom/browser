@@ -1,14 +1,14 @@
 # Code structure
 
 This is probably not the most obvious code base to get into, and some
-unidiomatic choices were made. 
+unidiomatic choices were made.
 
 Hopefully this can help potential contributors to get a better understanding of
 the code, and the unidiomatic choices - perhaps event come with better, more
 idiomatic solutions to the problems.
 
 ```sh
-browser/ # Main entry point, 
+browser/ # Main entry point,
     internal/
         clock/ # Controls the passing of simulated time
         code-gen/ # Code generator. Not documented here!
@@ -34,8 +34,8 @@ browser/ # Main entry point,
             codec/ # Conversion between Go and JS values
             dom/   # Implementation of the DOM API
             html/  # Implementation of the HTML DOM API
-        v8host/ # Scripting support using v8 (and CGo)
-        gojahost/ # scripting support using Goja, a pure Go engine
+        v8engine/ # Scripting support using v8 (and CGo)
+        sobekengine/ # scripting support using sobek, a pure Go engine
     testing/ # Provides usable test helpers for users of the library
         gomega-matchers/ # Matchers useful for users of the Gomega library
     url/ # Implementation of URL behaviour

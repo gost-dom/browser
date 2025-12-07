@@ -3,7 +3,7 @@
 // The same IDL interfaces are used to generate different types of code, e.g.
 //   - Go interfaces in the DOM implementation
 //   - Possibly Go types implementing those interfaces
-//   - JavaScript wrappers on top of those interfaces (for both V8 and Goja)
+//   - JavaScript wrappers on top of those interfaces (for both V8 and Sobek)
 //
 // Not all relevant properties exist in the IDL specification, e.g., if an
 // operation can result in an error or not. This package autments the IDL specs

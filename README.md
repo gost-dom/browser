@@ -39,7 +39,7 @@ Compared to browser automation, Gost-DOM provides the benefits:
 
 Gost-DOM still uses HTTP request and responses for verification, testing the
 entire stack, including how middlewares affect the behaviour, verifying, and
-supporting refactoring of e.g., authentication logic. 
+supporting refactoring of e.g., authentication logic.
 
 ## Looking for sponsors
 
@@ -82,7 +82,7 @@ At the moment there's an emphasis on high-risk features that can expose poor
 design choices, but the "primary API" has been reasonably stable for a good
 amount of time.
 
-Gost-DOM supports basic HTMX interactions, as well as basic Datastar cases. 
+Gost-DOM supports basic HTMX interactions, as well as basic Datastar cases.
 
 ### Future goals
 
@@ -93,18 +93,8 @@ There is much to do, which includes (but this is not a full list):
   not part of the ECMAScript standard itself.
   - JavaScript polyfills would be a good starting point; which is how xpath is
     implemented at the moment.
-- Implement default browser behaviour for user interaction, e.g. pressing 
+- Implement default browser behaviour for user interaction, e.g. pressing
   <key>enter</key> when an input field has focus should submit the form.
-
-#### Pure Go script engine
-
-V8 is a "feature complete" JavaScript environment, so V8 support will never go
-away. But it has some overhead, and it depends on Cgo. Also, the current V8
-layer [leaks memory in the scope of a browsing context](./docs/V8.md).
-
-[Goja](https://github.com/dop251/goja) is a pure Go JavaScript engine, and is
-alsmost fully supported as an alternative. JavaScript bindings in code target a
-layer of abstraction, allowing the script engine to be replaced.
 
 #### CSS Parsing
 
@@ -139,11 +129,11 @@ benefits:
 
 > A goal is not always meant to be reached, it often serves simply as something
 > to aim at.
-> 
+>
 > - Bruce Lee
 
 While it is a goal to reach whatwg spec compliance, the primary goal is to have
-a useful tool for testing modern web applications. 
+a useful tool for testing modern web applications.
 
 Some specs don't really have any usage in modern web applications, like
 `document.write` or depending on quirks mode.
@@ -163,7 +153,7 @@ capabilities that [Testing Library] provides for JavaScript.
 
 ### Visual Rendering
 
-It is not a goal to be able to provide a visual rendering of the DOM. 
+It is not a goal to be able to provide a visual rendering of the DOM.
 
 But just like the accessibility tree, this could be implemented in a new library
 depending only on the interface from here.
@@ -173,7 +163,7 @@ depending only on the interface from here.
 Some words inherntly have multiple meanings.
 
 - **Interface**. The IDL Specification defines _interfaces_; which are exposed
-in certain scopes, implemented by "classes" in JavaScript. 
+in certain scopes, implemented by "classes" in JavaScript.
   - The interfaces can be composed of _partial_ or _mixin_ interfaces.
   - IDL Interfaces and mixin interfaces are represented in Go, and typically
     exposed as Go `interface` types.
@@ -208,5 +198,5 @@ In addition, to verify compatibility with 3rd party JavaScript libraries, the
 [^2]: Complete isolation depends on _your code_, e.g., if you don't replace
     database dependencies, tests are not isolated.
 [^3]: Cliché, I know! But it is!
-[^4]: This depends on how you configure Gost-DOM. 
+[^4]: This depends on how you configure Gost-DOM.
 

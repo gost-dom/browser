@@ -14,8 +14,6 @@ const (
 	Events         = Dom + "/event"
 	Html           = BASE_PKG + "/html"
 	Scripting      = BASE_PKG + "/scripting"
-	V8host         = BASE_PKG + "/scripting/v8host"
-	Gojahost       = BASE_PKG + "/scripting/gojahost"
 	JSDom          = BASE_PKG + "/scripting/internal/dom"
 	Log            = BASE_PKG + "/internal/log"
 	Fetch          = BASE_PKG + "/internal/fetch"
@@ -28,8 +26,6 @@ const (
 	Codec          = BASE_PKG + "/scripting/internal/codec"
 	URL            = BASE_PKG + "/url"
 	Errors         = BASE_PKG + "/internal/gosterror"
-	V8go           = "github.com/gost-dom/v8go"
-	Goja           = "github.com/dop251/goja"
 
 	StdSlog = "log/slog"
 )

@@ -48,7 +48,10 @@ Footer description
 ```
 
 - Commit title must be short.
-- The optional exclamation mark in 
+- A breaking change must be indicated through either
+  - An optional exclamation mark after the type and scope, e.g., `feat!:
+    Something`
+  - A `BREAKING CHANGE:` footer, if more text is necessary
 - If the title isn't enough, the body should describe _why_ the commit is good.
 - Both title and body shall be written in the imperative format.
 
@@ -111,10 +114,10 @@ individually, separating refactor commits from changes to behaviour.
 
 ```
 * feat: Add feature Y (PR)
-|\  
+|\
 | * work: Add 'A' to API
 | * work: Add 'B' to API
-|/  
+|/
 * refactor: Make A easier to implement
 * refactor: Make B easier to implement
 * feat: Add feature X
@@ -132,5 +135,3 @@ the work commits.
 [^2]: This deviates from the angular convention, which defines refactor to mean
     something different that the commonly accepted meaning.
 
-[^3]: Goja support is ongoing. It's not worth mentioning any incremental updates
-    to Goja in the changelog until it is actually ready to use.
