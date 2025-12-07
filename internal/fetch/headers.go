@@ -137,6 +137,8 @@ func (h *Headers) All() iter.Seq2[types.ByteString, types.ByteString] {
 	}
 }
 
+// headers not valid to set on a requst. List obtained from Web Platform Tests
+// https://wpt.live/fetch/api/request/request-headers.any.html
 var invalidRequestHeaders = []types.ByteString{
 	"accept-charset",
 	"accept-encoding",
