@@ -18,7 +18,10 @@ const (
 	domErrorNotFound
 )
 
+// Deprecated: Use ErrDom
 var ErrDOM = DOMError{}
+
+var ErrDom = DOMError{}
 
 // ErrSyntax is returned when adding an empty string to a [DOMTokenList]. This
 // corresponds to a SyntaxError in JavaScript. This is a special case of a
@@ -44,6 +47,11 @@ type DOMError struct {
 
 func (e DOMError) Error() string { return e.msg }
 
+func (e DOMError) Is(err error) bool {
+	_, ok := err.(DOMError)
+	return ok
+}
+
 type NotImplementedError error
 
 func newDomError(msg string) error {
@@ -54,9 +62,9 @@ func newDomErrorCode(msg string, code int) error {
 	return DOMError{msg, code}
 }
 
+// Deprecated: Prefer using Errors.Is(err, ErrDom)
 func IsDOMError(err error) bool {
-	_, ok := err.(DOMError)
-	return ok
+	return errors.Is(err, ErrDOM)
 }
 
 // Deprecated: Will be removed
