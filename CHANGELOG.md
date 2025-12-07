@@ -1,6 +1,23 @@
 # Changelog - Gost-DOM
 
 
+## [0.10.3](https://github.com/gost-dom/browser/compare/v0.10.2...v0.10.3) (2025-12-07)
+
+
+### Features
+
+* Create ProcessingInstruction ([33f66e9](https://github.com/gost-dom/browser/commit/33f66e98a85cf3e9a6ab2edc2624697f875839e9))
+* Fix obsolete docs and error messages - thanks: [@nickchomey](https://github.com/nickchomey) ([f289f69](https://github.com/gost-dom/browser/commit/f289f69e091ad67e4978384dcfb970f73d9298d1))
+* **scripting/fetch:** Implement Request.Headers ([46c7f81](https://github.com/gost-dom/browser/commit/46c7f81f32c6c6a1395e6e65347dea0841883e26))
+* **scripting/fetch:** Support headers option ([dbde302](https://github.com/gost-dom/browser/commit/dbde3027e1dba140e0035e6640cc368ce626aa5c))
+* Validate ByteString in JS layer ([289d081](https://github.com/gost-dom/browser/commit/289d081f4a5ed0e1136c5e65d6ea00baab89ef84))
+
+
+### Bug Fixes
+
+* document.getElementById doesn't throw on undefined ([9225c3e](https://github.com/gost-dom/browser/commit/9225c3e51c714ecf46bd5902f83db5a1273417b0))
+* Proper V8 TypeErrors from Go ([6572a3b](https://github.com/gost-dom/browser/commit/6572a3bc74d444c5e1a55e78ee15138977645ef7))
+
 ## [0.10.2](https://github.com/gost-dom/browser/compare/v0.10.1...v0.10.2) (2025-11-26)
 
 
