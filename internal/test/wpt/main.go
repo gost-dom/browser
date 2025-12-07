@@ -19,12 +19,27 @@ import (
 	xhtml "golang.org/x/net/html"
 )
 
-type WebPlatformTest string
+type WebPlatformTest struct {
+	url     string
+	options options
+}
 
 func (s WebPlatformTest) Run(
 	ctx context.Context,
 	l *slog.Logger,
 ) (res []WebPlatformTestCase, err error) {
+	defer func() {
+		if s.options.ignorePanics {
+			return
+		}
+		if r := recover(); r != nil {
+			if e, ok := r.(error); ok {
+				err = e
+				return
+			}
+			err = fmt.Errorf("panic running test: %s\n%v\n", s.url, r)
+		}
+	}()
 	b := browser.New(
 		browser.WithScriptEngine(v8engine.DefaultEngine()),
 		browser.WithContext(ctx),
@@ -33,7 +48,7 @@ func (s WebPlatformTest) Run(
 	defer b.Close()
 	var win html.Window
 
-	win, err = b.Open(string(s))
+	win, err = b.Open(s.url)
 	l.Debug("Window opened")
 	if err == nil {
 		err = win.Clock().ProcessEvents(ctx)
@@ -42,6 +57,10 @@ func (s WebPlatformTest) Run(
 	if err != nil {
 		return
 	}
+	return s.parseResults(win)
+}
+
+func (s WebPlatformTest) parseResults(win html.Window) (res []WebPlatformTestCase, err error) {
 	r, _ := win.Document().QuerySelectorAll("#results > tbody > tr")
 	rows := r.All()
 	res = make([]WebPlatformTestCase, len(rows))
@@ -70,7 +89,7 @@ type WebPlatformTestCase struct {
 }
 
 func RunTestCase(
-	ctx context.Context, tc TestCase, log *slog.Logger,
+	ctx context.Context, tc TestCase, log *slog.Logger, o options,
 ) ([]WebPlatformTestCase, error) {
 	path := tc.Path
 	log = log.With(slog.String("TestCase", path))
@@ -79,7 +98,10 @@ func RunTestCase(
 	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
 	defer cancel()
 
-	suite := WebPlatformTest(tc.URL())
+	suite := WebPlatformTest{
+		url:     tc.URL(),
+		options: o,
+	}
 	return suite.Run(ctx, log)
 }
 
@@ -100,7 +122,12 @@ func (t pendingTest) result() testResult {
 // testResults return a channel of pending test results. The return type is a
 // channel of channels in order to have the channel reflect the order in which
 // tests were started, not when they were completed.
-func testResults(ctx context.Context, tests <-chan TestCase, log *slog.Logger) <-chan pendingTest {
+func testResults(
+	ctx context.Context,
+	tests <-chan TestCase,
+	log *slog.Logger,
+	o options,
+) <-chan pendingTest {
 	res := make(chan pendingTest, 64)
 	go func() {
 		var grp sync.WaitGroup
@@ -113,7 +140,7 @@ func testResults(ctx context.Context, tests <-chan TestCase, log *slog.Logger) <
 			go func() {
 				defer grp.Add(-1)
 
-				testCaseRes, err := RunTestCase(ctx, testCase, log)
+				testCaseRes, err := RunTestCase(ctx, testCase, log, o)
 				resultChan <- testResult{
 					testCase: testCase,
 					res:      testCaseRes,
@@ -127,9 +154,10 @@ func testResults(ctx context.Context, tests <-chan TestCase, log *slog.Logger) <
 }
 
 type options struct {
-	logger   *slog.Logger
-	file     string
-	includes []string
+	logger       *slog.Logger
+	file         string
+	includes     []string
+	ignorePanics bool
 }
 
 func (o options) Logger() (res *slog.Logger) {
@@ -204,7 +232,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	for pending := range testResults(ctx, source.testCases(ctx), logger) {
+	for pending := range testResults(ctx, source.testCases(ctx), logger, o) {
 		testCaseResult := pending.result()
 		var (
 			testCase = testCaseResult.testCase
@@ -285,5 +313,9 @@ func newLogger() *slog.Logger {
 	opts.Multiline = true
 	opts.Level = slog.LevelInfo
 	h := slogpretty.New(os.Stdout, opts)
+	// h := slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+	// 	Level: slog.LevelInfo,
+	// 	ReplaceAttr: log.ReplaceStackAttr,
+	// })
 	return slog.New(h)
 }
