@@ -77,3 +77,17 @@ func ErrAttr(err error) slog.Attr {
 	}
 	return slog.Group("err", "message", err, "errType", errType)
 }
+
+// ReplaceStackAttr removes "stack" entries from log output. While stack output
+// can be beneficial in some scenarios, it's very verbose.
+//
+// There is also a security consideration, stack output can expose details about
+// the inner workings of the system, that can be exploited to find weaknesses.
+// The intended use case of this library is not production use, there are still
+// risks log messages leak, e.g., build logs.
+func ReplaceStackAttr(grps []string, attr slog.Attr) slog.Attr {
+	if attr.Key == "stack" {
+		return slog.Attr{}
+	}
+	return attr
+}
