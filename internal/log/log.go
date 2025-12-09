@@ -1,7 +1,6 @@
 package log
 
 import (
-	"fmt"
 	"io"
 	"log/slog"
 )
@@ -36,11 +35,12 @@ func Default() *slog.Logger {
 
 // ErrAttr creates a log record attribute representing an error.
 //
-// If the error originates from V8, the relevant JavaScript location and stack
-// trace are included in the log record.
+// Different error types can implement their own LogValue() implementation,
+// e.g., the V8 error does that, attempting to extract call stact etc.
 func ErrAttr(err error) slog.Attr {
-	var errType = fmt.Sprintf("%T", err)
-	return slog.Group("err", "message", err, "errType", errType)
+	// TODO: This used to contain logic, but not anymore. Candidate for
+	// deletion. Only value now is consistent record key.
+	return slog.Any("err", err)
 }
 
 // ReplaceStackAttr removes "stack" entries from log output. While stack output
