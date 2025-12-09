@@ -6,6 +6,7 @@ import (
 	"iter"
 	"log/slog"
 
+	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/constants"
@@ -143,7 +144,10 @@ func (f v8Scope) NewUint8Array(data []byte) jsValue {
 		bytes[i] = f.NewInt32(int32(b))
 	}
 	byteArray := f.NewArray(bytes...)
-	from, err := f.v8ctx.RunScript("(data) => Uint8Array.from(data)", "gost-dom/v8engine/uint8array")
+	from, err := f.v8ctx.RunScript(
+		"(data) => Uint8Array.from(data)",
+		"gost-dom/v8engine/uint8array",
+	)
 	if err != nil {
 		panic(fmt.Sprintf("gost-dom/v8engine: Uint8Array.from: %v", err))
 	}
@@ -185,6 +189,19 @@ func (s v8Scope) newError(err error) *V8Error {
 	if errors.Is(err, gosterror.ErrTypeError) {
 		return s.errorOfV8Exception(v8go.NewTypeError(s.iso(), err.Error()))
 	}
+	if errors.Is(err, dom.ErrDom) {
+		fmt.Println("ERROR IS DOMError")
+		domException := s.getConstructor("DOMException")
+		val, err := domException.ft.InstanceTemplate().NewInstance(s.v8ctx)
+		if err == nil {
+			obj := newV8Object(s.V8ScriptContext, val).(*v8Object)
+			return &V8Error{
+				&obj.v8Value,
+				&v8go.Exception{Value: obj.Value},
+				err,
+			}
+		}
+	}
 	return newV8Error(s.V8ScriptContext, err)
 }
 
@@ -194,7 +211,6 @@ func (s v8Scope) errorOfV8Exception(e *v8go.Exception) *V8Error {
 		e,
 		e,
 	}
-
 }
 
 func (f v8Scope) JSONStringify(val jsValue) string {
@@ -280,8 +296,10 @@ func wrapV8Callback(
 			result, err = callback(cbCtx)
 			if err != nil {
 				err = cbCtx.newError(err).exception
+				fmt.Println("V8 ERROR RETURNED ERROR", err)
+				return nil, err
 			}
-			return toV8Value(result), err
+			return toV8Value(result), nil
 		},
 	)
 }

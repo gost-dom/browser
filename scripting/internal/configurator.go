@@ -21,7 +21,7 @@ func Configure[T any](host js.ScriptEngine[T]) {
 }
 
 func Bootstrap[T any](reg js.ClassBuilder[T]) {
-	dom.Bootstrap(reg)
+	dom.Register(reg)
 	html.InitBuilder(reg)
 	svg.Bootstrap(reg)
 	mathml.Bootstrap(reg)

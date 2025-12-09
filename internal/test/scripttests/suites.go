@@ -44,4 +44,5 @@ func RunSuites(t *testing.T, e html.ScriptEngine) {
 	t.Run("DOMParser", func(t *testing.T) { testDomParser(t, e) })
 	t.Run("HTMLAnchorElement", func(t *testing.T) { testHtmlAnchorElement(t, e) })
 	t.Run("MutationObserver", func(t *testing.T) { testMutationObserver(t, e) })
+	t.Run("Error handling", func(t *testing.T) { testErrorHandling(t, e) })
 }
