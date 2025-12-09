@@ -145,7 +145,7 @@ func (c scope) NewError(err error) js.Error[jsTypeParam] {
 	if errors.As(err, &typeError) {
 		return c.newTypeError(err.Error())
 	}
-	return newScriptError(c.scriptContext, err)
+	return newScriptError(c, err)
 }
 
 func (f scope) NewIterator(

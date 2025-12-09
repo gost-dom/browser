@@ -191,13 +191,14 @@ func (s v8Scope) newError(err error) *V8Error {
 	}
 	if errors.Is(err, dom.ErrDom) {
 		fmt.Println("ERROR IS DOMError")
-		domException := s.getConstructor("DOMException")
-		val, err := domException.ft.InstanceTemplate().NewInstance(s.v8ctx)
+		domException := s.V8ScriptContext.Constructor("DOMException")
+		obj, err := domException.NewInstance(err)
+		// val, err := domException.ft.InstanceTemplate().NewInstance(s.v8ctx)
 		if err == nil {
-			obj := newV8Object(s.V8ScriptContext, val).(*v8Object)
+
 			return &V8Error{
-				&obj.v8Value,
-				&v8go.Exception{Value: obj.Value},
+				obj.Self(),
+				&v8go.Exception{Value: obj.Self().Value},
 				err,
 			}
 		}

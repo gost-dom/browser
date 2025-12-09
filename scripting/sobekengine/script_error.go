@@ -29,12 +29,16 @@ func (e scriptError) Error() string {
 	return "undefined"
 }
 
-func newScriptError(ctx *scriptContext, err error) js.Error[jsTypeParam] {
+func newScriptError(s scope, err error) js.Error[jsTypeParam] {
+	ctx := s.scriptContext
 	if errors.Is(err, dom.ErrDom) {
 		fmt.Println("SOBEK IS ERROR")
-		cls := ctx.classes["DOMException"]
-		obj := cls.ctx.vm.CreateObject(cls.prototype)
-		return scriptError{newObject(ctx, obj)}
+		// cls := ctx.classes["DOMException"]
+		domException, constructErr := s.Constructor("DOMException").NewInstance(err)
+		if constructErr != nil {
+			panic(constructErr)
+		}
+		return scriptError{domException}
 	}
 	return scriptError{newObject(ctx, ctx.vm.NewGoError(err))}
 }
