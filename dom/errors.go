@@ -50,7 +50,7 @@ var ErrDom = DOMError{}
 // [DOMException]
 //
 // [DOMException]: https://developer.mozilla.org/en-US/docs/Web/API/DOMException
-var ErrSyntax = DOMError{Code: syntax_err}
+var ErrSyntax = DOMError{msg: "SymtaxError", Code: syntax_err}
 
 // ErrSyntax is returned when adding a token containing whitespace to a
 // [DOMTokenList]. This corresponds to a SyntaxError in JavaScript. This is a

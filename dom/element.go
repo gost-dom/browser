@@ -1,7 +1,6 @@
 package dom
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
 	"slices"
@@ -317,7 +316,7 @@ func (n *element) insertAdjacentNode(position string, node Node) error {
 		parent = n.ParentNode()
 		reference = n.NextSibling()
 	default:
-		return errors.New("Invalid position")
+		return newSyntaxError("invalid position")
 	}
 	_, err := parent.InsertBefore(node, reference)
 	return err

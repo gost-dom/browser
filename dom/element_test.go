@@ -23,6 +23,12 @@ func (s *ElementTestSuite) SetupTest() {
 	s.doc = CreateHTMLDocument()
 }
 
+func (s *ElementTestSuite) TestInsertAdjacentText() {
+	elm := s.doc.CreateElement("div")
+	err := elm.InsertAdjacentText("invalid-position", "content")
+	s.Assert().ErrorIs(err, ErrSyntax)
+}
+
 func (s *ElementTestSuite) TestGetSetAttribute() {
 	elm := s.doc.CreateElement("div")
 	s.Expect(elm.Attributes().Length()).To(Equal(0))
