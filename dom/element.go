@@ -253,7 +253,7 @@ func (e *element) RemoveAttributeNode(node Attr) (Attr, error) {
 			return node, nil
 		}
 	}
-	return nil, newDomErrorCode("Node was not found", domErrorNotFound)
+	return nil, newDomErrorCode("Node was not found", not_found_err)
 }
 
 func (e *element) getAttributes() Attributes {

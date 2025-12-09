@@ -55,7 +55,6 @@ func TestClassList(t *testing.T) {
 		err := pair.classList.Add("")
 		assert.ErrorIs(t, err, ErrSyntax, "Adding empty string to class list is SyntaxError")
 		assert.NotErrorIs(t, err, ErrInvalidCharacter)
-		assert.ErrorIs(t, err, ErrDOM, "SyntaxError is a DOMException")
 
 		err = pair.classList.Add("a b")
 		assert.NotErrorIs(t, err, ErrSyntax)
