@@ -1,12 +1,9 @@
 package log
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"log/slog"
-
-	"github.com/gost-dom/v8go"
 )
 
 type LogSource interface{ Logger() *slog.Logger }
@@ -42,39 +39,7 @@ func Default() *slog.Logger {
 // If the error originates from V8, the relevant JavaScript location and stack
 // trace are included in the log record.
 func ErrAttr(err error) slog.Attr {
-	var jsError *v8go.JSError
 	var errType = fmt.Sprintf("%T", err)
-	if errors.As(err, &jsError) {
-		return slog.Group("err",
-			"message", jsError.Message,
-			"location", jsError.Location,
-			"stackTrace", jsError.StackTrace,
-			"errType", errType,
-		)
-	}
-	var exception *v8go.Exception
-	if errors.As(err, &exception) {
-		obj, isObj := exception.Value.AsObject()
-		if isObj == nil {
-			attrs := make([]any, 2, 9)
-			attrs[0] = slog.Any("message", exception.Error())
-			attrs[1] = slog.String("errType", errType)
-			addValue := func(key string) {
-				if val, err := obj.Get(key); err == nil {
-					attrs = append(attrs, slog.Any(key, val))
-				}
-			}
-			addValue("message")
-			addValue("cause")
-			addValue("fileName")
-			addValue("lineNumber")
-			addValue("columnNumber")
-			addValue("name")
-			addValue("stack")
-
-			return slog.Group("err", attrs...)
-		}
-	}
 	return slog.Group("err", "message", err, "errType", errType)
 }
 
