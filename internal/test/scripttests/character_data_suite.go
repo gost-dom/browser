@@ -3,19 +3,12 @@ package scripttests
 import (
 	"testing"
 
-	"github.com/gost-dom/browser"
 	"github.com/gost-dom/browser/html"
-	"github.com/gost-dom/browser/internal/testing/gosttest"
-	"github.com/gost-dom/browser/internal/testing/htmltest"
 	"github.com/stretchr/testify/assert"
 )
 
 func testCharacterData(t *testing.T, e html.ScriptEngine) {
-	b := browser.New(
-		browser.WithScriptEngine(e),
-		browser.WithLogger(gosttest.NewTestLogger(t)),
-	)
-	win := htmltest.NewWindowHelper(t, b.NewWindow())
+	win := initWindow(t, e, nil)
 	win.LoadHTML(`<body><div /></body>`)
 	bodyHTML := win.MustEval(`
 		const t = document.createTextNode("foo")
