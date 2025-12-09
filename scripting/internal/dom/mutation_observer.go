@@ -15,8 +15,8 @@ type MutationCallback[T any] struct {
 }
 
 func (cb MutationCallback[T]) HandleMutation(recs []mutation.Record, obs *mutation.Observer) {
-	v8Recs, _ := toSequenceMutationRecord(cb.s, recs)
-	if _, err := cb.f.Call(cb.s.GlobalThis(), v8Recs); err != nil {
+	jsRecs, _ := toSequenceMutationRecord(cb.s, recs)
+	if _, err := cb.f.Call(cb.s.GlobalThis(), jsRecs); err != nil {
 		js.HandleJSCallbackError(cb.s, "HandleMutation", err)
 	}
 }
