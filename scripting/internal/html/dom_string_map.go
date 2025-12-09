@@ -5,20 +5,6 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-// func createDOMStringMapPrototype(scriptHost *V8ScriptHost) *v8.FunctionTemplate {
-// 	iso := scriptHost.iso
-// 	wrapper := NewDOMStringMap(scriptHost)
-// 	constructor := v8.NewFunctionTemplateWithError(iso, wrapper.Constructor)
-//
-// 	instanceTmpl := constructor.InstanceTemplate()
-// 	instanceTmpl.SetInternalFieldCount(1)
-// 	instanceTmpl.SetNamedHandler(wrapper)
-//
-// 	// wrapper.installPrototype(constructor.PrototypeTemplate())
-//
-// 	return constructor
-// }
-
 type DOMStringMap[T any] struct{}
 
 func NewDOMStringMap[T any](host js.ScriptEngine[T]) DOMStringMap[T] {

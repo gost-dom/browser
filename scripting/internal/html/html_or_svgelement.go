@@ -6,7 +6,6 @@ import (
 )
 
 func (w HTMLOrSVGElement[T]) focus(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	cbCtx.Logger().Debug("V8 Function call: HTMLOrSVGElement.focus")
 	instance, err := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if err == nil {
 		instance.Focus()

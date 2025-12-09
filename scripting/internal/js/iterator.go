@@ -90,9 +90,6 @@ func NewIterator2[K, V, U any](
 	keyLookup ValueResolver[K, U],
 	valueLookup ValueResolver[V, U],
 ) Iterator2[K, V, U] {
-	// iso := host.iso
-	// TODO, once we have weak handles in v8, we can release the iterator when it
-	// goes out of scope.
 	iterator := Iterator2[K, V, U]{keyLookup, valueLookup}
 	return iterator
 }

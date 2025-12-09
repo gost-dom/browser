@@ -15,7 +15,7 @@ func AssertObjectArg[T any](s Scope[T], v Value[T]) (Object[T], error) {
 }
 
 // ParseSetterArg parses a single argument and is intended for attribute
-// setters, where exactly one argument must be passed by v8.
+// setters, where exactly one argument must be passed by JS.
 func ParseSetterArg[T, U any](
 	ctx CallbackContext[T],
 	parsers ...func(Scope[T], Value[T]) (U, error),
