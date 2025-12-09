@@ -4,9 +4,9 @@ go 1.25.3
 
 require (
 	github.com/Marlliton/slogpretty v0.1.3
-	github.com/gost-dom/browser v0.10.2
+	github.com/gost-dom/browser v0.10.3
 	github.com/stretchr/testify v1.11.1
-	golang.org/x/net v0.47.0
+	golang.org/x/net v0.48.0
 )
 
 require (
