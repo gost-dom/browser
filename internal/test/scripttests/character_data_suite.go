@@ -7,22 +7,12 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
-	"github.com/gost-dom/browser/v8browser"
 	"github.com/stretchr/testify/assert"
 )
 
-func testCharacterData(t *testing.T, shf html.ScriptEngine) {
-	suite := characterDataSuite{shf}
-	t.Run("TextNode", suite.testTextNode)
-}
-
-type characterDataSuite struct {
-	engine html.ScriptEngine
-}
-
-func (s characterDataSuite) testTextNode(t *testing.T) {
-	b := v8browser.New(
-		browser.WithScriptEngine(s.engine),
+func testCharacterData(t *testing.T, e html.ScriptEngine) {
+	b := browser.New(
+		browser.WithScriptEngine(e),
 		browser.WithLogger(gosttest.NewTestLogger(t)),
 	)
 	win := htmltest.NewWindowHelper(t, b.NewWindow())
