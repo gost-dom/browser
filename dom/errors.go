@@ -11,21 +11,9 @@ import (
 	"fmt"
 )
 
-// just a helper to avoid implementing Error() on all types
-type browserError struct {
-	base      string
-	msg       string
-	errorType int
-}
-
 const (
-	errorTypeDOMError int = iota
-	errorTypeSyntaxError
-	errorTypeNotImplementedError
-)
-
-const (
-	domErrorSyntaxError int = iota
+	domErrorInvalid int = iota
+	domErrorSyntaxError
 	domErrorInvalidCharacter
 	domErrorNotFound
 )
@@ -50,26 +38,20 @@ var ErrInvalidCharacter = fmt.Errorf("%w: invalid character", ErrDOM)
 //
 // [DOMException]: https://developer.mozilla.org/en-US/docs/Web/API/DOMException
 type DOMError struct {
-	error
+	msg  string
 	code int
 }
 
+func (e DOMError) Error() string { return e.msg }
+
 type NotImplementedError error
 
-func newBrowserError(base string, msg string, errorType int) error {
-	return browserError{base, msg, errorType}
-}
-
-func (e browserError) Error() string {
-	return fmt.Sprintf("%s: %s", e.base, e.msg)
-}
-
 func newDomError(msg string) error {
-	return DOMError{newBrowserError("DOMError", msg, errorTypeDOMError), -1}
+	return DOMError{msg, domErrorInvalid}
 }
 
 func newDomErrorCode(msg string, code int) error {
-	return DOMError{newBrowserError("DOMError", msg, errorTypeDOMError), code}
+	return DOMError{msg, code}
 }
 
 func IsDOMError(err error) bool {
@@ -77,21 +59,17 @@ func IsDOMError(err error) bool {
 	return ok
 }
 
-func isBrowserErrorOfType(err error, errorType int) bool {
-	browserError, ok := err.(browserError)
-	return ok && browserError.errorType == errorType
-}
-
+// Deprecated: Will be removed
 func IsNotImplementedError(err error) bool {
-	return isBrowserErrorOfType(err, errorTypeNotImplementedError)
+	return false
 }
 
+// Deprecated: Will be removed
 func IsSyntaxError(err error) bool {
 	return errors.Is(err, ErrSyntax)
-	// e, ok := err.(DOMError)
-	// return ok && e.code == domErrorSyntaxError
 }
 
+// Deprecated: Will be removed
 func IsInvalidCharacterError(err error) bool {
 	e, ok := err.(DOMError)
 	return ok && e.code == domErrorInvalidCharacter
