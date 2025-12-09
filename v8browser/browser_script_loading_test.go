@@ -1,4 +1,4 @@
-package browser_test
+package v8browser_test
 
 import (
 	"strings"
