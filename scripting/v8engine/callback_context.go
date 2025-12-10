@@ -180,7 +180,7 @@ func (s v8Scope) NewError(err error) js.Error[jsTypeParam] {
 func (s v8Scope) NewValueError(v jsValue, err error) jsError {
 	val := v.Self()
 	exc := &v8go.Exception{Value: val.Value}
-	return &V8Error{val, exc, exc}
+	return &V8Error{val, exc, err}
 }
 
 func (f v8Scope) JSONStringify(val jsValue) string {
@@ -223,15 +223,9 @@ func (f v8Scope) NewIterator(
 }
 
 func (f v8Scope) NewTypeError(msg string) js.Error[jsTypeParam] {
-	// TODO: Should we wrap a V8 type error?
-	// return gosterror.NewTypeError(msg)
 	v8TypeErr := v8go.NewTypeError(f.iso(), msg)
 	v8TypeErrVal := newV8Value(f.V8ScriptContext, v8TypeErr.Value)
-	return &V8Error{
-		v8TypeErrVal,
-		v8TypeErr,
-		v8TypeErr,
-	}
+	return &V8Error{v8Value: v8TypeErrVal, exception: v8TypeErr}
 }
 
 func (f v8Scope) toJSValue(val *v8go.Value) jsValue {

@@ -11,7 +11,7 @@ import (
 type V8Error struct {
 	*v8Value
 	exception *v8go.Exception
-	error
+	err       error
 }
 
 func newV8Error(ctx *V8ScriptContext, err error) *V8Error {
@@ -20,8 +20,17 @@ func newV8Error(ctx *V8ScriptContext, err error) *V8Error {
 	return &V8Error{val, exc, err}
 }
 
+func (e V8Error) Unwrap() []error {
+	if e.err == nil {
+		return []error{e.exception}
+	} else {
+		return []error{e.exception, e.err}
+	}
+}
+func (e V8Error) Error() string { return e.exception.Error() }
+
 func (e V8Error) LogValue() slog.Value {
-	err := e.error
+	err := e.err
 	var jsError *v8go.JSError
 	var errType = fmt.Sprintf("%T", err)
 	if errors.As(err, &jsError) {
@@ -59,5 +68,4 @@ func (e V8Error) LogValue() slog.Value {
 		"message", err),
 		slog.String("errType", errType),
 	)
-
 }
