@@ -12,7 +12,7 @@ type AnyError struct{ Reason any }
 
 // Error implements the error interface
 func (e AnyError) Error() string {
-	return fmt.Sprintf("aborted: reason: %v", e.Reason)
+	return fmt.Sprintf("reason: %v", e.Reason)
 }
 
 // Unwrap supports error checking and casting behaviour of the [errors] package.
