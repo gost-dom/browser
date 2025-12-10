@@ -150,7 +150,7 @@ func newDomErrorCode(msg string, code domErrorCode) error {
 
 // Deprecated: Prefer using Errors.Is(err, ErrDom)
 func IsDOMError(err error) bool {
-	return errors.Is(err, ErrDOM)
+	return errors.Is(err, ErrDom)
 }
 
 // Deprecated: Will be removed

@@ -61,7 +61,7 @@ func TestClassList(t *testing.T) {
 		assert.ErrorIs(t, err, ErrInvalidCharacter,
 			"Adding empty string to class list is an InvalidCharacterException",
 		)
-		assert.ErrorIs(t, err, ErrDOM, "SyntaxError is a DOMException")
+		assert.ErrorIs(t, err, ErrDom, "SyntaxError is a DOMException")
 	}
 }
 

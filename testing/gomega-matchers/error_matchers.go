@@ -1,6 +1,8 @@
 package matchers
 
 import (
+	"errors"
+
 	"github.com/gost-dom/browser/dom"
 
 	"github.com/onsi/gomega/gcustom"
@@ -9,6 +11,6 @@ import (
 
 func BeADOMError() GomegaMatcher {
 	return gcustom.MakeMatcher(func(e error) (bool, error) {
-		return dom.IsDOMError(e), nil
+		return errors.Is(e, dom.ErrDom), nil
 	})
 }
