@@ -190,12 +190,9 @@ func (s v8Scope) newError(err error) *V8Error {
 		return s.errorOfV8Exception(v8go.NewTypeError(s.iso(), err.Error()))
 	}
 	if errors.Is(err, dom.ErrDom) {
-		fmt.Println("ERROR IS DOMError")
 		domException := s.V8ScriptContext.Constructor("DOMException")
-		obj, err := domException.NewInstance(err)
-		// val, err := domException.ft.InstanceTemplate().NewInstance(s.v8ctx)
-		if err == nil {
-
+		obj, domExcErr := domException.NewInstance(err)
+		if domExcErr == nil {
 			return &V8Error{
 				obj.Self(),
 				&v8go.Exception{Value: obj.Self().Value},
@@ -296,9 +293,7 @@ func wrapV8Callback(
 			var result jsValue
 			result, err = callback(cbCtx)
 			if err != nil {
-				err = cbCtx.newError(err).exception
-				fmt.Println("V8 ERROR RETURNED ERROR", err)
-				return nil, err
+				return nil, cbCtx.newError(err).exception
 			}
 			return toV8Value(result), nil
 		},
