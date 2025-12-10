@@ -50,14 +50,14 @@ func ReadAll(reader io.Reader) Promise[[]byte] {
 // this type. Consider moving in the future
 type ErrAny struct{ Reason any }
 
-func (err ErrAny) Error() string {
-	return fmt.Sprintf("aborted: reason: %v", err.Reason)
+// Error implements the error interface
+func (e ErrAny) Error() string {
+	return fmt.Sprintf("aborted: reason: %v", e.Reason)
 }
 
-func (err ErrAny) As(target any) bool {
-	if errAny, ok := target.(*ErrAny); ok {
-		*errAny = err
-		return true
-	}
-	return false
+// Unwrap supports error checking and casting behaviour of the [errors] package.
+// Returns Reason if it is an error instance, otherwise it returns nil.
+func (e ErrAny) Unwrap() error {
+	err, _ := e.Reason.(error)
+	return err
 }

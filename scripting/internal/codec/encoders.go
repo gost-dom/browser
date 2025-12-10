@@ -121,12 +121,10 @@ func EncodePromiseFunc[T any](
 		e.AddEvent(func() error {
 			if err == nil {
 				p.Resolve(r)
-				return nil
 			} else {
-				jsErr, err := EncodeError(c, err)
-				p.Reject(jsErr)
-				return err
+				p.Reject(encodeError(c, err))
 			}
+			return nil
 		})
 	}()
 	return p, nil
@@ -146,41 +144,25 @@ func EncodePromise[T, U any](
 	prom promise.Promise[U],
 	encoder Encoder[T, U],
 ) (js.Value[T], error) {
-	p := scope.NewPromise()
-	e := scope.Clock().BeginEvent()
-	go func() {
+	return EncodePromiseFunc(scope, func() (js.Value[T], error) {
 		res := <-prom
-		e.AddEvent(func() error {
-			err := res.Err
-			var val js.Value[T]
-			if err == nil {
-				val, err = encoder(scope, res.Value)
-			}
-			if err == nil {
-				p.Resolve(val)
-				return nil
-			} else {
-				errVal, err := EncodeError(scope, err)
-				if errVal == nil {
-					errVal = scope.Undefined()
-				}
-				p.Reject(errVal)
-				return err
-			}
-		})
-	}()
-	return p, nil
+		if res.Err == nil {
+			return encoder(scope, res.Value)
+		} else {
+			return nil, res.Err
+		}
+	})
 }
 
-func EncodeError[T any](scope js.Scope[T], err error) (js.Value[T], error) {
+func encodeError[T any](scope js.Scope[T], err error) js.Value[T] {
 	if err == nil {
-		return nil, nil
+		return nil
 	}
 	var errAny promise.ErrAny
 	if errors.As(err, &errAny) {
 		if v, ok := errAny.Reason.(js.Value[T]); ok {
-			return v, nil
+			return v
 		}
 	}
-	return scope.NewError(err), nil
+	return scope.NewError(err)
 }
