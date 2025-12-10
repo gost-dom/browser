@@ -2,7 +2,6 @@ package sobekengine
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/scripting/internal/js"
@@ -32,8 +31,6 @@ func (e scriptError) Error() string {
 func newScriptError(s scope, err error) js.Error[jsTypeParam] {
 	ctx := s.scriptContext
 	if errors.Is(err, dom.ErrDom) {
-		fmt.Println("SOBEK IS ERROR")
-		// cls := ctx.classes["DOMException"]
 		domException, constructErr := s.Constructor("DOMException").NewInstance(err)
 		if constructErr != nil {
 			panic(constructErr)
