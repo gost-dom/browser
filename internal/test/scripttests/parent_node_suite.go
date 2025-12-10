@@ -10,7 +10,7 @@ import (
 
 func testParentNode(t *testing.T, e html.ScriptEngine) {
 	t.Run("querySelector are functions", func(t *testing.T) {
-		b := initBrowser(t, e, nil)
+		b := initBrowser(t, nil, e)
 		w := b.NewWindow()
 		g := gomega.NewWithT(t)
 		g.Expect(w.Eval(`typeof document.querySelector`)).
@@ -20,8 +20,7 @@ func testParentNode(t *testing.T, e html.ScriptEngine) {
 	})
 
 	t.Run("querySelectorAll is iterable", func(t *testing.T) {
-		b := initBrowser(t, e, nil)
-		w := b.NewWindow()
+		w := initWindow(t, e, nil)
 		g := gomega.NewWithT(t)
 		g.Expect(w.LoadHTML(
 			`<div id="1" class="foo"><p id="child1"></p><div id="child2"></div><p id="child3"></p></div>`,

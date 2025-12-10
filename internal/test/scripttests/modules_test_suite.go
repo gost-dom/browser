@@ -2,13 +2,11 @@ package scripttests
 
 import (
 	"encoding/json"
-	"net/http"
 	"testing"
 
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 
-	"github.com/gost-dom/browser"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/onsi/gomega"
 	"github.com/stretchr/testify/assert"
@@ -36,7 +34,7 @@ func RunModuleSuite(t *testing.T, e html.ScriptEngine) {
 			"/index.html": gosttest.StaticHTML(indexHTML),
 			"/module.js":  gosttest.StaticJS(moduleJS),
 		}
-		win, err := initBrowser(t, e, server).Open("https://example.com/index.html")
+		win, err := initBrowser(t, server, e).Open("https://example.com/index.html")
 		assert.NoError(t, err)
 		g := gomega.NewWithT(t)
 		g.Expect(win.Document().GetElementById("tgt")).To(HaveTextContent("CONTENT"))
@@ -78,7 +76,7 @@ func RunModuleSuite(t *testing.T, e html.ScriptEngine) {
 				export const self = "/feature-a/script.js";
 			`),
 		}
-		win, err := initBrowser(t, e, server).Open("https://example.com/index.html")
+		win, err := initBrowser(t, server, e).Open("https://example.com/index.html")
 		assert.NoError(t, err)
 		data := win.Document().GetElementById("tgt").TextContent()
 		var m map[string]any
@@ -143,7 +141,7 @@ func RunModuleSuite(t *testing.T, e html.ScriptEngine) {
 			`),
 		}
 
-		win, err := initBrowser(t, e, server).Open("https://example.com/index.html")
+		win, err := initBrowser(t, server, e).Open("https://example.com/index.html")
 		assert.NoError(t, err)
 		g := gomega.NewWithT(t)
 		g.Expect(win.Document().GetElementById("tgt-1")).To(HaveTextContent("a-valueFromB"))
@@ -174,14 +172,3 @@ func RunModuleSuite(t *testing.T, e html.ScriptEngine) {
 }
 
 type jsonObject = map[string]any
-
-// initBrowser creates a browser with the most useful options. This browser will
-// by default fail a test if an error is logged, meaning an uncaught JavaScript
-// error will result in a test error.
-func initBrowser(t testing.TB, e html.ScriptEngine, handler http.Handler) *browser.Browser {
-	return browser.New(
-		browser.WithScriptEngine(e),
-		browser.WithHandler(handler),
-		browser.WithLogger(gosttest.NewTestLogger(t)),
-	)
-}

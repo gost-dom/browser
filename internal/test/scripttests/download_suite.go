@@ -30,7 +30,7 @@ func RunDownloadScriptSuite(t *testing.T, e html.ScriptEngine) {
 			"/index.html": gosttest.StaticHTML(indexHTML),
 			"/module.js":  gosttest.StaticJS(moduleJS),
 		}
-		win, err := initBrowser(t, e, server).Open("https://example.com/index.html")
+		win, err := initBrowser(t, server, e).Open("https://example.com/index.html")
 		assert.NoError(t, err)
 		g := gomega.NewWithT(t)
 		g.Expect(win.Document().GetElementById("tgt")).To(HaveTextContent("CONTENT"))
