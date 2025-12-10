@@ -111,7 +111,7 @@ var ErrDom = DOMError{}
 // [DOMException]
 //
 // [DOMException]: https://developer.mozilla.org/en-US/docs/Web/API/DOMException
-var ErrSyntax = DOMError{msg: "SyntaxError", Code: syntax_err}
+var ErrSyntax = DOMError{Message: "SyntaxError", Code: syntax_err}
 
 // ErrInvalidCharacter is returned when adding a token containing whitespace to
 // a [DOMTokenList]. This corresponds to a SyntaxError in JavaScript. This is a
@@ -124,11 +124,11 @@ var ErrInvalidCharacter = DOMError{Code: invalid_character_err}
 //
 // [DOMException]: https://developer.mozilla.org/en-US/docs/Web/API/DOMException
 type DOMError struct {
-	msg  string
-	Code domErrorCode
+	Message string
+	Code    domErrorCode
 }
 
-func (e DOMError) Error() string { return e.msg }
+func (e DOMError) Error() string { return e.Message }
 
 func (e DOMError) Is(target error) bool {
 	other, ok := target.(DOMError)
@@ -171,14 +171,14 @@ func IsInvalidCharacterError(err error) bool {
 
 func newSyntaxError(msg string) error {
 	return DOMError{
-		msg:  fmt.Sprintf("SyntaxError: %s", msg),
-		Code: syntax_err,
+		Message: fmt.Sprintf("SyntaxError: %s", msg),
+		Code:    syntax_err,
 	}
 }
 
 func newInvalidCharacterError(msg string) error {
 	return DOMError{
-		msg:  msg,
-		Code: invalid_character_err,
+		Message: msg,
+		Code:    invalid_character_err,
 	}
 }

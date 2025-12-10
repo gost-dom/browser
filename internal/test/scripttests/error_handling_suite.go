@@ -3,6 +3,7 @@ package scripttests
 import (
 	"testing"
 
+	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
 	"github.com/stretchr/testify/assert"
 )
@@ -17,11 +18,13 @@ func testErrorHandling(t *testing.T, e html.ScriptEngine) {
 		} catch(e) {
 			err = e
 		}
-		console.log("ERR", err?.message)
-		console.log("ERR PROTOTYPE", Object.getPrototypeOf(err).constructor.name)
 		err instanceof DOMException
 	`)
+
 	assert.True(t, result.(bool))
 	isError := win.MustEval(`err instanceof Error`)
 	assert.True(t, isError.(bool), "err instanceof Error")
+
+	expectedErr := win.Document().Append(dom.NewDocument(win))
+	assert.Equal(t, expectedErr.Error(), win.MustEval("err.message"))
 }
