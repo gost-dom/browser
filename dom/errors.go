@@ -106,16 +106,15 @@ var ErrDOM = DOMError{}
 
 var ErrDom = DOMError{}
 
-// ErrSyntax is returned when adding an empty string to a [DOMTokenList]. This
-// corresponds to a SyntaxError in JavaScript. This is a special case of a
-// [DOMException]
+// ErrSyntax is the [DOMException] returned when adding an empty string to a
+// [DOMTokenList]. This corresponds to a SyntaxError in JavaScript
 //
 // [DOMException]: https://developer.mozilla.org/en-US/docs/Web/API/DOMException
 var ErrSyntax = DOMError{Message: "SyntaxError", Code: syntax_err}
 
-// ErrInvalidCharacter is returned when adding a token containing whitespace to
-// a [DOMTokenList]. This corresponds to a SyntaxError in JavaScript. This is a
-// special case of a [DOMException]
+// ErrInvalidCharacter is the [DOMException] returned when adding a token
+// containing whitespace to a [DOMTokenList]. This corresponds to
+// InvalidCharacterError in JavaScript.
 //
 // [DOMException]: https://developer.mozilla.org/en-US/docs/Web/API/DOMException
 var ErrInvalidCharacter = DOMError{Code: invalid_character_err}
@@ -164,7 +163,7 @@ func IsSyntaxError(err error) bool {
 	return errors.Is(err, ErrSyntax)
 }
 
-// Deprecated: Will be removed - use errors.Id(err, ErrInvalidCharacter)
+// Deprecated: Will be removed - use errors.Is(err, ErrInvalidCharacter)
 func IsInvalidCharacterError(err error) bool {
 	return errors.Is(err, ErrInvalidCharacter)
 }
