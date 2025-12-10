@@ -226,7 +226,6 @@ func (f v8Scope) NewTypeError(msg string) js.Error[jsTypeParam] {
 	// TODO: Should we wrap a V8 type error?
 	// return gosterror.NewTypeError(msg)
 	v8TypeErr := v8go.NewTypeError(f.iso(), msg)
-	fmt.Printf("Constructed V8 Type Error: %P\n", v8TypeErr)
 	v8TypeErrVal := newV8Value(f.V8ScriptContext, v8TypeErr.Value)
 	return &V8Error{
 		v8TypeErrVal,
@@ -273,9 +272,7 @@ func wrapV8Callback(
 			var result jsValue
 			result, err = callback(cbCtx)
 			if err != nil {
-				fmt.Printf("Err!: %#v\n", err)
 				if jsErr, ok := js.ToJsError(cbCtx, err).(*V8Error); ok {
-					fmt.Printf("JS Err!: %#v\n", jsErr)
 					return nil, jsErr.exception
 				} else {
 					return nil, err
