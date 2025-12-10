@@ -186,16 +186,11 @@ type ValueFactory[T any] interface {
 	// [Iterator protocol]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterator_protocol
 	NewIterator(iter.Seq2[Value[T], error]) Value[T]
 
-	NewTypeError(msg string) error
+	NewTypeError(msg string) Error[T]
 
 	NewError(err error) Error[T]
+	NewValueError(v Value[T], err error) Error[T]
 
 	JSONStringify(val Value[T]) string
 	JSONParse(val string) (Value[T], error)
-}
-
-// Error is a JavaScript representation of a go error instance.
-type Error[T any] interface {
-	Value[T]
-	error
 }

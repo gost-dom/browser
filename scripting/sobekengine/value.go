@@ -11,6 +11,9 @@ type value struct {
 }
 
 type jsTypeParam = value
+type jsValue = js.Value[jsTypeParam]
+type jsObject = js.Value[jsTypeParam]
+type jsError = js.Error[jsTypeParam]
 
 // unwrapValue returns the underlying JS value of v. Returns undefined if v is
 // nil.

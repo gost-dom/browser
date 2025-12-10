@@ -104,7 +104,12 @@ func (f scope) NewString(v string) js.Value[jsTypeParam] {
 }
 
 // NewTypeError implements [js.ValueFactory].
-func (c scope) NewTypeError(v string) error { return gosterror.NewTypeError(v) }
+func (c scope) NewTypeError(v string) js.Error[jsTypeParam] {
+	sobekErrVal := c.vm.NewTypeError(v)
+	return scriptError{
+		newValue(c.scriptContext, sobekErrVal),
+	}
+}
 
 func (c scope) newTypeError(v string) scriptError {
 	return scriptError{newObject(
@@ -145,7 +150,12 @@ func (c scope) NewError(err error) js.Error[jsTypeParam] {
 	if errors.As(err, &typeError) {
 		return c.newTypeError(err.Error())
 	}
-	return newScriptError(c, err)
+	ctx := c.scriptContext
+	return scriptError{newObject(ctx, ctx.vm.NewGoError(err))}
+}
+
+func (c scope) NewValueError(val jsValue, err error) jsError {
+	return scriptError{val}
 }
 
 func (f scope) NewIterator(

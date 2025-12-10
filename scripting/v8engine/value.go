@@ -13,6 +13,7 @@ type jsTypeParam = *v8Value
 type jsValue = js.Value[*v8Value]
 type jsFunction = js.Function[*v8Value]
 type jsObject = js.Object[*v8Value]
+type jsError = js.Error[*v8Value]
 
 func toV8Value(v jsValue) *v8go.Value {
 	if v == nil {

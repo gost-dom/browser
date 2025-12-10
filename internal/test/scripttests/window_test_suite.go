@@ -22,14 +22,15 @@ func (s *WindowTestSuite) TestWindowInheritance() {
 func (s *WindowTestSuite) TestWindowConstructor() {
 	s.Expect(s.Eval("Window && typeof Window")).To(Equal("function"))
 	s.Expect(s.RunScript("Window()")).ToNot(Succeed())
-	s.Expect(s.Eval(`
+	s.MustRunScript(`
 		let error;
 		try { new Window() } catch(err) { 
 			error = err;
 		}
-		error && Object.getPrototypeOf(error).constructor.name
-	`)).To(Equal("TypeError"))
+	`)
 	s.Expect(s.Eval("error instanceof TypeError")).To(BeTrue())
+	s.Expect(s.Eval("error && Object.getPrototypeOf(error).constructor.name")).
+		To(Equal("TypeError"))
 }
 
 func (s *WindowTestSuite) TestDocumentProperty() {
