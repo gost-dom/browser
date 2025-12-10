@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/gost-dom/browser/dom/event"
-	"github.com/gost-dom/browser/internal/promise"
+	"github.com/gost-dom/browser/internal/gosterror"
 )
 
 const EventTypeAbort = "abort"
@@ -57,7 +57,7 @@ func AbortContext(ctx context.Context, signal *AbortSignal) context.Context {
 			reason := signal.reason
 			err, ok := reason.(error)
 			if !ok {
-				err = promise.ErrAny{Reason: reason}
+				err = gosterror.AnyError{Reason: reason}
 			}
 			cancel(err)
 		case <-ctx.Done():

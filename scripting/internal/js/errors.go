@@ -9,7 +9,6 @@ import (
 	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/internal/gosterror"
 	"github.com/gost-dom/browser/internal/log"
-	"github.com/gost-dom/browser/internal/promise"
 )
 
 // HandleJSCallbackError is to be called when calling into a JS callback function
@@ -51,18 +50,11 @@ func ToJsError[T any](s Scope[T], err error) (res Error[T]) {
 }
 
 func encodeAnyError[T any](s Scope[T], err error, res *Error[T]) (ok bool) {
-	fmt.Printf("encodeAnyError: %#v", err)
-	var anyErr promise.ErrAny
+	var anyErr gosterror.AnyError
 	if ok = errors.As(err, &anyErr); !ok {
 		return
 	}
-
-	r := anyErr.Reason
-	if jsErr, isJsErr := r.(Error[T]); isJsErr {
-		*res = jsErr
-		return
-	}
-	if val, isVal := r.(Value[T]); isVal {
+	if val, isVal := anyErr.Reason.(Value[T]); isVal {
 		*res = s.NewValueError(val, err)
 		return
 	}

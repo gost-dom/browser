@@ -5,15 +5,15 @@ import (
 	"github.com/grafana/sobek"
 )
 
-type value struct {
-	ctx   *scriptContext
-	value sobek.Value
-}
-
 type jsTypeParam = value
 type jsValue = js.Value[jsTypeParam]
 type jsObject = js.Value[jsTypeParam]
 type jsError = js.Error[jsTypeParam]
+
+type value struct {
+	ctx   *scriptContext
+	value sobek.Value
+}
 
 // unwrapValue returns the underlying JS value of v. Returns undefined if v is
 // nil.
