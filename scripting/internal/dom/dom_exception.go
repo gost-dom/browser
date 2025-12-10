@@ -9,9 +9,7 @@ import (
 
 type domException[T any] struct{}
 
-func newDOMException[T any](scriptHost js.ScriptEngine[T]) *domException[T] {
-	return &domException[T]{}
-}
+func newDOMException[T any](_ js.ScriptEngine[T]) *domException[T] { return &domException[T]{} }
 
 func (w domException[T]) Constructor(info js.CallbackContext[T]) (js.Value[T], error) {
 	return nil, nil
@@ -20,7 +18,7 @@ func (w domException[T]) Constructor(info js.CallbackContext[T]) (js.Value[T], e
 func (w domException[T]) Initialize(jsClass js.Class[T]) {
 	jsClass.CreateInstanceAttribute("code", w.code, nil)
 	jsClass.CreateInstanceAttribute("name", w.name, nil)
-	// TODO: Check in the message shouldn't have been Error.prototype.message
+	// TODO: Check if the message shouldn't have been Error.prototype.message
 	jsClass.CreateInstanceAttribute("message", w.message, nil)
 }
 func (w domException[T]) code(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
