@@ -15,7 +15,7 @@ import (
 
 type scope struct {
 	*scriptContext
-	global js.Object[jsTypeParam]
+	global jsObject
 }
 
 func newScope(ctx *scriptContext) scope {
@@ -24,8 +24,8 @@ func newScope(ctx *scriptContext) scope {
 	}
 }
 
-func (s scope) Window() html.Window                { return s.window }
-func (s scope) GlobalThis() js.Object[jsTypeParam] { return s.global }
+func (s scope) Window() html.Window  { return s.window }
+func (s scope) GlobalThis() jsObject { return s.global }
 
 func (s scope) Clock() *clock.Clock { return s.clock }
 func (s scope) Constructor(name string) js.Constructor[jsTypeParam] {
@@ -120,7 +120,7 @@ func (c scope) newTypeError(v string) scriptError {
 
 func (c scope) NewPromise() js.Promise[jsTypeParam] { return newPromise(c.scriptContext) }
 
-func (c scope) NewObject() js.Object[jsTypeParam] {
+func (c scope) NewObject() jsObject {
 	return newObject(c.scriptContext, c.vm.NewObject())
 }
 

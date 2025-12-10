@@ -7,7 +7,7 @@ import (
 
 type jsTypeParam = value
 type jsValue = js.Value[jsTypeParam]
-type jsObject = js.Value[jsTypeParam]
+type jsObject = js.Object[jsTypeParam]
 type jsError = js.Error[jsTypeParam]
 
 type value struct {
@@ -38,7 +38,7 @@ func (v value) AsFunction() (js.Function[jsTypeParam], bool) {
 	return function{v, f}, ok
 }
 
-func (v value) AsObject() (js.Object[jsTypeParam], bool) {
+func (v value) AsObject() (jsObject, bool) {
 	if o := v.value.ToObject(v.ctx.vm); o != nil {
 		return newObject(v.ctx, o), true
 	}

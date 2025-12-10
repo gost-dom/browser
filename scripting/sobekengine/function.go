@@ -11,7 +11,7 @@ type function struct {
 }
 
 func (f function) Call(
-	this js.Object[jsTypeParam],
+	this jsObject,
 	args ...js.Value[jsTypeParam],
 ) (js.Value[jsTypeParam], error) {
 	v := make([]sobek.Value, len(args))
