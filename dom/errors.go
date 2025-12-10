@@ -7,7 +7,6 @@
 package dom
 
 import (
-	"errors"
 	"fmt"
 	"strconv"
 )
@@ -101,9 +100,6 @@ func (c domErrorCode) String() string {
 	}
 }
 
-// Deprecated: Use ErrDom
-var ErrDOM = DOMError{}
-
 var ErrDom = DOMError{}
 
 // ErrSyntax is the [DOMException] returned when adding an empty string to a
@@ -137,35 +133,12 @@ func (e DOMError) Is(target error) bool {
 	return ok
 }
 
-// Deprecated: Unused, will be removed
-type NotImplementedError error
-
 func newDomError(msg string) error {
 	return DOMError{msg, domErrorInvalid}
 }
 
 func newDomErrorCode(msg string, code domErrorCode) error {
 	return DOMError{msg, code}
-}
-
-// Deprecated: Prefer using Errors.Is(err, ErrDom)
-func IsDOMError(err error) bool {
-	return errors.Is(err, ErrDom)
-}
-
-// Deprecated: Will be removed
-func IsNotImplementedError(err error) bool {
-	return false
-}
-
-// Deprecated: Will be removed
-func IsSyntaxError(err error) bool {
-	return errors.Is(err, ErrSyntax)
-}
-
-// Deprecated: Will be removed - use errors.Is(err, ErrInvalidCharacter)
-func IsInvalidCharacterError(err error) bool {
-	return errors.Is(err, ErrInvalidCharacter)
 }
 
 func newSyntaxError(msg string) error {
