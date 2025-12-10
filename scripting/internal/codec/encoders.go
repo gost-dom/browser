@@ -1,8 +1,6 @@
 package codec
 
 import (
-	"errors"
-
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/promise"
 	"github.com/gost-dom/browser/internal/types"
@@ -122,7 +120,7 @@ func EncodePromiseFunc[T any](
 			if err == nil {
 				p.Resolve(r)
 			} else {
-				p.Reject(encodeError(c, err))
+				p.Reject(js.ToJsError(c, err))
 			}
 			return nil
 		})
@@ -152,17 +150,4 @@ func EncodePromise[T, U any](
 			return nil, res.Err
 		}
 	})
-}
-
-func encodeError[T any](scope js.Scope[T], err error) js.Value[T] {
-	if err == nil {
-		return nil
-	}
-	var errAny promise.ErrAny
-	if errors.As(err, &errAny) {
-		if v, ok := errAny.Reason.(js.Value[T]); ok {
-			return v
-		}
-	}
-	return scope.NewError(err)
 }

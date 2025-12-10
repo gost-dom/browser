@@ -9,6 +9,7 @@ import (
 	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/internal/gosterror"
 	"github.com/gost-dom/browser/internal/log"
+	"github.com/gost-dom/browser/internal/promise"
 )
 
 // HandleJSCallbackError is to be called when calling into a JS callback function
@@ -41,15 +42,32 @@ func ToJsError[T any](s Scope[T], err error) (res Error[T]) {
 	if errors.As(err, &res) {
 		return
 	}
-	fmt.Println("CheckingErrors")
-	fmt.Printf(" - %#v\n", err)
-	fmt.Println(" - err is TypeError: ", errors.Is(err, gosterror.ErrTypeError))
-	fmt.Println(" - err is DOMException: ", errors.Is(err, dom.ErrDom))
 	if toTypeError(s, err, &res) ||
-		toDomException(s, err, &res) {
+		toDomException(s, err, &res) ||
+		encodeAnyError(s, err, &res) {
 		return
 	}
 	return s.NewError(err)
+}
+
+func encodeAnyError[T any](s Scope[T], err error, res *Error[T]) (ok bool) {
+	fmt.Printf("encodeAnyError: %#v", err)
+	var anyErr promise.ErrAny
+	if ok = errors.As(err, &anyErr); !ok {
+		return
+	}
+
+	r := anyErr.Reason
+	if jsErr, isJsErr := r.(Error[T]); isJsErr {
+		*res = jsErr
+		return
+	}
+	if val, isVal := r.(Value[T]); isVal {
+		*res = s.NewValueError(val, err)
+		return
+	}
+	*res = s.NewError(err)
+	return
 }
 
 func toTypeError[T any](s Scope[T], err error, res *Error[T]) bool {
