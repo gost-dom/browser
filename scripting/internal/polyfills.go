@@ -51,6 +51,7 @@ func InstallPolyfills[T any](host js.ScriptEngine[T]) {
 
 	`, "gost-dom/polyfills/xpath-custom.js")
 	host.RunScript(`
+		Object.setPrototypeOf(DOMException, Error)
 		Object.setPrototypeOf(DOMException.prototype, Error.prototype)
 	`, "gost-dom/polyfills/errors.js")
 }
