@@ -77,20 +77,14 @@ func toDomException[T any](s Scope[T], err error, res *Error[T]) (ok bool) {
 	if !ok {
 		return
 	}
-	cls := s.Constructor("DOMException")
-	if cls == nil {
-		err = errors.Join(err, errors.New("DOMException ctor not found"), constants.ErrGostDomBug)
-		*res = s.NewError(err)
-		return
+	if cls := s.Constructor("DOMException"); cls == nil {
+		*res = s.NewError(
+			errors.Join(err, errors.New("DOMException ctor not found"), constants.ErrGostDomBug),
+		)
+	} else if obj, ctorErr := cls.NewInstance(e); ctorErr != nil {
+		*res = s.NewError(errors.Join(err, fmt.Errorf("DOMException: %w", ctorErr), constants.ErrGostDomBug))
+	} else {
+		*res = s.NewValueError(obj, err)
 	}
-	obj, ctorErr := cls.NewInstance(e)
-	if ctorErr != nil {
-		err = errors.Join(err, fmt.Errorf("DOMException: %w", ctorErr), constants.ErrGostDomBug)
-		*res = s.NewError(err)
-		return
-	}
-	var val Value[T] = obj
-	*res = s.NewValueError(val, err)
-
 	return
 }
