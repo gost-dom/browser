@@ -35,9 +35,6 @@ func ToJsError[T any](s Scope[T], err error) (res Error[T]) {
 	if err == nil {
 		return nil
 	}
-	if res, ok := err.(Error[T]); ok {
-		return res
-	}
 	if errors.As(err, &res) {
 		return
 	}

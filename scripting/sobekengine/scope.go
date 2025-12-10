@@ -110,13 +110,6 @@ func (c scope) NewTypeError(v string) js.Error[jsTypeParam] {
 	}
 }
 
-func (c scope) newTypeError(v string) scriptError {
-	return scriptError{Value: newObject(
-		c.scriptContext,
-		c.scriptContext.vm.NewTypeError(v)),
-	}
-}
-
 func (c scope) NewPromise() js.Promise[jsTypeParam] { return newPromise(c.scriptContext) }
 
 func (c scope) NewObject() jsObject {
