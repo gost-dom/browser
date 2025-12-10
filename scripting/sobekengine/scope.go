@@ -8,7 +8,6 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/entity"
-	"github.com/gost-dom/browser/internal/gosterror"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/grafana/sobek"
 )
@@ -107,12 +106,12 @@ func (f scope) NewString(v string) js.Value[jsTypeParam] {
 func (c scope) NewTypeError(v string) js.Error[jsTypeParam] {
 	sobekErrVal := c.vm.NewTypeError(v)
 	return scriptError{
-		newValue(c.scriptContext, sobekErrVal),
+		Value: newValue(c.scriptContext, sobekErrVal),
 	}
 }
 
 func (c scope) newTypeError(v string) scriptError {
-	return scriptError{newObject(
+	return scriptError{Value: newObject(
 		c.scriptContext,
 		c.scriptContext.vm.NewTypeError(v)),
 	}
@@ -143,19 +142,12 @@ func (c scope) NewUint8Array(data []byte) js.Value[jsTypeParam] {
 }
 
 func (c scope) NewError(err error) js.Error[jsTypeParam] {
-	if jsErr, ok := err.(js.Error[jsTypeParam]); ok {
-		return jsErr
-	}
-	var typeError gosterror.TypeError
-	if errors.As(err, &typeError) {
-		return c.newTypeError(err.Error())
-	}
 	ctx := c.scriptContext
-	return scriptError{newObject(ctx, ctx.vm.NewGoError(err))}
+	return c.NewValueError(newObject(ctx, ctx.vm.NewGoError(err)), err)
 }
 
 func (c scope) NewValueError(val jsValue, err error) jsError {
-	return scriptError{val}
+	return scriptError{val, err}
 }
 
 func (f scope) NewIterator(
