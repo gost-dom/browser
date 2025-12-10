@@ -2,6 +2,7 @@ package dom
 
 import (
 	"errors"
+	"fmt"
 
 	dom "github.com/gost-dom/browser/dom"
 	js "github.com/gost-dom/browser/scripting/internal/js"
@@ -30,7 +31,7 @@ func decodeThisError[T any, E error](cbCtx js.CallbackContext[T], res *E) (err e
 		return
 	}
 	if !errors.As(val, res) {
-		err = cbCtx.NewTypeError("Value does not implement DOMException")
+		err = cbCtx.NewTypeError(fmt.Sprintf("Value does not implement target type: %T", *res))
 		return
 	}
 	return
