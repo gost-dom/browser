@@ -164,10 +164,9 @@ func IsSyntaxError(err error) bool {
 	return errors.Is(err, ErrSyntax)
 }
 
-// Deprecated: Will be removed
+// Deprecated: Will be removed - use errors.Id(err, ErrInvalidCharacter)
 func IsInvalidCharacterError(err error) bool {
-	e, ok := err.(DOMError)
-	return ok && e.Code == invalid_character_err
+	return errors.Is(err, ErrInvalidCharacter)
 }
 
 func newSyntaxError(msg string) error {
