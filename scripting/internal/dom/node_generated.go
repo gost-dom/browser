@@ -40,6 +40,7 @@ func (w Node[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("lastChild", w.lastChild, nil)
 	jsClass.CreatePrototypeAttribute("previousSibling", w.previousSibling, nil)
 	jsClass.CreatePrototypeAttribute("nextSibling", w.nextSibling, nil)
+	jsClass.CreatePrototypeAttribute("nodeValue", w.nodeValue, w.setNodeValue)
 	jsClass.CreatePrototypeAttribute("textContent", w.textContent, w.setTextContent)
 }
 
@@ -268,4 +269,24 @@ func (w Node[T]) nextSibling(cbCtx js.CallbackContext[T]) (res js.Value[T], err 
 	}
 	result := instance.NextSibling()
 	return codec.EncodeEntity(cbCtx, result)
+}
+
+func (w Node[T]) nodeValue(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	instance, err := js.As[dom.Node](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	result, hasValue := instance.NodeValue()
+	return codec.EncodeNillableString(cbCtx, result, hasValue)
+}
+
+func (w Node[T]) setNodeValue(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	instance, err0 := js.As[dom.Node](cbCtx.Instance())
+	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
+	err = gosterror.First(err0, err1)
+	if err != nil {
+		return nil, err
+	}
+	instance.SetNodeValue(val)
+	return nil, nil
 }

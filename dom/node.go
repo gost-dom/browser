@@ -155,6 +155,8 @@ type Node interface {
 	InsertBefore(newNode Node, referenceNode Node) (Node, error)
 	NodeName() string
 	NodeType() NodeType
+	NodeValue() (string, bool)
+	SetNodeValue(string)
 	OwnerDocument() Document
 	ParentNode() Node
 	ParentElement() Element
@@ -241,6 +243,9 @@ func (n *node) AppendChild(node Node) (Node, error) {
 	_, err := n.self.InsertBefore(node, nil)
 	return node, err
 }
+
+func (n *node) NodeValue() (string, bool) { return "", false }
+func (n *node) SetNodeValue(string)       {}
 
 func (n *node) InsertBefore(newChild Node, referenceNode Node) (Node, error) {
 	if err := n.assertCanAddNode(newChild); err != nil {
