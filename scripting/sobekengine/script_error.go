@@ -8,7 +8,10 @@ import (
 // value to be treated as an error in Go.
 type scriptError struct {
 	js.Value[jsTypeParam]
+	err error
 }
+
+func (e scriptError) Unwrap() error { return e.err }
 
 func (e scriptError) Error() string {
 	if obj, ok := e.AsObject(); ok {
@@ -23,8 +26,4 @@ func (e scriptError) Error() string {
 		}
 	}
 	return "undefined"
-}
-
-func newScriptError(ctx *scriptContext, err error) js.Error[jsTypeParam] {
-	return scriptError{newObject(ctx, ctx.vm.NewGoError(err))}
 }

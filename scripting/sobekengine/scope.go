@@ -8,14 +8,13 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/entity"
-	"github.com/gost-dom/browser/internal/gosterror"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/grafana/sobek"
 )
 
 type scope struct {
 	*scriptContext
-	global js.Object[jsTypeParam]
+	global jsObject
 }
 
 func newScope(ctx *scriptContext) scope {
@@ -24,8 +23,8 @@ func newScope(ctx *scriptContext) scope {
 	}
 }
 
-func (s scope) Window() html.Window                { return s.window }
-func (s scope) GlobalThis() js.Object[jsTypeParam] { return s.global }
+func (s scope) Window() html.Window  { return s.window }
+func (s scope) GlobalThis() jsObject { return s.global }
 
 func (s scope) Clock() *clock.Clock { return s.clock }
 func (s scope) Constructor(name string) js.Constructor[jsTypeParam] {
@@ -104,18 +103,16 @@ func (f scope) NewString(v string) js.Value[jsTypeParam] {
 }
 
 // NewTypeError implements [js.ValueFactory].
-func (c scope) NewTypeError(v string) error { return gosterror.NewTypeError(v) }
-
-func (c scope) newTypeError(v string) scriptError {
-	return scriptError{newObject(
-		c.scriptContext,
-		c.scriptContext.vm.NewTypeError(v)),
+func (c scope) NewTypeError(v string) js.Error[jsTypeParam] {
+	sobekErrVal := c.vm.NewTypeError(v)
+	return scriptError{
+		Value: newValue(c.scriptContext, sobekErrVal),
 	}
 }
 
 func (c scope) NewPromise() js.Promise[jsTypeParam] { return newPromise(c.scriptContext) }
 
-func (c scope) NewObject() js.Object[jsTypeParam] {
+func (c scope) NewObject() jsObject {
 	return newObject(c.scriptContext, c.vm.NewObject())
 }
 
@@ -138,14 +135,12 @@ func (c scope) NewUint8Array(data []byte) js.Value[jsTypeParam] {
 }
 
 func (c scope) NewError(err error) js.Error[jsTypeParam] {
-	if jsErr, ok := err.(js.Error[jsTypeParam]); ok {
-		return jsErr
-	}
-	var typeError gosterror.TypeError
-	if errors.As(err, &typeError) {
-		return c.newTypeError(err.Error())
-	}
-	return newScriptError(c.scriptContext, err)
+	ctx := c.scriptContext
+	return c.NewValueError(newObject(ctx, ctx.vm.NewGoError(err)), err)
+}
+
+func (c scope) NewValueError(val jsValue, err error) jsError {
+	return scriptError{val, err}
 }
 
 func (f scope) NewIterator(

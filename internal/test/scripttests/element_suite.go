@@ -141,6 +141,21 @@ func (s *ElementSuite) TestInsertAdjacentHTML() {
 	).To(Equal(`<body><p>foo</p><div id="1" class="foo"></div></body>`))
 }
 
+func (s *ElementSuite) TestInsertAdjacentHTMLBadPosition() {
+	s.MustLoadHTML(`<div id="1" class="foo"></div>`)
+	s.MustEval(`
+		let err
+		try {
+			document.getElementById("1").insertAdjacentHTML("invalid", "<p>foo</p>")
+		} catch (e) {
+			err = e
+		}
+	`)
+
+	s.Expect(s.Eval("err instanceof DOMException")).To(BeTrue())
+	s.Expect(s.Eval("err.code")).To(BeEquivalentTo(12))
+}
+
 func (s *ElementSuite) TestQuerySelector() {
 	s.MustLoadHTML(`<div id="1" class="foo"></div>`)
 	s.MustRunScript(`const e = document.getElementById("1")`)

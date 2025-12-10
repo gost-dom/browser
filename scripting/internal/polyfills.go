@@ -50,4 +50,8 @@ func InstallPolyfills[T any](host js.ScriptEngine[T]) {
 			Element.prototype.scrollIntoView = function() {};
 
 	`, "gost-dom/polyfills/xpath-custom.js")
+	host.RunScript(`
+		Object.setPrototypeOf(DOMException, Error)
+		Object.setPrototypeOf(DOMException.prototype, Error.prototype)
+	`, "gost-dom/polyfills/errors.js")
 }

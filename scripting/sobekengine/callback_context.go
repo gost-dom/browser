@@ -84,7 +84,7 @@ func wrapJSCallback(ctx *scriptContext, cb js.FunctionCallback[jsTypeParam]) sob
 
 func panicIfError(c *callbackContext, err error) {
 	if err != nil {
-		cbErr := c.NewError(err)
+		cbErr := js.ToJsError(c, err)
 		panic(cbErr.Self().value)
 	}
 

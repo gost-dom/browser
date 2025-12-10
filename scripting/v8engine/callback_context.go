@@ -9,7 +9,6 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/constants"
-	"github.com/gost-dom/browser/internal/gosterror"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
 	v8 "github.com/gost-dom/v8go"
@@ -77,7 +76,7 @@ func (c v8CallbackScope) Eval(script, location string) (jsValue, error) {
 }
 
 func (h *v8CallbackContext) ReturnWithTypeError(msg string) (jsValue, error) {
-	return nil, v8.NewTypeError(h.iso(), msg)
+	return nil, h.NewTypeError(msg)
 }
 
 func (h *v8CallbackContext) Args() []jsValue {
@@ -143,7 +142,10 @@ func (f v8Scope) NewUint8Array(data []byte) jsValue {
 		bytes[i] = f.NewInt32(int32(b))
 	}
 	byteArray := f.NewArray(bytes...)
-	from, err := f.v8ctx.RunScript("(data) => Uint8Array.from(data)", "gost-dom/v8engine/uint8array")
+	from, err := f.v8ctx.RunScript(
+		"(data) => Uint8Array.from(data)",
+		"gost-dom/v8engine/uint8array",
+	)
 	if err != nil {
 		panic(fmt.Sprintf("gost-dom/v8engine: Uint8Array.from: %v", err))
 	}
@@ -172,29 +174,13 @@ func (s v8Scope) NewPromise() js.Promise[jsTypeParam] {
 }
 
 func (s v8Scope) NewError(err error) js.Error[jsTypeParam] {
-	return s.newError(err)
-}
-
-func (s v8Scope) newError(err error) *V8Error {
-	if v8err, ok := err.(*V8Error); ok {
-		return v8err
-	}
-	if v8excption, ok := err.(*v8go.Exception); ok {
-		return s.errorOfV8Exception(v8excption)
-	}
-	if errors.Is(err, gosterror.ErrTypeError) {
-		return s.errorOfV8Exception(v8go.NewTypeError(s.iso(), err.Error()))
-	}
 	return newV8Error(s.V8ScriptContext, err)
 }
 
-func (s v8Scope) errorOfV8Exception(e *v8go.Exception) *V8Error {
-	return &V8Error{
-		&v8Value{s.V8ScriptContext, e.Value},
-		e,
-		e,
-	}
-
+func (s v8Scope) NewValueError(v jsValue, err error) jsError {
+	val := v.Self()
+	exc := &v8go.Exception{Value: val.Value}
+	return &V8Error{val, exc, err}
 }
 
 func (f v8Scope) JSONStringify(val jsValue) string {
@@ -236,9 +222,10 @@ func (f v8Scope) NewIterator(
 	return f.host.iterator.newIterator(newV8Scope(f.V8ScriptContext), i)
 }
 
-func (f v8Scope) NewTypeError(msg string) error {
-	// TODO: Should we wrap a V8 type error?
-	return gosterror.NewTypeError(msg)
+func (f v8Scope) NewTypeError(msg string) js.Error[jsTypeParam] {
+	v8TypeErr := v8go.NewTypeError(f.iso(), msg)
+	v8TypeErrVal := newV8Value(f.V8ScriptContext, v8TypeErr.Value)
+	return &V8Error{v8Value: v8TypeErrVal, exception: v8TypeErr}
 }
 
 func (f v8Scope) toJSValue(val *v8go.Value) jsValue {
@@ -279,9 +266,13 @@ func wrapV8Callback(
 			var result jsValue
 			result, err = callback(cbCtx)
 			if err != nil {
-				err = cbCtx.newError(err).exception
+				if jsErr, ok := js.ToJsError(cbCtx, err).(*V8Error); ok {
+					return nil, jsErr.exception
+				} else {
+					return nil, err
+				}
 			}
-			return toV8Value(result), err
+			return toV8Value(result), nil
 		},
 	)
 }

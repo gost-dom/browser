@@ -10,7 +10,7 @@ type object struct {
 	obj *sobek.Object
 }
 
-func newObject(c *scriptContext, o *sobek.Object) js.Object[jsTypeParam] {
+func newObject(c *scriptContext, o *sobek.Object) jsObject {
 	return object{value{c, o}, o}
 }
 
