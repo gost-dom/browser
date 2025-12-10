@@ -2,7 +2,6 @@ package dom
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/internal/constants"
@@ -54,8 +53,8 @@ func (w customEvent[T]) detail(info js.CallbackContext[T]) (js.Value[T], error) 
 		detail, _ := data.Detail.(js.Value[T])
 		return detail, nil
 	}
-	return nil, fmt.Errorf(
-		"Data for custom event was not a CustomEventInit. %s",
-		constants.BUG_ISSUE_URL,
+	return nil, errors.Join(
+		errors.New("Data for custom event was not a CustomEventInit"),
+		constants.ErrGostDomBug,
 	)
 }

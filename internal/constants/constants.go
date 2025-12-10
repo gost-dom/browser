@@ -5,10 +5,14 @@
 // that only support a subset of CSS selectors.
 package constants
 
+import "errors"
+
 const PACKAGE_NAME = "Gost-DOM"
 
 const MISSING_FEATURE_ISSUE_URL = "Create feature request here: https://github.com/gost-dom/browser/issues"
 
 const BUG_ISSUE_URL = "This is a bug in " + PACKAGE_NAME + ". Please fill a bug report here: https://github.com/gost-dom/browser/issues"
+
+var ErrGostDomBug = errors.New(BUG_ISSUE_URL)
 
 const BUG_ISSUE_DETAILS = "Please include the contents below, as well as other contextual information you might have"

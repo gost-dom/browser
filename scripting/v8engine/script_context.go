@@ -110,7 +110,10 @@ func (context *V8ScriptContext) initializeGlobals() error {
 			return err
 		}
 		if err := context.global.Set("location", l); err != nil {
-			return fmt.Errorf("error installing location: %v\n%s", err, constants.BUG_ISSUE_URL)
+			return errors.Join(
+				fmt.Errorf("error installing location: %w", err),
+				constants.ErrGostDomBug,
+			)
 		}
 	}
 	for _, s := range context.host.scripts {
@@ -271,9 +274,9 @@ func (r *moduleResolver) ResolveModule(
 	}
 	refModule, found := r.get(ref.ScriptID())
 	if !found {
-		return nil, fmt.Errorf(
-			"gost-dom/v8engine: referrer not cached. %s",
-			constants.BUG_ISSUE_URL,
+		return nil, errors.Join(
+			errors.New("gost-dom/v8engine: referrer not cached"),
+			constants.ErrGostDomBug,
 		)
 	}
 	scriptCtx := r.host.mustGetContext(v8ctx)
