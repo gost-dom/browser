@@ -1,6 +1,8 @@
 package sobekengine
 
 import (
+	"fmt"
+
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/grafana/sobek"
 )
@@ -8,6 +10,14 @@ import (
 type function struct {
 	value
 	f sobek.Callable
+}
+
+func newFunction(c *scriptContext, v sobek.Value) function {
+	f, ok := sobek.AssertFunction(v)
+	if !ok {
+		panic(fmt.Sprintf("gost-dom/sobekengine: %v: not a function value", v))
+	}
+	return function{value{c, v}, f}
 }
 
 func (f function) Call(

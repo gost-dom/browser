@@ -88,7 +88,13 @@ type CallbackContext[T any] interface {
 	ReturnWithTypeError(msg string) (Value[T], error)
 }
 
+type Callback[T any] interface {
+	Call(CallbackContext[T]) (Value[T], error)
+}
+
 type CallbackFunc[T any] func(CallbackContext[T]) (Value[T], error)
+
+func (f CallbackFunc[T]) Call(ctx CallbackContext[T]) (Value[T], error) { return f(ctx) }
 
 func (c CallbackFunc[T]) WithLog(class, method string) CallbackFunc[T] {
 	if c == nil {
@@ -173,6 +179,7 @@ type ValueFactory[T any] interface {
 	NewString(string) Value[T]
 	NewBoolean(bool) Value[T]
 	NewObject() Object[T]
+	NewFunction(Callback[T]) Function[T]
 	NewUint8Array([]byte) Value[T]
 	NewUint32(uint32) Value[T]
 	NewInt32(int32) Value[T]

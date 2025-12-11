@@ -7,6 +7,11 @@ type v8Function struct {
 	v8fn *v8go.Function
 }
 
+func newFunction(ctx *V8ScriptContext, ft *v8go.FunctionTemplate) *v8Function {
+	f := ft.GetFunction(ctx.v8ctx)
+	return &v8Function{*newV8Value(ctx, f.Value), f}
+}
+
 func (f v8Function) Call(this jsObject, args ...jsValue) (jsValue, error) {
 	v8Args := make([]v8go.Valuer, len(args))
 	for i, a := range args {

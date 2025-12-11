@@ -116,6 +116,11 @@ func (c scope) NewObject() jsObject {
 	return newObject(c.scriptContext, c.vm.NewObject())
 }
 
+func (c scope) NewFunction(cb js.Callback[jsTypeParam]) jsFunction {
+	value := wrapJSCallback(c.scriptContext, cb.Call)
+	return newFunction(c.scriptContext, value)
+}
+
 func (c scope) NewUint8Array(data []byte) js.Value[jsTypeParam] {
 	vm := c.scriptContext.vm
 	arrayBuf := vm.NewArrayBuffer(data)

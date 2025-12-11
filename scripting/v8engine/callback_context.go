@@ -136,6 +136,11 @@ func (f v8Scope) NewObject() jsObject {
 	return newV8Object(f.V8ScriptContext, obj)
 }
 
+func (s v8Scope) NewFunction(cb js.Callback[jsTypeParam]) jsFunction {
+	ft := wrapV8Callback(s.host, cb.Call)
+	return newFunction(s.V8ScriptContext, ft)
+}
+
 func (f v8Scope) NewUint8Array(data []byte) jsValue {
 	bytes := make([]jsValue, len(data))
 	for i, b := range data {
