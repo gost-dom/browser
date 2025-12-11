@@ -14,6 +14,6 @@ type globalObject struct {
 }
 
 // CreateFunction adds a function to an object in global scope.
-func (o globalObject) CreateFunction(name string, cb js.FunctionCallback[jsTypeParam]) {
+func (o globalObject) CreateFunction(name string, cb js.CallbackFunc[jsTypeParam]) {
 	o.obj.Set(name, wrapJSCallback(o.ctx, cb.WithLog("", name)))
 }

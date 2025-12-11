@@ -7,7 +7,7 @@ import (
 
 type class struct {
 	ctx            *scriptContext
-	cb             js.FunctionCallback[jsTypeParam]
+	cb             js.CallbackFunc[jsTypeParam]
 	name           string
 	prototype      *sobek.Object
 	indexedHandler *js.IndexedHandlerCallbacks[jsTypeParam]
@@ -51,8 +51,8 @@ func (c *class) CreateNamedHandler(opts ...js.NamedHandlerOption[jsTypeParam]) {
 
 func (c *class) CreateInstanceAttribute(
 	name string,
-	getter js.FunctionCallback[jsTypeParam],
-	setter js.FunctionCallback[jsTypeParam],
+	getter js.CallbackFunc[jsTypeParam],
+	setter js.CallbackFunc[jsTypeParam],
 ) {
 	c.instanceAttrs[name] = attributeHandler{c.ctx, name, getter, setter}
 	c.assertValid()
@@ -60,7 +60,7 @@ func (c *class) CreateInstanceAttribute(
 
 func (c class) CreatePrototypeMethod(
 	name string,
-	cb js.FunctionCallback[jsTypeParam],
+	cb js.CallbackFunc[jsTypeParam],
 ) {
 
 	if err := c.prototype.Set(name, wrapJSCallback(c.ctx, cb.WithLog(c.name, name))); err != nil {
@@ -70,14 +70,14 @@ func (c class) CreatePrototypeMethod(
 
 func (c class) CreatePrototypeAttribute(
 	name string,
-	getter js.FunctionCallback[jsTypeParam],
-	setter js.FunctionCallback[jsTypeParam],
+	getter js.CallbackFunc[jsTypeParam],
+	setter js.CallbackFunc[jsTypeParam],
 ) {
 	attr := attributeHandler{c.ctx, name, getter, setter}
 	attr.install(c.prototype)
 }
 
-func (c class) CreateIteratorMethod(cb js.FunctionCallback[jsTypeParam]) {
+func (c class) CreateIteratorMethod(cb js.CallbackFunc[jsTypeParam]) {
 	c.prototype.SetSymbol(
 		sobek.SymIterator,
 		wrapJSCallback(c.ctx, cb.WithLog(c.name, "Symbol.Iterator")),

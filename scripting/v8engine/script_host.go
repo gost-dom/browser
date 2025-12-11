@@ -209,7 +209,7 @@ func (host *V8ScriptHost) assertUndisposed() {
 func (host *V8ScriptHost) CreateClass(
 	name string,
 	extends js.Class[jsTypeParam],
-	callback js.FunctionCallback[jsTypeParam],
+	callback js.CallbackFunc[jsTypeParam],
 ) js.Class[jsTypeParam] {
 	ft := wrapV8Callback(host, callback.WithLog(name, "Constructor"))
 	result := newV8Class(host, name, ft)
@@ -232,7 +232,7 @@ func (h *V8ScriptHost) CreateGlobalObject(name string) js.GlobalObject[jsTypePar
 
 func (host *V8ScriptHost) CreateFunction(
 	name string,
-	callback js.FunctionCallback[jsTypeParam],
+	callback js.CallbackFunc[jsTypeParam],
 ) {
 	ft := wrapV8Callback(host, callback.WithLog("", name))
 	host.windowTemplate.Set(name, ft)

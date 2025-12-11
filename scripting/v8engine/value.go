@@ -159,7 +159,7 @@ func newV8GlobalObject(host *V8ScriptHost, tmpl *v8go.ObjectTemplate) v8GlobalOb
 	return v8GlobalObject{host, tmpl}
 }
 
-func (o v8GlobalObject) CreateFunction(name string, cb js.FunctionCallback[jsTypeParam]) {
+func (o v8GlobalObject) CreateFunction(name string, cb js.CallbackFunc[jsTypeParam]) {
 	o.tmpl.Set(name, wrapV8Callback(o.host, cb.WithLog("", name)))
 }
 
@@ -176,20 +176,20 @@ func newV8Class(host *V8ScriptHost, name string, ft *v8go.FunctionTemplate) v8Cl
 	return v8Class{host, ft, ft.PrototypeTemplate(), ft.InstanceTemplate(), name}
 }
 
-func (c v8Class) CreateIteratorMethod(cb js.FunctionCallback[jsTypeParam]) {
+func (c v8Class) CreateIteratorMethod(cb js.CallbackFunc[jsTypeParam]) {
 	v8cb := wrapV8Callback(c.host, cb.WithLog(c.name, "Symbol.iterator"))
 	it := v8go.SymbolIterator(c.host.iso)
 	c.proto.SetSymbol(it, v8cb, v8go.ReadOnly)
 }
-func (c v8Class) CreatePrototypeMethod(name string, cb js.FunctionCallback[jsTypeParam]) {
+func (c v8Class) CreatePrototypeMethod(name string, cb js.CallbackFunc[jsTypeParam]) {
 	v8cb := wrapV8Callback(c.host, cb.WithLog(c.name, name))
 	c.proto.Set(name, v8cb, v8go.ReadOnly)
 }
 
 func (c v8Class) CreatePrototypeAttribute(
 	name string,
-	getter js.FunctionCallback[jsTypeParam],
-	setter js.FunctionCallback[jsTypeParam],
+	getter js.CallbackFunc[jsTypeParam],
+	setter js.CallbackFunc[jsTypeParam],
 ) {
 	v8Getter := wrapV8Callback(c.host, getter.WithLog(c.name, fmt.Sprintf("%s get", name)))
 	v8Setter := wrapV8Callback(c.host, setter.WithLog(c.name, fmt.Sprintf("%s set", name)))
@@ -198,8 +198,8 @@ func (c v8Class) CreatePrototypeAttribute(
 
 func (c v8Class) CreateInstanceAttribute(
 	name string,
-	getter js.FunctionCallback[jsTypeParam],
-	setter js.FunctionCallback[jsTypeParam],
+	getter js.CallbackFunc[jsTypeParam],
+	setter js.CallbackFunc[jsTypeParam],
 ) {
 	v8Getter := wrapV8Callback(c.host, getter.WithLog(c.name, fmt.Sprintf("%s get", name)))
 	v8Setter := wrapV8Callback(c.host, setter.WithLog(c.name, fmt.Sprintf("%s set", name)))

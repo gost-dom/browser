@@ -51,10 +51,10 @@ type Function[T any] interface {
 // This is independent of any actual execution context, so values in global
 // scope can be declared before creating a JavaScript execution context.
 type Class[T any] interface {
-	CreatePrototypeMethod(name string, cb FunctionCallback[T])
-	CreateIteratorMethod(cb FunctionCallback[T])
-	CreatePrototypeAttribute(name string, getter FunctionCallback[T], setter FunctionCallback[T])
-	CreateInstanceAttribute(name string, getter FunctionCallback[T], setter FunctionCallback[T])
+	CreatePrototypeMethod(name string, cb CallbackFunc[T])
+	CreateIteratorMethod(cb CallbackFunc[T])
+	CreatePrototypeAttribute(name string, getter CallbackFunc[T], setter CallbackFunc[T])
+	CreateInstanceAttribute(name string, getter CallbackFunc[T], setter CallbackFunc[T])
 	CreateIndexedHandler(getter ...IndexedHandlerOption[T])
 	CreateNamedHandler(opts ...NamedHandlerOption[T])
 }
@@ -62,7 +62,7 @@ type Class[T any] interface {
 // GlobalObject represents an object that will be present in global scope. The
 // JavaScript console object is an example of a global object.
 type GlobalObject[T any] interface {
-	CreateFunction(name string, cb FunctionCallback[T])
+	CreateFunction(name string, cb CallbackFunc[T])
 }
 
 // Constructor represents a JavaScript "class" that wraps a Go object.

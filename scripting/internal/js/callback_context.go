@@ -88,9 +88,9 @@ type CallbackContext[T any] interface {
 	ReturnWithTypeError(msg string) (Value[T], error)
 }
 
-type FunctionCallback[T any] func(CallbackContext[T]) (Value[T], error)
+type CallbackFunc[T any] func(CallbackContext[T]) (Value[T], error)
 
-func (c FunctionCallback[T]) WithLog(class, method string) FunctionCallback[T] {
+func (c CallbackFunc[T]) WithLog(class, method string) CallbackFunc[T] {
 	if c == nil {
 		return nil
 	}

@@ -25,8 +25,8 @@ func newV8Iterator(host *V8ScriptHost) v8Iterator {
 		v8go.NewObjectTemplate(host.iso),
 		v8go.NewObjectTemplate(host.iso),
 	}
-	var nextJs js.FunctionCallback[jsTypeParam] = iterator.next
-	var iteratorJs js.FunctionCallback[jsTypeParam] = iterator.cloneIterator
+	var nextJs js.CallbackFunc[jsTypeParam] = iterator.next
+	var iteratorJs js.CallbackFunc[jsTypeParam] = iterator.cloneIterator
 	iterator.ot.Set("next", wrapV8Callback(host, nextJs.WithLog("Iterator", "next")))
 	iterator.ot.SetSymbol(
 		v8go.SymbolIterator(iso),

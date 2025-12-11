@@ -152,7 +152,7 @@ func (f scope) NewIterator(
 	obj := newObject(f.scriptContext, jsIterator)
 	obj.SetNativeValue(iter)
 
-	var nextJs js.FunctionCallback[jsTypeParam] = func(cbCtx js.CallbackContext[jsTypeParam]) (js.Value[jsTypeParam], error) {
+	var nextJs js.CallbackFunc[jsTypeParam] = func(cbCtx js.CallbackContext[jsTypeParam]) (js.Value[jsTypeParam], error) {
 		instance, ok := (cbCtx.This().NativeValue()).(*iterator)
 		if !ok {
 			return cbCtx.ReturnWithTypeError("Not an iterator instance")
@@ -170,7 +170,7 @@ func (f scope) NewIterator(
 		return newObject(f.scriptContext, res), err
 	}
 
-	var iteratorJS js.FunctionCallback[jsTypeParam] = func(cbCtx js.CallbackContext[jsTypeParam]) (js.Value[jsTypeParam], error) {
+	var iteratorJS js.CallbackFunc[jsTypeParam] = func(cbCtx js.CallbackContext[jsTypeParam]) (js.Value[jsTypeParam], error) {
 		return f.NewIterator(items), nil
 	}
 

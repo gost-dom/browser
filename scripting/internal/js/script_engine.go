@@ -1,9 +1,9 @@
 package js
 
 type ScriptEngine[T any] interface {
-	CreateClass(name string, Parent Class[T], cb FunctionCallback[T]) Class[T]
+	CreateClass(name string, Parent Class[T], cb CallbackFunc[T]) Class[T]
 	CreateGlobalObject(name string) GlobalObject[T]
-	CreateFunction(name string, cb FunctionCallback[T])
+	CreateFunction(name string, cb CallbackFunc[T])
 	RunScript(script, src string)
 }
 

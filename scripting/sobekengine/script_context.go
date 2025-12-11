@@ -128,7 +128,7 @@ func (m *scriptContext) createLocationInstance() *sobek.Object {
 	return location.(object).obj
 }
 
-func (c *scriptContext) CreateFunction(name string, cb js.FunctionCallback[jsTypeParam]) {
+func (c *scriptContext) CreateFunction(name string, cb js.CallbackFunc[jsTypeParam]) {
 	c.vm.Set(name, wrapJSCallback(c, cb.WithLog("", name)))
 }
 
@@ -142,7 +142,7 @@ func (c *scriptContext) RunScript(script, src string) {
 
 func (c *scriptContext) CreateClass(
 	name string, extends js.Class[jsTypeParam],
-	cb js.FunctionCallback[jsTypeParam],
+	cb js.CallbackFunc[jsTypeParam],
 ) js.Class[jsTypeParam] {
 	cls := &class{ctx: c, cb: cb, name: name, instanceAttrs: make(map[string]attributeHandler)}
 	constructor := c.vm.ToValue(cls.constructorCb).(*sobek.Object)
@@ -223,8 +223,8 @@ func (class *class) installInstance(this **sobek.Object, native any) {
 type attributeHandler struct {
 	ctx    *scriptContext
 	name   string
-	getter js.FunctionCallback[jsTypeParam]
-	setter js.FunctionCallback[jsTypeParam]
+	getter js.CallbackFunc[jsTypeParam]
+	setter js.CallbackFunc[jsTypeParam]
 }
 
 func (h attributeHandler) install(object *sobek.Object) {

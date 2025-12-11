@@ -254,7 +254,7 @@ func (f v8Scope) newV8Value(val any) jsValue {
 
 func wrapV8Callback(
 	host *V8ScriptHost,
-	callback js.FunctionCallback[jsTypeParam],
+	callback js.CallbackFunc[jsTypeParam],
 ) *v8go.FunctionTemplate {
 	if callback == nil {
 		return nil

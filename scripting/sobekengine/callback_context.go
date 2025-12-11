@@ -73,7 +73,7 @@ func (ctx *callbackContext) Argument(index int) sobek.Value {
 	return ctx.args[index]
 }
 
-func wrapJSCallback(ctx *scriptContext, cb js.FunctionCallback[jsTypeParam]) sobek.Value {
+func wrapJSCallback(ctx *scriptContext, cb js.CallbackFunc[jsTypeParam]) sobek.Value {
 	return ctx.vm.ToValue(func(c sobek.FunctionCall) sobek.Value {
 		cbCtx := newArgumentHelper(ctx, c)
 		res, err := cb(cbCtx)
