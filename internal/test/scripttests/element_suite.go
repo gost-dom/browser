@@ -218,9 +218,3 @@ func (m BeJSInstanceOfMatcher) FailureMessage(actual any) string {
 func (m BeJSInstanceOfMatcher) NegatedFailureMessage(actual any) string {
 	return "Expected to not be an instance of " + m.class
 }
-
-var sampleHTML = `<body>
-	<a ref="#foo" id="a">Link</a>
-	<p id="p">Paragraph</p>
-	<div id="div">Div</div>
-</body>`

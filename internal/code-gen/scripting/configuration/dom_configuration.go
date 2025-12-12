@@ -137,6 +137,7 @@ func configureDOMNode(specs *WebAPIConfig) {
 	domElement := specs.Type("Element")
 	// domElement.SkipWrapper = true
 	domElement.Method("classList").SetCustomImplementation()
+	domElement.RunCustomCode = true
 
 	domElement.MarkMembersAsNotImplemented(
 		"hasAttributes",

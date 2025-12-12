@@ -2,9 +2,26 @@ package dom
 
 import (
 	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/internal/entity"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
+
+func (w Element[T]) CustomInitializer(jsClass js.Class[T]) {
+	jsClass.CreateInstanceAttribute("style", w.style, nil)
+}
+
+func (w Element[T]) style(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	instance, err := js.As[dom.Element](cbCtx.Instance())
+	if err == nil {
+		var ok bool
+		if res, ok = entity.Component[js.Value[T]](instance, "style"); !ok {
+			res = cbCtx.NewObject()
+			entity.SetComponent(instance, "style", res)
+		}
+	}
+	return
+}
 
 func (e Element[T]) classList(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	instance, err := js.As[dom.Element](cbCtx.Instance())
