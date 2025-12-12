@@ -42,17 +42,6 @@ type ObjectIder interface {
 // It is advisable to create custom types for keys to avoid key-collissions with
 // code from other packages.
 //
-//	type KeyType string
-//	var MyKey KeyType = "Key"
-//
-//	type OtherKeyType string
-//	var MyOtherKey OtherKeyType = "Key"
-//
-//	var e entity.Entity
-//	e.SetComponent(KeyType, "Value")
-//	val1, ok1 := e.Component(MyKey);      // returns "Value", true
-//	val2, ok2 := e.Component(MyOtherKey); // returns nil, false
-//
 // See also: https://en.wikipedia.org/wiki/Entity_component_system
 type Components interface {
 	// Methods are kept unexported to allow refactoring
