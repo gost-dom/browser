@@ -195,7 +195,13 @@ type ValueFactory[T any] interface {
 
 	NewTypeError(msg string) Error[T]
 
+	// TODO: Do we need both?
+
+	// Create a JS throwable Error[T] value from a Go error
 	NewError(err error) Error[T]
+
+	// Wrap a JavaScript value in an Error[T], making it compatible with go
+	// error values. The err argument is optional. See also [Error].
 	NewValueError(v Value[T], err error) Error[T]
 
 	JSONStringify(val Value[T]) string
