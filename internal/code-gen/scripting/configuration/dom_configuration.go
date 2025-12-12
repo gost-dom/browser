@@ -157,7 +157,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 		"getElementsByClassName",
 		"namespaceURI",
 		"prefix",
-		"localName",
 		"shadowRoot",
 		"slot",
 		"className",

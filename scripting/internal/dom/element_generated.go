@@ -291,7 +291,12 @@ func (w Element[T]) prefix(cbCtx js.CallbackContext[T]) (res js.Value[T], err er
 }
 
 func (w Element[T]) localName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.localName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	instance, err := js.As[dom.Element](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	result := instance.LocalName()
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w Element[T]) tagName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

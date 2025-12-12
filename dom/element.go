@@ -45,6 +45,7 @@ type Element interface {
 	SetInnerHTML(string) error
 	TagName() string
 	Namespace() string
+	LocalName() string
 	Matches(string) (bool, error)
 	ID() string
 	SetID(string)
@@ -60,6 +61,7 @@ type element struct {
 	ElementParent
 	tagName          string
 	namespace        string
+	localName        string
 	attributes       Attributes
 	selfElement      Element
 	selfRenderer     Renderer
@@ -130,6 +132,7 @@ func (e *element) TagName() string {
 }
 
 func (e *element) Namespace() string { return e.namespace }
+func (e *element) LocalName() string { return e.localName }
 
 func (e *element) ID() string {
 	id, _ := e.GetAttribute("id")
