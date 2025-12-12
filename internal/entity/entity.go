@@ -105,8 +105,21 @@ func (e *Entity) setComponent(key any, val any) {
 	}
 }
 
-func Component(e Components, key any) (any, bool) { return e.component(key) }
+func Component[T any](e Components, key any) (res T, ok bool) {
+	var val any
+	if val, ok = e.component(key); !ok {
+		return
+	}
+	res, ok = val.(T)
+	return
+}
 func SetComponent(e Components, key any, val any) { e.setComponent(key, val) }
+
+func ComponentType[T any](e Components) (T, bool) {
+	return Component[T](e, reflect.TypeFor[T]())
+}
+
+func SetComponentType[T any](e Components, val T) { e.setComponent(reflect.TypeFor[T](), val) }
 
 func (e *Entity) find(v reflect.Value) (any, int, bool) {
 	for i, pair := range e.components {

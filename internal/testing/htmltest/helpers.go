@@ -11,21 +11,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type keyType struct{}
-
-var key keyType
-
 func SetTestingT(w html.Window, val testing.TB) {
-	entity.SetComponent(w, key, val)
+	entity.SetComponentType(w, val)
 }
 
 func GetTestingT(w html.Window) (testing.TB, bool) {
-	val, ok := entity.Component(w, key)
-	if !ok {
-		return nil, false
-	}
-	t, ok := val.(testing.TB)
-	return t, ok
+	return entity.ComponentType[testing.TB](w)
 }
 
 type BrowserHelper struct {
