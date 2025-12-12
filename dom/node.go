@@ -395,14 +395,20 @@ func (n *node) assertCanAddNode(newNode Node) error {
 		return newDomError("May not add a parent as a child")
 	}
 	if childType == NodeTypeText && parentType == NodeTypeDocument {
-		return newDomError("Text nodes may not be direct descendants of a document")
+		return newDomErrorCode(
+			"Text nodes may not be direct descendants of a document",
+			hierarchy_request_err,
+		)
 	}
 	if childType == NodeTypeDocumentType && parentType != NodeTypeDocument {
 		return newDomError("Document type may only be a parent of Document")
 	}
 	if doc, isDoc := n.getSelf().(Document); isDoc {
 		if doc.ChildElementCount() > 0 {
-			return newDomError("Document can have only one child element")
+			return newDomErrorCode(
+				"Document can have only one child element",
+				hierarchy_request_err,
+			)
 		}
 		if fragment, isFragment := newNode.(DocumentFragment); isFragment {
 			if fragment.ChildElementCount() > 0 {

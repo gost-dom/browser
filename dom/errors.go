@@ -51,7 +51,7 @@ func (c domErrorCode) String() string {
 	case domstring_size_err:
 		return "domstring_size_err"
 	case hierarchy_request_err:
-		return "hierarchy_request_err"
+		return "HierarchyRequestError"
 	case wrong_document_err:
 		return "wrong_document_err"
 	case invalid_character_err:
