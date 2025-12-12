@@ -1,13 +1,10 @@
 package scripttests
 
 import (
-	"errors"
-
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
-	"github.com/onsi/gomega/types"
 )
 
 type ElementSuite struct {
@@ -92,10 +89,11 @@ func (s *ElementSuite) TestAttributes() {
 }
 
 func (s *ElementSuite) TestIDLInterfaceNamesForElements() {
-	ctx := s.Window.ScriptContext()
-	s.Expect("document.createElement('a')").To(BeJSInstanceOf("HTMLAnchorElement", ctx))
-	s.Expect("document.createElement('p')").To(BeJSInstanceOf("HTMLParagraphElement", ctx))
-	s.Expect("document.createElement('div')").To(BeJSInstanceOf("HTMLDivElement", ctx))
+	s.MustRunScript(`
+		gost.assertInstanceOf(document.createElement('a'), HTMLAnchorElement);
+		gost.assertInstanceOf(document.createElement('p'), HTMLParagraphElement);
+		gost.assertInstanceOf(document.createElement('div'), HTMLDivElement);
+	`)
 }
 
 func (s *ElementSuite) TestChildren() {
@@ -185,36 +183,4 @@ func (s *ElementSuite) TestElementSiblings() {
 	s.Expect(win.Eval(`e.nextElementSibling.nodeType`)).
 		To(BeEquivalentTo(dom.NodeTypeElement), "nextElementSibling node type")
 	s.Expect(win.Eval(`e.nextElementSibling.id`)).To(Equal("e-3"), "nextElementSibling id")
-}
-
-type BeJSInstanceOfMatcher struct {
-	class string
-	ctx   html.ScriptContext
-}
-
-func BeJSInstanceOf(
-	expected string,
-	ctx html.ScriptContext,
-) types.GomegaMatcher {
-	return BeJSInstanceOfMatcher{expected, ctx}
-}
-
-func (m BeJSInstanceOfMatcher) Match(actual interface{}) (success bool, err error) {
-	str, ok := actual.(string)
-	if !ok {
-		return false, errors.New("Actual must be a string")
-	}
-	v, err := m.ctx.Eval(str + " instanceof " + m.class)
-	success, ok = v.(bool)
-	if !ok {
-		panic("Should have received a bool")
-	}
-	return
-}
-
-func (m BeJSInstanceOfMatcher) FailureMessage(actual any) string {
-	return "Expected an instance of " + m.class
-}
-func (m BeJSInstanceOfMatcher) NegatedFailureMessage(actual any) string {
-	return "Expected to not be an instance of " + m.class
 }
