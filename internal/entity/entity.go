@@ -70,13 +70,15 @@ type componentEntry struct {
 type Entity struct {
 	objectId   ObjectId
 	components []componentEntry
-	once       sync.Once
+	mu         sync.Mutex
 }
 
 func (e *Entity) init() {
-	e.once.Do(func() {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	if e.objectId == 0 {
 		e.objectId = NewObjectId()
-	})
+	}
 }
 
 func parseKey(key any) reflect.Value {
@@ -91,11 +93,15 @@ func parseKey(key any) reflect.Value {
 }
 
 func (e *Entity) component(key any) (res any, ok bool) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
 	res, _, ok = e.find(parseKey(key))
 	return
 }
 
 func (e *Entity) setComponent(key any, val any) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
 	v := parseKey(key)
 	_, idx, ok := e.find(v)
 	if ok {
