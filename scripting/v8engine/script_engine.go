@@ -6,6 +6,7 @@ import (
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/scripting/internal"
+	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
 )
 
@@ -109,6 +110,10 @@ var defaultEngine *v8ScriptEngine
 
 func DefaultEngine() html.ScriptEngine {
 	return defaultEngine
+}
+
+func newEngine(configurators ...js.Configurator[jsTypeParam]) html.ScriptEngine {
+	return &v8ScriptEngine{configurer: internal.NewScriptEngineConfigurer(configurators)}
 }
 
 func init() {
