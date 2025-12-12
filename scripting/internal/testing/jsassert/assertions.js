@@ -11,3 +11,15 @@ gost.assertInstanceOf = (actual, expected) => {
     );
   }
 };
+
+gost.assertTypeOf = (actual, expected) => {
+  if (typeof actual !== expected) {
+    return gost.error(`Expected value of type ${expected}. Got: ${actual}`);
+  }
+};
+
+gost.assertOk = (actual) => {
+  if (!actual) {
+    return gost.error(`Expected non-nullish value. Got ${actual}`);
+  }
+};

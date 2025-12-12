@@ -158,6 +158,7 @@ func configureHTMLFormElement(htmlSpecs *WebAPIConfig) {
 
 func configureHTMLElement(htmlSpecs *WebAPIConfig) {
 	htmlElement := htmlSpecs.Type("HTMLElement")
+	htmlElement.RunCustomCode = true
 	htmlElement.Method("hidden").Ignore()
 	htmlElement.Method("attachInternals").Ignore()
 	htmlElement.Method("showPopover").Ignore()

@@ -8,7 +8,7 @@ import (
 )
 
 func (w Element[T]) CustomInitializer(jsClass js.Class[T]) {
-	jsClass.CreateInstanceAttribute("style", w.style, nil)
+	jsClass.CreatePrototypeAttribute("style", w.style, nil)
 }
 
 func (w Element[T]) style(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

@@ -17,6 +17,7 @@ func NewHTMLElement[T any](scriptHost js.ScriptEngine[T]) *HTMLElement[T] {
 
 func (wrapper HTMLElement[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
+	wrapper.CustomInitializer(jsClass)
 }
 
 func (w HTMLElement[T]) installPrototype(jsClass js.Class[T]) {

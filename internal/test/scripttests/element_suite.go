@@ -184,3 +184,12 @@ func (s *ElementSuite) TestElementSiblings() {
 		To(BeEquivalentTo(dom.NodeTypeElement), "nextElementSibling node type")
 	s.Expect(win.Eval(`e.nextElementSibling.id`)).To(Equal("e-3"), "nextElementSibling id")
 }
+
+func (s *ElementSuite) TestElementStyle() {
+	s.MustRunScript(`
+		const style = document.documentElement.style
+		gost.assertEqual(style, document.documentElement.style)
+		gost.assertTypeOf(style, 'object')
+		gost.assertOk(style)
+	`)
+}
