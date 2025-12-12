@@ -22,13 +22,13 @@ func HandleJSCallbackError[T any](scope Scope[T], cbType string, err error) {
 // Error is a "throwable" error. In JavaScript, you can throw any value. This
 // includes interface error, making it a valid Go error value as well.
 //
-// Function ToJsError can convert An error returned from a native Go function to
+// Function ToJsError can convert sn error returned from a native Go function to
 // Error[T].
 //
 // To keep the original go error, the implementing type **must** be able to keep
-// an an optional error value, that can be obtained through an Unwrap()
-// function. Error[T] doesn't include the Unwrap() function as the return type
-// is unknown at design time; it can be either error or []error.
+// an optional error value, that can be obtained through an Unwrap() function.
+// Error[T] doesn't include the Unwrap() function as the return type is unknown
+// at design time; it can be either error or []error.
 type Error[T any] interface {
 	Value[T]
 	error
