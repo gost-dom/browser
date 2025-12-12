@@ -3,7 +3,6 @@ package scripttests
 import (
 	"context"
 	"log/slog"
-	"net/http"
 	"testing"
 	"time"
 
@@ -56,35 +55,6 @@ func WithMinLogLevel(lvl slog.Level) InitOption {
 
 func WithContext(ctx context.Context) InitOption {
 	return func(o *option) { o.ctx = ctx }
-}
-
-func initWindow(
-	t *testing.T,
-	e html.ScriptEngine,
-	h http.Handler,
-	opts ...InitOption,
-) htmltest.WindowHelper {
-	var o option
-	for _, opt := range opts {
-		opt(&o)
-	}
-	logger := gosttest.NewTestLogger(t, o.logOptions...)
-	ctx := o.ctx
-	if ctx == nil {
-		ctx = t.Context()
-	}
-	b := htmltest.NewBrowserHelper(t, browser.New(
-		browser.WithContext(ctx),
-		browser.WithLogger(logger),
-		browser.WithHandler(h),
-		browser.WithScriptEngine(e),
-	))
-	if h == nil {
-		t.Cleanup(b.Close)
-		return b.NewWindow()
-	} else {
-		return b.OpenWindow("https://example.com/index.html")
-	}
 }
 
 func testFetch(t *testing.T, e html.ScriptEngine) {

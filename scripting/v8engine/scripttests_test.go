@@ -1,13 +1,20 @@
-package v8engine_test
+package v8engine
 
 import (
 	"testing"
 
 	"github.com/gost-dom/browser/internal/test/scripttests"
-	"github.com/gost-dom/browser/scripting/v8engine"
+	"github.com/gost-dom/browser/scripting/internal"
+	"github.com/gost-dom/browser/scripting/internal/js"
+	"github.com/gost-dom/browser/scripting/internal/testing/jsassert"
+)
+
+var assertEngine = newEngine(
+	internal.DefaultInitializer[jsTypeParam](),
+	js.ConfigurerFunc[jsTypeParam](jsassert.Configure[jsTypeParam]),
 )
 
 // Runs all the shared script tests using the V8 script engine
 func TestV8ScriptHost(t *testing.T) {
-	scripttests.RunSuites(t, v8engine.DefaultEngine())
+	scripttests.RunSuites(t, assertEngine)
 }

@@ -141,6 +141,7 @@ type observer interface {
 
 type Node interface {
 	entity.ObjectIder
+	entity.Components
 	event.EventTarget
 	Logger() log.Logger
 	AppendChild(node Node) (Node, error)

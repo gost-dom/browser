@@ -4,7 +4,6 @@ import (
 	"errors"
 	"iter"
 	"log/slog"
-	"runtime/debug"
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
@@ -112,8 +111,8 @@ func (c CallbackFunc[T]) WithLog(class, method string) CallbackFunc[T] {
 			if err == nil {
 				l.Debug("JS function callback exit", LogAttr("res", res))
 			} else {
-				stack := string(debug.Stack())
-				l.Warn("JS function callback exit", LogAttr("res", res), log.ErrAttr(err), slog.Any("stack", stack))
+				// stack := string(debug.Stack())
+				l.Warn("JS function callback exit", LogAttr("res", res), log.ErrAttr(err)) //, slog.Any("stack", stack))
 			}
 		}()
 		return c(cbCtx)

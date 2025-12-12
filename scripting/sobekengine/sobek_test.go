@@ -1,29 +1,36 @@
-package sobekengine_test
+package sobekengine
 
 import (
 	"testing"
 
 	"github.com/gost-dom/browser/internal/test/scripttests"
-	"github.com/gost-dom/browser/scripting/sobekengine"
+	"github.com/gost-dom/browser/scripting/internal"
+	"github.com/gost-dom/browser/scripting/internal/js"
+	"github.com/gost-dom/browser/scripting/internal/testing/jsassert"
+)
+
+var assertEngine = newEngine(
+	internal.DefaultInitializer[jsTypeParam](),
+	js.ConfigurerFunc[jsTypeParam](jsassert.Configure[jsTypeParam]),
 )
 
 func TestSobekHost(t *testing.T) {
 	t.Parallel()
-	scripttests.RunSuites(t, sobekengine.DefaultEngine())
+	scripttests.RunSuites(t, assertEngine)
 }
 
 func TestESMSupport(t *testing.T) {
-	scripttests.RunModuleSuite(t, sobekengine.DefaultEngine())
+	scripttests.RunModuleSuite(t, DefaultEngine())
 }
 
 func TestScriptFileSupport(t *testing.T) {
-	scripttests.RunDownloadScriptSuite(t, sobekengine.DefaultEngine())
+	scripttests.RunDownloadScriptSuite(t, DefaultEngine())
 }
 
 func TestHTMX(t *testing.T) {
-	scripttests.RunHtmxTests(t, sobekengine.DefaultEngine())
+	scripttests.RunHtmxTests(t, DefaultEngine())
 }
 
 func TestDatastar(t *testing.T) {
-	scripttests.RunDataStarTests(t, sobekengine.DefaultEngine())
+	scripttests.RunDataStarTests(t, DefaultEngine())
 }

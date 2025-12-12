@@ -130,6 +130,7 @@ type Window interface {
 	event.EventTarget
 	BrowsingContext
 	entity.ObjectIder
+	entity.Components
 	Document() dom.Document
 	Close()
 	Clock() Clock
@@ -154,6 +155,7 @@ type Window interface {
 
 type window struct {
 	event.EventTarget
+	entity.Entity
 	document            dom.Document
 	history             *History
 	scriptEngineFactory ScriptHost

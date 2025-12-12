@@ -7,8 +7,26 @@ import (
 	"github.com/gost-dom/browser"
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/entity"
 	"github.com/stretchr/testify/assert"
 )
+
+type keyType struct{}
+
+var key keyType
+
+func SetTestingT(w html.Window, val testing.TB) {
+	entity.SetComponent(w, key, val)
+}
+
+func GetTestingT(w html.Window) (testing.TB, bool) {
+	val, ok := entity.Component(w, key)
+	if !ok {
+		return nil, false
+	}
+	t, ok := val.(testing.TB)
+	return t, ok
+}
 
 type BrowserHelper struct {
 	*browser.Browser
@@ -48,7 +66,9 @@ func NewWindowHTML(t testing.TB, s string) WindowHelper {
 }
 
 func NewWindowHelper(t testing.TB, win html.Window) WindowHelper {
-	return WindowHelper{win, t}
+	h := WindowHelper{win, t}
+	SetTestingT(win, t)
+	return h
 }
 
 func (win WindowHelper) MustRun(script string) {

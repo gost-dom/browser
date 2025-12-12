@@ -20,7 +20,7 @@ func (s *WindowTestSuite) TestWindowInheritance() {
 }
 
 func (s *WindowTestSuite) TestWindowConstructor() {
-	s.Expect(s.Eval("Window && typeof Window")).To(Equal("function"))
+	s.MustRunScript("gost.assertEqual(Window && typeof Window, 'function')")
 	s.Expect(s.RunScript("Window()")).ToNot(Succeed())
 	s.MustRunScript(`
 		let error;
