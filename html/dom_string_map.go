@@ -53,21 +53,21 @@ func decodeDataAttrKey(attr dom.Attr) (s string, ok bool) {
 
 }
 
-func (m DOMStringMap) Get(key string) (val string, exists bool) {
+func (m *DOMStringMap) Get(key string) (val string, exists bool) {
 	return m.Element.GetAttribute(encodeDataAttrKey(key))
 }
 
-func (m DOMStringMap) Set(key string, val string) {
+func (m *DOMStringMap) Set(key string, val string) {
 	m.Element.SetAttribute(encodeDataAttrKey(key), val)
 }
 
-func (m DOMStringMap) Delete(key string) {
+func (m *DOMStringMap) Delete(key string) {
 	if attr := m.Element.GetAttributeNode(encodeDataAttrKey(key)); attr != nil {
 		m.Element.RemoveAttributeNode(attr)
 	}
 }
 
-func (m DOMStringMap) Keys() []string {
+func (m *DOMStringMap) Keys() []string {
 	var res []string
 	for a := range m.Element.Attributes().All() {
 		if name, ok := decodeDataAttrKey(a); ok {
