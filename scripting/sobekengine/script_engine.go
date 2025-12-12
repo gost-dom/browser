@@ -3,6 +3,7 @@ package sobekengine
 import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/scripting/internal"
+	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
 type scriptEngine struct {
@@ -24,8 +25,10 @@ func DefaultEngine() html.ScriptEngine {
 	return defaultEngine
 }
 
+func newEngine(configurators ...js.Configurator[jsTypeParam]) html.ScriptEngine {
+	return &scriptEngine{internal.NewScriptEngineConfigurer(configurators)}
+}
+
 func init() {
-	defaultEngine = &scriptEngine{
-		internal.DefaultInitializer[jsTypeParam](),
-	}
+	defaultEngine = &scriptEngine{internal.DefaultInitializer[jsTypeParam]()}
 }

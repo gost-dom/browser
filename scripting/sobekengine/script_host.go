@@ -15,6 +15,8 @@ import (
 
 const internal_symbol_name = "__go_dom_internal_value__"
 
+// Deprecated: Don't create script hosts directly, create them through an
+// engine.
 func New() html.ScriptHost {
 	return &scriptHost{}
 }

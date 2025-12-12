@@ -9,6 +9,10 @@ type ScriptEngineConfigurer[T any] struct {
 	initializers []js.Configurator[T]
 }
 
+func NewScriptEngineConfigurer[T any](i []js.Configurator[T]) *ScriptEngineConfigurer[T] {
+	return &ScriptEngineConfigurer[T]{i}
+}
+
 func (c *ScriptEngineConfigurer[T]) AddConfigurator(configurer js.Configurator[T]) {
 	c.initializers = append(c.initializers, configurer)
 }
