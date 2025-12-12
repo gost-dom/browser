@@ -57,7 +57,7 @@ func TestEntityComponents(t *testing.T) {
 		assert.False(t, found)
 	})
 
-	t.Run("Allows retrieving types values", func(t *testing.T) {
+	t.Run("Allows retrieving typed values", func(t *testing.T) {
 		var e Entity
 		SetComponentType(&e, t)
 		val, found := ComponentType[*testing.T](&e)
