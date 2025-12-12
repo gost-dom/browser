@@ -34,8 +34,8 @@ func initWindow(
 		browser.WithHandler(h),
 		browser.WithScriptEngine(e),
 	))
+	t.Cleanup(b.Close)
 	if h == nil {
-		t.Cleanup(b.Close)
 		return b.NewWindow()
 	} else {
 		return b.OpenWindow("https://example.com/index.html")
