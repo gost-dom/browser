@@ -85,7 +85,7 @@ func (d document) ActiveElement() Element {
 }
 
 func (d *document) cloneNode(doc Document, deep bool) Node {
-	result := NewDocument(doc.window())
+	result := NewDocument(d.window())
 	if deep {
 		result.Append(d.cloneChildren()...)
 	}

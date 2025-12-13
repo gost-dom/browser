@@ -3,6 +3,7 @@ package dom_test
 import (
 	"testing"
 
+	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 	"github.com/stretchr/testify/assert"
@@ -68,4 +69,11 @@ func TestDocumentDocumentElementIsHTMLElement(t *testing.T) {
 	expect := gomega.NewWithT(t).Expect
 	doc := ParseHtmlString("")
 	expect(doc.DocumentElement()).To(BeHTMLElement())
+}
+
+func TestDocumentCloneNode(t *testing.T) {
+	doc := ParseHtmlString("<div>foo</div>")
+	node := doc.CloneNode(true)
+	newDoc := node.(dom.Document)
+	assert.Equal(t, doc.DocumentElement().OuterHTML(), newDoc.DocumentElement().OuterHTML())
 }
