@@ -23,3 +23,9 @@ gost.assertOk = (actual) => {
     return gost.error(`Expected non-nullish value. Got ${actual}`);
   }
 };
+
+gost.assertTrue = (actual) => {
+  if (actual !== true) {
+    return gost.error(`Expected true value. Got ${actual}`);
+  }
+};

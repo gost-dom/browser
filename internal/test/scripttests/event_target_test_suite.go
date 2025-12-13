@@ -4,6 +4,7 @@ import (
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
+	"github.com/gost-dom/browser/internal/testing/gosttest"
 )
 
 type EventTargetTestSuite struct {
@@ -133,4 +134,24 @@ func (s *EventTargetTestSuite) TestEventCapture() {
 		"Div bubble. Phase: 2",
 		"Window bubble. Phase: 3",
 	))
+}
+
+func (s *EventTargetTestSuite) TestErrorHandlerReturnsError() {
+	// Avoid a stack overflow, an error event handler throws an error, raising an
+	// error event ...
+	win := initWindow(s.T(), s.engine, nil, WithLogOption(gosttest.AllowErrors()))
+	err := win.Run(`
+		let callCount = 0
+		window.addEventListener("error", () => {
+			callCount++
+		throw new Error()
+		})
+		window.addEventListener("custom", () => {
+			throw new Error
+		})
+		window.dispatchEvent(new CustomEvent("custom"))
+	`)
+	s.Assert().NoError(err)
+	win.Clock().RunAll()
+	win.MustRun(`gost.assertEqual(1, callCount)`)
 }

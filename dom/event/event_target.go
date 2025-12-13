@@ -162,8 +162,7 @@ func (e *eventTarget) dispatchEvent(event *Event, capture bool) {
 	defer func() { event.CurrentTarget = nil }()
 	if e.catchAllHandler != nil && !capture {
 		if err := e.catchAllHandler.HandleEvent(event); err != nil {
-			e.logger().Debug("Error occurred", log.ErrAttr(err))
-			e.dispatchError(err)
+			e.handleError(event, err)
 		}
 	}
 
@@ -194,7 +193,10 @@ func (e *eventTarget) handleError(event *Event, err error) {
 		"eventType", event.Type,
 		log.ErrAttr(err),
 	)
-	e.dispatchError(err)
+
+	if event.Type != "error" {
+		e.dispatchError(err)
+	}
 }
 
 func (e *eventTarget) dispatchOnParent(event *Event, capture bool) {
