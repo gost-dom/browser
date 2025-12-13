@@ -242,7 +242,8 @@ func loadTestSource(o options) testCaseLoader {
 			options: o,
 			filter: pathFilter{
 				included: o.includes,
-				excluded: []string{}}.isMatch,
+				excluded: excludedSuites,
+			}.isMatch,
 		}
 	}
 }
