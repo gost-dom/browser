@@ -475,24 +475,39 @@ func (n *node) replaceNodes(index, count int, node Node) error {
 	)
 	newNodes := expandNode(node)
 	children := slices.Clone(n.ChildNodes().All())
-	if index > 0 {
-		prevSibling = children[index-1]
+	start := index
+	end := index + count
+	if start > 0 {
+		prevSibling = children[start-1]
 	}
-	if index+count < len(children) {
-		nextSibling = children[index+count]
+	if end < len(children) {
+		nextSibling = children[end]
 	}
 
-	removedNodes := slices.Clone(children[index : index+count])
-	children = slices.Replace(children, index, index+count, newNodes...)
+	currentIdx := slices.Index(children, node)
+	removedNodes := slices.Clone(children[start:end])
+	children = slices.Replace(children, start, end, newNodes...)
+	sameParent := node != nil && node.ParentNode() == n.self
+	if sameParent {
+		if currentIdx == -1 {
+			panic("replaceNodes: ad state - node has no index in it's parent collection")
+		}
+		if currentIdx >= end {
+			currentIdx = currentIdx - count + 1
+		}
+		children = slices.Delete(children, currentIdx, currentIdx+1)
+	}
 	n.childNodes.setNodes(children)
 
-	for _, node := range removedNodes {
-		node.setParent(nil)
-	}
-	for _, node := range newNodes {
-		node.setParent(n.self)
-		if node.IsConnected() {
-			node.Connected()
+	if !sameParent {
+		for _, node := range removedNodes {
+			node.setParent(nil)
+		}
+		for _, node := range newNodes {
+			node.setParent(n.self)
+			if node.IsConnected() {
+				node.Connected()
+			}
 		}
 	}
 
@@ -505,7 +520,6 @@ func (n *node) replaceNodes(index, count int, node Node) error {
 		RemovedNodes:    &nodeList{nodes: removedNodes},
 	})
 	return nil
-
 }
 
 func (n *node) ReplaceChild(node, child Node) (Node, error) {
@@ -582,14 +596,14 @@ func (n *node) PreviousSibling() Node {
 	idx := slices.IndexFunc(
 		children,
 		func(child Node) bool { return n.ObjectId() == child.ObjectId() },
-	) - 1
-	if idx == -2 {
+	)
+	if idx == -1 {
 		panic("We should exist in our parent's collection")
 	}
-	if idx < 0 {
+	if idx == 0 {
 		return nil
 	}
-	return children[idx]
+	return children[idx-1]
 }
 
 func (n *node) nodes() []Node {

@@ -247,6 +247,21 @@ func TestInsertAdjacentElement(t *testing.T) {
 			assert.Equal(t, want, doc.Body().OuterHTML())
 		})
 	}
+	t.Run("https://wpt.live/dom/nodes/Element-insertAdjacentElement.html", func(t *testing.T) {
+		doc := ParseHtmlString(`<div id="target"></div>
+			<div id="parent"><span id=target2></span></div>
+			<div id="log" style="visibility:visible"></div>
+			<span id="test1"></span>
+			<span id="test2"></span>
+			<span id="test3"></span>
+			<span id="test4"></span>`)
+		target := doc.GetElementById("target")
+		el, err := target.InsertAdjacentElement("beforebegin", doc.GetElementById("test1"))
+		t.Log(doc.Body().OuterHTML())
+		assert.NoError(t, err)
+		assert.NotNil(t, target.PreviousSibling())
+		assert.Equal(t, "test1", el.ID())
+	})
 }
 
 func TestElementOuterHTML(t *testing.T) {
