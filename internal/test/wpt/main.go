@@ -157,6 +157,7 @@ func testResults(
 type options struct {
 	logger       *slog.Logger
 	logLevel     string
+	logType      string
 	file         string
 	includes     []string
 	ignorePanics bool
@@ -166,9 +167,24 @@ func (o *options) initLogger() {
 	opts := slogpretty.DefaultOptions()
 	opts.Multiline = true
 	opts.Level = o.LogLevel()
-	fmt.Println("Log level", opts.Level)
-	h := slogpretty.New(os.Stdout, opts)
+	var h slog.Handler
+	if o.logType == "pretty" {
+		h = slogpretty.New(os.Stdout, opts)
+	}
+	if h == nil {
+		h = slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+			Level:       opts.Level,
+			ReplaceAttr: removeTime,
+		})
+	}
 	o.logger = slog.New(h)
+}
+
+func removeTime(groups []string, a slog.Attr) slog.Attr {
+	if a.Key == slog.TimeKey && len(groups) == 0 {
+		return slog.Attr{}
+	}
+	return a
 }
 
 func (o options) LogLevel() slog.Level {
@@ -239,11 +255,10 @@ type testCaseLoader interface {
 }
 
 func parseOptions() options {
-	var o = options{
-		logger: newLogger(),
-	}
+	var o options
 	flag.StringVar(&o.file, "file", "", "")
 	flag.StringVar(&o.logLevel, "log-level", "warn", "")
+	flag.StringVar(&o.logType, "log-type", "pretty", "")
 	flag.Parse()
 	o.initLogger()
 	o.includes = flag.Args()
@@ -356,16 +371,4 @@ func main() {
 	if err := errors.Join(errs...); err != nil {
 		os.Exit(1)
 	}
-}
-
-func newLogger() *slog.Logger {
-	opts := slogpretty.DefaultOptions()
-	opts.Multiline = true
-	opts.Level = slog.LevelError
-	h := slogpretty.New(os.Stdout, opts)
-	// h := slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-	// 	Level: slog.LevelInfo,
-	// 	ReplaceAttr: log.ReplaceStackAttr,
-	// })
-	return slog.New(h)
 }
