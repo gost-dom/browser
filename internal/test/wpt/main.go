@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -155,9 +156,36 @@ func testResults(
 
 type options struct {
 	logger       *slog.Logger
+	logLevel     string
 	file         string
 	includes     []string
 	ignorePanics bool
+}
+
+func (o *options) initLogger() {
+	opts := slogpretty.DefaultOptions()
+	opts.Multiline = true
+	opts.Level = o.LogLevel()
+	fmt.Println("Log level", opts.Level)
+	h := slogpretty.New(os.Stdout, opts)
+	o.logger = slog.New(h)
+}
+
+func (o options) LogLevel() slog.Level {
+	switch strings.ToLower(o.logLevel) {
+	case "debug", "d":
+		return slog.LevelDebug
+	case "info", "i":
+		return slog.LevelInfo
+	case "warn", "w":
+		return slog.LevelWarn
+	case "error", "err", "e":
+		return slog.LevelError
+	}
+	if lvl, err := strconv.Atoi(o.logLevel); err == nil {
+		return slog.Level(lvl)
+	}
+	return slog.LevelWarn
 }
 
 func (o options) Logger() (res *slog.Logger) {
@@ -215,7 +243,9 @@ func parseOptions() options {
 		logger: newLogger(),
 	}
 	flag.StringVar(&o.file, "file", "", "")
+	flag.StringVar(&o.logLevel, "log-level", "warn", "")
 	flag.Parse()
+	o.initLogger()
 	o.includes = flag.Args()
 	return o
 }
