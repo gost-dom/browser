@@ -56,16 +56,16 @@ func TestDocumentImportNode(t *testing.T) {
 	assert.Equal(t, newDoc, clone.OwnerDocument())
 }
 
-func TestOuterHTML(t *testing.T) {
+func TestDocumentOuterHTML(t *testing.T) {
 	// Parsing an empty HTML doc generates both head and body
 	doc := ParseHtmlString("")
 	assert.Equal(t,
 		"<html><head></head><body></body></html>",
 		doc.DocumentElement().OuterHTML())
 }
+
 func TestDocumentDocumentElementIsHTMLElement(t *testing.T) {
 	expect := gomega.NewWithT(t).Expect
 	doc := ParseHtmlString("")
 	expect(doc.DocumentElement()).To(BeHTMLElement())
-
 }
