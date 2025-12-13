@@ -9,6 +9,13 @@ import (
 	"golang.org/x/net/html/atom"
 )
 
+func textNode(t string) *xhtml.Node {
+	return &xhtml.Node{
+		Type: xhtml.TextNode,
+		Data: t,
+	}
+}
+
 func element(tag string, opts ...any) *xhtml.Node {
 	res := &xhtml.Node{
 		Type:     xhtml.ElementNode,
@@ -18,10 +25,7 @@ func element(tag string, opts ...any) *xhtml.Node {
 	for _, opt := range opts {
 		switch t := opt.(type) {
 		case string:
-			res.AppendChild(&xhtml.Node{
-				Type: xhtml.TextNode,
-				Data: t,
-			})
+			res.AppendChild(textNode(t))
 		case xhtml.Attribute:
 			res.Attr = append(res.Attr, t)
 		case *xhtml.Node:

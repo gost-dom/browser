@@ -226,11 +226,18 @@ func main() {
 
 	var logger = o.Logger()
 	body := element("body")
+	summary := element("div")
 	body.AppendChild(element("h1", "Web Application Test Report"))
+	body.AppendChild(summary)
 	var errs []error
 	var prevHeaders []string
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
+
+	suiteCount := 0
+	passedSuiteCount := 0
+	testCount := 0
+	passedTestCount := 0
 
 	for pending := range testResults(ctx, source.testCases(ctx), logger, o) {
 		testCaseResult := pending.result()
@@ -254,8 +261,13 @@ func main() {
 		}
 		prevHeaders = testCase.PathElements
 
+		suiteCount++
+		currentSuiteTestCount := len(res)
+		testCount = testCount + currentSuiteTestCount
 		if err == nil {
 			body.AppendChild(element("p", "All tests pass"))
+			passedSuiteCount++
+			passedTestCount = passedTestCount + currentSuiteTestCount
 			continue
 		}
 
@@ -282,10 +294,12 @@ func main() {
 		tr.AppendChild(element("th", "Msg"))
 
 		for _, row := range res {
+			testCount++
 			tr := element("tr")
 			pass := "FAIL"
 			if row.Success {
 				pass = "PASS"
+				passedTestCount++
 			}
 			tr.AppendChild(element("td", pass))
 			tr.AppendChild(element("td", row.Name))
@@ -300,6 +314,12 @@ func main() {
 			tbody.AppendChild(tr)
 		}
 	}
+	summary.AppendChild(
+		element("p", fmt.Sprintf("Passed test suites %d/%d", passedSuiteCount, suiteCount)),
+	)
+	summary.AppendChild(
+		element("p", fmt.Sprintf("Passed test cases %d/%d", passedTestCount, testCount)),
+	)
 	if err := save(body); err != nil {
 		errs = append(errs, err)
 	}
@@ -311,7 +331,7 @@ func main() {
 func newLogger() *slog.Logger {
 	opts := slogpretty.DefaultOptions()
 	opts.Multiline = true
-	opts.Level = slog.LevelInfo
+	opts.Level = slog.LevelError
 	h := slogpretty.New(os.Stdout, opts)
 	// h := slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
 	// 	Level: slog.LevelInfo,
