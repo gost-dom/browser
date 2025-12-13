@@ -258,7 +258,7 @@ func parseOptions() options {
 	var o options
 	flag.StringVar(&o.file, "file", "", "")
 	flag.StringVar(&o.logLevel, "log-level", "warn", "")
-	flag.StringVar(&o.logType, "log-type", "pretty", "")
+	flag.StringVar(&o.logType, "log-type", "", "")
 	flag.Parse()
 	o.initLogger()
 	o.includes = flag.Args()
