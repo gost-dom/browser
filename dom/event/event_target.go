@@ -162,7 +162,7 @@ func (e *eventTarget) dispatchEvent(event *Event, capture bool) {
 	defer func() { event.CurrentTarget = nil }()
 	if e.catchAllHandler != nil && !capture {
 		if err := e.catchAllHandler.HandleEvent(event); err != nil {
-			e.logger().Debug("Error occurred", "error", err.Error())
+			e.logger().Debug("Error occurred", log.ErrAttr(err))
 			e.dispatchError(err)
 		}
 	}
