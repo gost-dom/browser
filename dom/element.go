@@ -326,6 +326,10 @@ func (n *element) insertAdjacentNode(position string, node Node) error {
 }
 
 func (n *element) InsertAdjacentElement(position string, element Element) (res Element, err error) {
+	if element == nil {
+		err = newDomErrorCode("Cannot insert nil element", syntax_err)
+		return
+	}
 	err = n.insertAdjacentNode(position, element)
 	if err == nil {
 		res = element
