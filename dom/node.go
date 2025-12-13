@@ -251,9 +251,6 @@ func (n *node) InsertBefore(newChild Node, referenceNode Node) (Node, error) {
 	if err := n.assertCanAddNode(newChild); err != nil {
 		return nil, err
 	}
-	if fragment, ok := newChild.(DocumentFragment); ok {
-		return fragment, n.insertBefore(fragment, referenceNode)
-	}
 	err := n.insertBefore(newChild, referenceNode)
 	return newChild, err
 }
