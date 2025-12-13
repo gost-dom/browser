@@ -8,4 +8,4 @@ test:
 # WIP target is used to run tests for currently worked on feature
 .PHONY: wip
 wip:
-	GOEXPERIMENT=jsonv2 go run . dom/nodes/Element-insert
+	GOEXPERIMENT=jsonv2 go run . --log-level debug --file dom/events/Event-dispatch-redispatch.html
