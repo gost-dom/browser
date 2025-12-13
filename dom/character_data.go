@@ -30,8 +30,8 @@ func newCharacterData(text string, ownerDocument Document) characterData {
 	return characterData{newChildNode(ownerDocument), text}
 }
 
-func (n *characterData) NodeValue() (string, bool) { return n.data, true }
-func (n *characterData) SetNodeValue(val string)   { n.data = val }
+func (n *characterData) NodeValue() (string, bool) { return n.Data(), true }
+func (n *characterData) SetNodeValue(val string)   { n.SetData(val) }
 
 func (n *characterData) Data() string {
 	return n.data
