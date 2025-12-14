@@ -8,16 +8,16 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type v8EventListener[T any] struct {
+type eventListener[T any] struct {
 	s   js.Scope[T]
 	val js.Function[T]
 }
 
-func newV8EventListener[T any](s js.Scope[T], val js.Function[T]) event.EventHandler {
-	return v8EventListener[T]{s, val}
+func newEventListener[T any](s js.Scope[T], val js.Function[T]) event.EventHandler {
+	return eventListener[T]{s, val}
 }
 
-func (l v8EventListener[T]) HandleEvent(e *event.Event) error {
+func (l eventListener[T]) HandleEvent(e *event.Event) error {
 	f := l.val
 	event, err := codec.EncodeEntity(l.s, e)
 	if err == nil {
@@ -29,8 +29,8 @@ func (l v8EventListener[T]) HandleEvent(e *event.Event) error {
 	return err
 }
 
-func (l v8EventListener[T]) Equals(other event.EventHandler) bool {
-	x, ok := other.(v8EventListener[T])
+func (l eventListener[T]) Equals(other event.EventHandler) bool {
+	x, ok := other.(eventListener[T])
 	return ok && x.val.StrictEquals(l.val)
 }
 
@@ -44,7 +44,7 @@ func (w EventTarget[T]) decodeEventListener(
 	s js.Scope[T], v js.Value[T],
 ) (event.EventHandler, error) {
 	if fn, ok := v.AsFunction(); ok {
-		return newV8EventListener(s, fn), nil
+		return newEventListener(s, fn), nil
 	} else {
 		return nil, s.NewTypeError("Must be a function")
 	}
