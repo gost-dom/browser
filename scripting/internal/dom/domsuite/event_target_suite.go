@@ -188,4 +188,15 @@ func testEventTarget(t *testing.T, e html.ScriptEngine) {
 			gost.assertEqual(target, window)
 		`)
 	})
+
+	t.Run("Return false is treated as cancel", func(t *testing.T) {
+		win := browsertest.InitWindow(t, e)
+		win.MustRun(`
+			window.addEventListener("cancelled", () => { return false })
+			window.addEventListener("normal", () => {})
+		`)
+		assert.True(t, win.DispatchEvent(&event.Event{Type: "normal", Cancelable: true}))
+		assert.False(t, win.DispatchEvent(&event.Event{Type: "cancelled", Cancelable: true}))
+
+	})
 }

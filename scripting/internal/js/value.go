@@ -102,6 +102,8 @@ type Promise[T any] interface {
 // IsNullish returns whether a JavaScript value is null or undefined.
 func IsNullish[T any](v Value[T]) bool { return v == nil || v.IsNull() || v.IsUndefined() }
 
+func IsBoolean[T any](v Value[T]) bool { return v != nil && v.IsBoolean() }
+
 func AsFunction[T any](v Value[T]) (Function[T], bool) {
 	if IsNullish(v) {
 		return nil, false
