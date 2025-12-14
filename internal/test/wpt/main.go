@@ -158,22 +158,24 @@ type options struct {
 	logger       *slog.Logger
 	logLevel     string
 	logType      string
+	logNoColor   bool
 	file         string
 	includes     []string
 	ignorePanics bool
 }
 
 func (o *options) initLogger() {
-	opts := slogpretty.DefaultOptions()
-	opts.Multiline = true
-	opts.Level = o.LogLevel()
 	var h slog.Handler
 	if o.logType == "pretty" {
+		opts := slogpretty.DefaultOptions()
+		opts.Multiline = true
+		opts.Level = o.LogLevel()
+		opts.Colorful = !o.logNoColor
 		h = slogpretty.New(os.Stdout, opts)
 	}
 	if h == nil {
 		h = slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-			Level:       opts.Level,
+			Level:       o.LogLevel(),
 			ReplaceAttr: removeTime,
 		})
 	}
@@ -260,6 +262,7 @@ func parseOptions() options {
 	flag.StringVar(&o.file, "file", "", "")
 	flag.StringVar(&o.logLevel, "log-level", "warn", "")
 	flag.StringVar(&o.logType, "log-type", "", "")
+	flag.BoolVar(&o.logNoColor, "no-color", false, "")
 	flag.Parse()
 	o.initLogger()
 	o.includes = flag.Args()
