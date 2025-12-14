@@ -25,10 +25,10 @@ type ScriptEngineOptions struct {
 }
 
 // ScriptEngine represents a JavaScript interpreter with a specific global scope
-// initialized.
+// configuration.
 //
-// A script engine is used to create multiple script contexts. The engine
-// provides the ability to cache
+// A script engine is used to create multiple script contexts, all with the same
+// initial values in global scope.
 //
 // E.g., v8 has the root level of an "Isolate", on which you create "templates"
 // for values that must exist in global scope; including inheritance

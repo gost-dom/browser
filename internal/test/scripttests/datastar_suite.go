@@ -17,7 +17,7 @@ import (
 
 func RunDataStarTests(t *testing.T, e html.ScriptEngine) {
 	t.Run("Simple datastar test", func(t *testing.T) {
-		// Each test has it's own V8 instance, so everything can be parallelized.
+		// Each test has it's own JS engine instance, so everything can be parallelized.
 		t.Parallel()
 
 		// Make the test abort if it hasn't completed withing a second. This is an
