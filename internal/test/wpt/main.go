@@ -316,7 +316,6 @@ func main() {
 		if err == nil {
 			body.AppendChild(element("p", "All tests pass"))
 			passedSuiteCount++
-			passedTestCount = passedTestCount + currentSuiteTestCount
 			continue
 		}
 
@@ -343,7 +342,6 @@ func main() {
 		tr.AppendChild(element("th", "Msg"))
 
 		for _, row := range res {
-			testCount++
 			tr := element("tr")
 			pass := "FAIL"
 			if row.Success {
