@@ -175,13 +175,13 @@ func (e *eventTarget) dispatchEvent(event *Event, capture bool) {
 			event.Type,
 		)
 		if l.Capture == capture {
-			if err := l.Handler.HandleEvent(event); err != nil {
-				e.handleError(event, err)
-			}
 			if l.Once {
 				listeners = slices.Delete(listeners, i, i+1)
 				i--
 				e.lmap[event.Type] = listeners
+			}
+			if err := l.Handler.HandleEvent(event); err != nil {
+				e.handleError(event, err)
 			}
 		}
 	}

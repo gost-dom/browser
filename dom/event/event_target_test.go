@@ -152,6 +152,19 @@ func (s *EventPropagationTestSuite) TestEventOnce() {
 	}, events)
 }
 
+func (s *EventPropagationTestSuite) TestOnceWhenEventHandlerDispatchesSameEvent() {
+	var callCount int
+	s.window.AddEventListener("custom", NewTestHandler(func(e *Event) {
+		if callCount > 0 {
+			s.T().Error("Event handler called multiple times")
+		}
+		callCount++
+		s.window.DispatchEvent(&event.Event{Type: "custom"})
+	}), Once)
+	s.window.DispatchEvent(&event.Event{Type: "custom"})
+	s.Assert().Equal(1, callCount)
+}
+
 func (s *EventPropagationTestSuite) TestEventCapture() {
 	var events []string
 	s.window.AddEventListener("custom", NewTestHandler(func(e *Event) {
