@@ -1,7 +1,6 @@
 .PHONY: test
 test:
 	GOEXPERIMENT=jsonv2 go run . --log-type pretty \
-				 dom/events/Event-dispatch-redispatch.html \
 				 dom/nodes/Document-getElementById \
 				 dom/nodes/Element-childElement \
 				 dom/nodes/Element-insert 

@@ -68,6 +68,12 @@ func decodeEventListenerOptions[T any](
 				options = append(options, event.Capture)
 			}
 		}
+		if once, err := obj.Get("once"); err == nil &&
+			once != nil {
+			if once.Boolean() {
+				options = append(options, event.Once)
+			}
+		}
 	}
 	return options, nil
 }
