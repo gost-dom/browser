@@ -56,6 +56,11 @@ func (v value) IsSymbol() bool {
 	// 'typeof' in JS.
 	return v.ctx.typeOf(v) == "symbol"
 }
+func (v value) IsObject() bool {
+	// TODO: Sobek doesn't expose an IsSymbol function, so resort to calling
+	// 'typeof' in JS.
+	return v.ctx.typeOf(v) == "object"
+}
 
 func (v value) Self() value { return v }
 

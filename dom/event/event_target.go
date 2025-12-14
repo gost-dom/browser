@@ -21,6 +21,14 @@ func Once(o *EventListener)    { o.Once = true }
 
 type EventListenerOption = func(*EventListener)
 
+func WithCapture(c bool) EventListenerOption {
+	return func(e *EventListener) { e.Capture = c }
+}
+
+func WithOnce(c bool) EventListenerOption {
+	return func(e *EventListener) { e.Once = c }
+}
+
 type EventTarget interface {
 	AddEventListener(eventType string, listener EventHandler, options ...EventListenerOption)
 	RemoveEventListener(eventType string, listener EventHandler, options ...EventListenerOption)
@@ -92,7 +100,13 @@ func (e *eventTarget) AddEventListener(
 	options ...func(*EventListener),
 ) {
 	listener := e.createListener(handler, options)
-	e.logger().Debug("AddEventListener", "EventType", eventType)
+	e.logger().Debug("AddEventListener",
+		slog.Group("event",
+			slog.String("type", eventType)),
+		slog.Group("options",
+			slog.Bool("capture", listener.Capture),
+			slog.Bool("once", listener.Once)),
+	)
 	// TODO: Handle options
 	// - passive. Defaults to false,
 	// - signal - TODO: Implement AbortSignal
@@ -214,8 +228,8 @@ func (e *eventTarget) dispatchOnParent(event *Event, capture bool) {
 }
 
 func (e *eventTarget) dispatchError(err error) {
-	event := NewErrorEvent(err)
 	if e.parentTarget == nil {
+		event := NewErrorEvent(err)
 		e.DispatchEvent(event)
 	} else {
 		e.parentTarget.dispatchError(err)

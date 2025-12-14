@@ -55,27 +55,21 @@ func (w EventTarget[T]) defaultEventListenerOptions() []event.EventListenerOptio
 }
 
 func decodeEventListenerOptions[T any](
-	_ js.Scope[T], v js.Value[T],
-) ([]event.EventListenerOption, error) {
-	var options []func(*event.EventListener)
-	if v.Boolean() {
-		options = append(options, event.Capture)
-	}
-	if obj, ok := v.AsObject(); ok {
-		if capture, err := obj.Get("capture"); err == nil &&
-			capture != nil {
-			if capture.Boolean() {
-				options = append(options, event.Capture)
-			}
-		}
-		if once, err := obj.Get("once"); err == nil &&
-			once != nil {
-			if once.Boolean() {
-				options = append(options, event.Once)
-			}
+	scope js.Scope[T], val js.Value[T],
+) (res []event.EventListenerOption, err error) {
+	isObj := val.IsObject()
+	if isObj {
+		if res, err = codec.DecodeOptions(scope, val, codec.Options[T, event.EventListenerOption]{
+			"capture": codec.OptDecoder[T](codec.DecodeBoolean, event.WithCapture),
+			"once":    codec.OptDecoder[T](codec.DecodeBoolean, event.WithOnce),
+		}); err == nil {
+			return
 		}
 	}
-	return options, nil
+	if val.Boolean() {
+		return []event.EventListenerOption{event.Capture}, nil
+	}
+	return
 }
 
 func (w EventTarget[T]) decodeEvent(s js.Scope[T], v js.Value[T]) (*event.Event, error) {
