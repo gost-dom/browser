@@ -18,6 +18,7 @@ import (
 )
 
 var ErrTooManyRedirects = errors.New("Too many redirects")
+var ErrCancelled = errors.New("Cancelled")
 
 type ScriptEngineOptions struct {
 	HttpClient *http.Client

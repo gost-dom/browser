@@ -43,9 +43,14 @@ func (i *scriptContext) logger() *slog.Logger {
 }
 
 func (i *scriptContext) run(script, location string) (sobek.Value, error) {
-	res, err := i.vm.RunScript(location, script)
-	i.clock.Tick()
-	return res, err
+	select {
+	case <-i.Context().Done():
+		return nil, html.ErrCancelled
+	default:
+		res, err := i.vm.RunScript(location, script)
+		i.clock.Tick()
+		return res, err
+	}
 }
 
 func (i *scriptContext) Run(str string) error {

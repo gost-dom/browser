@@ -172,9 +172,15 @@ func (ctx *V8ScriptContext) addDisposer(disposer js.Disposable) {
 }
 
 func (ctx *V8ScriptContext) runScript(script string) (res *v8.Value, err error) {
-	res, err = ctx.v8ctx.RunScript(script, "")
-	ctx.clock.Tick()
-	return
+	goCtx := ctx.Window().Context()
+	select {
+	case <-goCtx.Done():
+		return nil, html.ErrCancelled
+	default:
+		res, err = ctx.v8ctx.RunScript(script, "")
+		ctx.clock.Tick()
+		return
+	}
 }
 
 func (ctx *V8ScriptContext) Run(script string) error {
