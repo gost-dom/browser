@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"os/signal"
 	"strconv"
 	"strings"
 	"sync"
@@ -25,20 +26,25 @@ type WebPlatformTest struct {
 	options options
 }
 
+type WptSuiteResult struct {
+	TestCases []WebPlatformTestCase
+	Error     error
+}
+
 func (s WebPlatformTest) Run(
 	ctx context.Context,
 	l *slog.Logger,
-) (res []WebPlatformTestCase, err error) {
+) (res WptSuiteResult) {
 	defer func() {
 		if s.options.ignorePanics {
 			return
 		}
 		if r := recover(); r != nil {
 			if e, ok := r.(error); ok {
-				err = e
+				res.Error = e
 				return
 			}
-			err = fmt.Errorf("panic running test: %s\n%v\n", s.url, r)
+			res.Error = fmt.Errorf("panic running test: %s\n%v\n", s.url, r)
 		}
 	}()
 	b := browser.New(
@@ -49,22 +55,24 @@ func (s WebPlatformTest) Run(
 	defer b.Close()
 	var win html.Window
 
-	win, err = b.Open(s.url)
+	win, res.Error = b.Open(s.url)
 	l.Debug("Window opened")
-	if err == nil {
-		err = win.Clock().ProcessEvents(ctx)
+	if res.Error == nil {
+		res.Error = win.Clock().ProcessEvents(ctx)
 	}
 	l.Debug("Events processed")
-	if err != nil {
+	if res.Error != nil {
 		return
 	}
 	return s.parseResults(win)
 }
 
-func (s WebPlatformTest) parseResults(win html.Window) (res []WebPlatformTestCase, err error) {
+func (s WebPlatformTest) parseResults(win html.Window) (res WptSuiteResult) {
 	r, _ := win.Document().QuerySelectorAll("#results > tbody > tr")
 	rows := r.All()
-	res = make([]WebPlatformTestCase, len(rows))
+	res = WptSuiteResult{
+		TestCases: make([]WebPlatformTestCase, len(rows)),
+	}
 	var errs []error
 	for i, row := range rows {
 		tds, _ := row.(dom.Element).QuerySelectorAll("td")
@@ -74,12 +82,12 @@ func (s WebPlatformTest) parseResults(win html.Window) (res []WebPlatformTestCas
 			Name:    tds.Item(1).TextContent(),
 			Msg:     tds.Item(2).(dom.Element).OuterHTML(),
 		}
-		res[i] = result
+		res.TestCases[i] = result
 		if !result.Success {
 			errs = append(errs, fmt.Errorf("fail: %s", result.Name))
 		}
 	}
-	err = errors.Join(errs...)
+	res.Error = errors.Join(errs...)
 	return
 }
 
@@ -91,24 +99,37 @@ type WebPlatformTestCase struct {
 
 func RunTestCase(
 	ctx context.Context, tc TestCase, log *slog.Logger, o options,
-) ([]WebPlatformTestCase, error) {
+) (res WptSuiteResult, err error) {
 	path := tc.Path
 	log = log.With(slog.String("TestCase", path))
 	log.Info("Start test")
+	ch := make(chan WptSuiteResult, 1)
 
 	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
 	defer cancel()
 
-	suite := WebPlatformTest{
-		url:     tc.URL(),
-		options: o,
+	go func() {
+		suite := WebPlatformTest{
+			url:     tc.URL(),
+			options: o,
+		}
+		select {
+		case ch <- suite.Run(ctx, log):
+		case <-ctx.Done():
+		}
+	}()
+	select {
+	case res := <-ch:
+		return res, nil
+	case <-ctx.Done():
+		err = errors.New("Context aborted")
+		return
 	}
-	return suite.Run(ctx, log)
 }
 
 type testResult struct {
 	testCase TestCase
-	res      []WebPlatformTestCase
+	res      WptSuiteResult
 	err      error
 }
 
@@ -135,19 +156,26 @@ func testResults(
 		defer func() { close(res) }()
 
 		for testCase := range tests {
-			grp.Add(1)
 			resultChan := make(chan testResult)
-			res <- resultChan
-			go func() {
-				defer grp.Add(-1)
+			select {
+			case res <- resultChan:
+				grp.Add(1)
+				go func() {
+					defer grp.Add(-1)
 
-				testCaseRes, err := RunTestCase(ctx, testCase, log, o)
-				resultChan <- testResult{
-					testCase: testCase,
-					res:      testCaseRes,
-					err:      err,
-				}
-			}()
+					testCaseRes, err := RunTestCase(ctx, testCase, log, o)
+					if err == nil && len(testCaseRes.TestCases) == 0 {
+						err = errors.New("Test suite returned no results")
+					}
+					resultChan <- testResult{
+						testCase: testCase,
+						res:      testCaseRes,
+						err:      err,
+					}
+				}()
+			case <-ctx.Done():
+				return
+			}
 		}
 		grp.Wait()
 	}()
@@ -270,6 +298,9 @@ func parseOptions() options {
 }
 
 func main() {
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
+
 	var o = parseOptions()
 	var source = loadTestSource(o)
 
@@ -280,8 +311,6 @@ func main() {
 	body.AppendChild(summary)
 	var errs []error
 	var prevHeaders []string
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
 
 	suiteCount := 0
 	passedSuiteCount := 0
@@ -311,7 +340,7 @@ func main() {
 		prevHeaders = testCase.PathElements
 
 		suiteCount++
-		currentSuiteTestCount := len(res)
+		currentSuiteTestCount := len(res.TestCases)
 		testCount = testCount + currentSuiteTestCount
 		if err == nil {
 			body.AppendChild(element("p", "All tests pass"))
@@ -325,6 +354,7 @@ func main() {
 				xhtml.Attribute{Key: "target", Val: "_blank"},
 				testCase.URL())),
 		)
+		body.AppendChild(element("div", err.Error()))
 
 		logger.Error("ERROR", "err", err)
 		errs = append(errs, err)
@@ -341,7 +371,7 @@ func main() {
 		tr.AppendChild(element("th", "Test"))
 		tr.AppendChild(element("th", "Msg"))
 
-		for _, row := range res {
+		for _, row := range res.TestCases {
 			tr := element("tr")
 			pass := "FAIL"
 			if row.Success {
