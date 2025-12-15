@@ -1,6 +1,8 @@
 package html
 
 import (
+	"log/slog"
+
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/internal/log"
 )
@@ -19,7 +21,11 @@ func NewHTMLScriptElement(ownerDocument HTMLDocument) HTMLElement {
 }
 
 func (e *htmlScriptElement) Connected() {
-	e.logger().Debug("<script> connected", "element", e)
+	l := e.logger()
+	if src := e.src(); src != "" {
+		l = l.With(slog.String("src", e.src()))
+	}
+	l.Debug("<script> connected", "element", e)
 	var (
 		err         error
 		deferScript bool
@@ -27,13 +33,13 @@ func (e *htmlScriptElement) Connected() {
 	window := e.htmlDocument.window()
 	e.script, deferScript, err = e.compile()
 	if err != nil {
-		e.logger().Error("HTMLScriptElement: script error", log.ErrAttr(err))
+		l.Error("HTMLScriptElement: script error", log.ErrAttr(err))
 		return
 	}
 	if deferScript {
 		window.deferScript(e)
 	} else {
-		e.run()
+		e.run(l)
 	}
 }
 
@@ -59,11 +65,12 @@ func (e *htmlScriptElement) compile() (script Script, deferred bool, err error) 
 	return
 }
 
-func (e *htmlScriptElement) run() {
+func (e *htmlScriptElement) run(l *slog.Logger) {
+	l.Info("Run")
 	if err := e.script.Run(); err != nil {
-		e.logger().Error("Script error", "src", e.src, log.ErrAttr(err))
+		l.Error("Script error", "src", e.src, log.ErrAttr(err))
 	}
-	e.logger().Debug("Script execution completed", "src", e.src)
+	l.Debug("Script execution completed", "src", e.src)
 }
 
 func (e *htmlScriptElement) src() string {

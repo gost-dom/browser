@@ -307,7 +307,7 @@ func (w *window) parseReader(reader io.Reader, u *url.URL) error {
 	w.document.setLocation(l)
 	err := dom.ParseDocument(w.document, reader)
 	for _, s := range w.deferredScripts {
-		s.run()
+		s.run(w.Logger())
 	}
 	if err == nil {
 		w.document.DispatchEvent(&event.Event{Type: dom.DocumentEventDOMContentLoaded})
