@@ -13,9 +13,15 @@ import "github.com/gost-dom/browser/internal/entity"
 // handler. E.g., when JavaScript code calls RemoveEventListener, a new Go
 // struct is created wrapping the same underlying handler.
 //
-// The Equals function must return true when the other event handler is the same
-// as the current value, so event handlers can properly be removed, and avoiding
-// duplicates are added by AddEventListener.
+// In JavaScript, an event that returns `false` prevents default behaviour for a
+// cancelable event. That behaviour is implemented in the JavaScript binding
+// layer.
+//
+// The Equals function must return true when two EventHandler instances
+// represent the same underlying handler. This is important for JavaScript handlers
+// where the same underlying JS function can be represented by
+// different Go values. This is important to be able to remove and detect
+// duplicates when adding the same handler twice.
 type EventHandler interface {
 	// HandleEvent is called when the the event occurrs.
 	//

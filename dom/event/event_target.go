@@ -94,6 +94,13 @@ func (t *eventTarget) createListener(
 	return listener
 }
 
+// AddEventListener implements core DOM event dispatch functionality.
+//
+// The following options are not implemented yet:
+// - passive - https://github.com/gost-dom/browser/issues/39
+// - signal - https://github.com/gost-dom/browser/issues/40
+//
+// See also: https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
 func (e *eventTarget) AddEventListener(
 	eventType string,
 	handler EventHandler,
@@ -107,14 +114,6 @@ func (e *eventTarget) AddEventListener(
 			slog.Bool("capture", listener.Capture),
 			slog.Bool("once", listener.Once)),
 	)
-	// TODO: Handle options
-	// - passive. Defaults to false,
-	// - signal - TODO: Implement AbortSignal
-	// Browser specific
-	// - Safari
-	//   - passive defaults to true for `wheel`, `mousewheel` `touchstart`, `tourchmove` events
-	// - Firefox (Gecko), receives an extra boolean argument, `wantsUntrusted`
-	//   - https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#wantsuntrusted
 	listeners := e.lmap[eventType]
 	for _, l := range listeners {
 		if l.Handler.Equals(handler) && l.Capture == listener.Capture {
