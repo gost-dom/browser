@@ -24,9 +24,7 @@ type Value[T any] interface {
 	IsSymbol() bool
 	IsString() bool
 	IsObject() bool
-	// Not used, and we cannot ask Sobek this question, so commented from the
-	// interface for now
-	// IsBoolean() bool
+	IsBoolean() bool
 	IsFunction() bool
 
 	AsFunction() (Function[T], bool)

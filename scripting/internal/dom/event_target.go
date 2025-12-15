@@ -66,7 +66,7 @@ func decodeEventListenerOptions[T any](
 			return
 		}
 	}
-	if val.Boolean() {
+	if val.IsBoolean() && val.Boolean() {
 		return []event.EventListenerOption{event.Capture}, nil
 	}
 	return
