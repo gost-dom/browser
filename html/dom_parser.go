@@ -55,32 +55,6 @@ type ElementSteps interface {
 	AppendChild(parent dom.Node, child dom.Node) dom.Node
 }
 
-type BaseRules struct{}
-
-func (r BaseRules) AppendChild(parent dom.Node, child dom.Node) dom.Node {
-	res, err := parent.AppendChild(child)
-	if err != nil {
-		panic(err)
-	}
-	return res
-}
-
-type TemplateElementRules struct{ BaseRules }
-
-func (TemplateElementRules) AppendChild(parent dom.Node, child dom.Node) dom.Node {
-	template, ok := child.(HTMLTemplateElement)
-	if !ok {
-		panic("Parser error, applying tepmlate rules to non-template element")
-	}
-	parent.AppendChild(child)
-	return template.Content()
-}
-
-var ElementMap = map[atom.Atom]ElementSteps{
-	// atom.Script:   ScriptElementRules{},
-	atom.Template: TemplateElementRules{},
-}
-
 func parseIntoDocument(doc dom.Document, r io.Reader) error {
 	node, err := html.Parse(r)
 	if err != nil {
@@ -111,11 +85,6 @@ func createElementFromNode(
 		panic("Elements must have a parent")
 	}
 
-	rules := ElementMap[source.DataAtom]
-	if rules == nil {
-		rules = BaseRules{}
-	}
-	var newNode dom.Node
 	var newElm dom.Element
 	if source.Namespace == "" {
 		newElm = d.CreateElement(source.Data)
@@ -125,13 +94,19 @@ func createElementFromNode(
 	for _, a := range source.Attr {
 		newElm.SetAttribute(a.Key, a.Val)
 	}
-	newNode = newElm
-	newNode = rules.AppendChild(parent, newElm)
+	newNode, err := parent.AppendChild(newElm)
+	if err != nil {
+		panic(err)
+	}
 	iterateChildren(d, newNode, source)
 	return newElm
 }
 
 func iterateChildren(d dom.Document, dest dom.Node, source *html.Node) {
+	if dest, ok := dest.(interface{ Content() dom.DocumentFragment }); ok {
+		iterateChildren(d, dest.Content(), source)
+		return
+	}
 	for child := range source.ChildNodes() {
 		iterate(d, dest, child)
 	}
