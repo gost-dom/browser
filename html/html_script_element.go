@@ -21,7 +21,11 @@ func NewHTMLScriptElement(ownerDocument HTMLDocument) HTMLElement {
 }
 
 func (e *htmlScriptElement) Connected() {
-	e.logger().Info("<script> connected", "element", e, "src", e.src())
+	l := e.logger()
+	if src := e.src(); src != "" {
+		l = l.With(slog.String("src", src))
+	}
+	l.Info("<script> connected", "element", e)
 	var (
 		err         error
 		deferScript bool
@@ -29,13 +33,13 @@ func (e *htmlScriptElement) Connected() {
 	window := e.htmlDocument.window()
 	e.script, deferScript, err = e.compile()
 	if err != nil {
-		e.logger().Error("HTMLScriptElement: script compile error", log.ErrAttr(err))
+		l.Error("HTMLScriptElement: script compile error", log.ErrAttr(err))
 		return
 	}
 	if deferScript {
 		window.deferScript(e)
 	} else {
-		e.run()
+		e.run(l)
 	}
 }
 
@@ -76,12 +80,12 @@ func (e *htmlScriptElement) compileInline() (Script, error) {
 	return script, err
 }
 
-func (e *htmlScriptElement) run() {
-	e.logger().Info("Run script", "src", e.src())
+func (e *htmlScriptElement) run(l *slog.Logger) {
+	l.Info("Run")
 	if err := e.script.Run(); err != nil {
-		e.logger().Error("Script error", "src", e.src(), log.ErrAttr(err))
+		l.Error("Script error", log.ErrAttr(err))
 	}
-	e.logger().Debug("Script execution completed", "src", e.src())
+	l.Debug("Script execution completed")
 }
 
 func (e *htmlScriptElement) src() string {
