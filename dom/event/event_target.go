@@ -3,6 +3,7 @@ package event
 import (
 	"log/slog"
 	"slices"
+	"strconv"
 
 	"github.com/gost-dom/browser/internal/log"
 )
@@ -15,6 +16,21 @@ const (
 	EventPhaseAtTarget EventPhase = 2
 	EventPhaseBubbling EventPhase = 3
 )
+
+func (i EventPhase) String() string {
+	switch i {
+	case EventPhaseNone:
+		return "none"
+	case EventPhaseCapture:
+		return "capture"
+	case EventPhaseAtTarget:
+		return "atTarget"
+	case EventPhaseBubbling:
+		return "bubbling"
+	default:
+		return strconv.Itoa(int(i))
+	}
+}
 
 func Capture(o *EventListener) { o.Capture = true }
 func Once(o *EventListener)    { o.Once = true }
@@ -168,6 +184,9 @@ func (e *eventTarget) DispatchEvent(event *Event) bool {
 }
 
 func (e *eventTarget) dispatchEvent(event *Event, capture bool) {
+	log := e.logger().With(newLogAttrForEvent(event))
+	log.Debug("eventTarget.dispatchEvent")
+
 	if event.stopped {
 		return
 	}
@@ -175,35 +194,31 @@ func (e *eventTarget) dispatchEvent(event *Event, capture bool) {
 	defer func() { event.CurrentTarget = nil }()
 	if e.catchAllHandler != nil && !capture {
 		if err := e.catchAllHandler.HandleEvent(event); err != nil {
-			e.handleError(event, err)
+			e.handleError(event, err, log.With(slog.String("handler", "catchAll")))
 		}
 	}
 
 	listeners := e.lmap[event.Type]
 	for i := 0; i < len(listeners); i++ {
 		l := listeners[i]
-		e.logger().Debug(
-			"eventTarget.dispatchEvent: Calling event handler",
-			"type",
-			event.Type,
-		)
 		if l.Capture == capture {
+			childLog := log.With(newLogAttrForListener(l))
+			childLog.Debug("eventTarget.dispatchEvent: call handler")
 			if l.Once {
 				listeners = slices.Delete(listeners, i, i+1)
 				i--
 				e.lmap[event.Type] = listeners
 			}
 			if err := l.Handler.HandleEvent(event); err != nil {
-				e.handleError(event, err)
+				e.handleError(event, err, childLog)
 			}
 		}
 	}
 }
 
-func (e *eventTarget) handleError(event *Event, err error) {
-	e.logger().Error(
+func (e *eventTarget) handleError(event *Event, err error, l *slog.Logger) {
+	l.Error(
 		"eventTarget.dispatchEvent: Error occurred in event handler",
-		"eventType", event.Type,
 		log.ErrAttr(err),
 	)
 
