@@ -52,13 +52,13 @@ func (v value) IsUndefined() bool { return sobek.IsUndefined(v.value) }
 func (v value) IsString() bool    { return sobek.IsString(v.value) }
 
 func (v value) IsSymbol() bool {
-	// TODO: Sobek doesn't expose an IsSymbol function, so resort to calling
-	// 'typeof' in JS.
+	// Sobek doesn't expose an IsSymbol function, so resort to calling 'typeof'
+	// in JS.
 	return v.ctx.typeOf(v) == "symbol"
 }
 func (v value) IsObject() bool {
-	// TODO: Sobek doesn't expose an IsSymbol function, so resort to calling
-	// 'typeof' in JS.
+	// Sobek doesn't expose an IsObject function, so resort to calling 'typeof'
+	// in JS.
 	return v.ctx.typeOf(v) == "object"
 }
 
