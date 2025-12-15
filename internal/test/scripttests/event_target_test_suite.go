@@ -138,13 +138,13 @@ func (s *EventTargetTestSuite) TestEventCapture() {
 
 func (s *EventTargetTestSuite) TestEventOnce() {
 	win := s.Window
-	s.Expect(win.Eval(`
+	win.MustRun(`
 		let callCount = 0
 		window.addEventListener("gost", e => { callCount++ }, { once: true })
 		window.dispatchEvent(new CustomEvent("gost"))
 		window.dispatchEvent(new CustomEvent("gost"))
 		gost.assertEqual(callCount, 1)
-	`))
+	`)
 }
 
 func (s *EventTargetTestSuite) TestErrorHandlerReturnsError() {
