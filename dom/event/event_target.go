@@ -32,15 +32,22 @@ func (i EventPhase) String() string {
 	}
 }
 
+// Deprecated: Prefer using [WithCapture] - it provides a more consistent API
 func Capture(o *EventListener) { o.Capture = true }
-func Once(o *EventListener)    { o.Once = true }
+
+// Deprecated: Prefer using [WithOnce] - it provides a more consistent API
+func Once(o *EventListener) { o.Once = true }
 
 type EventListenerOption = func(*EventListener)
 
+// WithCapture sets whether the event handler is called during the event capture
+// phase.
 func WithCapture(c bool) EventListenerOption {
 	return func(e *EventListener) { e.Capture = c }
 }
 
+// WitnOnce sets whether the event handler is removed automatically at first
+// invocation.
 func WithOnce(c bool) EventListenerOption {
 	return func(e *EventListener) { e.Once = c }
 }
