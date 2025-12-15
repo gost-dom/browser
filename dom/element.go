@@ -66,9 +66,14 @@ type element struct {
 }
 
 func NewElement(tagName string, ownerDocument Document) Element {
+	return newElementNS("", tagName, ownerDocument)
+}
+
+func newElementNS(ns, tagName string, ownerDocument Document) Element {
 	res := &element{
 		node:       newNode(ownerDocument),
-		tagName:    tagName,
+		tagName:    strings.ToLower(tagName),
+		namespace:  ns,
 		attributes: Attributes(nil),
 	}
 	res.childNode = childNode{&res.node}

@@ -117,8 +117,8 @@ func (d *document) CreateElement(name string) Element { return NewElement(name, 
 func (d *document) CreateText(data string) Text       { return d.CreateTextNode(data) }
 func (d *document) CreateTextNode(data string) Text   { return NewText(data, d.document) }
 func (d *document) CreateComment(data string) Comment { return NewComment(data, d.document) }
-func (d *document) CreateElementNS(_ string, name string) Element {
-	return NewElement(name, d.document)
+func (d *document) CreateElementNS(ns string, name string) Element {
+	return newElementNS(ns, name, d.document)
 }
 func (d *document) CreateDocumentType(name string) DocumentType {
 	return NewDocumentType(name, d.document)

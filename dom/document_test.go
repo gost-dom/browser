@@ -117,3 +117,10 @@ func TestDocumentCloneNode(t *testing.T) {
 	newDoc := node.(dom.Document)
 	assert.Equal(t, doc.DocumentElement().OuterHTML(), newDoc.DocumentElement().OuterHTML())
 }
+
+func TestDocumentCreateElementNS(t *testing.T) {
+	doc := dom.NewDocument(nil)
+	el := doc.CreateElementNS("ns", "Name")
+	assert.Equal(t, "ns", el.Namespace())
+	assert.Equal(t, "name", el.LocalName())
+}
