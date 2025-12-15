@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -16,9 +17,17 @@ type HttpDoer interface {
 	Do(*http.Request) (*http.Response, error)
 }
 
-func Download(ctx context.Context, url *url.URL, doer HttpDoer) (res string, err error) {
+func Download(
+	ctx context.Context,
+	log *slog.Logger,
+	url *url.URL,
+	doer HttpDoer,
+) (res string, err error) {
 	if ctx == nil {
 		ctx = context.Background()
+	}
+	if log != nil {
+		log.Info("download", slog.Any("url", url))
 	}
 	req, err := http.NewRequestWithContext(ctx, "GET", url.String(), nil)
 	if err != nil {

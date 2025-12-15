@@ -168,7 +168,7 @@ func (ctx *V8ScriptContext) Compile(script string) (html.Script, error) {
 
 func (ctx *V8ScriptContext) DownloadScript(src string) (html.Script, error) {
 	url := url.ParseURLBase(src, ctx.browsingCtx.LocationHREF())
-	script, err := gosthttp.Download(ctx.Context(), url, ctx.host.httpClient)
+	script, err := gosthttp.Download(ctx.Context(), ctx.logger(), url, ctx.host.httpClient)
 	if err != nil {
 		return nil, err
 	}
@@ -216,7 +216,7 @@ func (r *moduleResolver) downloadAndCompile(
 		return cached, nil
 	}
 
-	script, err := gosthttp.Download(ctx, url, r.host.httpClient)
+	script, err := gosthttp.Download(ctx, l, url, r.host.httpClient)
 	if err != nil {
 		return nil, err
 	}

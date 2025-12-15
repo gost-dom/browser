@@ -333,7 +333,7 @@ func (c *scriptContext) Compile(src string) (html.Script, error) {
 
 func (c *scriptContext) DownloadScript(src string) (html.Script, error) {
 	u := html.WindowResolveHref(c.browsingCtx, src)
-	if scr, err := gosthttp.Download(c.Context(), u, c.host.httpClient); err != nil {
+	if scr, err := gosthttp.Download(c.Context(), c.logger(), u, c.host.httpClient); err != nil {
 		return nil, err
 	} else {
 		return script{c, scr, src}, nil
