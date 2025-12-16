@@ -16,13 +16,6 @@ const (
 	DocumentEventLoad             DocumentEvent = "load"
 )
 
-// Deprecated: This interface is part of an implementation details, and it was
-// an oversight that it wasn't placed in an internal package. This will be
-// removed from the public API in a future version
-type DocumentParentWindow interface {
-	event.EventTarget
-}
-
 type Document interface {
 	RootNode
 	ActiveElement() Element
@@ -39,28 +32,22 @@ type Document interface {
 	DocumentElement() Element
 	GetElementsByTagName(string) NodeList
 	ImportNode(Node, bool) Node
-
-	window() DocumentParentWindow
 }
 
 type document struct {
 	rootNode
 	logger        *slog.Logger
 	activeElement Element
-	ownerWindow   DocumentParentWindow
 }
 
-func NewDocument(window DocumentParentWindow) Document {
-	result := &document{
-		rootNode:    newRootNode(nil),
-		ownerWindow: window,
-	}
+func NewDocument(parentEventTarget event.EventTarget) Document {
+	result := &document{rootNode: newRootNode(nil)}
 	// Hmmm, can document be replaced; and now the old doc's event goes to a
 	// window they shouldn't?
 	// What about disconnected documents, e.g. `new Document()` in the browser?
-	result.SetParentTarget(window)
+	result.SetParentTarget(parentEventTarget)
 	result.SetSelf(result)
-	if logger, isLogSource := window.(log.LogSource); isLogSource {
+	if logger, ok := parentEventTarget.(log.LogSource); ok {
 		result.logger = logger.Logger()
 	}
 	return result
@@ -72,7 +59,6 @@ func (d document) Logger() *slog.Logger {
 	}
 	return log.Default()
 }
-func (d document) window() DocumentParentWindow { return d.ownerWindow }
 
 func (d document) ActiveElement() Element {
 	if d.activeElement == nil {
@@ -82,7 +68,7 @@ func (d document) ActiveElement() Element {
 }
 
 func (d *document) cloneNode(doc Document, deep bool) Node {
-	result := NewDocument(d.window())
+	result := NewDocument(nil)
 	if deep {
 		result.Append(d.cloneChildren()...)
 	}

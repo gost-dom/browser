@@ -49,11 +49,7 @@ func NewHTMLDocument(window Window) HTMLDocument {
 // NewEmptyHtmlDocument is used internally to create an empty HTML when parsing an
 // HTML input.
 func NewEmptyHtmlDocument(window Window) HTMLDocument {
-	var parent dom.DocumentParentWindow
-	if window != nil {
-		parent = window
-	}
-	var result HTMLDocument = &htmlDocument{dom.NewDocument(parent), window}
+	var result HTMLDocument = &htmlDocument{dom.NewDocument(window), window}
 	result.SetSelf(result)
 	return result
 }
