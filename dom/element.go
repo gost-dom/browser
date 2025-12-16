@@ -13,13 +13,6 @@ import (
 	"golang.org/x/net/html/atom"
 )
 
-// TODO: In the DOM, this is a `NamedNodeMap`. Is that useful in Go?
-type Attributes []Attr
-
-func (attrs Attributes) Length() int {
-	return len(attrs)
-}
-
 // An Element in the document. Can be either an [HTMLElement] or an [XMLElement]
 type Element interface {
 	ElementContainer
