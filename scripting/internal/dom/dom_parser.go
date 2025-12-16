@@ -26,7 +26,7 @@ func domParserParseFromString[T any](cbCtx js.CallbackContext[T]) (js.Value[T], 
 			"DOMParser.parseFromString only supports text/html yet",
 		)
 	}
-	if err := dom.ParseReader(doc, strings.NewReader(html)); err == nil {
+	if err := dom.ParseDocument(doc, strings.NewReader(html)); err == nil {
 		return codec.EncodeEntity(cbCtx, doc)
 	} else {
 		return nil, err

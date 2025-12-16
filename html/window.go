@@ -278,7 +278,7 @@ func NewWindowReader(reader io.Reader, windowOptions ...WindowOption) (Window, e
 
 func (w *window) parseReader(reader io.Reader) error {
 	w.document = NewEmptyHtmlDocument(w)
-	err := dom.ParseReader(w.document, reader)
+	err := dom.ParseDocument(w.document, reader)
 	for _, s := range w.deferredScripts {
 		s.run()
 	}

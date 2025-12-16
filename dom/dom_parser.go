@@ -8,24 +8,22 @@ import (
 	"golang.org/x/net/html/atom"
 )
 
-// ParseReader parses an HTML or XML document from an [io.Reader] instance.
-func ParseReader(document Document, reader io.Reader) error {
+// ParseDocument parses an HTML or XML document.
+func ParseDocument(document Document, reader io.Reader) error {
 	return parseIntoDocument(document, reader)
 }
 
-func ParseFragment(
-	ownerDocument Document,
-	reader io.Reader,
-) (DocumentFragment, error) {
-	nodes, err := html.ParseFragment(reader, &html.Node{
+// ParseFragment parses an HTML or XML DocumentFragment.
+func ParseFragment(doc Document, r io.Reader) (DocumentFragment, error) {
+	nodes, err := html.ParseFragment(r, &html.Node{
 		Type:     html.ElementNode,
 		Data:     "body",
 		DataAtom: atom.Body,
 	})
-	result := ownerDocument.CreateDocumentFragment()
+	result := doc.CreateDocumentFragment()
 	if err == nil {
 		for _, child := range nodes {
-			iterate(ownerDocument, result, child)
+			iterate(doc, result, child)
 		}
 	}
 	return result, err
@@ -44,16 +42,14 @@ func convertNS(ns string) string {
 	switch ns {
 	case "svg":
 		return "http://www.w3.org/2000/svg"
+	case "math":
+		return "http://www.w3.org/1998/Math/MathML"
 	default:
 		return ns
 	}
 }
 
-func createElementFromNode(
-	d Document,
-	parent Node,
-	source *html.Node,
-) Element {
+func createElementFromNode(d Document, parent Node, source *html.Node) Element {
 	if parent == nil {
 		panic("Elements must have a parent")
 	}
@@ -64,9 +60,11 @@ func createElementFromNode(
 	} else {
 		newElm = d.CreateElementNS(convertNS(source.Namespace), source.Data)
 	}
+
 	for _, a := range source.Attr {
 		newElm.SetAttribute(a.Key, a.Val)
 	}
+
 	newNode, err := parent.AppendChild(newElm)
 	if err != nil {
 		panic(err)
