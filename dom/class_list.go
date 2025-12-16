@@ -108,11 +108,11 @@ func (l DOMTokenList) Toggle(token string) bool {
 }
 
 func (l DOMTokenList) getTokens() []string {
-	tokens := l.Value()
-	if strings.TrimSpace(tokens) == "" {
+	tokens := strings.TrimSpace(l.Value())
+	if tokens == "" {
 		return []string{}
 	}
-	return strings.Split(tokens, " ")
+	return strings.Fields(tokens)
 }
 
 func (l DOMTokenList) setTokens(tokens []string) {
