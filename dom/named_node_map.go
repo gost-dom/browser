@@ -42,12 +42,15 @@ type attr struct {
 	attr         *html.Attribute
 }
 
-func newAttr(n, v string, doc Document) Attr {
+func newAttr(n, v string, doc Document) Attr { return newAttrNS("", n, v, doc) }
+
+func newAttrNS(ns, n, v string, doc Document) Attr {
 	res := &attr{
 		node: newNode(doc),
 		attr: &html.Attribute{
-			Key: n,
-			Val: v,
+			Namespace: ns,
+			Key:       n,
+			Val:       v,
 		},
 	}
 	res.SetSelf(res)

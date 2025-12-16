@@ -23,6 +23,7 @@ type Document interface {
 	Head() Element
 	CreateDocumentFragment() DocumentFragment
 	CreateAttribute(string) Attr
+	CreateAttributeNS(string, string) Attr
 	CreateTextNode(data string) Text
 	CreateComment(data string) Comment
 	CreateDocumentType(name string) DocumentType
@@ -110,6 +111,10 @@ func (d *document) Head() Element {
 		}
 	}
 	return nil
+}
+
+func (d *document) CreateAttributeNS(ns, name string) Attr {
+	return newAttrNS(ns, name, "", d.document)
 }
 
 func (d *document) CreateAttribute(name string) Attr  { return newAttr(name, "", d.document) }

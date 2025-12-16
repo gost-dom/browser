@@ -70,7 +70,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 		"inputEncoding",
 		"charset", "characterSet",
 		"compatMode", "URL",
-		"createAttributeNS",
 
 		// Custom Implementation
 		"createCDATASection",

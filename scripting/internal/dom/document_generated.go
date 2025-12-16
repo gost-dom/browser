@@ -192,7 +192,18 @@ func (w Document[T]) createAttribute(cbCtx js.CallbackContext[T]) (res js.Value[
 }
 
 func (w Document[T]) createAttributeNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Document.createAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	instance, errInst := js.As[dom.Document](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	namespace, errArg1 := js.ConsumeArgument(cbCtx, "namespace", codec.ZeroValue, codec.DecodeString)
+	qualifiedName, errArg2 := js.ConsumeArgument(cbCtx, "qualifiedName", nil, codec.DecodeString)
+	err = gosterror.First(errArg1, errArg2)
+	if err != nil {
+		return nil, err
+	}
+	result := instance.CreateAttributeNS(namespace, qualifiedName)
+	return codec.EncodeEntity(cbCtx, result)
 }
 
 func (w Document[T]) createEvent(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
