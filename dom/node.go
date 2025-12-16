@@ -298,6 +298,9 @@ func (n *node) GetRootNode(options ...GetRootNodeOptions) Node {
 }
 
 func (n *node) Contains(node Node) bool {
+	if n.self == node {
+		return true
+	}
 	for _, c := range n.ChildNodes().All() {
 		if c == node || c.Contains(node) {
 			return true

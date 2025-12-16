@@ -93,6 +93,7 @@ func (s *NodeTestSuite) TestContains() {
 	<div id="sibling"></div>
 </body>`)
 	parent := doc.GetElementById("parent-1")
+	s.Assert().True(parent.Contains(parent), "The node itself")
 	s.Assert().True(parent.Contains(doc.GetElementById("1")), "Direct child node")
 	s.Assert().True(parent.Contains(doc.GetElementById("3")), "Great grand child node")
 	s.Assert().False(parent.Contains(doc.GetElementById("sibling")), "Sibling node")
