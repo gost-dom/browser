@@ -3,6 +3,7 @@ package js
 import (
 	"fmt"
 	"log/slog"
+	"strconv"
 )
 
 type jsValueLogger[T any] struct{ v Value[T] }
@@ -40,7 +41,12 @@ func (l thisLogValuer[T]) LogValue() slog.Value {
 type argsLogValuer[T any] struct{ ctx CallbackContext[T] }
 
 func (l argsLogValuer[T]) LogValue() slog.Value {
-	return slog.AnyValue(l.ctx.Args())
+	args := l.ctx.Args()
+	loggers := make([]slog.Attr, len(args))
+	for i, a := range args {
+		loggers[i] = slog.Any(strconv.Itoa(i), jsValueLogger[T]{a})
+	}
+	return slog.GroupValue(loggers...)
 }
 
 func LogAttr[T any](key string, val Value[T]) slog.Attr {
