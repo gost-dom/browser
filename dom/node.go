@@ -194,12 +194,16 @@ type Node interface {
 	nodeDocument() Document
 	notify(ChangeEvent)
 	cloneNode(Document, bool) Node
+	revision() int // Internal optimizations
 }
 
 type node struct {
 	event.EventTarget
 	entity.Entity
-	self       Node
+	self Node
+	// revision of the node is incremented on any change. Used by
+	// LiveHtmlCollection to check if a note has been changed.
+	rev        int
 	childNodes NodeList
 	parent     Node
 	document   Document
@@ -651,7 +655,10 @@ func (n *node) RenderChildren(builder *strings.Builder) {
 
 func (n *node) String() string { return n.self.NodeName() }
 
+func (n *node) revision() int { return n.rev }
+
 func (n *node) notify(event ChangeEvent) {
+	n.rev++
 	for _, o := range n.observers {
 		o.Process(event)
 	}

@@ -11,10 +11,11 @@ func (f predicateFunc[T]) Match(t T) bool { return f(t) }
 // liveHtmlCollection implements interface HTML collection and delivers a live
 // collection of a subtree mathing a specific filter.
 type liveHtmlCollection struct {
-	root   Element
-	cache  []*liveHtmlCollection
-	items  []Element
-	filter predicate[Element]
+	nodeRev int
+	root    Element
+	cache   []*liveHtmlCollection
+	items   []Element
+	filter  predicate[Element]
 }
 
 func newLiveHtmlCollection(n Node, filter predicate[Element]) *liveHtmlCollection {
@@ -30,6 +31,12 @@ func newLiveHtmlCollection(n Node, filter predicate[Element]) *liveHtmlCollectio
 var _ HTMLCollection = liveHtmlCollection{}
 
 func (c *liveHtmlCollection) checkCache() {
+	nodeRev := c.root.revision()
+	if nodeRev == c.nodeRev {
+		return
+	}
+	c.nodeRev = nodeRev
+
 	children := c.root.Children().All()
 	c.items = make([]Element, 0)
 	c.cache = make([]*liveHtmlCollection, len(children))
