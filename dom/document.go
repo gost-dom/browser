@@ -17,6 +17,7 @@ const (
 
 type Document interface {
 	RootNode
+	ElementOrDocument
 	ActiveElement() Element
 	Body() Element
 	Head() Element
@@ -29,7 +30,6 @@ type Document interface {
 	CreateElement(string) Element
 	CreateProcessingInstruction(string, string) ProcessingInstruction
 	DocumentElement() Element
-	GetElementsByTagName(string) NodeList
 	ImportNode(Node, bool) Node
 }
 
@@ -37,6 +37,7 @@ type document struct {
 	node
 	parentNode
 	rootNode
+	elementOrDocument
 	logger        *slog.Logger
 	activeElement Element
 }
@@ -45,6 +46,7 @@ func NewDocument(parentEventTarget event.EventTarget) Document {
 	result := &document{node: newNode(nil)}
 	result.parentNode = parentNode{&result.node}
 	result.rootNode = rootNode{&result.node}
+	result.elementOrDocument = elementOrDocument{result.parentNode}
 	// Hmmm, can document be replaced; and now the old doc's event goes to a
 	// window they shouldn't?
 	// What about disconnected documents, e.g. `new Document()` in the browser?
@@ -152,14 +154,6 @@ func (d *document) NodeType() NodeType { return NodeTypeDocument }
 
 func (d *document) SetActiveElement(e Element) {
 	d.activeElement = e
-}
-
-func (n *document) GetElementsByTagName(qualifiedName string) NodeList {
-	res, err := n.QuerySelectorAll(qualifiedName)
-	if err != nil {
-		return &nodeList{}
-	}
-	return res
 }
 
 func (d *document) CreateProcessingInstruction(target string, data string) ProcessingInstruction {

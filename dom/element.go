@@ -18,6 +18,7 @@ type Element interface {
 	ElementContainer
 	ChildNode
 	NonDocumentTypeChildNode
+	ElementOrDocument
 	ClassList() DOMTokenList
 	Closest(string) (Element, error)
 	HasAttribute(name string) bool
@@ -26,7 +27,6 @@ type Element interface {
 	RemoveAttribute(name string)
 	GetAttributeNode(string) Attr
 	SetAttributeNode(Attr) (Attr, error)
-	GetElementsByTagName(string) NodeList
 	RemoveAttributeNode(Attr) (Attr, error)
 	Attributes() NamedNodeMap
 	InsertAdjacentElement(position string, element Element) (Element, error)
@@ -53,6 +53,7 @@ type element struct {
 	node
 	childNode
 	parentNode
+	elementOrDocument
 	tagName          string
 	namespace        string
 	localName        string
@@ -73,6 +74,7 @@ func NewElement(tagName string, ownerDocument Document) Element {
 	}
 	res.childNode = childNode{&res.node}
 	res.parentNode = parentNode{&res.node}
+	res.elementOrDocument = elementOrDocument{res.parentNode}
 	res.SetSelf(res)
 	return res
 }
@@ -452,12 +454,4 @@ func (e *element) PreviousElementSibling() Element {
 			return res
 		}
 	}
-}
-
-func (n *element) GetElementsByTagName(qualifiedName string) NodeList {
-	res, err := n.QuerySelectorAll(qualifiedName)
-	if err != nil {
-		panic(fmt.Sprintf("element.GetElementsByTagName: %v", err))
-	}
-	return res
 }
