@@ -55,7 +55,7 @@ func (c domErrorCode) String() string {
 	case wrong_document_err:
 		return "wrong_document_err"
 	case invalid_character_err:
-		return "invalid_character_err"
+		return "InvalidCharacterError"
 	case no_data_allowed_err:
 		return "no_data_allowed_err"
 	case no_modification_allowed_err:

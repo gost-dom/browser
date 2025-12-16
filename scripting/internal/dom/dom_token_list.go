@@ -37,5 +37,9 @@ func (l DOMTokenList[T]) toggle(args js.CallbackContext[T]) (js.Value[T], error)
 			return args.NewBoolean(false), nil
 		}
 	}
-	return args.NewBoolean(instance.Toggle(token)), nil
+	res, err := instance.Toggle(token)
+	if err != nil {
+		return nil, err
+	}
+	return args.NewBoolean(res), nil
 }

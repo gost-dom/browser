@@ -19,14 +19,21 @@ func NewDOMTokenList(attribute string, element Element) DOMTokenList {
 	return DOMTokenList{attribute, element}
 }
 
+func validateDomToken(token string) error {
+	if token == "" {
+		return newSyntaxError("token is empty")
+	}
+	if strings.Contains(token, " ") {
+		return newInvalidCharacterError("token contains whitespace")
+	}
+	return nil
+}
+
 func (l DOMTokenList) Add(tokens ...string) error {
 	tokenList := l.getTokens()
 	for _, token := range tokens {
-		if token == "" {
-			return newSyntaxError("token is empty")
-		}
-		if strings.Contains(token, " ") {
-			return newInvalidCharacterError("token contains whitespace")
+		if err := validateDomToken(token); err != nil {
+			return err
 		}
 		if !slices.Contains(tokenList, token) {
 			tokenList = append(tokenList, token)
@@ -97,13 +104,16 @@ func (l DOMTokenList) Replace(oldToken string, newToken string) bool {
 	}
 }
 
-func (l DOMTokenList) Toggle(token string) bool {
+func (l DOMTokenList) Toggle(token string) (bool, error) {
+	if err := validateDomToken(token); err != nil {
+		return false, err
+	}
 	if l.Contains(token) {
 		l.Remove(token)
-		return false
+		return false, nil
 	} else {
 		l.Add(token)
-		return true
+		return true, nil
 	}
 }
 
