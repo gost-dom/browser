@@ -36,6 +36,15 @@ func TestDocumentFindElementById(t *testing.T) {
 	gomega.NewWithT(t).Expect(elm).To(HaveOuterHTML(`<div id="grand-child"></div>`))
 }
 
+func TestGetElementsByTagName(t *testing.T) {
+	doc := ParseHtmlString(`<body><div id="1"></div><div id="2"></div></body>`)
+	divs := doc.GetElementsByTagName("div")
+	assert.Equal(t, 2, divs.Length())
+
+	nosuchtags := doc.GetElementsByTagName("nosuchtag")
+	assert.Equal(t, 0, nosuchtags.Length())
+}
+
 func TestDocumentImportNode(t *testing.T) {
 	doc := ParseHtmlString(`
 		<body>
