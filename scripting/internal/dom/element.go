@@ -46,7 +46,7 @@ func (e *Element[T]) decodeElement(s js.Scope[T], v js.Value[T]) (dom.Element, e
 
 func (w *Element[T]) toHTMLCollection(
 	cbCtx js.CallbackContext[T],
-	c dom.NodeList,
+	c dom.HTMLCollection,
 ) (js.Value[T], error) {
-	return codec.EncodeEntity(cbCtx, c)
+	return cbCtx.Constructor("HTMLCollection").NewInstance(c)
 }

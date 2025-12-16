@@ -46,7 +46,7 @@ func NewDocument(parentEventTarget event.EventTarget) Document {
 	result := &document{node: newNode(nil)}
 	result.parentNode = parentNode{&result.node}
 	result.rootNode = rootNode{&result.node}
-	result.elementOrDocument = elementOrDocument{result.parentNode}
+	result.elementOrDocument = elementOrDocument{&result.node}
 	// Hmmm, can document be replaced; and now the old doc's event goes to a
 	// window they shouldn't?
 	// What about disconnected documents, e.g. `new Document()` in the browser?

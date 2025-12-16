@@ -45,6 +45,37 @@ func TestGetElementsByTagName(t *testing.T) {
 	assert.Equal(t, 0, nosuchtags.Length())
 }
 
+func TestGetElementsByTagNameReturnsALiveCollection(t *testing.T) {
+	doc := ParseHtmlString(`<body><div id="1"></div><div id="2"></div></body>`)
+	divs := doc.GetElementsByTagName("div")
+	assert.Equal(t, 2, divs.Length())
+
+	t.Run("Adding a non-matching element", func(t *testing.T) {
+		doc.Body().Append(doc.CreateElement("p"))
+		assert.Equal(t, 2, divs.Length())
+	})
+
+	t.Run("Adding a matching element is placed in the right position", func(t *testing.T) {
+		newDiv := doc.CreateElement("div")
+		newDiv.SetID("Test")
+		doc.Body().InsertBefore(newDiv, doc.Body().FirstChild())
+		assert.Equal(t, 3, divs.Length())
+		assert.Equal(t, "Test", divs.Item(0).ID())
+	})
+
+	t.Run("Adding elements further down", func(t *testing.T) {
+		newDiv := doc.CreateElement("div")
+		newDiv.SetID("Test2")
+
+		doc.GetElementById("2").Append(
+			newDiv,
+			doc.CreateElement("p"),
+		)
+		assert.Equal(t, 4, divs.Length())
+		assert.Equal(t, "Test2", divs.Item(3).ID())
+	})
+}
+
 func TestDocumentImportNode(t *testing.T) {
 	doc := ParseHtmlString(`
 		<body>

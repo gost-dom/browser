@@ -56,7 +56,6 @@ type element struct {
 	elementOrDocument
 	tagName          string
 	namespace        string
-	localName        string
 	attributes       Attributes
 	selfElement      Element
 	selfRenderer     Renderer
@@ -74,7 +73,7 @@ func NewElement(tagName string, ownerDocument Document) Element {
 	}
 	res.childNode = childNode{&res.node}
 	res.parentNode = parentNode{&res.node}
-	res.elementOrDocument = elementOrDocument{res.parentNode}
+	res.elementOrDocument = elementOrDocument{&res.node}
 	res.SetSelf(res)
 	return res
 }
@@ -129,7 +128,7 @@ func (e *element) TagName() string {
 }
 
 func (e *element) Namespace() string { return e.namespace }
-func (e *element) LocalName() string { return e.localName }
+func (e *element) LocalName() string { return e.tagName }
 
 func (e *element) ID() string {
 	id, _ := e.GetAttribute("id")

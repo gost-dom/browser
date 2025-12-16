@@ -65,7 +65,7 @@ func (w *Document[T]) createElement(cbCtx js.CallbackContext[T]) (js.Value[T], e
 
 func (w *Document[T]) toHTMLCollection(
 	cbCtx js.CallbackContext[T],
-	c dom.NodeList,
+	c dom.HTMLCollection,
 ) (js.Value[T], error) {
-	return codec.EncodeEntity(cbCtx, c)
+	return cbCtx.Constructor("HTMLCollection").NewInstance(c)
 }
