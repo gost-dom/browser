@@ -85,8 +85,8 @@ func (w DOMTokenList[T]) remove(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 	if errArg1 != nil {
 		return nil, errArg1
 	}
-	instance.Remove(tokens...)
-	return nil, nil
+	errCall := instance.Remove(tokens...)
+	return nil, errCall
 }
 
 func (w DOMTokenList[T]) replace(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

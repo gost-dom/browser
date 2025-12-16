@@ -21,6 +21,7 @@ var domRules = SpecRules{
 	}},
 	"DOMTokenList": {Operations: OperationRules{
 		"add":    {HasError: true},
+		"remove": {HasError: true},
 		"toggle": {HasError: true},
 	}},
 	"Node": {Operations: OperationRules{

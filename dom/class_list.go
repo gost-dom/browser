@@ -82,9 +82,12 @@ func (l DOMTokenList) Item(index int) (string, bool) {
 // Remove implements DOMTokenList.Remove
 //
 // see also: https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/remove
-func (l DOMTokenList) Remove(token ...string) {
+func (l DOMTokenList) Remove(token ...string) error {
 	tokens := l.getTokens()
 	for _, t := range token {
+		if err := validateDomToken(t); err != nil {
+			return err
+		}
 		itemIndex := slices.Index(tokens, t)
 		if itemIndex >= 0 {
 			tokens = slices.Delete(tokens, itemIndex, itemIndex+1)
@@ -92,6 +95,7 @@ func (l DOMTokenList) Remove(token ...string) {
 
 	}
 	l.setTokens(tokens)
+	return nil
 }
 
 func (l DOMTokenList) Replace(oldToken string, newToken string) bool {
@@ -105,15 +109,12 @@ func (l DOMTokenList) Replace(oldToken string, newToken string) bool {
 }
 
 func (l DOMTokenList) Toggle(token string) (bool, error) {
-	if err := validateDomToken(token); err != nil {
-		return false, err
-	}
 	if l.Contains(token) {
 		l.Remove(token)
 		return false, nil
 	} else {
-		l.Add(token)
-		return true, nil
+		err := l.Add(token)
+		return true, err
 	}
 }
 
