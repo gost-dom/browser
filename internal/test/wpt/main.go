@@ -167,6 +167,9 @@ func testResults(
 					if err == nil && len(testCaseRes.TestCases) == 0 {
 						err = errors.New("Test suite returned no results")
 					}
+					if err == nil {
+						err = testCaseRes.Error
+					}
 					resultChan <- testResult{
 						testCase: testCase,
 						res:      testCaseRes,
@@ -342,7 +345,11 @@ func main() {
 		suiteCount++
 		currentSuiteTestCount := len(res.TestCases)
 		testCount = testCount + currentSuiteTestCount
-		if err == nil {
+		if err != nil {
+			// body.AppendChild(element("div", err.Error()))
+			logger.Error("ERROR", "err", err)
+			errs = append(errs, err)
+		} else {
 			body.AppendChild(element("p", "All tests pass"))
 			passedSuiteCount++
 			continue
@@ -354,10 +361,6 @@ func main() {
 				xhtml.Attribute{Key: "target", Val: "_blank"},
 				testCase.URL())),
 		)
-		body.AppendChild(element("div", err.Error()))
-
-		logger.Error("ERROR", "err", err)
-		errs = append(errs, err)
 
 		tbl := element("table")
 		thead := element("thead")
