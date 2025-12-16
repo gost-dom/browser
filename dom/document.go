@@ -1,7 +1,6 @@
 package dom
 
 import (
-	"fmt"
 	"log/slog"
 
 	"github.com/gost-dom/browser/dom/event"
@@ -154,7 +153,7 @@ func (d *document) SetActiveElement(e Element) {
 func (n *document) GetElementsByTagName(qualifiedName string) NodeList {
 	res, err := n.QuerySelectorAll(qualifiedName)
 	if err != nil {
-		panic(fmt.Sprintf("document.GetElementsByTagName: %v", err))
+		return &nodeList{}
 	}
 	return res
 }
