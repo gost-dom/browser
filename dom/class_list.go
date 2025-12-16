@@ -66,7 +66,7 @@ func (l DOMTokenList) SetValue(val string) {
 
 func (l DOMTokenList) Item(index int) (string, bool) {
 	tokens := l.getTokens()
-	if index >= len(tokens) {
+	if index >= len(tokens) || index < 0 {
 		return "", false
 	}
 	return tokens[index], true
