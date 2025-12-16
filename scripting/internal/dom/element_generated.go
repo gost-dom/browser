@@ -227,7 +227,18 @@ func (w Element[T]) getElementsByTagName(cbCtx js.CallbackContext[T]) (res js.Va
 }
 
 func (w Element[T]) getElementsByTagNameNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.getElementsByTagNameNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	instance, errInst := js.As[dom.Element](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	namespace, errArg1 := js.ConsumeArgument(cbCtx, "namespace", codec.ZeroValue, codec.DecodeString)
+	localName, errArg2 := js.ConsumeArgument(cbCtx, "localName", nil, codec.DecodeString)
+	err = gosterror.First(errArg1, errArg2)
+	if err != nil {
+		return nil, err
+	}
+	result := instance.GetElementsByTagNameNS(namespace, localName)
+	return w.toHTMLCollection(cbCtx, result)
 }
 
 func (w Element[T]) getElementsByClassName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

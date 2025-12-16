@@ -43,6 +43,8 @@ func (c *liveHtmlCollection) checkCache() {
 	if c.filter.Match(c.root) {
 		c.items = append(c.items, c.root)
 	}
+
+	// TODO: Optimization possibility, check if cache is valid in sub branches
 	for i, child := range children {
 		subItem := &liveHtmlCollection{root: child, filter: c.filter}
 		subItem.checkCache()
