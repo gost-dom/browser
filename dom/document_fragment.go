@@ -8,14 +8,14 @@ type DocumentFragment interface {
 
 type documentFragment struct {
 	node
+	parentNode
 	rootNode
-	ElementParent
 }
 
 func NewDocumentFragment(ownerDocument Document) DocumentFragment {
 	result := &documentFragment{node: newNode(ownerDocument)}
-	result.rootNode = newRootNode(&result.node)
-	result.ElementParent = result.rootNode.parent
+	result.parentNode = parentNode{&result.node}
+	result.rootNode = rootNode{&result.node}
 	result.SetSelf(result)
 	return result
 }

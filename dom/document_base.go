@@ -18,12 +18,7 @@ type RootNode interface {
 }
 
 type rootNode struct {
-	node   *node
-	parent ElementParent
-}
-
-func newRootNode(node *node) rootNode {
-	return rootNode{node, newParentNode(node)}
+	node *node
 }
 
 type rootNodeHelper struct{ RootNode }
