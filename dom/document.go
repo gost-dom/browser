@@ -2,7 +2,6 @@ package dom
 
 import (
 	"fmt"
-	"io"
 	"log/slog"
 
 	"github.com/gost-dom/browser/dom/event"
@@ -22,7 +21,6 @@ const (
 // removed from the public API in a future version
 type DocumentParentWindow interface {
 	event.EventTarget
-	ParseFragment(ownerDocument Document, reader io.Reader) (DocumentFragment, error)
 }
 
 type Document interface {
@@ -41,7 +39,6 @@ type Document interface {
 	DocumentElement() Element
 	GetElementsByTagName(string) NodeList
 	ImportNode(Node, bool) Node
-	parseFragment(reader io.Reader) (DocumentFragment, error)
 
 	window() DocumentParentWindow
 }
@@ -90,10 +87,6 @@ func (d *document) cloneNode(doc Document, deep bool) Node {
 		result.Append(d.cloneChildren()...)
 	}
 	return result
-}
-
-func (d *document) parseFragment(reader io.Reader) (DocumentFragment, error) {
-	return d.ownerWindow.ParseFragment(d.nodeDocument(), reader)
 }
 
 func (d *document) ImportNode(n Node, deep bool) Node {

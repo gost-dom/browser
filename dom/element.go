@@ -173,14 +173,14 @@ func (e *element) SetOuterHTML(html string) error {
 			constants.BUG_ISSUE_DETAILS,
 		)
 	}
-	fragment, err := e.nodeDocument().parseFragment(strings.NewReader(html))
+	fragment, err := ParseFragment(e.nodeDocument(), strings.NewReader(html))
 	if err == nil {
 		_, err = parent.ReplaceChild(fragment, e.getSelf())
 	}
 	return err
 }
 func (e *element) SetInnerHTML(html string) error {
-	fragment, err := e.nodeDocument().parseFragment(strings.NewReader(html))
+	fragment, err := ParseFragment(e.nodeDocument(), strings.NewReader(html))
 	if err == nil {
 		err = e.ReplaceChildren(fragment)
 	}
@@ -343,7 +343,7 @@ func (n *element) InsertAdjacentText(position string, text string) (err error) {
 }
 
 func (n *element) InsertAdjacentHTML(position string, text string) error {
-	fragment, err := n.nodeDocument().parseFragment(strings.NewReader(text))
+	fragment, err := ParseFragment(n.nodeDocument(), strings.NewReader(text))
 	if err == nil {
 		err = n.insertAdjacentNode(position, fragment)
 	}
