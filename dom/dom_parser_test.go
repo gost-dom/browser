@@ -1,4 +1,4 @@
-package html_test
+package dom_test
 
 import (
 	"fmt"

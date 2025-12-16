@@ -33,7 +33,7 @@ func mustAppendChild(p, c dom.Node) dom.Node {
 //
 //	<html><head></head><body><h1>Gost-DOM</h1></body></html>
 func NewHTMLDocument(window Window) HTMLDocument {
-	doc := newHTMLDocument(window)
+	doc := NewEmptyHtmlDocument(window)
 	body := doc.CreateElement("body")
 	docEl := doc.CreateElement("html")
 	h1 := mustAppendChild(body, doc.CreateElement("h1"))
@@ -46,9 +46,9 @@ func NewHTMLDocument(window Window) HTMLDocument {
 	return doc
 }
 
-// newHTMLDocument is used internally to create an empty HTML when parsing an
+// NewEmptyHtmlDocument is used internally to create an empty HTML when parsing an
 // HTML input.
-func newHTMLDocument(window Window) HTMLDocument {
+func NewEmptyHtmlDocument(window Window) HTMLDocument {
 	var parent dom.DocumentParentWindow
 	if window != nil {
 		parent = window

@@ -1,40 +1,22 @@
-package html
+package dom
 
 import (
 	"fmt"
 	"io"
 
-	"github.com/gost-dom/browser/dom"
-
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
 )
 
-type domParser struct{}
-
-// Parses a HTML or XML from an [io.Reader] instance. The parsed nodes will
-// have reference the window, e.g. letting events bubble to the window itself.
-// The document pointer will be replaced by the created document.
-//
-// The document is updated using a pointer rather than returned as a value, as
-// parseing process can e.g. execute script tags that require the document to
-// be set on the window _before_ the script is executed.
-func (p domParser) ParseReader(window Window, document *dom.Document, reader io.Reader) error {
-	*document = NewEmptyHtmlDocument(window)
-	return parseIntoDocument(*document, reader)
-}
-
-func (p domParser) ParseFragment(
-	document dom.Document,
-	reader io.Reader,
-) (dom.DocumentFragment, error) {
-	return ParseFragment(document, reader)
+// ParseReader parses an HTML or XML document from an [io.Reader] instance.
+func ParseReader(document Document, reader io.Reader) error {
+	return parseIntoDocument(document, reader)
 }
 
 func ParseFragment(
-	ownerDocument dom.Document,
+	ownerDocument Document,
 	reader io.Reader,
-) (dom.DocumentFragment, error) {
+) (DocumentFragment, error) {
 	nodes, err := html.ParseFragment(reader, &html.Node{
 		Type:     html.ElementNode,
 		Data:     "body",
@@ -49,13 +31,7 @@ func ParseFragment(
 	return result, err
 }
 
-func NewDOMParser() domParser { return domParser{} }
-
-type ElementSteps interface {
-	AppendChild(parent dom.Node, child dom.Node) dom.Node
-}
-
-func parseIntoDocument(doc dom.Document, r io.Reader) error {
+func parseIntoDocument(doc Document, r io.Reader) error {
 	node, err := html.Parse(r)
 	if err != nil {
 		return err
@@ -64,9 +40,6 @@ func parseIntoDocument(doc dom.Document, r io.Reader) error {
 	return nil
 }
 
-// convertNS converts the namespace URI from x/net/html to the _right_
-// namespace.
-// SVG elements have namespace "svg"
 func convertNS(ns string) string {
 	switch ns {
 	case "svg":
@@ -77,15 +50,15 @@ func convertNS(ns string) string {
 }
 
 func createElementFromNode(
-	d dom.Document,
-	parent dom.Node,
+	d Document,
+	parent Node,
 	source *html.Node,
-) dom.Element {
+) Element {
 	if parent == nil {
 		panic("Elements must have a parent")
 	}
 
-	var newElm dom.Element
+	var newElm Element
 	if source.Namespace == "" {
 		newElm = d.CreateElement(source.Data)
 	} else {
@@ -102,8 +75,8 @@ func createElementFromNode(
 	return newElm
 }
 
-func iterateChildren(d dom.Document, dest dom.Node, source *html.Node) {
-	if dest, ok := dest.(interface{ Content() dom.DocumentFragment }); ok {
+func iterateChildren(d Document, dest Node, source *html.Node) {
+	if dest, ok := dest.(interface{ Content() DocumentFragment }); ok {
 		iterateChildren(d, dest.Content(), source)
 		return
 	}
@@ -112,7 +85,7 @@ func iterateChildren(d dom.Document, dest dom.Node, source *html.Node) {
 	}
 }
 
-func iterate(d dom.Document, dest dom.Node, child *html.Node) {
+func iterate(d Document, dest Node, child *html.Node) {
 	switch child.Type {
 	case html.ElementNode:
 		createElementFromNode(d, dest, child)

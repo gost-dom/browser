@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/gost-dom/browser/dom"
-	. "github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -14,7 +14,8 @@ func initDOMParser[T any](ft js.Class[T]) {
 	ft.CreatePrototypeMethod("parseFromString", domParserParseFromString)
 }
 func domParserParseFromString[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	window := cbCtx.Window()
+	win := cbCtx.Window()
+	doc := html.NewEmptyHtmlDocument(win)
 	html, err0 := js.ConsumeArgument(cbCtx, "html", nil, codec.DecodeString)
 	contentType, err1 := js.ConsumeArgument(cbCtx, "contentType", nil, codec.DecodeString)
 	if err := errors.Join(err0, err1); err != nil {
@@ -25,9 +26,7 @@ func domParserParseFromString[T any](cbCtx js.CallbackContext[T]) (js.Value[T], 
 			"DOMParser.parseFromString only supports text/html yet",
 		)
 	}
-	domParser := NewDOMParser()
-	var doc dom.Document
-	if err := domParser.ParseReader(window, &doc, strings.NewReader(html)); err == nil {
+	if err := dom.ParseReader(doc, strings.NewReader(html)); err == nil {
 		return codec.EncodeEntity(cbCtx, doc)
 	} else {
 		return nil, err

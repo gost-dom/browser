@@ -162,7 +162,6 @@ type window struct {
 	scriptContext       ScriptContext
 	httpClient          http.Client
 	baseLocation        string
-	domParser           domParser
 	logger              *slog.Logger
 	deferredScripts     []*htmlScriptElement
 	context             context.Context
@@ -191,7 +190,6 @@ func newWindow(windowOptions ...WindowOption) *window {
 	}
 	win.history.window = win
 	win.history.pushLoad(win.baseLocation)
-	win.domParser = domParser{}
 	win.initScriptEngine()
 	win.document = NewHTMLDocument(win)
 	event.SetEventTargetSelf(win)
@@ -260,7 +258,7 @@ func (w *window) ParseFragment(
 	ownerDocument dom.Document,
 	reader io.Reader,
 ) (dom.DocumentFragment, error) {
-	return w.domParser.ParseFragment(ownerDocument, reader)
+	return dom.ParseFragment(ownerDocument, reader)
 }
 
 // NewWindowReader will create a new window and load parse the HTML from the
@@ -279,7 +277,8 @@ func NewWindowReader(reader io.Reader, windowOptions ...WindowOption) (Window, e
 }
 
 func (w *window) parseReader(reader io.Reader) error {
-	err := w.domParser.ParseReader(w, &w.document, reader)
+	w.document = NewEmptyHtmlDocument(w)
+	err := dom.ParseReader(w.document, reader)
 	for _, s := range w.deferredScripts {
 		s.run()
 	}
