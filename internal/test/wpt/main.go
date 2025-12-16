@@ -27,8 +27,10 @@ type WebPlatformTest struct {
 }
 
 type WptSuiteResult struct {
-	TestCases []WebPlatformTestCase
-	Error     error
+	TestCases   []WebPlatformTestCase
+	TotalCount  int
+	PassedCount int
+	Error       error
 }
 
 func (s WebPlatformTest) Run(
@@ -83,10 +85,15 @@ func (s WebPlatformTest) parseResults(win html.Window) (res WptSuiteResult) {
 			Msg:     tds.Item(2).(dom.Element).OuterHTML(),
 		}
 		res.TestCases[i] = result
-		if !result.Success {
+
+		res.TotalCount++
+		if result.Success {
+			res.PassedCount++
+		} else {
 			errs = append(errs, fmt.Errorf("fail: %s", result.Name))
 		}
 	}
+
 	res.Error = errors.Join(errs...)
 	return
 }
@@ -343,17 +350,15 @@ func main() {
 		prevHeaders = testCase.PathElements
 
 		suiteCount++
-		currentSuiteTestCount := len(res.TestCases)
-		testCount = testCount + currentSuiteTestCount
-		if err != nil {
-			// body.AppendChild(element("div", err.Error()))
-			logger.Error("ERROR", "err", err)
-			errs = append(errs, err)
-		} else {
+		testCount = testCount + res.TotalCount
+		passedTestCount = passedTestCount + res.PassedCount
+		if err == nil {
 			body.AppendChild(element("p", "All tests pass"))
 			passedSuiteCount++
 			continue
 		}
+		logger.Error("ERROR", "err", err)
+		errs = append(errs, err)
 
 		body.AppendChild(
 			element("div", element("span", "Full path: "), element("a",
@@ -379,7 +384,6 @@ func main() {
 			pass := "FAIL"
 			if row.Success {
 				pass = "PASS"
-				passedTestCount++
 			}
 			tr.AppendChild(element("td", pass))
 			tr.AppendChild(element("td", row.Name))
