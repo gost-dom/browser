@@ -22,12 +22,15 @@ type CharacterData interface {
 }
 
 type characterData struct {
+	node
 	childNode
 	data string
 }
 
-func newCharacterData(text string, ownerDocument Document) characterData {
-	return characterData{newChildNode(ownerDocument), text}
+func newCharacterData(text string, ownerDocument Document) *characterData {
+	res := &characterData{node: newNode(ownerDocument), data: text}
+	res.childNode = childNode{&res.node}
+	return res
 }
 
 func (n *characterData) NodeValue() (string, bool) { return n.Data(), true }
@@ -67,7 +70,7 @@ type Comment interface {
 }
 
 type comment struct {
-	characterData
+	*characterData
 }
 
 func NewComment(text string, ownerDocument Document) Comment {
@@ -104,7 +107,7 @@ type Text interface {
 }
 
 type textNode struct {
-	characterData
+	*characterData
 }
 
 func NewText(text string, ownerDocument Document) Text {
@@ -146,7 +149,7 @@ type ProcessingInstruction interface {
 }
 
 type processingInstruction struct {
-	characterData
+	*characterData
 	target string
 }
 

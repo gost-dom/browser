@@ -50,6 +50,7 @@ type Element interface {
 }
 
 type element struct {
+	node
 	childNode
 	ElementParent
 	tagName          string
@@ -65,14 +66,15 @@ type element struct {
 }
 
 func NewElement(tagName string, ownerDocument Document) Element {
-	result := &element{
-		childNode:  newChildNode(ownerDocument),
+	res := &element{
+		node:       newNode(ownerDocument),
 		tagName:    tagName,
 		attributes: Attributes(nil),
 	}
-	result.ElementParent = newParentNode(&result.node)
-	result.SetSelf(result)
-	return result
+	res.childNode = childNode{&res.node}
+	res.ElementParent = newParentNode(&res.node)
+	res.SetSelf(res)
+	return res
 }
 
 func (e *element) IsEqualNode(n Node) bool {

@@ -9,14 +9,16 @@ type DocumentType interface {
 }
 
 type documentType struct {
+	node
 	childNode
 	name string
 }
 
 func NewDocumentType(name string, ownerDocument Document) DocumentType {
-	result := &documentType{newChildNode(ownerDocument), name}
-	result.SetSelf(result)
-	return result
+	res := &documentType{node: newNode(ownerDocument)}
+	res.childNode = childNode{&res.node}
+	res.SetSelf(res)
+	return res
 }
 
 func (t *documentType) Name() string       { return t.name }

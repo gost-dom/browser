@@ -5,13 +5,14 @@ type ChildNode interface {
 }
 
 type childNode struct {
-	node
+	node *node
 }
 
-func newChildNode(ownerDocument Document) childNode { return childNode{newNode(ownerDocument)} }
-
-func (n *childNode) Remove() {
-	s := n.self
+func (n childNode) Remove() {
+	s := n.node.self
+	if s == nil {
+		panic("NIL SELF")
+	}
 	if parent := s.ParentNode(); parent != nil {
 		parent.RemoveChild(s)
 	}
