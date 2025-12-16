@@ -34,13 +34,17 @@ type Document interface {
 }
 
 type document struct {
+	node
 	rootNode
+	ElementParent
 	logger        *slog.Logger
 	activeElement Element
 }
 
 func NewDocument(parentEventTarget event.EventTarget) Document {
-	result := &document{rootNode: newRootNode(nil)}
+	result := &document{node: newNode(nil)}
+	result.rootNode = newRootNode(&result.node)
+	result.ElementParent = result.rootNode.parent
 	// Hmmm, can document be replaced; and now the old doc's event goes to a
 	// window they shouldn't?
 	// What about disconnected documents, e.g. `new Document()` in the browser?

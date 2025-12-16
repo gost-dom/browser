@@ -18,12 +18,11 @@ type RootNode interface {
 }
 
 type rootNode struct {
-	*node
-	ElementParent
+	node   *node
+	parent ElementParent
 }
 
-func newRootNode(ownerDoc Document) rootNode {
-	node := newNodePtr(ownerDoc)
+func newRootNode(node *node) rootNode {
 	return rootNode{node, newParentNode(node)}
 }
 

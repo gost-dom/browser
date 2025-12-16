@@ -7,11 +7,15 @@ type DocumentFragment interface {
 }
 
 type documentFragment struct {
+	node
 	rootNode
+	ElementParent
 }
 
 func NewDocumentFragment(ownerDocument Document) DocumentFragment {
-	result := &documentFragment{newRootNode(ownerDocument)}
+	result := &documentFragment{node: newNode(ownerDocument)}
+	result.rootNode = newRootNode(&result.node)
+	result.ElementParent = result.rootNode.parent
 	result.SetSelf(result)
 	return result
 }
