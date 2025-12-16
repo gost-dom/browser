@@ -45,6 +45,13 @@ func TestClassList(t *testing.T) {
 	}
 	{
 		pair := initClassListPair(doc)
+		pair.element.SetAttribute("class", "c1 c2 ")
+		expect(pair.classList.Add("c3")).To(Succeed())
+		expect(pair.element).To(
+			HaveAttribute("class", "c1 c2 c3"), "Extra space in class is ignored")
+	}
+	{
+		pair := initClassListPair(doc)
 		pair.element.SetAttribute("class", "c1 c2")
 		expect(pair.classList.Add("c1", "c3")).To(Succeed())
 		expect(pair.element).To(
