@@ -28,7 +28,7 @@ func newLiveHtmlCollection(n Node, filter predicate[Element]) *liveHtmlCollectio
 	panic("Bad node")
 }
 
-var _ HTMLCollection = liveHtmlCollection{}
+var _ HTMLCollection = &liveHtmlCollection{}
 
 func (c *liveHtmlCollection) checkCache() {
 	nodeRev := c.root.revision()
@@ -55,13 +55,13 @@ func (c *liveHtmlCollection) checkCache() {
 	}
 }
 
-func (c liveHtmlCollection) All() []Element { c.checkCache(); return c.items }
-func (c liveHtmlCollection) Length() int    { c.checkCache(); return len(c.items) }
-func (c liveHtmlCollection) Item(i int) Element {
+func (c *liveHtmlCollection) All() []Element { c.checkCache(); return c.items }
+func (c *liveHtmlCollection) Length() int    { c.checkCache(); return len(c.items) }
+func (c *liveHtmlCollection) Item(i int) Element {
 	c.checkCache()
 	if i < 0 || i >= len(c.items) {
 		return nil
 	}
 	return c.items[i]
 }
-func (c liveHtmlCollection) NamedItem(string) Element { panic("NamedItem: Not implemented") }
+func (c *liveHtmlCollection) NamedItem(string) Element { panic("NamedItem: Not implemented") }
