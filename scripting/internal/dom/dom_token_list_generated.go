@@ -100,7 +100,10 @@ func (w DOMTokenList[T]) replace(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 	if err != nil {
 		return nil, err
 	}
-	result := instance.Replace(token, newToken)
+	result, errCall := instance.Replace(token, newToken)
+	if errCall != nil {
+		return nil, errCall
+	}
 	return codec.EncodeBoolean(cbCtx, result)
 }
 

@@ -20,9 +20,10 @@ var domRules = SpecRules{
 		"removeEventListener": {Arguments: ArgumentRules{"options": {Variadic: true}}},
 	}},
 	"DOMTokenList": {Operations: OperationRules{
-		"add":    {HasError: true},
-		"remove": {HasError: true},
-		"toggle": {HasError: true},
+		"add":     {HasError: true},
+		"remove":  {HasError: true},
+		"toggle":  {HasError: true},
+		"replace": {HasError: true},
 	}},
 	"Node": {Operations: OperationRules{
 		"insertBefore": {HasError: true},

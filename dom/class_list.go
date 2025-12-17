@@ -1,6 +1,7 @@
 package dom
 
 import (
+	"errors"
 	"iter"
 	"slices"
 	"strings"
@@ -98,13 +99,19 @@ func (l DOMTokenList) Remove(token ...string) error {
 	return nil
 }
 
-func (l DOMTokenList) Replace(oldToken string, newToken string) bool {
+func (l DOMTokenList) Replace(oldToken string, newToken string) (bool, error) {
+	if err := errors.Join(
+		validateDomToken(oldToken),
+		validateDomToken(newToken),
+	); err != nil {
+		return false, err
+	}
 	if l.Contains(oldToken) {
 		l.Remove(oldToken)
 		l.Add(newToken)
-		return true
+		return true, nil
 	} else {
-		return false
+		return false, nil
 	}
 }
 

@@ -134,15 +134,15 @@ func TestClassListRemove(t *testing.T) {
 func TestClassListReplace(t *testing.T) {
 	el := initElement()
 	el.SetAttribute("class", "a b c")
-	expect(
-		t,
-		el.ClassList().Replace("b", "x"),
-	).To(BeTrue(), "Replace return value for existing class")
-	expect(t, el).To(HaveAttribute("class", "a c x"), "Class attribute it updated")
+	g := gomega.NewGomegaWithT(t)
+	g.Expect(
+		el.ClassList().Replace("b", "x")).
+		To(BeTrue(), "Replace return value for existing class")
 
-	expect(
-		t,
-		el.ClassList().Replace("y", "x"),
-	).To(BeFalse(), "Replace return value for non-existing class")
-	expect(t, el).To(HaveAttribute("class", "a c x"), "Class attribute is preserved")
+	g.Expect(el).To(HaveAttribute("class", "a c x"), "Class attribute it updated")
+
+	g.Expect(
+		el.ClassList().Replace("y", "x")).
+		To(BeFalse(), "Replace return value for non-existing class")
+	g.Expect(el).To(HaveAttribute("class", "a c x"), "Class attribute is preserved")
 }
