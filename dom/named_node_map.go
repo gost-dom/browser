@@ -72,7 +72,7 @@ func (a *attr) htmlAttr() html.Attribute {
 }
 
 func (a *attr) cloneNode(doc Document, deep bool) Node {
-	return newAttr(a.attr.Key, a.attr.Val, doc)
+	return newAttrNS(a.attr.Namespace, a.attr.Key, a.attr.Val, doc)
 }
 
 func (m *namedNodeMap) All() iter.Seq[Attr] {

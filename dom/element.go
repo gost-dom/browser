@@ -428,7 +428,16 @@ func (e *element) String() string {
 
 func (e *element) cloneNode(doc Document, deep bool) Node {
 	tag := e.selfElement.TagName()
-	res := doc.CreateElement(tag)
+	// In an HTML setting, there's a difference between createElement("div") and
+	// createElementNs("", "div"), as the first creates an HTMLElement
+	// (HTMLDivElement) - the second creates an Element.
+	// TODO: Test the behaviour
+	var res Element
+	if e.namespace == "" {
+		res = doc.CreateElement(tag)
+	} else {
+		res = doc.CreateElementNS(e.namespace, tag)
+	}
 	for a := range e.Attributes().All() {
 		res.SetAttributeNode(a.CloneNode(deep).(Attr))
 	}
