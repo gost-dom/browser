@@ -40,7 +40,6 @@ func (s *FetchSuite) TestPrototypes() {
 
 type option struct {
 	logOptions []gosttest.HandlerOption
-	ctx        context.Context
 }
 
 type InitOption func(*option)
@@ -51,10 +50,6 @@ func WithLogOption(lo gosttest.HandlerOption) InitOption {
 
 func WithMinLogLevel(lvl slog.Level) InitOption {
 	return WithLogOption(gosttest.MinLogLevel(lvl))
-}
-
-func WithContext(ctx context.Context) InitOption {
-	return func(o *option) { o.ctx = ctx }
 }
 
 func testFetch(t *testing.T, e html.ScriptEngine) {
@@ -78,8 +73,6 @@ func testFetchAbortSignal(t *testing.T, e html.ScriptEngine) {
 	t.Log("testFetchAbortSignal: start")
 
 	g := gomega.NewWithT(t)
-	ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
-	defer cancel()
 	t.Log("testFetchAbortSignal: child context")
 
 	delayedHandler := &gosttest.PipeHandler{T: t}
@@ -87,7 +80,7 @@ func testFetchAbortSignal(t *testing.T, e html.ScriptEngine) {
 		"/index.html":     gosttest.StaticHTML(`<body>dummy</body>`),
 		"/slow-data.json": delayedHandler,
 	}
-	win := initWindow(t, e, handler, WithMinLogLevel(slog.LevelDebug), WithContext(ctx))
+	win := initWindow(t, e, handler, WithMinLogLevel(slog.LevelDebug))
 	t.Log("testFetchAbortSignal: window initialized")
 	win.MustRun(`
 		let resolved;
@@ -101,7 +94,7 @@ func testFetchAbortSignal(t *testing.T, e html.ScriptEngine) {
 	`)
 
 	t.Log("testFetchAbortSignal: script run")
-	win.Clock().ProcessEvents(ctx)
+	win.Clock().ProcessEvents(t.Context())
 	t.Log("testFetchAbortSignal: events processed")
 
 	t.Log("testFetchAbortSignal: eval ctrl")

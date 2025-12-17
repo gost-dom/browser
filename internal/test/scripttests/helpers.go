@@ -24,12 +24,8 @@ func initWindow(
 		opt(&o)
 	}
 	logger := gosttest.NewTestLogger(t, o.logOptions...)
-	ctx := o.ctx
-	if ctx == nil {
-		ctx = t.Context()
-	}
 	b := htmltest.NewBrowserHelper(t, browser.New(
-		browser.WithContext(ctx),
+		browser.WithContext(t.Context()),
 		browser.WithLogger(logger),
 		browser.WithHandler(h),
 		browser.WithScriptEngine(e),
