@@ -3,7 +3,7 @@ package sobekengine
 import (
 	"testing"
 
-	"github.com/gost-dom/browser/internal/test/scripttests"
+	"github.com/gost-dom/browser/scripting/internal/scripttests"
 	"github.com/gost-dom/browser/scripting/internal"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/browser/scripting/internal/testing/jsassert"
