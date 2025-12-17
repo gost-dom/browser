@@ -50,7 +50,7 @@ func InitBrowser(
 	return b
 }
 
-// InitBrowser creates a browser and an empty window with a script engine and a
+// InitWindow creates a browser and an empty window with a script engine and a
 // default set of options.
 //
 // See also: [InitBrowser]
