@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/scripting/internal/html/htmlsuite"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -42,7 +43,7 @@ func RunSuites(t *testing.T, e html.ScriptEngine) {
 	t.Run("CustomEvent", func(t *testing.T) { testCustomEvent(t, e) })
 	t.Run("URL", func(t *testing.T) { testURLSuite(t, e) })
 	t.Run("DOMParser", func(t *testing.T) { testDomParser(t, e) })
-	t.Run("HTMLAnchorElement", func(t *testing.T) { testHtmlAnchorElement(t, e) })
 	t.Run("MutationObserver", func(t *testing.T) { testMutationObserver(t, e) })
 	t.Run("Error handling", func(t *testing.T) { testErrorHandling(t, e) })
+	t.Run("html", func(t *testing.T) { htmlsuite.RunHtmlSuite(t, e) })
 }

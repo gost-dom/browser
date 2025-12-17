@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"time"
+
 	"github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/dom"
 	"github.com/gost-dom/browser/scripting/internal/fetch"
@@ -18,6 +20,23 @@ func Configure[T any](host js.ScriptEngine[T]) {
 	dom.Configure(host)
 	fetch.Configure(host)
 	configureConsole(host)
+
+	host.CreateFunction(
+		"requestAnimationFrame",
+		func(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+			f, err := js.ConsumeArgument(cbCtx, "fn", nil, codec.DecodeFunction)
+			if err != nil {
+				return nil, err
+			}
+			cbCtx.Clock().AddSafeTask(
+				func() {
+					if _, err := f.Call(cbCtx.GlobalThis()); err != nil {
+						js.HandleJSCallbackError(cbCtx, "requestAnimationFrame", err)
+					}
+				}, 10*time.Millisecond)
+			return nil, err
+		},
+	)
 }
 
 func Bootstrap[T any](reg js.ClassBuilder[T]) {

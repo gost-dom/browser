@@ -29,3 +29,9 @@ gost.assertTrue = (actual) => {
     return gost.error(`Expected true value. Got ${actual}`);
   }
 };
+
+gost.assertFalse = (actual) => {
+  if (actual !== false) {
+    return gost.error(`Expected false value. Got ${actual}`);
+  }
+};

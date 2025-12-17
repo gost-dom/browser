@@ -1,4 +1,4 @@
-package scripttests
+package htmlsuite
 
 import (
 	"testing"
