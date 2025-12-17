@@ -17,7 +17,7 @@ type tagNamePredicate struct {
 }
 
 func (p tagNamePredicate) Match(e Element) bool {
-	return strings.EqualFold(p.name, e.LocalName()) && strings.EqualFold(p.ns, e.Namespace())
+	return strings.EqualFold(p.name, e.LocalName()) && strings.EqualFold(p.ns, e.NamespaceURI())
 }
 
 type elementOrDocument struct {
