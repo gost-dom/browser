@@ -118,7 +118,8 @@ type AttributeRule struct {
 	SetterHasError bool
 	// Callable indicates that the attribute is implemented using methods in Go,
 	// rather than struct fields. Only has an effect on struct output types
-	Callable bool
+	Callable   bool
+	ZeroAsNull bool
 }
 
 // IdlTyper is the interface with the IdlType() method that can generate an

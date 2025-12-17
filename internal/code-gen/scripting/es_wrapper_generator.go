@@ -131,6 +131,7 @@ func CreateAttributes(
 			CustomImplementation: methodCustomization.CustomImplementation,
 			RetType:              attrType,
 			MethodCustomization:  methodCustomization,
+			ZeroAsNull:           customRule.ZeroAsNull,
 		}
 		if !attribute.Readonly {
 			setter = new(model.Callback)

@@ -40,8 +40,14 @@ var domRules = SpecRules{
 			"insertAdjacentText":    {HasError: true},
 		},
 		Attributes: AttributeRules{
-			"outerHTML": {SetterHasError: true},
-			"innerHTML": {SetterHasError: true},
+			"outerHTML":    {SetterHasError: true},
+			"innerHTML":    {SetterHasError: true},
+			"namespaceURI": {ZeroAsNull: true},
+		},
+	},
+	"Attr": {
+		Attributes: AttributeRules{
+			"namespaceURI": {ZeroAsNull: true},
 		},
 	},
 	"ParentNode": {Operations: OperationRules{

@@ -75,6 +75,15 @@ func EncodeNullableString[T any](scope js.CallbackScope[T], s *string) (js.Value
 	}
 	return EncodeNull(scope)
 }
+func EncodeOptionalString[T any](
+	scope js.CallbackScope[T],
+	s string,
+) (js.Value[T], error) {
+	if s == "" {
+		return EncodeNull(scope)
+	}
+	return scope.NewString(s), nil
+}
 func EncodeNillableString[T any](
 	scope js.CallbackScope[T],
 	s string,

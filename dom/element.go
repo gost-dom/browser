@@ -37,7 +37,9 @@ type Element interface {
 	InnerHTML() string
 	SetInnerHTML(string) error
 	TagName() string
+	// Deprecated: Use NamespaceURI
 	Namespace() string
+	NamespaceURI() string
 	LocalName() string
 	Matches(string) (bool, error)
 	ID() string
@@ -132,8 +134,9 @@ func (e *element) TagName() string {
 	return strings.ToLower(e.tagName)
 }
 
-func (e *element) Namespace() string { return e.namespace }
-func (e *element) LocalName() string { return e.tagName }
+func (e *element) Namespace() string    { return e.namespace }
+func (e *element) NamespaceURI() string { return e.namespace }
+func (e *element) LocalName() string    { return e.tagName }
 
 func (e *element) ID() string {
 	id, _ := e.GetAttribute("id")
@@ -213,7 +216,8 @@ func (e *element) RemoveAttribute(name string) {
 
 func (e *element) GetAttributeNode(name string) Attr {
 	for _, a := range e.attributes {
-		if a.Name() == name && a.NamespaceURI() == e.namespace {
+		ns := a.NamespaceURI()
+		if a.Name() == name && ns == e.namespace {
 			return a
 		}
 	}

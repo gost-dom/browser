@@ -105,7 +105,7 @@ func (m *namedNodeMap) Item(index int) Attr {
 
 func (a *attr) LocalName() string     { return a.attr.Key }
 func (a *attr) Name() string          { return a.attr.Key }
-func (a *attr) NamespaceURI() string  { return "" }
+func (a *attr) NamespaceURI() string  { return a.attr.Namespace }
 func (a *attr) OwnerElement() Element { return a.ownerElement }
 func (a *attr) Prefix() string        { return "" }
 func (a *attr) Value() string         { return a.attr.Val }

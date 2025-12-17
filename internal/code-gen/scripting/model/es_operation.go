@@ -15,6 +15,7 @@ import (
 var encodeString = g.NewValuePackage("EncodeString", packagenames.Codec)
 var encodeNillableString = g.NewValuePackage("EncodeNillableString", packagenames.Codec)
 var encodeNullableString = g.NewValuePackage("EncodeNullableString", packagenames.Codec)
+var encodeOptionalString = g.NewValuePackage("EncodeOptionalString", packagenames.Codec)
 var encodeInt = g.NewValuePackage("EncodeInt", packagenames.Codec)
 var encodeBoolean = g.NewValuePackage("EncodeBoolean", packagenames.Codec)
 var encodeEntity = g.NewValuePackage("EncodeEntity", packagenames.Codec)
@@ -39,6 +40,7 @@ type Callback struct {
 	CustomImplementation bool
 	MethodCustomization  configuration.ESMethodWrapper
 	Arguments            []ESOperationArgument
+	ZeroAsNull           bool
 }
 
 // CallbackMethodName gets the name for the unexported function that serves as a
@@ -107,6 +109,8 @@ func (o Callback) EncodeAsSimpleJSLookup() bool {
 	}
 }
 
+func zeroAsNull(_ ESConstructorData, cb Callback) bool { return cb.ZeroAsNull }
+
 func hasStringOkReturn(data ESConstructorData, cb Callback) bool {
 	return data.CustomRule.OutputType == customrules.OutputTypeStruct &&
 		cb.Kind == CallbackKindGetter
@@ -132,7 +136,9 @@ func (o Callback) Encoder(
 		return internal.BindValues(encodeBoolean, cbCtx)
 	case idlType.IsString():
 		if t.Nullable {
-			if hasStringOkReturn(data, o) {
+			if zeroAsNull(data, o) {
+				return internal.BindValues(encodeOptionalString, cbCtx)
+			} else if hasStringOkReturn(data, o) {
 				return internal.BindValues(encodeNullableString, cbCtx)
 			} else {
 				return internal.BindValues(encodeNillableString, cbCtx)
@@ -170,7 +176,7 @@ func (o Callback) RetValues(data ESConstructorData) []g.Generator {
 	t := o.RetType
 	res := g.Id("result")
 	hasValue := g.Id("hasValue")
-	if t.Nullable && !idltransform.NewIdlType(t).Nillable() {
+	if t.Nullable && !idltransform.NewIdlType(t).Nillable() && !o.ZeroAsNull {
 		if hasStringOkReturn(data, o) {
 			return g.List(res)
 		} else {
