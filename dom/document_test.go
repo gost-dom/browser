@@ -74,6 +74,13 @@ func TestGetElementsByTagNameReturnsALiveCollection(t *testing.T) {
 		assert.Equal(t, 4, divs.Length())
 		assert.Equal(t, "Test2", divs.Item(3).ID())
 	})
+
+	t.Run("Doesn't return the node itself", func(t *testing.T) {
+		el := doc.GetElementById("2")
+		divs := el.GetElementsByTagName("div")
+		assert.Equal(t, 1, divs.Length())
+		assert.Equal(t, "Test2", divs.Item(0).ID())
+	})
 }
 
 func TestDocumentImportNode(t *testing.T) {

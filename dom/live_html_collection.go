@@ -40,10 +40,12 @@ func (c *liveHtmlCollection) checkCache() {
 	children := c.root.Children().All()
 	c.items = make([]Element, 0)
 	c.cache = make([]*liveHtmlCollection, len(children))
-	if c.filter.Match(c.root) {
-		c.items = append(c.items, c.root)
-	}
 
+	for _, child := range children {
+		if c.filter.Match(child) {
+			c.items = append(c.items, child)
+		}
+	}
 	// TODO: Optimization possibility, check if cache is valid in sub branches
 	for i, child := range children {
 		subItem := &liveHtmlCollection{root: child, filter: c.filter}
