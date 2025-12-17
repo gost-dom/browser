@@ -1,6 +1,7 @@
 package dom
 
 import (
+	"errors"
 	"iter"
 	"slices"
 	"strings"
@@ -19,14 +20,21 @@ func NewDOMTokenList(attribute string, element Element) DOMTokenList {
 	return DOMTokenList{attribute, element}
 }
 
+func validateDomToken(token string) error {
+	if token == "" {
+		return newSyntaxError("token is empty")
+	}
+	if strings.Contains(token, " ") {
+		return newInvalidCharacterError("token contains whitespace")
+	}
+	return nil
+}
+
 func (l DOMTokenList) Add(tokens ...string) error {
 	tokenList := l.getTokens()
 	for _, token := range tokens {
-		if token == "" {
-			return newSyntaxError("token is empty")
-		}
-		if strings.Contains(token, " ") {
-			return newInvalidCharacterError("token contains whitespace")
+		if err := validateDomToken(token); err != nil {
+			return err
 		}
 		if !slices.Contains(tokenList, token) {
 			tokenList = append(tokenList, token)
@@ -75,9 +83,12 @@ func (l DOMTokenList) Item(index int) (string, bool) {
 // Remove implements DOMTokenList.Remove
 //
 // see also: https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/remove
-func (l DOMTokenList) Remove(token ...string) {
+func (l DOMTokenList) Remove(token ...string) error {
 	tokens := l.getTokens()
 	for _, t := range token {
+		if err := validateDomToken(t); err != nil {
+			return err
+		}
 		itemIndex := slices.Index(tokens, t)
 		if itemIndex >= 0 {
 			tokens = slices.Delete(tokens, itemIndex, itemIndex+1)
@@ -85,25 +96,32 @@ func (l DOMTokenList) Remove(token ...string) {
 
 	}
 	l.setTokens(tokens)
+	return nil
 }
 
-func (l DOMTokenList) Replace(oldToken string, newToken string) bool {
+func (l DOMTokenList) Replace(oldToken string, newToken string) (bool, error) {
+	if err := errors.Join(
+		validateDomToken(oldToken),
+		validateDomToken(newToken),
+	); err != nil {
+		return false, err
+	}
 	if l.Contains(oldToken) {
 		l.Remove(oldToken)
 		l.Add(newToken)
-		return true
+		return true, nil
 	} else {
-		return false
+		return false, nil
 	}
 }
 
-func (l DOMTokenList) Toggle(token string) bool {
+func (l DOMTokenList) Toggle(token string) (bool, error) {
 	if l.Contains(token) {
 		l.Remove(token)
-		return false
+		return false, nil
 	} else {
-		l.Add(token)
-		return true
+		err := l.Add(token)
+		return true, err
 	}
 }
 
