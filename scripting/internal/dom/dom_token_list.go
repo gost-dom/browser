@@ -17,29 +17,28 @@ func (w DOMTokenList[T]) toString_(s js.Scope[T], val string) (js.Value[T], erro
 	return s.NewString(val), nil
 }
 
-func (l DOMTokenList[T]) toggle(args js.CallbackContext[T]) (js.Value[T], error) {
+func (l DOMTokenList[T]) toggle(args js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInstance := js.As[dom.DOMTokenList](args.Instance())
 	token, err0 := js.ConsumeArgument(args, "toggle", nil, codec.DecodeString)
-	if err := errors.Join(err0, errInstance); err != nil {
+	force, found, err1 := js.ConsumeOptionalArg(args, "force", codec.DecodeBoolean)
+	if err = errors.Join(errInstance, err0, err1); err != nil {
 		return nil, err
 	}
 
-	force, found, err1 := js.ConsumeOptionalArg(args, "force", codec.DecodeBoolean)
+	var b bool
 	if found {
-		if err1 != nil {
-			return nil, err1
-		}
 		if force {
-			instance.Add(token)
-			return args.NewBoolean(true), nil
+			err = instance.Add(token)
+			b = true
 		} else {
-			instance.Remove(token)
-			return args.NewBoolean(false), nil
+			err = instance.Remove(token)
+			b = false
 		}
+	} else {
+		b, err = instance.Toggle(token)
 	}
-	res, err := instance.Toggle(token)
-	if err != nil {
-		return nil, err
+	if err == nil {
+		res = args.NewBoolean(b)
 	}
-	return args.NewBoolean(res), nil
+	return
 }
