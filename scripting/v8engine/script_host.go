@@ -56,6 +56,8 @@ type V8ScriptHost struct {
 	contexts        map[*v8go.Context]*V8ScriptContext
 	disposed        bool
 	iterator        v8Iterator
+
+	unhandledPromiseRejectionHandler js.ErrorHandler[jsTypeParam]
 }
 
 // consoleAPIMessageFunc represents a function that can receive javascript
@@ -90,7 +92,8 @@ func (host *V8ScriptHost) deleteContext(ctx *V8ScriptContext) {
 }
 
 func (host *V8ScriptHost) promiseRejected(msg v8go.PromiseRejectMessage) {
-	if msg.Event != v8go.PromiseRejectWithNoHandler {
+	if msg.Event != v8go.PromiseRejectWithNoHandler ||
+		host.unhandledPromiseRejectionHandler == nil {
 		return
 	}
 	ctx := host.mustGetContext(msg.Context)
@@ -104,8 +107,13 @@ func (host *V8ScriptHost) promiseRejected(msg v8go.PromiseRejectMessage) {
 			err = fmt.Errorf("unhandled promise rejection: %v", msg.Value)
 		}
 	}
+	host.unhandledPromiseRejectionHandler.HandleError(newV8Scope(ctx), err)
+}
 
-	js.HandleJSCallbackError(newV8Scope(ctx), "Promise", err)
+func (host *V8ScriptHost) SetUnhandledPromiseRejectionHandler(
+	h js.ErrorHandler[jsTypeParam],
+) {
+	host.unhandledPromiseRejectionHandler = h
 }
 
 func (host *V8ScriptHost) Logger() log.Logger {

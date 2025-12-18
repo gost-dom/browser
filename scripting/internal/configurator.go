@@ -37,6 +37,13 @@ func Configure[T any](host js.ScriptEngine[T]) {
 			return nil, err
 		},
 	)
+	host.SetUnhandledPromiseRejectionHandler(
+		js.ErrorHandlerFunc[T](handleUnhandledPromiseRejection[T]),
+	)
+}
+
+func handleUnhandledPromiseRejection[T any](scope js.Scope[T], err error) {
+	js.HandleJSCallbackError(scope, "promiseRejected", err)
 }
 
 func Bootstrap[T any](reg js.ClassBuilder[T]) {

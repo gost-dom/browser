@@ -100,6 +100,12 @@ func (i *scriptContext) RunFunction(str string, arguments ...any) (res any, err 
 	return
 }
 
+func (c *scriptContext) SetUnhandledPromiseRejectionHandler(
+	h js.ErrorHandler[jsTypeParam],
+) {
+	// TODO: Handle this with sobek
+}
+
 // Export create a native Go value out of a javascript value. The value argument
 // must be a [sobek.Value] instance.
 //
