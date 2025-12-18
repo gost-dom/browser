@@ -4,10 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"iter"
+	"log/slog"
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/entity"
+	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/grafana/sobek"
 )
@@ -32,6 +34,13 @@ func (s scope) Constructor(name string) js.Constructor[jsTypeParam] {
 		return class
 	}
 	return nil
+}
+
+func (s scope) Logger() *slog.Logger {
+	if l := s.logger(); l != nil {
+		return l
+	}
+	return log.Default()
 }
 
 func (s scope) GetValue(e entity.ObjectIder) (js.Value[jsTypeParam], bool) {

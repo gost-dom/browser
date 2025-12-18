@@ -1,9 +1,6 @@
 package sobekengine
 
 import (
-	"log/slog"
-
-	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/grafana/sobek"
 )
@@ -36,13 +33,6 @@ func (s callbackScope) Instance() (any, error) {
 		panic(s.vm.NewTypeError("No embedded value"))
 	}
 	return s.instance, nil
-}
-
-func (s callbackScope) Logger() *slog.Logger {
-	if l := s.logger(); l != nil {
-		return l
-	}
-	return log.Default()
 }
 
 type callbackContext struct {
