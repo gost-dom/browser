@@ -6,7 +6,6 @@ import (
 	"iter"
 	"log/slog"
 
-	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting/internal/js"
@@ -24,7 +23,6 @@ func newScope(ctx *scriptContext) scope {
 	}
 }
 
-func (s scope) Window() html.Window  { return s.window }
 func (s scope) GlobalThis() jsObject { return s.global }
 
 func (s scope) Clock() *clock.Clock { return s.clock }

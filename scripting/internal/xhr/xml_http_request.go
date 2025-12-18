@@ -30,8 +30,12 @@ func (xhr XMLHttpRequest[T]) decodeXMLHttpRequestBodyInit(
 func (xhr XMLHttpRequest[T]) CreateInstance(
 	cbCtx js.CallbackContext[T],
 ) (js.Value[T], error) {
+	win, err := codec.GetWindow(cbCtx)
+	if err != nil {
+		return nil, err
+	}
 	this := cbCtx.This()
-	result := inthtml.NewXmlHttpRequest(cbCtx.Window(), cbCtx.Clock())
+	result := inthtml.NewXmlHttpRequest(win, cbCtx.Clock())
 	result.SetCatchAllHandler(event.NewEventHandlerFunc(func(event *event.Event) error {
 		prop := "on" + event.Type
 		handler, err := this.Get(prop)

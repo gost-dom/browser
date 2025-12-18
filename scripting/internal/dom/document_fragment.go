@@ -7,6 +7,10 @@ import (
 )
 
 func (w DocumentFragment[T]) Constructor(ctx js.CallbackContext[T]) (js.Value[T], error) {
-	result := dom.NewDocumentFragment(ctx.Window().Document())
+	win, err := codec.GetWindow(ctx)
+	if err != nil {
+		return nil, err
+	}
+	result := dom.NewDocumentFragment(win.Document())
 	return codec.EncodeConstrucedValue(ctx, result)
 }

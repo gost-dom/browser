@@ -25,7 +25,11 @@ func (w Request[T]) CreateInstance(
 	url string,
 	options ...fetch.RequestOption,
 ) (js.Value[T], error) {
-	f := fetch.New(cbCtx.Window())
+	win, err := codec.GetWindow(cbCtx)
+	if err != nil {
+		return nil, err
+	}
+	f := fetch.New(win)
 	req := f.NewRequest(url, options...)
 	return codec.EncodeConstrucedValue(cbCtx, &req)
 }

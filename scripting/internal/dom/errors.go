@@ -2,6 +2,7 @@ package dom
 
 import (
 	"github.com/gost-dom/browser/dom/event"
+	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/log"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -11,5 +12,7 @@ import (
 // event handler, mutation observer, interval, etc.
 func HandleJSCallbackError[T any](scope js.Scope[T], cbType string, err error) {
 	scope.Logger().Error("Callback error", "callback-type", cbType, log.ErrAttr(err))
-	scope.Window().DispatchEvent(event.NewErrorEvent(err))
+	if target, err := js.As[html.Window](scope.GlobalThis().NativeValue(), nil); err == nil {
+		target.DispatchEvent(event.NewErrorEvent(err))
+	}
 }

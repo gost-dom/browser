@@ -25,7 +25,11 @@ func Fetch[T any](info js.CallbackContext[T]) (js.Value[T], error) {
 		codec.ZeroValue,
 		decodeRequestInit,
 	)
-	f := fetch.New(info.Window())
+	win, err := codec.GetWindow(info)
+	if err != nil {
+		return nil, err
+	}
+	f := fetch.New(win)
 	info.Logger().Debug("js/fetch: create promise")
 	req := f.NewRequest(url, opts...)
 	return codec.EncodePromise(info, f.FetchAsync(req), encodeResponse)

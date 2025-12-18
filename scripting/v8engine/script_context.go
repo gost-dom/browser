@@ -31,8 +31,7 @@ type V8ScriptContext struct {
 }
 
 func (c *V8ScriptContext) iso() *v8.Isolate         { return c.host.iso }
-func (c *V8ScriptContext) Window() html.Window      { return c.window }
-func (c *V8ScriptContext) context() context.Context { return c.window.Context() }
+func (c *V8ScriptContext) Context() context.Context { return c.window.Context() }
 
 func (h *V8ScriptHost) getContext(v8ctx *v8.Context) (*V8ScriptContext, bool) {
 	h.mu.Lock()
@@ -133,7 +132,7 @@ func (ctx *V8ScriptContext) addDisposer(disposer js.Disposable) {
 }
 
 func (ctx *V8ScriptContext) runScript(script string) (res *v8.Value, err error) {
-	goCtx := ctx.Window().Context()
+	goCtx := ctx.Context()
 	select {
 	case <-goCtx.Done():
 		return nil, html.ErrCancelled
@@ -171,7 +170,7 @@ func (ctx *V8ScriptContext) DownloadScript(src string) (html.Script, error) {
 
 func (ctx *V8ScriptContext) DownloadModule(src string) (html.Script, error) {
 	url := html.WindowResolveHref(ctx.window, src)
-	module, err := ctx.resolver.downloadAndCompile(ctx.context(), ctx.logger(), url)
+	module, err := ctx.resolver.downloadAndCompile(ctx.Context(), ctx.logger(), url)
 	if err = module.InstantiateModule(ctx.v8ctx, &ctx.resolver); err != nil {
 		return nil, fmt.Errorf("gost: v8engine: module instantiation: %w", err)
 	}
@@ -252,5 +251,5 @@ func (r *moduleResolver) ResolveModule(
 	l := scriptCtx.logger()
 	l.Info("v8engine: ResolveModule", "referrer", refModule.location, "src", spec)
 	url := refModule.location.Join(spec)
-	return r.downloadAndCompile(v8ScriptContext.context(), l, url)
+	return r.downloadAndCompile(v8ScriptContext.Context(), l, url)
 }

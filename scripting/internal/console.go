@@ -52,9 +52,9 @@ func consoleWrite[T any](ctx js.CallbackContext[T], level slog.Level) (js.Value[
 		}
 	}
 	if rest == nil {
-		logger.Log(ctx.Window().Context(), level, msg)
+		logger.Log(ctx.Context(), level, msg)
 	} else {
-		logger.Log(ctx.Window().Context(), level, msg, "args", rest)
+		logger.Log(ctx.Context(), level, msg, "args", rest)
 	}
 	return nil, nil
 }

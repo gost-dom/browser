@@ -1,11 +1,11 @@
 package js
 
 import (
+	"context"
 	"errors"
 	"iter"
 	"log/slog"
 
-	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/log"
 )
@@ -30,7 +30,7 @@ type Scope[T any] interface {
 	ValueFactory[T]
 
 	Logger() *slog.Logger
-	Window() html.Window
+	Context() context.Context
 	GlobalThis() Object[T]
 	Clock() *clock.Clock
 	Constructor(string) Constructor[T]

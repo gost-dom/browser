@@ -7,8 +7,12 @@ import (
 )
 
 func (w ParentNode[T]) decodeNodeOrText(s js.Scope[T], val js.Value[T]) (dom.Node, error) {
+	win, err := codec.GetWindow(s)
+	if err != nil {
+		return nil, err
+	}
 	if val.IsString() {
-		return s.Window().Document().CreateTextNode(val.String()), nil
+		return win.Document().CreateTextNode(val.String()), nil
 	}
 	return codec.DecodeNode(s, val)
 }
