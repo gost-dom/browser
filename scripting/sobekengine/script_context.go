@@ -24,6 +24,8 @@ type scriptContext struct {
 	classes      map[string]*class
 	wrappedGoObj *sobek.Symbol
 	cachedNodes  map[int32]sobek.Value
+
+	unhandledPromiseRejectionHandler js.ErrorHandler[jsTypeParam]
 }
 
 func (c *scriptContext) Clock() html.Clock        { return c.clock }
@@ -103,7 +105,14 @@ func (i *scriptContext) RunFunction(str string, arguments ...any) (res any, err 
 func (c *scriptContext) SetUnhandledPromiseRejectionHandler(
 	h js.ErrorHandler[jsTypeParam],
 ) {
-	// TODO: Handle this with sobek
+	c.unhandledPromiseRejectionHandler = h
+	c.vm.SetPromiseRejectionTracker(func(p *sobek.Promise, op sobek.PromiseRejectionOperation) {
+		if op == sobek.PromiseRejectionReject {
+			scope := newScope(c)
+			err := scope.NewValueError(newValue(c, p.Result()), nil)
+			h.HandleError(scope, err)
+		}
+	})
 }
 
 // Export create a native Go value out of a javascript value. The value argument
