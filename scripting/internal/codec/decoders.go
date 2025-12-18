@@ -103,7 +103,7 @@ func DecodeFunction[T any](s js.Scope[T], v js.Value[T]) (js.Function[T], error)
 	return nil, s.NewTypeError("Must be a function")
 }
 
-func DecodeInnerObject[T, U any](s js.Scope[T], v js.Value[T]) (res U, err error) {
+func DecodeNativeValue[T, U any](s js.Scope[T], v js.Value[T]) (res U, err error) {
 	obj, ok := v.AsObject()
 	if !ok {
 		err = fmt.Errorf("gost-dom/codec: option not an object: %v", v)

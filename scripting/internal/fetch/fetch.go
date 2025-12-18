@@ -38,7 +38,7 @@ func decodeRequestInit[T any](
 		return nil, nil
 	}
 	options := codec.Options[T, fetch.RequestOption]{
-		"signal":  codec.OptDecoder[T](codec.DecodeInnerObject, fetch.WithSignal),
+		"signal":  codec.OptDecoder[T](codec.DecodeNativeValue, fetch.WithSignal),
 		"method":  codec.OptDecoder[T](codec.DecodeString, fetch.WithMethod),
 		"body":    codec.OptDecoder[T](codec.DecodeRequestBody, fetch.WithBody),
 		"headers": codec.OptDecoder[T](decodeHeadersInit, fetch.WithHeaders),
