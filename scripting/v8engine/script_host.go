@@ -60,17 +60,6 @@ type V8ScriptHost struct {
 	unhandledPromiseRejectionHandler js.ErrorHandler[jsTypeParam]
 }
 
-// consoleAPIMessageFunc represents a function that can receive javascript
-// console messages and implements the [v8go.consoleAPIMessageFunc] interface.
-//
-// This type is a simple solution to avoid exporting the consoleAPIMessage
-// function.
-type consoleAPIMessageFunc func(message v8go.ConsoleAPIMessage)
-
-func (f consoleAPIMessageFunc) ConsoleAPIMessage(message v8go.ConsoleAPIMessage) {
-	f(message)
-}
-
 func (host *V8ScriptHost) consoleAPIMessage(message v8go.ConsoleAPIMessage) {
 	switch message.ErrorLevel {
 	case v8go.ErrorLevelDebug:
