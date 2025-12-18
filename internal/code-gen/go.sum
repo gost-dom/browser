@@ -20,6 +20,8 @@ github.com/gost-dom/webref v0.5.8 h1:0O7zmvzRpyK+rIBhWD8WqqGWx8jGiBYDQBBROZ/QRh4
 github.com/gost-dom/webref v0.5.8/go.mod h1:dDG6ljKAixLvdbSHD/FeyKbaFB5a9GiV9aHvSM5QmqE=
 github.com/gost-dom/webref v0.5.10 h1:kWKysau/s4RSAXz+BbazOOil5XjnA1DoTpfKO8vIUUE=
 github.com/gost-dom/webref v0.5.10/go.mod h1:dDG6ljKAixLvdbSHD/FeyKbaFB5a9GiV9aHvSM5QmqE=
+github.com/gost-dom/webref v0.5.11 h1:NcERebgEAi4QlS3hqb5i2hCkSexB8dAm12rv5micwG4=
+github.com/gost-dom/webref v0.5.11/go.mod h1:dDG6ljKAixLvdbSHD/FeyKbaFB5a9GiV9aHvSM5QmqE=
 github.com/mitranim/gg v0.1.29 h1:Jpu9tWq+RpDoeMds3KyG0ebErsxXKqGBiP34VBCIidA=
 github.com/mitranim/gg v0.1.29/go.mod h1:x2V+nJJOpeMl/XEoHou9zlTvFxYAcGOCqOAKpVkF0Yc=
 github.com/mitranim/gow v0.0.0-20250926091427-aad163e590a8 h1:TpGHxDFAli5/0EIvKDdnVuUe6Bbgxpcn1GLLe+6UwF8=
