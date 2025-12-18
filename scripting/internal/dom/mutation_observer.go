@@ -20,7 +20,7 @@ func (cb MutationCallback[T]) HandleMutation(recs []mutation.Record, obs *mutati
 		_, err = cb.f.Call(cb.s.GlobalThis(), jsRecs)
 	}
 	if err != nil {
-		js.HandleJSCallbackError(cb.s, "HandleMutation", err)
+		HandleJSCallbackError(cb.s, "HandleMutation", err)
 	}
 }
 

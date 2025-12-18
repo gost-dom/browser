@@ -6,6 +6,7 @@ import (
 
 	"github.com/gost-dom/browser/internal/clock"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
+	"github.com/gost-dom/browser/scripting/internal/dom"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -25,7 +26,7 @@ func QueueMicrotask[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 		clock := cbCtx.Clock()
 		clock.AddSafeMicrotask(func() {
 			if _, err := f.Call(cbCtx.GlobalThis()); err != nil {
-				js.HandleJSCallbackError(cbCtx, "Microtask", err)
+				dom.HandleJSCallbackError(cbCtx, "Microtask", err)
 			}
 		})
 	}
@@ -43,7 +44,7 @@ func SetTimeout[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	handle := clock.AddSafeTask(
 		func() {
 			if _, err := f.Call(cbCtx.GlobalThis()); err != nil {
-				js.HandleJSCallbackError(cbCtx, "setTimeout", err)
+				dom.HandleJSCallbackError(cbCtx, "setTimeout", err)
 			}
 		},
 		time.Duration(delay)*time.Millisecond,
@@ -62,7 +63,7 @@ func SetInterval[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	handle := cbCtx.Clock().SetInterval(
 		func() {
 			if _, err := f.Call(cbCtx.GlobalThis()); err != nil {
-				js.HandleJSCallbackError(cbCtx, "SetInterval", err)
+				dom.HandleJSCallbackError(cbCtx, "SetInterval", err)
 			}
 		},
 		time.Duration(delay)*time.Millisecond,
