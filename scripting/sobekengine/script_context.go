@@ -24,8 +24,6 @@ type scriptContext struct {
 	classes      map[string]*class
 	wrappedGoObj *sobek.Symbol
 	cachedNodes  map[int32]sobek.Value
-
-	unhandledPromiseRejectionHandler js.ErrorHandler[jsTypeParam]
 }
 
 func (c *scriptContext) Clock() html.Clock        { return c.clock }
@@ -105,7 +103,9 @@ func (i *scriptContext) RunFunction(str string, arguments ...any) (res any, err 
 func (c *scriptContext) SetUnhandledPromiseRejectionHandler(
 	h js.ErrorHandler[jsTypeParam],
 ) {
-	c.unhandledPromiseRejectionHandler = h
+	if h == nil {
+		return
+	}
 	c.vm.SetPromiseRejectionTracker(func(p *sobek.Promise, op sobek.PromiseRejectionOperation) {
 		if op == sobek.PromiseRejectionReject {
 			scope := newScope(c)
