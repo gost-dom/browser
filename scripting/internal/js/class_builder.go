@@ -17,7 +17,7 @@ func RegisterClass[T any, U Initializer[T], V InitializerFactory[T, U]](
 		var ok bool
 		if superClassConstructor, ok = e.Class(superClassName); !ok {
 			msg := fmt.Sprintf(
-				"gost-dom/js: createGlobals: %s: not registered", superClassName,
+				"gost-dom/js: RegisterClass: %s: not registered", superClassName,
 			)
 			panic(msg)
 		}
