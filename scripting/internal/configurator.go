@@ -46,7 +46,7 @@ func handleUnhandledPromiseRejection[T any](scope js.Scope[T], err error) {
 	dom.HandleJSCallbackError(scope, "promiseRejected", err)
 }
 
-func Bootstrap[T any](reg js.ClassBuilder[T]) {
+func Bootstrap[T any](e js.ScriptEngine[T], reg js.ClassBuilder[T]) {
 	dom.Register(reg)
 	html.InitBuilder(reg)
 	svg.Bootstrap(reg)
