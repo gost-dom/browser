@@ -219,6 +219,13 @@ func (host *V8ScriptHost) CreateClass(
 	return result
 }
 
+func (h *V8ScriptHost) Class(name string) js.Class[jsTypeParam] {
+	if class, ok := h.globals.namedGlobals[name]; ok {
+		return class
+	}
+	panic(fmt.Sprintf("gost-dom/v8engine: %s: class not registered", name))
+}
+
 // CreateGlobalObject implements [js/ScriptEngine.CreateGlobalObject]
 func (h *V8ScriptHost) CreateGlobalObject(name string) js.GlobalObject[jsTypeParam] {
 	tmpl := v8go.NewObjectTemplate(h.iso)
