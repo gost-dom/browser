@@ -1,7 +1,5 @@
 package js
 
-import "fmt"
-
 type ConstructorFactory[T any] = func(ScriptEngine[T], Class[T]) Class[T]
 
 type classSpec[T any] struct {
@@ -16,10 +14,11 @@ type classSpec[T any] struct {
 // creating superclasses before subclasses.
 type ClassBuilder[T any] struct {
 	classes map[string]classSpec[T]
+	specs   *[]classSpec[T]
 }
 
 func NewClassBuilder[T any]() ClassBuilder[T] {
-	return ClassBuilder[T]{make(map[string]classSpec[T])}
+	return ClassBuilder[T]{make(map[string]classSpec[T]), new([]classSpec[T])}
 }
 func (b ClassBuilder[T]) HasClass(name string) bool {
 	_, ok := b.classes[name]
@@ -38,6 +37,7 @@ func (r ClassBuilder[T]) Register(
 			return res
 		},
 	}
+	*r.specs = append(*r.specs, spec)
 	if _, ok := r.classes[className]; ok {
 		panic("Same class added twice: " + className)
 	}
@@ -67,30 +67,13 @@ type InitializerFactory[T any, U Initializer[T]] = func(ScriptEngine[T]) U
 // [ConfigurerFunc] type.
 // The function creates the classes in the correct order, creating superclasses
 // before subclasses.
-func (c *ClassBuilder[T]) CreateGlobals(host ScriptEngine[T]) {
-	var iter func(class classSpec[T]) Class[T]
-	uniqueNames := make(map[string]Class[T])
-	iter = func(class classSpec[T]) Class[T] {
-		if constructor, found := uniqueNames[class.name]; found {
-			return constructor
-		}
+func (c *ClassBuilder[T]) CreateGlobals(e ScriptEngine[T]) {
+	for _, class := range *c.specs {
 		var superClassConstructor Class[T]
 		if class.superClassName != "" {
-			superClassSpec, found := c.classes[class.superClassName]
-			if !found {
-				panic(fmt.Sprintf(
-					"Missing super class spec. Class: %s. Super: %s",
-					class.name, class.superClassName,
-				))
-			}
-			superClassConstructor = iter(superClassSpec)
+			superClassConstructor = e.Class(class.superClassName)
 		}
-		constructor := class.factory(host, superClassConstructor)
-		uniqueNames[class.name] = constructor
-		return constructor
-	}
-	for _, class := range c.classes {
-		iter(class)
+		class.factory(e, superClassConstructor)
 	}
 }
 
