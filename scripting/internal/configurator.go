@@ -69,7 +69,7 @@ func Bootstrap[T any](e js.ScriptEngine[T], reg js.ClassBuilder[T]) {
 
 	js.RegisterClass(reg, "ShadowRoot", "DocumentFragment", NewUnconstructable)
 	for _, cls := range codec.HtmlElements {
-		if !reg.HasClass(cls) && cls != "HTMLElement" {
+		if _, ok := e.Class(cls); !ok && cls != "HTMLElement" {
 			js.RegisterClass(reg, cls, "HTMLElement", NewUnconstructable)
 		}
 	}
