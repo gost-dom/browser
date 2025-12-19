@@ -12,10 +12,10 @@ type InitializerFactory[T any, U Initializer[T]] = func(ScriptEngine[T]) U
 func RegisterClass[T any, U Initializer[T], V InitializerFactory[T, U]](
 	e ScriptEngine[T], className, superClassName string, constructorFactory V,
 ) {
-	var superClassConstructor Class[T]
+	var superClass Class[T]
 	if superClassName != "" {
 		var ok bool
-		if superClassConstructor, ok = e.Class(superClassName); !ok {
+		if superClass, ok = e.Class(superClassName); !ok {
 			msg := fmt.Sprintf(
 				"gost-dom/js: RegisterClass: %s: not registered", superClassName,
 			)
@@ -23,6 +23,6 @@ func RegisterClass[T any, U Initializer[T], V InitializerFactory[T, U]](
 		}
 	}
 	wrapper := constructorFactory(e)
-	class := e.CreateClass(className, superClassConstructor, wrapper.Constructor)
+	class := e.CreateClass(className, superClass, wrapper.Constructor)
 	wrapper.Initialize(class)
 }
