@@ -46,31 +46,31 @@ func handleUnhandledPromiseRejection[T any](scope js.Scope[T], err error) {
 	dom.HandleJSCallbackError(scope, "promiseRejected", err)
 }
 
-func Bootstrap[T any](e js.ScriptEngine[T], reg js.ClassBuilder[T]) {
-	dom.Register(reg)
-	html.InitBuilder(reg)
-	svg.Bootstrap(reg)
-	mathml.Bootstrap(reg)
-	xhr.Bootstrap(reg)
-	url.Bootstrap(reg)
-	uievents.Bootstrap(reg)
-	fetch.Bootstrap(reg)
-	streams.Bootstrap(reg)
+func Bootstrap[T any](e js.ScriptEngine[T]) {
+	dom.Register(e)
+	html.InitBuilder(e)
+	svg.Bootstrap(e)
+	mathml.Bootstrap(e)
+	xhr.Bootstrap(e)
+	url.Bootstrap(e)
+	uievents.Bootstrap(e)
+	fetch.Bootstrap(e)
+	streams.Bootstrap(e)
 
-	js.RegisterClass(reg, "File", "", dom.NewEvent)
-	js.RegisterClass(reg, "CustomEvent", "Event", dom.NewCustomEvent)
+	js.RegisterClass(e, "File", "", dom.NewEvent)
+	js.RegisterClass(e, "CustomEvent", "Event", dom.NewCustomEvent)
 
 	// HTMLDocument exists as a separate class for historical reasons, but it
 	// can be treated merely as an alias for Document. In Firefox, there is an
 	// inheritance relationship between the two, which is modelled here.
 	//
 	// See also: https://developer.mozilla.org/en-US/docs/Web/API/HTMLDocument
-	js.RegisterClass(reg, "HTMLDocument", "Document", html.NewHTMLDocument)
+	js.RegisterClass(e, "HTMLDocument", "Document", html.NewHTMLDocument)
 
-	js.RegisterClass(reg, "ShadowRoot", "DocumentFragment", NewUnconstructable)
+	js.RegisterClass(e, "ShadowRoot", "DocumentFragment", NewUnconstructable)
 	for _, cls := range codec.HtmlElements {
 		if _, ok := e.Class(cls); !ok && cls != "HTMLElement" {
-			js.RegisterClass(reg, cls, "HTMLElement", NewUnconstructable)
+			js.RegisterClass(e, cls, "HTMLElement", NewUnconstructable)
 		}
 	}
 }

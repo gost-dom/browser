@@ -4,8 +4,8 @@ package streams
 
 import js "github.com/gost-dom/browser/scripting/internal/js"
 
-func Bootstrap[T any](reg js.ClassBuilder[T]) {
-	js.RegisterClass(reg, "ReadableStream", "", NewReadableStream)
-	js.RegisterClass(reg, "ReadableStreamBYOBReader", "", NewReadableStreamBYOBReader)
-	js.RegisterClass(reg, "ReadableStreamDefaultReader", "", NewReadableStreamDefaultReader)
+func Bootstrap[T any](e js.ScriptEngine[T]) {
+	js.RegisterClass(e, "ReadableStream", "", NewReadableStream)
+	js.RegisterClass(e, "ReadableStreamBYOBReader", "", NewReadableStreamBYOBReader)
+	js.RegisterClass(e, "ReadableStreamDefaultReader", "", NewReadableStreamDefaultReader)
 }

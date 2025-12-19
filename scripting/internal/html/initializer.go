@@ -14,9 +14,9 @@ func Initialize[T any](host js.ScriptEngine[T]) {
 	installEventLoopGlobals(host)
 }
 
-func InitBuilder[T any](reg js.ClassBuilder[T]) {
-	Bootstrap(reg)
-	js.RegisterClass(reg, "DOMStringMap", "", NewDOMStringMap)
+func InitBuilder[T any](e js.ScriptEngine[T]) {
+	Bootstrap(e)
+	js.RegisterClass(e, "DOMStringMap", "", NewDOMStringMap)
 }
 
 func QueueMicrotask[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {

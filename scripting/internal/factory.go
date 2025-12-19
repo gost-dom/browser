@@ -20,8 +20,7 @@ func (c *ScriptEngineConfigurer[T]) AddConfigurator(configurer js.Configurator[T
 func DefaultInitializer[T any](e js.ScriptEngine[T]) {
 	Configure(e)
 	html.Initialize(e)
-	var classRegistrations = js.NewClassBuilder(e)
-	Bootstrap(e, classRegistrations)
+	Bootstrap(e)
 	InstallPolyfills(e)
 }
 

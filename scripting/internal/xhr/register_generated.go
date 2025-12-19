@@ -4,8 +4,8 @@ package xhr
 
 import js "github.com/gost-dom/browser/scripting/internal/js"
 
-func Bootstrap[T any](reg js.ClassBuilder[T]) {
-	js.RegisterClass(reg, "FormData", "", NewFormData)
-	js.RegisterClass(reg, "XMLHttpRequestEventTarget", "EventTarget", NewXMLHttpRequestEventTarget)
-	js.RegisterClass(reg, "XMLHttpRequest", "XMLHttpRequestEventTarget", NewXMLHttpRequest)
+func Bootstrap[T any](e js.ScriptEngine[T]) {
+	js.RegisterClass(e, "FormData", "", NewFormData)
+	js.RegisterClass(e, "XMLHttpRequestEventTarget", "EventTarget", NewXMLHttpRequestEventTarget)
+	js.RegisterClass(e, "XMLHttpRequest", "XMLHttpRequestEventTarget", NewXMLHttpRequest)
 }

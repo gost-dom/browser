@@ -47,7 +47,7 @@ func Write(api string, specs configuration.WebIdlConfigurations) error {
 		return err
 	}
 	statements := g.StatementList()
-	registrator := g.Id("reg")
+	engine := g.Id("e")
 	s := slices.Collect(maps.Values(specs))
 	slices.SortFunc(
 		s,
@@ -69,7 +69,7 @@ func Write(api string, specs configuration.WebIdlConfigurations) error {
 		fmt.Println("Iter", typeInfo.Name())
 		statements.Append(
 			jsRegisterClass.Call(
-				registrator,
+				engine,
 				g.Lit(typeInfo.Name()),
 				g.Lit(typeInfo.Extends()),
 				g.Id(ConstructorNameForInterface(typeInfo.Name())),
@@ -77,8 +77,7 @@ func Write(api string, specs configuration.WebIdlConfigurations) error {
 	}
 
 	bootstrap := g.Raw(jen.Func().Id("Bootstrap").Types(jen.Id("T").Any()).Params(
-		jen.Add(registrator.Generate()).
-			Add(jsClassBuilder.Generate()).Types(jen.Id("T")),
+		jen.Add(engine.Generate()).Add(jsScriptEngine.Generate()),
 	).Block(statements.Generate()))
 
 	writer, err := os.Create("register_generated.go")

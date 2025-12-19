@@ -4,15 +4,15 @@ package html
 
 import js "github.com/gost-dom/browser/scripting/internal/js"
 
-func Bootstrap[T any](reg js.ClassBuilder[T]) {
-	js.RegisterClass(reg, "HTMLHyperlinkElementUtils", "", NewHTMLHyperlinkElementUtils)
-	js.RegisterClass(reg, "HTMLOrSVGElement", "", NewHTMLOrSVGElement)
-	js.RegisterClass(reg, "History", "", NewHistory)
-	js.RegisterClass(reg, "Location", "", NewLocation)
-	js.RegisterClass(reg, "HTMLElement", "Element", NewHTMLElement)
-	js.RegisterClass(reg, "HTMLAnchorElement", "HTMLElement", NewHTMLAnchorElement)
-	js.RegisterClass(reg, "HTMLFormElement", "HTMLElement", NewHTMLFormElement)
-	js.RegisterClass(reg, "HTMLInputElement", "HTMLElement", NewHTMLInputElement)
-	js.RegisterClass(reg, "HTMLTemplateElement", "HTMLElement", NewHTMLTemplateElement)
-	js.RegisterClass(reg, "Window", "EventTarget", NewWindow)
+func Bootstrap[T any](e js.ScriptEngine[T]) {
+	js.RegisterClass(e, "HTMLHyperlinkElementUtils", "", NewHTMLHyperlinkElementUtils)
+	js.RegisterClass(e, "HTMLOrSVGElement", "", NewHTMLOrSVGElement)
+	js.RegisterClass(e, "History", "", NewHistory)
+	js.RegisterClass(e, "Location", "", NewLocation)
+	js.RegisterClass(e, "HTMLElement", "Element", NewHTMLElement)
+	js.RegisterClass(e, "HTMLAnchorElement", "HTMLElement", NewHTMLAnchorElement)
+	js.RegisterClass(e, "HTMLFormElement", "HTMLElement", NewHTMLFormElement)
+	js.RegisterClass(e, "HTMLInputElement", "HTMLElement", NewHTMLInputElement)
+	js.RegisterClass(e, "HTMLTemplateElement", "HTMLElement", NewHTMLTemplateElement)
+	js.RegisterClass(e, "Window", "EventTarget", NewWindow)
 }
