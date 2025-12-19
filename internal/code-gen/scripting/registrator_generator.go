@@ -66,7 +66,6 @@ func Write(api string, specs configuration.WebIdlConfigurations) error {
 	}
 	slices.SortStableFunc(enriched, IntfComparer(idlSpec).compare)
 	for _, typeInfo := range enriched {
-		fmt.Println("Iter", typeInfo.Name())
 		statements.Append(
 			jsRegisterClass.Call(
 				engine,
