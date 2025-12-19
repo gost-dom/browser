@@ -25,10 +25,12 @@ func DefaultEngine() html.ScriptEngine {
 	return defaultEngine
 }
 
-func newEngine(configurators ...js.Configurator[jsTypeParam]) html.ScriptEngine {
+func newEngine(configurators ...js.Configurator[jsTypeParam]) *scriptEngine {
 	return &scriptEngine{internal.NewScriptEngineConfigurer(configurators)}
 }
 
 func init() {
-	defaultEngine = &scriptEngine{internal.DefaultInitializer[jsTypeParam]()}
+	defaultEngine = newEngine(
+		js.ConfigurerFunc[jsTypeParam](internal.DefaultInitializer[jsTypeParam]),
+	)
 }

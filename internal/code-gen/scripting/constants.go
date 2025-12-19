@@ -27,7 +27,6 @@ var (
 	jsCbCtx         = g.NewTypePackage("CallbackContext", packagenames.JS).TypeParam(g.Id("T"))
 	jsScriptEngine  = g.NewTypePackage("ScriptEngine", packagenames.JS).TypeParam(g.Id("T"))
 	jsRegisterClass = g.NewValuePackage("RegisterClass", packagenames.JS)
-	jsClassBuilder  = g.NewValuePackage("ClassBuilder", packagenames.JS)
 
 	errorsFirst = g.NewValuePackage("First", packagenames.Errors)
 

@@ -188,6 +188,11 @@ func (c *scriptContext) CreateClass(
 	return cls
 }
 
+func (c *scriptContext) Class(name string) (js.Class[jsTypeParam], bool) {
+	class, ok := c.classes[name]
+	return class, ok
+}
+
 // CreateGlobalObject implements [js/ScriptEngine.CreateGlobalObject]
 func (c *scriptContext) CreateGlobalObject(name string) js.GlobalObject[jsTypeParam] {
 	obj := c.vm.NewObject()

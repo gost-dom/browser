@@ -3,14 +3,14 @@ package sobekengine
 import (
 	"testing"
 
-	"github.com/gost-dom/browser/scripting/internal/scripttests"
 	"github.com/gost-dom/browser/scripting/internal"
 	"github.com/gost-dom/browser/scripting/internal/js"
+	"github.com/gost-dom/browser/scripting/internal/scripttests"
 	"github.com/gost-dom/browser/scripting/internal/testing/jsassert"
 )
 
 var assertEngine = newEngine(
-	internal.DefaultInitializer[jsTypeParam](),
+	js.ConfigurerFunc[jsTypeParam](internal.DefaultInitializer[jsTypeParam]),
 	js.ConfigurerFunc[jsTypeParam](jsassert.Configure[jsTypeParam]),
 )
 

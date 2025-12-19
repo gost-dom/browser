@@ -12,6 +12,7 @@ func (f ErrorHandlerFunc[T]) HandleError(s Scope[T], err error) {
 
 type ScriptEngine[T any] interface {
 	CreateClass(name string, Parent Class[T], cb CallbackFunc[T]) Class[T]
+	Class(name string) (Class[T], bool)
 	CreateGlobalObject(name string) GlobalObject[T]
 	CreateFunction(name string, cb CallbackFunc[T])
 	RunScript(script, src string)
