@@ -1,5 +1,7 @@
 package js
 
+import "fmt"
+
 type ConstructorFactory[T any] = func(ScriptEngine[T], Class[T]) Class[T]
 
 type classSpec[T any] struct {
@@ -71,7 +73,13 @@ func (c *ClassBuilder[T]) CreateGlobals(e ScriptEngine[T]) {
 	for _, class := range *c.specs {
 		var superClassConstructor Class[T]
 		if class.superClassName != "" {
-			superClassConstructor = e.Class(class.superClassName)
+			var ok bool
+			if superClassConstructor, ok = e.Class(class.superClassName); !ok {
+				msg := fmt.Sprintf(
+					"gost-dom/js: createGlobals: %s: not registered", class.superClassName,
+				)
+				panic(msg)
+			}
 		}
 		class.factory(e, superClassConstructor)
 	}

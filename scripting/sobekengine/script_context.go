@@ -188,11 +188,9 @@ func (c *scriptContext) CreateClass(
 	return cls
 }
 
-func (c *scriptContext) Class(name string) js.Class[jsTypeParam] {
-	if class, ok := c.classes[name]; ok {
-		return class
-	}
-	panic(fmt.Sprintf("gost-dom/sobekengine: %s: class not registered", name))
+func (c *scriptContext) Class(name string) (js.Class[jsTypeParam], bool) {
+	class, ok := c.classes[name]
+	return class, ok
 }
 
 // CreateGlobalObject implements [js/ScriptEngine.CreateGlobalObject]
