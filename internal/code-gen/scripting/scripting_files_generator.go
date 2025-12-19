@@ -28,7 +28,7 @@ func writePackageFiles(packagePath string, spec *configuration.WebAPIConfig) err
 	if err != nil {
 		return err
 	}
-	types := spec.GetTypesSorted()
+	types := spec.Types()
 	errs := make([]error, len(types))
 	for i, specType := range types {
 		outputFileName := fmt.Sprintf("%s_generated.go", typeNameToFileName(specType.TypeName))

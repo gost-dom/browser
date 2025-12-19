@@ -18,9 +18,16 @@ import (
 
 func inheritanceHierarchy(spec idl.Spec, intf idl.Interface) string {
 	var res []string
-	for intf.Inheritance != "" {
-		res = append(res, intf.Name)
+	var first = true
+	for {
+		if first {
+			res = append(res, "."+intf.Name)
+			first = false
+		} else {
+			res = append(res, intf.Name)
+		}
 		if i, ok := spec.Interfaces[intf.Inheritance]; !ok {
+			res = append(res, intf.Inheritance)
 			break
 		} else {
 			if slices.Contains(res, i.Name) {
@@ -29,6 +36,7 @@ func inheritanceHierarchy(spec idl.Spec, intf idl.Interface) string {
 			intf = i
 		}
 	}
+	res = append(res, ".Object")
 	slices.Reverse(res)
 	return strings.Join(res, ",")
 }
@@ -48,18 +56,13 @@ func Write(api string, specs configuration.WebIdlConfigurations) error {
 	}
 	statements := g.StatementList()
 	engine := g.Id("e")
-	s := slices.Collect(maps.Values(specs))
-	slices.SortFunc(
-		s,
-		func(x, y *configuration.WebAPIConfig) int { return cmp.Compare(x.Name, y.Name) },
-	)
-	var enriched = make([]model.ESConstructorData, 0)
-	for _, spec := range s {
+	var enriched []model.ESConstructorData
+	for _, spec := range slices.Collect(maps.Values(specs)) {
 		data, extra, err := configuration.LoadSpecs(spec)
 		if err != nil {
 			return err
 		}
-		types := spec.GetTypesSorted()
+		types := spec.Types()
 		for _, t := range types {
 			enriched = append(enriched, createData(data, t, extra))
 		}

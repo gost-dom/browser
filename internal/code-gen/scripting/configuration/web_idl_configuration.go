@@ -1,9 +1,6 @@
 package configuration
 
 import (
-	"cmp"
-	"slices"
-
 	"github.com/gost-dom/webref/idl"
 )
 
@@ -30,16 +27,13 @@ func NewWebAPIConfig(name string) *WebAPIConfig {
 	}
 }
 
-func (spec WebAPIConfig) GetTypesSorted() []*WebIDLConfig {
+func (spec WebAPIConfig) Types() []*WebIDLConfig {
 	types := make([]*WebIDLConfig, len(spec.Interfaces))
 	idx := 0
 	for _, t := range spec.Interfaces {
 		types[idx] = t
 		idx++
 	}
-	slices.SortFunc(types, func(x, y *WebIDLConfig) int {
-		return cmp.Compare(x.TypeName, y.TypeName)
-	})
 	return types
 }
 
@@ -61,4 +55,17 @@ func LoadSpecs(c *WebAPIConfig) (spec idl.Spec, extra []idl.Spec, err error) {
 		}
 	}
 	return
+}
+
+func (s *WebAPIConfig) Type(typeName string) *WebIDLConfig {
+	if result, ok := s.Interfaces[typeName]; ok {
+		return result
+	}
+	result := &WebIDLConfig{
+		DomSpec:  s,
+		TypeName: typeName,
+	}
+	result.ensureMap()
+	s.Interfaces[typeName] = result
+	return result
 }

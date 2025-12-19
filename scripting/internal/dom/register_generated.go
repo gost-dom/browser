@@ -21,8 +21,8 @@ func Bootstrap[T any](e js.ScriptEngine[T]) {
 	js.RegisterClass(e, "Node", "EventTarget", NewNode)
 	js.RegisterClass(e, "Attr", "Node", NewAttr)
 	js.RegisterClass(e, "CharacterData", "Node", NewCharacterData)
-	js.RegisterClass(e, "Text", "CharacterData", NewText)
 	js.RegisterClass(e, "Document", "Node", NewDocument)
 	js.RegisterClass(e, "DocumentFragment", "Node", NewDocumentFragment)
 	js.RegisterClass(e, "Element", "Node", NewElement)
+	js.RegisterClass(e, "Text", "CharacterData", NewText)
 }

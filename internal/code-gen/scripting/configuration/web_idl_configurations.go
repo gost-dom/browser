@@ -18,16 +18,3 @@ func (c WebIdlConfigurations) Module(spec string) *WebAPIConfig {
 	c[spec] = mod
 	return mod
 }
-
-func (s *WebAPIConfig) Type(typeName string) *WebIDLConfig {
-	if result, ok := s.Interfaces[typeName]; ok {
-		return result
-	}
-	result := &WebIDLConfig{
-		DomSpec:  s,
-		TypeName: typeName,
-	}
-	result.ensureMap()
-	s.Interfaces[typeName] = result
-	return result
-}
