@@ -49,6 +49,8 @@ func (c IntfComparer) compare(a, b model.ESConstructorData) int {
 	return cmp.Compare(inhA, inhB)
 }
 
+func IsGlobal(intf idl.Interface) bool { return len(intf.Global) > 0 }
+
 func Write(api string, specs configuration.WebIdlConfigurations) error {
 	idlSpec, err := idl.Load(api)
 	if err != nil {
@@ -64,7 +66,11 @@ func Write(api string, specs configuration.WebIdlConfigurations) error {
 		}
 		types := spec.Types()
 		for _, t := range types {
-			enriched = append(enriched, createData(data, t, extra))
+			typeInfo := createData(data, t, extra)
+			if IsGlobal(typeInfo.IdlInterface) {
+				continue
+			}
+			enriched = append(enriched, typeInfo)
 		}
 	}
 	slices.SortStableFunc(enriched, IntfComparer(idlSpec).compare)

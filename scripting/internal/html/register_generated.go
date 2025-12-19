@@ -14,5 +14,4 @@ func Bootstrap[T any](e js.ScriptEngine[T]) {
 	js.RegisterClass(e, "HTMLFormElement", "HTMLElement", NewHTMLFormElement)
 	js.RegisterClass(e, "HTMLInputElement", "HTMLElement", NewHTMLInputElement)
 	js.RegisterClass(e, "HTMLTemplateElement", "HTMLElement", NewHTMLTemplateElement)
-	js.RegisterClass(e, "Window", "EventTarget", NewWindow)
 }
