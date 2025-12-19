@@ -22,5 +22,5 @@ type ScriptEngine[T any] interface {
 // ScriptEngineFactory constructs ScriptEngine instances. Client code can
 // register a Configurator to define values in global JavaScript scope.
 type ScriptEngineFactory[T any] interface {
-	AddConfigurator(Configurator[T])
+	AddConfigurator(Configurer[T])
 }

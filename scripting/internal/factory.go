@@ -6,18 +6,25 @@ import (
 )
 
 type ScriptEngineConfigurer[T any] struct {
-	initializers []js.Configurator[T]
+	initializers []js.Configurer[T]
 }
 
-func NewScriptEngineConfigurer[T any](i []js.Configurator[T]) *ScriptEngineConfigurer[T] {
+func NewScriptEngineConfigurer[T any](i []js.Configurer[T]) *ScriptEngineConfigurer[T] {
 	return &ScriptEngineConfigurer[T]{i}
 }
 
-func (c *ScriptEngineConfigurer[T]) AddConfigurator(configurer js.Configurator[T]) {
+func (c *ScriptEngineConfigurer[T]) AddConfigurer(configurer js.Configurer[T]) {
 	c.initializers = append(c.initializers, configurer)
 }
 
+func (c *ScriptEngineConfigurer[T]) AddConfigurerFunc(f func(js.ScriptEngine[T])) {
+	c.initializers = append(c.initializers, js.ConfigurerFunc[T](f))
+}
+
 func DefaultInitializer[T any](e js.ScriptEngine[T]) {
+	e.SetUnhandledPromiseRejectionHandler(
+		js.ErrorHandlerFunc[T](handleUnhandledPromiseRejection[T]),
+	)
 	Configure(e)
 	html.Initialize(e)
 	Bootstrap(e)

@@ -112,7 +112,7 @@ func DefaultEngine() html.ScriptEngine {
 	return defaultEngine
 }
 
-func newEngine(configurators ...js.Configurator[jsTypeParam]) *v8ScriptEngine {
+func newEngine(configurators ...js.Configurer[jsTypeParam]) *v8ScriptEngine {
 	return &v8ScriptEngine{configurer: internal.NewScriptEngineConfigurer(configurators)}
 }
 

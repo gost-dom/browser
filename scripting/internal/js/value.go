@@ -74,7 +74,7 @@ type Constructor[T any] interface {
 	NewInstance(nativeValue any) (Object[T], error)
 }
 
-type Configurator[T any] interface{ Configure(ScriptEngine[T]) }
+type Configurer[T any] interface{ Configure(ScriptEngine[T]) }
 type ConfigurerFunc[T any] func(ScriptEngine[T])
 
 func (f ConfigurerFunc[T]) Configure(e ScriptEngine[T]) { f(e) }
