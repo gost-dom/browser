@@ -17,16 +17,14 @@ func (c *ScriptEngineConfigurer[T]) AddConfigurator(configurer js.Configurator[T
 	c.initializers = append(c.initializers, configurer)
 }
 
-func DefaultInitializer[T any]() *ScriptEngineConfigurer[T] {
-	factory := &ScriptEngineConfigurer[T]{}
+func DefaultInitializer[T any](e js.ScriptEngine[T]) {
 	var classRegistrations = js.NewClassBuilder[T]()
 	Bootstrap(classRegistrations)
 
-	js.AddConfigurator(factory, Configure)
-	js.AddConfigurator(factory, html.Initialize)
-	js.AddConfigurator(factory, classRegistrations.CreateGlobals)
-	js.AddConfigurator(factory, InstallPolyfills)
-	return factory
+	Configure(e)
+	html.Initialize(e)
+	classRegistrations.CreateGlobals(e)
+	InstallPolyfills(e)
 }
 
 func (c *ScriptEngineConfigurer[T]) Configure(host js.ScriptEngine[T]) {
