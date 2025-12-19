@@ -1,15 +1,26 @@
 package internal
 
 import (
+	"time"
+
+	"github.com/gost-dom/browser/scripting/internal/codec"
+	"github.com/gost-dom/browser/scripting/internal/dom"
+	"github.com/gost-dom/browser/scripting/internal/fetch"
 	"github.com/gost-dom/browser/scripting/internal/html"
 	"github.com/gost-dom/browser/scripting/internal/js"
+	"github.com/gost-dom/browser/scripting/internal/mathml"
+	"github.com/gost-dom/browser/scripting/internal/streams"
+	"github.com/gost-dom/browser/scripting/internal/svg"
+	"github.com/gost-dom/browser/scripting/internal/uievents"
+	"github.com/gost-dom/browser/scripting/internal/url"
+	"github.com/gost-dom/browser/scripting/internal/xhr"
 )
 
 type ScriptEngineConfigurer[T any] struct {
 	initializers []js.Configurer[T]
 }
 
-func NewScriptEngineConfigurer[T any](i []js.Configurer[T]) *ScriptEngineConfigurer[T] {
+func NewScriptEngineConfigurer[T any](i ...js.Configurer[T]) *ScriptEngineConfigurer[T] {
 	return &ScriptEngineConfigurer[T]{i}
 }
 
@@ -25,14 +36,68 @@ func DefaultInitializer[T any](e js.ScriptEngine[T]) {
 	e.SetUnhandledPromiseRejectionHandler(
 		js.ErrorHandlerFunc[T](handleUnhandledPromiseRejection[T]),
 	)
-	Configure(e)
+	dom.Configure(e)
+	fetch.Configure(e)
+	configureConsole(e)
+
+	e.CreateFunction(
+		"requestAnimationFrame",
+		func(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+			f, err := js.ConsumeArgument(cbCtx, "fn", nil, codec.DecodeFunction)
+			if err != nil {
+				return nil, err
+			}
+			cbCtx.Clock().AddSafeTask(
+				func() {
+					if _, err := f.Call(cbCtx.GlobalThis()); err != nil {
+						dom.HandleJSCallbackError(cbCtx, "requestAnimationFrame", err)
+					}
+				}, 10*time.Millisecond)
+			return nil, err
+		},
+	)
 	html.Initialize(e)
-	Bootstrap(e)
+	dom.Register(e)
+	html.InitBuilder(e)
+	svg.Bootstrap(e)
+	mathml.Bootstrap(e)
+	xhr.Bootstrap(e)
+	url.Bootstrap(e)
+	uievents.Bootstrap(e)
+	fetch.Bootstrap(e)
+	streams.Bootstrap(e)
+
+	js.RegisterClass(e, "File", "", dom.NewEvent)
+	js.RegisterClass(e, "CustomEvent", "Event", dom.NewCustomEvent)
+
+	// HTMLDocument exists as a separate class for historical reasons, but it
+	// can be treated merely as an alias for Document. In Firefox, there is an
+	// inheritance relationship between the two, which is modelled here.
+	//
+	// See also: https://developer.mozilla.org/en-US/docs/Web/API/HTMLDocument
+	js.RegisterClass(e, "HTMLDocument", "Document", html.NewHTMLDocument)
+
+	js.RegisterClass(e, "ShadowRoot", "DocumentFragment", NewUnconstructable)
+	for _, cls := range codec.HtmlElements {
+		if _, ok := e.Class(cls); !ok && cls != "HTMLElement" {
+			js.RegisterClass(e, cls, "HTMLElement", NewUnconstructable)
+		}
+	}
 	InstallPolyfills(e)
 }
 
-func (c *ScriptEngineConfigurer[T]) Configure(host js.ScriptEngine[T]) {
+func (c *ScriptEngineConfigurer[T]) Configure(e js.ScriptEngine[T]) {
 	for _, i := range c.initializers {
-		i.Configure(host)
+		i.Configure(e)
 	}
+}
+
+func handleUnhandledPromiseRejection[T any](scope js.Scope[T], err error) {
+	dom.HandleJSCallbackError(scope, "promiseRejected", err)
+}
+
+func CreateWindowsConfigurer[T any]() *ScriptEngineConfigurer[T] {
+	result := NewScriptEngineConfigurer[T]()
+	result.AddConfigurerFunc(DefaultInitializer)
+	return result
 }
