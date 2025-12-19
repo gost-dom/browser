@@ -2,6 +2,9 @@ package dom
 
 import "github.com/gost-dom/browser/scripting/internal/js"
 
-func Configure[T any](host js.ScriptEngine[T]) {
-	installDOMParser(host)
+func ConfigureScriptEngine[T any](e js.ScriptEngine[T]) {
+	installDOMParser(e)
+	Register(e)
+	js.RegisterClass(e, "ShadowRoot", "DocumentFragment", newShadowRoot)
+	js.RegisterClass(e, "CustomEvent", "Event", NewCustomEvent)
 }

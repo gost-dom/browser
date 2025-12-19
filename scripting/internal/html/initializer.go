@@ -10,13 +10,33 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func Initialize[T any](host js.ScriptEngine[T]) {
-	installEventLoopGlobals(host)
+type unconstructable[T any] struct{}
+
+func NewUnconstructable[T any](host js.ScriptEngine[T]) unconstructable[T] {
+	return unconstructable[T]{}
 }
 
-func InitBuilder[T any](e js.ScriptEngine[T]) {
+func (w unconstructable[T]) Constructor(cb js.CallbackContext[T]) (js.Value[T], error) {
+	return nil, cb.NewTypeError("Illegal constructor")
+}
+func (w unconstructable[T]) Initialize(c js.Class[T]) {}
+
+func ConfigureScriptEngine[T any](e js.ScriptEngine[T]) {
+	installEventLoopGlobals(e)
 	Bootstrap(e)
 	js.RegisterClass(e, "DOMStringMap", "", NewDOMStringMap)
+
+	// HTMLDocument exists as a separate class for historical reasons, but it
+	// can be treated merely as an alias for Document. In Firefox, there is an
+	// inheritance relationship between the two, which is modelled here.
+	//
+	// See also: https://developer.mozilla.org/en-US/docs/Web/API/HTMLDocument
+	js.RegisterClass(e, "HTMLDocument", "Document", NewHTMLDocument)
+	for _, cls := range codec.HtmlElements {
+		if _, ok := e.Class(cls); !ok && cls != "HTMLElement" {
+			js.RegisterClass(e, cls, "HTMLElement", NewUnconstructable)
+		}
+	}
 }
 
 func QueueMicrotask[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -95,4 +115,19 @@ func installEventLoopGlobals[T any](host js.ScriptEngine[T]) {
 	host.CreateFunction("clearTimeout", ClearTimeout[T])
 	host.CreateFunction("setInterval", SetInterval[T])
 	host.CreateFunction("clearInterval", ClearInterval[T])
+	host.CreateFunction("requestAnimationFrame", requestAnimationFrame)
+}
+
+func requestAnimationFrame[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	f, err := js.ConsumeArgument(cbCtx, "fn", nil, codec.DecodeFunction)
+	if err != nil {
+		return nil, err
+	}
+	cbCtx.Clock().AddSafeTask(
+		func() {
+			if _, err := f.Call(cbCtx.GlobalThis()); err != nil {
+				dom.HandleJSCallbackError(cbCtx, "requestAnimationFrame", err)
+			}
+		}, 10*time.Millisecond)
+	return nil, err
 }

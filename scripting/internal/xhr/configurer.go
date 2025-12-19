@@ -1,7 +1,7 @@
-package mathml
+package xhr
 
 import js "github.com/gost-dom/browser/scripting/internal/js"
 
 func ConfigureScriptEngine[T any](e js.ScriptEngine[T]) {
-	js.RegisterClass(e, "MathMLElement", "Element", NewMathMLElement)
+	Bootstrap(e)
 }
