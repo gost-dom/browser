@@ -380,13 +380,7 @@ func (w *window) Eval(script string) (any, error) {
 func (w *window) ScriptContext() ScriptContext { return w.scriptContext }
 
 func (w *window) Location() Location {
-	var u *netURL.URL
-	if w.baseLocation != "" {
-		u, _ = netURL.Parse(w.baseLocation)
-	} else {
-		u = new(netURL.URL)
-	}
-	return newLocation(u)
+	return newLocation(url.ParseURL(w.baseLocation))
 }
 
 func (w *window) Clock() Clock { return w.scriptContext.Clock() }

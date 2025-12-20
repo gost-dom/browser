@@ -5,17 +5,14 @@ import (
 
 	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/url"
-
-	netURL "net/url"
 )
 
 type location struct {
 	*url.URL
-	neturl *netURL.URL
 }
 
-func newLocation(u *netURL.URL) Location {
-	return location{url.NewURLFromNetURL(u), u}
+func newLocation(u *url.URL) Location {
+	return location{u}
 }
 
 func (l location) AncestorOrigins() DOMStringList {
