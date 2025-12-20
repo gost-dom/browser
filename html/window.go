@@ -192,15 +192,12 @@ func newWindow(windowOptions ...WindowOption) *window {
 	}
 	win.history.window = win
 	win.history.pushLoad(baseLocation)
-	doc := NewHTMLDocument(win)
 	url, err := url.NewUrl(baseLocation)
 	if err != nil {
 		win.Logger().
 			Warn("newWindow: Error parsing location", slog.String("location", options.BaseLocation), log.ErrAttr(err))
 	}
-	win.Logger().Info("SET LOCATION ***")
-	doc.setLocation(newLocation(url))
-	win.document = doc
+	win.document = NewHTMLDocument(win, newLocation(url))
 	event.SetEventTargetSelf(win)
 	win.initScriptEngine()
 	return win
@@ -293,11 +290,10 @@ func NewWindowReader(
 
 func (w *window) parseReader(reader io.Reader, u *url.URL) error {
 	l := w.document.location()
-	w.document = NewEmptyHtmlDocument(w)
 	if u != nil {
 		l = newLocation(u)
 	}
-	w.document.setLocation(l)
+	w.document = NewEmptyHtmlDocument(w, l)
 	err := dom.ParseDocument(w.document, reader)
 	for _, s := range w.deferredScripts {
 		s.run()
@@ -343,8 +339,7 @@ func (w *window) reload(href string) error {
 func (w *window) get(href string) error {
 	url := url.ParseURL(href)
 	if href == "about:blank" {
-		w.document = NewHTMLDocument(w)
-		w.document.setLocation(newLocation(url))
+		w.document = NewHTMLDocument(w, newLocation(url))
 		return nil
 	} else if req, err := http.NewRequest("GET", href, nil); err == nil {
 		err := w.fetchRequest(req)

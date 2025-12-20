@@ -30,6 +30,11 @@ func (s *WindowLocationTestSuite) SetupTest() {
 
 func TestWindowLocation(t *testing.T) {
 	suite.Run(t, new(WindowLocationTestSuite))
+
+	t.Run("Empty window", func(t *testing.T) {
+		win := browsertest.InitWindow(t, nil)
+		assert.Equal(t, "about:blank", win.Location().Href())
+	})
 }
 
 func (s *WindowLocationTestSuite) TestPathname() {

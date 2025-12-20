@@ -92,7 +92,7 @@ func (h *History) Go(relative int) error {
 	if shouldReload {
 		return h.window.reload(newHref)
 	} else {
-		h.window.document.setLocation(newLocation(url.ParseURL(newHref)))
+		h.window.document.location().set(url.ParseURL(newHref))
 		h.window.DispatchEvent(newPopStateEvent(newCurrentEntry.state))
 		return nil
 	}

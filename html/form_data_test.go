@@ -7,6 +7,7 @@ import (
 	. "github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
+	"github.com/gost-dom/browser/internal/testing/htmltest"
 	"github.com/stretchr/testify/suite"
 
 	"github.com/onsi/gomega"
@@ -123,8 +124,8 @@ func (s *FormDataMultipleValuesTestSuite) TestSetValueWithNewName() {
 }
 
 func TestFormDataFormWithUnnamedInput(t *testing.T) {
-	doc := NewHTMLDocument(nil)
-	form := NewHtmlFormElement(doc)
+	doc := htmltest.NewHTMLDocumentHelper(t, nil)
+	form := NewHtmlFormElement(doc.HTMLDocument)
 	Expect := gomega.NewWithT(t).Expect
 
 	namedInput1 := NewHTMLInputElement(doc)
