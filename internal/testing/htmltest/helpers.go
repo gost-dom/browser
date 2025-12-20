@@ -92,11 +92,11 @@ func (h WindowHelper) MustLoadHTML(html string) {
 // for testing.
 type HTMLDocumentHelper struct {
 	HTMLParentNodeHelper
-	dom.Document
+	html.HTMLDocument
 	t testing.TB
 }
 
-func NewHTMLDocumentHelper(t testing.TB, doc dom.Document) HTMLDocumentHelper {
+func NewHTMLDocumentHelper(t testing.TB, doc html.HTMLDocument) HTMLDocumentHelper {
 	if doc == nil {
 		doc = html.NewHTMLDocument(nil)
 	}
