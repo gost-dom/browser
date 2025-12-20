@@ -135,14 +135,6 @@ func (i *scriptContext) Export(value any) (res any, err error) {
 	return
 }
 
-func (m *scriptContext) createLocationInstance() *sobek.Object {
-	location, err := m.classes["Location"].NewInstance(m.window.Location())
-	if err != nil {
-		panic(err)
-	}
-	return location.(object).obj
-}
-
 func (c *scriptContext) CreateFunction(name string, cb js.CallbackFunc[jsTypeParam]) {
 	c.vm.Set(name, wrapJSCallback(c, cb.WithLog("", name)))
 }

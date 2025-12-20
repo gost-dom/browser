@@ -77,30 +77,6 @@ func (context *V8ScriptContext) initializeGlobals() error {
 			return err
 		}
 	}
-	{
-		// Install window.location as a "data property".
-		//
-		// A better solution could have been an accessor property that
-		// automatically retrieves a cached JS object for a Go value. This could
-		// have been configured on the template, and be consistent with how code
-		// gen works.
-		//
-		// Currently, Window.Location() returns a new value every time,
-		// preventing that solution, as the location is a [SameValue] object -
-		// and verified by tests. Furthermore, in JS, document.location must
-		// return the same object as window.location (document.location looks up
-		// window.location)
-		l, err := context.Constructor("Location").NewInstance(win.Location())
-		if err != nil {
-			return err
-		}
-		if err := context.global.Set("location", l); err != nil {
-			return errors.Join(
-				fmt.Errorf("error installing location: %w", err),
-				constants.ErrGostDomBug,
-			)
-		}
-	}
 	for _, s := range context.host.scripts {
 		script := s[0]
 		src := s[1]
