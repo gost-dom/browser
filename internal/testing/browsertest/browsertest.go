@@ -60,17 +60,17 @@ func InitBrowser(
 	handler http.Handler,
 	engine html.ScriptEngine,
 	opts ...InitOption,
-) *browser.Browser {
+) htmltest.BrowserHelper {
 	var o option
 	for _, opt := range opts {
 		opt(&o)
 	}
 	logger := gosttest.NewTestLogger(t, o.logOptions...)
-	b := browser.New(
+	b := htmltest.NewBrowserHelper(t, browser.New(
 		browser.WithScriptEngine(engine),
 		browser.WithHandler(handler),
 		browser.WithLogger(logger),
-	)
+	))
 	t.Cleanup(b.Close)
 	return b
 }

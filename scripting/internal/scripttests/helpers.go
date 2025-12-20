@@ -16,15 +16,13 @@ var WithMinLogLevel = browsertest.WithMinLogLevel
 func initWindow(
 	t *testing.T, e html.ScriptEngine, h http.Handler, opts ...browsertest.InitOption,
 ) htmltest.WindowHelper {
-	b := htmltest.NewBrowserHelper(t, initBrowser(t, h, e, opts...))
-	t.Cleanup(b.Close)
+	b := initBrowser(t, h, e, opts...)
 	return b.NewWindow()
 }
 
 func openWindow(
 	t *testing.T, e html.ScriptEngine, h http.Handler, url string, opts ...browsertest.InitOption,
 ) htmltest.WindowHelper {
-	b := htmltest.NewBrowserHelper(t, initBrowser(t, h, e, opts...))
-	t.Cleanup(b.Close)
+	b := initBrowser(t, h, e, opts...)
 	return b.OpenWindow(url)
 }
