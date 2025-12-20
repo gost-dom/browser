@@ -22,9 +22,7 @@ func (w *Document[T]) CustomInitializer(class js.Class[T]) {
 
 func (w *Document[T]) CreateInstance(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	res := dom.NewDocument(nil)
-	cbCtx.This().SetNativeValue(res)
-	cbCtx.SetValue(res, cbCtx.This())
-	return nil, nil
+	return codec.EncodeConstrucedValue(cbCtx, res)
 }
 
 func (w *Document[T]) getElementById(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
