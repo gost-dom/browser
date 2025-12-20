@@ -21,8 +21,8 @@ func TestScriptHostDocumentScriptLoading(t *testing.T) {
 	t.Cleanup(host.Close)
 	options := html.WindowOptions{ScriptHost: host}
 	win, err := html.NewWindowReader(reader, options)
-	defer win.Close()
 	Expect(err).ToNot(HaveOccurred())
+	defer win.Close()
 	ctx := win.ScriptContext()
 	Expect(
 		ctx.Eval("window.sut"),
