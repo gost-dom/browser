@@ -10,6 +10,7 @@ import (
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/gosthttp"
+	"github.com/gost-dom/browser/internal/testing/browsertest"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
@@ -22,7 +23,8 @@ type WindowLocationTestSuite struct {
 
 func (s *WindowLocationTestSuite) SetupTest() {
 	server := newAnchorTagNavigationServer()
-	s.window = NewWindowFromHandler(server)
+	b := browsertest.InitBrowser(s.T(), server, nil)
+	s.window = b.NewWindow()
 }
 
 func TestWindowLocation(t *testing.T) {

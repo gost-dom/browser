@@ -12,6 +12,7 @@ import (
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/testing/browsertest"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
@@ -74,8 +75,8 @@ func (s *WindowNavigationTestSuite) SetupTest() {
 		http.Redirect(w, r, "/infinite-redirects", 301)
 	})
 
-	s.win = htmltest.NewWindowHelper(s.T(), NewWindowFromHandler(m))
-	s.win.Navigate("https://example.com/page-1")
+	b := browsertest.InitBrowser(s.T(), m, nil)
+	s.win = b.OpenWindow("https://example.com/page-1")
 }
 
 func TestWindowNavigation(t *testing.T) {
