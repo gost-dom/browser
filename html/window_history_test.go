@@ -8,6 +8,7 @@ import (
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/testing/browsertest"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
@@ -25,7 +26,8 @@ func (s *WindowHistoryTestSuite) History() *html.History {
 
 func (s *WindowHistoryTestSuite) SetupTest() {
 	s.h = new(gosttest.EchoHandler)
-	s.win = html.NewWindow(windowOptionHandler(s.h))
+	b := browsertest.InitBrowser(s.T(), s.h, nil)
+	s.win, _ = b.Open("http://example.com/index")
 }
 
 func (s *WindowHistoryTestSuite) TestWithNewWindow() {
@@ -40,11 +42,10 @@ func (s *WindowHistoryTestSuite) TestHistoryAfterNavigating() {
 func (s *WindowHistoryTestSuite) TestReloadWithGoMethod() {
 	s.Expect(s.win.Navigate("/page-2")).To(Succeed())
 	s.Expect(s.History().Length()).To(Equal(2), "History length after navigate")
-	// about:blank wasn't a request
-	s.Expect(s.h.RequestCount()).To(Equal(1), "No of HTTP requests")
+	s.Expect(s.h.RequestCount()).To(Equal(2), "No of HTTP requests")
 	s.Expect(s.History().Go(0)).To(Succeed())
 	s.Expect(s.History().Length()).To(Equal(2), "History length after reload")
-	s.Expect(s.h.RequestCount()).To(Equal(2), "No of HTTP requests") // about:blank wasn't a request
+	s.Expect(s.h.RequestCount()).To(Equal(3), "No of HTTP requests") // about:blank wasn't a request
 }
 
 func (s *WindowHistoryTestSuite) TestNavigate() {
@@ -56,8 +57,8 @@ func (s *WindowHistoryTestSuite) TestNavigate() {
 func (s *WindowHistoryTestSuite) TestGoBackOnce() {
 	s.Expect(s.win.Navigate("/page-2")).To(Succeed())
 	s.Expect(s.win.History().Go(-1)).To(Succeed())
-	s.Expect(s.win.Document()).To(HaveH1("Gost-DOM"), "Page content after pack")
-	s.Expect(s.win.Location().Href()).To(Equal("about:blank"), "Location after back")
+	s.Expect(s.win.Document()).To(HaveH1("/index"), "Page content after pack")
+	s.Expect(s.win.Location().Pathname()).To(Equal("/index"), "Location after back")
 }
 
 func (s *WindowHistoryTestSuite) TestGoForward() {
@@ -98,7 +99,7 @@ func (s *WindowHistoryTestSuite) TestReplaceState() {
 	s.Expect(s.win.Navigate("/page-2")).To(Succeed())
 	s.Expect(s.win.History().Length()).To(Equal(2))
 	s.Expect(s.win.History().ReplaceState(EMPTY_STATE, "/page-3"))
-	s.Expect(s.h.RequestCount()).To(Equal(1), "No of HTTP requests")
+	s.Expect(s.h.RequestCount()).To(Equal(2), "No of HTTP requests")
 	s.Expect(s.win.History().Length()).To(Equal(2), "History length after ReplaceState")
 	s.Expect(s.win.Location().Pathname()).To(Equal("/page-3"), "Path after ReplaceState")
 }
@@ -115,7 +116,8 @@ type WindowHistoryPushStateTestSuite struct {
 
 func (s *WindowHistoryPushStateTestSuite) SetupTest() {
 	s.h = new(gosttest.EchoHandler)
-	s.win = html.NewWindow(windowOptionHandler(s.h))
+	b := browsertest.InitBrowser(s.T(), s.h, nil)
+	s.win, _ = b.Open("http://example.com/index")
 	s.Expect(s.win.Navigate("/page-2")).To(Succeed())
 	s.Expect(s.win.Navigate("/page-3")).To(Succeed())
 
@@ -144,12 +146,12 @@ func (s *WindowHistoryPushStateTestSuite) TestPushStateWithRealPage() {
 	s.Expect(s.win.History().Length()).To(Equal(4))
 	s.Expect(s.win.History().Length()).To(Equal(4))
 	s.Expect(s.win.Location().Pathname()).To(Equal("/page-4"))
-	s.Expect(s.h.RequestCount()).To(Equal(2), "No of request _after_ pushState")
+	s.Expect(s.h.RequestCount()).To(Equal(3), "No of request _after_ pushState")
 
 	s.Expect(s.win.History().Back()).To(Succeed())
 	s.Expect(s.win.History().Length()).To(Equal(4))
 	s.Expect(s.win.Location().Pathname()).To(Equal("/page-3"))
-	s.Expect(s.h.RequestCount()).To(Equal(2), "No of request _after_ back")
+	s.Expect(s.h.RequestCount()).To(Equal(3), "No of request _after_ back")
 }
 
 func (s *WindowHistoryPushStateTestSuite) TestPushStateWithEmptyURL() {
@@ -164,7 +166,8 @@ type WindowHistoryPushStateWithMultipleEntriesTestSuite struct {
 
 func (s *WindowHistoryPushStateWithMultipleEntriesTestSuite) SetupTest() {
 	s.h = new(gosttest.EchoHandler)
-	s.win = html.NewWindow(windowOptionHandler(s.h))
+	b := browsertest.InitBrowser(s.T(), s.h, nil)
+	s.win, _ = b.Open("http://example.com/index")
 
 	s.Expect(s.win.Navigate("/page-2")).To(Succeed())
 	s.Expect(s.win.Navigate("/page-3")).To(Succeed())
@@ -176,7 +179,7 @@ func (s *WindowHistoryPushStateWithMultipleEntriesTestSuite) SetupTest() {
 	s.Expect(s.win.History().PushState(EMPTY_STATE, "/page-8"))
 	s.Expect(s.win.History().PushState(EMPTY_STATE, "/page-9"))
 	s.Expect(s.win.History().Length()).To(Equal(9))
-	s.Expect(s.h.RequestCount()).To(Equal(4))
+	s.Expect(s.h.RequestCount()).To(Equal(5))
 }
 
 func TestWindowHistoryPushStateWithMultipleEntries(t *testing.T) {
@@ -187,14 +190,14 @@ func (s *WindowHistoryPushStateWithMultipleEntriesTestSuite) TestGoBackTwo() {
 	s.Expect(s.win.History().Go(-2)).To(Succeed())
 	s.Expect(s.win.History().Length()).To(Equal(9))
 	s.Expect(s.h.RequestCount()).
-		To(Equal(4), "No of HTTP requests, a new should _not_ have been made")
+		To(Equal(5), "No of HTTP requests, a new should _not_ have been made")
 	s.Expect(s.win.Document().GetElementById("heading")).To(HaveTextContent("/page-7"))
 }
 
 func (s *WindowHistoryPushStateWithMultipleEntriesTestSuite) TestGoBackThree() {
 	s.Expect(s.win.History().Go(-3)).To(Succeed())
 	s.Expect(s.win.History().Length()).To(Equal(9))
-	s.Expect(s.h.RequestCount()).To(Equal(5), "No of HTTP requests, a new _should_ have been made")
+	s.Expect(s.h.RequestCount()).To(Equal(6), "No of HTTP requests, a new _should_ have been made")
 	s.Expect(s.win.Document().GetElementById("heading")).To(HaveTextContent("/page-6"))
 }
 
@@ -204,7 +207,7 @@ func (s *WindowHistoryPushStateWithMultipleEntriesTestSuite) TestGoBackFive() {
 		To(HaveTextContent("/page-4"), "Page for loaded")
 
 	s.Expect(s.win.History().Length()).To(Equal(9), "History length - should be unchanged")
-	s.Expect(s.h.RequestCount()).To(Equal(5), "No of HTTP requests - a new should have been made")
+	s.Expect(s.h.RequestCount()).To(Equal(6), "No of HTTP requests - a new should have been made")
 }
 
 func (s *WindowHistoryPushStateWithMultipleEntriesTestSuite) TestBackFiveAndForwardOne() {
@@ -212,13 +215,13 @@ func (s *WindowHistoryPushStateWithMultipleEntriesTestSuite) TestBackFiveAndForw
 	s.Expect(s.win.History().Go(1)).To(Succeed())
 	s.Expect(s.win.History().Length()).To(Equal(9))
 	s.Expect(s.h.RequestCount()).
-		To(Equal(5), "No of HTTP requests - a new should _not_ have been made")
+		To(Equal(6), "No of HTTP requests - a new should _not_ have been made")
 }
 
 func (s *WindowHistoryPushStateWithMultipleEntriesTestSuite) TestBackFiveAndForwardTwo() {
 	s.Expect(s.win.History().Go(-5)).To(Succeed())
 	s.Expect(s.win.History().Go(2)).To(Succeed())
 	s.Expect(s.win.History().Length()).To(Equal(9))
-	s.Expect(s.h.RequestCount()).To(Equal(6), "No of HTTP requests - a new should have been made")
+	s.Expect(s.h.RequestCount()).To(Equal(7), "No of HTTP requests - a new should have been made")
 	s.Expect(s.win.Document().GetElementById("heading")).To(HaveTextContent("/page-6"))
 }
