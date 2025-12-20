@@ -23,7 +23,6 @@ type WindowLocationTestSuite struct {
 func (s *WindowLocationTestSuite) SetupTest() {
 	server := newAnchorTagNavigationServer()
 	s.window = NewWindowFromHandler(server)
-
 }
 
 func TestWindowLocation(t *testing.T) {
@@ -34,7 +33,7 @@ func (s *WindowLocationTestSuite) TestEmptyWindow() {
 	s.Expect(s.window.Location().Href()).To(Equal("about:blank"))
 }
 
-func (s *WindowLocationTestSuite) TestPathnam() {
+func (s *WindowLocationTestSuite) TestPathname() {
 	s.Expect(s.window.Navigate("/index")).To(Succeed())
 	s.Expect(s.window.Location().Pathname()).To(Equal("/index"))
 }
@@ -77,7 +76,6 @@ func (s *WindowLocationTestSuite) TestClickAbsoluteURL() {
 	link := s.GetLink("Products from absolute url")
 	link.Click()
 	s.Expect(s.window.Location().Pathname()).To(Equal("/products"))
-
 }
 
 func (s *WindowLocationTestSuite) TestClickRelativeURL() {
