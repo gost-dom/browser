@@ -10,12 +10,7 @@ import (
 // getJSInstance gets the JavaScript object that wraps a specific Go object. If
 // a wrapper already has been created, that wrapper is returned; otherwise a new
 // object is created with the correct prototype configured.
-func EncodeEntity[T any](s js.Scope[T], e entity.ObjectIder) (js.Value[T], error) {
-	return EncodeEntityScoped(s, e)
-}
-
-// TODO: Embed scope in CallbackScope, so only one function is necessary
-func EncodeEntityScoped[T any](scope js.Scope[T], e entity.ObjectIder) (js.Value[T], error) {
+func EncodeEntity[T any](scope js.Scope[T], e entity.ObjectIder) (js.Value[T], error) {
 	if e == nil {
 		return scope.Null(), nil
 	}

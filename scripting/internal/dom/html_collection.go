@@ -9,7 +9,7 @@ import (
 func (w *HTMLCollection[T]) CustomInitializer(class js.Class[T]) {
 	iterator := js.NewIterator(
 		func(s js.Scope[T], instance dom.Element) (js.Value[T], error) {
-			return codec.EncodeEntityScoped(s, instance)
+			return codec.EncodeEntity(s, instance)
 		})
 	iterator.InstallPrototype(class)
 
