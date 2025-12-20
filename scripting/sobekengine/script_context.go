@@ -8,7 +8,6 @@ import (
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
-	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/gosthttp"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting/internal/js"
@@ -23,7 +22,6 @@ type scriptContext struct {
 	window       html.Window
 	classes      map[string]*class
 	wrappedGoObj *sobek.Symbol
-	cachedNodes  map[int32]sobek.Value
 }
 
 func (c *scriptContext) Clock() html.Clock        { return c.clock }
@@ -76,9 +74,6 @@ func (c *scriptContext) storeInternal(value any, obj *sobek.Object) {
 		sobek.FLAG_FALSE,
 		sobek.FLAG_FALSE,
 	)
-	if e, ok := value.(entity.ObjectIder); ok {
-		c.cachedNodes[e.ObjectId()] = obj
-	}
 }
 
 func (i *scriptContext) RunFunction(str string, arguments ...any) (res any, err error) {

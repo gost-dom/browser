@@ -8,7 +8,6 @@ import (
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
-	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/grafana/sobek"
@@ -41,14 +40,6 @@ func (s scope) Logger() *slog.Logger {
 		return l
 	}
 	return log.Default()
-}
-
-func (s scope) GetValue(e entity.ObjectIder) (js.Value[jsTypeParam], bool) {
-	v, ok := s.cachedNodes[e.ObjectId()]
-	return newValue(s.scriptContext, v), ok
-}
-func (s scope) SetValue(e entity.ObjectIder, v js.Value[jsTypeParam]) {
-	s.cachedNodes[e.ObjectId()] = v.Self().value
 }
 
 func (f scope) JSONParse(s string) (js.Value[jsTypeParam], error) {

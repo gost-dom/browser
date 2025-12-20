@@ -58,7 +58,6 @@ func (h *scriptHost) NewContext(window html.Window) html.ScriptContext {
 		clock:        clock.New(),
 		window:       window,
 		wrappedGoObj: sobek.NewSymbol(internal_symbol_name),
-		cachedNodes:  make(map[int32]sobek.Value),
 		classes:      make(map[string]*class),
 	}
 

@@ -7,7 +7,6 @@ import (
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
-	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
 )
 
@@ -34,8 +33,6 @@ type Scope[T any] interface {
 	Window() html.Window
 	GlobalThis() Object[T]
 	Clock() *clock.Clock
-	GetValue(entity.ObjectIder) (Value[T], bool)
-	SetValue(entity.ObjectIder, Value[T])
 	Constructor(string) Constructor[T]
 }
 

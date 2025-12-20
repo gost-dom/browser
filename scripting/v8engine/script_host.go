@@ -10,7 +10,6 @@ import (
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
-	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
@@ -176,7 +175,6 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 		clock:    clock.New(clock.WithLogger(w.Logger())),
 		v8ctx:    v8ctx,
 		window:   w,
-		v8nodes:  make(map[entity.ObjectId]jsValue),
 		resolver: moduleResolver{host: host},
 	}
 	if _, err := context.runScript("Object.setPrototypeOf(globalThis, globalThis.Window.prototype)"); err != nil {
@@ -189,7 +187,6 @@ func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
 	host.inspector.ContextCreated(context.v8ctx)
 	global := newV8Object(context, context.v8ctx.Global())
 	context.addDisposer(global.(js.Disposable))
-	context.cacheEntity(global, w)
 
 	return context
 }

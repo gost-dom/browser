@@ -10,7 +10,6 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/constants"
-	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/gosthttp"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/browser/url"
@@ -24,7 +23,6 @@ type V8ScriptContext struct {
 	host       *V8ScriptHost
 	v8ctx      *v8.Context
 	window     html.Window
-	v8nodes    map[entity.ObjectId]jsValue
 	disposers  []js.Disposable
 	clock      *clock.Clock
 	disposed   bool
@@ -48,19 +46,6 @@ func (h *V8ScriptHost) mustGetContext(v8ctx *v8.Context) *V8ScriptContext {
 		return ctx
 	}
 	panic("Unknown v8 context!!\n" + string(debug.Stack()))
-}
-
-func (c *V8ScriptContext) cacheEntity(obj jsObject, node entity.ObjectIder) {
-	c.v8nodes[node.ObjectId()] = obj
-}
-
-func (c *V8ScriptContext) GetValue(entity entity.ObjectIder) (jsValue, bool) {
-	res, ok := c.v8nodes[entity.ObjectId()]
-	return res, ok
-}
-
-func (c *V8ScriptContext) SetValue(entity entity.ObjectIder, value jsValue) {
-	c.v8nodes[entity.ObjectId()] = value
 }
 
 func (context *V8ScriptContext) installError(

@@ -7,11 +7,10 @@ import (
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
-	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/uievents"
 )
 
-func LookupJSPrototype(entity entity.ObjectIder) string {
+func LookupJSPrototype(entity any) string {
 	switch n := entity.(type) {
 	case *event.Event:
 		switch n.Data.(type) {

@@ -7,44 +7,58 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-// getJSInstance gets the JavaScript object that wraps a specific Go object. If
+func setJsValue[T any](c entity.Components, v js.Value[T]) {
+	// It may be overkill to extract this one-line function, the primary reason
+	// is to ensure the correct type parameter is used. If you remove the
+	// explicit type parameter, and leave it to type inference, the type could
+	// in many cases easily be inferred to Object instead of value, not looking
+	// up the correct slot.
+	entity.SetComponentType(c, v)
+}
+
+func getJsValue[T any](c entity.Components) (v js.Value[T]) {
+	res, _ := entity.ComponentType[js.Value[T]](c)
+	return res
+}
+
+// EncodeEntity gets the JavaScript object that wraps a specific Go object. If
 // a wrapper already has been created, that wrapper is returned; otherwise a new
 // object is created with the correct prototype configured.
-func EncodeEntity[T any](scope js.Scope[T], e entity.ObjectIder) (js.Value[T], error) {
+func EncodeEntity[T any](s js.Scope[T], e entity.Components) (js.Value[T], error) {
 	if e == nil {
-		return scope.Null(), nil
+		return s.Null(), nil
 	}
 
-	if cached, ok := scope.GetValue(e); ok {
+	if cached := getJsValue[T](e); cached != nil {
 		return cached, nil
 	}
 
 	prototypeName := LookupJSPrototype(e)
-	prototype := scope.Constructor(prototypeName)
+	prototype := s.Constructor(prototypeName)
 	value, err := prototype.NewInstance(e)
 	if err == nil {
-		scope.SetValue(e, value)
+		setJsValue(e, value)
 	}
 	return value, err
 }
 
 func EncodeEntityScopedWithPrototype[T any](
 	scope js.Scope[T],
-	e entity.ObjectIder,
+	e entity.Components,
 	protoName string,
 ) (js.Value[T], error) {
 	if e == nil {
 		return scope.Null(), nil
 	}
 
-	if cached, ok := scope.GetValue(e); ok {
+	if cached := getJsValue[T](e); cached != nil {
 		return cached, nil
 	}
 
 	prototype := scope.Constructor(protoName)
 	value, err := prototype.NewInstance(e)
 	if err == nil {
-		scope.SetValue(e, value)
+		setJsValue(e, value)
 	}
 	return value, err
 }
@@ -100,8 +114,8 @@ func EncodeNull[T any](s js.CallbackScope[T]) (js.Value[T], error) {
 func EncodeConstrucedValue[T any](s js.CallbackScope[T], val any) (js.Value[T], error) {
 	// TODO: Figure out if this function should survive
 	s.This().SetNativeValue(val)
-	if e, ok := val.(entity.ObjectIder); ok {
-		s.SetValue(e, s.This())
+	if e, ok := val.(entity.Components); ok {
+		setJsValue(e, s.This())
 	}
 	return nil, nil
 }

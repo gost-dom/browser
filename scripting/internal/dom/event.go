@@ -26,7 +26,7 @@ func (w Event[T]) toEventTarget(
 	if e == nil {
 		return cbCtx.Null(), nil
 	}
-	if entity, ok := e.(entity.ObjectIder); ok {
+	if entity, ok := e.(entity.Components); ok {
 		return codec.EncodeEntity(cbCtx, entity)
 	}
 	return cbCtx.ReturnWithTypeError(fmt.Sprintf(

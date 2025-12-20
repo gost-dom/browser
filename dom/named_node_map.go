@@ -9,7 +9,7 @@ import (
 )
 
 type NamedNodeMap interface {
-	entity.ObjectIder
+	entity.Components
 	All() iter.Seq[Attr]
 	Length() int
 	Item(index int) Attr

@@ -3,7 +3,7 @@ package dom
 import "github.com/gost-dom/browser/internal/entity"
 
 type NodeList interface {
-	entity.ObjectIder
+	entity.Components
 	Length() int
 
 	// Item returns the node with the specified zero-based index. If the index
