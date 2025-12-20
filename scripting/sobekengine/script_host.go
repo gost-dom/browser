@@ -10,6 +10,8 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/scripting/internal"
+	"github.com/gost-dom/browser/scripting/internal/codec"
+	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/grafana/sobek"
 )
 
@@ -71,11 +73,10 @@ func (h *scriptHost) NewContext(window html.Window) html.ScriptContext {
 	)
 	globalThis.Set("window", globalThis)
 	h.initializer.Configure(result)
-	location := result.createLocationInstance()
 	globalThis.DefineAccessorProperty(
 		"location",
-		vm.ToValue(func(c *sobek.FunctionCall) sobek.Value {
-			return location
+		wrapJSCallback(result, func(cbCtx js.CallbackContext[jsTypeParam]) (jsValue, error) {
+			return codec.EncodeEntity(cbCtx, window.Location())
 		}),
 		nil,
 		sobek.FLAG_FALSE,

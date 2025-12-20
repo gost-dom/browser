@@ -20,7 +20,7 @@ func TestScriptHostDocumentScriptLoading(t *testing.T) {
 	host := v8engine.New()
 	t.Cleanup(host.Close)
 	options := html.WindowOptions{ScriptHost: host}
-	win, err := html.NewWindowReader(reader, options)
+	win, err := html.NewWindowReader(reader, nil, options)
 	Expect(err).ToNot(HaveOccurred())
 	defer win.Close()
 	ctx := win.ScriptContext()

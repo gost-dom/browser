@@ -6,6 +6,7 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/url"
 	"github.com/onsi/gomega"
 	"github.com/onsi/gomega/types"
 )
@@ -28,7 +29,7 @@ func (s *DocumentSuite) Document() dom.Document {
 }
 
 func ParseHtmlString(s string, windowOptions ...html.WindowOption) dom.Document {
-	win, err := html.NewWindowReader(strings.NewReader(s), windowOptions...)
+	win, err := html.NewWindowReader(strings.NewReader(s), url.ParseURL(s), windowOptions...)
 	if err != nil {
 		panic(err)
 	}

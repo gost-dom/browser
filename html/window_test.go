@@ -24,13 +24,13 @@ type WindowTestSuite struct {
 }
 
 func (s *WindowTestSuite) TestDocumentIsAnHTMLDocument() {
-	win, err := NewWindowReader(strings.NewReader("<html><body></body></html>"))
+	win, err := NewWindowReader(strings.NewReader("<html><body></body></html>"), nil)
 	s.Expect(err).ToNot(HaveOccurred())
 	s.Expect(win.Document().DocumentElement()).To(BeHTMLElement())
 }
 
 func (s *WindowTestSuite) TestDocumentWithDOCTYPE() {
-	win, err := NewWindowReader(strings.NewReader("<!DOCTYPE HTML><html><body></body></html>"))
+	win, err := NewWindowReader(strings.NewReader("<!DOCTYPE HTML><html><body></body></html>"), nil)
 	s.Expect(err).ToNot(HaveOccurred())
 	s.Expect(win.Document().FirstChild().NodeType()).To(Equal(dom.NodeTypeDocumentType))
 }

@@ -4,6 +4,8 @@ import (
 	"errors"
 
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/entity"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -33,4 +35,8 @@ func (w *Window[T]) opener(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 
 func (w *Window[T]) setOpener(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return nil, errors.New("Not implemented")
+}
+
+func (w *Window[T]) toLocation(cbCtx js.CallbackContext[T], l html.Location) (js.Value[T], error) {
+	return codec.EncodeEntity(cbCtx, l.(entity.Components))
 }

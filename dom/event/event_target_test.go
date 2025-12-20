@@ -95,6 +95,7 @@ func (s *EventPropagationTestSuiteBase) SetupTest() {
 	var err error
 	s.window, err = html.NewWindowReader(
 		strings.NewReader(`<body><div id="target"></div></body>`),
+		nil,
 	)
 	s.Expect(err).ToNot(HaveOccurred())
 	s.target = s.window.Document().GetElementById("target")

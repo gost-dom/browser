@@ -4,16 +4,20 @@ import (
 	"fmt"
 
 	"github.com/gost-dom/browser/internal/constants"
+	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/url"
 )
 
 type location struct {
+	entity.Entity
 	*url.URL
 }
 
-func newLocation(u *url.URL) Location {
-	return location{u}
+func newLocation(u *url.URL) *location {
+	return &location{URL: u}
 }
+
+func (l *location) set(u *url.URL) { l.URL = u }
 
 func (l location) AncestorOrigins() DOMStringList {
 	return nil

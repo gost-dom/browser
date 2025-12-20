@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/onsi/gomega"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 
@@ -24,15 +25,11 @@ type WindowLocationTestSuite struct {
 func (s *WindowLocationTestSuite) SetupTest() {
 	server := newAnchorTagNavigationServer()
 	b := browsertest.InitBrowser(s.T(), server, nil)
-	s.window = b.NewWindow()
+	s.window = b.OpenWindow("http://example.com/index")
 }
 
 func TestWindowLocation(t *testing.T) {
 	suite.Run(t, new(WindowLocationTestSuite))
-}
-
-func (s *WindowLocationTestSuite) TestEmptyWindow() {
-	s.Expect(s.window.Location().Href()).To(Equal("about:blank"))
 }
 
 func (s *WindowLocationTestSuite) TestPathname() {
@@ -45,19 +42,24 @@ func (s *WindowLocationTestSuite) TestNavigateToAboutBlank() {
 	s.Expect(s.window.Document()).To(HaveH1("Gost-DOM"))
 }
 
-func (s *WindowLocationTestSuite) TestNavigateClearsEventHandlers() {
+func TestWindowNavigateClearsEventHandlers(t *testing.T) {
+	b := browsertest.InitBrowser(t, newAnchorTagNavigationServer(), nil)
+	win := b.NewWindow()
 	count := 0
-	s.Expect(s.window.Navigate("about:blank")).To(Succeed())
-	s.window.AddEventListener(
-		"gost-event",
+	win.AddEventListener("gost-event",
 		event.NewEventHandlerFunc(func(e *event.Event) error {
 			count++
 			return nil
 		}))
+	s := gomega.NewGomegaWithT(t)
+	win.DispatchEvent(&event.Event{Type: "gost-event"})
+	s.Expect(count).To(Equal(1))
 
-	s.Expect(s.window.Navigate("/index")).To(Succeed())
-	s.window.DispatchEvent(&event.Event{Type: "gost-event"})
+	count = 0
+	s.Expect(win.Navigate("/index")).To(Succeed())
+	win.DispatchEvent(&event.Event{Type: "gost-event"})
 	s.Expect(count).To(Equal(0))
+
 }
 
 func (s *WindowLocationTestSuite) GetLink(text string) html.HTMLElement {
@@ -75,6 +77,7 @@ func (s *WindowLocationTestSuite) GetLink(text string) html.HTMLElement {
 }
 
 func (s *WindowLocationTestSuite) TestClickAbsoluteURL() {
+	s.window.Navigate("http://example.com/index")
 	link := s.GetLink("Products from absolute url")
 	link.Click()
 	s.Expect(s.window.Location().Pathname()).To(Equal("/products"))

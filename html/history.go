@@ -5,6 +5,7 @@ import (
 
 	"github.com/gost-dom/browser/dom/event"
 	htmlinterfaces "github.com/gost-dom/browser/internal/interfaces/html-interfaces"
+	"github.com/gost-dom/browser/url"
 )
 
 const HistoryEventPopState = "popstate"
@@ -91,7 +92,7 @@ func (h *History) Go(relative int) error {
 	if shouldReload {
 		return h.window.reload(newHref)
 	} else {
-		h.window.baseLocation = newHref
+		h.window.document.setLocation(newLocation(url.ParseURL(newHref)))
 		h.window.DispatchEvent(newPopStateEvent(newCurrentEntry.state))
 		return nil
 	}

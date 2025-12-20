@@ -32,6 +32,7 @@ func (w Window[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("self", w.self, nil)
 	jsClass.CreatePrototypeAttribute("document", w.document, nil)
 	jsClass.CreatePrototypeAttribute("name", w.name, w.setName)
+	jsClass.CreatePrototypeAttribute("location", w.location, nil)
 	jsClass.CreatePrototypeAttribute("history", w.history, nil)
 	jsClass.CreatePrototypeAttribute("navigation", w.navigation, nil)
 	jsClass.CreatePrototypeAttribute("customElements", w.customElements, nil)
@@ -109,6 +110,15 @@ func (w Window[T]) name(cbCtx js.CallbackContext[T]) (res js.Value[T], err error
 
 func (w Window[T]) setName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return codec.EncodeCallbackErrorf(cbCtx, "Window.setName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+}
+
+func (w Window[T]) location(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	instance, err := js.As[html.Window](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	result := instance.Location()
+	return w.toLocation(cbCtx, result)
 }
 
 func (w Window[T]) navigation(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

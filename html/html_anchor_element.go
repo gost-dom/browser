@@ -31,7 +31,7 @@ func (e *htmlAnchorElement) SetAttribute(name string, val string) {
 	win := e.window().History().window
 	e.htmlElement.SetAttribute(name, val)
 	if name == "href" {
-		e.URL = url.ParseURLBase(val, win.baseLocation)
+		e.URL = win.resolveHref(val)
 	}
 }
 

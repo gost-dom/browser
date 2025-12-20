@@ -8,6 +8,7 @@ import (
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/entity"
+	"github.com/gost-dom/browser/url"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -51,7 +52,7 @@ type WindowHelper struct {
 
 func NewWindowHTML(t testing.TB, s string) WindowHelper {
 	t.Helper()
-	win, err := html.NewWindowReader(strings.NewReader(s))
+	win, err := html.NewWindowReader(strings.NewReader(s), url.ParseURL(s))
 	assert.NoError(t, err, "htmltest: NewWindowHTML")
 	return NewWindowHelper(t, win)
 }
@@ -178,7 +179,7 @@ func (h HTMLParentNodeHelper) QuerySelectorHTMLOpt(pattern string) (res *HTMLEle
 }
 
 func ParseHTMLDocument(t testing.TB, s string) HTMLDocumentHelper {
-	win, err := html.NewWindowReader(strings.NewReader(s))
+	win, err := html.NewWindowReader(strings.NewReader(s), url.ParseURL(s))
 	if err != nil {
 		t.Fatalf("gost-dom/htmltest: ParseHTMLDocument: %v", err)
 	}

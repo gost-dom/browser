@@ -157,15 +157,15 @@ type Window interface {
 type window struct {
 	event.EventTarget
 	entity.Entity
-	document            dom.Document
+	document            HTMLDocument
 	history             *History
 	scriptEngineFactory ScriptHost
 	scriptContext       ScriptContext
 	httpClient          http.Client
-	baseLocation        string
-	logger              *slog.Logger
-	deferredScripts     []*htmlScriptElement
-	context             context.Context
+	// baseLocation        string
+	logger          *slog.Logger
+	deferredScripts []*htmlScriptElement
+	context         context.Context
 }
 
 func newWindow(windowOptions ...WindowOption) *window {
@@ -177,23 +177,32 @@ func newWindow(windowOptions ...WindowOption) *window {
 	if ctx == nil {
 		ctx = context.Background()
 	}
+	baseLocation := options.BaseLocation
 	win := &window{
-		EventTarget:         event.NewEventTarget(),
-		httpClient:          options.HttpClient,
-		baseLocation:        options.BaseLocation,
+		EventTarget: event.NewEventTarget(),
+		httpClient:  options.HttpClient,
+		// baseLocation:        options.BaseLocation,
 		scriptEngineFactory: options.ScriptHost,
 		logger:              options.Logger,
 		history:             new(History),
 		context:             ctx,
 	}
-	if win.baseLocation == "" {
-		win.baseLocation = "about:blank"
+	if baseLocation == "" {
+		baseLocation = "about:blank"
 	}
 	win.history.window = win
-	win.history.pushLoad(win.baseLocation)
-	win.initScriptEngine()
-	win.document = NewHTMLDocument(win)
+	win.history.pushLoad(baseLocation)
+	doc := NewHTMLDocument(win)
+	url, err := url.NewUrl(baseLocation)
+	if err != nil {
+		win.Logger().
+			Warn("newWindow: Error parsing location", slog.String("location", options.BaseLocation), log.ErrAttr(err))
+	}
+	win.Logger().Info("SET LOCATION ***")
+	doc.setLocation(newLocation(url))
+	win.document = doc
 	event.SetEventTargetSelf(win)
+	win.initScriptEngine()
 	return win
 }
 
@@ -248,11 +257,12 @@ func (w *window) initScriptEngine() {
 }
 
 func (w *window) setBaseLocation(href string) string {
-	if href == "" {
-		return w.baseLocation
+	loc := w.document.location()
+	if href != "" && loc != nil {
+		url := w.resolveHref(href)
+		loc.set(url)
 	}
-	w.baseLocation = w.resolveHref(href).Href()
-	return w.baseLocation
+	return w.document.Location().Href()
 }
 
 func (w *window) ParseFragment(
@@ -271,14 +281,23 @@ func (w *window) ParseFragment(
 //
 // Experimental: This function will likely be removed in favour of other ways of
 // creating an initialized window
-func NewWindowReader(reader io.Reader, windowOptions ...WindowOption) (Window, error) {
+func NewWindowReader(
+	reader io.Reader,
+	url *url.URL,
+	windowOptions ...WindowOption,
+) (Window, error) {
 	window := newWindow(windowOptions...)
-	err := window.parseReader(reader)
+	err := window.parseReader(reader, url)
 	return window, err
 }
 
-func (w *window) parseReader(reader io.Reader) error {
+func (w *window) parseReader(reader io.Reader, u *url.URL) error {
+	l := w.document.location()
 	w.document = NewEmptyHtmlDocument(w)
+	if u != nil {
+		l = newLocation(u)
+	}
+	w.document.setLocation(l)
 	err := dom.ParseDocument(w.document, reader)
 	for _, s := range w.deferredScripts {
 		s.run()
@@ -299,8 +318,8 @@ func (w *window) parseReader(reader io.Reader) error {
 }
 
 func (w *window) Navigate(href string) (err error) {
-	w.Logger().Info("Window.navigate:", "href", href)
-	if w.baseLocation != "about:blank" {
+	w.Logger().Info("Window.navigate", "href", href)
+	if href != "about:blank" {
 		href = w.resolveHref(href).String()
 	}
 	defer func() {
@@ -310,13 +329,7 @@ func (w *window) Navigate(href string) (err error) {
 	}()
 	w.History().pushLoad(href)
 	w.initScriptEngine()
-	w.baseLocation = href
-	if href == "about:blank" {
-		w.document = NewHTMLDocument(w)
-		return nil
-	} else {
-		return w.get(href)
-	}
+	return w.get(href)
 }
 
 // reload is used internally to load a page into the browser, but without
@@ -324,18 +337,18 @@ func (w *window) Navigate(href string) (err error) {
 func (w *window) reload(href string) error {
 	w.Logger().Debug("Window.reload:", "href", href)
 	w.initScriptEngine()
-	w.baseLocation = href
-	if href == "about:blank" {
-		w.document = NewHTMLDocument(w)
-		return nil
-	} else {
-		return w.get(href)
-	}
+	return w.get(href)
 }
 
 func (w *window) get(href string) error {
-	if req, err := http.NewRequest("GET", href, nil); err == nil {
-		return w.fetchRequest(req)
+	url := url.ParseURL(href)
+	if href == "about:blank" {
+		w.document = NewHTMLDocument(w)
+		w.document.setLocation(newLocation(url))
+		return nil
+	} else if req, err := http.NewRequest("GET", href, nil); err == nil {
+		err := w.fetchRequest(req)
+		return err
 	} else {
 		return err
 	}
@@ -356,11 +369,12 @@ func (w *window) fetchRequest(req *http.Request) error {
 	if resp.StatusCode != 200 {
 		return errors.New("Non-ok Response")
 	}
-	return w.parseReader(resp.Body)
+	u := url.ParseURL(resp.Request.URL.String())
+	return w.parseReader(resp.Body, u)
 }
 
 func (w *window) LoadHTML(html string) error {
-	return w.parseReader(strings.NewReader(html))
+	return w.parseReader(strings.NewReader(html), nil)
 }
 
 func (w *window) Run(script string) error {
@@ -379,13 +393,14 @@ func (w *window) Eval(script string) (any, error) {
 
 func (w *window) ScriptContext() ScriptContext { return w.scriptContext }
 
-func (w *window) Location() Location {
-	return newLocation(url.ParseURL(w.baseLocation))
-}
+func (w *window) Location() Location { return w.document.Location() }
 
 func (w *window) Clock() Clock { return w.scriptContext.Clock() }
 
-func (w *window) LocationHREF() string { return w.baseLocation }
+func (w *window) LocationHREF() string {
+
+	return w.Location().Href()
+}
 
 func (w *window) Close() {
 	if w.scriptContext != nil {
