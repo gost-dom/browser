@@ -132,7 +132,7 @@ type Window interface {
 	BrowsingContext
 	entity.ObjectIder
 	entity.Components
-	Document() dom.Document
+	Document() HTMLDocument
 	Close()
 	Clock() Clock
 	// Open an HTML document from an href. A URL will be opened, but a path will
@@ -240,7 +240,7 @@ func OpenWindowFromLocation(location string, windowOptions ...WindowOption) (Win
 }
 
 func (w *window) HTTPClient() http.Client  { return w.httpClient }
-func (w *window) Document() dom.Document   { return w.document }
+func (w *window) Document() HTMLDocument   { return w.document }
 func (w *window) History() *History        { return w.history }
 func (w *window) Context() context.Context { return w.context }
 
