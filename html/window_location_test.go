@@ -69,7 +69,6 @@ func TestWindowNavigateClearsEventHandlers(t *testing.T) {
 
 func (s *WindowLocationTestSuite) GetLink(text string) html.HTMLElement {
 	s.T().Helper()
-	s.Expect(s.window.Navigate("/index")).To(Succeed())
 	nodes, err := s.window.Document().QuerySelectorAll("a")
 	s.Expect(err).ToNot(HaveOccurred())
 	for _, n := range nodes.All() {
@@ -89,6 +88,7 @@ func (s *WindowLocationTestSuite) TestClickAbsoluteURL() {
 }
 
 func (s *WindowLocationTestSuite) TestClickRelativeURL() {
+	s.window.Navigate("http://example.com/index")
 	link := s.GetLink("Products from relative url")
 	link.Click()
 	s.Expect(s.window.Location().Pathname()).To(Equal("/products"))
