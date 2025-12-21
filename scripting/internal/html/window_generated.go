@@ -118,7 +118,7 @@ func (w Window[T]) location(cbCtx js.CallbackContext[T]) (res js.Value[T], err e
 		return nil, err
 	}
 	result := instance.Location()
-	return w.toLocation(cbCtx, result)
+	return codec.EncodeEntity(cbCtx, result)
 }
 
 func (w Window[T]) navigation(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

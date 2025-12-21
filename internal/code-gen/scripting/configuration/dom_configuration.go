@@ -100,7 +100,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 		"dir",
 
 		// TODO: Use these
-		"location",
 		"title",
 		"body",
 		"head",

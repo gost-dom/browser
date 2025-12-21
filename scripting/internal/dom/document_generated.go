@@ -51,6 +51,7 @@ func (w Document[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("contentType", w.contentType, nil)
 	jsClass.CreatePrototypeAttribute("doctype", w.doctype, nil)
 	jsClass.CreatePrototypeAttribute("documentElement", w.documentElement, nil)
+	jsClass.CreatePrototypeAttribute("location", w.location, nil)
 	w.parentNode.installPrototype(jsClass)
 }
 
@@ -264,5 +265,14 @@ func (w Document[T]) documentElement(cbCtx js.CallbackContext[T]) (res js.Value[
 		return nil, err
 	}
 	result := instance.DocumentElement()
+	return codec.EncodeEntity(cbCtx, result)
+}
+
+func (w Document[T]) location(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	instance, err := js.As[html.HTMLDocument](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	result := instance.Location()
 	return codec.EncodeEntity(cbCtx, result)
 }

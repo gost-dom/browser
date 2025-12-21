@@ -23,18 +23,6 @@ func (w *Document[T]) CreateInstance(cbCtx js.CallbackContext[T]) (js.Value[T], 
 	return codec.EncodeConstrucedValue(cbCtx, res)
 }
 
-func (w *Document[T]) location(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	instance, err := js.As[html.HTMLDocument](cbCtx.Instance())
-	if err != nil {
-		return nil, err
-	}
-	loc := instance.Location()
-	if loc == nil {
-		return cbCtx.Null(), nil
-	}
-	return codec.EncodeEntity(cbCtx, loc)
-}
-
 func (w *Document[T]) getElementById(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	instance, err0 := js.As[dom.Document](cbCtx.Instance())
 	id, err1 := js.ConsumeArgument(cbCtx, "id", nil, codec.DecodeString)
