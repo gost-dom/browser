@@ -30,7 +30,9 @@ func Download(ctx context.Context, url *url.URL, doer HttpDoer) (res string, err
 	}
 	defer resp.Body.Close()
 	var buf strings.Builder
-	io.Copy(&buf, resp.Body)
+	if _, err := io.Copy(&buf, resp.Body); err != nil {
+		return "", err
+	}
 	script := buf.String()
 
 	if resp.StatusCode != 200 {
