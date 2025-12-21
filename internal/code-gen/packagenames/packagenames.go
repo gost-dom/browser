@@ -11,6 +11,7 @@ const (
 	// alternate url: "https://github.com/gost-dom/browser/issues?q=sort%3Aupdated-desc+is%3Aissue+is%3Aopen"
 
 	Dom            = BASE_PKG + "/dom"
+	Entity         = BASE_PKG + "/internal/entity"
 	Events         = Dom + "/event"
 	Html           = BASE_PKG + "/html"
 	Scripting      = BASE_PKG + "/scripting"

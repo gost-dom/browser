@@ -48,6 +48,10 @@ type InterfaceRule struct {
 	OutputType       OutputType
 	Operations       OperationRules
 	Attributes       AttributeRules
+	// IsEntity indicates that the type must have "entity" semantics, i.e.
+	// identity is omportant. Everything type returned from an attribute with
+	// [SameObject] must have entity semantics.
+	IsEntity bool
 }
 
 type OperationRules map[string]OperationRule

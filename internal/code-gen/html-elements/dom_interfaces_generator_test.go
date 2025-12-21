@@ -37,7 +37,6 @@ func TestGenerationOfExplicitVariadicArgument(t *testing.T) {
 	expect(
 		g,
 	).To(HaveRenderedSubstring("\n\tObserve(dom.Node, ...ObserveOption) error\n"))
-
 }
 
 func TestGenerationOfEventTarget(t *testing.T) {
@@ -49,5 +48,4 @@ func TestGenerationOfEventTarget(t *testing.T) {
 	expect(err).ToNot(HaveOccurred())
 	expect(g).To(HaveRenderedSubstring("{\n\tevent.EventTarget\n"))
 	expect(g).To(HaveRenderedSubstring("\n\tOnabort() event.EventHandler\n"))
-
 }
