@@ -1,10 +1,9 @@
 package html
 
 import (
-	"strings"
-
 	"github.com/gost-dom/browser/dom"
 	. "github.com/gost-dom/browser/internal/dom"
+	"github.com/gost-dom/browser/internal/entity"
 )
 
 type HTMLTemplateElement interface {
@@ -23,22 +22,9 @@ func NewHTMLTemplateElement(ownerDocument HTMLDocument) HTMLTemplateElement {
 		dom.NewDocumentFragment(ownerDocument),
 	}
 	result.SetSelf(result)
+	entity.SetComponentType(result, result.content.(ChildrenRenderer))
+	entity.SetComponentType(result, result.content.(dom.ContentContainer))
 	return result
 }
 
 func (e *htmlTemplateElement) Content() dom.DocumentFragment { return e.content }
-
-func (e *htmlTemplateElement) RenderChildren(builder *strings.Builder) {
-	if renderer, ok := e.content.(ChildrenRenderer); ok {
-		renderer.RenderChildren(builder)
-	}
-}
-
-func (e *htmlTemplateElement) SetInnerHTML(html string) error {
-	doc := e.htmlDocument
-	fragment, err := doc.window().ParseFragment(doc, strings.NewReader(html))
-	if err == nil {
-		e.content = fragment
-	}
-	return err
-}

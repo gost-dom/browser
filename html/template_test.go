@@ -48,6 +48,7 @@ func TestDocumentFragmentSetInnerHTML(t *testing.T) {
 		doc.QuerySelectorHTML("template"),
 	)
 	template.SetInnerHTML("<p>P1</p><p>P2</p>")
+	Expect(t, template.ChildElementCount()).To(Equal(0))
 	Expect(t, template.InnerHTML()).To(Equal(
 		`<p>P1</p><p>P2</p>`,
 	))

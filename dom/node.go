@@ -639,7 +639,12 @@ func (n *node) TextContent() string {
 }
 
 func (n *node) renderChildren(builder *strings.Builder) {
-	if childRenderer, ok := n.self.(ChildrenRenderer); ok {
+	childRenderer, ok := entity.ComponentType[ChildrenRenderer](n.self)
+	fmt.Println("ChildrenRenderer?", ok)
+	if !ok {
+		childRenderer, ok = n.self.(ChildrenRenderer)
+	}
+	if ok {
 		childRenderer.RenderChildren(builder)
 	}
 }

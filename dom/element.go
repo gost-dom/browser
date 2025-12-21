@@ -2,16 +2,20 @@ package dom
 
 import (
 	"fmt"
-	"regexp"
 	"slices"
 	"strings"
 
 	"github.com/gost-dom/browser/internal/constants"
 	. "github.com/gost-dom/browser/internal/dom"
+	"github.com/gost-dom/browser/internal/entity"
 
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
 )
+
+type ContentContainer interface {
+	ReplaceChildren(...Node) error
+}
 
 // An Element in the document. Can be either an [HTMLElement] or an [XMLElement]
 type Element interface {
@@ -56,12 +60,11 @@ type element struct {
 	childNode
 	parentNode
 	elementOrDocument
-	tagName          string
-	namespace        string
-	attributes       Attributes
-	selfElement      Element
-	selfRenderer     Renderer
-	childrenRenderer ChildrenRenderer
+	tagName      string
+	namespace    string
+	attributes   Attributes
+	selfElement  Element
+	selfRenderer Renderer
 	// We might want a "prototype" as a value, rather than a Go type, as new types
 	// can be created at runtime. But if so, we probably want them on the node
 	// type.
@@ -117,11 +120,6 @@ func (e *element) SetSelf(n Node) {
 		e.selfRenderer = self
 	} else {
 		panic("Setting a non-renderer as element self")
-	}
-	if self, ok := n.(ChildrenRenderer); ok {
-		e.childrenRenderer = self
-	} else {
-		panic("Setting a non-child-renderer as element self")
 	}
 	e.node.SetSelf(n)
 }
@@ -185,10 +183,14 @@ func (e *element) SetOuterHTML(html string) error {
 }
 func (e *element) SetInnerHTML(html string) error {
 	fragment, err := ParseFragment(e.nodeDocument(), strings.NewReader(html))
-	if err == nil {
-		err = e.ReplaceChildren(fragment)
+	if err != nil {
+		return err
 	}
-	return err
+	c, ok := entity.ComponentType[ContentContainer](e)
+	if !ok {
+		c = e
+	}
+	return c.ReplaceChildren(fragment)
 }
 
 func (e *element) HasAttribute(name string) bool {
@@ -373,7 +375,7 @@ func renderElement(e *element, writer *strings.Builder) {
 		writer.WriteString("\"")
 	}
 	writer.WriteRune('>')
-	e.childrenRenderer.RenderChildren(writer)
+	e.renderChildren(writer)
 	writer.WriteString("</")
 	writer.WriteString(tagName)
 	writer.WriteRune('>')
