@@ -30,7 +30,7 @@ func (m *moduleResolver) resolveModule(
 		}
 		return nil, fmt.Errorf("ResolveModule: unknown source: %v", v)
 	} else {
-		return nil, fmt.Errorf("ResolveModule: ref not a string: (%T) %v", ref, ref)
+		return nil, fmt.Errorf("ResolveModule: unexpected ref type: (%T) %v", ref, ref)
 	}
 }
 
