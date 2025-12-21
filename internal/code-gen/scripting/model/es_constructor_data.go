@@ -110,8 +110,19 @@ func (d ESConstructorData) WrappedType() g.Generator {
 		}
 		return res
 	}
-	idlInterfaceName := d.Name()
-	res := g.NewTypePackage(idlInterfaceName, d.GetInternalPackage())
+	var typeName string
+	var interfacePackage string
+	if name := d.CustomRule.OverrideTypeName; name != "" {
+		typeName = name
+	} else {
+		typeName = d.Name()
+	}
+	if name := d.CustomRule.InterfacePackage; name != "" {
+		interfacePackage = string(name)
+	} else {
+		interfacePackage = d.GetInternalPackage()
+	}
+	res := g.NewTypePackage(typeName, interfacePackage)
 	if d.CustomRule.OutputType == customrules.OutputTypeStruct {
 		return res.Pointer()
 	}

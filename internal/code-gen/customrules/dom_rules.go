@@ -1,6 +1,9 @@
 package customrules
 
-import "github.com/gost-dom/webref/idl"
+import (
+	"github.com/gost-dom/code-gen/packagenames"
+	"github.com/gost-dom/webref/idl"
+)
 
 var domRules = SpecRules{
 	"AbortController": {Operations: OperationRules{
@@ -9,11 +12,14 @@ var domRules = SpecRules{
 	"AbortSignal": {Operations: OperationRules{
 		"throwIfAborted": {HasError: true},
 	}},
-	"Document": {Operations: OperationRules{
-		"createElementNS": {Arguments: ArgumentRules{
-			"options": {Ignore: true, Variadic: true}, // TODO: Get this working
+	"Document": {
+		OverrideTypeName: "HTMLDocument",
+		InterfacePackage: packagenames.Html,
+		Operations: OperationRules{
+			"createElementNS": {Arguments: ArgumentRules{
+				"options": {Ignore: true, Variadic: true}, // TODO: Get this working
+			}},
 		}},
-	}},
 	"Event": {OutputType: OutputTypeStruct},
 	"EventTarget": {Operations: OperationRules{
 		"addEventListener":    {Arguments: ArgumentRules{"options": {Variadic: true}}},
