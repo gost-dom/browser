@@ -13,7 +13,7 @@ import (
 func HandleJSCallbackError[T any](scope js.Scope[T], cbType string, err error) {
 	scope.Logger().Error("Callback error", "callback-type", cbType, log.ErrAttr(err))
 
-	if target, err := codec.GetWindow(scope); err == nil {
+	if target, winErr := codec.GetWindow(scope); winErr == nil {
 		target.DispatchEvent(event.NewErrorEvent(err))
 	}
 }
