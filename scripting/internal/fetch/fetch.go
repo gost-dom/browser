@@ -14,7 +14,10 @@ func encodeResponse[T any](info js.Scope[T], res *fetch.Response) (js.Value[T], 
 }
 
 func Fetch[T any](info js.CallbackContext[T]) (js.Value[T], error) {
-	info.Logger().Debug("JS Function call: fetch")
+	win, err := codec.GetWindow(info)
+	if err != nil {
+		return nil, err
+	}
 	url, err := js.ConsumeArgument(info, "url", nil, codec.DecodeString)
 	if err != nil {
 		return nil, err
@@ -25,12 +28,10 @@ func Fetch[T any](info js.CallbackContext[T]) (js.Value[T], error) {
 		codec.ZeroValue,
 		decodeRequestInit,
 	)
-	win, err := codec.GetWindow(info)
 	if err != nil {
 		return nil, err
 	}
 	f := fetch.New(win)
-	info.Logger().Debug("js/fetch: create promise")
 	req := f.NewRequest(url, opts...)
 	return codec.EncodePromise(info, f.FetchAsync(req), encodeResponse)
 }
