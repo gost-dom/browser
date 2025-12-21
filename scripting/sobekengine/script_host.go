@@ -47,14 +47,14 @@ func (_ propertyNameMapper) MethodName(t reflect.Type, m reflect.Method) string 
 	}
 }
 
-func (h *scriptHost) NewContext(window html.Window) html.ScriptContext {
+func (h *scriptHost) NewContext(bc html.BrowsingContext) html.ScriptContext {
 	vm := sobek.New()
 	vm.SetFieldNameMapper(propertyNameMapper{})
 	result := &scriptContext{
 		host:         h,
 		vm:           vm,
 		clock:        clock.New(),
-		window:       window,
+		browsingCtx:  bc,
 		wrappedGoObj: sobek.NewSymbol(internal_symbol_name),
 		classes:      make(map[string]*class),
 	}
@@ -62,7 +62,7 @@ func (h *scriptHost) NewContext(window html.Window) html.ScriptContext {
 	globalThis := vm.GlobalObject()
 	globalThis.DefineDataPropertySymbol(
 		result.wrappedGoObj,
-		vm.ToValue(window),
+		vm.ToValue(bc),
 		sobek.FLAG_FALSE,
 		sobek.FLAG_FALSE,
 		sobek.FLAG_FALSE,

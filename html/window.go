@@ -51,7 +51,7 @@ type ScriptEngine interface {
 // Client code should call Close() when done using the host, allowing it to be
 // returned to the cache.
 type ScriptHost interface {
-	NewContext(window Window) ScriptContext
+	NewContext(global BrowsingContext) ScriptContext
 	Close()
 }
 
@@ -465,6 +465,14 @@ func (o WindowOptions) Apply(options *WindowOptions) {
 }
 
 // WindowResolveHref resolves an href from the scope of a window
-func WindowResolveHref(w Window, href string) *url.URL {
-	return w.resolveHref(href)
+func WindowResolveHref(w BrowsingContext, href string) *url.URL {
+	if u := url.ParseURLBase(href, w.LocationHREF()); u != nil {
+		return u
+	}
+	panic(
+		fmt.Sprintf(
+			"WindowResolveHref: href: %s - cannot resolve from base: %s",
+			href, w.LocationHREF(),
+		),
+	)
 }

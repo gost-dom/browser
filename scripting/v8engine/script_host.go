@@ -167,15 +167,15 @@ func (host *V8ScriptHost) setDisposed() {
 }
 
 // NewContext creates a new script context using w as the global window object.
-func (host *V8ScriptHost) NewContext(w html.Window) html.ScriptContext {
+func (host *V8ScriptHost) NewContext(bc html.BrowsingContext) html.ScriptContext {
 	host.assertUndisposed()
 	v8ctx := v8go.NewContext(host.iso, host.windowTemplate)
 	context := &V8ScriptContext{
-		host:     host,
-		clock:    clock.New(clock.WithLogger(w.Logger())),
-		v8ctx:    v8ctx,
-		window:   w,
-		resolver: moduleResolver{host: host},
+		host:        host,
+		clock:       clock.New(clock.WithLogger(bc.Logger())),
+		v8ctx:       v8ctx,
+		browsingCtx: bc,
+		resolver:    moduleResolver{host: host},
 	}
 	if _, err := context.runScript("Object.setPrototypeOf(globalThis, globalThis.Window.prototype)"); err != nil {
 		panic(err)

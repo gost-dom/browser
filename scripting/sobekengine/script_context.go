@@ -19,18 +19,18 @@ type scriptContext struct {
 	host         *scriptHost
 	vm           *sobek.Runtime
 	clock        *clock.Clock
-	window       html.Window
+	browsingCtx  html.BrowsingContext
 	classes      map[string]*class
 	wrappedGoObj *sobek.Symbol
 }
 
 func (c *scriptContext) Clock() html.Clock        { return c.clock }
-func (c *scriptContext) Context() context.Context { return c.window.Context() }
+func (c *scriptContext) Context() context.Context { return c.browsingCtx.Context() }
 
 func (i *scriptContext) Close() {}
 
 func (i *scriptContext) logger() *slog.Logger {
-	l := i.window.Logger()
+	l := i.browsingCtx.Logger()
 	if l == nil {
 		l = i.host.logger
 	}
@@ -267,11 +267,11 @@ func (c *scriptContext) Compile(src string) (html.Script, error) {
 }
 
 func (c *scriptContext) DownloadScript(src string) (html.Script, error) {
-	u := html.WindowResolveHref(c.window, src)
+	u := html.WindowResolveHref(c.browsingCtx, src)
 	if scr, err := gosthttp.Download(c.Context(), u, c.host.httpClient); err != nil {
 		return nil, err
 	} else {
-		return script{c, scr, src}, nil // c.Compile(script)
+		return script{c, scr, src}, nil
 	}
 }
 
@@ -282,7 +282,7 @@ func (c *scriptContext) DownloadModule(script string) (result html.Script, err e
 		make(map[sobek.ModuleRecord]*url.URL),
 		make(map[string]sobek.ModuleRecord),
 	}
-	rec, err := resolver.resolveModuleUrl(html.WindowResolveHref(c.window, script))
+	rec, err := resolver.resolveModuleUrl(html.WindowResolveHref(c.browsingCtx, script))
 
 	if err == nil {
 		err = rec.Link()

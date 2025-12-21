@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/gosthttp"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/stretchr/testify/assert"
@@ -25,18 +26,20 @@ func (h *dummyScriptHost) record(script dummyScript) (html.Script, error) {
 }
 
 func (h *dummyScriptHost) Close() {}
-func (h *dummyScriptHost) NewContext(win html.Window) html.ScriptContext {
-	return dummyScriptContext{h, win, h.client}
+func (h *dummyScriptHost) NewContext(bc html.BrowsingContext) html.ScriptContext {
+	return dummyScriptContext{h, bc, h.client, clock.New()}
 }
 
 type dummyScriptContext struct {
 	host   *dummyScriptHost
-	win    html.Window
+	win    html.BrowsingContext
 	client http.Client
+	clock  *clock.Clock
 }
 
-func (c dummyScriptContext) Close()                   {}
-func (c dummyScriptContext) Clock() html.Clock        { return c.win.Clock() }
+func (c dummyScriptContext) Close() {}
+
+func (c dummyScriptContext) Clock() html.Clock        { return c.clock }
 func (c dummyScriptContext) Eval(string) (any, error) { return nil, nil }
 func (c dummyScriptContext) Run(string) error         { return nil }
 func (c dummyScriptContext) Compile(string) (html.Script, error) {

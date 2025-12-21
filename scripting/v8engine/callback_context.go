@@ -6,7 +6,6 @@ import (
 	"iter"
 	"log/slog"
 
-	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/scripting/internal/js"
@@ -114,7 +113,6 @@ func newV8Scope(ctx *V8ScriptContext) v8Scope {
 }
 
 func (s v8Scope) Logger() *slog.Logger { return s.host.Logger() }
-func (s v8Scope) Window() html.Window  { return s.window }
 func (s v8Scope) GlobalThis() jsObject { return s.global }
 func (s v8Scope) Clock() *clock.Clock  { return s.clock }
 

@@ -19,19 +19,19 @@ import (
 )
 
 type V8ScriptContext struct {
-	htmxLoaded bool
-	host       *V8ScriptHost
-	v8ctx      *v8.Context
-	window     html.Window
-	disposers  []js.Disposable
-	clock      *clock.Clock
-	disposed   bool
-	global     jsObject
-	resolver   moduleResolver
+	htmxLoaded  bool
+	host        *V8ScriptHost
+	v8ctx       *v8.Context
+	browsingCtx html.BrowsingContext
+	disposers   []js.Disposable
+	clock       *clock.Clock
+	disposed    bool
+	global      jsObject
+	resolver    moduleResolver
 }
 
 func (c *V8ScriptContext) iso() *v8.Isolate         { return c.host.iso }
-func (c *V8ScriptContext) Context() context.Context { return c.window.Context() }
+func (c *V8ScriptContext) Context() context.Context { return c.browsingCtx.Context() }
 
 func (h *V8ScriptHost) getContext(v8ctx *v8.Context) (*V8ScriptContext, bool) {
 	h.mu.Lock()
@@ -63,9 +63,8 @@ func (context *V8ScriptContext) installError(
 }
 
 func (context *V8ScriptContext) initializeGlobals() error {
-	win := context.window
 	context.global = newV8Object(context, context.v8ctx.Global())
-	context.global.SetNativeValue(win)
+	context.global.SetNativeValue(context.browsingCtx)
 	{
 		// For some reason ... type errors created in Go scope are not the same
 		// prototype as in JS scope.
@@ -160,8 +159,8 @@ func (ctx *V8ScriptContext) Compile(script string) (html.Script, error) {
 }
 
 func (ctx *V8ScriptContext) DownloadScript(src string) (html.Script, error) {
-	url := url.ParseURLBase(src, ctx.window.LocationHREF())
-	script, err := gosthttp.Download(ctx.window.Context(), url, ctx.host.httpClient)
+	url := url.ParseURLBase(src, ctx.browsingCtx.LocationHREF())
+	script, err := gosthttp.Download(ctx.Context(), url, ctx.host.httpClient)
 	if err != nil {
 		return nil, err
 	}
@@ -169,7 +168,7 @@ func (ctx *V8ScriptContext) DownloadScript(src string) (html.Script, error) {
 }
 
 func (ctx *V8ScriptContext) DownloadModule(src string) (html.Script, error) {
-	url := html.WindowResolveHref(ctx.window, src)
+	url := html.WindowResolveHref(ctx.browsingCtx, src)
 	module, err := ctx.resolver.downloadAndCompile(ctx.Context(), ctx.logger(), url)
 	if err = module.InstantiateModule(ctx.v8ctx, &ctx.resolver); err != nil {
 		return nil, fmt.Errorf("gost: v8engine: module instantiation: %w", err)
