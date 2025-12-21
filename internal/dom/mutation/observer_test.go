@@ -32,7 +32,7 @@ type MutationObserverTestSuite struct {
 }
 
 func (s *MutationObserverTestSuite) TestObserveChildListNoSubtree() {
-	doc := html.NewHTMLDocument(nil, nil)
+	doc := html.NewHTMLDocument(nil)
 	body := doc.Body()
 
 	recorder := initMutationRecorder(body, ChildList)
@@ -101,7 +101,7 @@ func (s *MutationObserverTestSuite) TestObserveChildListNoSubtree() {
 }
 
 func (s *MutationObserverTestSuite) TestSetInnerHTMLRemovesChildren() {
-	doc := html.NewHTMLDocument(html.NewWindow(), nil)
+	doc := html.NewHTMLDocument(html.NewWindow())
 	body := doc.Body()
 	parent := doc.CreateElement("div")
 	body.Append(parent)
@@ -126,7 +126,7 @@ func (s *MutationObserverTestSuite) TestValidOptions() {
 	assert := s.Assert()
 	var rec = new(MutationRecorder)
 
-	doc := html.NewHTMLDocument(nil, nil)
+	doc := html.NewHTMLDocument(nil)
 
 	assert.NoError(NewObserver(rec, rec).Observe(doc, ChildList), "Error when including ChildList")
 	assert.NoError(
@@ -151,7 +151,7 @@ func (s *MutationObserverTestSuite) TestValidOptions() {
 }
 
 func (s *MutationObserverTestSuite) TestAttributeChanges() {
-	doc := html.NewHTMLDocument(nil, nil)
+	doc := html.NewHTMLDocument(nil)
 	parent := doc.CreateElement("div")
 	child := doc.CreateElement("div")
 	doc.Body().AppendChild(parent)
@@ -185,7 +185,7 @@ func Test(t *testing.T) {
 }
 
 func (s *MutationObserverTestSuite) TestChangeCDataValue() {
-	doc := html.NewHTMLDocument(nil, nil)
+	doc := html.NewHTMLDocument(nil)
 	textNode := doc.CreateTextNode("Original value")
 	commentNode := doc.CreateComment("Original comment")
 	doc.Body().AppendChild(textNode)

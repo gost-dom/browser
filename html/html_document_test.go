@@ -8,7 +8,7 @@ import (
 )
 
 func TestEmptyHTMLDocumentActiveElement(t *testing.T) {
-	doc := NewHTMLDocument(nil, nil)
+	doc := NewHTMLDocument(nil)
 	assert.Equal(t, doc.Body(), doc.ActiveElement(), "Active element is body by default")
 }
 
@@ -16,7 +16,7 @@ func TestEmptyHTMLDocumentStructure(t *testing.T) {
 	t.Parallel()
 
 	assert := assert.New(t)
-	doc := NewHTMLDocument(nil, nil)
+	doc := NewHTMLDocument(nil)
 	docElm := doc.DocumentElement()
 	body := doc.Body()
 	head := doc.Head()
@@ -32,7 +32,7 @@ func TestHTMLDocumentCreateElement(t *testing.T) {
 	t.Parallel()
 
 	assert := assert.New(t)
-	doc := NewHTMLDocument(nil, nil)
+	doc := NewHTMLDocument(nil)
 	{
 		// Separate scopes to isolates cases
 		_, e1IsAnchor := doc.CreateElement("a").(HTMLAnchorElement)

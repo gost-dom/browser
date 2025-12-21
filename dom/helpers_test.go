@@ -37,7 +37,7 @@ func ParseHtmlString(s string, windowOptions ...html.WindowOption) dom.Document 
 }
 
 func CreateHTMLDocument() dom.Document {
-	return html.NewHTMLDocument(nil, nil)
+	return html.NewHTMLDocument(nil)
 }
 
 func expect(t testing.TB, actual any) types.Assertion {

@@ -11,7 +11,7 @@ type HTMLHelper struct {
 }
 
 func (h HTMLHelper) NewDocument() HTMLDocumentHelper {
-	return NewHTMLDocumentHelper(h.T, html.NewHTMLDocument(nil, nil))
+	return NewHTMLDocumentHelper(h.T, html.NewHTMLDocument(nil))
 }
 
 // Create a single HTMLElement for testing element behaviour.

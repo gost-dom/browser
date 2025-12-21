@@ -30,7 +30,7 @@ func (s *HTMLFormElementTestSuite) SetupTest() {
 		BaseLocation: "http://example.com/forms/example-form.html?original-query=original-value",
 	}))
 
-	s.doc = NewHTMLDocument(s.win, nil)
+	s.doc = NewHTMLDocument(s.win)
 	s.form = s.doc.CreateElement("form").(HTMLFormElement)
 }
 

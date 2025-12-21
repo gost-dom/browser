@@ -98,7 +98,7 @@ type HTMLDocumentHelper struct {
 
 func NewHTMLDocumentHelper(t testing.TB, doc html.HTMLDocument) HTMLDocumentHelper {
 	if doc == nil {
-		doc = html.NewHTMLDocument(nil, nil)
+		doc = html.NewHTMLDocument(nil)
 	}
 	return HTMLDocumentHelper{NewHTMLParentNodeHelper(t, doc), doc, t}
 }

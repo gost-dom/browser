@@ -13,6 +13,7 @@ type HTMLDocument interface {
 	window() *window
 	setActiveElement(e dom.Element)
 	location() *location
+	setLocation(*location)
 }
 
 type htmlDocument struct {
@@ -35,8 +36,8 @@ func mustAppendChild(p, c dom.Node) dom.Node {
 // guarantees about the actual content.
 //
 //	<html><head></head><body><h1>Gost-DOM</h1></body></html>
-func NewHTMLDocument(window Window, location *location) HTMLDocument {
-	doc := NewEmptyHtmlDocument(window, location)
+func NewHTMLDocument(window Window) HTMLDocument {
+	doc := NewEmptyHtmlDocument(window)
 	body := doc.CreateElement("body")
 	docEl := doc.CreateElement("html")
 	h1 := mustAppendChild(body, doc.CreateElement("h1"))
@@ -50,8 +51,8 @@ func NewHTMLDocument(window Window, location *location) HTMLDocument {
 }
 
 // NewEmptyHtmlDocument creates an HTML document without any content.
-func NewEmptyHtmlDocument(window Window, location *location) HTMLDocument {
-	var result HTMLDocument = &htmlDocument{dom.NewDocument(window), window, location}
+func NewEmptyHtmlDocument(window Window) HTMLDocument {
+	var result HTMLDocument = &htmlDocument{dom.NewDocument(window), window, nil}
 	result.SetSelf(result)
 	return result
 }
@@ -91,7 +92,8 @@ func (d *htmlDocument) Location() Location {
 	return d.docLocation
 }
 
-func (d *htmlDocument) location() *location { return d.docLocation }
+func (d *htmlDocument) location() *location     { return d.docLocation }
+func (d *htmlDocument) setLocation(l *location) { d.docLocation = l }
 
 func (d *htmlDocument) window() *window {
 	if d.win == nil {
