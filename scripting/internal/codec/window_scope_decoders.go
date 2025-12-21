@@ -6,6 +6,5 @@ import (
 )
 
 func GetWindow[T any](scope js.Scope[T]) (html.Window, error) {
-	win, err := DecodeNativeValue[T, html.Window](scope, scope.GlobalThis())
-	return win, err
+	return DecodeNativeValue[T, html.Window](scope, scope.GlobalThis())
 }
