@@ -26,7 +26,7 @@ func (m *moduleResolver) resolveModule(
 
 	if v, ok := ref.(sobek.ModuleRecord); ok {
 		if src, ok := m.modules[v]; ok {
-			return m.resolveModuleUrl(src, specifier)
+			return m.resolveModuleUrl(src.Join(specifier))
 		}
 		return nil, fmt.Errorf("ResolveModule: unknown source: %v", v)
 	} else {
@@ -35,10 +35,8 @@ func (m *moduleResolver) resolveModule(
 }
 
 func (m *moduleResolver) resolveModuleUrl(
-	src *url.URL,
-	specifier string,
+	u *url.URL,
 ) (sobek.ModuleRecord, error) {
-	u := src.Join(specifier)
 	href := u.Href()
 	if cached, ok := m.cache[href]; ok {
 		return cached, nil

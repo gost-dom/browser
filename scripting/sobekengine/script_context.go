@@ -268,7 +268,7 @@ func (c *scriptContext) Compile(src string) (html.Script, error) {
 }
 
 func (c *scriptContext) DownloadScript(src string) (html.Script, error) {
-	u := html.WindowUrl(c.window).Join(src)
+	u := html.WindowResolveHref(c.window, src)
 	if scr, err := gosthttp.Download(c.Context(), u, c.host.HttpClient); err != nil {
 		return nil, err
 	} else {
@@ -283,7 +283,7 @@ func (c *scriptContext) DownloadModule(script string) (result html.Script, err e
 		make(map[sobek.ModuleRecord]*url.URL),
 		make(map[string]sobek.ModuleRecord),
 	}
-	rec, err := resolver.resolveModuleUrl(html.WindowUrl(c.window), script)
+	rec, err := resolver.resolveModuleUrl(html.WindowResolveHref(c.window, script))
 
 	if err == nil {
 		err = rec.Link()

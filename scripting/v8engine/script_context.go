@@ -170,7 +170,7 @@ func (ctx *V8ScriptContext) DownloadScript(src string) (html.Script, error) {
 }
 
 func (ctx *V8ScriptContext) DownloadModule(src string) (html.Script, error) {
-	url := html.WindowUrl(ctx.window).Join(src)
+	url := html.WindowResolveHref(ctx.window, src)
 	module, err := ctx.resolver.downloadAndCompile(ctx.context(), ctx.logger(), url)
 	if err = module.InstantiateModule(ctx.v8ctx, &ctx.resolver); err != nil {
 		return nil, fmt.Errorf("gost: v8engine: module instantiation: %w", err)

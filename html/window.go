@@ -3,6 +3,7 @@ package html
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
@@ -12,6 +13,7 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/dom/event"
+	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/url"
@@ -412,7 +414,7 @@ func (w *window) ObjectId() entity.ObjectId { return -1 }
 func (w *window) resolveHref(href string) *url.URL {
 	r, err := url.NewUrlBase(href, w.Location().Href())
 	if err != nil {
-		panic(err)
+		panic(fmt.Errorf("gost-dom/html: resolveHref: %w\n%w", err, constants.ErrGostDomBug))
 	}
 	return r
 }
@@ -462,7 +464,7 @@ func (o WindowOptions) Apply(options *WindowOptions) {
 	*options = o
 }
 
-// WindowUrl returns the *url.URL for the current document's location.
-func WindowUrl(w Window) *url.URL {
-	return w.Document().location().URL
+// WindowResolveHref resolves an href from the scope of a window
+func WindowResolveHref(w Window, href string) *url.URL {
+	return w.resolveHref(href)
 }
