@@ -11,7 +11,7 @@ import (
 type moduleResolver struct {
 	host    *scriptHost
 	ctx     *scriptContext
-	modules map[sobek.ModuleRecord]string
+	modules map[sobek.ModuleRecord]*url.URL
 	cache   map[string]sobek.ModuleRecord
 }
 
@@ -22,10 +22,10 @@ func (m *moduleResolver) resolveModule(
 	ref := referencingScriptOrModule
 	m.ctx.logger().
 		Info("SobekModule.ResolveModule", "ref", ref, "spec", specifier)
-	var src string
+	var src *url.URL
 	switch v := ref.(type) {
 	case string:
-		src = v
+		src = url.ParseURL(v)
 	case sobek.ModuleRecord:
 		var ok bool
 		src, ok = m.modules[v]
@@ -35,18 +35,19 @@ func (m *moduleResolver) resolveModule(
 	default:
 		return nil, fmt.Errorf("ResolveModule: ref not a string: (%T) %v", ref, ref)
 	}
-	name := url.ParseURLBase(specifier, src).Href()
-	if cached, ok := m.cache[name]; ok {
+	u := src.Join(specifier)
+	href := u.Href()
+	if cached, ok := m.cache[href]; ok {
 		return cached, nil
 	}
-	code, err := gosthttp.Download(m.ctx.window.Context(), name, m.host.HttpClient)
+	code, err := gosthttp.Download(m.ctx.window.Context(), u, m.host.HttpClient)
 	if err != nil {
 		return nil, err
 	}
-	mod, err := sobek.ParseModule(name, code, m.resolveModule)
+	mod, err := sobek.ParseModule(href, code, m.resolveModule)
 	if err == nil {
-		m.modules[mod] = name
-		m.cache[name] = mod
+		m.modules[mod] = u
+		m.cache[href] = mod
 	}
 	return mod, err
 }

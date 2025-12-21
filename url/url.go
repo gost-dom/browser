@@ -10,6 +10,11 @@ type URL struct {
 	url *netURL.URL
 }
 
+func (l URL) Join(u string) *URL {
+	res, _ := NewUrlBase(u, l.Href())
+	return res
+}
+
 func NewUrl(rawUrl string) (*URL, error) {
 	if res, err := netURL.Parse(rawUrl); err == nil {
 		return &URL{res}, nil

@@ -160,7 +160,8 @@ func (ctx *V8ScriptContext) Compile(script string) (html.Script, error) {
 	return ctx.compile(script), nil
 }
 
-func (ctx *V8ScriptContext) DownloadScript(url string) (html.Script, error) {
+func (ctx *V8ScriptContext) DownloadScript(src string) (html.Script, error) {
+	url := url.ParseURLBase(src, ctx.window.LocationHREF())
 	script, err := gosthttp.Download(ctx.window.Context(), url, ctx.host.httpClient)
 	if err != nil {
 		return nil, err
@@ -168,7 +169,8 @@ func (ctx *V8ScriptContext) DownloadScript(url string) (html.Script, error) {
 	return ctx.Compile(script)
 }
 
-func (ctx *V8ScriptContext) DownloadModule(url string) (html.Script, error) {
+func (ctx *V8ScriptContext) DownloadModule(src string) (html.Script, error) {
+	url := url.ParseURLBase(src, ctx.window.LocationHREF())
 	module, err := ctx.resolver.downloadAndCompile(ctx.context(), ctx.logger(), url)
 	if err = module.InstantiateModule(ctx.v8ctx, &ctx.resolver); err != nil {
 		return nil, fmt.Errorf("gost: v8engine: module instantiation: %w", err)
@@ -180,7 +182,7 @@ func (ctx *V8ScriptContext) logger() *slog.Logger { return ctx.host.logger }
 
 type resolvedModule struct {
 	scriptID int
-	location string
+	location *url.URL
 	module   *v8go.Module
 }
 
@@ -189,9 +191,9 @@ type moduleResolver struct {
 	modules []resolvedModule
 }
 
-func (r *moduleResolver) cached(url string) *v8go.Module {
+func (r *moduleResolver) cached(location *url.URL) *v8go.Module {
 	for _, m := range r.modules {
-		if m.location == url {
+		if m.location.Href() == location.Href() {
 			return m.module
 		}
 	}
@@ -201,7 +203,7 @@ func (r *moduleResolver) cached(url string) *v8go.Module {
 func (r *moduleResolver) downloadAndCompile(
 	ctx context.Context,
 	l *slog.Logger,
-	url string,
+	url *url.URL,
 ) (*v8go.Module, error) {
 	l.Info("v8engine: ResolveModule", "url", url)
 	if cached := r.cached(url); cached != nil {
@@ -212,7 +214,7 @@ func (r *moduleResolver) downloadAndCompile(
 	if err != nil {
 		return nil, err
 	}
-	module, err := v8.CompileModule(r.host.iso, script, url)
+	module, err := v8.CompileModule(r.host.iso, script, url.Href())
 	if err != nil {
 		return nil, fmt.Errorf("gost-dom/v8engine: module compilation: %w", err)
 	}
@@ -249,6 +251,6 @@ func (r *moduleResolver) ResolveModule(
 	scriptCtx := r.host.mustGetContext(v8ctx)
 	l := scriptCtx.logger()
 	l.Info("v8engine: ResolveModule", "referrer", refModule.location, "src", spec)
-	url := url.ParseURLBase(spec, refModule.location).Href()
+	url := refModule.location.Join(spec)
 	return r.downloadAndCompile(v8ScriptContext.context(), l, url)
 }

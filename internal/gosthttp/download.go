@@ -6,6 +6,8 @@ import (
 	"io"
 	"net/http"
 	"strings"
+
+	"github.com/gost-dom/browser/url"
 )
 
 // HttpDoer is the interface representing for the Do function on the http.Client
@@ -14,11 +16,11 @@ type HttpDoer interface {
 	Do(*http.Request) (*http.Response, error)
 }
 
-func Download(ctx context.Context, url string, doer HttpDoer) (res string, err error) {
+func Download(ctx context.Context, url *url.URL, doer HttpDoer) (res string, err error) {
 	if ctx == nil {
 		ctx = context.Background()
 	}
-	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", url.String(), nil)
 	if err != nil {
 		return
 	}

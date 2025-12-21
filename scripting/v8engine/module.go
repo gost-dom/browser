@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"time"
 
+	"github.com/gost-dom/browser/url"
 	"github.com/gost-dom/v8go"
 )
 
@@ -14,7 +15,7 @@ type V8Module struct {
 	ctx      *V8ScriptContext
 	module   *v8go.Module
 	logger   *slog.Logger
-	location string
+	location *url.URL
 }
 
 func (mod V8Module) Run() error {
