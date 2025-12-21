@@ -379,10 +379,6 @@ func renderElement(e *element, writer *strings.Builder) {
 	writer.WriteRune('>')
 }
 
-var tagNameRegExp = regexp.MustCompile("(?m:^[a-zA-Z]+$)")
-var attributeRegExp = regexp.MustCompile("(?m:^[[]([a-zA-Z-]+)[]]$)")
-var tagNameAndAttribute = regexp.MustCompile(`(?m:^([a-zA-Z]+)+[[]([a-zA-Z-]+)="([a-zA-Z-]+)"[]]$)`)
-
 // Element.Matches returns true if the current element matches the specified CSS
 // selectors; accepting a comma-separated list of selectors with any leading and
 // trailing whitespace trimmed. Returns an error if the patterns is not
