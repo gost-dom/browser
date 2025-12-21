@@ -640,7 +640,6 @@ func (n *node) TextContent() string {
 
 func (n *node) renderChildren(builder *strings.Builder) {
 	childRenderer, ok := entity.ComponentType[ChildrenRenderer](n.self)
-	fmt.Println("ChildrenRenderer?", ok)
 	if !ok {
 		childRenderer, ok = n.self.(ChildrenRenderer)
 	}

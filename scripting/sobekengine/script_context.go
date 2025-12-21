@@ -142,7 +142,6 @@ func (c *scriptContext) CreateFunction(name string, cb js.CallbackFunc[jsTypePar
 func (c *scriptContext) RunScript(script, src string) {
 	_, err := c.vm.RunScript(src, script)
 	if err != nil {
-		fmt.Println("RUN SCRIPT FAIL", script, src)
 		panic(err)
 	}
 }
