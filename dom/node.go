@@ -218,11 +218,6 @@ func newNode(ownerDocument Document) node {
 	}
 }
 
-func newNodePtr(ownerDocument Document) *node {
-	n := newNode(ownerDocument)
-	return &n
-}
-
 func (n *node) CloneNode(deep bool) Node {
 	return n.self.cloneNode(n.OwnerDocument(), deep)
 }
@@ -386,13 +381,14 @@ func (n *node) assertCanAddNode(newNode Node) error {
 	parentType := n.getSelf().NodeType()
 	childType := newNode.NodeType()
 	if !parentType.canHaveChildren() {
-		return newDomError(
+		return newDomErrorCode(
 			fmt.Sprintf("May not add children to node type %s", parentType),
+			hierarchy_request_err,
 		)
 	}
 	if !childType.canBeAChild() {
-		return newDomError(
-			fmt.Sprintf("May not add an node type %s as a child", childType),
+		return newDomErrorCode(
+			fmt.Sprintf("May not add an node type %s as a child", childType), hierarchy_request_err,
 		)
 	}
 	if newNode.Contains(n.getSelf()) {
@@ -400,8 +396,7 @@ func (n *node) assertCanAddNode(newNode Node) error {
 	}
 	if childType == NodeTypeText && parentType == NodeTypeDocument {
 		return newDomErrorCode(
-			"Text nodes may not be direct descendants of a document",
-			hierarchy_request_err,
+			"Text nodes may not be direct descendants of a document", hierarchy_request_err,
 		)
 	}
 	if childType == NodeTypeDocumentType && parentType != NodeTypeDocument {
@@ -416,11 +411,15 @@ func (n *node) assertCanAddNode(newNode Node) error {
 		}
 		if fragment, isFragment := newNode.(DocumentFragment); isFragment {
 			if fragment.ChildElementCount() > 0 {
-				return newDomError("Document can have only one child element")
+				return newDomErrorCode(
+					"Document can have only one child element", hierarchy_request_err)
 			}
 			for _, n := range fragment.ChildNodes().All() {
 				if n.NodeType() == NodeTypeText {
-					return newDomError("Text nodes may not be direct descendants of a document")
+					return newDomErrorCode(
+						"Text nodes may not be direct descendants of a document",
+						hierarchy_request_err,
+					)
 				}
 			}
 		}
