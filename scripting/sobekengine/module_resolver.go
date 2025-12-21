@@ -2,6 +2,7 @@ package sobekengine
 
 import (
 	"fmt"
+	"log/slog"
 
 	"github.com/gost-dom/browser/internal/gosthttp"
 	"github.com/gost-dom/browser/url"
@@ -16,25 +17,27 @@ type moduleResolver struct {
 }
 
 func (m *moduleResolver) resolveModule(
-	referencingScriptOrModule interface{},
+	ref interface{},
 	specifier string,
 ) (sobek.ModuleRecord, error) {
-	ref := referencingScriptOrModule
-	m.ctx.logger().
-		Info("SobekModule.ResolveModule", "ref", ref, "spec", specifier)
-	var src *url.URL
-	switch v := ref.(type) {
-	case string:
-		src = url.ParseURL(v)
-	case sobek.ModuleRecord:
-		var ok bool
-		src, ok = m.modules[v]
-		if !ok {
-			return nil, fmt.Errorf("ResolveModule: unknown source: %v", v)
+	m.ctx.logger().Info("SobekModule.ResolveModule",
+		slog.Any("ref", ref),
+		slog.String("spec", specifier))
+
+	if v, ok := ref.(sobek.ModuleRecord); ok {
+		if src, ok := m.modules[v]; ok {
+			return m.resolveModuleUrl(src, specifier)
 		}
-	default:
+		return nil, fmt.Errorf("ResolveModule: unknown source: %v", v)
+	} else {
 		return nil, fmt.Errorf("ResolveModule: ref not a string: (%T) %v", ref, ref)
 	}
+}
+
+func (m *moduleResolver) resolveModuleUrl(
+	src *url.URL,
+	specifier string,
+) (sobek.ModuleRecord, error) {
 	u := src.Join(specifier)
 	href := u.Href()
 	if cached, ok := m.cache[href]; ok {
