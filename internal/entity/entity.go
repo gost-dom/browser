@@ -36,10 +36,15 @@ type ObjectIder interface {
 // This is very inspired by the idea of an Entity Component System.
 //
 // Keys must be non-nil and comparable. Methods will panic if the key is nil or
-// not comparable.
+// not comparable. When using string values as keys, it's advisable to create a
+// new type for the keys to avoid name collision with keys from other parts of
+// the code.
 //
-// It is advisable to create custom types for keys to avoid key-collissions with
-// code from other packages.
+// Example usages:
+//
+//   - The JavaScript wrapper for a component is stored in the component.
+//   - Test code stores a *testing.T in the window object, allowing assertions
+//     in JavaScript to integrate with Go tests.
 //
 // See also: https://en.wikipedia.org/wiki/Entity_component_system
 type Components interface {
@@ -58,9 +63,6 @@ type componentEntry struct {
 type Entity struct {
 	objectId   ObjectId
 	components []componentEntry
-}
-
-func (e *Entity) init() {
 }
 
 func parseKey(key any) reflect.Value {
@@ -97,6 +99,7 @@ func Component[T any](e Components, key any) (res T, ok bool) {
 	res, ok = val.(T)
 	return
 }
+
 func SetComponent(e Components, key any, val any) { e.setComponent(key, val) }
 
 func ComponentType[T any](e Components) (T, bool) {

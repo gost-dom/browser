@@ -4,19 +4,23 @@ import (
 	"fmt"
 
 	"github.com/gost-dom/browser/internal/constants"
+	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/url"
-
-	netURL "net/url"
 )
 
 type location struct {
+	entity.Entity
 	*url.URL
-	neturl *netURL.URL
 }
 
-func newLocation(u *netURL.URL) Location {
-	return location{url.NewURLFromNetURL(u), u}
+func urlToLocation(u *url.URL) *location {
+	if u == nil {
+		return nil
+	}
+	return &location{URL: u}
 }
+
+func (l *location) set(u *url.URL) { l.URL = u }
 
 func (l location) AncestorOrigins() DOMStringList {
 	return nil

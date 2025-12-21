@@ -11,6 +11,7 @@ import (
 	. "github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/internal/gosthttp"
 	"github.com/gost-dom/browser/internal/log"
+	"github.com/gost-dom/browser/url"
 )
 
 type browserConfig struct {
@@ -170,8 +171,9 @@ func (b *Browser) Open(location string) (window Window, err error) {
 	if resp.StatusCode != 200 {
 		return nil, fmt.Errorf("Non-ok Response: %d", resp.StatusCode)
 	}
-	respLocation := resp.Request.URL.String()
-	window, err = html.NewWindowReader(resp.Body, b.createOptions(respLocation))
+
+	respUrl := url.ParseURL(resp.Request.URL.String())
+	window, err = html.NewWindowReader(resp.Body, respUrl, b.createOptions(respUrl.String()))
 	b.windows = append(b.windows, window)
 	return
 }

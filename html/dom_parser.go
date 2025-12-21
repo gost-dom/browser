@@ -10,12 +10,6 @@ import (
 type domParser struct{}
 
 // Deprecated: Will be removed
-func (p domParser) ParseReader(window Window, document *dom.Document, reader io.Reader) error {
-	*document = NewEmptyHtmlDocument(window)
-	return dom.ParseDocument(*document, reader)
-}
-
-// Deprecated: Will be removed
 func (p domParser) ParseFragment(doc dom.Document, r io.Reader) (dom.DocumentFragment, error) {
 	return ParseFragment(doc, r)
 }

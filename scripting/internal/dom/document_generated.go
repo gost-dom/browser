@@ -3,7 +3,7 @@
 package dom
 
 import (
-	dom "github.com/gost-dom/browser/dom"
+	html "github.com/gost-dom/browser/html"
 	gosterror "github.com/gost-dom/browser/internal/gosterror"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
@@ -51,6 +51,7 @@ func (w Document[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("contentType", w.contentType, nil)
 	jsClass.CreatePrototypeAttribute("doctype", w.doctype, nil)
 	jsClass.CreatePrototypeAttribute("documentElement", w.documentElement, nil)
+	jsClass.CreatePrototypeAttribute("location", w.location, nil)
 	w.parentNode.installPrototype(jsClass)
 }
 
@@ -59,7 +60,7 @@ func (w Document[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 }
 
 func (w Document[T]) getElementsByTagName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	instance, errInst := js.As[dom.Document](cbCtx.Instance())
+	instance, errInst := js.As[html.HTMLDocument](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
 	}
@@ -72,7 +73,7 @@ func (w Document[T]) getElementsByTagName(cbCtx js.CallbackContext[T]) (res js.V
 }
 
 func (w Document[T]) getElementsByTagNameNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	instance, errInst := js.As[dom.Document](cbCtx.Instance())
+	instance, errInst := js.As[html.HTMLDocument](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
 	}
@@ -91,7 +92,7 @@ func (w Document[T]) getElementsByClassName(cbCtx js.CallbackContext[T]) (res js
 }
 
 func (w Document[T]) createElementNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	instance, errInst := js.As[dom.Document](cbCtx.Instance())
+	instance, errInst := js.As[html.HTMLDocument](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
 	}
@@ -106,7 +107,7 @@ func (w Document[T]) createElementNS(cbCtx js.CallbackContext[T]) (res js.Value[
 }
 
 func (w Document[T]) createDocumentFragment(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	instance, err := js.As[dom.Document](cbCtx.Instance())
+	instance, err := js.As[html.HTMLDocument](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
@@ -115,7 +116,7 @@ func (w Document[T]) createDocumentFragment(cbCtx js.CallbackContext[T]) (res js
 }
 
 func (w Document[T]) createTextNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	instance, errInst := js.As[dom.Document](cbCtx.Instance())
+	instance, errInst := js.As[html.HTMLDocument](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
 	}
@@ -132,7 +133,7 @@ func (w Document[T]) createCDATASection(cbCtx js.CallbackContext[T]) (res js.Val
 }
 
 func (w Document[T]) createComment(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	instance, errInst := js.As[dom.Document](cbCtx.Instance())
+	instance, errInst := js.As[html.HTMLDocument](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
 	}
@@ -145,7 +146,7 @@ func (w Document[T]) createComment(cbCtx js.CallbackContext[T]) (res js.Value[T]
 }
 
 func (w Document[T]) createProcessingInstruction(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	instance, errInst := js.As[dom.Document](cbCtx.Instance())
+	instance, errInst := js.As[html.HTMLDocument](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
 	}
@@ -160,7 +161,7 @@ func (w Document[T]) createProcessingInstruction(cbCtx js.CallbackContext[T]) (r
 }
 
 func (w Document[T]) importNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	instance, errInst := js.As[dom.Document](cbCtx.Instance())
+	instance, errInst := js.As[html.HTMLDocument](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
 	}
@@ -179,7 +180,7 @@ func (w Document[T]) adoptNode(cbCtx js.CallbackContext[T]) (res js.Value[T], er
 }
 
 func (w Document[T]) createAttribute(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	instance, errInst := js.As[dom.Document](cbCtx.Instance())
+	instance, errInst := js.As[html.HTMLDocument](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
 	}
@@ -192,7 +193,7 @@ func (w Document[T]) createAttribute(cbCtx js.CallbackContext[T]) (res js.Value[
 }
 
 func (w Document[T]) createAttributeNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	instance, errInst := js.As[dom.Document](cbCtx.Instance())
+	instance, errInst := js.As[html.HTMLDocument](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
 	}
@@ -259,10 +260,19 @@ func (w Document[T]) doctype(cbCtx js.CallbackContext[T]) (res js.Value[T], err 
 }
 
 func (w Document[T]) documentElement(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	instance, err := js.As[dom.Document](cbCtx.Instance())
+	instance, err := js.As[html.HTMLDocument](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
 	result := instance.DocumentElement()
+	return codec.EncodeEntity(cbCtx, result)
+}
+
+func (w Document[T]) location(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	instance, err := js.As[html.HTMLDocument](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	result := instance.Location()
 	return codec.EncodeEntity(cbCtx, result)
 }

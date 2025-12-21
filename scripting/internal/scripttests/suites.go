@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/scripting/internal/dom/domsuite"
 	"github.com/gost-dom/browser/scripting/internal/html/htmlsuite"
 	"github.com/stretchr/testify/suite"
 )
@@ -25,7 +26,6 @@ func RunSuites(t *testing.T, e html.ScriptEngine) {
 	t.Run("Element", runSuite(NewElementSuite(e)))
 	t.Run("Window", runSuite(NewWindowTestSuite(e)))
 	t.Run("UIEvents", runSuite(NewUIEventTestSuite(e)))
-	t.Run("Document", runSuite(NewDocumentSuite(e)))
 	t.Run("EventTarget", runSuite(NewEventTargetTestSuite(e)))
 	t.Run("FormData", runSuite(NewFormDataSuite(e)))
 	t.Run("ClassList", runSuite(NewClassListTestSuite(e)))
@@ -46,4 +46,5 @@ func RunSuites(t *testing.T, e html.ScriptEngine) {
 	t.Run("MutationObserver", func(t *testing.T) { testMutationObserver(t, e) })
 	t.Run("Error handling", func(t *testing.T) { testErrorHandling(t, e) })
 	t.Run("html", func(t *testing.T) { htmlsuite.RunHtmlSuite(t, e) })
+	t.Run("dom", func(t *testing.T) { domsuite.RunDomSuite(t, e) })
 }

@@ -4,11 +4,13 @@ import "github.com/gost-dom/webref/idl"
 
 var htmlRules = SpecRules{
 	"DOMStringMap": {OutputType: OutputTypeStruct},
-	"Location": {Operations: OperationRules{
-		"assign":  {HasError: true},
-		"replace": {HasError: true},
-		"reload":  {HasError: true},
-	}},
+	"Location": {
+		IsEntity: true,
+		Operations: OperationRules{
+			"assign":  {HasError: true},
+			"replace": {HasError: true},
+			"reload":  {HasError: true},
+		}},
 	"History": {
 		Operations: OperationRules{
 			"go":      {HasError: true},

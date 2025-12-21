@@ -7,7 +7,6 @@ import (
 	app "github.com/gost-dom/browser/internal/test/integration/test-app"
 	"github.com/gost-dom/browser/internal/testing/browsertest"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
-	"github.com/gost-dom/browser/internal/testing/htmltest"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 	"github.com/onsi/gomega"
 )
@@ -18,7 +17,7 @@ func RunHtmxTests(t *testing.T, e html.ScriptEngine) {
 
 		expect := gomega.NewWithT(t).Expect
 		server := app.CreateServer()
-		b := htmltest.NewBrowserHelper(t, browsertest.InitBrowser(t, server, e))
+		b := browsertest.InitBrowser(t, server, e)
 		win, err := b.Open("/counter/index.html")
 		expect(err).ToNot(HaveOccurred())
 		counter := win.Document().GetElementById("counter").(html.HTMLElement)
@@ -33,7 +32,7 @@ func RunHtmxTests(t *testing.T, e html.ScriptEngine) {
 
 		expect := gomega.NewWithT(t).Expect
 		server := app.CreateServer()
-		b := htmltest.NewBrowserHelper(t, browsertest.InitBrowser(t, server, e))
+		b := browsertest.InitBrowser(t, server, e)
 		win := b.OpenWindow("/navigation/page-a.html")
 		expect(win.ScriptContext().Eval("window.pageA")).To(BeTrue())
 		expect(win.ScriptContext().Eval("window.pageB")).To(BeNil())
@@ -56,7 +55,7 @@ func RunHtmxTests(t *testing.T, e html.ScriptEngine) {
 
 		expect := gomega.NewWithT(t).Expect
 		server := app.CreateServer()
-		b := htmltest.NewBrowserHelper(t, browsertest.InitBrowser(t, server, e))
+		b := browsertest.InitBrowser(t, server, e)
 		win, err := b.Open("/navigation/page-a.html")
 		expect(err).ToNot(HaveOccurred())
 
@@ -82,7 +81,7 @@ func RunHtmxTests(t *testing.T, e html.ScriptEngine) {
 
 		expect := gomega.NewWithT(t).Expect
 		server := app.CreateServer()
-		b := htmltest.NewBrowserHelper(t, browsertest.InitBrowser(t, server, e))
+		b := browsertest.InitBrowser(t, server, e)
 		win, err := b.Open("/forms/form-1.html")
 		expect(err).ToNot(HaveOccurred())
 		i1 := win.Document().GetElementById("field-1")

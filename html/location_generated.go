@@ -2,9 +2,13 @@
 
 package html
 
-import "fmt"
+import (
+	"fmt"
+	entity "github.com/gost-dom/browser/internal/entity"
+)
 
 type Location interface {
+	entity.Components
 	fmt.Stringer
 	Href() string
 	SetHref(string)

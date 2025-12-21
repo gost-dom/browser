@@ -8,14 +8,18 @@ import (
 
 type HTMLDocument interface {
 	dom.Document
+	Location() Location
 	// unexported
 	window() *window
 	setActiveElement(e dom.Element)
+	location() *location
+	setLocation(*location)
 }
 
 type htmlDocument struct {
 	dom.Document
-	win Window
+	win         Window
+	docLocation *location
 }
 
 func mustAppendChild(p, c dom.Node) dom.Node {
@@ -48,7 +52,7 @@ func NewHTMLDocument(window Window) HTMLDocument {
 
 // NewEmptyHtmlDocument creates an HTML document without any content.
 func NewEmptyHtmlDocument(window Window) HTMLDocument {
-	var result HTMLDocument = &htmlDocument{dom.NewDocument(window), window}
+	var result HTMLDocument = &htmlDocument{dom.NewDocument(window), window, nil}
 	result.SetSelf(result)
 	return result
 }
@@ -79,6 +83,17 @@ func (d *htmlDocument) CreateElement(name string) dom.Element {
 	}
 	return NewHTMLElement(name, d)
 }
+
+func (d *htmlDocument) Location() Location {
+	d.Logger().Info("Document Location", "loc", d.docLocation)
+	if d.docLocation == nil {
+		return nil
+	}
+	return d.docLocation
+}
+
+func (d *htmlDocument) location() *location     { return d.docLocation }
+func (d *htmlDocument) setLocation(l *location) { d.docLocation = l }
 
 func (d *htmlDocument) window() *window {
 	if d.win == nil {

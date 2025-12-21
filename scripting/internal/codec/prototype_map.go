@@ -51,6 +51,8 @@ func LookupJSPrototype(entity any) string {
 		return "Node"
 	case *html.DOMStringMap:
 		return "DOMStringMap"
+	case html.Location:
+		return "Location"
 	default:
 		panic(fmt.Sprintf("Cannot lookup node: %v", n))
 	}

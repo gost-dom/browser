@@ -8,6 +8,7 @@ import (
 	"github.com/gost-dom/code-gen/customrules/typerule"
 	"github.com/gost-dom/code-gen/idltransform"
 	. "github.com/gost-dom/code-gen/internal"
+	"github.com/gost-dom/code-gen/packagenames"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )
@@ -27,12 +28,17 @@ type IdlInterface struct {
 	TargetPkg      string
 }
 
+var components = g.NewTypePackage("Components", packagenames.Entity)
+
 func (i IdlInterface) Generate() *jen.Statement {
 	fields := make(
 		[]g.Generator,
 		0,
-		2*len(i.Attributes)+1, // Make room for getters and setters
+		2*len(i.Attributes)+2, // Make room for getters and setters
 	)
+	if i.Rules.IsEntity {
+		fields = append(fields, components)
+	}
 	if i.Inherits != "" {
 		fields = append(fields, idltransform.TypeGen(i.Inherits, i.TargetPkg))
 	}

@@ -102,7 +102,7 @@ func (o Callback) EncodeAsSimpleJSLookup() bool {
 		return true
 	}
 	switch o.RetType.Name {
-	case "Attr", "NodeList", "HTMLFormControlsCollection", "Comment", "DOMStringMap":
+	case "Attr", "NodeList", "HTMLFormControlsCollection", "Comment", "DOMStringMap", "Location":
 		return true
 	default:
 		return false

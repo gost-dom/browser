@@ -116,12 +116,13 @@ func (e *htmlFormElement) submitFormData(formData *FormData) error {
 		req *http.Request
 		err error
 	)
+	url := e.action()
 	if e.Method() == "get" {
 		searchParams := formData.QueryString()
-		targetURL := replaceSearchParams(e.action(), searchParams)
+		targetURL := replaceSearchParams(url, searchParams)
 		req, err = http.NewRequest("GET", targetURL, nil)
 	} else {
-		req, err = http.NewRequest("POST", e.Action(), formData.GetReader())
+		req, err = http.NewRequest("POST", url.Href(), formData.GetReader())
 		req.GetBody = func() (io.ReadCloser, error) { return formData.GetReader(), nil }
 		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	}
@@ -156,17 +157,11 @@ func (e *htmlFormElement) SetAction(val string) { e.SetAttribute("action", val) 
 func (e *htmlFormElement) action() *url.URL {
 	window := e.window()
 	action, found := e.GetAttribute("action")
-	l := window.Location().(location)
-	target := l.URL
-	var err error
 	if found {
-		if target, err = url.NewUrlBase(action, window.Location().Href()); err != nil {
-			// This _shouldn't_ happen. But let's refactor code, so err isn't a
-			// possible return value
-			panic(err)
-		}
+		return window.resolveHref(action)
+	} else {
+		return url.ParseURL(window.LocationHREF())
 	}
-	return target
 }
 func (e *htmlFormElement) Action() string {
 	return e.action().Href()

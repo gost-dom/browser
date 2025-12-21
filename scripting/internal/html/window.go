@@ -31,6 +31,6 @@ func (w *Window[T]) opener(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return cbCtx.Null(), nil
 }
 
-func (w *Window[T]) setOpener(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func (w *Window[T]) setOpener(_ js.CallbackContext[T]) (js.Value[T], error) {
 	return nil, errors.New("Not implemented")
 }

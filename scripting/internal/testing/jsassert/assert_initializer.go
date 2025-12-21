@@ -15,6 +15,7 @@ func Configure[T any](e js.ScriptEngine[T]) {
 	gost := e.CreateGlobalObject("gost")
 	gost.CreateFunction("error", func(ctx js.CallbackContext[T]) (js.Value[T], error) {
 		if t, ok := htmltest.GetTestingT(ctx.Window()); ok {
+			t.Helper()
 			msg, err := js.ConsumeArgument(ctx, "message", nil, codec.DecodeString)
 			if err != nil {
 				msg = "(missing message)"

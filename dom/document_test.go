@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/gost-dom/browser/dom"
-	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 	"github.com/stretchr/testify/assert"
 
@@ -96,7 +95,7 @@ func TestDocumentImportNode(t *testing.T) {
 		</body>`,
 	)
 	parent := doc.GetElementById("parent")
-	newDoc := html.NewHTMLDocument(html.NewWindow())
+	newDoc := CreateHTMLDocument()
 	if !assert.NotNil(t, parent) {
 		return
 	}

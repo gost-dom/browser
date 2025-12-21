@@ -12,6 +12,7 @@ import (
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/testing/browsertest"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
@@ -23,13 +24,13 @@ type WindowTestSuite struct {
 }
 
 func (s *WindowTestSuite) TestDocumentIsAnHTMLDocument() {
-	win, err := NewWindowReader(strings.NewReader("<html><body></body></html>"))
+	win, err := NewWindowReader(strings.NewReader("<html><body></body></html>"), nil)
 	s.Expect(err).ToNot(HaveOccurred())
 	s.Expect(win.Document().DocumentElement()).To(BeHTMLElement())
 }
 
 func (s *WindowTestSuite) TestDocumentWithDOCTYPE() {
-	win, err := NewWindowReader(strings.NewReader("<!DOCTYPE HTML><html><body></body></html>"))
+	win, err := NewWindowReader(strings.NewReader("<!DOCTYPE HTML><html><body></body></html>"), nil)
 	s.Expect(err).ToNot(HaveOccurred())
 	s.Expect(win.Document().FirstChild().NodeType()).To(Equal(dom.NodeTypeDocumentType))
 }
@@ -74,8 +75,8 @@ func (s *WindowNavigationTestSuite) SetupTest() {
 		http.Redirect(w, r, "/infinite-redirects", 301)
 	})
 
-	s.win = htmltest.NewWindowHelper(s.T(), NewWindowFromHandler(m))
-	s.win.Navigate("https://example.com/page-1")
+	b := browsertest.InitBrowser(s.T(), m, nil)
+	s.win = b.OpenWindow("https://example.com/page-1")
 }
 
 func TestWindowNavigation(t *testing.T) {

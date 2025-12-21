@@ -13,6 +13,9 @@ import (
 func GenerateHtmlAnchor() (g.Generator, error) {
 	return getIdlInterfaceGenerator("html", "HTMLAnchorElement")
 }
+func GenerateLocation() (g.Generator, error) {
+	return getIdlInterfaceGenerator("html", "Location")
+}
 
 func TestHTMLAnchorInterface(t *testing.T) {
 	Expect := gomega.NewWithT(t).Expect
@@ -37,6 +40,14 @@ func TestHTMLAnchorInterface(t *testing.T) {
 		GenerateHtmlAnchor(),
 	).ToNot(HaveRendered(MatchRegexp(`func \([^(]+\) Host\(\) string`)),
 		"Rendered implementation for URL properties")
+}
+
+func TestLocationIsEntity(t *testing.T) {
+	Expect := gomega.NewWithT(t).Expect
+
+	Expect(GenerateLocation()).To(HaveRendered(MatchRegexp(
+		`type Location interface {\n\tentity.Components`)),
+	)
 }
 
 func exp(t *testing.T) func(any, ...any) gomega.GomegaAssertion {

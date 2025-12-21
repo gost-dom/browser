@@ -71,16 +71,6 @@ func (h *scriptHost) NewContext(window html.Window) html.ScriptContext {
 	)
 	globalThis.Set("window", globalThis)
 	h.initializer.Configure(result)
-	location := result.createLocationInstance()
-	globalThis.DefineAccessorProperty(
-		"location",
-		vm.ToValue(func(c *sobek.FunctionCall) sobek.Value {
-			return location
-		}),
-		nil,
-		sobek.FLAG_FALSE,
-		sobek.FLAG_TRUE,
-	)
 	globalThis.SetPrototype(result.classes["Window"].prototype)
 
 	return result

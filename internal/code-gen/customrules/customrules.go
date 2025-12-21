@@ -44,10 +44,18 @@ const (
 // InterfaceRule specifies the rules for a specific interface or interface
 // mixin.
 type InterfaceRule struct {
+	// OverrideTypeName cusomizes the type named used to implement the type. It
+	// is virtually always the idl interface name. One exception is that the
+	// Document IDL interface is implemented by HTMLDocument in Go.
+	OverrideTypeName string
 	InterfacePackage Package
 	OutputType       OutputType
 	Operations       OperationRules
 	Attributes       AttributeRules
+	// IsEntity indicates that the type must have "entity" semantics, i.e.
+	// identity is omportant. Everything type returned from an attribute with
+	// [SameObject] must have entity semantics.
+	IsEntity bool
 }
 
 type OperationRules map[string]OperationRule

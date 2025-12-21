@@ -58,7 +58,7 @@ func (e *htmlElement) SetSelf(self dom.Node) {
 
 func (e *htmlElement) getHTMLDocument() HTMLDocument { return e.htmlDocument }
 
-func (e *htmlElement) window() Window { return e.getHTMLDocument().window() }
+func (e *htmlElement) window() Window { return e.htmlDocument.window() }
 
 func (e *htmlElement) TagName() string {
 	return strings.ToUpper(e.Element.TagName())

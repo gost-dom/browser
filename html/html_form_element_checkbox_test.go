@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/testing/browsertest"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
 	"github.com/stretchr/testify/suite"
@@ -19,7 +20,8 @@ func TestHTMLFormElementWithCheckbox(t *testing.T) {
 
 func (s *HTMLFormElementWithCheckboxTestSuite) TestSubmitWithCheckboxes() {
 	rec := gosttest.NewHTTPRequestRecorder(s.T(), ParseFormHandler)
-	win := htmltest.NewWindowHelper(s.T(), NewWindowFromHandler(rec))
+	b := browsertest.InitBrowser(s.T(), rec, nil)
+	win := b.NewWindow()
 	win.LoadHTML(`<body>
 		<form method="post">
 			<input id="check-1" name="check-me-1" type="checkbox" />
