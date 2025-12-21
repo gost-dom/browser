@@ -83,9 +83,15 @@ func (d *htmlDocument) CreateElement(name string) dom.Element {
 	return NewHTMLElement(name, d)
 }
 
-func (d *htmlDocument) Location() Location      { return d.docLocation }
-func (d *htmlDocument) location() *location     { return d.docLocation }
-func (d *htmlDocument) setLocation(l *location) { d.docLocation = l }
+func (d *htmlDocument) Location() Location {
+	d.Logger().Info("Document Location", "loc", d.docLocation)
+	if d.docLocation == nil {
+		return nil
+	}
+	return d.docLocation
+}
+
+func (d *htmlDocument) location() *location { return d.docLocation }
 
 func (d *htmlDocument) window() *window {
 	if d.win == nil {

@@ -43,8 +43,13 @@ gost.assertUndefined = (actual) => {
 };
 
 gost.assertNull = (actual) => {
-  if (typeof actual !== null) {
+  if (actual !== null) {
     return gost.error(`Expected null. Got ${actual}`);
+  }
+};
+gost.assertNotNull = (actual) => {
+  if (actual === null) {
+    return gost.error(`Expected not null. Got ${actual}`);
   }
 };
 

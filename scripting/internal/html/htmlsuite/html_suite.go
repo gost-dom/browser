@@ -13,4 +13,5 @@ func RunHtmlSuite(t *testing.T, e html.ScriptEngine) {
 
 	t.Run("AnimationFrameProvider", wrapSuite(testAnimationFrameProvider))
 	t.Run("HTMLAnchorElement", wrapSuite(testHtmlAnchorElement))
+	t.Run("Location", wrapSuite(testLocation))
 }

@@ -60,9 +60,6 @@ type Entity struct {
 	components []componentEntry
 }
 
-func (e *Entity) init() {
-}
-
 func parseKey(key any) reflect.Value {
 	if key == nil {
 		panic("nil key")

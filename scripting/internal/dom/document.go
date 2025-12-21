@@ -5,7 +5,6 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
-	"github.com/gost-dom/browser/internal/entity"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -13,17 +12,14 @@ import (
 func (w *Document[T]) CustomInitializer(class js.Class[T]) {
 	// host := w.scriptHost
 	// tmpl := constructor.InstanceTemplate()
-	class.CreateInstanceAttribute("location",
-		func(ctx js.CallbackContext[T]) (js.Value[T], error) {
-			return ctx.GlobalThis().Get("location")
-		}, nil)
+	class.CreateInstanceAttribute("location", w.location, nil)
 	class.CreatePrototypeAttribute("head", w.head, nil)
 	class.CreatePrototypeAttribute("body", w.body, nil)
 	class.CreatePrototypeMethod("getElementById", w.getElementById)
 }
 
 func (w *Document[T]) CreateInstance(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	res := dom.NewDocument(nil)
+	res := html.NewHTMLDocument(nil, nil)
 	return codec.EncodeConstrucedValue(cbCtx, res)
 }
 
@@ -32,7 +28,11 @@ func (w *Document[T]) location(cbCtx js.CallbackContext[T]) (js.Value[T], error)
 	if err != nil {
 		return nil, err
 	}
-	return codec.EncodeEntity(cbCtx, instance.Location().(entity.Components))
+	loc := instance.Location()
+	if loc == nil {
+		return cbCtx.Null(), nil
+	}
+	return codec.EncodeEntity(cbCtx, loc)
 }
 
 func (w *Document[T]) getElementById(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

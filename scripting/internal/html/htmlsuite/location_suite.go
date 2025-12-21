@@ -7,7 +7,7 @@ import (
 	"github.com/gost-dom/browser/internal/testing/browsertest"
 )
 
-func testHtmlDocument(t *testing.T, e html.ScriptEngine) {
+func testLocation(t *testing.T, e html.ScriptEngine) {
 	win := browsertest.InitWindow(t, e)
 	t.Run("Location is null on new document", func(t *testing.T) {
 		win.MustRun(`

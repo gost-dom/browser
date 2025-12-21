@@ -13,7 +13,10 @@ type location struct {
 	*url.URL
 }
 
-func newLocation(u *url.URL) *location {
+func urlToLocation(u *url.URL) *location {
+	if u == nil {
+		return nil
+	}
 	return &location{URL: u}
 }
 
