@@ -461,3 +461,8 @@ func WindowOptionHTTPClient(client http.Client) WindowOptionFunc {
 func (o WindowOptions) Apply(options *WindowOptions) {
 	*options = o
 }
+
+// WindowUrl returns the *url.URL for the current document's location.
+func WindowUrl(w Window) *url.URL {
+	return w.Document().location().URL
+}
