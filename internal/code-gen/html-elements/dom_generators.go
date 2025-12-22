@@ -11,11 +11,4 @@ var DOMPackageConfig = GeneratorConfig{
 		SpecName:          "dom",
 		GenerateInterface: true,
 	},
-	/* Doesn't generate an All() function
-	"html_collection": {
-		InterfaceName:     "HTMLCollection",
-		SpecName:          "dom",
-		GenerateInterface: true,
-	},
-	*/
 }

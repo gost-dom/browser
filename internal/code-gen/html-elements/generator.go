@@ -5,7 +5,9 @@ import (
 	"os"
 
 	"github.com/dave/jennifer/jen"
+	"github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/code-gen/packagenames"
+	"github.com/gost-dom/webref/idl"
 )
 
 func writeFile(s FileGeneratorSpec) error {
@@ -48,11 +50,37 @@ func CreatePackageGenerators(name string) (res []FileGeneratorSpec, err error) {
 	return
 }
 
+func CreateInterfaceFileGenerators(destPackage string) ([]FileGeneratorSpec, error) {
+	config, ok := PackageInterfacesConfiguration[destPackage]
+	if !ok {
+		return nil, nil
+	}
+	spec, err := idl.Load(config.webApi)
+	if err != nil {
+		return nil, err
+	}
+	res := make([]FileGeneratorSpec, len(config.interfaces))
+	for i, intf := range config.interfaces {
+		idlIntf := spec.Interfaces[intf]
+		res[i] = FileGeneratorSpec{
+			OutputFile: internal.TypeNameToFileName(intf),
+			Package:    destPackage,
+			Generator:  generateInterface(config.webApi, destPackage, idlIntf),
+		}
+	}
+	return res, nil
+}
+
 func CreateImplementationPackage(name string) error {
 	files, err := CreatePackageGenerators(name)
 	if err != nil {
 		return err
 	}
+	interfaceFiles, err := CreateInterfaceFileGenerators(name)
+	if err != nil {
+		return err
+	}
+	files = append(files, interfaceFiles...)
 	for _, f := range files {
 		if err = writeFile(f); err != nil {
 			return err
@@ -60,29 +88,3 @@ func CreateImplementationPackage(name string) error {
 	}
 	return nil
 }
-
-// func GenerateHTMLElements() error {
-// 	files, err := CreateHTMLGenerators()
-// 	if err != nil {
-// 		return err
-// 	}
-// 	for _, f := range files {
-// 		if err = writeFile(f); err != nil {
-// 			return err
-// 		}
-// 	}
-// 	return nil
-// }
-
-// func GenerateDOMTypes() error {
-// 	files, err := CreateDOMGenerators()
-// 	if err != nil {
-// 		return err
-// 	}
-// 	for _, f := range files {
-// 		if err = writeFile(f); err != nil {
-// 			return err
-// 		}
-// 	}
-// 	return nil
-// }

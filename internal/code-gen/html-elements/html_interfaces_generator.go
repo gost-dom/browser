@@ -1,9 +1,9 @@
 package htmlelements
 
 var HTMLInterfacesPackageConfig = GeneratorConfig{
-	"history": {
-		InterfaceName:     "History",
-		SpecName:          "html",
-		GenerateInterface: true,
-	},
+	// "history": {
+	// 	InterfaceName:     "History",
+	// 	SpecName:          "html",
+	// 	GenerateInterface: true,
+	// },
 }

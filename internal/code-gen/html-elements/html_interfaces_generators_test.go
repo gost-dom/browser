@@ -3,13 +3,14 @@ package htmlelements_test
 import (
 	"testing"
 
+	htmlelements "github.com/gost-dom/code-gen/html-elements"
 	. "github.com/gost-dom/generators/testing/matchers"
 	"github.com/onsi/gomega"
 )
 
 func TestHTMLHistoryInterface(t *testing.T) {
 	Expect := gomega.NewWithT(t).Expect
-	gen, err := getIdlInterfaceGenerator("htmlinterfaces", "History")
+	gen, err := htmlelements.GenerateInterface("html", "htmlinterfaces", "History")
 	Expect(err).ToNot(gomega.HaveOccurred())
 
 	Expect(gen).To(HaveRenderedSubstring("\tLength() int\n"))

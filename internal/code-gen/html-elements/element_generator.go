@@ -118,30 +118,47 @@ func (gen baseGenerator) GenerateReadonlyStruct() g.Generator {
 }
 
 func (gen baseGenerator) GenerateInterface() g.Generator {
-	idlInterface := gen.idlType
+	return generateInterface(gen.req.SpecName, gen.target, gen.idlType)
+}
+
+func GenerateInterface(webApi string, target string, name string) (g.Generator, error) {
+	spec, err := idl.Load(webApi)
+	if err != nil {
+		return nil, err
+	}
+	idlInterface, ok := spec.Interfaces[name]
+	if !ok {
+		return nil, fmt.Errorf("GenerateInterface: %s: not found in package: %s", name, webApi)
+	}
+	return generateInterface(webApi, target, idlInterface), nil
+}
+
+func generateInterface(webApi string, target string, idlInterface idl.Interface) g.Generator {
+	apiRules := customrules.GetSpecRules(webApi)
+	intfRules := apiRules[idlInterface.Name]
 	attributes := make([]IdlInterfaceAttribute, 0)
 	operations := make([]IdlInterfaceOperation, 0)
 	includes := make([]IdlInterfaceInclude, len(idlInterface.Includes))
 	iterableTypes := make([]idltransform.IdlType, len(idlInterface.IterableTypes))
 
-	interfaces := make([]idl.Interface, 1+len(gen.idlType.Includes))
-	interfaces[0] = gen.idlType
-	copy(interfaces[1:], gen.idlType.Includes)
+	interfaces := make([]idl.Interface, 1+len(idlInterface.Includes))
+	interfaces[0] = idlInterface
+	copy(interfaces[1:], idlInterface.Includes)
 	result := IdlInterface{
-		SpecName:  gen.req.SpecName,
-		Name:      gen.idlType.Name,
-		Inherits:  gen.idlType.InternalSpec.Inheritance,
+		SpecName:  webApi,
+		Name:      idlInterface.Name,
+		Inherits:  idlInterface.InternalSpec.Inheritance,
 		Includes:  includes,
-		Rules:     gen.rules,
-		TargetPkg: gen.target,
+		Rules:     intfRules,
+		TargetPkg: target,
 	}
 
-	for idx, i := range gen.idlType.Includes {
+	for idx, i := range idlInterface.Includes {
 		includes[idx] = IdlInterfaceInclude{i}
 	}
 
-	for _, a := range gen.idlType.Attributes {
-		attributeRule := gen.rules.Attributes[a.Name]
+	for _, a := range idlInterface.Attributes {
+		attributeRule := intfRules.Attributes[a.Name]
 		if attributeRule.NotImplemented {
 			continue
 		}
@@ -154,18 +171,18 @@ func (gen baseGenerator) GenerateInterface() g.Generator {
 		}
 		attributes = append(attributes, IdlInterfaceAttribute{
 			Name:     a.Name,
-			Type:     gen.newIdlType(attrType),
+			Type:     idltransform.IdlType{Type: attrType, TargetPackage: target},
 			ReadOnly: a.Readonly,
 		})
 	}
-	for _, o := range gen.idlType.Operations {
+	for _, o := range idlInterface.Operations {
 		if o.Stringifier {
 			result.HasStringifier = true
 			if o.Name == "" {
 				continue
 			}
 		}
-		operationRule := gen.rules.Operations[o.Name]
+		operationRule := intfRules.Operations[o.Name]
 		getArg := func(name string) (res customrules.ArgumentRule) {
 			if operationRule.Arguments != nil {
 				res = operationRule.Arguments[name]
@@ -184,14 +201,14 @@ func (gen baseGenerator) GenerateInterface() g.Generator {
 			IdlInterfaceOperation{
 				o,
 				arguments,
-				gen.newIdlType(o.ReturnType),
+				idltransform.IdlType{Type: o.ReturnType, TargetPackage: target},
 				operationRule,
-				gen.target,
+				target,
 			},
 		)
 	}
 	for i, t := range idlInterface.IterableTypes {
-		iterableTypes[i] = gen.newIdlType(t)
+		iterableTypes[i] = idltransform.IdlType{Type: t, TargetPackage: target}
 	}
 	result.Attributes = attributes
 	result.Operations = operations
