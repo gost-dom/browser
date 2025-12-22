@@ -6,11 +6,10 @@ import (
 	"io"
 	"maps"
 	"os"
-	"regexp"
 	"slices"
-	"strings"
 
 	"github.com/dave/jennifer/jen"
+	"github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/code-gen/scripting/configuration"
 	g "github.com/gost-dom/generators"
@@ -31,7 +30,10 @@ func writePackageFiles(packagePath string, spec *configuration.WebAPIConfig) err
 	types := spec.Types()
 	errs := make([]error, len(types))
 	for i, specType := range types {
-		outputFileName := fmt.Sprintf("%s_generated.go", typeNameToFileName(specType.TypeName))
+		outputFileName := fmt.Sprintf(
+			"%s_generated.go",
+			internal.TypeNameToFileName(specType.TypeName),
+		)
 		if writer, err := os.Create(outputFileName); err != nil {
 			errs[i] = err
 		} else {
@@ -44,15 +46,6 @@ func writePackageFiles(packagePath string, spec *configuration.WebAPIConfig) err
 		}
 	}
 	return errors.Join(errs...)
-}
-
-var matchKnownWord = regexp.MustCompile("(HTML|URL|DOM)([A-Z][a-z]+)")
-var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")
-
-func typeNameToFileName(name string) string {
-	snake := matchKnownWord.ReplaceAllString(name, "${1}_${2}")
-	snake = matchAllCap.ReplaceAllString(snake, "${1}_${2}")
-	return strings.ToLower(snake)
 }
 
 func CreateJavaScriptMappings(webAPI string) error {
