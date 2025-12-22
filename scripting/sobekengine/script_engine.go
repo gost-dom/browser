@@ -2,12 +2,14 @@ package sobekengine
 
 import (
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/cache"
 	"github.com/gost-dom/browser/scripting/internal"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
 type scriptEngine struct {
 	initializer *internal.ScriptEngineConfigurer[jsTypeParam]
+	cache       cache.Cache
 }
 
 func (e scriptEngine) NewHost(opts html.ScriptEngineOptions) html.ScriptHost {
@@ -15,6 +17,7 @@ func (e scriptEngine) NewHost(opts html.ScriptEngineOptions) html.ScriptHost {
 		logger:      opts.Logger,
 		httpClient:  opts.HttpClient,
 		initializer: e.initializer,
+		cache:       &e.cache,
 	}
 	return &res
 }
@@ -26,7 +29,9 @@ func DefaultEngine() html.ScriptEngine {
 }
 
 func newEngine(configurators ...js.Configurer[jsTypeParam]) *scriptEngine {
-	return &scriptEngine{internal.NewScriptEngineConfigurer(configurators...)}
+	return &scriptEngine{
+		initializer: internal.NewScriptEngineConfigurer(configurators...),
+	}
 }
 
 func init() {

@@ -30,6 +30,7 @@ func TestHTMX(t *testing.T) {
 func TestDatastar(t *testing.T) {
 	scripttests.RunDataStarTests(t, DefaultEngine())
 }
+
 func init() {
 	configurer := internal.CreateWindowsConfigurer[jsTypeParam]()
 	configurer.AddConfigurerFunc(jsassert.Configure)

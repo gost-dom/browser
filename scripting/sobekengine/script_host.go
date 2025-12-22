@@ -8,6 +8,7 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/cache"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/scripting/internal"
 	"github.com/grafana/sobek"
@@ -25,6 +26,7 @@ type scriptHost struct {
 	httpClient  *http.Client
 	logger      *slog.Logger
 	initializer *internal.ScriptEngineConfigurer[jsTypeParam]
+	cache       *cache.Cache
 }
 
 type propertyNameMapper struct{}
@@ -52,6 +54,7 @@ func (h *scriptHost) NewContext(bc html.BrowsingContext) html.ScriptContext {
 	vm.SetFieldNameMapper(propertyNameMapper{})
 	result := &scriptContext{
 		host:         h,
+		cache:        h.cache,
 		vm:           vm,
 		clock:        clock.New(),
 		browsingCtx:  bc,

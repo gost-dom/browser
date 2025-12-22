@@ -7,6 +7,7 @@ import (
 	"log/slog"
 
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/cache"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/gosthttp"
 	"github.com/gost-dom/browser/internal/log"
@@ -19,6 +20,7 @@ type scriptContext struct {
 	host         *scriptHost
 	vm           *sobek.Runtime
 	clock        *clock.Clock
+	cache        *cache.Cache
 	browsingCtx  html.BrowsingContext
 	classes      map[string]*class
 	wrappedGoObj *sobek.Symbol
@@ -139,8 +141,23 @@ func (c *scriptContext) CreateFunction(name string, cb js.CallbackFunc[jsTypePar
 	c.vm.Set(name, wrapJSCallback(c, cb.WithLog("", name)))
 }
 
+func (c *scriptContext) compilePolyfill(script, src string) (*sobek.Program, error) {
+	if res, ok := cache.Get[*sobek.Program](c.cache, src); ok {
+		return res, nil
+	}
+	res, err := sobek.Compile(src, script, false)
+	if err != nil {
+		return nil, fmt.Errorf("gost-dom/sobekengine: compilePolyfill: %w", err)
+	}
+	cache.Set(c.cache, src, res)
+	return res, nil
+}
+
 func (c *scriptContext) InstallPolyfill(script, src string) {
-	_, err := c.vm.RunScript(src, script)
+	prg, err := c.compilePolyfill(script, src)
+	if err == nil {
+		_, err = c.vm.RunProgram(prg)
+	}
 	if err != nil {
 		panic(err)
 	}
