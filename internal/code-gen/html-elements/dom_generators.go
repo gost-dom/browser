@@ -19,10 +19,3 @@ var DOMPackageConfig = GeneratorConfig{
 	},
 	*/
 }
-
-func CreateDOMGenerators() ([]FileGeneratorSpec, error) {
-	return createGenerators(
-		DOMPackageConfig,
-		"github.com/stroiman/go-dom/browser/dom",
-	)
-}

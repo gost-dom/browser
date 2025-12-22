@@ -29,10 +29,3 @@ var HTMLPackageConfig = setSpecName("html", GeneratorConfig{
 		GenerateInterface: true,
 	},
 })
-
-func CreateHTMLGenerators() ([]FileGeneratorSpec, error) {
-	return createGenerators(
-		HTMLPackageConfig,
-		"github.com/stroiman/go-dom/browser/html",
-	)
-}
