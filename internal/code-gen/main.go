@@ -43,12 +43,6 @@ func main() {
 	case "script-bootstrap":
 		exitOnError(scripting.GenerateRegisterFunctions(*packageName))
 		os.Exit(0)
-	case "htmlelements":
-		exitOnError(htmlelements.CreateImplementationPackage("html"))
-		os.Exit(0)
-	case "dom":
-		exitOnError(htmlelements.CreateImplementationPackage("dom"))
-		os.Exit(0)
 	case "gotypes":
 		if packageName == nil {
 			panic("Missing package spec")

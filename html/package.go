@@ -1,4 +1,4 @@
-//go:generate ../internal/code-gen/code-gen -g htmlelements
+//go:generate ../internal/code-gen/code-gen -g gotypes -p html
 
 // Package html works on top of the DOM to implement specific HTML elements.
 //

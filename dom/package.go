@@ -1,4 +1,4 @@
-//go:generate ../internal/code-gen/code-gen -g dom
+//go:generate ../internal/code-gen/code-gen -g gotypes -p dom
 
 // Package dom provides the fundamental DOM implementation for Gost-DOM.
 //
