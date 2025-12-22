@@ -32,7 +32,7 @@ func (i *scriptContext) Close() {}
 func (i *scriptContext) logger() *slog.Logger {
 	l := i.window.Logger()
 	if l == nil {
-		l = i.host.Logger
+		l = i.host.logger
 	}
 	if l == nil {
 		l = log.Default()
@@ -268,7 +268,7 @@ func (c *scriptContext) Compile(src string) (html.Script, error) {
 
 func (c *scriptContext) DownloadScript(src string) (html.Script, error) {
 	u := html.WindowResolveHref(c.window, src)
-	if scr, err := gosthttp.Download(c.Context(), u, c.host.HttpClient); err != nil {
+	if scr, err := gosthttp.Download(c.Context(), u, c.host.httpClient); err != nil {
 		return nil, err
 	} else {
 		return script{c, scr, src}, nil // c.Compile(script)

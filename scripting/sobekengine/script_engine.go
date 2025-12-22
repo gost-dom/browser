@@ -12,8 +12,8 @@ type scriptEngine struct {
 
 func (e scriptEngine) NewHost(opts html.ScriptEngineOptions) html.ScriptHost {
 	res := scriptHost{
-		Logger:      opts.Logger,
-		HttpClient:  opts.HttpClient,
+		logger:      opts.Logger,
+		httpClient:  opts.HttpClient,
 		initializer: e.initializer,
 	}
 	return &res

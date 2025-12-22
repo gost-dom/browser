@@ -41,7 +41,7 @@ func (m *moduleResolver) resolveModuleUrl(
 	if cached, ok := m.cache[href]; ok {
 		return cached, nil
 	}
-	code, err := gosthttp.Download(m.ctx.window.Context(), u, m.host.HttpClient)
+	code, err := gosthttp.Download(m.ctx.window.Context(), u, m.host.httpClient)
 	if err != nil {
 		return nil, err
 	}

@@ -22,10 +22,8 @@ func New() html.ScriptHost {
 }
 
 type scriptHost struct {
-	// TODO: Unexport
-	HttpClient *http.Client
-	// TODO: Unexport
-	Logger      *slog.Logger
+	httpClient  *http.Client
+	logger      *slog.Logger
 	initializer *internal.ScriptEngineConfigurer[jsTypeParam]
 }
 
