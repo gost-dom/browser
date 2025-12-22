@@ -12,7 +12,7 @@ type scriptEngine struct {
 	cache       cache.Cache
 }
 
-func (e scriptEngine) NewHost(opts html.ScriptEngineOptions) html.ScriptHost {
+func (e *scriptEngine) NewHost(opts html.ScriptEngineOptions) html.ScriptHost {
 	res := scriptHost{
 		logger:      opts.Logger,
 		httpClient:  opts.HttpClient,
