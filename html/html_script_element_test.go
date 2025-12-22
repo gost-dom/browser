@@ -31,10 +31,10 @@ func (h *dummyScriptHost) NewContext(bc html.BrowsingContext) html.ScriptContext
 }
 
 type dummyScriptContext struct {
-	host   *dummyScriptHost
-	win    html.BrowsingContext
-	client http.Client
-	clock  *clock.Clock
+	host        *dummyScriptHost
+	browsingCtx html.BrowsingContext
+	client      http.Client
+	clock       *clock.Clock
 }
 
 func (c dummyScriptContext) Close() {}
