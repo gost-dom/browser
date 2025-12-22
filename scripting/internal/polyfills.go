@@ -13,12 +13,12 @@ var xpath []byte
 var textEncoderDecoder []byte
 
 func InstallPolyfills[T any](host js.ScriptEngine[T]) {
-	host.RunScript(`
+	host.InstallPolyfill(`
 		FormData.prototype.forEach = function(cb) {
 			return Array.from(this).forEach(([k,v]) => { cb(v,k) })
 		}
 	`, "gost-dom/polyfills/formdata.js")
-	host.RunScript(`
+	host.InstallPolyfill(`
 		Node.ELEMENT_NODE = 1;
 		Node.ATTRIBUTE_NODE = 2;
 		Node.TEXT_NODE = 3;
@@ -39,9 +39,9 @@ func InstallPolyfills[T any](host js.ScriptEngine[T]) {
 		Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC = 0x20;
 	`, "gost-dom/polyfills/node.js")
 
-	host.RunScript(string(xpath), "gost-dom/polyfills/xpath-jsdom.js")
-	host.RunScript(string(textEncoderDecoder), "gost-dom/polyfills/text-encoder-decoder.js")
-	host.RunScript(`
+	host.InstallPolyfill(string(xpath), "gost-dom/polyfills/xpath-jsdom.js")
+	host.InstallPolyfill(string(textEncoderDecoder), "gost-dom/polyfills/text-encoder-decoder.js")
+	host.InstallPolyfill(`
 			const { XPathExpression, XPathResult } = window;
 			const evaluate = XPathExpression.prototype.evaluate;
 			XPathExpression.prototype.evaluate = function (context, type, res) {
@@ -50,7 +50,7 @@ func InstallPolyfills[T any](host js.ScriptEngine[T]) {
 			Element.prototype.scrollIntoView = function() {};
 
 	`, "gost-dom/polyfills/xpath-custom.js")
-	host.RunScript(`
+	host.InstallPolyfill(`
 		Object.setPrototypeOf(DOMException, Error)
 		Object.setPrototypeOf(DOMException.prototype, Error.prototype)
 	`, "gost-dom/polyfills/errors.js")

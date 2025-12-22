@@ -237,6 +237,6 @@ func (host *V8ScriptHost) CreateFunction(
 	host.windowTemplate.Set(name, ft)
 }
 
-func (host *V8ScriptHost) RunScript(script, src string) {
+func (host *V8ScriptHost) InstallPolyfill(script, src string) {
 	host.scripts = append(host.scripts, [2]string{script, src})
 }

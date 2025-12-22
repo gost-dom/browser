@@ -27,5 +27,5 @@ func Configure[T any](e js.ScriptEngine[T]) {
 		}
 		return nil, ctx.NewTypeError("error")
 	})
-	e.RunScript(assertions, "gost-dom/assertions")
+	e.InstallPolyfill(assertions, "gost-dom/assertions")
 }

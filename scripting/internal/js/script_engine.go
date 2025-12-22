@@ -15,8 +15,11 @@ type ScriptEngine[T any] interface {
 	Class(name string) (Class[T], bool)
 	CreateGlobalObject(name string) GlobalObject[T]
 	CreateFunction(name string, cb CallbackFunc[T])
-	RunScript(script, src string)
 	SetUnhandledPromiseRejectionHandler(ErrorHandler[T])
+
+	// InstallPolyfill is an escape hatch for when creating the right DOM
+	// environment was easier to do in JS - or usable polyfills were found.
+	InstallPolyfill(script, src string)
 }
 
 // ScriptEngineFactory constructs ScriptEngine instances. Client code can

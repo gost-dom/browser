@@ -139,7 +139,7 @@ func (c *scriptContext) CreateFunction(name string, cb js.CallbackFunc[jsTypePar
 	c.vm.Set(name, wrapJSCallback(c, cb.WithLog("", name)))
 }
 
-func (c *scriptContext) RunScript(script, src string) {
+func (c *scriptContext) InstallPolyfill(script, src string) {
 	_, err := c.vm.RunScript(src, script)
 	if err != nil {
 		panic(err)
