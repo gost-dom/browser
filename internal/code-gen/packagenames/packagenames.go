@@ -1,6 +1,8 @@
 package packagenames
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // Names that relate to the project name, which would only change if the project
 // is moved/renamed.
@@ -48,4 +50,16 @@ func PackageName(apiName string) string {
 		return res
 	}
 	return fmt.Sprintf("%s/internal/%s", BASE_PKG, apiName)
+}
+
+// ExpandPackageName converts a package name to full import path, e.g.,
+//
+// - "dominterfaces" -> "example.com/gost-dom/.../dominterfaces"
+func ExpandPackageName(name string) string {
+	switch name {
+	case "dominterfaces":
+		return DomInterfaces
+	}
+	return fmt.Sprintf("%s/%s", BASE_PKG, name)
+
 }

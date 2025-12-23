@@ -7,6 +7,7 @@ import (
 	htmlelements "github.com/gost-dom/code-gen/html-elements"
 	"github.com/gost-dom/code-gen/idltransform"
 	"github.com/gost-dom/code-gen/internal"
+	"github.com/gost-dom/code-gen/packagenames"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )
@@ -25,7 +26,7 @@ func CreateInterfaceFileGenerators(destPackage string) ([]htmlelements.FileGener
 		idlIntf := spec.Interfaces[intf]
 		res[i] = htmlelements.FileGeneratorSpec{
 			OutputFile: internal.TypeNameToFileName(intf),
-			Package:    htmlelements.PackageName(destPackage),
+			Package:    packagenames.ExpandPackageName(destPackage),
 			Generator:  generateInterface(config.webApi, destPackage, idlIntf),
 		}
 	}
