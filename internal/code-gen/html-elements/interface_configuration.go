@@ -13,4 +13,19 @@ var PackageInterfacesConfiguration = map[string]PackageInterfaces{
 			"History",
 		},
 	},
+	"dom": {
+		webApi: "dom",
+		interfaces: []string{
+			"NonDocumentTypeChildNode",
+			"ParentNode",
+		},
+	},
+	"dominterfaces": {
+		webApi: "dom",
+		interfaces: []string{
+			"AbortSignal",
+			"AbortController",
+			"MutationObserver",
+		},
+	},
 }

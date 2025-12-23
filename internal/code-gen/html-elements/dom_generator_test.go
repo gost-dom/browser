@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/gost-dom/code-gen/codegentest"
+	htmlelements "github.com/gost-dom/code-gen/html-elements"
 	"github.com/gost-dom/code-gen/packagenames"
 	. "github.com/gost-dom/generators/testing/matchers"
 	"github.com/onsi/gomega"
@@ -31,7 +32,7 @@ func (s *DomSuite) TestGenerateHTMLCollection() {
 }
 
 func (s *DomSuite) TestGenerateParentNode() {
-	generator, err := getIdlInterfaceGenerator("dom", "ParentNode")
+	generator, err := htmlelements.GenerateInterface("dom", "dom", "ParentNode")
 	s.Expect(err).ToNot(HaveOccurred())
 	output := codegentest.RenderInPackage(s.T(), packagenames.Dom, generator)
 	s.Expect(output).To(ContainSubstring("Append(...Node) error\n"))

@@ -64,7 +64,7 @@ func CreateInterfaceFileGenerators(destPackage string) ([]FileGeneratorSpec, err
 		idlIntf := spec.Interfaces[intf]
 		res[i] = FileGeneratorSpec{
 			OutputFile: internal.TypeNameToFileName(intf),
-			Package:    destPackage,
+			Package:    packageName(destPackage),
 			Generator:  generateInterface(config.webApi, destPackage, idlIntf),
 		}
 	}
