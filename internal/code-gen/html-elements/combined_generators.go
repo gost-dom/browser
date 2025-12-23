@@ -5,8 +5,5 @@ package htmlelements
 type PackageGeneratorSpecs map[string]GeneratorConfig
 
 var PackageConfigs = PackageGeneratorSpecs{
-	"html":           HTMLPackageConfig,
-	"urlinterfaces":  URLPackageConfig,
-	"dominterfaces":  DOMInterfacesPackageConfig,
-	"htmlinterfaces": HTMLInterfacesPackageConfig,
+	"dominterfaces": DOMInterfacesPackageConfig,
 }

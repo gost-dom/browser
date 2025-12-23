@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-var matchKnownWord = regexp.MustCompile("(HTML|URL|DOM)([A-Z][a-z]+)")
+var matchKnownWord = regexp.MustCompile("(HTML|URL|DOM|SVG)([A-Z][a-z]+)")
 var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")
 
 func TypeNameToFileName(name string) string {

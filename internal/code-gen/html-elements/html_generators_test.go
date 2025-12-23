@@ -5,16 +5,20 @@ import (
 
 	"github.com/onsi/gomega"
 
+	htmlelements "github.com/gost-dom/code-gen/html-elements"
 	. "github.com/gost-dom/code-gen/internal/gomega-matchers"
 	g "github.com/gost-dom/generators"
 	. "github.com/gost-dom/generators/testing/matchers"
 )
 
 func GenerateHtmlAnchor() (g.Generator, error) {
-	return getIdlInterfaceGenerator("html", "HTMLAnchorElement")
+	return htmlelements.GenerateInterface("html", "html", "HTMLAnchorElement")
 }
 func GenerateLocation() (g.Generator, error) {
-	return getIdlInterfaceGenerator("html", "Location")
+	return htmlelements.GenerateInterface("html", "html", "Location")
+}
+func GenerateHtmlOrSvgElement() (g.Generator, error) {
+	return htmlelements.GenerateInterface("html", "html", "HTMLOrSVGElement")
 }
 
 func TestHTMLAnchorInterface(t *testing.T) {
@@ -59,7 +63,7 @@ func exp(t *testing.T) func(any, ...any) gomega.GomegaAssertion {
 func TestGenerateTabindex(t *testing.T) {
 	// This verifies that 'long' becomes an 'int'
 	expect := exp(t)
-	expect(getIdlInterfaceGenerator("html", "HTMLOrSVGElement")).To(HaveRenderedSubstring(
+	expect(GenerateHtmlOrSvgElement()).To(HaveRenderedSubstring(
 		"TabIndex() int\n\tSetTabIndex(int)"),
 		"Custom override of attribute type from long->int")
 }
@@ -67,20 +71,20 @@ func TestGenerateTabindex(t *testing.T) {
 func TestGenerateNoFocusOptions(t *testing.T) {
 	// Verify that the focusoptions are not generated
 	expect := exp(t)
-	expect(getIdlInterfaceGenerator("html", "HTMLOrSVGElement")).To(HaveRenderedSubstring(
+	expect(GenerateHtmlOrSvgElement()).To(HaveRenderedSubstring(
 		"\tFocus()\n"), "Focus doesn't have options")
 }
 
 func TestGenerateGetterReturnsStruct(t *testing.T) {
 	// Verify that the focusoptions are not generated
 	expect := exp(t)
-	expect(getIdlInterfaceGenerator("html", "HTMLOrSVGElement")).To(HaveRenderedSubstring(
+	expect(GenerateHtmlOrSvgElement()).To(HaveRenderedSubstring(
 		"\tDataset() *DOMStringMap\n"), "HTMLOrSVGElement should be a pointer")
 }
 
 func TestGenerateEventHandlerFunction(t *testing.T) {
 	expect := exp(t)
-	expect(getIdlInterfaceGenerator("html", "HTMLOrSVGElement")).To(HaveRenderedSubstring(
+	expect(GenerateHtmlOrSvgElement()).To(HaveRenderedSubstring(
 		"\tBlur()\n"), "Blur returns a bool")
 
 }

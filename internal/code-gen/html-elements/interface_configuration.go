@@ -28,4 +28,18 @@ var PackageInterfacesConfiguration = map[string]PackageInterfaces{
 			"MutationObserver",
 		},
 	},
+	"html": {
+		webApi: "html",
+		interfaces: []string{
+			"Location", "DOMStringList",
+			"HTMLAnchorElement", "HTMLHyperlinkElementUtils",
+			"HTMLOrSVGElement",
+		},
+	},
+	"urlinterfaces": {
+		webApi: "url",
+		interfaces: []string{
+			"URL", "URLSearchParams",
+		},
+	},
 }
