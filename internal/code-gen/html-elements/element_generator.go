@@ -75,10 +75,6 @@ func CreateGenerator(req HTMLGeneratorReq, target string) (baseGenerator, error)
 func (gen baseGenerator) Generate() *jen.Statement {
 	list := generators.StatementList()
 
-	if gen.req.GenerateInterface {
-		list.Append(gen.GenerateInterface())
-	}
-
 	if gen.req.GenerateReadonlyStruct || gen.rules.OutputType == customrules.OutputTypeStruct {
 		list.Append(gen.GenerateReadonlyStruct())
 	}
@@ -115,10 +111,6 @@ func (gen baseGenerator) GenerateReadonlyStruct() g.Generator {
 		)
 	}
 	return result
-}
-
-func (gen baseGenerator) GenerateInterface() g.Generator {
-	return generateInterface(gen.req.SpecName, gen.target, gen.idlType)
 }
 
 func GenerateInterface(webApi string, target string, name string) (g.Generator, error) {
@@ -218,79 +210,8 @@ func generateInterface(webApi string, target string, idlInterface idl.Interface)
 
 /* -------- htmlElementGenerator -------- */
 
-type htmlElementGenerator struct {
-	baseGenerator
-	tagName string
-}
-
-func (gen htmlElementGenerator) Generator() g.Generator {
-	result := g.StatementList()
-	if gen.req.GenerateInterface {
-		result.Append(
-			gen.GenerateInterface(),
-			g.Line,
-		)
-	}
-	if gen.req.GenerateStruct {
-		result.Append(gen.GenerateStruct(),
-			g.Line,
-		)
-	}
-	if gen.req.GenerateConstructor {
-		result.Append(
-			gen.GenerateConstructor(),
-			g.Line,
-		)
-	}
-	if gen.req.GenerateAttributes {
-		result.Append(gen.GenerateAttributes())
-	}
-	return result
-}
-
 func toStructName(name string) string {
 	return strings.Replace(name, "HTML", "html", 1)
-}
-
-func (gen htmlElementGenerator) GenerateStruct() g.Generator {
-	res := g.Struct{Name: g.NewType(toStructName(gen.idlType.Name))}
-	res.Embed(g.Id("HTMLElement"))
-	return res
-}
-
-func (gen htmlElementGenerator) GenerateConstructor() g.Generator {
-	res := g.NewValue("result")
-	t := g.NewType(toStructName(gen.idlType.Name))
-	owner := g.Id("ownerDoc")
-	return g.FunctionDefinition{
-		Name:     fmt.Sprintf("New%s", gen.idlType.Name),
-		RtnTypes: g.List(g.Id("jsInitializer")), // g.List(i),
-		Args:     g.Arg(owner, g.Id("HTMLDocument")),
-		Body: g.StatementList(
-			g.Assign(
-				res,
-				t.CreateInstance(g.NewValue("NewHTMLElement").Call(g.Lit(gen.tagName), owner)).
-					Reference(),
-			),
-			res.Field("SetSelf").Call(res),
-			g.Return(res),
-		),
-	}
-}
-
-func (gen htmlElementGenerator) GenerateAttributes() g.Generator {
-	result := g.StatementList()
-	for _, a := range gen.idlType.Attributes {
-		result.Append(IDLAttribute{
-			AttributeName: a.Name,
-			ReadOnly:      a.Readonly,
-			Receiver: Receiver{
-				Name: g.NewValue("e"),
-				Type: gen.type_.Pointer(),
-			},
-		})
-	}
-	return result
 }
 
 type FileGeneratorSpec struct {
