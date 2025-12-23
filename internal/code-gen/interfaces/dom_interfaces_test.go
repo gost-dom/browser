@@ -11,14 +11,16 @@ import (
 func TestGenerationOfExplicitVariadicArgument(t *testing.T) {
 	t.Parallel()
 
-	gom := NewGomegaWithT(t)
+	expect := NewGomegaWithT(t).Expect
 
 	g, err := interfaces.GenerateInterface("dom", "dominterfaces", "MutationObserver")
-	gom.Expect(err).ToNot(HaveOccurred())
-	gom.Expect(g).To(HaveRenderedSubstring("type MutationObserver interface {\n"))
-	gom.Expect(
-		g,
-	).To(HaveRenderedSubstring("\n\tObserve(dom.Node, ...ObserveOption) error\n"))
+	expect(err).ToNot(HaveOccurred())
+	expect(g).To(
+		HaveRenderedSubstring("type MutationObserver interface {\n"),
+	)
+	expect(g).To(
+		HaveRenderedSubstring("\n\tObserve(dom.Node, ...ObserveOption) error\n"),
+	)
 }
 
 func TestGenerationOfEventTarget(t *testing.T) {
