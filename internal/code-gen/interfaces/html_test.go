@@ -1,24 +1,23 @@
-package htmlelements_test
+package interfaces_test
 
 import (
 	"testing"
 
-	"github.com/onsi/gomega"
-
-	htmlelements "github.com/gost-dom/code-gen/html-elements"
+	"github.com/gost-dom/code-gen/interfaces"
 	. "github.com/gost-dom/code-gen/internal/gomega-matchers"
 	g "github.com/gost-dom/generators"
 	. "github.com/gost-dom/generators/testing/matchers"
+	"github.com/onsi/gomega"
 )
 
 func GenerateHtmlAnchor() (g.Generator, error) {
-	return htmlelements.GenerateInterface("html", "html", "HTMLAnchorElement")
+	return interfaces.GenerateInterface("html", "html", "HTMLAnchorElement")
 }
 func GenerateLocation() (g.Generator, error) {
-	return htmlelements.GenerateInterface("html", "html", "Location")
+	return interfaces.GenerateInterface("html", "html", "Location")
 }
 func GenerateHtmlOrSvgElement() (g.Generator, error) {
-	return htmlelements.GenerateInterface("html", "html", "HTMLOrSVGElement")
+	return interfaces.GenerateInterface("html", "html", "HTMLOrSVGElement")
 }
 
 func TestHTMLAnchorInterface(t *testing.T) {
@@ -54,25 +53,12 @@ func TestLocationIsEntity(t *testing.T) {
 	)
 }
 
-func exp(t *testing.T) func(any, ...any) gomega.GomegaAssertion {
-	return func(actual interface{}, extras ...interface{}) gomega.GomegaAssertion {
-		return gomega.NewWithT(t).Expect(actual, extras...)
-	}
-}
-
 func TestGenerateTabindex(t *testing.T) {
 	// This verifies that 'long' becomes an 'int'
 	expect := exp(t)
 	expect(GenerateHtmlOrSvgElement()).To(HaveRenderedSubstring(
 		"TabIndex() int\n\tSetTabIndex(int)"),
 		"Custom override of attribute type from long->int")
-}
-
-func TestGenerateNoFocusOptions(t *testing.T) {
-	// Verify that the focusoptions are not generated
-	expect := exp(t)
-	expect(GenerateHtmlOrSvgElement()).To(HaveRenderedSubstring(
-		"\tFocus()\n"), "Focus doesn't have options")
 }
 
 func TestGenerateGetterReturnsStruct(t *testing.T) {
@@ -82,9 +68,22 @@ func TestGenerateGetterReturnsStruct(t *testing.T) {
 		"\tDataset() *DOMStringMap\n"), "HTMLOrSVGElement should be a pointer")
 }
 
+func TestGenerateNoFocusOptions(t *testing.T) {
+	// Verify that the focusoptions are not generated
+	expect := exp(t)
+	expect(GenerateHtmlOrSvgElement()).To(HaveRenderedSubstring(
+		"\tFocus()\n"), "Focus doesn't have options")
+}
+
 func TestGenerateEventHandlerFunction(t *testing.T) {
 	expect := exp(t)
 	expect(GenerateHtmlOrSvgElement()).To(HaveRenderedSubstring(
 		"\tBlur()\n"), "Blur returns a bool")
 
+}
+
+func exp(t *testing.T) func(any, ...any) gomega.GomegaAssertion {
+	return func(actual any, extras ...any) gomega.GomegaAssertion {
+		return gomega.NewWithT(t).Expect(actual, extras...)
+	}
 }

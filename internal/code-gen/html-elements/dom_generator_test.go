@@ -3,9 +3,6 @@ package htmlelements_test
 import (
 	"testing"
 
-	"github.com/gost-dom/code-gen/codegentest"
-	htmlelements "github.com/gost-dom/code-gen/html-elements"
-	"github.com/gost-dom/code-gen/packagenames"
 	. "github.com/gost-dom/generators/testing/matchers"
 	"github.com/onsi/gomega"
 	. "github.com/onsi/gomega"
@@ -29,13 +26,6 @@ func (s *DomSuite) TestGenerateHTMLCollection() {
 	s.Expect(err).ToNot(HaveOccurred())
 	s.Expect(generator).To(HaveRendered(ContainSubstring(`Length() int`)))
 	s.Expect(generator).To(HaveRendered(ContainSubstring(`Item(int) Element`)))
-}
-
-func (s *DomSuite) TestGenerateParentNode() {
-	generator, err := htmlelements.GenerateInterface("dom", "dom", "ParentNode")
-	s.Expect(err).ToNot(HaveOccurred())
-	output := codegentest.RenderInPackage(s.T(), packagenames.Dom, generator)
-	s.Expect(output).To(ContainSubstring("Append(...Node) error\n"))
 }
 
 func TestGeneratedDomTypes(t *testing.T) {

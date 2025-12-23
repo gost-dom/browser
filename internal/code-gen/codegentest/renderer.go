@@ -3,6 +3,7 @@ package codegentest
 import (
 	"bytes"
 	"io"
+	"strings"
 	"testing"
 
 	"github.com/dave/jennifer/jen"
@@ -28,4 +29,8 @@ func RenderInPackage(t testing.TB, packagePath string, gen generators.Generator)
 	file := jen.NewFilePath(packagePath)
 	file.Add(gen.Generate())
 	return RenderString(t, file)
+}
+
+func Lines(l ...string) string {
+	return strings.Join(l, "\n")
 }

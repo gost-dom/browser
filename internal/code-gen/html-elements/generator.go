@@ -5,12 +5,10 @@ import (
 	"os"
 
 	"github.com/dave/jennifer/jen"
-	"github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/code-gen/packagenames"
-	"github.com/gost-dom/webref/idl"
 )
 
-func writeFile(s FileGeneratorSpec) error {
+func WriteFile(s FileGeneratorSpec) error {
 	jf := jen.NewFilePath(s.Package)
 	jf.HeaderComment("This file is generated. Do not edit.")
 	jf.Add(s.Generator.Generate())
@@ -34,7 +32,7 @@ func GetPackageGeneratorSpecs(packageName string) (result GeneratorConfig, err e
 	return
 }
 
-func packageName(name string) string {
+func PackageName(name string) string {
 	switch name {
 	case "dominterfaces":
 		return packagenames.DomInterfaces
@@ -45,30 +43,9 @@ func packageName(name string) string {
 
 func CreatePackageGenerators(name string) (res []FileGeneratorSpec, err error) {
 	if config, err := GetPackageGeneratorSpecs(name); err == nil {
-		return createGenerators(config, packageName(name))
+		return createGenerators(config, PackageName(name))
 	}
 	return
-}
-
-func CreateInterfaceFileGenerators(destPackage string) ([]FileGeneratorSpec, error) {
-	config, ok := PackageInterfacesConfiguration[destPackage]
-	if !ok {
-		return nil, nil
-	}
-	spec, err := idl.Load(config.webApi)
-	if err != nil {
-		return nil, err
-	}
-	res := make([]FileGeneratorSpec, len(config.interfaces))
-	for i, intf := range config.interfaces {
-		idlIntf := spec.Interfaces[intf]
-		res[i] = FileGeneratorSpec{
-			OutputFile: internal.TypeNameToFileName(intf),
-			Package:    packageName(destPackage),
-			Generator:  generateInterface(config.webApi, destPackage, idlIntf),
-		}
-	}
-	return res, nil
 }
 
 func CreateImplementationPackage(name string) error {
@@ -76,13 +53,8 @@ func CreateImplementationPackage(name string) error {
 	if err != nil {
 		return err
 	}
-	interfaceFiles, err := CreateInterfaceFileGenerators(name)
-	if err != nil {
-		return err
-	}
-	files = append(files, interfaceFiles...)
 	for _, f := range files {
-		if err = writeFile(f); err != nil {
+		if err = WriteFile(f); err != nil {
 			return err
 		}
 	}

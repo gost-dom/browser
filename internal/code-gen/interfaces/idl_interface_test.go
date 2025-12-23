@@ -1,12 +1,13 @@
-package htmlelements_test
+package interfaces_test
 
 import (
 	"testing"
 
 	"github.com/onsi/gomega"
 
-	. "github.com/gost-dom/code-gen/html-elements"
+	"github.com/gost-dom/code-gen/codegentest"
 	"github.com/gost-dom/code-gen/idltransform"
+	. "github.com/gost-dom/code-gen/interfaces"
 	. "github.com/gost-dom/generators/testing/matchers"
 	"github.com/gost-dom/webref/idl"
 )
@@ -24,7 +25,7 @@ func TestIDLInterface(t *testing.T) {
 		Name:       "HTMLAnchorElement",
 		Attributes: []IdlInterfaceAttribute{NewStringAttribute("target")},
 	}
-	Expect(actual).To(HaveRendered(lines(
+	Expect(actual).To(HaveRendered(codegentest.Lines(
 		`type HTMLAnchorElement interface {`,
 		`	Target() string`,
 		`	SetTarget(string)`,
@@ -39,7 +40,7 @@ func TestIDLInterfaceInheritance(t *testing.T) {
 		Inherits:   "HTMLElement",
 		Attributes: []IdlInterfaceAttribute{NewStringAttribute("target")},
 	}
-	Expect(actual).To(HaveRendered(lines(
+	Expect(actual).To(HaveRendered(codegentest.Lines(
 		`type HTMLAnchorElement interface {`,
 		`	HTMLElement`,
 		`	Target() string`,

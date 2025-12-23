@@ -1,4 +1,5 @@
 //go:generate ../../code-gen/code-gen -g gotypes -p urlinterfaces
+//go:generate ../../code-gen/code-gen -g interfaces -p urlinterfaces
 
 // Package urlinterfaces contains internal code representing the IDL interfaces
 // in the [URL API]

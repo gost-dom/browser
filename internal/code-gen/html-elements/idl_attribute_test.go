@@ -5,6 +5,7 @@ import (
 
 	"github.com/onsi/gomega"
 
+	"github.com/gost-dom/code-gen/codegentest"
 	. "github.com/gost-dom/code-gen/html-elements"
 	g "github.com/gost-dom/generators"
 	. "github.com/gost-dom/generators/testing/matchers"
@@ -20,7 +21,7 @@ func TestIDLAttributeGetterAndSetter(t *testing.T) {
 				Name: g.Id("e"),
 				Type: g.NewType("htmlAnchorElement").Pointer(),
 			},
-		}).To(HaveRendered(lines(
+		}).To(HaveRendered(codegentest.Lines(
 			"func (e *htmlAnchorElement) Target() string {",
 			"\treturn e.target",
 			"}",
@@ -38,7 +39,7 @@ func TestIDLAttributeGetterAndSetter(t *testing.T) {
 				Name: g.Id("e"),
 				Type: g.NewType("htmlAnchorElement").Pointer(),
 			},
-		}).To(HaveRendered(lines(
+		}).To(HaveRendered(codegentest.Lines(
 			`func (e *htmlAnchorElement) Target() string {`,
 			`	result, _ := e.GetAttribute("target")`,
 			`	return result`,

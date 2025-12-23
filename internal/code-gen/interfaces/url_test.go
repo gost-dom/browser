@@ -1,9 +1,9 @@
-package htmlelements_test
+package interfaces_test
 
 import (
 	"testing"
 
-	htmlelements "github.com/gost-dom/code-gen/html-elements"
+	"github.com/gost-dom/code-gen/interfaces"
 	. "github.com/gost-dom/generators/testing/matchers"
 	"github.com/onsi/gomega"
 )
@@ -11,29 +11,29 @@ import (
 func TestURLSearchParamsShouldEmbedStringer(t *testing.T) {
 	// The stringifier is an unnamed operation and shouldn't be included in the
 	// go interface; but will generate an error if not handled in code
-	expect := newGomega(t)
-	g, err := htmlelements.GenerateInterface("url", "urlinterfaces", "URLSearchParams")
+	expect := gomega.NewGomegaWithT(t).Expect
+	g, err := interfaces.GenerateInterface("url", "urlinterfaces", "URLSearchParams")
 	expect(err).NotTo(gomega.HaveOccurred())
 	expect(g).To(HaveRenderedSubstring("interface {\n\tfmt.Stringer\n"))
 }
 
 func TestURLSearchParamsHaveSliceReturnValue(t *testing.T) {
-	expect := newGomega(t)
-	g, err := htmlelements.GenerateInterface("url", "urlinterfaces", "URLSearchParams")
+	expect := gomega.NewGomegaWithT(t).Expect
+	g, err := interfaces.GenerateInterface("url", "urlinterfaces", "URLSearchParams")
 	expect(err).NotTo(gomega.HaveOccurred())
 	expect(g).To(HaveRenderedSubstring("\tGetAll(string) []string\n"))
 }
 
 func TestURLSearchParamsReturnFoundOnNullableReturnValues(t *testing.T) {
-	expect := newGomega(t)
-	g, err := htmlelements.GenerateInterface("url", "urlinterfaces", "URLSearchParams")
+	expect := gomega.NewGomegaWithT(t).Expect
+	g, err := interfaces.GenerateInterface("url", "urlinterfaces", "URLSearchParams")
 	expect(err).NotTo(gomega.HaveOccurred())
 	expect(g).To(HaveRenderedSubstring("\tGet(string) (string, bool)\n"))
 }
 
 func TestURLSearchParamsOptionalArgs(t *testing.T) {
-	expect := newGomega(t)
-	g, err := htmlelements.GenerateInterface("url", "urlinterfaces", "URLSearchParams")
+	expect := gomega.NewGomegaWithT(t).Expect
+	g, err := interfaces.GenerateInterface("url", "urlinterfaces", "URLSearchParams")
 	expect(err).NotTo(gomega.HaveOccurred())
 	expect(g).To(HaveRenderedSubstring("\tHas(string) bool\n\tHasValue(string, string) bool\n"))
 	expect(
@@ -42,9 +42,9 @@ func TestURLSearchParamsOptionalArgs(t *testing.T) {
 }
 
 func TestURLSearchParamsIterable(t *testing.T) {
-	expect := newGomega(t)
+	expect := gomega.NewGomegaWithT(t).Expect
 	expect(
-		htmlelements.GenerateInterface("url", "urlinterfaces", "URLSearchParams"),
+		interfaces.GenerateInterface("url", "urlinterfaces", "URLSearchParams"),
 	).To(HaveRenderedSubstring(
 		"\tAll() iter.Seq2[string, string]\n"), "URLSearchParams is iterable")
 

@@ -1,4 +1,4 @@
-package htmlelements
+package interfaces
 
 import (
 	"fmt"

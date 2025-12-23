@@ -3,7 +3,6 @@ package htmlelements_test
 import (
 	"errors"
 	"fmt"
-	"strings"
 	"testing"
 
 	htmlelements "github.com/gost-dom/code-gen/html-elements"
@@ -46,8 +45,4 @@ func getIdlInterfaceGenerator(
 		interfaceName,
 		packageName,
 	)
-}
-
-func lines(l ...string) string {
-	return strings.Join(l, "\n")
 }
