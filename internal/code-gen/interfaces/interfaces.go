@@ -17,13 +17,17 @@ func CreateInterfaceFileGenerators(destPackage string) ([]htmlelements.FileGener
 	if !ok {
 		return nil, nil
 	}
-	spec, err := idl.Load(config.webApi)
+	webApi := config.webApi
+	spec, err := idl.Load(webApi)
 	if err != nil {
 		return nil, err
 	}
 	res := make([]htmlelements.FileGeneratorSpec, len(config.interfaces))
 	for i, intf := range config.interfaces {
-		idlIntf := spec.Interfaces[intf]
+		idlIntf, ok := spec.Interfaces[intf]
+		if !ok {
+			return nil, fmt.Errorf("%s (%s): interface not found in idl spec", intf, webApi)
+		}
 		res[i] = htmlelements.FileGeneratorSpec{
 			OutputFile: internal.TypeNameToFileName(intf),
 			Package:    packagenames.ExpandPackageName(destPackage),
