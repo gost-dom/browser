@@ -59,7 +59,10 @@ func ExpandPackageName(name string) string {
 	switch name {
 	case "dominterfaces":
 		return DomInterfaces
+	case "htmlinterfaces":
+		return HTMLInterfaces
+	case "urlinterfaces":
+		return URLInterfaces
 	}
 	return fmt.Sprintf("%s/%s", BASE_PKG, name)
-
 }
