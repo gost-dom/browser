@@ -30,7 +30,7 @@ func configureDOMNode(specs *WebAPIConfig) {
 	docFrag.SkipConstructor = true
 
 	attr := specs.Type("Attr")
-	attr.MarkMembersAsIgnored("namespaceURI", "prefix", "specified")
+	attr.MarkMembersAsIgnored("prefix", "specified")
 
 	eventTarget := specs.Type("EventTarget")
 	addEventListenerOptions := eventTarget.Method("addEventListener").Argument("options")

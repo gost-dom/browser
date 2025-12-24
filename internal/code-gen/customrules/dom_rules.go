@@ -12,6 +12,11 @@ var domRules = SpecRules{
 	"AbortSignal": {Operations: OperationRules{
 		"throwIfAborted": {HasError: true},
 	}},
+	"Attr": {
+		Attributes: AttributeRules{
+			"namespaceURI": {ZeroAsNull: true, Ignore: true},
+		},
+	},
 	"Document": {
 		OverrideTypeName: "HTMLDocument",
 		InterfacePackage: packagenames.Html,
@@ -48,11 +53,6 @@ var domRules = SpecRules{
 		Attributes: AttributeRules{
 			"outerHTML":    {SetterHasError: true},
 			"innerHTML":    {SetterHasError: true},
-			"namespaceURI": {ZeroAsNull: true},
-		},
-	},
-	"Attr": {
-		Attributes: AttributeRules{
 			"namespaceURI": {ZeroAsNull: true},
 		},
 	},

@@ -113,7 +113,8 @@ func CreateAttributes(
 	for attribute := range idlInterface.AllAttributes(interfaceConfig.IncludeIncludes) {
 		methodCustomization := interfaceConfig.GetMethodCustomization(attribute.Name)
 		customRule := intfRules.Attributes[attribute.Name]
-		if methodCustomization.Ignored || attribute.Type.Name == "EventHandler" {
+		if methodCustomization.Ignored || attribute.Type.Name == "EventHandler" ||
+			customRule.Ignore {
 			continue
 		}
 		var (
