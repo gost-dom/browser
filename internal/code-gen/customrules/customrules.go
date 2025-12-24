@@ -105,6 +105,7 @@ func (r OperationRule) Argument(name string) ArgumentRule {
 type ArgumentRules map[string]ArgumentRule
 
 type ArgumentRule struct {
+	GoType        GoType
 	Type          idl.Type
 	Variadic      bool
 	Ignore        bool

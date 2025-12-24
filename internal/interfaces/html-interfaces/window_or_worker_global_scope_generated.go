@@ -2,12 +2,12 @@
 
 package htmlinterfaces
 
+import "time"
+
 type WindowOrWorkerGlobalScope interface {
-	SetTimeout(TimerHandler) int
-	SetTimeoutTimeout(TimerHandler, int, ...any) int
+	SetTimeout(TimerHandler, time.Duration) int
 	ClearTimeout(int)
-	SetInterval(TimerHandler) int
-	SetIntervalTimeout(TimerHandler, int, ...any) int
+	SetInterval(TimerHandler, time.Duration) int
 	ClearInterval(int)
 	QueueMicrotask(VoidFunction)
 }

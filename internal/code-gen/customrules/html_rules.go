@@ -2,6 +2,8 @@ package customrules
 
 import "github.com/gost-dom/webref/idl"
 
+var timeDuration = GoType{Package: "time", Name: "Duration"}
+
 var htmlRules = SpecRules{
 	"DOMStringMap": {OutputType: OutputTypeStruct},
 	"Location": {
@@ -38,7 +40,16 @@ var htmlRules = SpecRules{
 	"HTMLOrSVGElement": {Operations: OperationRules{
 		"focus": {Arguments: ArgumentRules{"options": {Ignore: true}}},
 	}},
-	"WindowOrWorkerGlobalScope": InterfaceRule{}.IgnoreOperations(
+	"WindowOrWorkerGlobalScope": InterfaceRule{Operations: OperationRules{
+		"setTimeout": {Arguments: ArgumentRules{"timeout": {GoType: timeDuration},
+			"arguments": {Ignore: true}}},
+		"setInterval": {
+			Arguments: ArgumentRules{
+				"timeout":   {GoType: timeDuration},
+				"arguments": {Ignore: true},
+			},
+		},
+	}}.IgnoreOperations(
 		"atob",
 		"btoa",
 		"createImageBitmap",

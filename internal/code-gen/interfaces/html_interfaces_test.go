@@ -36,5 +36,6 @@ func TestHTMLInterfaceWindowOrWorkerGlobalScope(t *testing.T) {
 	gen := generateHtmlIntf(t, "WindowOrWorkerGlobalScope")
 
 	Expect(gen).ToNot(HaveRenderedSubstring("CreateImageBitmap"))
-	Expect(gen).ToNot(HaveRenderedSubstring("\tOrigin("))
+	Expect(gen).ToNot(HaveRenderedSubstring("\tOrigin()"))
+	Expect(gen).To(HaveRenderedSubstring("\tSetTimeout(TimerHandler, time.Duration"))
 }

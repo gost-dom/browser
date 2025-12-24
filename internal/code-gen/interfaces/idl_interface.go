@@ -147,8 +147,28 @@ func (o IdlInterfaceOperation) Stringifier() bool { return o.IdlOperation.String
 func (o IdlInterfaceOperation) Name() string      { return o.IdlOperation.Name }
 func (o IdlInterfaceOperation) Static() bool      { return o.IdlOperation.Static }
 
-func (o IdlInterfaceOperation) newIdlType(t idl.Type) idltransform.IdlType {
+func (o IdlInterfaceOperation) newIdlType(t idl.Type) g.Generator {
 	return idltransform.IdlType{Type: t, TargetPackage: o.Target}
+}
+
+func (o IdlInterfaceOperation) argumentType(a IdlInterfaceOperationArgument) g.Generator {
+
+	if goType := a.Rules.GoType; goType.Name != "" {
+		res := g.NewTypePackage(goType.Name, goType.Package)
+		if goType.Pointer {
+			res = res.Pointer()
+		}
+		return res
+	}
+
+	var arg g.Generator = o.newIdlType(a.Type())
+	if a.Rules.OverridesType() {
+		arg = o.newIdlType(a.Rules.Type)
+	}
+	if a.Variadic() {
+		arg = g.Raw(jen.Op("...").Add(arg.Generate()))
+	}
+	return arg
 }
 
 func (o IdlInterfaceOperation) Generate() *jen.Statement {
@@ -167,19 +187,12 @@ func (o IdlInterfaceOperation) Generate() *jen.Statement {
 		if a.Ignore() {
 			continue
 		}
-		var arg g.Generator = o.newIdlType(a.Type())
-		if a.Rules.OverridesType() {
-			arg = o.newIdlType(a.Rules.Type)
-		}
-		if a.Variadic() {
-			arg = g.Raw(jen.Op("...").Add(arg.Generate()))
-		}
-		args = append(args, arg)
+		args = append(args, o.argumentType(a))
 
 		if i < len(o.Arguments)-1 {
 			nextArg := o.Arguments[i+1]
 			argRule := o.Rules.Arguments[nextArg.Name()]
-			if nextArg.Optional() && !argRule.ZeroAsDefault {
+			if nextArg.Optional() && !argRule.ZeroAsDefault && nextArg.Argument.Default == nil {
 				result.Append(InterfaceFunction{
 					Name:     UpperCaseFirstLetter(name),
 					Args:     args,
