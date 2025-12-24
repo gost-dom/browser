@@ -3,11 +3,6 @@
 package htmlinterfaces
 
 type WindowOrWorkerGlobalScope interface {
-	IsSecureContext() bool
-	CrossOriginIsolated() bool
-	ReportError(any)
-	Btoa(string) string
-	Atob(string) string
 	SetTimeout(TimerHandler) int
 	SetTimeoutTimeout(TimerHandler, int, ...any) int
 	ClearTimeout(int)

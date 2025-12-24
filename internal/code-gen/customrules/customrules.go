@@ -58,6 +58,29 @@ type InterfaceRule struct {
 	IsEntity bool
 }
 
+func (r InterfaceRule) IgnoreOperations(names ...string) InterfaceRule {
+	if r.Operations == nil {
+		r.Operations = make(OperationRules)
+	}
+	if r.Attributes == nil {
+		r.Attributes = make(AttributeRules)
+	}
+	for _, name := range names {
+		op := r.Operations[name]
+		op.Ignore = true
+		r.Operations[name] = op
+	}
+	return r
+}
+func (r InterfaceRule) IgnoreAttributes(names ...string) InterfaceRule {
+	for _, name := range names {
+		a := r.Attributes[name]
+		a.Ignore = true
+		r.Attributes[name] = a
+	}
+	return r
+}
+
 type OperationRules map[string]OperationRule
 
 type OperationRule struct {
