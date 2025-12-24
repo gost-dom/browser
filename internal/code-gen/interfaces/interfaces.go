@@ -15,7 +15,7 @@ import (
 func CreateInterfaceFileGenerators(destPackage string) ([]htmlelements.FileGeneratorSpec, error) {
 	config, ok := PackageInterfacesConfiguration[destPackage]
 	if !ok {
-		return nil, nil
+		return nil, fmt.Errorf("Interfaces generateor: %s: No rules defined", destPackage)
 	}
 	webApi := config.webApi
 	spec, err := idl.Load(webApi)
