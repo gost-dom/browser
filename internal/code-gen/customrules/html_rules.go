@@ -41,8 +41,10 @@ var htmlRules = SpecRules{
 		"focus": {Arguments: ArgumentRules{"options": {Ignore: true}}},
 	}},
 	"WindowOrWorkerGlobalScope": InterfaceRule{Operations: OperationRules{
-		"setTimeout": {Arguments: ArgumentRules{"timeout": {GoType: timeDuration},
-			"arguments": {Ignore: true}}},
+		"setTimeout": {Arguments: ArgumentRules{
+			"timeout":   {GoType: timeDuration},
+			"arguments": {Ignore: true}},
+		},
 		"setInterval": {
 			Arguments: ArgumentRules{
 				"timeout":   {GoType: timeDuration},

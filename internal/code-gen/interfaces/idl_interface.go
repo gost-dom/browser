@@ -152,7 +152,6 @@ func (o IdlInterfaceOperation) newIdlType(t idl.Type) g.Generator {
 }
 
 func (o IdlInterfaceOperation) argumentType(a IdlInterfaceOperationArgument) g.Generator {
-
 	if goType := a.Rules.GoType; goType.Name != "" {
 		res := g.NewTypePackage(goType.Name, goType.Package)
 		if goType.Pointer {
@@ -192,7 +191,10 @@ func (o IdlInterfaceOperation) Generate() *jen.Statement {
 		if i < len(o.Arguments)-1 {
 			nextArg := o.Arguments[i+1]
 			argRule := o.Rules.Arguments[nextArg.Name()]
-			if nextArg.Optional() && !argRule.ZeroAsDefault && nextArg.Argument.Default == nil {
+			if nextArg.Optional() &&
+				!argRule.ZeroAsDefault &&
+				nextArg.Argument.Default == nil &&
+				!nextArg.Ignore() {
 				result.Append(InterfaceFunction{
 					Name:     UpperCaseFirstLetter(name),
 					Args:     args,
