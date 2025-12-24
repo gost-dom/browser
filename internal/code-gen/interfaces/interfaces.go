@@ -89,7 +89,7 @@ func generateInterface(webApi string, target string, idlInterface idl.Interface)
 			Name:     a.Name,
 			Type:     idltransform.IdlType{Type: attrType, TargetPackage: target},
 			ReadOnly: a.Readonly,
-			Rules:    intfRules.Attributes[a.Name],
+			Rules:    attributeRule,
 		})
 	}
 	for _, o := range idlInterface.Operations {
