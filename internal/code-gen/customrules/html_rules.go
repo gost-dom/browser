@@ -40,22 +40,30 @@ var htmlRules = SpecRules{
 	"HTMLOrSVGElement": {Operations: OperationRules{
 		"focus": {Arguments: ArgumentRules{"options": {Ignore: true}}},
 	}},
-	"WindowOrWorkerGlobalScope": InterfaceRule{Operations: OperationRules{
+	"WindowOrWorkerGlobalScope": {Operations: OperationRules{
 		"setTimeout": {Arguments: ArgumentRules{
 			"timeout":   {GoType: timeDuration},
-			"arguments": {Ignore: true}},
-		},
-		"setInterval": {
-			Arguments: ArgumentRules{
-				"timeout":   {GoType: timeDuration},
-				"arguments": {Ignore: true},
+			"arguments": {Ignore: true},
+		}},
+		"setInterval": {Arguments: ArgumentRules{
+			"timeout":   {GoType: timeDuration},
+			"arguments": {Ignore: true},
+		}},
+	}},
+}
+
+func init() {
+	IgnoreMembers(htmlRules,
+		Overrides{"WindowOrWorkerGlobalScope": {
+			Operations: []string{
+				"atob",
+				"btoa",
+				"createImageBitmap",
+				"structuredClone",
+				"reportError",
 			},
-		},
-	}}.IgnoreOperations(
-		"atob",
-		"btoa",
-		"createImageBitmap",
-		"structuredClone",
-		"reportError",
-	).IgnoreAttributes("origin", "isSecureContext", "crossOriginIsolated"),
+			Attributes: []string{
+				"origin", "isSecureContext", "crossOriginIsolated",
+			},
+		}})
 }
