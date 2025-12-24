@@ -38,4 +38,13 @@ var htmlRules = SpecRules{
 	"HTMLOrSVGElement": {Operations: OperationRules{
 		"focus": {Arguments: ArgumentRules{"options": {Ignore: true}}},
 	}},
+	"WindowOrWorkerGlobalScope": {
+		Operations: OperationRules{
+			"createImageBitmap": {Ignore: true},
+			"structuredClone":   {Ignore: true},
+		},
+		Attributes: AttributeRules{
+			"origin": {Ignore: true},
+		},
+	},
 }

@@ -52,6 +52,9 @@ func (i IdlInterface) Generate() *jen.Statement {
 	}
 
 	for _, a := range i.Attributes {
+		if a.Rules.Ignore {
+			continue
+		}
 		getterName := UpperCaseFirstLetter(a.Name)
 		fields = append(fields, InterfaceFunction{
 			Name:     getterName,
@@ -99,6 +102,7 @@ type IdlInterfaceAttribute struct {
 	Name     string
 	Type     idltransform.IdlType
 	ReadOnly bool
+	Rules    customrules.AttributeRule
 }
 
 func (a IdlInterfaceAttribute) GetterType(spec string) g.Generator {
@@ -129,7 +133,8 @@ func (t OutputType) Generate() *jen.Statement {
 
 // Represents an operation specified on an IDL interface. The type is itself a
 // [generators.Generator] for generating the method, potentially multiple
-// methods if the method is overloaded in the source.
+// methods if the method is overloaded in the source; or none if the method is
+// ignored.
 type IdlInterfaceOperation struct {
 	IdlOperation idl.Operation
 	Arguments    []IdlInterfaceOperationArgument
@@ -150,6 +155,10 @@ func (o IdlInterfaceOperation) Generate() *jen.Statement {
 	if o.Stringifier() && o.Name() == "" || o.Static() {
 		return nil
 	}
+	if o.Rules.Ignore {
+		return nil
+	}
+
 	opRules := o.Rules
 	name := o.Name()
 	result := g.StatementList()

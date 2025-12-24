@@ -66,6 +66,10 @@ type OperationRule struct {
 	HasError    bool
 	Arguments   ArgumentRules
 	DocComments string
+
+	// Ignore indicates that the operation is completely ignored, i.e., not
+	// implemented Gost-DOM.
+	Ignore bool
 }
 
 func (r OperationRule) Argument(name string) ArgumentRule {
@@ -128,6 +132,8 @@ type AttributeRule struct {
 	// rather than struct fields. Only has an effect on struct output types
 	Callable   bool
 	ZeroAsNull bool
+
+	Ignore bool
 }
 
 // IdlTyper is the interface with the IdlType() method that can generate an
