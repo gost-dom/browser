@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head> </head>
+  <body>
+    <h1>Worker test</h1>
+    <h2>Data from worker</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Key</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody id="worker-data"></tbody>
+    </table>
+    <script>
+      w = new Worker("worker.js");
+      w.addEventListener("message", (e) => {
+        const body = document.getElementById("worker-data");
+        const tr = document.createElement("tr");
+        const add = (txt) => {
+          const td = document.createElement("td");
+          td.textContent = txt;
+          tr.append(td);
+        };
+        add(e.lastEventId);
+        add(e.data.key);
+        add(e.data.value);
+        body.append(tr);
+      });
+    </script>
+  </body>
+</html>
