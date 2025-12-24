@@ -62,9 +62,6 @@ func (r InterfaceRule) IgnoreOperations(names ...string) InterfaceRule {
 	if r.Operations == nil {
 		r.Operations = make(OperationRules)
 	}
-	if r.Attributes == nil {
-		r.Attributes = make(AttributeRules)
-	}
 	for _, name := range names {
 		op := r.Operations[name]
 		op.Ignore = true
@@ -73,6 +70,9 @@ func (r InterfaceRule) IgnoreOperations(names ...string) InterfaceRule {
 	return r
 }
 func (r InterfaceRule) IgnoreAttributes(names ...string) InterfaceRule {
+	if r.Attributes == nil {
+		r.Attributes = make(AttributeRules)
+	}
 	for _, name := range names {
 		a := r.Attributes[name]
 		a.Ignore = true
