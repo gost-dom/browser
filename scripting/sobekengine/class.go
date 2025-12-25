@@ -49,15 +49,6 @@ func (c *class) CreateNamedHandler(opts ...js.NamedHandlerOption[jsTypeParam]) {
 	c.assertValid()
 }
 
-func (c *class) CreateInstanceAttribute(
-	name string,
-	getter js.CallbackFunc[jsTypeParam],
-	setter js.CallbackFunc[jsTypeParam],
-) {
-	c.instanceAttrs[name] = attributeHandler{c.ctx, name, getter, setter}
-	c.assertValid()
-}
-
 func (c class) CreateOperation(
 	name string,
 	cb js.CallbackFunc[jsTypeParam],
@@ -74,8 +65,14 @@ func (c class) CreateAttribute(
 	setter js.CallbackFunc[jsTypeParam],
 	opts ...js.PropertyOption,
 ) {
-	attr := attributeHandler{c.ctx, name, getter, setter}
-	attr.install(c.prototype)
+	o := js.InitOpts(opts...)
+	if o.InstanceMember {
+		c.instanceAttrs[name] = attributeHandler{c.ctx, name, getter, setter}
+		c.assertValid()
+	} else {
+		attr := attributeHandler{c.ctx, name, getter, setter}
+		attr.install(c.prototype)
+	}
 }
 
 func (c class) CreateIteratorMethod(cb js.CallbackFunc[jsTypeParam]) {

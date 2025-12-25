@@ -174,19 +174,14 @@ func (c v8Class) CreateAttribute(
 	setter js.CallbackFunc[jsTypeParam],
 	opts ...js.PropertyOption,
 ) {
+	o := js.InitOpts(opts...)
 	v8Getter := wrapV8Callback(c.host, getter.WithLog(c.name, fmt.Sprintf("%s get", name)))
 	v8Setter := wrapV8Callback(c.host, setter.WithLog(c.name, fmt.Sprintf("%s set", name)))
-	c.proto.SetAccessorProperty(name, v8Getter, v8Setter, v8go.None)
-}
-
-func (c v8Class) CreateInstanceAttribute(
-	name string,
-	getter js.CallbackFunc[jsTypeParam],
-	setter js.CallbackFunc[jsTypeParam],
-) {
-	v8Getter := wrapV8Callback(c.host, getter.WithLog(c.name, fmt.Sprintf("%s get", name)))
-	v8Setter := wrapV8Callback(c.host, setter.WithLog(c.name, fmt.Sprintf("%s set", name)))
-	c.inst.SetAccessorProperty(name, v8Getter, v8Setter, v8go.None)
+	if o.InstanceMember {
+		c.inst.SetAccessorProperty(name, v8Getter, v8Setter, v8go.None)
+	} else {
+		c.proto.SetAccessorProperty(name, v8Getter, v8Setter, v8go.None)
+	}
 }
 
 func (c v8Class) CreateIndexedHandler(opts ...js.IndexedHandlerOption[jsTypeParam]) {

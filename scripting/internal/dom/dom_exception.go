@@ -17,10 +17,10 @@ func (w domException[T]) Constructor(info js.CallbackContext[T]) (js.Value[T], e
 }
 
 func (w domException[T]) Initialize(jsClass js.Class[T]) {
-	jsClass.CreateInstanceAttribute("code", w.code, nil)
-	jsClass.CreateInstanceAttribute("name", w.name, nil)
+	jsClass.CreateAttribute("code", w.code, nil)
+	jsClass.CreateAttribute("name", w.name, nil)
 	// TODO: Check if the message shouldn't have been Error.prototype.message
-	jsClass.CreateInstanceAttribute("message", w.message, nil)
+	jsClass.CreateAttribute("message", w.message, nil)
 }
 
 // decodeThisError retrieves the wrapped error object from the `this` object

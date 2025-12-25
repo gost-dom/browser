@@ -7,7 +7,7 @@ import (
 )
 
 func (w HTMLElement[T]) CustomInitializer(jsClass js.Class[T]) {
-	jsClass.CreateInstanceAttribute("style", w.style, nil)
+	jsClass.CreateAttribute("style", w.style, nil)
 }
 
 func (w HTMLElement[T]) style(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
