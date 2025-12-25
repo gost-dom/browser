@@ -98,7 +98,7 @@ type OperationRule struct {
 	DocComments string
 
 	// Ignore indicates that the operation is completely ignored, i.e., not
-	// implemented Gost-DOM.
+	// implemented in Gost-DOM.
 	Ignore bool
 }
 
