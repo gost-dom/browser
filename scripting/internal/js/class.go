@@ -1,7 +1,8 @@
 package js
 
 type Option struct {
-	// instanceMember indicates that the member is on
+	// instanceMember indicates that the member will be an own property on
+	// instance of the interface; not the prototype instance.
 	InstanceMember bool
 }
 
