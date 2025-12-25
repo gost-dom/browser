@@ -25,10 +25,6 @@ func (w ChildNode[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeMethod("remove", w.remove)
 }
 
-func (w ChildNode[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return cbCtx.ReturnWithTypeError("Illegal constructor")
-}
-
 func (w ChildNode[T]) before(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return codec.EncodeCallbackErrorf(cbCtx, "ChildNode.before: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

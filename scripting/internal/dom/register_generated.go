@@ -6,7 +6,6 @@ import js "github.com/gost-dom/browser/scripting/internal/js"
 
 func Bootstrap[T any](e js.ScriptEngine[T]) {
 	js.RegisterClass(e, "AbortController", "", NewAbortController)
-	js.RegisterClass(e, "ChildNode", "", NewChildNode)
 	js.RegisterClass(e, "DOMTokenList", "", NewDOMTokenList)
 	js.RegisterClass(e, "Event", "", NewEvent)
 	js.RegisterClass(e, "EventTarget", "", NewEventTarget)
@@ -15,8 +14,6 @@ func Bootstrap[T any](e js.ScriptEngine[T]) {
 	js.RegisterClass(e, "MutationRecord", "", NewMutationRecord)
 	js.RegisterClass(e, "NamedNodeMap", "", NewNamedNodeMap)
 	js.RegisterClass(e, "NodeList", "", NewNodeList)
-	js.RegisterClass(e, "NonDocumentTypeChildNode", "", NewNonDocumentTypeChildNode)
-	js.RegisterClass(e, "ParentNode", "", NewParentNode)
 	js.RegisterClass(e, "AbortSignal", "EventTarget", NewAbortSignal)
 	js.RegisterClass(e, "Node", "EventTarget", NewNode)
 	js.RegisterClass(e, "Attr", "Node", NewAttr)

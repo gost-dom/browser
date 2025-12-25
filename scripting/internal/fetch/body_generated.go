@@ -29,10 +29,6 @@ func (w Body[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("bodyUsed", w.bodyUsed, nil)
 }
 
-func (w Body[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return cbCtx.ReturnWithTypeError("Illegal constructor")
-}
-
 func (w Body[T]) arrayBuffer(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return codec.EncodeCallbackErrorf(cbCtx, "Body.arrayBuffer: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

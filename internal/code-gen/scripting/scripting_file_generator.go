@@ -22,7 +22,7 @@ func (gen ScriptingFileGenerator) Generate() *jen.Statement {
 		g.Line,
 		PrototypeInitializer{wrapper},
 		g.Line,
-		renderIf(!gen.Data.Spec.SkipConstructor, wrapper.Callbacks().ConstructorCallback()),
+		renderIf(gen.Data.WriteConstructor(), wrapper.Callbacks().ConstructorCallback()),
 		gen.OperationCallbacks(),
 		gen.AttributeCallbacks(),
 	).Generate()

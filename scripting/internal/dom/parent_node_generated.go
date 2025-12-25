@@ -30,10 +30,6 @@ func (w ParentNode[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("childElementCount", w.childElementCount, nil)
 }
 
-func (w ParentNode[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return cbCtx.ReturnWithTypeError("Illegal constructor")
-}
-
 func (w ParentNode[T]) prepend(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {

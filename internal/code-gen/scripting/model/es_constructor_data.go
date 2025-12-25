@@ -21,6 +21,17 @@ type ESConstructorData struct {
 	RunCustomCode bool
 }
 
+func (d ESConstructorData) WriteConstructor() bool {
+	return d.InstallConstructor() && !d.Spec.SkipConstructor
+}
+
+func (d ESConstructorData) InstallConstructor() bool {
+	if d.IdlInterface.Mixin || d.IdlInterface.Partial {
+		return false
+	}
+	return true
+}
+
 func (d ESConstructorData) AllowConstructor() bool {
 	// You _can_ create a Document, but not HTMLDocument, nor other nodes.
 	if d.IdlInterface.Name == "Document" {

@@ -75,13 +75,15 @@ func Write(api string, specs configuration.WebIdlConfigurations) error {
 	}
 	slices.SortStableFunc(enriched, IntfComparer(idlSpec).compare)
 	for _, typeInfo := range enriched {
-		statements.Append(
-			jsRegisterClass.Call(
-				engine,
-				g.Lit(typeInfo.Name()),
-				g.Lit(typeInfo.Extends()),
-				g.Id(ConstructorNameForInterface(typeInfo.Name())),
-			))
+		if typeInfo.InstallConstructor() {
+			statements.Append(
+				jsRegisterClass.Call(
+					engine,
+					g.Lit(typeInfo.Name()),
+					g.Lit(typeInfo.Extends()),
+					g.Id(ConstructorNameForInterface(typeInfo.Name())),
+				))
+		}
 	}
 
 	bootstrap := g.Raw(jen.Func().Id("Bootstrap").Types(jen.Id("T").Any()).Params(

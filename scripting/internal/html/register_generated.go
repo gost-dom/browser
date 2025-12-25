@@ -5,8 +5,6 @@ package html
 import js "github.com/gost-dom/browser/scripting/internal/js"
 
 func Bootstrap[T any](e js.ScriptEngine[T]) {
-	js.RegisterClass(e, "HTMLHyperlinkElementUtils", "", NewHTMLHyperlinkElementUtils)
-	js.RegisterClass(e, "HTMLOrSVGElement", "", NewHTMLOrSVGElement)
 	js.RegisterClass(e, "History", "", NewHistory)
 	js.RegisterClass(e, "Location", "", NewLocation)
 	js.RegisterClass(e, "HTMLElement", "Element", NewHTMLElement)
