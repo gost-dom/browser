@@ -21,7 +21,7 @@ func (wrapper NodeList[T]) Initialize(jsClass js.Class[T]) {
 
 func (w NodeList[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateOperation("item", w.item)
-	jsClass.CreatePrototypeAttribute("length", w.length, nil)
+	jsClass.CreateAttribute("length", w.length, nil)
 }
 
 func (w NodeList[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

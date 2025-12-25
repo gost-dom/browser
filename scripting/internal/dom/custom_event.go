@@ -41,7 +41,7 @@ func (w customEvent[T]) Constructor(info js.CallbackContext[T]) (js.Value[T], er
 }
 
 func (w customEvent[T]) Initialize(class js.Class[T]) {
-	class.CreatePrototypeAttribute("detail", w.detail, nil)
+	class.CreateAttribute("detail", w.detail, nil)
 }
 
 func (w customEvent[T]) detail(info js.CallbackContext[T]) (js.Value[T], error) {

@@ -19,8 +19,8 @@ func (wrapper NonDocumentTypeChildNode[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w NonDocumentTypeChildNode[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeAttribute("previousElementSibling", w.previousElementSibling, nil)
-	jsClass.CreatePrototypeAttribute("nextElementSibling", w.nextElementSibling, nil)
+	jsClass.CreateAttribute("previousElementSibling", w.previousElementSibling, nil)
+	jsClass.CreateAttribute("nextElementSibling", w.nextElementSibling, nil)
 }
 
 func (w NonDocumentTypeChildNode[T]) previousElementSibling(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

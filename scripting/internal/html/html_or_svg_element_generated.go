@@ -22,10 +22,10 @@ func (wrapper HTMLOrSVGElement[T]) Initialize(jsClass js.Class[T]) {
 func (w HTMLOrSVGElement[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateOperation("focus", w.focus)
 	jsClass.CreateOperation("blur", w.blur)
-	jsClass.CreatePrototypeAttribute("dataset", w.dataset, nil)
-	jsClass.CreatePrototypeAttribute("nonce", w.nonce, w.setNonce)
-	jsClass.CreatePrototypeAttribute("autofocus", w.autofocus, w.setAutofocus)
-	jsClass.CreatePrototypeAttribute("tabIndex", w.tabIndex, w.setTabIndex)
+	jsClass.CreateAttribute("dataset", w.dataset, nil)
+	jsClass.CreateAttribute("nonce", w.nonce, w.setNonce)
+	jsClass.CreateAttribute("autofocus", w.autofocus, w.setAutofocus)
+	jsClass.CreateAttribute("tabIndex", w.tabIndex, w.setTabIndex)
 }
 
 func (w HTMLOrSVGElement[T]) blur(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

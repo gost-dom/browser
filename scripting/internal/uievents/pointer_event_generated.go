@@ -12,10 +12,10 @@ func (wrapper PointerEvent[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w PointerEvent[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeAttribute("width", w.width, nil)
-	jsClass.CreatePrototypeAttribute("height", w.height, nil)
-	jsClass.CreatePrototypeAttribute("pressure", w.pressure, nil)
-	jsClass.CreatePrototypeAttribute("tangentialPressure", w.tangentialPressure, nil)
+	jsClass.CreateAttribute("width", w.width, nil)
+	jsClass.CreateAttribute("height", w.height, nil)
+	jsClass.CreateAttribute("pressure", w.pressure, nil)
+	jsClass.CreateAttribute("tangentialPressure", w.tangentialPressure, nil)
 }
 
 func (w PointerEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

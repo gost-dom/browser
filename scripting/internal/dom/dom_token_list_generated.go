@@ -28,8 +28,8 @@ func (w DOMTokenList[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateOperation("toggle", w.toggle)
 	jsClass.CreateOperation("replace", w.replace)
 	jsClass.CreateOperation("supports", w.supports)
-	jsClass.CreatePrototypeAttribute("length", w.length, nil)
-	jsClass.CreatePrototypeAttribute("value", w.value, w.setValue)
+	jsClass.CreateAttribute("length", w.length, nil)
+	jsClass.CreateAttribute("value", w.value, w.setValue)
 	jsClass.CreateOperation("toString", w.value)
 }
 

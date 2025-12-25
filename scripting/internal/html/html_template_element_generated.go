@@ -19,11 +19,11 @@ func (wrapper HTMLTemplateElement[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w HTMLTemplateElement[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeAttribute("content", w.content, nil)
-	jsClass.CreatePrototypeAttribute("shadowRootMode", w.shadowRootMode, w.setShadowRootMode)
-	jsClass.CreatePrototypeAttribute("shadowRootDelegatesFocus", w.shadowRootDelegatesFocus, w.setShadowRootDelegatesFocus)
-	jsClass.CreatePrototypeAttribute("shadowRootClonable", w.shadowRootClonable, w.setShadowRootClonable)
-	jsClass.CreatePrototypeAttribute("shadowRootSerializable", w.shadowRootSerializable, w.setShadowRootSerializable)
+	jsClass.CreateAttribute("content", w.content, nil)
+	jsClass.CreateAttribute("shadowRootMode", w.shadowRootMode, w.setShadowRootMode)
+	jsClass.CreateAttribute("shadowRootDelegatesFocus", w.shadowRootDelegatesFocus, w.setShadowRootDelegatesFocus)
+	jsClass.CreateAttribute("shadowRootClonable", w.shadowRootClonable, w.setShadowRootClonable)
+	jsClass.CreateAttribute("shadowRootSerializable", w.shadowRootSerializable, w.setShadowRootSerializable)
 }
 
 func (w HTMLTemplateElement[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

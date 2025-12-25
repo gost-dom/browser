@@ -22,7 +22,7 @@ func (wrapper HTMLAnchorElement[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w HTMLAnchorElement[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeAttribute("target", w.target, w.setTarget)
+	jsClass.CreateAttribute("target", w.target, w.setTarget)
 	w.htmlHyperlinkElementUtils.installPrototype(jsClass)
 }
 

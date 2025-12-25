@@ -13,8 +13,8 @@ func (w *Document[T]) CustomInitializer(class js.Class[T]) {
 	// host := w.scriptHost
 	// tmpl := constructor.InstanceTemplate()
 	class.CreateInstanceAttribute("location", w.location, nil)
-	class.CreatePrototypeAttribute("head", w.head, nil)
-	class.CreatePrototypeAttribute("body", w.body, nil)
+	class.CreateAttribute("head", w.head, nil)
+	class.CreateAttribute("body", w.body, nil)
 	class.CreateOperation("getElementById", w.getElementById)
 }
 

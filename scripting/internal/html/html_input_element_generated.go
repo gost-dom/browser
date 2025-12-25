@@ -21,9 +21,9 @@ func (wrapper HTMLInputElement[T]) Initialize(jsClass js.Class[T]) {
 
 func (w HTMLInputElement[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateOperation("checkValidity", w.checkValidity)
-	jsClass.CreatePrototypeAttribute("name", w.name, w.setName)
-	jsClass.CreatePrototypeAttribute("type", w.type_, w.setType)
-	jsClass.CreatePrototypeAttribute("value", w.value, w.setValue)
+	jsClass.CreateAttribute("name", w.name, w.setName)
+	jsClass.CreateAttribute("type", w.type_, w.setType)
+	jsClass.CreateAttribute("value", w.value, w.setValue)
 }
 
 func (w HTMLInputElement[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

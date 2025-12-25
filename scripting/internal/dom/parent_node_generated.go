@@ -24,10 +24,10 @@ func (w ParentNode[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateOperation("replaceChildren", w.replaceChildren)
 	jsClass.CreateOperation("querySelector", w.querySelector)
 	jsClass.CreateOperation("querySelectorAll", w.querySelectorAll)
-	jsClass.CreatePrototypeAttribute("children", w.children, nil)
-	jsClass.CreatePrototypeAttribute("firstElementChild", w.firstElementChild, nil)
-	jsClass.CreatePrototypeAttribute("lastElementChild", w.lastElementChild, nil)
-	jsClass.CreatePrototypeAttribute("childElementCount", w.childElementCount, nil)
+	jsClass.CreateAttribute("children", w.children, nil)
+	jsClass.CreateAttribute("firstElementChild", w.firstElementChild, nil)
+	jsClass.CreateAttribute("lastElementChild", w.lastElementChild, nil)
+	jsClass.CreateAttribute("childElementCount", w.childElementCount, nil)
 }
 
 func (w ParentNode[T]) prepend(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

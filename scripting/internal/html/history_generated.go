@@ -25,8 +25,8 @@ func (w History[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateOperation("forward", w.forward)
 	jsClass.CreateOperation("pushState", w.pushState)
 	jsClass.CreateOperation("replaceState", w.replaceState)
-	jsClass.CreatePrototypeAttribute("length", w.length, nil)
-	jsClass.CreatePrototypeAttribute("state", w.state, nil)
+	jsClass.CreateAttribute("length", w.length, nil)
+	jsClass.CreateAttribute("state", w.state, nil)
 }
 
 func (w History[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

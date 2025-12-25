@@ -22,13 +22,13 @@ func (wrapper Response[T]) Initialize(jsClass js.Class[T]) {
 
 func (w Response[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateOperation("clone", w.clone)
-	jsClass.CreatePrototypeAttribute("type", w.type_, nil)
-	jsClass.CreatePrototypeAttribute("url", w.url, nil)
-	jsClass.CreatePrototypeAttribute("redirected", w.redirected, nil)
-	jsClass.CreatePrototypeAttribute("status", w.status, nil)
-	jsClass.CreatePrototypeAttribute("ok", w.ok, nil)
-	jsClass.CreatePrototypeAttribute("statusText", w.statusText, nil)
-	jsClass.CreatePrototypeAttribute("headers", w.headers, nil)
+	jsClass.CreateAttribute("type", w.type_, nil)
+	jsClass.CreateAttribute("url", w.url, nil)
+	jsClass.CreateAttribute("redirected", w.redirected, nil)
+	jsClass.CreateAttribute("status", w.status, nil)
+	jsClass.CreateAttribute("ok", w.ok, nil)
+	jsClass.CreateAttribute("statusText", w.statusText, nil)
+	jsClass.CreateAttribute("headers", w.headers, nil)
 	w.body.installPrototype(jsClass)
 }
 

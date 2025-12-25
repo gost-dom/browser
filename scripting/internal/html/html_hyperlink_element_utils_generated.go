@@ -20,18 +20,18 @@ func (wrapper HTMLHyperlinkElementUtils[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w HTMLHyperlinkElementUtils[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeAttribute("href", w.href, w.setHref)
+	jsClass.CreateAttribute("href", w.href, w.setHref)
 	jsClass.CreateOperation("toString", w.href)
-	jsClass.CreatePrototypeAttribute("origin", w.origin, nil)
-	jsClass.CreatePrototypeAttribute("protocol", w.protocol, w.setProtocol)
-	jsClass.CreatePrototypeAttribute("username", w.username, w.setUsername)
-	jsClass.CreatePrototypeAttribute("password", w.password, w.setPassword)
-	jsClass.CreatePrototypeAttribute("host", w.host, w.setHost)
-	jsClass.CreatePrototypeAttribute("hostname", w.hostname, w.setHostname)
-	jsClass.CreatePrototypeAttribute("port", w.port, w.setPort)
-	jsClass.CreatePrototypeAttribute("pathname", w.pathname, w.setPathname)
-	jsClass.CreatePrototypeAttribute("search", w.search, w.setSearch)
-	jsClass.CreatePrototypeAttribute("hash", w.hash, w.setHash)
+	jsClass.CreateAttribute("origin", w.origin, nil)
+	jsClass.CreateAttribute("protocol", w.protocol, w.setProtocol)
+	jsClass.CreateAttribute("username", w.username, w.setUsername)
+	jsClass.CreateAttribute("password", w.password, w.setPassword)
+	jsClass.CreateAttribute("host", w.host, w.setHost)
+	jsClass.CreateAttribute("hostname", w.hostname, w.setHostname)
+	jsClass.CreateAttribute("port", w.port, w.setPort)
+	jsClass.CreateAttribute("pathname", w.pathname, w.setPathname)
+	jsClass.CreateAttribute("search", w.search, w.setSearch)
+	jsClass.CreateAttribute("hash", w.hash, w.setHash)
 }
 
 func (w HTMLHyperlinkElementUtils[T]) href(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

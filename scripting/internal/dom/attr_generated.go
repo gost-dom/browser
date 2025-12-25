@@ -20,10 +20,10 @@ func (wrapper Attr[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w Attr[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeAttribute("localName", w.localName, nil)
-	jsClass.CreatePrototypeAttribute("name", w.name, nil)
-	jsClass.CreatePrototypeAttribute("value", w.value, w.setValue)
-	jsClass.CreatePrototypeAttribute("ownerElement", w.ownerElement, nil)
+	jsClass.CreateAttribute("localName", w.localName, nil)
+	jsClass.CreateAttribute("name", w.name, nil)
+	jsClass.CreateAttribute("value", w.value, w.setValue)
+	jsClass.CreateAttribute("ownerElement", w.ownerElement, nil)
 }
 
 func (w Attr[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

@@ -25,7 +25,7 @@ func (w ReadableStream[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateOperation("pipeThrough", w.pipeThrough)
 	jsClass.CreateOperation("pipeTo", w.pipeTo)
 	jsClass.CreateOperation("tee", w.tee)
-	jsClass.CreatePrototypeAttribute("locked", w.locked, nil)
+	jsClass.CreateAttribute("locked", w.locked, nil)
 }
 
 func (w ReadableStream[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

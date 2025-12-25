@@ -19,7 +19,7 @@ func (wrapper Text[T]) Initialize(jsClass js.Class[T]) {
 
 func (w Text[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateOperation("splitText", w.splitText)
-	jsClass.CreatePrototypeAttribute("wholeText", w.wholeText, nil)
+	jsClass.CreateAttribute("wholeText", w.wholeText, nil)
 }
 
 func (w Text[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

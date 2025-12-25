@@ -20,7 +20,7 @@ func (wrapper AbortController[T]) Initialize(jsClass js.Class[T]) {
 
 func (w AbortController[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateOperation("abort", w.abort)
-	jsClass.CreatePrototypeAttribute("signal", w.signal, nil)
+	jsClass.CreateAttribute("signal", w.signal, nil)
 }
 
 func (w AbortController[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

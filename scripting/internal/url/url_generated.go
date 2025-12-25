@@ -15,19 +15,19 @@ func (wrapper URL[T]) Initialize(jsClass js.Class[T]) {
 
 func (w URL[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateOperation("toJSON", w.toJSON)
-	jsClass.CreatePrototypeAttribute("href", w.href, w.setHref)
+	jsClass.CreateAttribute("href", w.href, w.setHref)
 	jsClass.CreateOperation("toString", w.href)
-	jsClass.CreatePrototypeAttribute("origin", w.origin, nil)
-	jsClass.CreatePrototypeAttribute("protocol", w.protocol, w.setProtocol)
-	jsClass.CreatePrototypeAttribute("username", w.username, w.setUsername)
-	jsClass.CreatePrototypeAttribute("password", w.password, w.setPassword)
-	jsClass.CreatePrototypeAttribute("host", w.host, w.setHost)
-	jsClass.CreatePrototypeAttribute("hostname", w.hostname, w.setHostname)
-	jsClass.CreatePrototypeAttribute("port", w.port, w.setPort)
-	jsClass.CreatePrototypeAttribute("pathname", w.pathname, w.setPathname)
-	jsClass.CreatePrototypeAttribute("search", w.search, w.setSearch)
-	jsClass.CreatePrototypeAttribute("searchParams", w.searchParams, nil)
-	jsClass.CreatePrototypeAttribute("hash", w.hash, w.setHash)
+	jsClass.CreateAttribute("origin", w.origin, nil)
+	jsClass.CreateAttribute("protocol", w.protocol, w.setProtocol)
+	jsClass.CreateAttribute("username", w.username, w.setUsername)
+	jsClass.CreateAttribute("password", w.password, w.setPassword)
+	jsClass.CreateAttribute("host", w.host, w.setHost)
+	jsClass.CreateAttribute("hostname", w.hostname, w.setHostname)
+	jsClass.CreateAttribute("port", w.port, w.setPort)
+	jsClass.CreateAttribute("pathname", w.pathname, w.setPathname)
+	jsClass.CreateAttribute("search", w.search, w.setSearch)
+	jsClass.CreateAttribute("searchParams", w.searchParams, nil)
+	jsClass.CreateAttribute("hash", w.hash, w.setHash)
 }
 
 func (w URL[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

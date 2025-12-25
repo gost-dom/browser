@@ -68,7 +68,7 @@ func (c class) CreateOperation(
 	}
 }
 
-func (c class) CreatePrototypeAttribute(
+func (c class) CreateAttribute(
 	name string,
 	getter js.CallbackFunc[jsTypeParam],
 	setter js.CallbackFunc[jsTypeParam],

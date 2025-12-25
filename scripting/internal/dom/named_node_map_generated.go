@@ -27,7 +27,7 @@ func (w NamedNodeMap[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateOperation("setNamedItemNS", w.setNamedItemNS)
 	jsClass.CreateOperation("removeNamedItem", w.removeNamedItem)
 	jsClass.CreateOperation("removeNamedItemNS", w.removeNamedItemNS)
-	jsClass.CreatePrototypeAttribute("length", w.length, nil)
+	jsClass.CreateAttribute("length", w.length, nil)
 }
 
 func (w NamedNodeMap[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

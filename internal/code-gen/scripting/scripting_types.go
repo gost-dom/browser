@@ -13,7 +13,7 @@ func (c class) CreateOperation(name string, callback g.Generator) g.Generator {
 }
 
 func (c class) CreateAttribute(name string, getter g.Generator, setter g.Generator) g.Generator {
-	return c.Field("CreatePrototypeAttribute").Call(g.Lit(name), getter, setter)
+	return c.Field("CreateAttribute").Call(g.Lit(name), getter, setter)
 }
 
 /* -------- CallbackContext -------- */

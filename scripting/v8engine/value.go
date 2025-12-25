@@ -168,7 +168,7 @@ func (c v8Class) CreateOperation(name string, cb js.CallbackFunc[jsTypeParam]) {
 	c.proto.Set(name, v8cb, v8go.ReadOnly)
 }
 
-func (c v8Class) CreatePrototypeAttribute(
+func (c v8Class) CreateAttribute(
 	name string,
 	getter js.CallbackFunc[jsTypeParam],
 	setter js.CallbackFunc[jsTypeParam],

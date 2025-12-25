@@ -29,7 +29,7 @@ func (w URLSearchParams[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateOperation("set", w.set)
 	jsClass.CreateOperation("sort", w.sort)
 	jsClass.CreateOperation("toString", w.toString)
-	jsClass.CreatePrototypeAttribute("size", w.size, nil)
+	jsClass.CreateAttribute("size", w.size, nil)
 }
 
 func (w URLSearchParams[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

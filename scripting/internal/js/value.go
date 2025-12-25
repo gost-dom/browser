@@ -51,7 +51,7 @@ type Function[T any] interface {
 type Class[T any] interface {
 	CreateOperation(name string, cb CallbackFunc[T])
 	CreateIteratorMethod(cb CallbackFunc[T])
-	CreatePrototypeAttribute(name string, getter CallbackFunc[T], setter CallbackFunc[T])
+	CreateAttribute(name string, getter CallbackFunc[T], setter CallbackFunc[T])
 	CreateInstanceAttribute(name string, getter CallbackFunc[T], setter CallbackFunc[T])
 	CreateIndexedHandler(getter ...IndexedHandlerOption[T])
 	CreateNamedHandler(opts ...NamedHandlerOption[T])

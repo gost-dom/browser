@@ -13,15 +13,15 @@ func (wrapper KeyboardEvent[T]) Initialize(jsClass js.Class[T]) {
 
 func (w KeyboardEvent[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateOperation("getModifierState", w.getModifierState)
-	jsClass.CreatePrototypeAttribute("key", w.key, nil)
-	jsClass.CreatePrototypeAttribute("code", w.code, nil)
-	jsClass.CreatePrototypeAttribute("location", w.location, nil)
-	jsClass.CreatePrototypeAttribute("ctrlKey", w.ctrlKey, nil)
-	jsClass.CreatePrototypeAttribute("shiftKey", w.shiftKey, nil)
-	jsClass.CreatePrototypeAttribute("altKey", w.altKey, nil)
-	jsClass.CreatePrototypeAttribute("metaKey", w.metaKey, nil)
-	jsClass.CreatePrototypeAttribute("repeat", w.repeat, nil)
-	jsClass.CreatePrototypeAttribute("isComposing", w.isComposing, nil)
+	jsClass.CreateAttribute("key", w.key, nil)
+	jsClass.CreateAttribute("code", w.code, nil)
+	jsClass.CreateAttribute("location", w.location, nil)
+	jsClass.CreateAttribute("ctrlKey", w.ctrlKey, nil)
+	jsClass.CreateAttribute("shiftKey", w.shiftKey, nil)
+	jsClass.CreateAttribute("altKey", w.altKey, nil)
+	jsClass.CreateAttribute("metaKey", w.metaKey, nil)
+	jsClass.CreateAttribute("repeat", w.repeat, nil)
+	jsClass.CreateAttribute("isComposing", w.isComposing, nil)
 }
 
 func (w KeyboardEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

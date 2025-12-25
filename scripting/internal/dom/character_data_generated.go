@@ -31,8 +31,8 @@ func (w CharacterData[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateOperation("insertData", w.insertData)
 	jsClass.CreateOperation("deleteData", w.deleteData)
 	jsClass.CreateOperation("replaceData", w.replaceData)
-	jsClass.CreatePrototypeAttribute("data", w.data, w.setData)
-	jsClass.CreatePrototypeAttribute("length", w.length, nil)
+	jsClass.CreateAttribute("data", w.data, w.setData)
+	jsClass.CreateAttribute("length", w.length, nil)
 	w.nonDocumentTypeChildNode.installPrototype(jsClass)
 	w.childNode.installPrototype(jsClass)
 }

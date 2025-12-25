@@ -19,15 +19,15 @@ func (wrapper MutationRecord[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w MutationRecord[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeAttribute("type", w.type_, nil)
-	jsClass.CreatePrototypeAttribute("target", w.target, nil)
-	jsClass.CreatePrototypeAttribute("addedNodes", w.addedNodes, nil)
-	jsClass.CreatePrototypeAttribute("removedNodes", w.removedNodes, nil)
-	jsClass.CreatePrototypeAttribute("previousSibling", w.previousSibling, nil)
-	jsClass.CreatePrototypeAttribute("nextSibling", w.nextSibling, nil)
-	jsClass.CreatePrototypeAttribute("attributeName", w.attributeName, nil)
-	jsClass.CreatePrototypeAttribute("attributeNamespace", w.attributeNamespace, nil)
-	jsClass.CreatePrototypeAttribute("oldValue", w.oldValue, nil)
+	jsClass.CreateAttribute("type", w.type_, nil)
+	jsClass.CreateAttribute("target", w.target, nil)
+	jsClass.CreateAttribute("addedNodes", w.addedNodes, nil)
+	jsClass.CreateAttribute("removedNodes", w.removedNodes, nil)
+	jsClass.CreateAttribute("previousSibling", w.previousSibling, nil)
+	jsClass.CreateAttribute("nextSibling", w.nextSibling, nil)
+	jsClass.CreateAttribute("attributeName", w.attributeName, nil)
+	jsClass.CreateAttribute("attributeNamespace", w.attributeNamespace, nil)
+	jsClass.CreateAttribute("oldValue", w.oldValue, nil)
 }
 
 func (w MutationRecord[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

@@ -22,13 +22,13 @@ func (wrapper Event[T]) Initialize(jsClass js.Class[T]) {
 func (w Event[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateOperation("stopPropagation", w.stopPropagation)
 	jsClass.CreateOperation("preventDefault", w.preventDefault)
-	jsClass.CreatePrototypeAttribute("type", w.type_, nil)
-	jsClass.CreatePrototypeAttribute("target", w.target, nil)
-	jsClass.CreatePrototypeAttribute("currentTarget", w.currentTarget, nil)
-	jsClass.CreatePrototypeAttribute("eventPhase", w.eventPhase, nil)
-	jsClass.CreatePrototypeAttribute("bubbles", w.bubbles, nil)
-	jsClass.CreatePrototypeAttribute("cancelable", w.cancelable, nil)
-	jsClass.CreatePrototypeAttribute("defaultPrevented", w.defaultPrevented, nil)
+	jsClass.CreateAttribute("type", w.type_, nil)
+	jsClass.CreateAttribute("target", w.target, nil)
+	jsClass.CreateAttribute("currentTarget", w.currentTarget, nil)
+	jsClass.CreateAttribute("eventPhase", w.eventPhase, nil)
+	jsClass.CreateAttribute("bubbles", w.bubbles, nil)
+	jsClass.CreateAttribute("cancelable", w.cancelable, nil)
+	jsClass.CreateAttribute("defaultPrevented", w.defaultPrevented, nil)
 }
 
 func (w Event[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

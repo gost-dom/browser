@@ -25,8 +25,8 @@ func (w Body[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateOperation("formData", w.formData)
 	jsClass.CreateOperation("json", w.json)
 	jsClass.CreateOperation("text", w.text)
-	jsClass.CreatePrototypeAttribute("body", w.body, nil)
-	jsClass.CreatePrototypeAttribute("bodyUsed", w.bodyUsed, nil)
+	jsClass.CreateAttribute("body", w.body, nil)
+	jsClass.CreateAttribute("bodyUsed", w.bodyUsed, nil)
 }
 
 func (w Body[T]) arrayBuffer(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
