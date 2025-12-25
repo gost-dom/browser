@@ -3,6 +3,8 @@ package scripting
 import (
 	"fmt"
 
+	"github.com/gost-dom/code-gen/customrules"
+	"github.com/gost-dom/code-gen/gotypes"
 	"github.com/gost-dom/code-gen/idltransform"
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/code-gen/scripting/model"
@@ -11,6 +13,7 @@ import (
 )
 
 var decodeString = g.NewValuePackage("DecodeString", packagenames.Codec)
+var decodeDuration = g.NewValuePackage("DecodeDuration", packagenames.Codec)
 var decodeByteString = g.NewValuePackage("DecodeByteString", packagenames.Codec)
 var decodeBoolean = g.NewValuePackage("DecodeBoolean", packagenames.Codec)
 var decodeInt = g.NewValuePackage("DecodeInt", packagenames.Codec)
@@ -25,8 +28,25 @@ func DecodersForArg(receiver g.Generator, arg model.ESOperationArgument) []g.Gen
 	}
 
 	argType := arg.IdlArg.Type
-	if arg.CustomRule.OverridesType() {
-		argType = arg.CustomRule.Type
+	argRules := arg.CustomRule
+	if argRules.GoType.Name != "" {
+		fmt.Println("Decode type", argRules.GoType)
+		return DecodersForGoType(receiver, argType, argRules.GoType)
+	}
+
+	if argRules.OverridesType() {
+		argType = argRules.Type
+	}
+	return DecodersForType(receiver, argType)
+}
+
+func DecodersForGoType(
+	receiver g.Generator,
+	argType idl.Type,
+	goType customrules.GoType,
+) []g.Generator {
+	if goType == gotypes.TimeDuration {
+		return []g.Generator{decodeDuration}
 	}
 	return DecodersForType(receiver, argType)
 }

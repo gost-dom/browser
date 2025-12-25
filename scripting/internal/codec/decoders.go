@@ -3,6 +3,7 @@ package codec
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
@@ -32,6 +33,10 @@ func DecodeBoolean[T any](_ js.Scope[T], val js.Value[T]) (bool, error) {
 
 func DecodeInt[T any](_ js.Scope[T], v js.Value[T]) (int, error) {
 	return int(v.Int32()), nil
+}
+
+func DecodeDuration[T any](_ js.Scope[T], v js.Value[T]) (time.Duration, error) {
+	return time.Millisecond * time.Duration(v.Int32()), nil
 }
 
 func DecodeNode[T any](s js.Scope[T], v js.Value[T]) (dom.Node, error) {
