@@ -7,15 +7,13 @@ import (
 	g "github.com/gost-dom/generators"
 	. "github.com/gost-dom/generators/testing/matchers"
 	"github.com/onsi/gomega"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func generateHtmlIntf(t testing.TB, name string) g.Generator {
 	t.Helper()
 	gen, err := interfaces.GenerateInterface("html", "htmlinterfaces", name)
-	if !assert.NoError(t, err) {
-		t.Fatal()
-	}
+	require.NoError(t, err)
 	return gen
 }
 
