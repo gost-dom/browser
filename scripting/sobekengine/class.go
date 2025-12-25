@@ -72,6 +72,7 @@ func (c class) CreateAttribute(
 	name string,
 	getter js.CallbackFunc[jsTypeParam],
 	setter js.CallbackFunc[jsTypeParam],
+	opts ...js.PropertyOption,
 ) {
 	attr := attributeHandler{c.ctx, name, getter, setter}
 	attr.install(c.prototype)

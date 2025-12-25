@@ -172,6 +172,7 @@ func (c v8Class) CreateAttribute(
 	name string,
 	getter js.CallbackFunc[jsTypeParam],
 	setter js.CallbackFunc[jsTypeParam],
+	opts ...js.PropertyOption,
 ) {
 	v8Getter := wrapV8Callback(c.host, getter.WithLog(c.name, fmt.Sprintf("%s get", name)))
 	v8Setter := wrapV8Callback(c.host, setter.WithLog(c.name, fmt.Sprintf("%s set", name)))
