@@ -12,7 +12,7 @@ func (wrapper MouseEvent[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w MouseEvent[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("getModifierState", w.getModifierState)
+	jsClass.CreateOperation("getModifierState", w.getModifierState)
 	jsClass.CreatePrototypeAttribute("screenX", w.screenX, nil)
 	jsClass.CreatePrototypeAttribute("screenY", w.screenY, nil)
 	jsClass.CreatePrototypeAttribute("clientX", w.clientX, nil)

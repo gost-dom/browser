@@ -19,12 +19,12 @@ func (wrapper Body[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w Body[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("arrayBuffer", w.arrayBuffer)
-	jsClass.CreatePrototypeMethod("blob", w.blob)
-	jsClass.CreatePrototypeMethod("bytes", w.bytes)
-	jsClass.CreatePrototypeMethod("formData", w.formData)
-	jsClass.CreatePrototypeMethod("json", w.json)
-	jsClass.CreatePrototypeMethod("text", w.text)
+	jsClass.CreateOperation("arrayBuffer", w.arrayBuffer)
+	jsClass.CreateOperation("blob", w.blob)
+	jsClass.CreateOperation("bytes", w.bytes)
+	jsClass.CreateOperation("formData", w.formData)
+	jsClass.CreateOperation("json", w.json)
+	jsClass.CreateOperation("text", w.text)
 	jsClass.CreatePrototypeAttribute("body", w.body, nil)
 	jsClass.CreatePrototypeAttribute("bodyUsed", w.bodyUsed, nil)
 }

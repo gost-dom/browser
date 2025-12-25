@@ -20,11 +20,11 @@ func (wrapper ReadableStream[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w ReadableStream[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("cancel", w.cancel)
-	jsClass.CreatePrototypeMethod("getReader", w.getReader)
-	jsClass.CreatePrototypeMethod("pipeThrough", w.pipeThrough)
-	jsClass.CreatePrototypeMethod("pipeTo", w.pipeTo)
-	jsClass.CreatePrototypeMethod("tee", w.tee)
+	jsClass.CreateOperation("cancel", w.cancel)
+	jsClass.CreateOperation("getReader", w.getReader)
+	jsClass.CreateOperation("pipeThrough", w.pipeThrough)
+	jsClass.CreateOperation("pipeTo", w.pipeTo)
+	jsClass.CreateOperation("tee", w.tee)
 	jsClass.CreatePrototypeAttribute("locked", w.locked, nil)
 }
 

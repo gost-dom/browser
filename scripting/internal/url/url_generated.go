@@ -14,9 +14,9 @@ func (wrapper URL[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w URL[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("toJSON", w.toJSON)
+	jsClass.CreateOperation("toJSON", w.toJSON)
 	jsClass.CreatePrototypeAttribute("href", w.href, w.setHref)
-	jsClass.CreatePrototypeMethod("toString", w.href)
+	jsClass.CreateOperation("toString", w.href)
 	jsClass.CreatePrototypeAttribute("origin", w.origin, nil)
 	jsClass.CreatePrototypeAttribute("protocol", w.protocol, w.setProtocol)
 	jsClass.CreatePrototypeAttribute("username", w.username, w.setUsername)

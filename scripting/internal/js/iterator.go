@@ -58,7 +58,7 @@ func (i Iterator[T, U]) NewIterator(s Scope[U], items iter.Seq[T]) (Value[U], er
 // - Symbol iterator - implementing the iterable protocol
 // - "entries" - which all web API implement
 func (i Iterator[T, U]) InstallPrototype(class Class[U]) {
-	class.CreatePrototypeMethod("entries", i.entries)
+	class.CreateOperation("entries", i.entries)
 	class.CreateIteratorMethod(i.entries)
 }
 
@@ -140,11 +140,11 @@ func (i Iterator2[K, V, U]) InstallPrototype(cls Class[U]) {
 		}
 		return i.newIterator(cbCtx, instance)
 	}
-	cls.CreatePrototypeMethod("entries", getEntries)
+	cls.CreateOperation("entries", getEntries)
 	cls.CreateIteratorMethod(getEntries)
 	keys := NewIterator(i.keyLookup)
 	values := NewIterator(i.valueLookup)
-	cls.CreatePrototypeMethod("keys", func(cbCtx CallbackContext[U]) (Value[U], error) {
+	cls.CreateOperation("keys", func(cbCtx CallbackContext[U]) (Value[U], error) {
 		cbCtx.Logger().Debug("JS Function call: Iterator2.keys", ThisLogAttr(cbCtx))
 		instance, err := As[iterable2[K, V]](cbCtx.Instance())
 		if err != nil {
@@ -152,7 +152,7 @@ func (i Iterator2[K, V, U]) InstallPrototype(cls Class[U]) {
 		}
 		return keys.NewIterator(cbCtx, pairKeys(instance.All()))
 	})
-	cls.CreatePrototypeMethod("values", func(cbCtx CallbackContext[U]) (Value[U], error) {
+	cls.CreateOperation("values", func(cbCtx CallbackContext[U]) (Value[U], error) {
 		cbCtx.Logger().Debug("JS Function call: Iterator2.values", ThisLogAttr(cbCtx))
 		instance, err := As[iterable2[K, V]](cbCtx.Instance())
 		if err != nil {

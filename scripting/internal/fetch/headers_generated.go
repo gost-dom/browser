@@ -21,12 +21,12 @@ func (wrapper Headers[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w Headers[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("append", w.append)
-	jsClass.CreatePrototypeMethod("delete", w.delete)
-	jsClass.CreatePrototypeMethod("get", w.get)
-	jsClass.CreatePrototypeMethod("getSetCookie", w.getSetCookie)
-	jsClass.CreatePrototypeMethod("has", w.has)
-	jsClass.CreatePrototypeMethod("set", w.set)
+	jsClass.CreateOperation("append", w.append)
+	jsClass.CreateOperation("delete", w.delete)
+	jsClass.CreateOperation("get", w.get)
+	jsClass.CreateOperation("getSetCookie", w.getSetCookie)
+	jsClass.CreateOperation("has", w.has)
+	jsClass.CreateOperation("set", w.set)
 }
 
 func (w Headers[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

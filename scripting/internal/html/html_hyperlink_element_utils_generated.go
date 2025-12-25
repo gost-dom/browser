@@ -21,7 +21,7 @@ func (wrapper HTMLHyperlinkElementUtils[T]) Initialize(jsClass js.Class[T]) {
 
 func (w HTMLHyperlinkElementUtils[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreatePrototypeAttribute("href", w.href, w.setHref)
-	jsClass.CreatePrototypeMethod("toString", w.href)
+	jsClass.CreateOperation("toString", w.href)
 	jsClass.CreatePrototypeAttribute("origin", w.origin, nil)
 	jsClass.CreatePrototypeAttribute("protocol", w.protocol, w.setProtocol)
 	jsClass.CreatePrototypeAttribute("username", w.username, w.setUsername)

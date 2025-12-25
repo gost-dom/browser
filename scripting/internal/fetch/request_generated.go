@@ -22,7 +22,7 @@ func (wrapper Request[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w Request[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("clone", w.clone)
+	jsClass.CreateOperation("clone", w.clone)
 	jsClass.CreatePrototypeAttribute("method", w.method, nil)
 	jsClass.CreatePrototypeAttribute("url", w.url, nil)
 	jsClass.CreatePrototypeAttribute("headers", w.headers, nil)

@@ -70,7 +70,7 @@ func (i PrototypeInitializer) InstallFunctionHandlers(
 			continue
 		}
 		cb := receiver.Field(op.CallbackMethodName())
-		stmts.Append(class.CreatePrototypeMethod(op.Name, cb))
+		stmts.Append(class.CreateOperation(op.Name, cb))
 		renderedAny = true
 	}
 	if renderedAny {
@@ -112,7 +112,7 @@ func (i PrototypeInitializer) InstallAttributeHandler(
 	)
 	if op.Spec.Stringifier {
 		res.Append(
-			class.CreatePrototypeMethod("toString", getterFn),
+			class.CreateOperation("toString", getterFn),
 		)
 	}
 	return res

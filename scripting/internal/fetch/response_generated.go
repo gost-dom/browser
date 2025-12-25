@@ -21,7 +21,7 @@ func (wrapper Response[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w Response[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("clone", w.clone)
+	jsClass.CreateOperation("clone", w.clone)
 	jsClass.CreatePrototypeAttribute("type", w.type_, nil)
 	jsClass.CreatePrototypeAttribute("url", w.url, nil)
 	jsClass.CreatePrototypeAttribute("redirected", w.redirected, nil)

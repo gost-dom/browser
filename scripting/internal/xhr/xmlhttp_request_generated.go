@@ -20,13 +20,13 @@ func (wrapper XMLHttpRequest[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w XMLHttpRequest[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("open", w.open)
-	jsClass.CreatePrototypeMethod("setRequestHeader", w.setRequestHeader)
-	jsClass.CreatePrototypeMethod("send", w.send)
-	jsClass.CreatePrototypeMethod("abort", w.abort)
-	jsClass.CreatePrototypeMethod("getResponseHeader", w.getResponseHeader)
-	jsClass.CreatePrototypeMethod("getAllResponseHeaders", w.getAllResponseHeaders)
-	jsClass.CreatePrototypeMethod("overrideMimeType", w.overrideMimeType)
+	jsClass.CreateOperation("open", w.open)
+	jsClass.CreateOperation("setRequestHeader", w.setRequestHeader)
+	jsClass.CreateOperation("send", w.send)
+	jsClass.CreateOperation("abort", w.abort)
+	jsClass.CreateOperation("getResponseHeader", w.getResponseHeader)
+	jsClass.CreateOperation("getAllResponseHeaders", w.getAllResponseHeaders)
+	jsClass.CreateOperation("overrideMimeType", w.overrideMimeType)
 	jsClass.CreatePrototypeAttribute("readyState", w.readyState, nil)
 	jsClass.CreatePrototypeAttribute("timeout", w.timeout, w.setTimeout)
 	jsClass.CreatePrototypeAttribute("withCredentials", w.withCredentials, w.setWithCredentials)

@@ -20,11 +20,11 @@ func (wrapper History[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w History[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("go", w.go_)
-	jsClass.CreatePrototypeMethod("back", w.back)
-	jsClass.CreatePrototypeMethod("forward", w.forward)
-	jsClass.CreatePrototypeMethod("pushState", w.pushState)
-	jsClass.CreatePrototypeMethod("replaceState", w.replaceState)
+	jsClass.CreateOperation("go", w.go_)
+	jsClass.CreateOperation("back", w.back)
+	jsClass.CreateOperation("forward", w.forward)
+	jsClass.CreateOperation("pushState", w.pushState)
+	jsClass.CreateOperation("replaceState", w.replaceState)
 	jsClass.CreatePrototypeAttribute("length", w.length, nil)
 	jsClass.CreatePrototypeAttribute("state", w.state, nil)
 }

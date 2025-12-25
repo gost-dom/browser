@@ -21,7 +21,7 @@ func (wrapper HTMLElement[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w HTMLElement[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("click", w.click)
+	jsClass.CreateOperation("click", w.click)
 	w.htmlOrSVGElement.installPrototype(jsClass)
 }
 

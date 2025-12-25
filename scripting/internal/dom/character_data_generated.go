@@ -26,11 +26,11 @@ func (wrapper CharacterData[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w CharacterData[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("substringData", w.substringData)
-	jsClass.CreatePrototypeMethod("appendData", w.appendData)
-	jsClass.CreatePrototypeMethod("insertData", w.insertData)
-	jsClass.CreatePrototypeMethod("deleteData", w.deleteData)
-	jsClass.CreatePrototypeMethod("replaceData", w.replaceData)
+	jsClass.CreateOperation("substringData", w.substringData)
+	jsClass.CreateOperation("appendData", w.appendData)
+	jsClass.CreateOperation("insertData", w.insertData)
+	jsClass.CreateOperation("deleteData", w.deleteData)
+	jsClass.CreateOperation("replaceData", w.replaceData)
 	jsClass.CreatePrototypeAttribute("data", w.data, w.setData)
 	jsClass.CreatePrototypeAttribute("length", w.length, nil)
 	w.nonDocumentTypeChildNode.installPrototype(jsClass)

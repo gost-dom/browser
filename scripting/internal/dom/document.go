@@ -15,7 +15,7 @@ func (w *Document[T]) CustomInitializer(class js.Class[T]) {
 	class.CreateInstanceAttribute("location", w.location, nil)
 	class.CreatePrototypeAttribute("head", w.head, nil)
 	class.CreatePrototypeAttribute("body", w.body, nil)
-	class.CreatePrototypeMethod("getElementById", w.getElementById)
+	class.CreateOperation("getElementById", w.getElementById)
 }
 
 func (w *Document[T]) CreateInstance(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

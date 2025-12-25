@@ -19,11 +19,11 @@ func (wrapper ParentNode[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w ParentNode[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("prepend", w.prepend)
-	jsClass.CreatePrototypeMethod("append", w.append)
-	jsClass.CreatePrototypeMethod("replaceChildren", w.replaceChildren)
-	jsClass.CreatePrototypeMethod("querySelector", w.querySelector)
-	jsClass.CreatePrototypeMethod("querySelectorAll", w.querySelectorAll)
+	jsClass.CreateOperation("prepend", w.prepend)
+	jsClass.CreateOperation("append", w.append)
+	jsClass.CreateOperation("replaceChildren", w.replaceChildren)
+	jsClass.CreateOperation("querySelector", w.querySelector)
+	jsClass.CreateOperation("querySelectorAll", w.querySelectorAll)
 	jsClass.CreatePrototypeAttribute("children", w.children, nil)
 	jsClass.CreatePrototypeAttribute("firstElementChild", w.firstElementChild, nil)
 	jsClass.CreatePrototypeAttribute("lastElementChild", w.lastElementChild, nil)

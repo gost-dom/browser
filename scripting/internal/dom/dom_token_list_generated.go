@@ -21,16 +21,16 @@ func (wrapper DOMTokenList[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w DOMTokenList[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("item", w.item)
-	jsClass.CreatePrototypeMethod("contains", w.contains)
-	jsClass.CreatePrototypeMethod("add", w.add)
-	jsClass.CreatePrototypeMethod("remove", w.remove)
-	jsClass.CreatePrototypeMethod("toggle", w.toggle)
-	jsClass.CreatePrototypeMethod("replace", w.replace)
-	jsClass.CreatePrototypeMethod("supports", w.supports)
+	jsClass.CreateOperation("item", w.item)
+	jsClass.CreateOperation("contains", w.contains)
+	jsClass.CreateOperation("add", w.add)
+	jsClass.CreateOperation("remove", w.remove)
+	jsClass.CreateOperation("toggle", w.toggle)
+	jsClass.CreateOperation("replace", w.replace)
+	jsClass.CreateOperation("supports", w.supports)
 	jsClass.CreatePrototypeAttribute("length", w.length, nil)
 	jsClass.CreatePrototypeAttribute("value", w.value, w.setValue)
-	jsClass.CreatePrototypeMethod("toString", w.value)
+	jsClass.CreateOperation("toString", w.value)
 }
 
 func (w DOMTokenList[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

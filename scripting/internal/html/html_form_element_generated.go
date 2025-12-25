@@ -20,11 +20,11 @@ func (wrapper HTMLFormElement[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w HTMLFormElement[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("submit", w.submit)
-	jsClass.CreatePrototypeMethod("requestSubmit", w.requestSubmit)
-	jsClass.CreatePrototypeMethod("reset", w.reset)
-	jsClass.CreatePrototypeMethod("checkValidity", w.checkValidity)
-	jsClass.CreatePrototypeMethod("reportValidity", w.reportValidity)
+	jsClass.CreateOperation("submit", w.submit)
+	jsClass.CreateOperation("requestSubmit", w.requestSubmit)
+	jsClass.CreateOperation("reset", w.reset)
+	jsClass.CreateOperation("checkValidity", w.checkValidity)
+	jsClass.CreateOperation("reportValidity", w.reportValidity)
 	jsClass.CreatePrototypeAttribute("acceptCharset", w.acceptCharset, w.setAcceptCharset)
 	jsClass.CreatePrototypeAttribute("action", w.action, w.setAction)
 	jsClass.CreatePrototypeAttribute("autocomplete", w.autocomplete, w.setAutocomplete)

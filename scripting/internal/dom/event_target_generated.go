@@ -20,9 +20,9 @@ func (wrapper EventTarget[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w EventTarget[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("addEventListener", w.addEventListener)
-	jsClass.CreatePrototypeMethod("removeEventListener", w.removeEventListener)
-	jsClass.CreatePrototypeMethod("dispatchEvent", w.dispatchEvent)
+	jsClass.CreateOperation("addEventListener", w.addEventListener)
+	jsClass.CreateOperation("removeEventListener", w.removeEventListener)
+	jsClass.CreateOperation("dispatchEvent", w.dispatchEvent)
 }
 
 func (w EventTarget[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

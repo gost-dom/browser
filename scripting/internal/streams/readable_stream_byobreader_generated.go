@@ -18,8 +18,8 @@ func (wrapper ReadableStreamBYOBReader[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w ReadableStreamBYOBReader[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("read", w.read)
-	jsClass.CreatePrototypeMethod("releaseLock", w.releaseLock)
+	jsClass.CreateOperation("read", w.read)
+	jsClass.CreateOperation("releaseLock", w.releaseLock)
 }
 
 func (w ReadableStreamBYOBReader[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

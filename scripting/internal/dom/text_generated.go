@@ -18,7 +18,7 @@ func (wrapper Text[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w Text[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("splitText", w.splitText)
+	jsClass.CreateOperation("splitText", w.splitText)
 	jsClass.CreatePrototypeAttribute("wholeText", w.wholeText, nil)
 }
 

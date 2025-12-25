@@ -12,7 +12,7 @@ func (wrapper KeyboardEvent[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w KeyboardEvent[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("getModifierState", w.getModifierState)
+	jsClass.CreateOperation("getModifierState", w.getModifierState)
 	jsClass.CreatePrototypeAttribute("key", w.key, nil)
 	jsClass.CreatePrototypeAttribute("code", w.code, nil)
 	jsClass.CreatePrototypeAttribute("location", w.location, nil)

@@ -58,7 +58,7 @@ func (c *class) CreateInstanceAttribute(
 	c.assertValid()
 }
 
-func (c class) CreatePrototypeMethod(
+func (c class) CreateOperation(
 	name string,
 	cb js.CallbackFunc[jsTypeParam],
 ) {

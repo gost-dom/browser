@@ -20,9 +20,9 @@ func (wrapper MutationObserver[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w MutationObserver[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("observe", w.observe)
-	jsClass.CreatePrototypeMethod("disconnect", w.disconnect)
-	jsClass.CreatePrototypeMethod("takeRecords", w.takeRecords)
+	jsClass.CreateOperation("observe", w.observe)
+	jsClass.CreateOperation("disconnect", w.disconnect)
+	jsClass.CreateOperation("takeRecords", w.takeRecords)
 }
 
 func (w MutationObserver[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

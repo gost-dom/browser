@@ -20,8 +20,8 @@ func (wrapper HTMLOrSVGElement[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w HTMLOrSVGElement[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("focus", w.focus)
-	jsClass.CreatePrototypeMethod("blur", w.blur)
+	jsClass.CreateOperation("focus", w.focus)
+	jsClass.CreateOperation("blur", w.blur)
 	jsClass.CreatePrototypeAttribute("dataset", w.dataset, nil)
 	jsClass.CreatePrototypeAttribute("nonce", w.nonce, w.setNonce)
 	jsClass.CreatePrototypeAttribute("autofocus", w.autofocus, w.setAutofocus)

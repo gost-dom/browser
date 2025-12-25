@@ -11,7 +11,7 @@ import (
 )
 
 func initDOMParser[T any](ft js.Class[T]) {
-	ft.CreatePrototypeMethod("parseFromString", domParserParseFromString)
+	ft.CreateOperation("parseFromString", domParserParseFromString)
 }
 func domParserParseFromString[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	win, err := codec.GetWindow(cbCtx)

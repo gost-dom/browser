@@ -20,8 +20,8 @@ func (wrapper Event[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w Event[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("stopPropagation", w.stopPropagation)
-	jsClass.CreatePrototypeMethod("preventDefault", w.preventDefault)
+	jsClass.CreateOperation("stopPropagation", w.stopPropagation)
+	jsClass.CreateOperation("preventDefault", w.preventDefault)
 	jsClass.CreatePrototypeAttribute("type", w.type_, nil)
 	jsClass.CreatePrototypeAttribute("target", w.target, nil)
 	jsClass.CreatePrototypeAttribute("currentTarget", w.currentTarget, nil)

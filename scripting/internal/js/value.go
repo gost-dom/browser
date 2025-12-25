@@ -49,7 +49,7 @@ type Function[T any] interface {
 // This is independent of any actual execution context, so values in global
 // scope can be declared before creating a JavaScript execution context.
 type Class[T any] interface {
-	CreatePrototypeMethod(name string, cb CallbackFunc[T])
+	CreateOperation(name string, cb CallbackFunc[T])
 	CreateIteratorMethod(cb CallbackFunc[T])
 	CreatePrototypeAttribute(name string, getter CallbackFunc[T], setter CallbackFunc[T])
 	CreateInstanceAttribute(name string, getter CallbackFunc[T], setter CallbackFunc[T])

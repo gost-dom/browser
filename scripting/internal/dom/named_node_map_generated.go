@@ -20,13 +20,13 @@ func (wrapper NamedNodeMap[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w NamedNodeMap[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("item", w.item)
-	jsClass.CreatePrototypeMethod("getNamedItem", w.getNamedItem)
-	jsClass.CreatePrototypeMethod("getNamedItemNS", w.getNamedItemNS)
-	jsClass.CreatePrototypeMethod("setNamedItem", w.setNamedItem)
-	jsClass.CreatePrototypeMethod("setNamedItemNS", w.setNamedItemNS)
-	jsClass.CreatePrototypeMethod("removeNamedItem", w.removeNamedItem)
-	jsClass.CreatePrototypeMethod("removeNamedItemNS", w.removeNamedItemNS)
+	jsClass.CreateOperation("item", w.item)
+	jsClass.CreateOperation("getNamedItem", w.getNamedItem)
+	jsClass.CreateOperation("getNamedItemNS", w.getNamedItemNS)
+	jsClass.CreateOperation("setNamedItem", w.setNamedItem)
+	jsClass.CreateOperation("setNamedItemNS", w.setNamedItemNS)
+	jsClass.CreateOperation("removeNamedItem", w.removeNamedItem)
+	jsClass.CreateOperation("removeNamedItemNS", w.removeNamedItemNS)
 	jsClass.CreatePrototypeAttribute("length", w.length, nil)
 }
 

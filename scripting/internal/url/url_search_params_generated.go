@@ -21,14 +21,14 @@ func (wrapper URLSearchParams[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w URLSearchParams[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("append", w.append)
-	jsClass.CreatePrototypeMethod("delete", w.delete)
-	jsClass.CreatePrototypeMethod("get", w.get)
-	jsClass.CreatePrototypeMethod("getAll", w.getAll)
-	jsClass.CreatePrototypeMethod("has", w.has)
-	jsClass.CreatePrototypeMethod("set", w.set)
-	jsClass.CreatePrototypeMethod("sort", w.sort)
-	jsClass.CreatePrototypeMethod("toString", w.toString)
+	jsClass.CreateOperation("append", w.append)
+	jsClass.CreateOperation("delete", w.delete)
+	jsClass.CreateOperation("get", w.get)
+	jsClass.CreateOperation("getAll", w.getAll)
+	jsClass.CreateOperation("has", w.has)
+	jsClass.CreateOperation("set", w.set)
+	jsClass.CreateOperation("sort", w.sort)
+	jsClass.CreateOperation("toString", w.toString)
 	jsClass.CreatePrototypeAttribute("size", w.size, nil)
 }
 

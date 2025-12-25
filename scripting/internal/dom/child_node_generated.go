@@ -19,10 +19,10 @@ func (wrapper ChildNode[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w ChildNode[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("before", w.before)
-	jsClass.CreatePrototypeMethod("after", w.after)
-	jsClass.CreatePrototypeMethod("replaceWith", w.replaceWith)
-	jsClass.CreatePrototypeMethod("remove", w.remove)
+	jsClass.CreateOperation("before", w.before)
+	jsClass.CreateOperation("after", w.after)
+	jsClass.CreateOperation("replaceWith", w.replaceWith)
+	jsClass.CreateOperation("remove", w.remove)
 }
 
 func (w ChildNode[T]) before(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

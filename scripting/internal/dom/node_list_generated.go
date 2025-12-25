@@ -20,7 +20,7 @@ func (wrapper NodeList[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w NodeList[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("item", w.item)
+	jsClass.CreateOperation("item", w.item)
 	jsClass.CreatePrototypeAttribute("length", w.length, nil)
 }
 

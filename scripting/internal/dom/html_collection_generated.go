@@ -20,8 +20,8 @@ func (wrapper HTMLCollection[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w HTMLCollection[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("item", w.item)
-	jsClass.CreatePrototypeMethod("namedItem", w.namedItem)
+	jsClass.CreateOperation("item", w.item)
+	jsClass.CreateOperation("namedItem", w.namedItem)
 	jsClass.CreatePrototypeAttribute("length", w.length, nil)
 }
 

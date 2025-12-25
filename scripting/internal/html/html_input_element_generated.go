@@ -20,7 +20,7 @@ func (wrapper HTMLInputElement[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w HTMLInputElement[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("checkValidity", w.checkValidity)
+	jsClass.CreateOperation("checkValidity", w.checkValidity)
 	jsClass.CreatePrototypeAttribute("name", w.name, w.setName)
 	jsClass.CreatePrototypeAttribute("type", w.type_, w.setType)
 	jsClass.CreatePrototypeAttribute("value", w.value, w.setValue)

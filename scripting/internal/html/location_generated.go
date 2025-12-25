@@ -20,11 +20,11 @@ func (wrapper Location[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w Location[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("assign", w.assign)
-	jsClass.CreatePrototypeMethod("replace", w.replace)
-	jsClass.CreatePrototypeMethod("reload", w.reload)
+	jsClass.CreateOperation("assign", w.assign)
+	jsClass.CreateOperation("replace", w.replace)
+	jsClass.CreateOperation("reload", w.reload)
 	jsClass.CreatePrototypeAttribute("href", w.href, w.setHref)
-	jsClass.CreatePrototypeMethod("toString", w.href)
+	jsClass.CreateOperation("toString", w.href)
 	jsClass.CreatePrototypeAttribute("origin", w.origin, nil)
 	jsClass.CreatePrototypeAttribute("protocol", w.protocol, w.setProtocol)
 	jsClass.CreatePrototypeAttribute("host", w.host, w.setHost)

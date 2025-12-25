@@ -19,7 +19,7 @@ func (wrapper AbortController[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w AbortController[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreatePrototypeMethod("abort", w.abort)
+	jsClass.CreateOperation("abort", w.abort)
 	jsClass.CreatePrototypeAttribute("signal", w.signal, nil)
 }
 

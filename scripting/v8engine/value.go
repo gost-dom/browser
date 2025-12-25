@@ -163,7 +163,7 @@ func (c v8Class) CreateIteratorMethod(cb js.CallbackFunc[jsTypeParam]) {
 	it := v8go.SymbolIterator(c.host.iso)
 	c.proto.SetSymbol(it, v8cb, v8go.ReadOnly)
 }
-func (c v8Class) CreatePrototypeMethod(name string, cb js.CallbackFunc[jsTypeParam]) {
+func (c v8Class) CreateOperation(name string, cb js.CallbackFunc[jsTypeParam]) {
 	v8cb := wrapV8Callback(c.host, cb.WithLog(c.name, name))
 	c.proto.Set(name, v8cb, v8go.ReadOnly)
 }
