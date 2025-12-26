@@ -50,7 +50,7 @@ func RunHtmxTests(t *testing.T, e html.ScriptEngine) {
 		expect(win.Location().Pathname()).To(Equal("/navigation/page-a.html"), "Location updated")
 	})
 
-	t.Run("Clock boosted link", func(t *testing.T) {
+	t.Run("Click boosted link", func(t *testing.T) {
 		t.Parallel()
 
 		expect := gomega.NewWithT(t).Expect
