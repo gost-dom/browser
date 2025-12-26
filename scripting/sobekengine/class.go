@@ -246,3 +246,14 @@ func (c *globalObjectClass) CreateAttribute(
 	attr := attributeHandler{c.ctx, name, getter, setter}
 	attr.install(globalThis)
 }
+
+func (c *globalObjectClass) CreateOperation(
+	name string,
+	cb js.CallbackFunc[jsTypeParam],
+) {
+	globalThis := c.class.ctx.globalThis()
+
+	if err := globalThis.Set(name, wrapJSCallback(c.ctx, cb.WithLog(c.name, name))); err != nil {
+		panic(err)
+	}
+}
