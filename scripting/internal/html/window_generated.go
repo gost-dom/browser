@@ -8,10 +8,12 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type Window[T any] struct{}
+type Window[T any] struct {
+	windowOrWorkerGlobalScope *WindowOrWorkerGlobalScope[T]
+}
 
 func NewWindow[T any](scriptHost js.ScriptEngine[T]) *Window[T] {
-	return &Window[T]{}
+	return &Window[T]{NewWindowOrWorkerGlobalScope(scriptHost)}
 }
 
 func (wrapper Window[T]) Initialize(jsClass js.Class[T]) {
@@ -53,6 +55,7 @@ func (w Window[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("navigator", w.navigator, nil)
 	jsClass.CreateAttribute("clientInformation", w.clientInformation, nil)
 	jsClass.CreateAttribute("originAgentCluster", w.originAgentCluster, nil)
+	w.windowOrWorkerGlobalScope.installPrototype(jsClass)
 }
 
 func (w Window[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

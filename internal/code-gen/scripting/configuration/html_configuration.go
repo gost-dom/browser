@@ -8,6 +8,12 @@ func ConfigureHTMLSpecs(htmlSpecs *WebAPIConfig) {
 	configureHTMLFormElement(htmlSpecs)
 	configureHTMLInputElement(htmlSpecs)
 	configureWindow(htmlSpecs)
+	global := htmlSpecs.Type("WindowOrWorkerGlobalScope")
+	global.Method("setTimeout").SetCustomImplementation()
+	global.Method("setInterval").SetCustomImplementation()
+	global.Method("clearTimeout").SetCustomImplementation()
+	global.Method("clearInterval").SetCustomImplementation()
+	global.Method("queueMicrotask").SetCustomImplementation()
 
 	location := htmlSpecs.Type("Location")
 	location.Method("ancestorOrigins").SetNotImplemented()

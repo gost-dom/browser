@@ -75,6 +75,10 @@ func CreateInstanceMethods(
 	// TODO: Handle overloads, e.g. of XHR.open
 	visited := make(map[string]bool)
 	for _, operation := range idlInterface.Operations {
+		opRules := intfRule.Operations[operation.Name]
+		if opRules.Ignore {
+			continue
+		}
 		if operation.Name != "" && !visited[operation.Name] && !operation.Static {
 			result = append(
 				result,

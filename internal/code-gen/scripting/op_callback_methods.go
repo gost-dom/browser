@@ -62,7 +62,6 @@ func (gen OpCallbackMethods) NativeMethodCall(
 func (gen OpCallbackMethods) CtorOrOperationCallback(
 	callNativeFunc func(op model.Callback, methodPostFix string, args []g.Generator) g.Generator,
 ) g.Generator {
-
 	// reqArgs are "required" args on the Go side. This include optional args in
 	// the IDL specification that have a default value, or customization
 	// indicates a default value.

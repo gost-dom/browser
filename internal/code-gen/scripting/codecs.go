@@ -30,7 +30,6 @@ func DecodersForArg(receiver g.Generator, arg model.ESOperationArgument) []g.Gen
 	argType := arg.IdlArg.Type
 	argRules := arg.CustomRule
 	if argRules.GoType.Name != "" {
-		fmt.Println("Decode type", argRules.GoType)
 		return DecodersForGoType(receiver, argType, argRules.GoType)
 	}
 

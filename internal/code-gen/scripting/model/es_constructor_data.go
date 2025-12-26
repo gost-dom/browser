@@ -69,6 +69,8 @@ func (d ESConstructorData) GetInternalPackage() string {
 		return packagenames.DomInterfaces
 	case "URLSearchParams", "URL":
 		return packagenames.URLInterfaces
+	case "WindowOrWorkerGlobalScope":
+		return packagenames.HTMLInterfaces
 	case "XMLHttpRequest":
 		return packagenames.HTMLInternal
 	case "FormData":
