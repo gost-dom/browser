@@ -23,7 +23,7 @@ func TestScriptFileSupport(t *testing.T) {
 	scripttests.RunDownloadScriptSuite(t, DefaultEngine())
 }
 
-func TestHTMX(t *testing.T) {
+func TestHTMX_Sobek(t *testing.T) {
 	scripttests.RunHtmxTests(t, DefaultEngine())
 }
 
