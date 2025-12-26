@@ -7,7 +7,7 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func setJsValue[T any](c entity.Components, v js.Value[T]) {
+func SetJsValue[T any](c entity.Components, v js.Value[T]) {
 	// It may be overkill to extract this one-line function, the primary reason
 	// is to ensure the correct type parameter is used. If you remove the
 	// explicit type parameter, and leave it to type inference, the type could
@@ -37,7 +37,7 @@ func EncodeEntity[T any](s js.Scope[T], e entity.Components) (js.Value[T], error
 	prototype := s.Constructor(prototypeName)
 	value, err := prototype.NewInstance(e)
 	if err == nil {
-		setJsValue(e, value)
+		SetJsValue(e, value)
 	}
 	return value, err
 }
@@ -58,7 +58,7 @@ func EncodeEntityScopedWithPrototype[T any](
 	prototype := scope.Constructor(protoName)
 	value, err := prototype.NewInstance(e)
 	if err == nil {
-		setJsValue(e, value)
+		SetJsValue(e, value)
 	}
 	return value, err
 }
@@ -115,7 +115,7 @@ func EncodeConstrucedValue[T any](s js.CallbackScope[T], val any) (js.Value[T], 
 	// TODO: Figure out if this function should survive
 	s.This().SetNativeValue(val)
 	if e, ok := val.(entity.Components); ok {
-		setJsValue(e, s.This())
+		SetJsValue(e, s.This())
 	}
 	return nil, nil
 }

@@ -176,6 +176,16 @@ func testEventTarget(t *testing.T, e html.ScriptEngine) {
 		assert.NoError(t, err)
 		win.Clock().RunAll()
 		win.MustRun(`gost.assertEqual(1, callCount)`)
+	})
 
+	t.Run("Event target is same object as Window", func(t *testing.T) {
+		win := browsertest.InitWindow(t, e)
+		win.MustRun(`
+			let target = null
+			window.addEventListener('custom', e => { target = e.target })
+			window.dispatchEvent(new Event('custom'))
+			gost.assertNotNull(target)
+			gost.assertEqual(target, window)
+		`)
 	})
 }

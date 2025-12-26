@@ -10,7 +10,9 @@ import (
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
+	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
+	"github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
 )
@@ -194,6 +196,11 @@ func (host *V8ScriptHost) NewContext(bc html.BrowsingContext) html.ScriptContext
 	}
 	host.inspector.ContextCreated(context.v8ctx)
 	global := newV8Object(context, context.v8ctx.Global())
+	// global.SetNativeValue(bc)
+
+	if e, ok := bc.(entity.Components); ok {
+		codec.SetJsValue(e, global)
+	}
 	context.addDisposer(global.(js.Disposable))
 
 	return context

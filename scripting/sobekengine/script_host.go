@@ -10,7 +10,9 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/cache"
 	"github.com/gost-dom/browser/internal/clock"
+	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/scripting/internal"
+	"github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/grafana/sobek"
 )
 
@@ -73,6 +75,9 @@ func (h *scriptHost) NewContext(bc html.BrowsingContext) html.ScriptContext {
 	h.initializer.Configure(result)
 	if global := result.global; global != nil {
 		globalThis.SetPrototype(result.global.prototype)
+	}
+	if e, ok := bc.(entity.Components); ok {
+		codec.SetJsValue(e, newScope(result).GlobalThis())
 	}
 
 	return result

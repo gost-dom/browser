@@ -10,7 +10,9 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/constants"
+	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/gosthttp"
+	"github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/browser/url"
 	"github.com/gost-dom/v8go"
@@ -65,6 +67,10 @@ func (context *V8ScriptContext) installError(
 func (context *V8ScriptContext) initializeGlobals() error {
 	context.global = newV8Object(context, context.v8ctx.Global())
 	context.global.SetNativeValue(context.browsingCtx)
+
+	if e, ok := context.browsingCtx.(entity.Components); ok {
+		codec.SetJsValue(e, context.global)
+	}
 	{
 		// For some reason ... type errors created in Go scope are not the same
 		// prototype as in JS scope.
