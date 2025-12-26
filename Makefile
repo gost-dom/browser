@@ -69,10 +69,10 @@ test-html:
 
 .PHONY: test-v8
 test-v8:
-	gotestsum --format dots --watch --packages "./scripting/v8engine ./internal/test/scripttests" -- -vet=off
+	gotestsum --format dots --watch --packages "./scripting/v8engine ./scripting/internal/scripttests" -- -vet=off
 
 test-scripting:
-	gotestsum --format dots --watch --packages "./scripting/... ./internal/test/scripttests" -- -vet=off
+	gotestsum --format dots --watch --packages "./scripting/... ./scripting/internal/scripttests" -- -vet=off
 
 .PHONY: test-sobek
 test-sobek:
