@@ -196,7 +196,6 @@ func (c *scriptContext) CreateClass(
 func (c *scriptContext) ConfigureGlobalScope(
 	name string, extends js.Class[jsTypeParam],
 ) js.Class[jsTypeParam] {
-	fmt.Println("ConfigureGlobal")
 	cls := newGlobalObject(c, name)
 	c.global = cls
 	constructor := c.vm.ToValue(cls.constructorCb).(*sobek.Object)

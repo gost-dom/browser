@@ -92,7 +92,6 @@ func (c v8GlobalClass) CreateAttribute(
 	setter js.CallbackFunc[jsTypeParam],
 	opts ...js.PropertyOption,
 ) {
-	fmt.Println("Setting global attribute", name)
 	host := c.v8Class.host
 	className := c.v8Class.name
 	v8Getter := wrapV8Callback(host, getter.WithLog(className, fmt.Sprintf("%s get", name)))
