@@ -7,6 +7,6 @@ import (
 	"github.com/gost-dom/browser/scripting/v8engine"
 )
 
-func TestESMSupport(t *testing.T) {
+func TestESMSupport_V8(t *testing.T) {
 	scripttests.RunModuleSuite(t, v8engine.DefaultEngine())
 }

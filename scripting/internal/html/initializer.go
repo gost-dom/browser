@@ -25,7 +25,10 @@ func ConfigureScriptEngine[T any](e js.ScriptEngine[T]) {
 	installEventLoopGlobals(e)
 	Bootstrap(e)
 
-	js.RegisterClass(e, "Window", "EventTarget", NewWindow)
+	w := NewWindow(e)
+	eventTarget, _ := e.Class("EventTarget")
+	window := e.ConfigureGlobalScope("Window", eventTarget)
+	w.Initialize(window)
 	js.RegisterClass(e, "DOMStringMap", "", NewDOMStringMap)
 
 	// HTMLDocument exists as a separate class for historical reasons, but it

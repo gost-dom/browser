@@ -16,6 +16,7 @@ type ScriptEngine[T any] interface {
 	CreateGlobalObject(name string) GlobalObject[T]
 	CreateFunction(name string, cb CallbackFunc[T])
 	SetUnhandledPromiseRejectionHandler(ErrorHandler[T])
+	ConfigureGlobalScope(name string, Parent Class[T]) Class[T]
 
 	// InstallPolyfill is an escape hatch for when creating the right DOM
 	// environment was easier to do in JS - or usable polyfills were found.
@@ -26,4 +27,8 @@ type ScriptEngine[T any] interface {
 // register a Configurator to define values in global JavaScript scope.
 type ScriptEngineFactory[T any] interface {
 	AddConfigurator(Configurer[T])
+}
+
+func IllegalConstructor[T any](ctx CallbackContext[T]) (Value[T], error) {
+	return nil, ctx.NewTypeError("Illegal Constructor")
 }

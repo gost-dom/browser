@@ -7,6 +7,9 @@ import (
 	"github.com/gost-dom/v8go"
 )
 
+var _ jsClass = &v8Class{}
+var _ jsClass = &v8GlobalClass{}
+
 type v8Class struct {
 	host  *V8ScriptHost
 	ft    *v8go.FunctionTemplate
@@ -17,7 +20,9 @@ type v8Class struct {
 }
 
 func newV8Class(host *V8ScriptHost, name string, ft *v8go.FunctionTemplate) v8Class {
-	return v8Class{host, ft, ft.PrototypeTemplate(), ft.InstanceTemplate(), name}
+	result := v8Class{host, ft, ft.PrototypeTemplate(), ft.InstanceTemplate(), name}
+	result.inst.SetInternalFieldCount(1)
+	return result
 }
 
 func (c v8Class) CreateIteratorMethod(cb js.CallbackFunc[jsTypeParam]) {
@@ -25,6 +30,7 @@ func (c v8Class) CreateIteratorMethod(cb js.CallbackFunc[jsTypeParam]) {
 	it := v8go.SymbolIterator(c.host.iso)
 	c.proto.SetSymbol(it, v8cb, v8go.ReadOnly)
 }
+
 func (c v8Class) CreateOperation(name string, cb js.CallbackFunc[jsTypeParam]) {
 	v8cb := wrapV8Callback(c.host, cb.WithLog(c.name, name))
 	c.proto.Set(name, v8cb, v8go.ReadOnly)
@@ -63,4 +69,45 @@ func (c v8Class) CreateNamedHandler(opts ...js.NamedHandlerOption[jsTypeParam]) 
 		o(&oo)
 	}
 	c.inst.SetNamedHandler(v8HandlerWrapper{c.host, oo})
+}
+
+/* -------- v8GlobalClass -------- */
+
+type v8GlobalClass struct {
+	v8Class v8Class
+}
+
+func newV8GlobalClass(host *V8ScriptHost, name string, ft *v8go.FunctionTemplate) *v8GlobalClass {
+	return &v8GlobalClass{newV8Class(host, name, ft)}
+}
+
+func (c v8GlobalClass) CreateOperation(name string, cb js.CallbackFunc[jsTypeParam]) {
+	v8cb := wrapV8Callback(c.v8Class.host, cb.WithLog(c.v8Class.name, name))
+	c.v8Class.host.windowTemplate.Set(name, v8cb, v8go.ReadOnly)
+}
+
+func (c v8GlobalClass) CreateAttribute(
+	name string,
+	getter js.CallbackFunc[jsTypeParam],
+	setter js.CallbackFunc[jsTypeParam],
+	opts ...js.PropertyOption,
+) {
+	fmt.Println("Setting global attribute", name)
+	host := c.v8Class.host
+	className := c.v8Class.name
+	v8Getter := wrapV8Callback(host, getter.WithLog(className, fmt.Sprintf("%s get", name)))
+	v8Setter := wrapV8Callback(host, setter.WithLog(className, fmt.Sprintf("%s set", name)))
+	host.windowTemplate.SetAccessorProperty(name, v8Getter, v8Setter, v8go.None)
+}
+
+func (c v8GlobalClass) CreateIndexedHandler(opts ...js.IndexedHandlerOption[jsTypeParam]) {
+	c.v8Class.CreateIndexedHandler(opts...)
+}
+
+func (c v8GlobalClass) CreateNamedHandler(opts ...js.NamedHandlerOption[jsTypeParam]) {
+	c.v8Class.CreateNamedHandler(opts...)
+}
+
+func (c v8GlobalClass) CreateIteratorMethod(cb js.CallbackFunc[jsTypeParam]) {
+	c.v8Class.CreateIteratorMethod(cb)
 }

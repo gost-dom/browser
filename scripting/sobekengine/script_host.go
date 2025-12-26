@@ -70,9 +70,10 @@ func (h *scriptHost) NewContext(bc html.BrowsingContext) html.ScriptContext {
 		sobek.FLAG_FALSE,
 		sobek.FLAG_FALSE,
 	)
-	globalThis.Set("window", globalThis)
 	h.initializer.Configure(result)
-	globalThis.SetPrototype(result.classes["Window"].prototype)
+	if global := result.global; global != nil {
+		globalThis.SetPrototype(result.global.prototype)
+	}
 
 	return result
 }

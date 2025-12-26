@@ -24,10 +24,12 @@ type scriptContext struct {
 	browsingCtx  html.BrowsingContext
 	classes      map[string]*class
 	wrappedGoObj *sobek.Symbol
+	global       *globalObjectClass
 }
 
-func (c *scriptContext) Clock() html.Clock        { return c.clock }
-func (c *scriptContext) Context() context.Context { return c.browsingCtx.Context() }
+func (c *scriptContext) Clock() html.Clock         { return c.clock }
+func (c *scriptContext) Context() context.Context  { return c.browsingCtx.Context() }
+func (c *scriptContext) globalThis() *sobek.Object { return c.vm.GlobalObject() }
 
 func (i *scriptContext) Close() {}
 
@@ -179,6 +181,35 @@ func (c *scriptContext) CreateClass(
 	cls.prototype = constructor.Get("prototype").(*sobek.Object)
 	c.vm.Set(name, constructor)
 	c.classes[name] = cls
+
+	if extends != nil {
+		if superclass, ok := extends.(*class); ok {
+			cls.prototype.SetPrototype(superclass.prototype)
+		} else {
+			panic(fmt.Sprintf("Superclass not installed for %s. extends: %+v", name, extends))
+		}
+	}
+
+	return cls
+}
+
+func (c *scriptContext) ConfigureGlobalScope(
+	name string, extends js.Class[jsTypeParam],
+) js.Class[jsTypeParam] {
+	fmt.Println("ConfigureGlobal")
+	cls := newGlobalObject(c, name)
+	c.global = cls
+	constructor := c.vm.ToValue(cls.constructorCb).(*sobek.Object)
+	constructor.DefineDataProperty(
+		"name",
+		c.vm.ToValue(name),
+		sobek.FLAG_NOT_SET,
+		sobek.FLAG_NOT_SET,
+		sobek.FLAG_NOT_SET,
+	)
+	cls.prototype = constructor.Get("prototype").(*sobek.Object)
+	c.vm.Set(name, constructor)
+	// c.classes[name] = cls
 
 	if extends != nil {
 		if superclass, ok := extends.(*class); ok {

@@ -55,6 +55,7 @@ type V8ScriptHost struct {
 	contexts        map[*v8go.Context]*V8ScriptContext
 	disposed        bool
 	iterator        v8Iterator
+	global          *v8GlobalClass
 
 	unhandledPromiseRejectionHandler js.ErrorHandler[jsTypeParam]
 }
@@ -177,10 +178,17 @@ func (host *V8ScriptHost) NewContext(bc html.BrowsingContext) html.ScriptContext
 		browsingCtx: bc,
 		resolver:    moduleResolver{host: host},
 	}
-	if _, err := context.runScript("Object.setPrototypeOf(globalThis, globalThis.Window.prototype)"); err != nil {
-		panic(err)
+	if g := host.global; g != nil {
+		script := fmt.Sprintf(
+			"Object.setPrototypeOf(globalThis, globalThis.%s.prototype)",
+			host.global.v8Class.name,
+		)
+		if _, err := context.runScript(script); err != nil {
+			panic(err)
+		}
 	}
 	host.addContext(context)
+
 	if err := context.initializeGlobals(); err != nil {
 		panic(err)
 	}
@@ -207,13 +215,21 @@ func (host *V8ScriptHost) CreateClass(
 ) js.Class[jsTypeParam] {
 	ft := wrapV8Callback(host, callback.WithLog(name, "Constructor"))
 	result := newV8Class(host, name, ft)
-	result.inst.SetInternalFieldCount(1)
 	if extends != nil {
 		ft.Inherit(extends.(v8Class).ft)
 	}
 	host.windowTemplate.Set(name, ft)
 	host.globals.namedGlobals[name] = result
 	return result
+}
+
+func (h *V8ScriptHost) ConfigureGlobalScope(name string, parent jsClass) jsClass {
+	h.global = newV8GlobalClass(h, name, wrapV8Callback(h, js.IllegalConstructor[jsTypeParam]))
+	h.windowTemplate.Set(name, h.global.v8Class.ft)
+	if parent != nil {
+		h.global.v8Class.ft.Inherit(parent.(v8Class).ft)
+	}
+	return h.global
 }
 
 func (h *V8ScriptHost) Class(name string) (js.Class[jsTypeParam], bool) {

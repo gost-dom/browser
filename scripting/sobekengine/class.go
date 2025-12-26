@@ -218,3 +218,31 @@ func (o dynamicObject) Set(key string, val sobek.Value) bool {
 	}
 	return true
 }
+
+/* -------- globalObjectClass -------- */
+
+type globalObjectClass struct {
+	class
+}
+
+func newGlobalObject(c *scriptContext,
+	name string) *globalObjectClass {
+	return &globalObjectClass{
+		class{
+			ctx: c, name: name,
+			cb:            js.IllegalConstructor[jsTypeParam],
+			instanceAttrs: make(map[string]attributeHandler),
+		},
+	}
+}
+
+func (c *globalObjectClass) CreateAttribute(
+	name string,
+	getter js.CallbackFunc[jsTypeParam],
+	setter js.CallbackFunc[jsTypeParam],
+	opts ...js.PropertyOption,
+) {
+	globalThis := c.class.ctx.globalThis()
+	attr := attributeHandler{c.ctx, name, getter, setter}
+	attr.install(globalThis)
+}
