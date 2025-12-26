@@ -1,4 +1,4 @@
-package v8engine_test
+package v8engine
 
 import (
 	"strings"
@@ -6,7 +6,7 @@ import (
 
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
-	"github.com/gost-dom/browser/scripting/v8engine"
+	"github.com/gost-dom/browser/scripting/internal/scripttests"
 	"github.com/onsi/gomega"
 )
 
@@ -17,7 +17,7 @@ func TestScriptHostDocumentScriptLoading(t *testing.T) {
     <div>I should not be in the output</div>
   </body></html>
 `)
-	host := v8engine.New()
+	host := New()
 	t.Cleanup(host.Close)
 	options := html.WindowOptions{ScriptHost: host}
 	win, err := html.NewWindowReader(reader, nil, options)
@@ -28,4 +28,8 @@ func TestScriptHostDocumentScriptLoading(t *testing.T) {
 		ctx.Eval("window.sut"),
 	).To(Equal(`<html><head></head><body>
     <script>window.sut = document.documentElement.outerHTML</script></body></html>`))
+}
+
+func TestBasics(t *testing.T) {
+	scripttests.RunBasicSuite(t, assertEngine)
 }

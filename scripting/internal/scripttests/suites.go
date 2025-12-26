@@ -4,8 +4,10 @@ import (
 	"testing"
 
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/testing/browsertest"
 	"github.com/gost-dom/browser/scripting/internal/dom/domsuite"
 	"github.com/gost-dom/browser/scripting/internal/html/htmlsuite"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -14,6 +16,15 @@ func runSuite(s suite.TestingSuite) func(t *testing.T) {
 		t.Parallel()
 		suite.Run(t, s)
 	}
+}
+
+func RunBasicSuite(t *testing.T, e html.ScriptEngine) {
+	var w = browsertest.InitWindow(t, e)
+	assert.NotNil(t, w.MustEval("globalThis"), "globalThis is nil")
+	assert.NotNil(t, w.MustEval("window"), "window is nil")
+	assert.Equal(t, "Window", w.MustEval("Object.getPrototypeOf(globalThis).constructor.name"))
+	assert.Equal(t, "Window", w.MustEval("Object.getPrototypeOf(window).constructor.name"))
+	assert.True(t, w.MustEval("window === globalThis").(bool))
 }
 
 func RunSuites(t *testing.T, e html.ScriptEngine) {

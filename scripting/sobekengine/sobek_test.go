@@ -15,7 +15,7 @@ func TestSobekHost(t *testing.T) {
 	scripttests.RunSuites(t, assertEngine)
 }
 
-func TestESMSupport(t *testing.T) {
+func TestESMSupport_Sobek(t *testing.T) {
 	scripttests.RunModuleSuite(t, DefaultEngine())
 }
 
@@ -29,6 +29,10 @@ func TestHTMX(t *testing.T) {
 
 func TestDatastar(t *testing.T) {
 	scripttests.RunDataStarTests(t, DefaultEngine())
+}
+
+func TestBasics(t *testing.T) {
+	scripttests.RunBasicSuite(t, assertEngine)
 }
 
 func init() {
