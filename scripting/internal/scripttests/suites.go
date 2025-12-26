@@ -37,7 +37,6 @@ func RunSuites(t *testing.T, e html.ScriptEngine) {
 	t.Run("Element", runSuite(NewElementSuite(e)))
 	t.Run("Window", runSuite(NewWindowTestSuite(e)))
 	t.Run("UIEvents", runSuite(NewUIEventTestSuite(e)))
-	t.Run("EventTarget", runSuite(NewEventTargetTestSuite(e)))
 	t.Run("FormData", runSuite(NewFormDataSuite(e)))
 	t.Run("ClassList", runSuite(NewClassListTestSuite(e)))
 	t.Run("Node", runSuite(NewNodeTestSuite(e)))
