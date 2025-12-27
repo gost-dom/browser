@@ -1,8 +1,16 @@
 # Glossary
 
+- **Interface**. 
+
+  The IDL Specification defines _interfaces_; which are exposed in certain
+  scopes, implemented by "classes" in JavaScript.
+  - The interfaces can be composed of _partial_ or _mixin_ interfaces.
+  - IDL Interfaces and mixin interfaces are represented in Go, and typically
+    exposed as Go `interface` types.
+
 ## JavaScript
 
-- Realm
+- **Realm**
   
   An isolated JavaScript environment with it's own set of objects in global
   scope. When navigating, the browser creates a new realm.
