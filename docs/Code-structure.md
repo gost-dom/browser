@@ -19,10 +19,9 @@ browser/ # Main entry point,
         gosthttp/   # Helper for handling HTTP requests
         interfaces/ # Interfaces generated from webref specs
             url-interfaces/ # Interfaces for the URL spec.
-        log/ # Logging functionality
+        log/  # Logging helpers
         test/ # Test code.
             integration/ # Contains a simple go web app for testing
-            scripttests/ # Common test suite for JavaScript implementations
         testing/ # Test helpers
     dom/ # Core dom functionality. Nodes, elements, attributes, document, etc.
         event/ # EventTarget and Event types
@@ -30,6 +29,7 @@ browser/ # Main entry point,
     logger/ # Provides a way for client code of receiving log messages
     scripting/ # Impementing of scripting engines
         internal/
+            scripttests/ # Common test suite for JavaScript implementations
             js/    # Defines the interface for a script engine
             codec/ # Conversion between Go and JS values
             dom/   # Implementation of the DOM API
