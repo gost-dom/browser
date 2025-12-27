@@ -65,10 +65,7 @@ func (i PrototypeInitializer) InstallFunctionHandlers(
 ) g.Generator {
 	renderedAny := false
 	stmts := g.StatementList()
-	for _, op := range i.Data.Operations {
-		if op.MethodCustomization.Ignored {
-			continue
-		}
+	for op := range i.Data.WrapperFunctionsToInstall() {
 		cb := receiver.Field(op.CallbackMethodName())
 		stmts.Append(class.CreateOperation(op.Name, cb))
 		renderedAny = true
