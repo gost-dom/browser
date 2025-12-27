@@ -125,8 +125,8 @@ be directed back to Go code, see [Getting started](./Getting-started.md)
 This is so far very limited in capabilities. Only enough has been implemented to
 support some basic [Datastar](https://data-star.dev/) cases.
 
-- Fetch only supports `GET` requests [#93]
-- The **only** option accepted is `signal` [#106]
+- Fetch options `method`, `headers`, `body`, and `signal` are supported.
+
 - Only basic `ReadableStream` support, and no BYOB reader.
 
 [#93]: https://github.com/gost-dom/browser/issues/93

@@ -43,7 +43,7 @@ browser/ # Main entry point,
 
 ## Entities
 
-Package `internal/entities` defines the ability to store arbitrary data in an
+Package `internal/entity` defines the ability to store arbitrary data in an
 entity.
 
 This allows Gost-DOM to make sure the same JavaScript object is always returned
