@@ -5,7 +5,7 @@ import (
 	"io"
 
 	"github.com/gost-dom/browser/dom/event"
-	inthtml "github.com/gost-dom/browser/internal/html"
+	xhrint "github.com/gost-dom/browser/internal/html/xhr"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -35,7 +35,7 @@ func (xhr XMLHttpRequest[T]) CreateInstance(
 		return nil, err
 	}
 	this := cbCtx.This()
-	result := inthtml.NewXmlHttpRequest(win, cbCtx.Clock())
+	result := xhrint.NewXmlHttpRequest(win, cbCtx.Clock())
 	result.SetCatchAllHandler(event.NewEventHandlerFunc(func(event *event.Event) error {
 		prop := "on" + event.Type
 		handler, err := this.Get(prop)
@@ -52,7 +52,7 @@ func (xhr XMLHttpRequest[T]) CreateInstance(
 }
 
 func (xhr XMLHttpRequest[T]) open(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	instance, errInstance := js.As[inthtml.XmlHttpRequest](cbCtx.Instance())
+	instance, errInstance := js.As[xhrint.XmlHttpRequest](cbCtx.Instance())
 	method, err0 := js.ConsumeArgument(cbCtx, "method", nil, codec.DecodeString)
 	url, err1 := js.ConsumeArgument(cbCtx, "url", nil, codec.DecodeString)
 	if err := errors.Join(err0, err1, errInstance); err != nil {
@@ -62,7 +62,7 @@ func (xhr XMLHttpRequest[T]) open(cbCtx js.CallbackContext[T]) (js.Value[T], err
 		if err2 != nil {
 			return nil, err2
 		}
-		instance.Open(method, url, inthtml.RequestOptionAsync(async))
+		instance.Open(method, url, xhrint.RequestOptionAsync(async))
 		return nil, nil
 	}
 	instance.Open(method, url)

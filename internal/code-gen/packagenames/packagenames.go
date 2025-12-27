@@ -25,6 +25,7 @@ const (
 	URLInterfaces  = BASE_PKG + "/internal/interfaces/url-interfaces"
 	HTMLInterfaces = BASE_PKG + "/internal/interfaces/html-interfaces"
 	HTMLInternal   = BASE_PKG + "/internal/html"
+	Xhr            = BASE_PKG + "/internal/html/xhr"
 	JS             = BASE_PKG + "/scripting/internal/js"
 	Codec          = BASE_PKG + "/scripting/internal/codec"
 	URL            = BASE_PKG + "/url"
