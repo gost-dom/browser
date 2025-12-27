@@ -10,7 +10,7 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (xhr XMLHttpRequest[T]) decodeDocument(
+func decodeDocument[T any](
 	_ js.Scope[T],
 	val js.Value[T],
 ) (io.Reader, error) {
@@ -20,7 +20,7 @@ func (xhr XMLHttpRequest[T]) decodeDocument(
 	return nil, errors.New("Not supported yet")
 }
 
-func (xhr XMLHttpRequest[T]) decodeXMLHttpRequestBodyInit(
+func decodeXMLHttpRequestBodyInit[T any](
 	s js.Scope[T],
 	val js.Value[T],
 ) (io.Reader, error) {
@@ -77,7 +77,7 @@ func (w XMLHttpRequest[T]) toAny(s js.Scope[T], val string) (js.Value[T], error)
 	return codec.EncodeString(s, val)
 }
 
-func (xhr XMLHttpRequest[T]) decodeXMLHttpRequestResponseType(
+func decodeXMLHttpRequestResponseType[T any](
 	s js.Scope[T], val js.Value[T],
 ) (string, error) {
 	return codec.DecodeString(s, val)

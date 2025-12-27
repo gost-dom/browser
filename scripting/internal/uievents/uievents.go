@@ -7,12 +7,12 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w UIEvent[T]) decodeMouseEventInit(s js.Scope[T], v js.Value[T]) (codec.EventInit, error) {
-	return w.decodeUIEventInit(s, v)
+func decodeMouseEventInit[T any](s js.Scope[T], v js.Value[T]) (codec.EventInit, error) {
+	return decodeUIEventInit(s, v)
 }
 
-func (w UIEvent[T]) decodePointerEventInit(s js.Scope[T], v js.Value[T]) (codec.EventInit, error) {
-	return w.decodeMouseEventInit(s, v)
+func decodePointerEventInit[T any](s js.Scope[T], v js.Value[T]) (codec.EventInit, error) {
+	return decodeMouseEventInit(s, v)
 }
 
 func (w UIEvent[T]) CreateInstance(
@@ -30,12 +30,12 @@ func (w UIEvent[T]) CreateInstanceEventInitDict(
 	return codec.EncodeConstrucedValue(cbCtx, e)
 }
 
-func (w UIEvent[T]) decodeUIEventInit(s js.Scope[T], v js.Value[T]) (codec.EventInit, error) {
+func decodeUIEventInit[T any](s js.Scope[T], v js.Value[T]) (codec.EventInit, error) {
 	return codec.DecodeEventInit(s, v)
 }
 
-func (w UIEvent[T]) decodeKeyboardEventInit(s js.Scope[T], v js.Value[T]) (codec.EventInit, error) {
-	return w.decodeUIEventInit(s, v)
+func decodeKeyboardEventInit[T any](s js.Scope[T], v js.Value[T]) (codec.EventInit, error) {
+	return decodeUIEventInit(s, v)
 }
 
 type MouseEvent[T any] struct {

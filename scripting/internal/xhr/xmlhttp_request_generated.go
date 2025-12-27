@@ -64,7 +64,7 @@ func (w XMLHttpRequest[T]) send(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 	if errInst != nil {
 		return nil, errInst
 	}
-	body, errArg1 := js.ConsumeArgument(cbCtx, "body", codec.ZeroValue, w.decodeDocument, w.decodeXMLHttpRequestBodyInit)
+	body, errArg1 := js.ConsumeArgument(cbCtx, "body", codec.ZeroValue, decodeDocument, decodeXMLHttpRequestBodyInit)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -201,7 +201,7 @@ func (w XMLHttpRequest[T]) responseType(cbCtx js.CallbackContext[T]) (res js.Val
 
 func (w XMLHttpRequest[T]) setResponseType(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[xhr.XMLHttpRequest](cbCtx.Instance())
-	val, err1 := js.ParseSetterArg(cbCtx, w.decodeXMLHttpRequestResponseType)
+	val, err1 := js.ParseSetterArg(cbCtx, decodeXMLHttpRequestResponseType)
 	err = gosterror.First(err0, err1)
 	if err != nil {
 		return nil, err

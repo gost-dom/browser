@@ -29,8 +29,8 @@ func (w ReadableStream[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w ReadableStream[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	underlyingSource, errArg1 := js.ConsumeArgument(cbCtx, "underlyingSource", codec.ZeroValue, w.decodeObject)
-	strategy, errArg2 := js.ConsumeArgument(cbCtx, "strategy", nil, w.decodeQueuingStrategy)
+	underlyingSource, errArg1 := js.ConsumeArgument(cbCtx, "underlyingSource", codec.ZeroValue, decodeObject)
+	strategy, errArg2 := js.ConsumeArgument(cbCtx, "strategy", nil, decodeQueuingStrategy)
 	err = gosterror.First(errArg1, errArg2)
 	if err != nil {
 		return nil, err
@@ -47,7 +47,7 @@ func (w ReadableStream[T]) getReader(cbCtx js.CallbackContext[T]) (res js.Value[
 	if errInst != nil {
 		return nil, errInst
 	}
-	options, errArg1 := js.ConsumeArgument(cbCtx, "options", nil, w.decodeReadableStreamGetReaderOptions)
+	options, errArg1 := js.ConsumeArgument(cbCtx, "options", nil, decodeReadableStreamGetReaderOptions)
 	if errArg1 != nil {
 		return nil, errArg1
 	}

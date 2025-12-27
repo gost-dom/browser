@@ -26,7 +26,7 @@ func (w MutationObserver[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w MutationObserver[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	callback, errArg1 := js.ConsumeArgument(cbCtx, "callback", nil, w.decodeMutationCallback)
+	callback, errArg1 := js.ConsumeArgument(cbCtx, "callback", nil, decodeMutationCallback)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -39,7 +39,7 @@ func (w MutationObserver[T]) observe(cbCtx js.CallbackContext[T]) (res js.Value[
 		return nil, errInst
 	}
 	target, errArg1 := js.ConsumeArgument(cbCtx, "target", nil, codec.DecodeNode)
-	options, errArg2 := js.ConsumeArgument(cbCtx, "options", nil, w.decodeObserveOption)
+	options, errArg2 := js.ConsumeArgument(cbCtx, "options", nil, decodeObserveOption)
 	err = gosterror.First(errArg1, errArg2)
 	if err != nil {
 		return nil, err

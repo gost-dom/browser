@@ -23,7 +23,7 @@ func (w PointerEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[
 	if errArg1 != nil {
 		return nil, errArg1
 	}
-	eventInitDict, found, errArg := js.ConsumeOptionalArg(cbCtx, "eventInitDict", w.decodePointerEventInit)
+	eventInitDict, found, errArg := js.ConsumeOptionalArg(cbCtx, "eventInitDict", decodePointerEventInit)
 	if found {
 		if errArg != nil {
 			return nil, errArg

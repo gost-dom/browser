@@ -34,7 +34,7 @@ func (n Node[T]) nodeType(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return codec.EncodeInt(cbCtx, int(instance.NodeType()))
 }
 
-func (n Node[T]) decodeGetRootNodeOptions(
+func decodeGetRootNodeOptions[T any](
 	_ js.Scope[T],
 	value js.Value[T],
 ) (dom.GetRootNodeOptions, error) {

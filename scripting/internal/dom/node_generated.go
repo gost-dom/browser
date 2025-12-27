@@ -53,7 +53,7 @@ func (w Node[T]) getRootNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err 
 	if errInst != nil {
 		return nil, errInst
 	}
-	options, errArg1 := js.ConsumeArgument(cbCtx, "options", w.defaultGetRootNodeOptions, w.decodeGetRootNodeOptions)
+	options, errArg1 := js.ConsumeArgument(cbCtx, "options", w.defaultGetRootNodeOptions, decodeGetRootNodeOptions)
 	if errArg1 != nil {
 		return nil, errArg1
 	}

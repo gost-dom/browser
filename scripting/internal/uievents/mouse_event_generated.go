@@ -27,7 +27,7 @@ func (w MouseEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T]
 	if errArg1 != nil {
 		return nil, errArg1
 	}
-	eventInitDict, found, errArg := js.ConsumeOptionalArg(cbCtx, "eventInitDict", w.decodeMouseEventInit)
+	eventInitDict, found, errArg := js.ConsumeOptionalArg(cbCtx, "eventInitDict", decodeMouseEventInit)
 	if found {
 		if errArg != nil {
 			return nil, errArg

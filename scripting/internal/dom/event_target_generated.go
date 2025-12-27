@@ -35,7 +35,7 @@ func (w EventTarget[T]) addEventListener(cbCtx js.CallbackContext[T]) (res js.Va
 		return nil, errInst
 	}
 	type_, errArg1 := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
-	callback, errArg2 := js.ConsumeArgument(cbCtx, "callback", codec.ZeroValue, w.decodeEventListener)
+	callback, errArg2 := js.ConsumeArgument(cbCtx, "callback", codec.ZeroValue, decodeEventListener)
 	options, errArg3 := js.ConsumeArgument(cbCtx, "options", w.defaultEventListenerOptions, decodeEventListenerOptions)
 	err = gosterror.First(errArg1, errArg2, errArg3)
 	if err != nil {
@@ -51,7 +51,7 @@ func (w EventTarget[T]) removeEventListener(cbCtx js.CallbackContext[T]) (res js
 		return nil, errInst
 	}
 	type_, errArg1 := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
-	callback, errArg2 := js.ConsumeArgument(cbCtx, "callback", codec.ZeroValue, w.decodeEventListener)
+	callback, errArg2 := js.ConsumeArgument(cbCtx, "callback", codec.ZeroValue, decodeEventListener)
 	options, errArg3 := js.ConsumeArgument(cbCtx, "options", w.defaultEventListenerOptions, decodeEventListenerOptions)
 	err = gosterror.First(errArg1, errArg2, errArg3)
 	if err != nil {
@@ -66,7 +66,7 @@ func (w EventTarget[T]) dispatchEvent(cbCtx js.CallbackContext[T]) (res js.Value
 	if errInst != nil {
 		return nil, errInst
 	}
-	event, errArg1 := js.ConsumeArgument(cbCtx, "event", nil, w.decodeEvent)
+	event, errArg1 := js.ConsumeArgument(cbCtx, "event", nil, decodeEvent)
 	if errArg1 != nil {
 		return nil, errArg1
 	}

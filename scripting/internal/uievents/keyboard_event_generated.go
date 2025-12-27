@@ -29,7 +29,7 @@ func (w KeyboardEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value
 	if errArg1 != nil {
 		return nil, errArg1
 	}
-	eventInitDict, found, errArg := js.ConsumeOptionalArg(cbCtx, "eventInitDict", w.decodeKeyboardEventInit)
+	eventInitDict, found, errArg := js.ConsumeOptionalArg(cbCtx, "eventInitDict", decodeKeyboardEventInit)
 	if found {
 		if errArg != nil {
 			return nil, errArg

@@ -6,7 +6,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w ReadableStream[T]) decodeObject(s js.Scope[T], v js.Value[T]) (string, error) {
+func decodeObject[T any](s js.Scope[T], v js.Value[T]) (string, error) {
 	var err error
 	if v != nil && v.Boolean() {
 		return "", codec.CallbackErrorf(s,
@@ -16,7 +16,7 @@ func (w ReadableStream[T]) decodeObject(s js.Scope[T], v js.Value[T]) (string, e
 	return "", err
 }
 
-func (w ReadableStream[T]) decodeQueuingStrategy(s js.Scope[T], v js.Value[T]) ([]string, error) {
+func decodeQueuingStrategy[T any](s js.Scope[T], v js.Value[T]) ([]string, error) {
 	if v != nil && v.Boolean() {
 		return nil, codec.CallbackErrorf(s,
 			"gost-dom/scripting/streams: ReadableStream strategy not yet supported",
@@ -32,7 +32,7 @@ func (w ReadableStream[T]) CreateInstance(
 		"gost-dom/scripting/streams: ReadableStream constructor not yet supported",
 	)
 }
-func (w ReadableStream[T]) decodeReadableStreamGetReaderOptions(
+func decodeReadableStreamGetReaderOptions[T any](
 	s js.Scope[T], v js.Value[T],
 ) ([]streams.GetReaderOption, error) {
 	if v != nil && v.Boolean() {
