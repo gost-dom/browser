@@ -10,7 +10,7 @@ func decodeHistoryState[T any](s js.Scope[T], val js.Value[T]) (html.HistoryStat
 	return html.HistoryState(s.JSONStringify(val)), nil
 }
 
-func (w History[T]) toHistoryState(
+func encodeHistoryState[T any](
 	cbCtx js.CallbackContext[T],
 	val htmlinterfaces.HistoryState,
 ) (js.Value[T], error) {

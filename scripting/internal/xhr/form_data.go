@@ -48,14 +48,14 @@ func decodeFormDataValue[T any](
 	return html.FormDataValue(val.String()), nil
 }
 
-func (w FormData[T]) toFormDataEntryValue(
+func encodeFormDataEntryValue[T any](
 	cbCtx js.CallbackContext[T],
 	val html.FormDataValue,
 ) (js.Value[T], error) {
 	return codec.EncodeString(cbCtx, string(val))
 }
 
-func (w FormData[T]) toSequenceFormDataEntryValue(
+func encodeSequenceFormDataEntryValue[T any](
 	cbCtx js.CallbackContext[T],
 	data []html.FormDataValue,
 ) (js.Value[T], error) {

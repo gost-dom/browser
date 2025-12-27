@@ -69,7 +69,7 @@ func (w Document[T]) getElementsByTagName(cbCtx js.CallbackContext[T]) (res js.V
 		return nil, errArg1
 	}
 	result := instance.GetElementsByTagName(qualifiedName)
-	return w.toHTMLCollection(cbCtx, result)
+	return encodeHTMLCollection(cbCtx, result)
 }
 
 func (w Document[T]) getElementsByTagNameNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
@@ -84,7 +84,7 @@ func (w Document[T]) getElementsByTagNameNS(cbCtx js.CallbackContext[T]) (res js
 		return nil, err
 	}
 	result := instance.GetElementsByTagNameNS(namespace, localName)
-	return w.toHTMLCollection(cbCtx, result)
+	return encodeHTMLCollection(cbCtx, result)
 }
 
 func (w Document[T]) getElementsByClassName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

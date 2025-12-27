@@ -55,7 +55,7 @@ func (w Body[T]) body(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) 
 		return nil, err
 	}
 	result := instance.Body()
-	return w.toReadableStream(cbCtx, result)
+	return encodeReadableStream(cbCtx, result)
 }
 
 func (w Body[T]) bodyUsed(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

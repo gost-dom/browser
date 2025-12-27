@@ -24,12 +24,12 @@ func (w ReadableStreamDefaultReader[T]) decodeReadableStream(
 	return
 }
 
-func (w ReadableStreamDefaultReader[T]) toPromiseReadableStreamReadResult(
+func encodePromiseReadableStreamReadResult[T any](
 	ctx js.CallbackContext[T], prom promise.Promise[streams.ReadResult]) (js.Value[T], error) {
-	return codec.EncodePromise(ctx, prom, w.encodeReadResult)
+	return codec.EncodePromise(ctx, prom, encodeReadResult)
 }
 
-func (w ReadableStreamDefaultReader[T]) encodeReadResult(
+func encodeReadResult[T any](
 	s js.Scope[T], readResult streams.ReadResult,
 ) (js.Value[T], error) {
 	res := s.NewObject()

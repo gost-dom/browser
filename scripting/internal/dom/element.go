@@ -33,7 +33,7 @@ func (e Element[T]) classList(cbCtx js.CallbackContext[T]) (js.Value[T], error) 
 	return tokenList.NewInstance(cl)
 }
 
-func (e *Element[T]) toNamedNodeMap(
+func encodeNamedNodeMap[T any](
 	cbCtx js.CallbackContext[T],
 	n dom.NamedNodeMap,
 ) (js.Value[T], error) {
@@ -42,11 +42,4 @@ func (e *Element[T]) toNamedNodeMap(
 
 func decodeElement[T any](s js.Scope[T], v js.Value[T]) (dom.Element, error) {
 	return codec.DecodeAs[dom.Element](s, v)
-}
-
-func (w *Element[T]) toHTMLCollection(
-	cbCtx js.CallbackContext[T],
-	c dom.HTMLCollection,
-) (js.Value[T], error) {
-	return cbCtx.Constructor("HTMLCollection").NewInstance(c)
 }

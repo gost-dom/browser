@@ -107,7 +107,7 @@ func (w ParentNode[T]) children(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 		return nil, err
 	}
 	result := instance.Children()
-	return w.toHTMLCollection(cbCtx, result)
+	return encodeHTMLCollection(cbCtx, result)
 }
 
 func (w ParentNode[T]) firstElementChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

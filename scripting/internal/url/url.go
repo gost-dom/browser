@@ -84,7 +84,7 @@ func (w URLSearchParams[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T
 	return codec.EncodeConstructedValue(cbCtx, &res)
 }
 
-func (w URLSearchParams[T]) toSequenceString_(
+func encodeSequenceString_[T any](
 	cbCtx js.CallbackContext[T],
 	values []string,
 ) (js.Value[T], error) {

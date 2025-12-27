@@ -20,7 +20,7 @@ func (w AbortController[T]) CreateInstance(cbCtx js.CallbackContext[T]) (js.Valu
 	return codec.EncodeConstructedValue(cbCtx, ctrl)
 }
 
-func (w AbortController[T]) toAbortSignal(
+func encodeAbortSignal[T any](
 	cbCtx js.CallbackContext[T],
 	signal dominterfaces.AbortSignal,
 ) (js.Value[T], error) {

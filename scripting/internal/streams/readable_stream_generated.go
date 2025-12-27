@@ -52,7 +52,7 @@ func (w ReadableStream[T]) getReader(cbCtx js.CallbackContext[T]) (res js.Value[
 		return nil, errArg1
 	}
 	result := instance.GetReader(options...)
-	return w.toReadableStreamReader(cbCtx, result)
+	return encodeReadableStreamReader(cbCtx, result)
 }
 
 func (w ReadableStream[T]) pipeThrough(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

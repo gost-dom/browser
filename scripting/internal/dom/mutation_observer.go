@@ -67,7 +67,7 @@ func decodeObserveOption[T any](
 	return res, err
 }
 
-func (w MutationObserver[T]) toSequenceMutationRecord(
+func encodeSequenceMutationRecord[T any](
 	cbCtx js.CallbackContext[T],
 	records []mutation.Record,
 ) (js.Value[T], error) {

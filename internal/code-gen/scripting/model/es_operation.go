@@ -145,7 +145,7 @@ func (o Callback) Encoder(
 		}
 	}
 	var boundArgs []g.Generator
-	converter := "to"
+	converter := "encode"
 	if t.Kind == idl.KindSequence {
 		converter += "Sequence"
 		t = *t.TypeParam
@@ -163,7 +163,7 @@ func (o Callback) Encoder(
 		}
 	}
 	converter += IdlNameToGoName(idlTypeNameToGoName(t))
-	return internal.BindValues(receiver.Field(converter), cbCtx)
+	return internal.BindValues(g.NewValue(converter), cbCtx)
 }
 
 func (o Callback) RetValues(data ESConstructorData) []g.Generator {

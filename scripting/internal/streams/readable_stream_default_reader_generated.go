@@ -37,7 +37,7 @@ func (w ReadableStreamDefaultReader[T]) read(cbCtx js.CallbackContext[T]) (res j
 		return nil, err
 	}
 	result := instance.Read()
-	return w.toPromiseReadableStreamReadResult(cbCtx, result)
+	return encodePromiseReadableStreamReadResult(cbCtx, result)
 }
 
 func (w ReadableStreamDefaultReader[T]) releaseLock(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

@@ -23,7 +23,7 @@ func EncodeJSONBytes[T any](scope js.Scope[T], b []byte) (js.Value[T], error) {
 	return scope.JSONParse(string(b))
 }
 
-func (w Body[T]) toReadableStream(
+func encodeReadableStream[T any](
 	cbCtx js.CallbackContext[T],
 	body streams.ReadableStream,
 ) (js.Value[T], error) {

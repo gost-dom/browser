@@ -71,5 +71,5 @@ func (w Response[T]) headers(cbCtx js.CallbackContext[T]) (res js.Value[T], err 
 		return nil, err
 	}
 	result := &instance.Headers
-	return w.toHeaders(cbCtx, result)
+	return encodeHeaders(cbCtx, result)
 }

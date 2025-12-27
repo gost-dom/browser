@@ -111,5 +111,5 @@ func (w History[T]) state(cbCtx js.CallbackContext[T]) (res js.Value[T], err err
 		return nil, err
 	}
 	result := instance.State()
-	return w.toHistoryState(cbCtx, result)
+	return encodeHistoryState(cbCtx, result)
 }
