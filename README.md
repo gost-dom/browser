@@ -9,11 +9,13 @@
 In order to work effeciently with code<br />
 I want a fast feedback loop for <em>all</em> of my code.</blockquote></div>
 
-Gost-DOM is a development tool to help building web applications in Go. 
+Gost-DOM is a development tool to help building web applications in Go by
+providing a blazingly fast, completely reliable, feedback loop.
 
-By simulating a browser envinronment, including JavaScript execution[^1], Gost-DOM
-allows you to write an automated test suite, and run them so fast enough that they
-become a _useful feedback tool_.
+By simulating a browser envinronment in the test itself, including JavaScript
+execution[^1], Gost-DOM allows you to write an automated test suite, and run
+them so fast enough that they become a useful feedback tool _while implementing
+behaviour_.
 
 <p align="center">
 <em>
@@ -26,7 +28,7 @@ predictable code execution.
 
 To learn more, read [Why Gost-DOM?](./docs/why-gost.md)
 
-## Why not ...
+## Why not use ...
 
 The typical solution relies on browser automation (e.g., playwright). These have a
 significant overhead controlling a remote browser. In addition, developers
