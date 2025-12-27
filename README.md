@@ -9,27 +9,50 @@
 In order to work effeciently with code<br />
 I want a fast feedback loop for <em>all</em> of my code.</blockquote></div>
 
-Gost-DOM was born from the philosophy that the fast feedback loop provided by
-TDD makes it the most effective way to work with _the majority of the code
-base_.
+Gost-DOM is a development tool to help building web applications in Go. 
 
-Web UIs are typical exceptions to this rule. They rely on _real browsers_ for
-testing which introduce excessive overhead and slows down the feedback loop;
-reducing, or even eliminating, the effectiveness of TDD. In addition, developers
-often struggle with erratic tests due to unpredictable code execution.
+By simulating a browser envinronment, including JavaScript execution[^1], Gost-DOM
+allows you to write an automated test suite, and run them so fast enough that they
+become a _useful feedback tool_.
 
-Gost-DOM aims to solve that problem for web projects using Go. Gost-DOM
-simulates a browser environment, using a JavaScript engine to execute client
-script, allowing you to write test cases in Go to verify application behaviour,
-and apply an iterative process; supporting refactoring.[^1]
+<p align="center">
+<em>
+
+Gost-DOM is **the headless browser** that provides sub-second feedback with 100%
+predictable code execution.
+
+</em>
+</p>
 
 To learn more, read [Why Gost-DOM?](./docs/why-gost.md)
 
-## Benefits of Gost-DOM
+## Why not ...
 
-Compared to browser automation, Gost-DOM provides the benefits:
+The typical solution relies on browser automation (e.g., playwright). These have a
+significant overhead controlling a remote browser. In addition, developers
+often struggle with erratic tests due to unpredictable code execution.
 
-- Tests run in parallel due to complete _complete isolation_[^2]
+As a result, these types of tests are typically written _after the fact_, when
+the system already works.
+
+These tests didn't provide any value as a feedback tool _during development_.
+
+
+### Not a replacement
+
+Gost-DOM allows verification of individual pieces of behaviour _during
+development_, but it's not a full browser, e.g., you cannot export screen shots.
+
+In addition, there are sensible tests to write _after_ features were developed,
+e.g., test a complete web-shop order flow from login to check-out. Using a real
+browser for these types of tests would be sensible; and verifying in _all_
+browsers you support.
+
+## Other Benefits of Gost-DOM
+
+Gost-DOM has a few additional benefits over browser automation:
+
+- Tests run in parallel due to _complete isolation_[^2]
 - No erratic behaviour; 100% predictable UI reactions.
 - _Blazingly fast_.[^3] No out-of-process calls, not even thread boundaries for web
   API calls as web application code runs in the test thread.[^4]
@@ -41,19 +64,6 @@ Gost-DOM still uses HTTP request and responses for verification, testing the
 entire stack, including how middlewares affect the behaviour, verifying, and
 supporting refactoring of e.g., authentication logic.
 
-## Looking for sponsors
-
-This tool has reached a level where it can be used to test some web applications
-with JavaScript, e.g., simple HTMX applications. But there is still a lot to
-build to support just the most relevant Web APIs.
-
-I've made good progress because of too much spare time; but that will not last.
-If I could find enough sponsors, it could mean the difference between continued
-development, or death 😢
-
-For companies wanting to sponsor, I can send formal invoices too. More
-information on the project's [Sponsor page](https://gostdom.net/sponsor)
-
 ## Getting started
 
 - Read [Getting Started]
@@ -61,6 +71,12 @@ information on the project's [Sponsor page](https://gostdom.net/sponsor)
 - [Join my discord server] to chat with me, and stay up-to-date on progress.
 - [say hi!] on the github discussions page.
 - Read the [contribution guide](./CONTRIBUTING.md) to see how you can help.
+
+Also, check out the [Shaman module] which provides capabilities of querying the
+DOM at a higher level of abstraction, e.g., find an element with a specific
+_label_ / _accessibility name_, allowing tests to be more expressive
+
+[Shaman module]: https://github.com/gost-dom/shaman
 
 > [!NOTE]
 >
@@ -73,100 +89,16 @@ information on the project's [Sponsor page](https://gostdom.net/sponsor)
 [say hi!]: https://github.com/orgs/gost-dom/discussions
 [Join my discord server]: https://discord.gg/rPBRt8Rf
 
-## Project status
+## Looking for sponsors
 
-This is still in an early phase, but it's approaching a design that seems
-promising for the purpose.
+This project is the spare time project for a single developer making good
+progress because of too much spare time; but that will not last.
 
-At the moment there's an emphasis on high-risk features that can expose poor
-design choices, but the "primary API" has been reasonably stable for a good
-amount of time.
+If I could find enough sponsors, it could mean the difference between continued
+development, or death 😢
 
-Gost-DOM supports basic HTMX interactions, as well as basic Datastar cases.
-
-### Future goals
-
-There is much to do, which includes (but this is not a full list):
-
-- Support web-sockets and server-sent events.
-- Implement all standard JavaScript classes that a browser should support; but
-  not part of the ECMAScript standard itself.
-  - JavaScript polyfills would be a good starting point; which is how xpath is
-    implemented at the moment.
-- Implement default browser behaviour for user interaction, e.g. pressing
-  <key>enter</key> when an input field has focus should submit the form.
-
-#### CSS Parsing
-
-Parsing CSS woule be nice, allowing test code to verify the style properties of
-HTML elements; in particular whether an element is visible; but having a working
-DOM with a JavaScript engine is higher priority.
-
-#### Mock external sites
-
-The system may depend on external sites in the browser, most notably identity
-providers (IDP), where your app redirects to the IDP, which redirects on
-successful login; but could be other services such as map providers, etc.
-
-For testing purposes, replacing this with a dummy replacement would have some
-benefits:
-
-- The verification of your system doesn't depend on the availability of an
-  external service; when working offline
-- Avoid tests breaking due to a new UI in your external dependency.
-- For an identity provider
-  - Avoid pollution of dummy accounts to run your test suite.
-  - Avoid locking out test accounts due to _"suspiscious activity"_.
-  - The IDP may use a Captcha or 2FA that can be impossible; or difficult to
-    control from tests, and would cause a significant slowdown to the test
-    suite.
-- For applications like map providers
-  - Avoid being billed for API use during testing.
-
-## Out of scope.
-
-### Full Spec Compliance
-
-> A goal is not always meant to be reached, it often serves simply as something
-> to aim at.
->
-> - Bruce Lee
-
-While it is a goal to reach whatwg spec compliance, the primary goal is to have
-a useful tool for testing modern web applications.
-
-Some specs don't really have any usage in modern web applications, like
-`document.write` or depending on quirks mode.
-
-### Accessibility tree
-
-It is not currently planned that this library should maintain the accessibility
-tree.
-
-The [Shaman module] provides capabilities of querying the DOM at a higher level
-of abstraction, e.g., find an element with a specific _label_ / _accessibility
-name_, allowing tests to be more expressive. This is inspired by the
-capabilities that [Testing Library] provides for JavaScript.
-
-[Shaman module]: https://github.com/gost-dom/shaman
-[Testing Library]: https://testing-library.com
-
-### Visual Rendering
-
-It is not a goal to be able to provide a visual rendering of the DOM.
-
-But just like the accessibility tree, this could be implemented in a new library
-depending only on the interface from here.
-
-## Terminology
-
-Some words inherntly have multiple meanings.
-
-- **Interface**. The IDL Specification defines _interfaces_; which are exposed
-in certain scopes, implemented by "classes" in JavaScript.
-  - The interfaces can be composed of _partial_ or _mixin_ interfaces.
-  - IDL Interfaces and mixin interfaces are represented in Go, and typically
-    exposed as Go `interface` types.
+For companies wanting to sponsor, I can send formal invoices too. More
+information on the project's [Sponsor page](https://gostdom.net/sponsor)
 
 ## Attribution / 3rd party included code.
 
@@ -194,7 +126,8 @@ In addition, to verify compatibility with 3rd party JavaScript libraries, the
 
 ---
 
-[^1]: Gost-DOM, by default, embeds a V8 engine - the same JavaScript engine that powers Chrome.
+[^1]: Gost-DOM can use V8 - the same JavaScript engine that powers Chrome; but a
+    native Go alternative also exists.
 [^2]: Complete isolation depends on _your code_, e.g., if you don't replace
     database dependencies, tests are not isolated.
 [^3]: Cliché, I know! But it is!
