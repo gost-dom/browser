@@ -7,7 +7,6 @@
     <table>
       <thead>
         <tr>
-          <th>Id</th>
           <th>Key</th>
           <th>Value</th>
         </tr>
@@ -15,7 +14,7 @@
       <tbody id="worker-data"></tbody>
     </table>
     <script>
-      w = new Worker("worker.js");
+      const w = new Worker("worker.js");
       w.addEventListener("message", (e) => {
         const body = document.getElementById("worker-data");
         const tr = document.createElement("tr");
@@ -24,7 +23,6 @@
           td.textContent = txt;
           tr.append(td);
         };
-        add(e.lastEventId);
         add(e.data.key);
         add(e.data.value);
         body.append(tr);
