@@ -85,7 +85,7 @@ func (w FormData[T]) get(cbCtx js.CallbackContext[T]) (res js.Value[T], err erro
 		return nil, errArg1
 	}
 	result := instance.Get(name)
-	return w.toFormDataEntryValue(cbCtx, result)
+	return encodeFormDataEntryValue(cbCtx, result)
 }
 
 func (w FormData[T]) getAll(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
@@ -98,7 +98,7 @@ func (w FormData[T]) getAll(cbCtx js.CallbackContext[T]) (res js.Value[T], err e
 		return nil, errArg1
 	}
 	result := instance.GetAll(name)
-	return w.toSequenceFormDataEntryValue(cbCtx, result)
+	return encodeSequenceFormDataEntryValue(cbCtx, result)
 }
 
 func (w FormData[T]) has(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

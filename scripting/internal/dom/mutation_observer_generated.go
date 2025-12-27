@@ -63,5 +63,5 @@ func (w MutationObserver[T]) takeRecords(cbCtx js.CallbackContext[T]) (res js.Va
 		return nil, err
 	}
 	result := instance.TakeRecords()
-	return w.toSequenceMutationRecord(cbCtx, result)
+	return encodeSequenceMutationRecord(cbCtx, result)
 }

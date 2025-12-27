@@ -43,7 +43,7 @@ func decodeReadableStreamGetReaderOptions[T any](
 	return nil, nil
 }
 
-func (w ReadableStream[T]) toReadableStreamReader(
+func encodeReadableStreamReader[T any](
 	ctx js.CallbackContext[T], reader streams.Reader,
 ) (js.Value[T], error) {
 	ctx.Logger().Info("toReadableStreamReader", "reader", reader)

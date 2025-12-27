@@ -19,7 +19,7 @@ func (w Event[T]) CreateInstance(
 	return codec.EncodeConstrucedValue(cbCtx, e)
 }
 
-func (w Event[T]) toEventTarget(
+func encodeEventTarget[T any](
 	cbCtx js.CallbackContext[T],
 	e event.EventTarget,
 ) (js.Value[T], error) {

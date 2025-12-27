@@ -46,5 +46,5 @@ func (w AbortController[T]) signal(cbCtx js.CallbackContext[T]) (res js.Value[T]
 		return nil, err
 	}
 	result := instance.Signal()
-	return w.toAbortSignal(cbCtx, result)
+	return encodeAbortSignal(cbCtx, result)
 }

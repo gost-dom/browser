@@ -196,7 +196,7 @@ func (w XMLHttpRequest[T]) responseType(cbCtx js.CallbackContext[T]) (res js.Val
 		return nil, err
 	}
 	result := instance.ResponseType()
-	return w.toXMLHttpRequestResponseType(cbCtx, result)
+	return encodeXMLHttpRequestResponseType(cbCtx, result)
 }
 
 func (w XMLHttpRequest[T]) setResponseType(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
@@ -216,7 +216,7 @@ func (w XMLHttpRequest[T]) response(cbCtx js.CallbackContext[T]) (res js.Value[T
 		return nil, err
 	}
 	result := instance.Response()
-	return w.toAny(cbCtx, result)
+	return encodeAny(cbCtx, result)
 }
 
 func (w XMLHttpRequest[T]) responseText(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

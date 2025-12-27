@@ -74,7 +74,7 @@ func (w Event[T]) target(cbCtx js.CallbackContext[T]) (res js.Value[T], err erro
 		return nil, err
 	}
 	result := instance.Target
-	return w.toEventTarget(cbCtx, result)
+	return encodeEventTarget(cbCtx, result)
 }
 
 func (w Event[T]) currentTarget(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
@@ -83,7 +83,7 @@ func (w Event[T]) currentTarget(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 		return nil, err
 	}
 	result := instance.CurrentTarget
-	return w.toEventTarget(cbCtx, result)
+	return encodeEventTarget(cbCtx, result)
 }
 
 func (w Event[T]) bubbles(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

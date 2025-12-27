@@ -91,7 +91,7 @@ func (w URLSearchParams[T]) getAll(cbCtx js.CallbackContext[T]) (res js.Value[T]
 		return nil, errArg1
 	}
 	result := instance.GetAll(name)
-	return w.toSequenceString_(cbCtx, result)
+	return encodeSequenceString_(cbCtx, result)
 }
 
 func (w URLSearchParams[T]) has(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

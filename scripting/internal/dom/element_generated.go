@@ -223,7 +223,7 @@ func (w Element[T]) getElementsByTagName(cbCtx js.CallbackContext[T]) (res js.Va
 		return nil, errArg1
 	}
 	result := instance.GetElementsByTagName(qualifiedName)
-	return w.toHTMLCollection(cbCtx, result)
+	return encodeHTMLCollection(cbCtx, result)
 }
 
 func (w Element[T]) getElementsByTagNameNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
@@ -238,7 +238,7 @@ func (w Element[T]) getElementsByTagNameNS(cbCtx js.CallbackContext[T]) (res js.
 		return nil, err
 	}
 	result := instance.GetElementsByTagNameNS(namespace, localName)
-	return w.toHTMLCollection(cbCtx, result)
+	return encodeHTMLCollection(cbCtx, result)
 }
 
 func (w Element[T]) getElementsByClassName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
@@ -361,7 +361,7 @@ func (w Element[T]) attributes(cbCtx js.CallbackContext[T]) (res js.Value[T], er
 		return nil, err
 	}
 	result := instance.Attributes()
-	return w.toNamedNodeMap(cbCtx, result)
+	return encodeNamedNodeMap(cbCtx, result)
 }
 
 func (w Element[T]) shadowRoot(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

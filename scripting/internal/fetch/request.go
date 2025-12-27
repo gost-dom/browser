@@ -27,6 +27,6 @@ func (w Request[T]) CreateInstance(
 	return codec.EncodeConstrucedValue(cbCtx, &req)
 }
 
-func (w Request[T]) toHeaders(cbCtx js.CallbackContext[T], h *fetch.Headers) (js.Value[T], error) {
+func encodeHeaders[T any](cbCtx js.CallbackContext[T], h *fetch.Headers) (js.Value[T], error) {
 	return codec.EncodeEntityScopedWithPrototype(cbCtx, h, "Headers")
 }
