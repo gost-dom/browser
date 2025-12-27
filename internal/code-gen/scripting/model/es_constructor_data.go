@@ -103,7 +103,7 @@ func (d ESConstructorData) AttributesToInstall() iter.Seq[ESAttribute] {
 func (d ESConstructorData) OperationCallbackInfos() iter.Seq[Callback] {
 	return func(yield func(Callback) bool) {
 		for op := range d.WrapperFunctionsToInstall() {
-			if !op.MethodCustomization.CustomImplementation && !yield(op) {
+			if !op.CustomImplementation && !yield(op) {
 				return
 			}
 		}
