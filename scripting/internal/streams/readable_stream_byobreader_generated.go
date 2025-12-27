@@ -23,7 +23,7 @@ func (w ReadableStreamBYOBReader[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w ReadableStreamBYOBReader[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	stream, errArg1 := js.ConsumeArgument(cbCtx, "stream", nil, w.decodeReadableStream)
+	stream, errArg1 := js.ConsumeArgument(cbCtx, "stream", nil, decodeReadableStream)
 	if errArg1 != nil {
 		return nil, errArg1
 	}

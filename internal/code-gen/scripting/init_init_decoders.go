@@ -54,7 +54,7 @@ func createEventInitDecoderBody(dict idl.Dictionary) g.Generator {
 				field.Reference(),
 				options,
 				g.Lit(entry.Key),
-				decoderForType(nil, entry.Value),
+				decoderForType(entry.Value),
 			),
 			))
 	}

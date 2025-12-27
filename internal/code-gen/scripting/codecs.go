@@ -57,15 +57,15 @@ func DecodersForType(receiver g.Generator, argType idl.Type) []g.Generator {
 	if argType.Kind == idl.KindUnion {
 		res := make([]g.Generator, len(argType.Types))
 		for i, t := range argType.Types {
-			res[i] = decoderForType(receiver, t)
+			res[i] = decoderForType(t)
 		}
 		return res
 	} else {
-		return []g.Generator{decoderForType(receiver, argType)}
+		return []g.Generator{decoderForType(argType)}
 	}
 }
 
-func decoderForType(receiver g.Generator, argType idl.Type) g.Generator {
+func decoderForType(argType idl.Type) g.Generator {
 	idlType := idltransform.NewIdlType(argType)
 	switch {
 	case idlType.Name == "ByteString":
@@ -82,5 +82,5 @@ func decoderForType(receiver g.Generator, argType idl.Type) g.Generator {
 		return decode(argType.Name)
 	}
 	name := fmt.Sprintf("decode%s", model.IdlNameToGoName(argType.Name))
-	return g.ValueOf(receiver).Field(name)
+	return g.Id(name)
 }

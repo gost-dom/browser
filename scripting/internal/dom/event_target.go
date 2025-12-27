@@ -40,7 +40,7 @@ func (w EventTarget[T]) CreateInstance(cbCtx js.CallbackContext[T]) (js.Value[T]
 	return nil, nil
 }
 
-func (w EventTarget[T]) decodeEventListener(
+func decodeEventListener[T any](
 	s js.Scope[T], v js.Value[T],
 ) (event.EventHandler, error) {
 	if fn, ok := v.AsFunction(); ok {
@@ -72,7 +72,7 @@ func decodeEventListenerOptions[T any](
 	return
 }
 
-func (w EventTarget[T]) decodeEvent(s js.Scope[T], v js.Value[T]) (*event.Event, error) {
+func decodeEvent[T any](s js.Scope[T], v js.Value[T]) (*event.Event, error) {
 	obj, err := js.AssertObjectArg(s, v)
 	if err == nil {
 		return js.As[*event.Event](obj.NativeValue(), nil)

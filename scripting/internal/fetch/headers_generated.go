@@ -30,7 +30,7 @@ func (w Headers[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w Headers[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	init, errArg1 := js.ConsumeArgument(cbCtx, "init", nil, w.decodeHeadersInit)
+	init, errArg1 := js.ConsumeArgument(cbCtx, "init", nil, decodeHeadersInit)
 	if errArg1 != nil {
 		return nil, errArg1
 	}

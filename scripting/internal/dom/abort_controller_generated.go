@@ -32,7 +32,7 @@ func (w AbortController[T]) abort(cbCtx js.CallbackContext[T]) (res js.Value[T],
 	if errInst != nil {
 		return nil, errInst
 	}
-	reason, errArg1 := js.ConsumeArgument(cbCtx, "reason", codec.ZeroValue, w.decodeAny)
+	reason, errArg1 := js.ConsumeArgument(cbCtx, "reason", codec.ZeroValue, decodeAny)
 	if errArg1 != nil {
 		return nil, errArg1
 	}

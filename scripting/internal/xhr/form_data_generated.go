@@ -30,7 +30,7 @@ func (w FormData[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w FormData[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	form, found, errArg := js.ConsumeOptionalArg(cbCtx, "form", w.decodeHTMLFormElement)
+	form, found, errArg := js.ConsumeOptionalArg(cbCtx, "form", decodeHTMLFormElement)
 	if found {
 		if errArg != nil {
 			return nil, errArg
@@ -53,7 +53,7 @@ func (w FormData[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err e
 		return nil, errInst
 	}
 	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
-	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, w.decodeFormDataValue)
+	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, decodeFormDataValue)
 	err = gosterror.First(errArg1, errArg2)
 	if err != nil {
 		return nil, err
@@ -120,7 +120,7 @@ func (w FormData[T]) set(cbCtx js.CallbackContext[T]) (res js.Value[T], err erro
 		return nil, errInst
 	}
 	name, errArg1 := js.ConsumeArgument(cbCtx, "name", nil, codec.DecodeString)
-	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, w.decodeFormDataValue)
+	value, errArg2 := js.ConsumeArgument(cbCtx, "value", nil, decodeFormDataValue)
 	err = gosterror.First(errArg1, errArg2)
 	if err != nil {
 		return nil, err

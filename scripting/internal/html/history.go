@@ -6,7 +6,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w History[T]) decodeHistoryState(s js.Scope[T], val js.Value[T]) (html.HistoryState, error) {
+func decodeHistoryState[T any](s js.Scope[T], val js.Value[T]) (html.HistoryState, error) {
 	return html.HistoryState(s.JSONStringify(val)), nil
 }
 

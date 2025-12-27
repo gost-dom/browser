@@ -251,7 +251,7 @@ func (w Element[T]) insertAdjacentElement(cbCtx js.CallbackContext[T]) (res js.V
 		return nil, errInst
 	}
 	where, errArg1 := js.ConsumeArgument(cbCtx, "where", nil, codec.DecodeString)
-	element, errArg2 := js.ConsumeArgument(cbCtx, "element", nil, w.decodeElement)
+	element, errArg2 := js.ConsumeArgument(cbCtx, "element", nil, decodeElement)
 	err = gosterror.First(errArg1, errArg2)
 	if err != nil {
 		return nil, err

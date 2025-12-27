@@ -69,7 +69,7 @@ func (w History[T]) pushState(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 	if errInst != nil {
 		return nil, errInst
 	}
-	data, errArg1 := js.ConsumeArgument(cbCtx, "data", nil, w.decodeHistoryState)
+	data, errArg1 := js.ConsumeArgument(cbCtx, "data", nil, decodeHistoryState)
 	cbCtx.ConsumeArg()
 	url, errArg3 := js.ConsumeArgument(cbCtx, "url", codec.ZeroValue, codec.DecodeString)
 	err = gosterror.First(errArg1, errArg3)
@@ -85,7 +85,7 @@ func (w History[T]) replaceState(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 	if errInst != nil {
 		return nil, errInst
 	}
-	data, errArg1 := js.ConsumeArgument(cbCtx, "data", nil, w.decodeHistoryState)
+	data, errArg1 := js.ConsumeArgument(cbCtx, "data", nil, decodeHistoryState)
 	cbCtx.ConsumeArg()
 	url, errArg3 := js.ConsumeArgument(cbCtx, "url", codec.ZeroValue, codec.DecodeString)
 	err = gosterror.First(errArg1, errArg3)

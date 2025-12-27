@@ -31,7 +31,7 @@ func (w MutationObserver[T]) CreateInstance(
 	return codec.EncodeConstructedValue(cbCtx, mutation.NewObserver(cbCtx.Clock(), cb))
 }
 
-func (w MutationObserver[T]) decodeMutationCallback(s js.Scope[T], val js.Value[T],
+func decodeMutationCallback[T any](s js.Scope[T], val js.Value[T],
 ) (mutation.Callback, error) {
 	if f, ok := val.AsFunction(); ok {
 		return MutationCallback[T]{s, f}, nil
@@ -39,7 +39,7 @@ func (w MutationObserver[T]) decodeMutationCallback(s js.Scope[T], val js.Value[
 	return nil, s.NewTypeError("Not a function")
 }
 
-func (w MutationObserver[T]) decodeObserveOption(
+func decodeObserveOption[T any](
 	s js.Scope[T],
 	v js.Value[T],
 ) ([]mutation.ObserveOption, error) {

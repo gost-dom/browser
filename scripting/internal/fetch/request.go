@@ -6,18 +6,11 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w Request[T]) decodeRequestInfo(
+func decodeRequestInfo[T any](
 	_ js.Scope[T],
 	val js.Value[T],
 ) (string, error) {
 	return val.String(), nil
-}
-
-func (w Request[T]) decodeRequestInit(
-	s js.Scope[T],
-	v js.Value[T],
-) ([]fetch.RequestOption, error) {
-	return decodeRequestInit(s, v)
 }
 
 func (w Request[T]) CreateInstance(

@@ -15,7 +15,7 @@ func (w ReadableStreamBYOBReader[T]) CreateInstance(
 	)
 }
 
-func (w ReadableStreamBYOBReader[T]) decodeReadableStream(s js.Scope[T], v js.Value[T]) (string, error) {
+func decodeReadableStream[T any](s js.Scope[T], v js.Value[T]) (string, error) {
 	if v != nil && v.Boolean() {
 		return "", codec.CallbackErrorf(s,
 			"gost-dom/scripting/streams: ReadableStreamBYOBReader readableStream not yet supported",

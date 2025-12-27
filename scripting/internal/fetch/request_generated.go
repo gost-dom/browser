@@ -43,8 +43,8 @@ func (w Request[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w Request[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	input, errArg1 := js.ConsumeArgument(cbCtx, "input", nil, w.decodeRequestInfo)
-	init, errArg2 := js.ConsumeArgument(cbCtx, "init", nil, w.decodeRequestInit)
+	input, errArg1 := js.ConsumeArgument(cbCtx, "input", nil, decodeRequestInfo)
+	init, errArg2 := js.ConsumeArgument(cbCtx, "init", nil, decodeRequestInit)
 	err = gosterror.First(errArg1, errArg2)
 	if err != nil {
 		return nil, err

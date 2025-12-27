@@ -41,7 +41,7 @@ func (w FormData[T]) CreateInstanceFormSubmitter(
 	return codec.EncodeConstructedValue(cbCtx, value)
 }
 
-func (w FormData[T]) decodeFormDataValue(
+func decodeFormDataValue[T any](
 	_ js.Scope[T],
 	val js.Value[T],
 ) (html.FormDataValue, error) {
@@ -66,7 +66,7 @@ func (w FormData[T]) toSequenceFormDataEntryValue(
 	return cbCtx.NewArray(vals...), nil
 }
 
-func (w FormData[T]) decodeHTMLFormElement(
+func decodeHTMLFormElement[T any](
 	s js.Scope[T],
 	val js.Value[T],
 ) (html.HTMLFormElement, error) {
