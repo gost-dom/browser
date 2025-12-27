@@ -26,7 +26,7 @@ func (w HTMLAnchorElement[T]) installPrototype(jsClass js.Class[T]) {
 	w.htmlHyperlinkElementUtils.installPrototype(jsClass)
 }
 
-func (w HTMLAnchorElement[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLAnchorElementConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

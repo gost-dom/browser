@@ -24,7 +24,7 @@ func (w NodeList[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("length", w.length, nil)
 }
 
-func (w NodeList[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func NodeListConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

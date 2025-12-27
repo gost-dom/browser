@@ -26,7 +26,7 @@ func (w Attr[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("ownerElement", w.ownerElement, nil)
 }
 
-func (w Attr[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func AttrConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

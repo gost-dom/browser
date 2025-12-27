@@ -26,7 +26,7 @@ func (w MouseEvent[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("relatedTarget", w.relatedTarget, nil)
 }
 
-func (w MouseEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func MouseEventConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	type_, errType := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
 	options, errOpts := js.ConsumeArgument(cbCtx, "options", codec.ZeroValue, codec.DecodeJsObject)
 	err = gosterror.First(errType, errOpts)

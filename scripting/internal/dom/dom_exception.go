@@ -12,7 +12,7 @@ type domException[T any] struct{}
 
 func newDOMException[T any](_ js.ScriptEngine[T]) *domException[T] { return &domException[T]{} }
 
-func (w domException[T]) Constructor(info js.CallbackContext[T]) (js.Value[T], error) {
+func domExceptionConstructor[T any](info js.CallbackContext[T]) (js.Value[T], error) {
 	return nil, nil
 }
 

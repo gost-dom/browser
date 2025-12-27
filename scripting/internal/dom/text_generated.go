@@ -22,7 +22,7 @@ func (w Text[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("wholeText", w.wholeText, nil)
 }
 
-func (w Text[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func TextConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

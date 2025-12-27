@@ -44,7 +44,7 @@ func (w Node[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("textContent", w.textContent, w.setTextContent)
 }
 
-func (w Node[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func NodeConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

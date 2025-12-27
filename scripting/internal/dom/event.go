@@ -10,7 +10,7 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w Event[T]) CreateInstance(
+func CreateEvent[T any](
 	cbCtx js.CallbackContext[T],
 	type_ string,
 	o codec.EventInit,

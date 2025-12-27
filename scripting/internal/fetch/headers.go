@@ -10,8 +10,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w Headers[T]) CreateInstance(
-	cbCtx js.CallbackContext[T], options ...[2]types.ByteString,
+func CreateHeaders[T any](cbCtx js.CallbackContext[T], options ...[2]types.ByteString,
 ) (js.Value[T], error) {
 	res := &fetch.Headers{}
 	for _, h := range options {

@@ -82,6 +82,7 @@ func Write(api string, specs configuration.WebIdlConfigurations) error {
 					g.Lit(typeInfo.Name()),
 					g.Lit(typeInfo.Extends()),
 					g.Id(ConstructorNameForInterface(typeInfo.Name())),
+					g.Id(JsConstructorForInterface(typeInfo.Name())),
 				))
 		}
 	}

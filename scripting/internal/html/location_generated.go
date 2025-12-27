@@ -36,7 +36,7 @@ func (w Location[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("ancestorOrigins", w.ancestorOrigins, nil)
 }
 
-func (w Location[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func LocationConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

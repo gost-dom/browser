@@ -37,7 +37,7 @@ func (w CharacterData[T]) installPrototype(jsClass js.Class[T]) {
 	w.childNode.installPrototype(jsClass)
 }
 
-func (w CharacterData[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func CharacterDataConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

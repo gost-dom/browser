@@ -25,7 +25,7 @@ func decodeQueuingStrategy[T any](s js.Scope[T], v js.Value[T]) ([]string, error
 	return nil, nil
 }
 
-func (w ReadableStream[T]) CreateInstance(
+func CreateReadableStream[T any](
 	cbCtx js.CallbackContext[T], _x string, _y ...string,
 ) (js.Value[T], error) {
 	return codec.EncodeCallbackErrorf(cbCtx,

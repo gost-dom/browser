@@ -34,7 +34,7 @@ func (l eventListener[T]) Equals(other event.EventHandler) bool {
 	return ok && x.val.StrictEquals(l.val)
 }
 
-func (w EventTarget[T]) CreateInstance(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func CreateEventTarget[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	t := event.NewEventTarget()
 	cbCtx.This().SetNativeValue(t)
 	return nil, nil

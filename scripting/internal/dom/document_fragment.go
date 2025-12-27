@@ -6,7 +6,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w DocumentFragment[T]) Constructor(ctx js.CallbackContext[T]) (js.Value[T], error) {
+func DocumentFragmentConstructor[T any](ctx js.CallbackContext[T]) (js.Value[T], error) {
 	win, err := codec.GetWindow(ctx)
 	if err != nil {
 		return nil, err

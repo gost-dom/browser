@@ -55,8 +55,8 @@ func (w Document[T]) installPrototype(jsClass js.Class[T]) {
 	w.parentNode.installPrototype(jsClass)
 }
 
-func (w Document[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return w.CreateInstance(cbCtx)
+func DocumentConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return CreateDocument(cbCtx)
 }
 
 func (w Document[T]) getElementsByTagName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

@@ -28,14 +28,14 @@ func (w ReadableStream[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("locked", w.locked, nil)
 }
 
-func (w ReadableStream[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func ReadableStreamConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	underlyingSource, errArg1 := js.ConsumeArgument(cbCtx, "underlyingSource", codec.ZeroValue, decodeObject)
 	strategy, errArg2 := js.ConsumeArgument(cbCtx, "strategy", nil, decodeQueuingStrategy)
 	err = gosterror.First(errArg1, errArg2)
 	if err != nil {
 		return nil, err
 	}
-	return w.CreateInstance(cbCtx, underlyingSource, strategy...)
+	return CreateReadableStream(cbCtx, underlyingSource, strategy...)
 }
 
 func (w ReadableStream[T]) cancel(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

@@ -30,7 +30,7 @@ func (w URL[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("hash", w.hash, w.setHash)
 }
 
-func (w URL[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func URLConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	url, errArg1 := js.ConsumeArgument(cbCtx, "url", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
@@ -40,9 +40,9 @@ func (w URL[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err e
 		if errArg != nil {
 			return nil, errArg
 		}
-		return w.CreateInstanceBase(cbCtx, url, base)
+		return CreateURLBase(cbCtx, url, base)
 	}
-	return w.CreateInstance(cbCtx, url)
+	return CreateURL(cbCtx, url)
 }
 
 func (w URL[T]) toJSON(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

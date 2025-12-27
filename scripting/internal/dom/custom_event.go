@@ -14,7 +14,7 @@ func NewCustomEvent[T any](scriptHost js.ScriptEngine[T]) *customEvent[T] {
 	return &customEvent[T]{}
 }
 
-func (w customEvent[T]) Constructor(info js.CallbackContext[T]) (js.Value[T], error) {
+func customEventConstructor[T any](info js.CallbackContext[T]) (js.Value[T], error) {
 	arg, ok := info.ConsumeArg()
 	if !ok {
 		return info.ReturnWithTypeError("Must have at least one constructor argument")

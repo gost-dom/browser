@@ -7,7 +7,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w ReadableStreamBYOBReader[T]) CreateInstance(
+func CreateReadableStreamBYOBReader[T any](
 	cbCtx js.CallbackContext[T], _x string,
 ) (js.Value[T], error) {
 	return codec.EncodeCallbackErrorf(cbCtx,

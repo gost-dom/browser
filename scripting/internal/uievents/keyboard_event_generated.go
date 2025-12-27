@@ -28,7 +28,7 @@ func (w KeyboardEvent[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("isComposing", w.isComposing, nil)
 }
 
-func (w KeyboardEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func KeyboardEventConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	type_, errType := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
 	options, errOpts := js.ConsumeArgument(cbCtx, "options", codec.ZeroValue, codec.DecodeJsObject)
 	err = gosterror.First(errType, errOpts)

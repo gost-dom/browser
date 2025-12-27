@@ -11,7 +11,7 @@ func NewDOMStringMap[T any](host js.ScriptEngine[T]) DOMStringMap[T] {
 	return DOMStringMap[T]{}
 }
 
-func (w DOMStringMap[T]) Constructor(info js.CallbackContext[T]) (js.Value[T], error) {
+func DOMStringMapConstructor[T any](info js.CallbackContext[T]) (js.Value[T], error) {
 	return info.ReturnWithTypeError("Illegal Constructor")
 }
 

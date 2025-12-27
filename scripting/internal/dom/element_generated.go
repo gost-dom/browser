@@ -71,7 +71,7 @@ func (w Element[T]) installPrototype(jsClass js.Class[T]) {
 	w.childNode.installPrototype(jsClass)
 }
 
-func (w Element[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func ElementConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

@@ -5,6 +5,6 @@ package url
 import js "github.com/gost-dom/browser/scripting/internal/js"
 
 func Bootstrap[T any](e js.ScriptEngine[T]) {
-	js.RegisterClass(e, "URL", "", NewURL)
-	js.RegisterClass(e, "URLSearchParams", "", NewURLSearchParams)
+	js.RegisterClass(e, "URL", "", NewURL, URLConstructor)
+	js.RegisterClass(e, "URLSearchParams", "", NewURLSearchParams, URLSearchParamsConstructor)
 }

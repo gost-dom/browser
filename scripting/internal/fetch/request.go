@@ -13,7 +13,7 @@ func decodeRequestInfo[T any](
 	return val.String(), nil
 }
 
-func (w Request[T]) CreateInstance(
+func CreateRequest[T any](
 	cbCtx js.CallbackContext[T],
 	url string,
 	options ...fetch.RequestOption,
