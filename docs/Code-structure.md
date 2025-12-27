@@ -10,13 +10,13 @@ idiomatic solutions to the problems.
 ```sh
 browser/ # Main entry point,
     internal/
-        clock/ # Controls the passing of simulated time
-        code-gen/ # Code generator. Not documented here!
-        constants/ # String constants, e.g., BUG issue URLs for error messages
-        dom/ # Parts of the DOM API not yet available to client code.
-        entity/ # Generates objects with JS-friendly unique IDs
-        html/ # XMLHTTPRequest implementation
-        gosthttp/ # Helper for handling HTTP requests
+        clock/      # Controls the passing of simulated time
+        code-gen/   # Code generator. Not documented here!
+        constants/  # String constants, e.g., BUG issue URLs for error messages
+        dom/        # Parts of the DOM API not yet available to client code.
+        entity/     # Functionality for "entities"
+        html/       # XMLHTTPRequest implementation
+        gosthttp/   # Helper for handling HTTP requests
         interfaces/ # Interfaces generated from webref specs
             url-interfaces/ # Interfaces for the URL spec.
         log/ # Logging functionality
@@ -40,6 +40,20 @@ browser/ # Main entry point,
         gomega-matchers/ # Matchers useful for users of the Gomega library
     url/ # Implementation of URL behaviour
 ```
+
+## Entities
+
+Package `internal/entities` defines the ability to store arbitrary data in an
+entity.
+
+This allows Gost-DOM to make sure the same JavaScript object is always returned
+for the same Go representation of a DOM element. But in a way that the
+JavaScript engine is completely decoupled from the Go implementation.
+
+The first time a Go DOM element is exposed to JavaScript, the script bindings
+create the JavaScript object and stores it as a _component_ on the Go entity.
+The second time, the same DOM element is requested from JavaScript, the script
+bindings can find the previously created object and return it.
 
 ## Structure loosely follows Web APIs
 

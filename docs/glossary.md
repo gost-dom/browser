@@ -1,5 +1,11 @@
 # Glossary
 
+- **Entity**
+
+  An entity is an object that is defined by its _identity_, i.e. we care about
+  if we receive the same object of not. In a browser context, a DOM element is
+  an entity.
+
 - **Interface**. 
 
   The IDL Specification defines _interfaces_; which are exposed in certain
