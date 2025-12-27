@@ -15,7 +15,7 @@ type CallbackMethods struct{ WrapperStruct }
 func (cb CallbackMethods) Receiver() g.Value      { return g.NewValue("w") }
 func (cb CallbackMethods) CbCtx() CallbackContext { return NewCallbackContext(g.Id("cbCtx")) }
 
-func (cb CallbackMethods) CallbackFunction(name string, body g.Generator) g.Generator {
+func (cb CallbackMethods) CallbackMethod(name string, body g.Generator) g.Generator {
 	return g.FunctionDefinition{
 		Receiver: g.FunctionArgument{
 			Name: cb.Receiver(),
@@ -31,30 +31,23 @@ func (cb CallbackMethods) CallbackFunction(name string, body g.Generator) g.Gene
 	}
 }
 
-func (cb CallbackMethods) ConstructorCallback() g.Generator {
-	// return cb.CallbackFunction("Constructor", cb.ConstructorCallbackBody())
-	funcName := cb.Data.Name() + "Constructor"
+func (cb CallbackMethods) CallbackFunction(name string, body g.Generator) g.Generator {
 	return g.Raw(
 		jen.Func().
-			Id(funcName).
+			Id(name).
 			Types(jen.Id("T").Id("any")).
 			Params(cb.CbCtx().Generate().Add(jsCbCtx.Generate())).
 			Params(
 				g.Raw(jen.Id("res").Add(jsValue.Generate())),
 				g.Raw(jen.Id("err").Add(g.NewType("error").Generate())),
 			).
-			Block(cb.ConstructorCallbackBody().Generate()),
+			Block(body.Generate()),
 	)
+}
 
-	// return g.FunctionDefinition{
-	// 	Name: cb.Data.Name() + "Constructor",
-	// 	Args: g.Arg(cb.CbCtx(), jsCbCtx),
-	// 	RtnTypes: g.List(
-	// 		g.Raw(jen.Id("res").Add(jsValue.Generate())),
-	// 		g.Raw(jen.Id("err").Add(g.NewType("error").Generate())),
-	// 	),
-	// 	Body: cb.ConstructorCallbackBody(),
-	// }
+func (cb CallbackMethods) ConstructorCallback() g.Generator {
+	funcName := cb.Data.Name() + "Constructor"
+	return cb.CallbackFunction(funcName, cb.ConstructorCallbackBody())
 }
 
 func (cb CallbackMethods) ConstructorCallbackBody() g.Generator {
@@ -68,7 +61,7 @@ func (cb CallbackMethods) ConstructorCallbackBody() g.Generator {
 func (cb CallbackMethods) MethodCallback(op model.Callback) g.Generator {
 	cbCtx := NewCallbackContext(g.Id("cbCtx"))
 	name := op.CallbackMethodName()
-	return cb.CallbackFunction(
+	return cb.CallbackMethod(
 		name,
 		renderIfElse(op.NotImplemented,
 			cb.ReturnNotImplementedError(name, cbCtx),
@@ -85,7 +78,7 @@ func (cb CallbackMethods) AttributeGetter(attr model.ESAttribute) g.Generator {
 	cbCtx := NewCallbackContext(g.Id("cbCtx"))
 	op := attr.Getter
 	name := op.CallbackMethodName()
-	return cb.CallbackFunction(name,
+	return cb.CallbackMethod(name,
 		renderIfElse(op.NotImplemented,
 			cb.ReturnNotImplementedError(name, cbCtx),
 			cb.AttributeGetterCallbackBody(attr),
@@ -129,7 +122,7 @@ func (cb CallbackMethods) AttributeSetter(attr model.ESAttribute) g.Generator {
 	cbCtx := NewCallbackContext(g.Id("cbCtx"))
 	op := attr.Setter
 	name := op.CallbackMethodName()
-	return cb.CallbackFunction(name,
+	return cb.CallbackMethod(name,
 		renderIfElse(op.NotImplemented,
 			cb.ReturnNotImplementedError(name, cbCtx),
 			cb.AttributeSetterCallbackBody(attr),
