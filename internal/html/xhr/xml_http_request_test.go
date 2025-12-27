@@ -1,4 +1,4 @@
-package html_test
+package xhr_test
 
 import (
 	"io"
@@ -10,7 +10,7 @@ import (
 	"github.com/gost-dom/browser/dom/event"
 	. "github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
-	. "github.com/gost-dom/browser/internal/html"
+	xhr "github.com/gost-dom/browser/internal/html/xhr"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/stretchr/testify/assert"
@@ -27,7 +27,7 @@ type XMLHTTPRequestTestSuite struct {
 	actualReqBody  []byte
 	reqErr         error
 	responseHeader http.Header
-	xhr            XmlHttpRequest
+	xhr            xhr.XmlHttpRequest
 	timer          *clock.Clock
 }
 
@@ -59,7 +59,7 @@ func (s *XMLHTTPRequestTestSuite) SetupTest() {
 	ctx, cancel := gosttest.NewBrowsingContextFromT(s.T(), s.handler)
 	defer cancel()
 
-	s.xhr = NewXmlHttpRequest(
+	s.xhr = xhr.NewXmlHttpRequest(
 		ctx,
 		s.timer,
 	)
@@ -73,7 +73,7 @@ func (s *XMLHTTPRequestTestSuite) SetupTest() {
 }
 
 func (s *XMLHTTPRequestTestSuite) TestSynchronousRequest() {
-	s.xhr.Open("GET", "/dummy", RequestOptionAsync(false))
+	s.xhr.Open("GET", "/dummy", xhr.RequestOptionAsync(false))
 	s.Expect(s.xhr.Status()).To(Equal(0))
 	s.Expect(s.xhr.Send(nil)).To(Succeed())
 	// Verify request
@@ -94,21 +94,21 @@ func (s *XMLHTTPRequestTestSuite) TestAsynchronousRequest() {
 	)
 	s.xhr.Open("GET", "/dummy")
 	s.xhr.AddEventListener(
-		XHREventLoadstart,
+		xhr.XHREventLoadstart,
 		event.NewEventHandlerFunc(func(e *event.Event) error {
 			loadStarted = true
 			return nil
 		}),
 	)
 	s.xhr.AddEventListener(
-		XHREventLoadend,
+		xhr.XHREventLoadend,
 		event.NewEventHandlerFunc(func(e *event.Event) error {
 			loadEnded = true
 			return nil
 		}),
 	)
 	s.xhr.AddEventListener(
-		XHREventLoad,
+		xhr.XHREventLoad,
 		event.NewEventHandlerFunc(func(e *event.Event) error {
 			loaded = true
 			return nil
@@ -130,7 +130,7 @@ func (s *XMLHTTPRequestTestSuite) TestFormdataEncoding() {
 	// This test uses blocking requests.
 	// This isn't the ususal case, but the test is much easier to write; and
 	// code being tested is unrelated to blocking/non-blocking.
-	s.xhr.Open("POST", "/dummy", RequestOptionAsync(false))
+	s.xhr.Open("POST", "/dummy", xhr.RequestOptionAsync(false))
 	formData := NewFormData()
 	formData.Append("key1", "Value%42")
 	formData.Append("key2", "Value&=42")
@@ -147,7 +147,7 @@ func (s *XMLHTTPRequestTestSuite) TestFormdataEncoding() {
 
 func (s *XMLHTTPRequestTestSuite) TestRequestHeaders() {
 	s.xhr.SetRequestHeader("x-test", "42")
-	s.xhr.Open("GET", "/dummy", RequestOptionAsync(false))
+	s.xhr.Open("GET", "/dummy", xhr.RequestOptionAsync(false))
 	s.Expect(s.xhr.Send(nil)).To(Succeed())
 	s.Expect(s.actualHeader.Get("x-test")).To(Equal("42"))
 }
@@ -157,7 +157,7 @@ func (s *XMLHTTPRequestTestSuite) TestResponseHeaders() {
 	s.responseHeader.Add("X-Test-1", "value1")
 	s.responseHeader.Add("X-Test-2", "value2")
 	s.responseHeader.Add("Content-Type", "text/plain")
-	s.xhr.Open("GET", "/dummy", RequestOptionAsync(false))
+	s.xhr.Open("GET", "/dummy", xhr.RequestOptionAsync(false))
 	s.xhr.Send(nil)
 	s.Expect(
 		s.xhr.GetAllResponseHeaders(),
@@ -174,7 +174,7 @@ func (s *XMLHTTPRequestTestSuite) TestSameResponseHeaderAddedTwice() {
 	s.responseHeader.Add("Content-Type", "text/plain")
 	s.responseHeader.Add("x-test-1", "value3")
 
-	s.xhr.Open("GET", "/dummy", RequestOptionAsync(false))
+	s.xhr.Open("GET", "/dummy", xhr.RequestOptionAsync(false))
 	s.xhr.Send(nil)
 
 	s.Expect(
@@ -196,7 +196,7 @@ func (s *XMLHTTPRequestTestSuite) TestCookieVisibility() {
 	s.responseHeader.Add("X-Test-2", "value2")
 	s.responseHeader.Add("Content-Type", "text/plain")
 
-	s.xhr.Open("GET", "/dummy", RequestOptionAsync(false))
+	s.xhr.Open("GET", "/dummy", xhr.RequestOptionAsync(false))
 	s.xhr.Send(nil)
 
 	s.responseHeader = make(http.Header)
@@ -216,11 +216,11 @@ func TestXMLHTTPRequestRedirect(t *testing.T) {
 	ctx, cancel := gosttest.NewBrowsingContextFromT(t, m)
 	defer cancel()
 
-	xhr := NewXmlHttpRequest(ctx, clock.New())
-	xhr.Open("GET", "https://example.com/redirect", RequestOptionAsync(false))
-	xhr.Send(nil)
+	req := xhr.NewXmlHttpRequest(ctx, clock.New())
+	req.Open("GET", "https://example.com/redirect", xhr.RequestOptionAsync(false))
+	req.Send(nil)
 
-	assert.Equal(t, "https://example.com/redirected-url", xhr.ResponseURL())
+	assert.Equal(t, "https://example.com/redirected-url", req.ResponseURL())
 }
 
 func HaveLines(expected ...string) types.GomegaMatcher {

@@ -72,7 +72,7 @@ func (d ESConstructorData) GetInternalPackage() string {
 	case "WindowOrWorkerGlobalScope":
 		return packagenames.HTMLInterfaces
 	case "XMLHttpRequest":
-		return packagenames.HTMLInternal
+		return packagenames.Xhr
 	case "FormData":
 		return packagenames.Html
 	default:
