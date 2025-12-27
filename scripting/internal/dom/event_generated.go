@@ -31,14 +31,14 @@ func (w Event[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("defaultPrevented", w.defaultPrevented, nil)
 }
 
-func (w Event[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func EventConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	type_, errArg1 := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
 	eventInitDict, errArg2 := js.ConsumeArgument(cbCtx, "eventInitDict", codec.ZeroValue, codec.DecodeEventInit)
 	err = gosterror.First(errArg1, errArg2)
 	if err != nil {
 		return nil, err
 	}
-	return w.CreateInstance(cbCtx, type_, eventInitDict)
+	return CreateEvent(cbCtx, type_, eventInitDict)
 }
 
 func (w Event[T]) stopPropagation(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

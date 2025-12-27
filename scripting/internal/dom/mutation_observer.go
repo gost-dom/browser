@@ -24,7 +24,7 @@ func (cb MutationCallback[T]) HandleMutation(recs []mutation.Record, obs *mutati
 	}
 }
 
-func (w MutationObserver[T]) CreateInstance(
+func CreateMutationObserver[T any](
 	cbCtx js.CallbackContext[T],
 	cb mutation.Callback,
 ) (js.Value[T], error) {

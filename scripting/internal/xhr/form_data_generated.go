@@ -29,22 +29,22 @@ func (w FormData[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateOperation("set", w.set)
 }
 
-func (w FormData[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func FormDataConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	form, found, errArg := js.ConsumeOptionalArg(cbCtx, "form", decodeHTMLFormElement)
 	if found {
 		if errArg != nil {
 			return nil, errArg
 		}
-		return w.CreateInstanceForm(cbCtx, form)
+		return CreateFormDataForm(cbCtx, form)
 	}
 	submitter, found, errArg := js.ConsumeOptionalArg(cbCtx, "submitter", codec.DecodeHTMLElement)
 	if found {
 		if errArg != nil {
 			return nil, errArg
 		}
-		return w.CreateInstanceFormSubmitter(cbCtx, form, submitter)
+		return CreateFormDataFormSubmitter(cbCtx, form, submitter)
 	}
-	return w.CreateInstance(cbCtx)
+	return CreateFormData(cbCtx)
 }
 
 func (w FormData[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

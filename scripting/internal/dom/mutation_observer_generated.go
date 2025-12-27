@@ -25,12 +25,12 @@ func (w MutationObserver[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateOperation("takeRecords", w.takeRecords)
 }
 
-func (w MutationObserver[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func MutationObserverConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	callback, errArg1 := js.ConsumeArgument(cbCtx, "callback", nil, decodeMutationCallback)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
-	return w.CreateInstance(cbCtx, callback)
+	return CreateMutationObserver(cbCtx, callback)
 }
 
 func (w MutationObserver[T]) observe(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

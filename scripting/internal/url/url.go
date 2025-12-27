@@ -22,7 +22,7 @@ type handleDisposable cgo.Handle
 
 func (h handleDisposable) Dispose() { cgo.Handle(h).Delete() }
 
-func (w URL[T]) CreateInstance(
+func CreateURL[T any](
 	cbCtx js.CallbackContext[T],
 	u string,
 ) (js.Value[T], error) {
@@ -33,7 +33,7 @@ func (w URL[T]) CreateInstance(
 	return codec.EncodeConstrucedValue(cbCtx, value)
 }
 
-func (w URL[T]) CreateInstanceBase(
+func CreateURLBase[T any](
 	cbCtx js.CallbackContext[T],
 	u string,
 	base string,
@@ -45,7 +45,7 @@ func (w URL[T]) CreateInstanceBase(
 	return codec.EncodeConstrucedValue(cbCtx, value)
 }
 
-func (w URLSearchParams[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func URLSearchParamsConstructor[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	var err error
 	arg, ok := cbCtx.ConsumeArg()
 	var res url.URLSearchParams

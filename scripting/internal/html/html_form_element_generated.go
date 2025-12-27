@@ -38,7 +38,7 @@ func (w HTMLFormElement[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("length", w.length, nil)
 }
 
-func (w HTMLFormElement[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLFormElementConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

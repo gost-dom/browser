@@ -32,7 +32,29 @@ func (cb CallbackMethods) CallbackFunction(name string, body g.Generator) g.Gene
 }
 
 func (cb CallbackMethods) ConstructorCallback() g.Generator {
-	return cb.CallbackFunction("Constructor", cb.ConstructorCallbackBody())
+	// return cb.CallbackFunction("Constructor", cb.ConstructorCallbackBody())
+	funcName := cb.Data.Name() + "Constructor"
+	return g.Raw(
+		jen.Func().
+			Id(funcName).
+			Types(jen.Id("T").Id("any")).
+			Params(cb.CbCtx().Generate().Add(jsCbCtx.Generate())).
+			Params(
+				g.Raw(jen.Id("res").Add(jsValue.Generate())),
+				g.Raw(jen.Id("err").Add(g.NewType("error").Generate())),
+			).
+			Block(cb.ConstructorCallbackBody().Generate()),
+	)
+
+	// return g.FunctionDefinition{
+	// 	Name: cb.Data.Name() + "Constructor",
+	// 	Args: g.Arg(cb.CbCtx(), jsCbCtx),
+	// 	RtnTypes: g.List(
+	// 		g.Raw(jen.Id("res").Add(jsValue.Generate())),
+	// 		g.Raw(jen.Id("err").Add(g.NewType("error").Generate())),
+	// 	),
+	// 	Body: cb.ConstructorCallbackBody(),
+	// }
 }
 
 func (cb CallbackMethods) ConstructorCallbackBody() g.Generator {

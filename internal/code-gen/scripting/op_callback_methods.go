@@ -29,8 +29,7 @@ func (gen OpCallbackMethods) NativeConstructorCall(
 	args []g.Generator,
 ) g.Generator {
 	return g.Return(
-		gen.Receiver().
-			Field("CreateInstance" + methodPostFix).
+		g.NewValue("Create" + gen.Data.Name() + methodPostFix).
 			Call(append([]g.Generator{gen.CbCtx()}, args...)...),
 	)
 }

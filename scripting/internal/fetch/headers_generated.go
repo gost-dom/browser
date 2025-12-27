@@ -29,12 +29,12 @@ func (w Headers[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateOperation("set", w.set)
 }
 
-func (w Headers[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HeadersConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	init, errArg1 := js.ConsumeArgument(cbCtx, "init", nil, decodeHeadersInit)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
-	return w.CreateInstance(cbCtx, init...)
+	return CreateHeaders(cbCtx, init...)
 }
 
 func (w Headers[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

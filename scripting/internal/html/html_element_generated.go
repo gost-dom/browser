@@ -25,7 +25,7 @@ func (w HTMLElement[T]) installPrototype(jsClass js.Class[T]) {
 	w.htmlOrSVGElement.installPrototype(jsClass)
 }
 
-func (w HTMLElement[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLElementConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

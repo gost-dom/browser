@@ -29,7 +29,7 @@ func (w History[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("state", w.state, nil)
 }
 
-func (w History[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HistoryConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

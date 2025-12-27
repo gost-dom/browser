@@ -26,7 +26,7 @@ func (w HTMLInputElement[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("value", w.value, w.setValue)
 }
 
-func (w HTMLInputElement[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLInputElementConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

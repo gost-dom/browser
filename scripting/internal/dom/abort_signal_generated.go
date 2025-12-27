@@ -24,7 +24,7 @@ func (w AbortSignal[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("reason", w.reason, nil)
 }
 
-func (w AbortSignal[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func AbortSignalConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

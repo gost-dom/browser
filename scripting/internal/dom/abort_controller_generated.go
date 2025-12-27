@@ -23,8 +23,8 @@ func (w AbortController[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("signal", w.signal, nil)
 }
 
-func (w AbortController[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return w.CreateInstance(cbCtx)
+func AbortControllerConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return CreateAbortController(cbCtx)
 }
 
 func (w AbortController[T]) abort(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

@@ -15,14 +15,46 @@ func decodePointerEventInit[T any](s js.Scope[T], v js.Value[T]) (codec.EventIni
 	return decodeMouseEventInit(s, v)
 }
 
-func (w UIEvent[T]) CreateInstance(
-	cbCtx js.CallbackContext[T],
-	type_ string,
-) (js.Value[T], error) {
-	return w.CreateInstanceEventInitDict(cbCtx, type_)
+func CreateUIEvent[T any](cbCtx js.CallbackContext[T], type_ string) (js.Value[T], error) {
+	return CreateUIEventEventInitDict(cbCtx, type_)
 }
 
-func (w UIEvent[T]) CreateInstanceEventInitDict(
+func CreateKeyboardEvent[T any](cbCtx js.CallbackContext[T], type_ string) (js.Value[T], error) {
+	return CreateUIEvent(cbCtx, type_)
+}
+
+func CreateKeyboardEventEventInitDict[T any](
+	cbCtx js.CallbackContext[T],
+	type_ string,
+	options ...interface{},
+) (js.Value[T], error) {
+	return CreateUIEventEventInitDict(cbCtx, type_, options...)
+}
+
+func CreateMouseEvent[T any](cbCtx js.CallbackContext[T], type_ string) (js.Value[T], error) {
+	return CreateUIEvent(cbCtx, type_)
+}
+
+func CreateMouseEventEventInitDict[T any](
+	cbCtx js.CallbackContext[T],
+	type_ string,
+	options ...interface{},
+) (js.Value[T], error) {
+	return CreateUIEventEventInitDict(cbCtx, type_, options...)
+}
+func CreatePointerEvent[T any](cbCtx js.CallbackContext[T], type_ string) (js.Value[T], error) {
+	return CreateUIEvent(cbCtx, type_)
+}
+
+func CreatePointerEventEventInitDict[T any](
+	cbCtx js.CallbackContext[T],
+	type_ string,
+	options ...interface{},
+) (js.Value[T], error) {
+	return CreateUIEventEventInitDict(cbCtx, type_, options...)
+}
+
+func CreateUIEventEventInitDict[T any](
 	cbCtx js.CallbackContext[T],
 	type_ string,
 	options ...interface{}) (js.Value[T], error) {

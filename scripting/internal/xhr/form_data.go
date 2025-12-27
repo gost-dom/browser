@@ -16,12 +16,12 @@ func (w FormData[T]) CustomInitializer(class js.Class[T]) {
 	iterator.InstallPrototype(class)
 }
 
-func (w FormData[T]) CreateInstance(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func CreateFormData[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	value := html.NewFormData()
 	return codec.EncodeConstrucedValue(cbCtx, value)
 }
 
-func (w FormData[T]) CreateInstanceForm(
+func CreateFormDataForm[T any](
 	cbCtx js.CallbackContext[T],
 	form html.HTMLFormElement,
 ) (js.Value[T], error) {
@@ -29,7 +29,7 @@ func (w FormData[T]) CreateInstanceForm(
 	return codec.EncodeConstrucedValue(cbCtx, value)
 }
 
-func (w FormData[T]) CreateInstanceFormSubmitter(
+func CreateFormDataFormSubmitter[T any](
 	cbCtx js.CallbackContext[T],
 	form html.HTMLFormElement,
 	submitter html.HTMLElement,

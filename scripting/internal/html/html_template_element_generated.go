@@ -26,7 +26,7 @@ func (w HTMLTemplateElement[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("shadowRootSerializable", w.shadowRootSerializable, w.setShadowRootSerializable)
 }
 
-func (w HTMLTemplateElement[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLTemplateElementConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

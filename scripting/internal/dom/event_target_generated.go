@@ -25,8 +25,8 @@ func (w EventTarget[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateOperation("dispatchEvent", w.dispatchEvent)
 }
 
-func (w EventTarget[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return w.CreateInstance(cbCtx)
+func EventTargetConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return CreateEventTarget(cbCtx)
 }
 
 func (w EventTarget[T]) addEventListener(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

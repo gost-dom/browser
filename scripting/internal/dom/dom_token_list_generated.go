@@ -33,7 +33,7 @@ func (w DOMTokenList[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateOperation("toString", w.value)
 }
 
-func (w DOMTokenList[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func DOMTokenListConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 

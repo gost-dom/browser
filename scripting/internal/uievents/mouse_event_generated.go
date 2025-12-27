@@ -22,7 +22,7 @@ func (w MouseEvent[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("relatedTarget", w.relatedTarget, nil)
 }
 
-func (w MouseEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func MouseEventConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	type_, errArg1 := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
 	if errArg1 != nil {
 		return nil, errArg1
@@ -32,9 +32,9 @@ func (w MouseEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T]
 		if errArg != nil {
 			return nil, errArg
 		}
-		return w.CreateInstanceEventInitDict(cbCtx, type_, eventInitDict)
+		return CreateMouseEventEventInitDict(cbCtx, type_, eventInitDict)
 	}
-	return w.CreateInstance(cbCtx, type_)
+	return CreateMouseEvent(cbCtx, type_)
 }
 
 func (w MouseEvent[T]) getModifierState(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

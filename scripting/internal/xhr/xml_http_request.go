@@ -27,9 +27,7 @@ func decodeXMLHttpRequestBodyInit[T any](
 	return codec.DecodeRequestBody(s, val)
 }
 
-func (xhr XMLHttpRequest[T]) CreateInstance(
-	cbCtx js.CallbackContext[T],
-) (js.Value[T], error) {
+func CreateXMLHttpRequest[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	win, err := codec.GetWindow(cbCtx)
 	if err != nil {
 		return nil, err

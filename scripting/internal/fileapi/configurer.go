@@ -6,5 +6,5 @@ import (
 )
 
 func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
-	js.RegisterClass(e, "File", "", dom.NewEvent)
+	js.RegisterClass(e, "File", "", dom.NewEvent, dom.EventConstructor)
 }

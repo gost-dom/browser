@@ -3,7 +3,6 @@ package js
 import "fmt"
 
 type Initializer[T any] interface {
-	Constructor(CallbackContext[T]) (Value[T], error)
 	Initialize(Class[T])
 }
 
@@ -11,6 +10,7 @@ type InitializerFactory[T any, U Initializer[T]] = func(ScriptEngine[T]) U
 
 func RegisterClass[T any, U Initializer[T], V InitializerFactory[T, U]](
 	e ScriptEngine[T], className, superClassName string, constructorFactory V,
+	constructorCallback CallbackFunc[T],
 ) {
 	var superClass Class[T]
 	if superClassName != "" {
@@ -23,6 +23,6 @@ func RegisterClass[T any, U Initializer[T], V InitializerFactory[T, U]](
 		}
 	}
 	wrapper := constructorFactory(e)
-	class := e.CreateClass(className, superClass, wrapper.Constructor)
+	class := e.CreateClass(className, superClass, constructorCallback)
 	wrapper.Initialize(class)
 }

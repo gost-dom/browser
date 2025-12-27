@@ -45,3 +45,7 @@ var IdlTypeUndefined = idl.Type{Name: "undefined", Kind: idl.KindSimple}
 func ConstructorNameForInterface(name string) string {
 	return fmt.Sprintf("New%s", name)
 }
+
+func JsConstructorForInterface(name string) string {
+	return fmt.Sprintf("%s%s", name, "Constructor")
+}

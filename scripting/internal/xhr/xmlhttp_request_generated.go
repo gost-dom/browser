@@ -40,8 +40,8 @@ func (w XMLHttpRequest[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("responseXML", w.responseXML, nil)
 }
 
-func (w XMLHttpRequest[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return w.CreateInstance(cbCtx)
+func XMLHttpRequestConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return CreateXMLHttpRequest(cbCtx)
 }
 
 func (w XMLHttpRequest[T]) setRequestHeader(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
