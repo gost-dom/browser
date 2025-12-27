@@ -23,7 +23,7 @@ func (w WindowOrWorkerGlobalScope[T]) decodeTimerHandler(
 			dom.HandleJSCallbackError(scope, "TimerHandler", err)
 		}
 	}
-	return res, err
+	return res, nil
 }
 
 func (w WindowOrWorkerGlobalScope[T]) decodeVoidFunction(
