@@ -5,6 +5,7 @@ import (
 
 	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/customrules"
+	gen "github.com/gost-dom/code-gen/gens"
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/code-gen/scripting/model"
 	g "github.com/gost-dom/generators"
@@ -86,28 +87,58 @@ func (cb CallbackMethods) AttributeGetter(attr model.ESAttribute) g.Generator {
 	)
 }
 
+func EventInitDictType(name string) g.Generator {
+	return g.NewTypePackage(name, packagenames.UIEvents)
+}
+
 func (cb CallbackMethods) AttributeGetterCallbackBody(
 	attr model.ESAttribute,
 ) g.Generator {
 	statements := g.StatementList()
 	instance := g.NewValue("instance")
 	var call g.Generator
-	name := model.IdlNameToGoName(attr.Getter.Name)
-	field := g.ValueOf(instance).Field(name)
+	var transforms g.Generator = g.Noop
 	attrRule := cb.Data.CustomRule.Attributes[attr.Name]
-	if cb.Data.CustomRule.OutputType == customrules.OutputTypeStruct && !attrRule.Callable {
-		targetTypeRule := customrules.AllRules[attr.Spec.Type.Name]
-		if targetTypeRule.OutputType == customrules.OutputTypeStruct {
-			call = field.Reference()
-		} else {
-			call = field
-		}
+	name := model.IdlNameToGoName(attr.Getter.Name)
+
+	if cb.Data.IsEvent() {
+		className := "KeyboardEvent"
+		eventInit := g.NewValue("eventInit")
+		ok := g.NewValue("ok")
+
+		transforms = g.StatementList(
+			g.AssignMany(g.List(eventInit, ok),
+				g.Raw(
+					instance.Generate().Dot("Data").Assert(
+						EventInitDictType("KeyboardEventInit").Generate(),
+					),
+				),
+			),
+			g.IfStmt{
+				Condition: gen.Not(ok),
+				Block: g.Return(g.Nil, cb.CbCtx().NewTypeError(
+					fmt.Sprintf("Object is not a %s", className),
+				)),
+			},
+		)
+		call = eventInit.Field(name)
 	} else {
-		call = field.Call()
+		field := g.ValueOf(instance).Field(name)
+		if cb.Data.CustomRule.OutputType == customrules.OutputTypeStruct && !attrRule.Callable {
+			targetTypeRule := customrules.AllRules[attr.Spec.Type.Name]
+			if targetTypeRule.OutputType == customrules.OutputTypeStruct {
+				call = field.Reference()
+			} else {
+				call = field
+			}
+		} else {
+			call = field.Call()
+		}
 	}
 
 	statements.Append(
 		cb.assignInstance(nil),
+		transforms,
 		ReturnValueGenerator{
 			Data:     cb.Data,
 			Op:       *attr.Getter,

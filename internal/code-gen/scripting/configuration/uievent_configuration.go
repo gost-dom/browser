@@ -26,7 +26,7 @@ func ConfigureEventSpecs(s *WebAPIConfig) {
 	keyboardEvent.SkipWrapper = true
 
 	keyboardEvent.Method("getModifierState").SetNotImplemented()
-	keyboardEvent.Method("key").SetCustomImplementation()
+	// keyboardEvent.Method("key").SetCustomImplementation()
 	keyboardEvent.Method("code").SetNotImplemented()
 	keyboardEvent.Method("location").SetNotImplemented()
 	keyboardEvent.Method("ctrlKey").SetNotImplemented()

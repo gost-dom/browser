@@ -2,6 +2,7 @@ package model
 
 import (
 	"iter"
+	"strings"
 
 	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/idltransform"
@@ -115,7 +116,17 @@ func (d ESConstructorData) Extends() string {
 	return d.IdlInterface.Inheritance
 }
 
+var eventType = g.NewTypePackage("Event", packagenames.Events).Pointer()
+
+func (d ESConstructorData) IsEvent() bool {
+	return strings.HasSuffix(d.Name(), "Event") && d.Name() != "Event"
+}
+
 func (d ESConstructorData) WrappedType() g.Generator {
+	if d.IsEvent() {
+		return eventType
+	}
+
 	if override := d.Spec.OverrideWrappedType; override != nil {
 		res := g.NewTypePackage(override.Name, override.Package)
 		if override.Pointer {

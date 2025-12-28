@@ -43,9 +43,14 @@ func (c CallbackContext) IllegalConstructor() g.Generator {
 	return c.ReturnWithTypeError("Illegal constructor")
 }
 
+func (c CallbackContext) NewTypeError(msg string) g.Generator {
+	return c.Field("NewTypeError").Call(g.Lit(msg))
+}
+
 func (c CallbackContext) ReturnWithTypeError(msg string) g.Generator {
 	return c.Field("ReturnWithTypeError").Call(g.Lit(msg))
 }
+
 func (c CallbackContext) ReturnWithValue(val g.Generator) g.Generator {
 	return c.Field("ReturnWithValue").Call(val)
 }
