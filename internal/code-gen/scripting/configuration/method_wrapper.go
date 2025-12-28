@@ -12,13 +12,6 @@ type ESMethodWrapper struct {
 	// referencing the custom function
 	CustomImplementation bool
 	Arguments            map[string]*ESMethodArgument
-	// Name of the method that will convert the result to JS
-	Encoder string
-}
-
-func (w *ESMethodWrapper) SetEncoder(e string) *ESMethodWrapper {
-	w.Encoder = e
-	return w
 }
 
 // SetNotImplemented is a simple wrapper around [NotImplemented] to support a

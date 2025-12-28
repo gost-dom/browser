@@ -205,7 +205,7 @@ func createOperation(
 		esArg := model.ESOperationArgument{
 			Name:         idlArg.Name,
 			IdlArg:       idlArg,
-			Optional:     idlArg.Optional && !esArgumentSpec.Required,
+			Optional:     idlArg.Optional,
 			ArgumentSpec: esArgumentSpec,
 			Ignore:       esArgumentSpec.Ignored,
 			CustomRule:   opRules.Argument(idlArg.Name),
