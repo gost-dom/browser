@@ -113,6 +113,7 @@ func (cb CallbackMethods) AttributeGetterCallbackBody(
 			Op:       *attr.Getter,
 			Ctx:      cb.CbCtx(),
 			Receiver: cb.Receiver(),
+			GoType:   attrRule.GoType,
 		}.Transform(call),
 	)
 	return statements

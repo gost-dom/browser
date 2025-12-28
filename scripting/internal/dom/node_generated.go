@@ -181,6 +181,15 @@ func (w Node[T]) removeChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err 
 	return codec.EncodeEntity(cbCtx, result)
 }
 
+func (w Node[T]) nodeType(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	instance, err := js.As[dom.Node](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	result := instance.NodeType()
+	return encodeNodeType(cbCtx, result)
+}
+
 func (w Node[T]) nodeName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dom.Node](cbCtx.Instance())
 	if err != nil {

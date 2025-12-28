@@ -36,12 +36,19 @@ var domRules = SpecRules{
 		"toggle":  {HasError: true},
 		"replace": {HasError: true},
 	}},
-	"Node": {Operations: OperationRules{
-		"insertBefore": {HasError: true},
-		"appendChild":  {HasError: true},
-		"removeChild":  {HasError: true},
-		"replaceChild": {HasError: true},
-	}},
+	"Node": {
+		Operations: OperationRules{
+			"insertBefore": {HasError: true},
+			"appendChild":  {HasError: true},
+			"removeChild":  {HasError: true},
+			"replaceChild": {HasError: true},
+		},
+		Attributes: AttributeRules{
+			"nodeType": {GoType: GoType{
+				Name:    "NodeType",
+				Package: packagenames.Dom,
+			}},
+		}},
 	"Element": {
 		Operations: OperationRules{
 			"matches":               {HasError: true},

@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/gost-dom/code-gen/customrules"
@@ -116,11 +117,19 @@ func hasStringOkReturn(data ESConstructorData, cb Callback) bool {
 		cb.Kind == CallbackKindGetter
 }
 
+func encodeGoType(t customrules.GoType) g.Value {
+	return g.NewValue(fmt.Sprintf("encode%s", t.Name))
+}
+
 func (o Callback) Encoder(
 	receiver g.Value,
 	cbCtx g.Generator,
 	data ESConstructorData,
+	goType customrules.GoType,
 ) internal.BoundFunction {
+	if goType.Name != "" {
+		return internal.BindValues(encodeGoType(goType), cbCtx)
+	}
 	if o.EncodeAsSimpleJSLookup() {
 		return internal.BindValues(encodeEntity, cbCtx)
 	}
