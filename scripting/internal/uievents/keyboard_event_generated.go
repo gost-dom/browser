@@ -53,6 +53,19 @@ func (w KeyboardEvent[T]) getModifierState(cbCtx js.CallbackContext[T]) (res js.
 	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.getModifierState: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
+func (w KeyboardEvent[T]) key(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	instance, err := js.As[*event.Event](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	eventInit, ok := instance.Data.(uievents.KeyboardEventInit)
+	if !ok {
+		return nil, cbCtx.NewTypeError("Object is not a KeyboardEvent")
+	}
+	result := eventInit.Key
+	return codec.EncodeString(cbCtx, result)
+}
+
 func (w KeyboardEvent[T]) code(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.code: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
