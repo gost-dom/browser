@@ -124,9 +124,6 @@ func (o Callback) Encoder(
 	if o.EncodeAsSimpleJSLookup() {
 		return internal.BindValues(encodeEntity, cbCtx)
 	}
-	// if e := o.MethodCustomization.Encoder; e != "" {
-	// 	return internal.BindValues(receiver.Field(e))
-	// }
 	t := idltransform.FilterType(o.RetType)
 	idlType := idltransform.NewIdlType(t)
 	switch {
