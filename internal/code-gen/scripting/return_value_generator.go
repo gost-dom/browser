@@ -1,6 +1,7 @@
 package scripting
 
 import (
+	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/scripting/model"
 	g "github.com/gost-dom/generators"
 )
@@ -10,6 +11,7 @@ type ReturnValueGenerator struct {
 	Op       model.Callback
 	Ctx      CallbackContext
 	Receiver g.Generator
+	GoType   customrules.GoType
 }
 
 func (gen ReturnValueGenerator) Transform(call g.Generator) g.Generator {
@@ -55,6 +57,6 @@ func (gen ReturnValueGenerator) encodeReturnValue(
 	cbCtx CallbackContext,
 	val []g.Generator,
 ) g.Generator {
-	encoder := gen.Op.Encoder(g.ValueOf(gen.Receiver), cbCtx, gen.Data)
+	encoder := gen.Op.Encoder(g.ValueOf(gen.Receiver), cbCtx, gen.Data, gen.GoType)
 	return encoder.Call(val...)
 }

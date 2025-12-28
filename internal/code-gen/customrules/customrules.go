@@ -157,6 +157,7 @@ type AttributeRule struct {
 	// NotImplemented indicates that the IDL does not have an implementation in
 	// Go.
 	NotImplemented bool
+	GoType         GoType
 	OverrideType   IdlTyper
 	SetterHasError bool
 	// Callable indicates that the attribute is implemented using methods in Go,

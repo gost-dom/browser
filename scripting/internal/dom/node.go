@@ -26,12 +26,8 @@ func (n Node[T]) setTextContent(cbCtx js.CallbackContext[T]) (js.Value[T], error
 	return nil, nil
 }
 
-func (n Node[T]) nodeType(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	instance, err := js.As[dom.Node](cbCtx.Instance())
-	if err != nil {
-		return nil, err
-	}
-	return codec.EncodeInt(cbCtx, int(instance.NodeType()))
+func encodeNodeType[T any](cbCtx js.CallbackContext[T], value dom.NodeType) (js.Value[T], error) {
+	return codec.EncodeInt(cbCtx, int(value))
 }
 
 func decodeGetRootNodeOptions[T any](

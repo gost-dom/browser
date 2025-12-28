@@ -176,7 +176,7 @@ func configureDOMNode(specs *WebAPIConfig) {
 	domTokenList.Method("supports").SetNotImplemented()
 
 	domNode := specs.Type("Node")
-	domNode.Method("nodeType").SetCustomImplementation()
+	// domNode.Method("nodeType").SetCustomImplementation()
 	domNode.Method("getRootNode").Argument("options").SetHasDefault()
 	domNode.Method("textContent").SetCustomImplementation()
 
