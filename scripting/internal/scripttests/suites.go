@@ -7,6 +7,7 @@ import (
 	"github.com/gost-dom/browser/internal/testing/browsertest"
 	"github.com/gost-dom/browser/scripting/internal/dom/domsuite"
 	"github.com/gost-dom/browser/scripting/internal/html/htmlsuite"
+	"github.com/gost-dom/browser/scripting/internal/uievents/uieventssuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -36,7 +37,7 @@ func RunSuites(t *testing.T, e html.ScriptEngine) {
 	t.Run("EventLoop", runSuite(NewEventLoopTestSuite(e)))
 	t.Run("Element", runSuite(NewElementSuite(e)))
 	t.Run("Window", runSuite(NewWindowTestSuite(e)))
-	t.Run("UIEvents", runSuite(NewUIEventTestSuite(e)))
+	t.Run("UIEvents", func(t *testing.T) { uieventssuite.RunUieventsSuite(t, e) })
 	t.Run("FormData", runSuite(NewFormDataSuite(e)))
 	t.Run("ClassList", runSuite(NewClassListTestSuite(e)))
 	t.Run("Node", runSuite(NewNodeTestSuite(e)))
