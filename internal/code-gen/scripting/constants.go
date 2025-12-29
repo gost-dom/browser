@@ -11,6 +11,8 @@ import (
 var (
 	// Exported values from: scripting/internal/js
 
+	event = g.NewTypePackage("Event", packagenames.Events)
+
 	jsParseSetterArg     = g.NewValuePackage("ParseSetterArg", packagenames.JS)
 	jsConsumeArg         = g.NewValuePackage("ConsumeArgument", packagenames.JS)
 	jsConsumeOptionalArg = g.NewValuePackage("ConsumeOptionalArg", packagenames.JS)
@@ -38,7 +40,12 @@ var (
 
 	// Codecs
 	EncodeCallbackErrorf = g.NewValuePackage("EncodeCallbackErrorf", packagenames.Codec)
+	decodeJsObject       = g.NewValuePackage("DecodeJsObject", packagenames.Codec)
 )
+
+func EncodeConstructedValue(ctx g.Generator, value g.Generator) g.Generator {
+	return g.NewValuePackage("EncodeConstructedValue", packagenames.Codec).Call(ctx, value)
+}
 
 var IdlTypeUndefined = idl.Type{Name: "undefined", Kind: idl.KindSimple}
 

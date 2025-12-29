@@ -2,6 +2,7 @@ package model
 
 import (
 	"iter"
+	"strings"
 
 	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/idltransform"
@@ -19,6 +20,12 @@ type ESConstructorData struct {
 	Attributes    []ESAttribute
 	Constructor   *Callback
 	RunCustomCode bool
+}
+
+func (d ESConstructorData) SpecName() string { return d.Spec.SpecName() }
+
+func (d ESConstructorData) IsEventType() bool {
+	return strings.HasSuffix(d.IdlInterface.Name, "Event")
 }
 
 func (d ESConstructorData) WriteConstructor() bool {

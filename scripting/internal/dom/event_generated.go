@@ -32,13 +32,20 @@ func (w Event[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w Event[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	type_, errArg1 := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
-	eventInitDict, errArg2 := js.ConsumeArgument(cbCtx, "eventInitDict", codec.ZeroValue, codec.DecodeEventInit)
-	err = gosterror.First(errArg1, errArg2)
+	type_, errType := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
+	options, errOpts := js.ConsumeArgument(cbCtx, "options", codec.ZeroValue, codec.DecodeJsObject)
+	err = gosterror.First(errType, errOpts)
 	if err != nil {
 		return nil, err
 	}
-	return w.CreateInstance(cbCtx, type_, eventInitDict)
+	e := event.Event{Type: type_}
+	if options != nil {
+		err = codec.DecodeEvent(cbCtx, options, &e)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return codec.EncodeConstructedValue(cbCtx, &e)
 }
 
 func (w Event[T]) stopPropagation(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

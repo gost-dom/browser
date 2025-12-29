@@ -35,3 +35,7 @@ func NewUIEvent(type_ string) *event.Event {
 func NewPointerEvent(type_ string, init PointerEventInit) *event.Event {
 	return &event.Event{Type: type_, Data: init}
 }
+
+func NewKeyboardEvent(type_ string, init KeyboardEventInit) *event.Event {
+	return &event.Event{Type: type_, Data: init}
+}

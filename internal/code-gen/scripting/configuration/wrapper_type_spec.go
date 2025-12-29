@@ -36,6 +36,8 @@ type WebIDLConfig struct {
 	OverrideWrappedType *GoType
 }
 
+func (c WebIDLConfig) SpecName() string { return c.DomSpec.Name }
+
 func (w *WebIDLConfig) ensureMap() {
 	if w.Customization == nil {
 		w.Customization = make(map[string]*ESMethodWrapper)

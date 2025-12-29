@@ -15,6 +15,8 @@ type WrapperStruct struct {
 	Data model.ESConstructorData
 }
 
+func (s WrapperStruct) SpecName() string { return s.Data.SpecName() }
+
 // TypeDefinition renders the actual struct type definition
 func (ws WrapperStruct) TypeDefinition() g.Generator {
 	return g.StatementList(

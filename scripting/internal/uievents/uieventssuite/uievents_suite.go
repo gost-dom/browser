@@ -54,4 +54,14 @@ func RunUieventsSuite(t *testing.T, e html.ScriptEngine) {
 		w.HTMLDocument().GetHTMLElementById("foo").Click()
 		Expect(w.MustEval(`event instanceof PointerEvent`)).To(BeTrue(), "Event is a PointerEvent")
 	})
+
+	t.Run("KeyboardEvent initialization", func(t *testing.T) {
+		w := browsertest.InitWindow(t, e)
+		w.MustRun(`
+			const event = new KeyboardEvent("dummy", {
+				key: "k"
+			})
+			gost.assertEqual(event.key, "k")
+		`)
+	})
 }

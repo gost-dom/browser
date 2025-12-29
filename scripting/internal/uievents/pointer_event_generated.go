@@ -3,6 +3,9 @@
 package uievents
 
 import (
+	event "github.com/gost-dom/browser/dom/event"
+	gosterror "github.com/gost-dom/browser/internal/gosterror"
+	uievents "github.com/gost-dom/browser/internal/uievents"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -19,18 +22,26 @@ func (w PointerEvent[T]) installPrototype(jsClass js.Class[T]) {
 }
 
 func (w PointerEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	type_, errArg1 := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
-	if errArg1 != nil {
-		return nil, errArg1
+	type_, errType := js.ConsumeArgument(cbCtx, "type", nil, codec.DecodeString)
+	options, errOpts := js.ConsumeArgument(cbCtx, "options", codec.ZeroValue, codec.DecodeJsObject)
+	err = gosterror.First(errType, errOpts)
+	if err != nil {
+		return nil, err
 	}
-	eventInitDict, found, errArg := js.ConsumeOptionalArg(cbCtx, "eventInitDict", w.decodePointerEventInit)
-	if found {
-		if errArg != nil {
-			return nil, errArg
+	var data uievents.PointerEventInit
+	e := event.Event{Type: type_}
+	if options != nil {
+		err = codec.DecodeEvent(cbCtx, options, &e)
+		if err != nil {
+			return nil, err
 		}
-		return w.CreateInstanceEventInitDict(cbCtx, type_, eventInitDict)
+		err = decodePointerEventInit(cbCtx, options, &data)
+		if err != nil {
+			return nil, err
+		}
 	}
-	return w.CreateInstance(cbCtx, type_)
+	e.Data = data
+	return codec.EncodeConstructedValue(cbCtx, &e)
 }
 
 func (w PointerEvent[T]) width(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

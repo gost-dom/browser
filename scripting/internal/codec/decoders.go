@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/types"
 	"github.com/gost-dom/browser/scripting/internal/js"
@@ -79,6 +80,22 @@ type EventInit struct {
 	Init       any
 }
 
+func DecodeEvent[T any](
+	_ js.Scope[T],
+	options js.Object[T],
+	ev *event.Event,
+) error {
+	bubbles, err1 := options.Get("bubbles")
+	cancelable, err2 := options.Get("cancelable")
+	err := errors.Join(err1, err2)
+	if err != nil {
+		return err
+	}
+	ev.Bubbles = bubbles.Boolean()
+	ev.Cancelable = cancelable.Boolean()
+	return nil
+}
+
 func DecodeEventInit[T any](
 	_ js.Scope[T],
 	val js.Value[T],
@@ -106,6 +123,15 @@ func DecodeFunction[T any](s js.Scope[T], v js.Value[T]) (js.Function[T], error)
 		return f, nil
 	}
 	return nil, s.NewTypeError("Must be a function")
+}
+
+func DecodeJsObject[T any](s js.Scope[T], v js.Value[T]) (res js.Object[T], err error) {
+	obj, ok := v.AsObject()
+	if !ok {
+		err = fmt.Errorf("gost-dom/codec: option not an object: %v", v)
+		return
+	}
+	return obj, nil
 }
 
 func DecodeNativeValue[T, U any](s js.Scope[T], v js.Value[T]) (res U, err error) {

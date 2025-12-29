@@ -5,6 +5,7 @@ import (
 
 	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/customrules"
+	variable "github.com/gost-dom/code-gen/gen/var"
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/code-gen/scripting/model"
 	g "github.com/gost-dom/generators"
@@ -36,6 +37,9 @@ func (cb CallbackMethods) ConstructorCallback() g.Generator {
 }
 
 func (cb CallbackMethods) ConstructorCallbackBody() g.Generator {
+	if cb.Data.IsEventType() {
+		return cb.EventConstructorCallbackBody()
+	}
 	if !cb.Data.AllowConstructor() {
 		return g.Return(cb.CbCtx().IllegalConstructor())
 	}
@@ -53,6 +57,90 @@ func (cb CallbackMethods) MethodCallback(op model.Callback) g.Generator {
 			cb.OpCallbackGenerators(op).MethodCallbackBody(),
 		),
 	)
+}
+
+func EventInitDictType(name, domspec string) g.Generator {
+	switch name {
+	case "EventInit":
+		return g.NewTypePackage(name, packagenames.Events)
+	}
+	return g.NewTypePackage(name, packagenames.PackageName(domspec))
+}
+
+func (m CallbackMethods) EventConstructorCallbackBody() g.Generator {
+	type_ := g.Id("type_")
+	err := g.Id("err")
+	errType := g.Id("errType")
+	errOpts := g.Id("errOpts")
+	ev := g.NewValue("e")
+	options := g.Id("options")
+	data := g.Id("data")
+	cons := *m.Data.Constructor
+
+	fmt.Printf("Constructor: %+v", cons.Arguments[1])
+	eventInitType := cons.Arguments[1].IdlArg.Type.Name // "KeyboardEventInit"
+	goEventInitType := EventInitDictType(eventInitType, m.SpecName())
+
+	return g.StatementList(
+		g.AssignMany(g.List(type_, errType),
+			jsConsumeArg.Call(m.CbCtx(), g.Lit("type"), g.Nil, decodeString),
+		),
+		g.AssignMany(
+			g.List(options, errOpts),
+			jsConsumeArg.Call(m.CbCtx(), g.Lit("options"), zeroValue, decodeJsObject),
+		),
+		g.Reassign(err, errorsFirst.Call(errType, errOpts)),
+		g.IfStmt{
+			Condition: g.Neq{Lhs: err, Rhs: g.Nil},
+			Block:     g.Return(g.Nil, err),
+		},
+
+		renderIf(m.Data.Name() != "Event",
+			variable.New(
+				variable.Name(data),
+				variable.Type(goEventInitType),
+			),
+		),
+		g.Assign(ev, StructLiteral(event,
+			KeyField("Type", type_),
+		)),
+		g.IfStmt{
+			Condition: g.Neq{Lhs: options, Rhs: g.Nil},
+			Block: g.StatementList(
+				g.Reassign(err, g.NewValuePackage("DecodeEvent", packagenames.Codec).Call(
+					m.CbCtx(),
+					options,
+					g.ValueOf(ev).Reference(),
+				)),
+				ReturnIfError(err),
+				renderIf(m.Data.Name() != "Event",
+					g.StatementList(
+						g.Reassign(err, g.NewValue(fmt.Sprintf("decode%s", eventInitType)).Call(
+							m.CbCtx(),
+							options,
+							g.ValueOf(data).Reference(),
+						)),
+						ReturnIfError(err),
+					)),
+			),
+		},
+		renderIf(m.Data.Name() != "Event",
+			g.Reassign(ev.Field("Data"), data),
+		),
+		g.Return(EncodeConstructedValue(m.CbCtx(), ev.Reference())),
+	)
+}
+
+func StructLiteral(t g.Generator, opts ...func(*g.StructLiteral)) g.Generator {
+	res := g.StructLiteral{Type: t}
+	for _, opt := range opts {
+		opt(&res)
+	}
+	return res
+}
+
+func KeyField(name string, val g.Generator) func(*g.StructLiteral) {
+	return func(l *g.StructLiteral) { l.KeyField(g.Id(name), val) }
 }
 
 func (cb CallbackMethods) OpCallbackGenerators(op model.Callback) OpCallbackMethods {
