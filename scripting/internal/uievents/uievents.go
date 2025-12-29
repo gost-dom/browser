@@ -64,37 +64,6 @@ func decodeUIEventInit[T any](
 	return nil
 }
 
-func (w UIEvent[T]) decodeMouseEventInit(s js.Scope[T], v js.Value[T]) (codec.EventInit, error) {
-	return w.decodeUIEventInit(s, v)
-}
-
-func (w UIEvent[T]) decodePointerEventInit(s js.Scope[T], v js.Value[T]) (codec.EventInit, error) {
-	return w.decodeMouseEventInit(s, v)
-}
-
-func (w UIEvent[T]) CreateInstance(
-	cbCtx js.CallbackContext[T],
-	type_ string,
-) (js.Value[T], error) {
-	return w.CreateInstanceEventInitDict(cbCtx, type_)
-}
-
-func (w UIEvent[T]) CreateInstanceEventInitDict(
-	cbCtx js.CallbackContext[T],
-	type_ string,
-	options ...interface{}) (js.Value[T], error) {
-	e := uievents.NewUIEvent(type_)
-	return codec.EncodeConstructedValue(cbCtx, e)
-}
-
-func (w UIEvent[T]) decodeUIEventInit(s js.Scope[T], v js.Value[T]) (codec.EventInit, error) {
-	return codec.DecodeEventInit(s, v)
-}
-
-func (w UIEvent[T]) decodeKeyboardEventInit(s js.Scope[T], v js.Value[T]) (codec.EventInit, error) {
-	return w.decodeUIEventInit(s, v)
-}
-
 type MouseEvent[T any] struct {
 	UIEvent[T]
 }
@@ -105,21 +74,6 @@ type PointerEvent[T any] struct {
 
 type KeyboardEvent[T any] struct {
 	UIEvent[T]
-}
-
-func (w KeyboardEvent[T]) CreateInstance(
-	cbCtx js.CallbackContext[T],
-	type_ string,
-) (js.Value[T], error) {
-	return w.CreateInstanceEventInitDict(cbCtx, type_)
-}
-
-func (w KeyboardEvent[T]) CreateInstanceEventInitDict(
-	cbCtx js.CallbackContext[T],
-	type_ string,
-	options ...any) (js.Value[T], error) {
-	e := uievents.NewKeyboardEvent(type_, uievents.KeyboardEventInit{})
-	return codec.EncodeConstructedValue(cbCtx, e)
 }
 
 func (e KeyboardEvent[T]) key(cbctx js.CallbackContext[T]) (js.Value[T], error) {

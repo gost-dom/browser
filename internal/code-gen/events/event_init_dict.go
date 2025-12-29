@@ -45,13 +45,13 @@ func GenerateEventInitDict(name string, dict idl.Dictionary) g.Generator {
 func CreateEventDicts(pkg string) error {
 	spec, err := idl.Load(pkg)
 	if err != nil {
-		return fmt.Errorf("GenerateEventInit: load pkg %s: %w", pkg, err)
+		return fmt.Errorf("CreateEventDicts: load pkg %s: %w", pkg, err)
 	}
 	statements := g.StatementList()
 	for _, name := range eventInitNames {
 		dict, ok := spec.Dictionaries[name]
 		if !ok {
-			return fmt.Errorf("GenerateEventInit: %s: dictionary not found", name)
+			return fmt.Errorf("CreateEventDicts: %s: dictionary not found", name)
 		}
 		statements.Append(g.Line, GenerateEventInitDict(name, dict))
 	}

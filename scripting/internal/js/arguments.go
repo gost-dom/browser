@@ -50,20 +50,6 @@ func ConsumeArgument[T, U any](
 
 func IsUndefined[T any](v Value[T]) bool { return v == nil || v.IsUndefined() }
 
-func ConsumeArgumentInto[T, U any](
-	ptr *T,
-	args CallbackContext[U],
-	name string,
-	defaultValue func() T,
-	decoders ...func(Scope[U], Value[U]) (T, error),
-) (err error) {
-	res, err := ConsumeArgument(args, name, defaultValue, decoders...)
-	if err != nil {
-		*ptr = res
-	}
-	return err
-}
-
 func ConsumeRestArguments[T, U any](
 	args CallbackContext[U],
 	name string,
