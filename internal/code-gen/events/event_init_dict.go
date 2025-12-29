@@ -32,7 +32,9 @@ func GenerateEventInit(name, pkg string) (g.Generator, error) {
 
 func GenerateEventInitDict(name string, dict idl.Dictionary) g.Generator {
 	res := g.NewStruct(g.Id(name))
-	res.Embed(g.Id(dict.Inheritance))
+	if dict.Inheritance != "" {
+		res.Embed(g.Id(dict.Inheritance))
+	}
 	for _, entry := range dict.Entries {
 		t := idltransform.IdlType{Type: entry.Value}
 		res.Field(g.Id(internal.IdlNameToGoName(entry.Key)), t)
