@@ -52,6 +52,6 @@ func RunUieventsSuite(t *testing.T, e html.ScriptEngine) {
 			document.getElementById("foo").addEventListener("click", e => { event = e })
 		`)
 		w.HTMLDocument().GetHTMLElementById("foo").Click()
-		Expect(w.MustEval(`event instanceof PointerEvent`)).To(BeTrue(), "Event is an event")
+		Expect(w.MustEval(`event instanceof PointerEvent`)).To(BeTrue(), "Event is a PointerEvent")
 	})
 }

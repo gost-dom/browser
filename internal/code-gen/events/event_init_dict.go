@@ -51,7 +51,6 @@ func CreateEventDicts(pkg string) error {
 	file.HeaderComment("This file is generated. Do not edit.")
 	file.Add(statements.Generate())
 
-	// spec, err := idl.Load(pkg)
 	filename := "event_inits_generated.go"
 	writer, err := os.Create(filename)
 	if err != nil {

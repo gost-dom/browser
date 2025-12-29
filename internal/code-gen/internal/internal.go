@@ -61,7 +61,7 @@ func IdlNameToGoName(s string) string {
 	for i, word := range words {
 		uppered := strings.ToUpper(word)
 		if slices.Contains(KnownAcronyms, uppered) {
-			return uppered
+			words[i] = uppered
 		} else {
 			words[i] = UpperCaseFirstLetter(word)
 		}
