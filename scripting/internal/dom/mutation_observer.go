@@ -28,7 +28,7 @@ func (w MutationObserver[T]) CreateInstance(
 	cbCtx js.CallbackContext[T],
 	cb mutation.Callback,
 ) (js.Value[T], error) {
-	return codec.EncodeConstrucedValue(cbCtx, mutation.NewObserver(cbCtx.Clock(), cb))
+	return codec.EncodeConstructedValue(cbCtx, mutation.NewObserver(cbCtx.Clock(), cb))
 }
 
 func (w MutationObserver[T]) decodeMutationCallback(s js.Scope[T], val js.Value[T],

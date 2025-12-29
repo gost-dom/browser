@@ -18,7 +18,7 @@ func (w FormData[T]) CustomInitializer(class js.Class[T]) {
 
 func (w FormData[T]) CreateInstance(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	value := html.NewFormData()
-	return codec.EncodeConstrucedValue(cbCtx, value)
+	return codec.EncodeConstructedValue(cbCtx, value)
 }
 
 func (w FormData[T]) CreateInstanceForm(
@@ -26,7 +26,7 @@ func (w FormData[T]) CreateInstanceForm(
 	form html.HTMLFormElement,
 ) (js.Value[T], error) {
 	value := html.NewFormDataForm(form)
-	return codec.EncodeConstrucedValue(cbCtx, value)
+	return codec.EncodeConstructedValue(cbCtx, value)
 }
 
 func (w FormData[T]) CreateInstanceFormSubmitter(
@@ -38,7 +38,7 @@ func (w FormData[T]) CreateInstanceFormSubmitter(
 	if submitter != nil {
 		value.AddElement(submitter)
 	}
-	return codec.EncodeConstrucedValue(cbCtx, value)
+	return codec.EncodeConstructedValue(cbCtx, value)
 }
 
 func (w FormData[T]) decodeFormDataValue(

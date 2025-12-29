@@ -17,7 +17,7 @@ func (w abortControllerWrapper) Signal() dominterfaces.AbortSignal {
 
 func (w AbortController[T]) CreateInstance(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	ctrl := dominterfaces.AbortController(abortControllerWrapper{dom.NewAbortController()})
-	return codec.EncodeConstrucedValue(cbCtx, ctrl)
+	return codec.EncodeConstructedValue(cbCtx, ctrl)
 }
 
 func (w AbortController[T]) toAbortSignal(

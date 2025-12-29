@@ -48,7 +48,7 @@ func (xhr XMLHttpRequest[T]) CreateInstance(
 		}
 		return nil
 	}))
-	return codec.EncodeConstrucedValue(cbCtx, result)
+	return codec.EncodeConstructedValue(cbCtx, result)
 }
 
 func (xhr XMLHttpRequest[T]) open(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

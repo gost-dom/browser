@@ -31,7 +31,7 @@ func (w Request[T]) CreateInstance(
 	}
 	f := fetch.New(win)
 	req := f.NewRequest(url, options...)
-	return codec.EncodeConstrucedValue(cbCtx, &req)
+	return codec.EncodeConstructedValue(cbCtx, &req)
 }
 
 func (w Request[T]) toHeaders(cbCtx js.CallbackContext[T], h *fetch.Headers) (js.Value[T], error) {

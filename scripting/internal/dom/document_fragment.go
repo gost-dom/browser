@@ -12,5 +12,5 @@ func (w DocumentFragment[T]) Constructor(ctx js.CallbackContext[T]) (js.Value[T]
 		return nil, err
 	}
 	result := dom.NewDocumentFragment(win.Document())
-	return codec.EncodeConstrucedValue(ctx, result)
+	return codec.EncodeConstructedValue(ctx, result)
 }

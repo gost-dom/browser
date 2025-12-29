@@ -30,7 +30,7 @@ func (w URL[T]) CreateInstance(
 	if err != nil {
 		return nil, err
 	}
-	return codec.EncodeConstrucedValue(cbCtx, value)
+	return codec.EncodeConstructedValue(cbCtx, value)
 }
 
 func (w URL[T]) CreateInstanceBase(
@@ -42,7 +42,7 @@ func (w URL[T]) CreateInstanceBase(
 	if err != nil {
 		return nil, err
 	}
-	return codec.EncodeConstrucedValue(cbCtx, value)
+	return codec.EncodeConstructedValue(cbCtx, value)
 }
 
 func (w URLSearchParams[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
@@ -81,7 +81,7 @@ func (w URLSearchParams[T]) Constructor(cbCtx js.CallbackContext[T]) (js.Value[T
 			)
 		}
 	}
-	return codec.EncodeConstrucedValue(cbCtx, &res)
+	return codec.EncodeConstructedValue(cbCtx, &res)
 }
 
 func (w URLSearchParams[T]) toSequenceString_(

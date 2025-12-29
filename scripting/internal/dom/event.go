@@ -16,7 +16,7 @@ func (w Event[T]) CreateInstance(
 	o codec.EventInit,
 ) (js.Value[T], error) {
 	e := &event.Event{Type: type_, Bubbles: o.Bubbles, Cancelable: o.Cancelable, Data: o.Init}
-	return codec.EncodeConstrucedValue(cbCtx, e)
+	return codec.EncodeConstructedValue(cbCtx, e)
 }
 
 func (w Event[T]) toEventTarget(

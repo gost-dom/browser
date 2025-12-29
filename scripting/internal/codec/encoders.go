@@ -108,10 +108,10 @@ func EncodeNull[T any](s js.CallbackScope[T]) (js.Value[T], error) {
 	return s.Null(), nil
 }
 
-// EncodeConstrucedValue is a simple helper for JS constructor callbacks to
+// EncodeConstructedValue is a simple helper for JS constructor callbacks to
 // store the constructed Go value in the JavaScript object, and possibly cache
 // it with the script context.
-func EncodeConstrucedValue[T any](s js.CallbackScope[T], val any) (js.Value[T], error) {
+func EncodeConstructedValue[T any](s js.CallbackScope[T], val any) (js.Value[T], error) {
 	// TODO: Figure out if this function should survive
 	s.This().SetNativeValue(val)
 	if e, ok := val.(entity.Components); ok {

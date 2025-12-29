@@ -17,7 +17,7 @@ func (w Headers[T]) CreateInstance(
 	for _, h := range options {
 		res.Append(h[0], h[1])
 	}
-	return codec.EncodeConstrucedValue(cbCtx, res)
+	return codec.EncodeConstructedValue(cbCtx, res)
 }
 
 func (w Headers[T]) decodeHeadersInit(

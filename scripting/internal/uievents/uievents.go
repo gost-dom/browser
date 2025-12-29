@@ -27,7 +27,7 @@ func (w UIEvent[T]) CreateInstanceEventInitDict(
 	type_ string,
 	options ...interface{}) (js.Value[T], error) {
 	e := uievents.NewUIEvent(type_)
-	return codec.EncodeConstrucedValue(cbCtx, e)
+	return codec.EncodeConstructedValue(cbCtx, e)
 }
 
 func (w UIEvent[T]) decodeUIEventInit(s js.Scope[T], v js.Value[T]) (codec.EventInit, error) {
