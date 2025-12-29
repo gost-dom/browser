@@ -7,7 +7,6 @@ import (
 	"github.com/gost-dom/code-gen/events"
 	g "github.com/gost-dom/generators"
 
-	// . "github.com/gost-dom/generators/testing/matchers"
 	"github.com/onsi/gomega"
 	"github.com/stretchr/testify/require"
 )
