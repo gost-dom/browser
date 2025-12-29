@@ -11,6 +11,13 @@ import (
 	"github.com/gost-dom/webref/idl"
 )
 
+// GenerateEventInit generates EventInit structs in the form
+//
+//	type MouseEventInit struct {
+//		UIEventInit
+//		ScreenX int
+//		ScreenY int
+//	}
 func GenerateEventInit(name, pkg string) (g.Generator, error) {
 	spec, err := idl.Load(pkg)
 	if err != nil {
