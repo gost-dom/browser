@@ -24,11 +24,6 @@ type FocusEventInit struct {
 	RelatedTarget event.EventTarget
 }
 
-type KeyboardEventInit struct {
-	UIEventInit
-	Key string
-}
-
 type InputEventInit struct {
 	UIEventInit
 }

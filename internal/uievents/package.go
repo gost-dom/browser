@@ -1,4 +1,5 @@
 //go:generate ../../internal/code-gen/code-gen -g eventTypes -p uievents
+//go:generate ../../internal/code-gen/code-gen -g eventInitTypes -p uievents
 
 // Package uievents creates and dispatches [UI Events].
 //

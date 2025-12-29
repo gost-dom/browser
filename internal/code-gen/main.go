@@ -62,6 +62,12 @@ func main() {
 		}
 		exitOnError(events.CreateEventGenerators(*packageName))
 		os.Exit(0)
+	case "eventInitTypes":
+		if packageName == nil {
+			panic("Missing package spec")
+		}
+		exitOnError(events.CreateEventDicts(*packageName))
+		os.Exit(0)
 	}
 
 	if *outputFile == "" || *generatorType == "" {
