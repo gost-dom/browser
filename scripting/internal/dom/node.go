@@ -16,7 +16,3 @@ func decodeGetRootNodeOptions[T any](
 ) (dom.GetRootNodeOptions, error) {
 	return dom.GetRootNodeOptions(value.Boolean()), nil
 }
-
-func (n Node[T]) defaultGetRootNodeOptions() dom.GetRootNodeOptions {
-	return false
-}

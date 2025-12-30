@@ -50,10 +50,6 @@ func decodeEventListener[T any](
 	}
 }
 
-func (w EventTarget[T]) defaultEventListenerOptions() []event.EventListenerOption {
-	return nil
-}
-
 func decodeEventListenerOptions[T any](
 	scope js.Scope[T], val js.Value[T],
 ) (res []event.EventListenerOption, err error) {

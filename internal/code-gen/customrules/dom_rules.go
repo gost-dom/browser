@@ -41,8 +41,12 @@ var domRules = SpecRules{
 		},
 	},
 	"EventTarget": {Operations: OperationRules{
-		"addEventListener":    {Arguments: ArgumentRules{"options": {Variadic: true}}},
-		"removeEventListener": {Arguments: ArgumentRules{"options": {Variadic: true}}},
+		"addEventListener": {
+			Arguments: ArgumentRules{"options": {ZeroAsDefault: true, Variadic: true}},
+		},
+		"removeEventListener": {
+			Arguments: ArgumentRules{"options": {ZeroAsDefault: true, Variadic: true}},
+		},
 	}},
 	"DOMTokenList": {Operations: OperationRules{
 		"add":     {HasError: true},
@@ -52,6 +56,9 @@ var domRules = SpecRules{
 	}},
 	"Node": {
 		Operations: OperationRules{
+			"getRootNode": {Arguments: ArgumentRules{
+				"options": {ZeroAsDefault: true},
+			}},
 			"insertBefore": {HasError: true},
 			"appendChild":  {HasError: true},
 			"removeChild":  {HasError: true},
