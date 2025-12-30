@@ -32,62 +32,69 @@ var generators = map[string]func(io.Writer) error{
 }
 
 func main() {
-	debug := flag.Bool("d", false, "Debug")
-	outputFile := flag.String("o", "", "Output file to write")
-	generatorType := flag.String("g", "", "Generator type")
-	packageName := flag.String("p", "", "Package to generate")
+	var (
+		generatorType string
+		packageName   string
+		outputFile    string
+		debug         bool
+	)
+	flag.BoolVar(&debug, "d", false, "Debug")
+	flag.StringVar(&outputFile, "o", "", "Output file to write")
+	flag.StringVar(&generatorType, "g", "", "Generator type")
+	flag.StringVar(&packageName, "p", "", "Package to generate")
 	flag.Parse()
-	switch *generatorType {
+
+	switch generatorType {
 	case "script":
-		exitOnError(scripting.CreateJavaScriptMappings(*packageName))
+		exitOnError(scripting.CreateJavaScriptMappings(packageName))
 		os.Exit(0)
 	case "script-bootstrap":
-		exitOnError(scripting.GenerateRegisterFunctions(*packageName))
+		exitOnError(scripting.GenerateRegisterFunctions(packageName))
 		os.Exit(0)
 	case "event-init-decoders":
-		if packageName == nil {
+		if packageName == "" {
 			panic("Missing package spec")
 		}
-		exitOnError(scripting.CreateEventInitDecoders(*packageName))
+		exitOnError(scripting.CreateEventInitDecoders(packageName))
 		os.Exit(0)
 	case "gotypes":
-		if packageName == nil {
+		if packageName == "" {
 			panic("Missing package spec")
 		}
-		exitOnError(htmlelements.CreateImplementationPackage(*packageName))
+		exitOnError(htmlelements.CreateImplementationPackage(packageName))
 		os.Exit(0)
 	case "interfaces":
-		if packageName == nil {
+		if packageName == "" {
 			panic("Missing package spec")
 		}
-		exitOnError(interfaces.CreateInterfaces(*packageName))
+		exitOnError(interfaces.CreateInterfaces(packageName))
 		os.Exit(0)
 	case "eventTypes":
-		if packageName == nil {
+		if packageName == "" {
 			panic("Missing package spec")
 		}
-		exitOnError(events.CreateEventGenerators(*packageName))
+		exitOnError(events.CreateEventGenerators(packageName))
 		os.Exit(0)
 	case "eventInitTypes":
-		if packageName == nil {
+		if packageName == "" {
 			panic("Missing package spec")
 		}
-		exitOnError(events.CreateEventDicts(*packageName))
+		exitOnError(events.CreateEventDicts(packageName))
 		os.Exit(0)
 	}
 
-	if *outputFile == "" || *generatorType == "" {
+	if outputFile == "" || generatorType == "" {
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
-	if *debug {
+	if debug {
 		fmt.Println(strings.Join(os.Args, " "))
 		fmt.Println("--------")
 	}
 
-	file := getWriter(*outputFile)
+	file := getWriter(outputFile)
 
-	generator, ok := generators[*generatorType]
+	generator, ok := generators[generatorType]
 	if !ok {
 		os.Exit(1)
 	}
