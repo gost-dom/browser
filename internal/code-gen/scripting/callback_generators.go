@@ -198,8 +198,9 @@ func (cb CallbackMethods) AttributeGetterCallbackBody(
 	attrRule := cb.Data.CustomRule.Attributes[attr.Name]
 	name := model.IdlNameToGoName(attr.Getter.Name)
 
+	eventInitType := fmt.Sprintf("%sInit", cb.IdlName())
+
 	if cb.Data.IsEvent() {
-		className := "KeyboardEvent"
 		eventInit := g.NewValue("eventInit")
 		ok := g.NewValue("ok")
 
@@ -207,14 +208,14 @@ func (cb CallbackMethods) AttributeGetterCallbackBody(
 			g.AssignMany(g.List(eventInit, ok),
 				g.Raw(
 					instance.Generate().Dot("Data").Assert(
-						EventInitDictType("KeyboardEventInit", cb.SpecName()).Generate(),
+						EventInitDictType(eventInitType, cb.SpecName()).Generate(),
 					),
 				),
 			),
 			g.IfStmt{
 				Condition: gen.Not(ok),
 				Block: g.Return(g.Nil, cb.CbCtx().NewTypeError(
-					fmt.Sprintf("Object is not a %s", className),
+					fmt.Sprintf("Object is not a %s", cb.IdlName()),
 				)),
 			},
 		)
