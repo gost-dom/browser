@@ -18,10 +18,7 @@ import (
 // [XMLHttpRequest.send]: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/send
 // [RequestInit.body]: https://developer.mozilla.org/en-US/docs/Web/API/RequestInit
 func DecodeRequestBody[T any](s js.Scope[T], val js.Value[T]) (io.Reader, error) {
-	if val == nil {
-		return nil, nil
-	}
-	if val.IsUndefined() || val.IsNull() {
+	if js.IsNullish(val) {
 		return nil, nil
 	}
 	if val.IsString() {
