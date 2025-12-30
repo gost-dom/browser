@@ -46,6 +46,10 @@ var (
 	decodeJsObject       = g.NewValuePackage("DecodeJsObject", packagenames.Codec)
 )
 
+func jsLegacyUnforgeable() g.Generator {
+	return g.NewValuePackage("LegacyUnforgeable", packagenames.JS).Call()
+}
+
 func EncodeConstructedValue(ctx g.Generator, value g.Generator) g.Generator {
 	return g.NewValuePackage("EncodeConstructedValue", packagenames.Codec).Call(ctx, value)
 }

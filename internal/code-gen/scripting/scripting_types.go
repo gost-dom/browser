@@ -12,8 +12,13 @@ func (c class) CreateOperation(name string, callback g.Generator) g.Generator {
 	return c.Field("CreateOperation").Call(g.Lit(name), callback)
 }
 
-func (c class) CreateAttribute(name string, getter g.Generator, setter g.Generator) g.Generator {
-	return c.Field("CreateAttribute").Call(g.Lit(name), getter, setter)
+func (c class) CreateAttribute(
+	name string,
+	getter g.Generator,
+	setter g.Generator,
+	opts ...g.Generator,
+) g.Generator {
+	return c.Field("CreateAttribute").Call(append(g.List(g.Lit(name), getter, setter), opts...)...)
 }
 
 /* -------- CallbackContext -------- */

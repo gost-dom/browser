@@ -55,7 +55,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 
 	specs.Type("NonDocumentTypeChildNode")
 	document := specs.Type("Document")
-	document.RunCustomCode = true // Set instance properties
 	document.MarkMembersAsNotImplemented(
 		"createNodeIterator",
 		"createTreeWalker",

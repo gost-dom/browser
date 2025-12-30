@@ -5,7 +5,7 @@ go 1.24.0
 require (
 	github.com/dave/jennifer v1.7.1
 	github.com/gost-dom/generators v0.0.0-20250703140108-658e7c0ed22c
-	github.com/gost-dom/webref v0.5.12
+	github.com/gost-dom/webref v0.5.13
 	github.com/onsi/gomega v1.38.3
 	github.com/stretchr/testify v1.11.1
 )

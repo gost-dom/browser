@@ -9,10 +9,6 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w *Document[T]) CustomInitializer(class js.Class[T]) {
-	class.CreateAttribute("location", w.location, nil, js.LegacyUnforgable())
-}
-
 func CreateDocument[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	res := html.NewHTMLDocument(nil)
 	return codec.EncodeConstructedValue(cbCtx, res)

@@ -8,7 +8,7 @@ type Option struct {
 
 type PropertyOption func(*Option)
 
-func LegacyUnforgable() PropertyOption {
+func LegacyUnforgeable() PropertyOption {
 	return func(o *Option) { o.InstanceMember = true }
 }
 

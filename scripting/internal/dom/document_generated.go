@@ -23,7 +23,6 @@ func NewDocument[T any](scriptHost js.ScriptEngine[T]) *Document[T] {
 
 func (wrapper Document[T]) Initialize(jsClass js.Class[T]) {
 	wrapper.installPrototype(jsClass)
-	wrapper.CustomInitializer(jsClass)
 }
 
 func (w Document[T]) installPrototype(jsClass js.Class[T]) {
@@ -55,7 +54,7 @@ func (w Document[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("contentType", w.contentType, nil)
 	jsClass.CreateAttribute("doctype", w.doctype, nil)
 	jsClass.CreateAttribute("documentElement", w.documentElement, nil)
-	jsClass.CreateAttribute("location", w.location, nil)
+	jsClass.CreateAttribute("location", w.location, nil, js.LegacyUnforgeable())
 	jsClass.CreateAttribute("body", w.body, w.setBody)
 	jsClass.CreateAttribute("head", w.head, nil)
 	w.nonElementParentNode.installPrototype(jsClass)

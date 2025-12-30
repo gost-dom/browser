@@ -88,6 +88,15 @@ func (i PrototypeInitializer) InstallAttributeHandlers(
 	return stmts
 }
 
+func (i PrototypeInitializer) attributeOptions(attr model.ESAttribute) []g.Generator {
+	var res []g.Generator
+	if attr.Spec.LegacyUnforgeable {
+		res = append(res, jsLegacyUnforgeable())
+
+	}
+	return res
+}
+
 func (i PrototypeInitializer) InstallAttributeHandler(
 	op model.ESAttribute,
 	receiver g.Value,
@@ -105,7 +114,7 @@ func (i PrototypeInitializer) InstallAttributeHandler(
 	}
 
 	res := g.StatementList(
-		class.CreateAttribute(op.Name, getterFn, setterFn),
+		class.CreateAttribute(op.Name, getterFn, setterFn, i.attributeOptions(op)...),
 	)
 	if op.Spec.Stringifier {
 		res.Append(
