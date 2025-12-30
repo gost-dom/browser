@@ -122,7 +122,6 @@ func encodeGoType(t customrules.GoType) g.Value {
 }
 
 func (o Callback) Encoder(
-	receiver g.Value,
 	cbCtx g.Generator,
 	data ESConstructorData,
 	goType customrules.GoType,

@@ -51,10 +51,9 @@ func (gen OpCallbackMethods) NativeMethodCall(
 	name := op.NativeFunctionName() + methodPostFix
 	eval := gen.instance().Field(name).Call(args...)
 	return ReturnValueGenerator{
-		Data:     gen.Data,
-		Op:       op,
-		Ctx:      gen.CbCtx(),
-		Receiver: gen.Receiver(),
+		Data: gen.Data,
+		Op:   op,
+		Ctx:  gen.CbCtx(),
 	}.Transform(eval)
 }
 
@@ -94,7 +93,7 @@ func (gen OpCallbackMethods) CtorOrOperationCallback(
 		if !a.Variadic {
 			parseArgs = append(parseArgs, defaultValuer)
 		}
-		var dec = DecodersForArg(gen.Receiver(), a)
+		var dec = DecodersForArg(a)
 		parseArgs = append(parseArgs, dec...)
 		if a.Variadic {
 			stmts.Append(
@@ -123,7 +122,7 @@ func (gen OpCallbackMethods) CtorOrOperationCallback(
 		err := g.Id("errArg")
 		optArgs = append(optArgs, arg)
 		parseArgs := []g.Generator{gen.CbCtx(), g.Lit(a.Name)}
-		decoders := DecodersForArg(gen.Receiver(), a)
+		decoders := DecodersForArg(a)
 		parseArgs = append(parseArgs, decoders...)
 		optArgsBlock.Append(
 			g.AssignMany(

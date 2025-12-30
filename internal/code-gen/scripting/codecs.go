@@ -22,7 +22,7 @@ func decode(s string) g.Generator {
 	return g.NewValuePackage(fmt.Sprintf("Decode%s", s), packagenames.Codec)
 }
 
-func DecodersForArg(receiver g.Generator, arg model.ESOperationArgument) []g.Generator {
+func DecodersForArg(arg model.ESOperationArgument) []g.Generator {
 	if d := arg.ArgumentSpec.Decoder; d != "" {
 		return g.List(g.Id(d))
 	}
@@ -30,29 +30,28 @@ func DecodersForArg(receiver g.Generator, arg model.ESOperationArgument) []g.Gen
 	argType := arg.IdlArg.Type
 	argRules := arg.CustomRule
 	if argRules.GoType.Name != "" {
-		return DecodersForGoType(receiver, argType, argRules.GoType)
+		return DecodersForGoType(argType, argRules.GoType)
 	}
 
 	if argRules.OverridesType() {
 		argType = argRules.Type
 	}
-	return DecodersForType(receiver, argType)
+	return DecodersForType(argType)
 }
 
 func DecodersForGoType(
-	receiver g.Generator,
 	argType idl.Type,
 	goType customrules.GoType,
 ) []g.Generator {
 	if goType == gotypes.TimeDuration {
 		return []g.Generator{decodeDuration}
 	}
-	return DecodersForType(receiver, argType)
+	return DecodersForType(argType)
 }
 
 // DecodersForType generates the decoders to be used for decoding an input of a
 // specific JavaScript type into Go based on the web IDL specification.
-func DecodersForType(receiver g.Generator, argType idl.Type) []g.Generator {
+func DecodersForType(argType idl.Type) []g.Generator {
 	argType = idltransform.FilterType(argType)
 	if argType.Kind == idl.KindUnion {
 		res := make([]g.Generator, len(argType.Types))

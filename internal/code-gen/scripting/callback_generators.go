@@ -238,11 +238,10 @@ func (cb CallbackMethods) AttributeGetterCallbackBody(
 		),
 		transforms,
 		ReturnValueGenerator{
-			Data:     cb.Data,
-			Op:       *attr.Getter,
-			Ctx:      cb.CbCtx(),
-			Receiver: cb.Receiver(),
-			GoType:   attrRule.GoType,
+			Data:   cb.Data,
+			Op:     *attr.Getter,
+			Ctx:    cb.CbCtx(),
+			GoType: attrRule.GoType,
 		}.Transform(call),
 	)
 	return statements
@@ -272,7 +271,7 @@ func (cb CallbackMethods) AttributeSetterCallbackBody(attr model.ESAttribute) g.
 
 	args := append(
 		[]g.Generator{cb.CbCtx()},
-		DecodersForType(cb.Receiver(), attr.Spec.Type)...,
+		DecodersForType(attr.Spec.Type)...,
 	)
 	parsedArg := jsParseSetterArg.Call(args...)
 
