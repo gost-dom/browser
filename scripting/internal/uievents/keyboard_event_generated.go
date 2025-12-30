@@ -64,33 +64,81 @@ func (w KeyboardEvent[T]) key(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 }
 
 func (w KeyboardEvent[T]) code(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.code: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	var eventInit uievents.KeyboardEventInit
+	eventInit, err = codec.RetrieveEventInit[uievents.KeyboardEventInit](cbCtx)
+	if err != nil {
+		return nil, err
+	}
+	result := eventInit.Code
+	return codec.EncodeString(cbCtx, result)
 }
 
 func (w KeyboardEvent[T]) location(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.location: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	var eventInit uievents.KeyboardEventInit
+	eventInit, err = codec.RetrieveEventInit[uievents.KeyboardEventInit](cbCtx)
+	if err != nil {
+		return nil, err
+	}
+	result := eventInit.Location
+	return codec.EncodeInt(cbCtx, result)
 }
 
 func (w KeyboardEvent[T]) ctrlKey(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.ctrlKey: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	var eventInit uievents.KeyboardEventInit
+	eventInit, err = codec.RetrieveEventInit[uievents.KeyboardEventInit](cbCtx)
+	if err != nil {
+		return nil, err
+	}
+	result := eventInit.CtrlKey
+	return codec.EncodeBoolean(cbCtx, result)
 }
 
 func (w KeyboardEvent[T]) shiftKey(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.shiftKey: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	var eventInit uievents.KeyboardEventInit
+	eventInit, err = codec.RetrieveEventInit[uievents.KeyboardEventInit](cbCtx)
+	if err != nil {
+		return nil, err
+	}
+	result := eventInit.ShiftKey
+	return codec.EncodeBoolean(cbCtx, result)
 }
 
 func (w KeyboardEvent[T]) altKey(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.altKey: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	var eventInit uievents.KeyboardEventInit
+	eventInit, err = codec.RetrieveEventInit[uievents.KeyboardEventInit](cbCtx)
+	if err != nil {
+		return nil, err
+	}
+	result := eventInit.AltKey
+	return codec.EncodeBoolean(cbCtx, result)
 }
 
 func (w KeyboardEvent[T]) metaKey(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.metaKey: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	var eventInit uievents.KeyboardEventInit
+	eventInit, err = codec.RetrieveEventInit[uievents.KeyboardEventInit](cbCtx)
+	if err != nil {
+		return nil, err
+	}
+	result := eventInit.MetaKey
+	return codec.EncodeBoolean(cbCtx, result)
 }
 
 func (w KeyboardEvent[T]) repeat(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.repeat: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	var eventInit uievents.KeyboardEventInit
+	eventInit, err = codec.RetrieveEventInit[uievents.KeyboardEventInit](cbCtx)
+	if err != nil {
+		return nil, err
+	}
+	result := eventInit.Repeat
+	return codec.EncodeBoolean(cbCtx, result)
 }
 
 func (w KeyboardEvent[T]) isComposing(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.isComposing: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	var eventInit uievents.KeyboardEventInit
+	eventInit, err = codec.RetrieveEventInit[uievents.KeyboardEventInit](cbCtx)
+	if err != nil {
+		return nil, err
+	}
+	result := eventInit.IsComposing
+	return codec.EncodeBoolean(cbCtx, result)
 }
