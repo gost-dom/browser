@@ -15,7 +15,7 @@ type MutationCallback[T any] struct {
 }
 
 func (cb MutationCallback[T]) HandleMutation(recs []mutation.Record, obs *mutation.Observer) {
-	jsRecs, err := toSequenceMutationRecord(cb.s, recs)
+	jsRecs, err := encodeSequenceMutationRecord(cb.s, recs)
 	if err == nil {
 		_, err = cb.f.Call(cb.s.GlobalThis(), jsRecs)
 	}
@@ -68,13 +68,6 @@ func decodeObserveOption[T any](
 }
 
 func encodeSequenceMutationRecord[T any](
-	cbCtx js.CallbackContext[T],
-	records []mutation.Record,
-) (js.Value[T], error) {
-	return toSequenceMutationRecord(cbCtx, records)
-}
-
-func toSequenceMutationRecord[T any](
 	s js.Scope[T], records []mutation.Record,
 ) (js.Value[T], error) {
 	res := make([]js.Value[T], len(records))
