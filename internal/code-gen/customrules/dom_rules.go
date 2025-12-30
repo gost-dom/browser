@@ -52,6 +52,7 @@ var domRules = SpecRules{
 				Name:    "NodeType",
 				Package: packagenames.Dom,
 			}},
+			"textContent": {ZeroAsNull: true},
 		}},
 	"Element": {
 		Operations: OperationRules{

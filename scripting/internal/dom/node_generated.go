@@ -299,3 +299,23 @@ func (w Node[T]) setNodeValue(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 	instance.SetNodeValue(val)
 	return nil, nil
 }
+
+func (w Node[T]) textContent(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	instance, err := js.As[dom.Node](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	result := instance.TextContent()
+	return codec.EncodeOptionalString(cbCtx, result)
+}
+
+func (w Node[T]) setTextContent(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	instance, err0 := js.As[dom.Node](cbCtx.Instance())
+	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
+	err = gosterror.First(err0, err1)
+	if err != nil {
+		return nil, err
+	}
+	instance.SetTextContent(val)
+	return nil, nil
+}
