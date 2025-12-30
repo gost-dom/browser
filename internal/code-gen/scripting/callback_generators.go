@@ -77,7 +77,6 @@ func (m CallbackMethods) EventConstructorCallbackBody() g.Generator {
 	data := g.Id("data")
 	cons := *m.Data.Constructor
 
-	fmt.Printf("Constructor: %+v", cons.Arguments[1])
 	eventInitType := cons.Arguments[1].IdlArg.Type.Name // "KeyboardEventInit"
 	goEventInitType := EventInitDictType(eventInitType, m.SpecName())
 
