@@ -1,6 +1,6 @@
 package events
 
-var eventInitNames = []string{
+var GeneratedEventInitNames = []string{
 	"EventModifierInit",
 	"KeyboardEventInit",
 }

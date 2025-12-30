@@ -48,7 +48,7 @@ func CreateEventDicts(pkg string) error {
 		return fmt.Errorf("CreateEventDicts: load pkg %s: %w", pkg, err)
 	}
 	statements := g.StatementList()
-	for _, name := range eventInitNames {
+	for _, name := range GeneratedEventInitNames {
 		dict, ok := spec.Dictionaries[name]
 		if !ok {
 			return fmt.Errorf("CreateEventDicts: %s: dictionary not found", name)
