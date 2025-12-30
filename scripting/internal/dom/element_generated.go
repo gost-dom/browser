@@ -347,6 +347,15 @@ func (w Element[T]) setClassName(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.setClassName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
+func (w Element[T]) classList(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	instance, err := js.As[dom.Element](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	result := instance.ClassList()
+	return encodeDOMTokenList(cbCtx, result)
+}
+
 func (w Element[T]) slot(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.slot: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

@@ -23,14 +23,9 @@ func (w Element[T]) style(cbCtx js.CallbackContext[T]) (res js.Value[T], err err
 	return
 }
 
-func (e Element[T]) classList(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	instance, err := js.As[dom.Element](cbCtx.Instance())
-	if err != nil {
-		return nil, err
-	}
-	cl := instance.ClassList()
+func encodeDOMTokenList[T any](cbCtx js.Scope[T], val dom.DOMTokenList) (js.Value[T], error) {
 	tokenList := cbCtx.Constructor("DOMTokenList")
-	return tokenList.NewInstance(cl)
+	return tokenList.NewInstance(val)
 }
 
 func encodeNamedNodeMap[T any](
