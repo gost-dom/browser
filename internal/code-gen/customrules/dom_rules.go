@@ -21,6 +21,9 @@ var domRules = SpecRules{
 		OverrideTypeName: "HTMLDocument",
 		InterfacePackage: packagenames.Html,
 		Operations: OperationRules{
+			"createElement": {Arguments: ArgumentRules{
+				"options": {Ignore: true, Variadic: true}, // TODO: Get this working
+			}},
 			"createElementNS": {Arguments: ArgumentRules{
 				"options": {Ignore: true, Variadic: true}, // TODO: Get this working
 			}},

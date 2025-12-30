@@ -115,7 +115,7 @@ func configureDOMNode(specs *WebAPIConfig) {
 	)
 
 	// createElement has `is` option, relating to web components
-	document.Method("createElement").SetCustomImplementation()
+	// document.Method("createElement").SetCustomImplementation()
 
 	nodeList := specs.Type("NodeList")
 	nodeList.RunCustomCode = true

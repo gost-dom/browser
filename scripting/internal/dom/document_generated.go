@@ -97,6 +97,19 @@ func (w Document[T]) getElementsByClassName(cbCtx js.CallbackContext[T]) (res js
 	return codec.EncodeCallbackErrorf(cbCtx, "Document.getElementsByClassName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
+func (w Document[T]) createElement(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	instance, errInst := js.As[html.HTMLDocument](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	localName, errArg1 := js.ConsumeArgument(cbCtx, "localName", nil, codec.DecodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result := instance.CreateElement(localName)
+	return codec.EncodeEntity(cbCtx, result)
+}
+
 func (w Document[T]) createElementNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[html.HTMLDocument](cbCtx.Instance())
 	if errInst != nil {
