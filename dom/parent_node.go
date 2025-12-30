@@ -17,10 +17,6 @@ type parentNode struct {
 	node *node
 }
 
-func newParentNode(n *node) ParentNode {
-	return parentNode{n}
-}
-
 func (n parentNode) Append(nodes ...Node) (err error) {
 	if node := n.collapseNodes(nodes); node != nil {
 		_, err = n.node.self.InsertBefore(node, nil)
