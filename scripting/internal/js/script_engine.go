@@ -30,5 +30,5 @@ type ScriptEngineFactory[T any] interface {
 }
 
 func IllegalConstructor[T any](ctx CallbackContext[T]) (Value[T], error) {
-	return nil, ctx.NewTypeError("Illegal Constructor")
+	return nil, ctx.NewTypeError("Illegal constructor")
 }

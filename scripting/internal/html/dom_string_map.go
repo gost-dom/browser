@@ -11,10 +11,6 @@ func NewDOMStringMap[T any](host js.ScriptEngine[T]) DOMStringMap[T] {
 	return DOMStringMap[T]{}
 }
 
-func DOMStringMapConstructor[T any](info js.CallbackContext[T]) (js.Value[T], error) {
-	return info.ReturnWithTypeError("Illegal Constructor")
-}
-
 func (w DOMStringMap[T]) Initialize(class js.Class[T]) {
 	class.CreateNamedHandler(
 		js.WithGetterCallback(w.NamedPropertyGet),
