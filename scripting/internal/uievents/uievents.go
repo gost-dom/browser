@@ -7,37 +7,6 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func decodeInto[T, U any](
-	scope js.Scope[T],
-	target *U,
-	opts js.Object[T],
-	key string,
-	decoder func(js.Scope[T], js.Value[T]) (U, error),
-) error {
-	val, err := opts.Get(key)
-	if err != nil {
-		return err
-	}
-	if js.IsUndefined(val) {
-		return nil
-	}
-	decoded, err := decoder(scope, val)
-	if err == nil {
-		*target = decoded
-	}
-	return err
-}
-
-// func decodeKeyboardEventInit[T any](
-// 	scope js.Scope[T],
-// 	options js.Object[T],
-// 	init *uievents.KeyboardEventInit,
-// ) error {
-// 	return errors.Join(
-// 		decodeInto(scope, &init.Key, options, "key", codec.DecodeString),
-// 	)
-// }
-
 func decodePointerEventInit[T any](
 	_ js.Scope[T],
 	options js.Object[T],

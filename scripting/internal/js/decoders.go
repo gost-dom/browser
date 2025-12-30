@@ -35,3 +35,24 @@ func ParseSetterArg[T, U any](
 	err = fmt.Errorf("parseSetterArg: conversion errors: %w", errors.Join(errs...))
 	return
 }
+
+func DecodeInto[T, U any](
+	scope Scope[T],
+	target *U,
+	opts Object[T],
+	key string,
+	decoder func(Scope[T], Value[T]) (U, error),
+) error {
+	val, err := opts.Get(key)
+	if err != nil {
+		return err
+	}
+	if IsUndefined(val) {
+		return nil
+	}
+	decoded, err := decoder(scope, val)
+	if err == nil {
+		*target = decoded
+	}
+	return err
+}

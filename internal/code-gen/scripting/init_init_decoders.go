@@ -27,11 +27,11 @@ func CreateEventInitDecoder(name string, dict idl.Dictionary) g.Generator {
 				jen.Id("init").Add(eventType.Pointer().Generate()),
 			).
 			Params(jen.Id("error")).
-			Block(createEventInitDecoderBody(name, dict).Generate()),
+			Block(createEventInitDecoderBody(dict).Generate()),
 	)
 }
 
-func createEventInitDecoderBody(name string, dict idl.Dictionary) g.Generator {
+func createEventInitDecoderBody(dict idl.Dictionary) g.Generator {
 	var decoders []g.Generator
 	var init = g.NewValue("init")
 	var options = g.Id("options")
@@ -49,7 +49,7 @@ func createEventInitDecoderBody(name string, dict idl.Dictionary) g.Generator {
 		var field = init.Field(fieldName)
 		decoders = append(
 			decoders,
-			gen.NewlineBefore(g.NewValue("decodeInto").Call(
+			gen.NewlineBefore(jsDecodeInto.Call(
 				g.Id("scope"),
 				field.Reference(),
 				options,
