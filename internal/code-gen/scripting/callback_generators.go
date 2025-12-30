@@ -202,22 +202,19 @@ func (cb CallbackMethods) AttributeGetterCallbackBody(
 
 	if cb.Data.IsEvent() {
 		eventInit := g.NewValue("eventInit")
-		ok := g.NewValue("ok")
+		eventInitTyep := EventInitDictType(eventInitType, cb.SpecName())
+		err := g.Id("err")
 
 		transforms = g.StatementList(
-			g.AssignMany(g.List(eventInit, ok),
-				g.Raw(
-					instance.Generate().Dot("Data").Assert(
-						EventInitDictType(eventInitType, cb.SpecName()).Generate(),
-					),
-				),
+			variable.New(
+				variable.Name(eventInit),
+				variable.Type(eventInitTyep)),
+			g.ReassignMany(g.List(eventInit, err),
+				g.NewValuePackage(
+					"RetrieveEventInit", packagenames.Codec,
+				).TypeParam(eventInitTyep).Call(cb.CbCtx()),
 			),
-			g.IfStmt{
-				Condition: gen.Not(ok),
-				Block: g.Return(g.Nil, cb.CbCtx().NewTypeError(
-					fmt.Sprintf("Object is not a %s", cb.IdlName()),
-				)),
-			},
+			ReturnIfError(err),
 		)
 		call = eventInit.Field(name)
 	} else {
@@ -235,7 +232,10 @@ func (cb CallbackMethods) AttributeGetterCallbackBody(
 	}
 
 	statements.Append(
-		cb.assignInstance(nil),
+		renderIf(
+			!cb.Data.IsEvent(),
+			cb.assignInstance(nil),
+		),
 		transforms,
 		ReturnValueGenerator{
 			Data:     cb.Data,

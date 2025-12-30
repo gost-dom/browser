@@ -147,3 +147,18 @@ func DecodeNativeValue[T, U any](s js.Scope[T], v js.Value[T]) (res U, err error
 	err = fmt.Errorf("gost-dom/codec: option not of type %T: %v", res, optVal)
 	return
 }
+
+func RetrieveEventInit[T, U any](cbCtx js.CallbackContext[U]) (res T, err error) {
+	var ev *event.Event
+	ev, err = js.As[*event.Event](cbCtx.Instance())
+	if err != nil {
+		return
+	}
+
+	var ok bool
+	res, ok = ev.Data.(T)
+	if !ok {
+		err = cbCtx.NewTypeError(fmt.Sprintf("Object is not a %T", res))
+	}
+	return
+}
