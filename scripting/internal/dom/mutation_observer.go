@@ -45,7 +45,7 @@ func decodeObserveOption[T any](
 ) ([]mutation.ObserveOption, error) {
 	obj, ok := v.AsObject()
 	if !ok {
-		return nil, s.NewTypeError("Obtions not an object")
+		return nil, s.NewTypeError("Options not an object")
 	}
 	var res []mutation.ObserveOption
 	ap := func(key string, o mutation.ObserveOption) {
