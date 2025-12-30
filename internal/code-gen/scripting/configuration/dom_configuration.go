@@ -189,7 +189,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 func configureDOMEvent(domSpecs *WebAPIConfig) {
 	event := domSpecs.Type("Event")
 	// event.SkipWrapper = true
-	event.Method("eventPhase").SetCustomImplementation()
 	event.Method("initEvent").Ignore()
 	event.Method("composed").Ignore()
 	event.Method("composedPath").Ignore()

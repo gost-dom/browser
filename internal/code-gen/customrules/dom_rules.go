@@ -32,7 +32,14 @@ var domRules = SpecRules{
 			"body": {SetterHasError: true},
 		},
 	},
-	"Event": {OutputType: OutputTypeStruct},
+	"Event": {OutputType: OutputTypeStruct,
+		Attributes: AttributeRules{
+			"eventPhase": {GoType: GoType{
+				Name:    "EventPhase",
+				Package: packagenames.Events,
+			}},
+		},
+	},
 	"EventTarget": {Operations: OperationRules{
 		"addEventListener":    {Arguments: ArgumentRules{"options": {Variadic: true}}},
 		"removeEventListener": {Arguments: ArgumentRules{"options": {Variadic: true}}},

@@ -34,11 +34,6 @@ func encodeEventTarget[T any](
 		constants.MISSING_FEATURE_ISSUE_URL),
 	)
 }
-
-func (w Event[T]) eventPhase(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	instance, err := js.As[*event.Event](cbCtx.Instance())
-	if err != nil {
-		return nil, err
-	}
-	return codec.EncodeInt(cbCtx, int(instance.EventPhase))
+func encodeEventPhase[T any](scope js.Scope[T], e event.EventPhase) (js.Value[T], error) {
+	return codec.EncodeInt(scope, int(e))
 }

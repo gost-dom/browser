@@ -66,7 +66,7 @@ func EncodeEntityScopedWithPrototype[T any](
 func EncodeBoolean[T any](s js.CallbackScope[T], b bool) (js.Value[T], error) {
 	return s.NewBoolean(b), nil
 }
-func EncodeInt[T any](s js.CallbackScope[T], i int) (js.Value[T], error) {
+func EncodeInt[T any](s js.Scope[T], i int) (js.Value[T], error) {
 	return s.NewInt32(int32(i)), nil
 }
 

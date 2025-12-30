@@ -93,6 +93,15 @@ func (w Event[T]) currentTarget(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 	return encodeEventTarget(cbCtx, result)
 }
 
+func (w Event[T]) eventPhase(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	instance, err := js.As[*event.Event](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	result := instance.EventPhase
+	return encodeEventPhase(cbCtx, result)
+}
+
 func (w Event[T]) bubbles(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
