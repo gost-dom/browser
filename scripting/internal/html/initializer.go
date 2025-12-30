@@ -31,7 +31,7 @@ func ConfigureScriptEngine[T any](e js.ScriptEngine[T]) {
 	// inheritance relationship between the two, which is modelled here.
 	//
 	// See also: https://developer.mozilla.org/en-US/docs/Web/API/HTMLDocument
-	js.RegisterClass(e, "HTMLDocument", "Document", NewHTMLDocument, HTMLDocumentConstructor)
+	js.RegisterClass(e, "HTMLDocument", "Document", NewHTMLDocument, js.IllegalConstructor)
 	for _, cls := range codec.HtmlElements {
 		if _, ok := e.Class(cls); !ok && cls != "HTMLElement" {
 			js.RegisterClass(e, cls, "HTMLElement", NewUnconstructable, js.IllegalConstructor)
