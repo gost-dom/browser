@@ -373,6 +373,6 @@ type ElementEventDispatchFunctionsGenerator struct {
 	Element string
 }
 
-func (g *ElementEventDispatchFunctionsGenerator) Generate() *jen.Statement {
+func (*ElementEventDispatchFunctionsGenerator) Generate() *jen.Statement {
 	return nil
 }
