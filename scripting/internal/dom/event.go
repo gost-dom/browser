@@ -29,8 +29,8 @@ func encodeEventTarget[T any](
 	if entity, ok := e.(entity.Components); ok {
 		return codec.EncodeEntity(cbCtx, entity)
 	}
-	return cbCtx.ReturnWithTypeError(fmt.Sprintf(
-		"encode EventTarget: Not an antity. %s",
+	return nil, cbCtx.NewTypeError(fmt.Sprintf(
+		"encode EventTarget: Not an entity. %s",
 		constants.MISSING_FEATURE_ISSUE_URL),
 	)
 }
