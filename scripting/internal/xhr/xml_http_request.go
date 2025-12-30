@@ -14,7 +14,7 @@ func decodeDocument[T any](
 	_ js.Scope[T],
 	val js.Value[T],
 ) (io.Reader, error) {
-	if val.IsNull() {
+	if js.IsNullish(val) {
 		return nil, nil
 	}
 	return nil, errors.New("Not supported yet")
