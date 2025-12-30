@@ -3,6 +3,7 @@
 package uievents
 
 import (
+	"errors"
 	event "github.com/gost-dom/browser/dom/event"
 	gosterror "github.com/gost-dom/browser/internal/gosterror"
 	uievents "github.com/gost-dom/browser/internal/uievents"
@@ -35,11 +36,9 @@ func (w MouseEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[T]
 	var data uievents.MouseEventInit
 	e := event.Event{Type: type_}
 	if options != nil {
-		err = codec.DecodeEvent(cbCtx, options, &e)
-		if err != nil {
-			return nil, err
-		}
-		err = decodeMouseEventInit(cbCtx, options, &data)
+		err = errors.Join(
+			codec.DecodeEvent(cbCtx, options, &e),
+			decodeMouseEventInit(cbCtx, options, &data))
 		if err != nil {
 			return nil, err
 		}

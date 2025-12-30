@@ -3,6 +3,7 @@
 package uievents
 
 import (
+	"errors"
 	event "github.com/gost-dom/browser/dom/event"
 	gosterror "github.com/gost-dom/browser/internal/gosterror"
 	uievents "github.com/gost-dom/browser/internal/uievents"
@@ -31,11 +32,9 @@ func (w PointerEvent[T]) Constructor(cbCtx js.CallbackContext[T]) (res js.Value[
 	var data uievents.PointerEventInit
 	e := event.Event{Type: type_}
 	if options != nil {
-		err = codec.DecodeEvent(cbCtx, options, &e)
-		if err != nil {
-			return nil, err
-		}
-		err = decodePointerEventInit(cbCtx, options, &data)
+		err = errors.Join(
+			codec.DecodeEvent(cbCtx, options, &e),
+			decodePointerEventInit(cbCtx, options, &data))
 		if err != nil {
 			return nil, err
 		}

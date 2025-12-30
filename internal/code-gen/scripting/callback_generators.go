@@ -5,9 +5,11 @@ import (
 
 	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/customrules"
+	"github.com/gost-dom/code-gen/gen"
 	variable "github.com/gost-dom/code-gen/gen/var"
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/code-gen/scripting/model"
+	"github.com/gost-dom/code-gen/stdgen"
 	g "github.com/gost-dom/generators"
 )
 
@@ -80,6 +82,9 @@ func (m CallbackMethods) EventConstructorCallbackBody() g.Generator {
 	eventInitType := cons.Arguments[1].IdlArg.Type.Name // "KeyboardEventInit"
 	goEventInitType := EventInitDictType(eventInitType, m.SpecName())
 
+	// For the base event, we don't configure an EventInit
+	isBaseEvent := m.Data.Name() == "Event"
+
 	return g.StatementList(
 		g.AssignMany(g.List(type_, errType),
 			jsConsumeArg.Call(m.CbCtx(), g.Lit("type"), g.Nil, decodeString),
@@ -94,38 +99,48 @@ func (m CallbackMethods) EventConstructorCallbackBody() g.Generator {
 			Block:     g.Return(g.Nil, err),
 		},
 
-		renderIf(m.Data.Name() != "Event",
-			variable.New(
-				variable.Name(data),
-				variable.Type(goEventInitType),
-			),
-		),
+		renderIf(!isBaseEvent, variable.New(
+			variable.Name(data),
+			variable.Type(goEventInitType),
+		)),
 		g.Assign(ev, StructLiteral(event,
 			KeyField("Type", type_),
 		)),
 		g.IfStmt{
 			Condition: g.Neq{Lhs: options, Rhs: g.Nil},
 			Block: g.StatementList(
-				g.Reassign(err, g.NewValuePackage("DecodeEvent", packagenames.Codec).Call(
-					m.CbCtx(),
-					options,
-					g.ValueOf(ev).Reference(),
-				)),
-				ReturnIfError(err),
-				renderIf(m.Data.Name() != "Event",
+				renderIfElse(isBaseEvent,
 					g.StatementList(
-						g.Reassign(err, g.NewValue(fmt.Sprintf("decode%s", eventInitType)).Call(
+						g.Reassign(err, g.NewValuePackage("DecodeEvent", packagenames.Codec).Call(
 							m.CbCtx(),
 							options,
-							g.ValueOf(data).Reference(),
+							g.ValueOf(ev).Reference(),
 						)),
+						ReturnIfError(err),
+					),
+					g.StatementList(
+						g.Reassign(err,
+							stdgen.ErrorsJoin(
+								gen.NewlineBefore(
+									g.NewValuePackage("DecodeEvent", packagenames.Codec).Call(
+										m.CbCtx(),
+										options,
+										g.ValueOf(ev).Reference(),
+									),
+								),
+								gen.NewlineBefore(
+									g.NewValue(fmt.Sprintf("decode%s", eventInitType)).Call(
+										m.CbCtx(),
+										options,
+										g.ValueOf(data).Reference(),
+									),
+								),
+							)),
 						ReturnIfError(err),
 					)),
 			),
 		},
-		renderIf(m.Data.Name() != "Event",
-			g.Reassign(ev.Field("Data"), data),
-		),
+		renderIf(!isBaseEvent, g.Reassign(ev.Field("Data"), data)),
 		g.Return(EncodeConstructedValue(m.CbCtx(), ev.Reference())),
 	)
 }
