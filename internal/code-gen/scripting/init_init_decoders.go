@@ -66,13 +66,13 @@ func createEventInitDecoderBody(dict idl.Dictionary) g.Generator {
 func CreateEventInitDecoders(pkg string) error {
 	spec, err := idl.Load(pkg)
 	if err != nil {
-		return fmt.Errorf("CreateEventDicts: load pkg %s: %w", pkg, err)
+		return fmt.Errorf("CreateEventInitDecoders: load pkg %s: %w", pkg, err)
 	}
 	statements := g.StatementList()
 	for _, name := range events.GeneratedEventInitNames {
 		dict, ok := spec.Dictionaries[name]
 		if !ok {
-			return fmt.Errorf("CreateEventDicts: %s: dictionary not found", name)
+			return fmt.Errorf("CreateEventInitDecoders: %s: dictionary not found", name)
 		}
 		statements.Append(g.Line, CreateEventInitDecoder(name, dict))
 	}
