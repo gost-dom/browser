@@ -15,7 +15,6 @@ type IdlType struct {
 	idl.Type
 }
 
-// Creates a new IdlType that will always be qualified
 func NewIdlType(t idl.Type) IdlType { return IdlType{t} }
 
 func InternalPackage(name string) string {
@@ -32,14 +31,14 @@ func InternalPackage(name string) string {
 }
 
 func TypeGen(name string) g.Generator {
-	if pkg := InternalPackage(name); pkg != "" /* && pkg != targetPkg */ {
+	if pkg := InternalPackage(name); pkg != "" {
 		return g.NewTypePackage(name, pkg)
 	}
 	return g.Id(name)
 }
 
 func (s IdlType) Generate() *jen.Statement {
-	if pkg := InternalPackage(s.Name); pkg != "" /* && pkg != s.TargetPackage */ {
+	if pkg := InternalPackage(s.Name); pkg != "" {
 		return jen.Qual(pkg, s.Name)
 	}
 	switch s.Kind {

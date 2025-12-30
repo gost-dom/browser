@@ -61,12 +61,11 @@ func generateInterface(webApi string, target string, idlInterface idl.Interface)
 	interfaces[0] = idlInterface
 	copy(interfaces[1:], idlInterface.Includes)
 	result := IdlInterface{
-		SpecName:  webApi,
-		Name:      idlInterface.Name,
-		Inherits:  idlInterface.InternalSpec.Inheritance,
-		Includes:  includes,
-		Rules:     intfRules,
-		TargetPkg: target,
+		SpecName: webApi,
+		Name:     idlInterface.Name,
+		Inherits: idlInterface.InternalSpec.Inheritance,
+		Includes: includes,
+		Rules:    intfRules,
 	}
 
 	for idx, i := range idlInterface.Includes {

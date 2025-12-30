@@ -25,7 +25,6 @@ type IdlInterface struct {
 	Operations     []IdlInterfaceOperation
 	Includes       []IdlInterfaceInclude
 	IterableTypes  []idltransform.IdlType
-	TargetPkg      string
 }
 
 var components = g.NewTypePackage("Components", packagenames.Entity)
