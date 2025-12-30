@@ -44,6 +44,12 @@ func main() {
 	case "script-bootstrap":
 		exitOnError(scripting.GenerateRegisterFunctions(*packageName))
 		os.Exit(0)
+	case "event-init-decoders":
+		if packageName == nil {
+			panic("Missing package spec")
+		}
+		exitOnError(scripting.CreateEventInitDecoders(*packageName))
+		os.Exit(0)
 	case "gotypes":
 		if packageName == nil {
 			panic("Missing package spec")

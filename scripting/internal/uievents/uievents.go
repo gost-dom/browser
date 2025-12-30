@@ -1,8 +1,6 @@
 package uievents
 
 import (
-	"errors"
-
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/internal/uievents"
 	"github.com/gost-dom/browser/scripting/internal/codec"
@@ -30,15 +28,15 @@ func decodeInto[T, U any](
 	return err
 }
 
-func decodeKeyboardEventInit[T any](
-	scope js.Scope[T],
-	options js.Object[T],
-	init *uievents.KeyboardEventInit,
-) error {
-	return errors.Join(
-		decodeInto(scope, &init.Key, options, "key", codec.DecodeString),
-	)
-}
+// func decodeKeyboardEventInit[T any](
+// 	scope js.Scope[T],
+// 	options js.Object[T],
+// 	init *uievents.KeyboardEventInit,
+// ) error {
+// 	return errors.Join(
+// 		decodeInto(scope, &init.Key, options, "key", codec.DecodeString),
+// 	)
+// }
 
 func decodePointerEventInit[T any](
 	_ js.Scope[T],
