@@ -10,11 +10,9 @@ import (
 )
 
 // IdlType wraps an [idl.Type] value and can generate the proper type
-// specification. The TargetPackage field is used to avoid creating a qualified
-// type when generating code in the package the type is defined
+// specification.
 type IdlType struct {
 	idl.Type
-	// TargetPackage string
 }
 
 // Creates a new IdlType that will always be qualified
