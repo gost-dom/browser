@@ -367,12 +367,3 @@ func CreateEventGenerators(packageName string) error {
 	}
 	return nil
 }
-
-type ElementEventDispatchFunctionsGenerator struct {
-	Api     events.Events
-	Element string
-}
-
-func (*ElementEventDispatchFunctionsGenerator) Generate() *jen.Statement {
-	return nil
-}
