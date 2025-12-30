@@ -59,3 +59,9 @@ Go implementation expects an `*event.Event` value with a specific type for
 `Data`. E.g., the JavaScript `KeyboardEvent` prototype has a `key` attribute,
 and the getter implementation in Go expects a `KeyboardEventInit` value in the
 `Data` field.
+
+> [!NOTE]
+> This was simplified slightly. The dictionary types defines an extra level.
+> `KeyboardEventInit` _inherits_ `ModifierEventInit`, which then inherits
+> `UIEventInit`. This is only the options specifications, the actual event types
+> do not have this extra level.
