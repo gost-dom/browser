@@ -8,26 +8,16 @@ import (
 )
 
 func decodePointerEventInit[T any](
-	_ js.Scope[T],
-	options js.Object[T],
-	init *uievents.PointerEventInit,
+	_ js.Scope[T], _ js.Object[T], _ *uievents.PointerEventInit,
 ) error {
 	return nil
 }
 
-func decodeMouseEventInit[T any](
-	_ js.Scope[T],
-	options js.Object[T],
-	init *uievents.MouseEventInit,
-) error {
+func decodeMouseEventInit[T any](_ js.Scope[T], _ js.Object[T], _ *uievents.MouseEventInit) error {
 	return nil
 }
 
-func decodeUIEventInit[T any](
-	_ js.Scope[T],
-	options js.Object[T],
-	init *uievents.UIEventInit,
-) error {
+func decodeUIEventInit[T any](_ js.Scope[T], _ js.Object[T], _ *uievents.UIEventInit) error {
 	return nil
 }
 
