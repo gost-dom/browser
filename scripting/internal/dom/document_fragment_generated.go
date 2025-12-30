@@ -5,11 +5,15 @@ package dom
 import js "github.com/gost-dom/browser/scripting/internal/js"
 
 type DocumentFragment[T any] struct {
-	parentNode *ParentNode[T]
+	nonElementParentNode *NonElementParentNode[T]
+	parentNode           *ParentNode[T]
 }
 
 func NewDocumentFragment[T any](scriptHost js.ScriptEngine[T]) *DocumentFragment[T] {
-	return &DocumentFragment[T]{NewParentNode(scriptHost)}
+	return &DocumentFragment[T]{
+		NewNonElementParentNode(scriptHost),
+		NewParentNode(scriptHost),
+	}
 }
 
 func (wrapper DocumentFragment[T]) Initialize(jsClass js.Class[T]) {
@@ -17,5 +21,6 @@ func (wrapper DocumentFragment[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w DocumentFragment[T]) installPrototype(jsClass js.Class[T]) {
+	w.nonElementParentNode.installPrototype(jsClass)
 	w.parentNode.installPrototype(jsClass)
 }

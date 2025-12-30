@@ -14,5 +14,6 @@ const MISSING_FEATURE_ISSUE_URL = "Create feature request here: https://github.c
 const BUG_ISSUE_URL = "This is a bug in " + PACKAGE_NAME + ". Please fill a bug report here: https://github.com/gost-dom/browser/issues"
 
 var ErrGostDomBug = errors.New(BUG_ISSUE_URL)
+var ErrGostDomMissingFeature = errors.New(MISSING_FEATURE_ISSUE_URL)
 
 const BUG_ISSUE_DETAILS = "Please include the contents below, as well as other contextual information you might have"

@@ -24,7 +24,11 @@ var domRules = SpecRules{
 			"createElementNS": {Arguments: ArgumentRules{
 				"options": {Ignore: true, Variadic: true}, // TODO: Get this working
 			}},
-		}},
+		},
+		Attributes: AttributeRules{
+			"body": {SetterHasError: true},
+		},
+	},
 	"Event": {OutputType: OutputTypeStruct},
 	"EventTarget": {Operations: OperationRules{
 		"addEventListener":    {Arguments: ArgumentRules{"options": {Variadic: true}}},

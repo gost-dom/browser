@@ -10,42 +10,12 @@ import (
 )
 
 func (w *Document[T]) CustomInitializer(class js.Class[T]) {
-	// host := w.scriptHost
-	// tmpl := constructor.InstanceTemplate()
 	class.CreateAttribute("location", w.location, nil, js.LegacyUnforgable())
-	class.CreateAttribute("head", w.head, nil)
-	class.CreateAttribute("body", w.body, nil)
-	class.CreateOperation("getElementById", w.getElementById)
 }
 
 func CreateDocument[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	res := html.NewHTMLDocument(nil)
 	return codec.EncodeConstructedValue(cbCtx, res)
-}
-
-func (w *Document[T]) getElementById(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	instance, err0 := js.As[dom.Document](cbCtx.Instance())
-	id, err1 := js.ConsumeArgument(cbCtx, "id", nil, codec.DecodeString)
-	if err := errors.Join(err0, err1); err != nil {
-		return nil, err
-	}
-	return codec.EncodeEntity(cbCtx, instance.GetElementById(id))
-}
-
-func (w *Document[T]) head(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	instance, err := js.As[dom.Document](cbCtx.Instance())
-	if err != nil {
-		return nil, err
-	}
-	return codec.EncodeEntity(cbCtx, instance.Head())
-}
-
-func (w *Document[T]) body(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	instance, err := js.As[dom.Document](cbCtx.Instance())
-	if err != nil {
-		return nil, err
-	}
-	return codec.EncodeEntity(cbCtx, instance.Body())
 }
 
 func (w *Document[T]) createElement(cbCtx js.CallbackContext[T]) (js.Value[T], error) {

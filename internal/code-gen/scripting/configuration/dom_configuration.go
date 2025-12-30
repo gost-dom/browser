@@ -101,8 +101,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 
 		// TODO: Use these
 		"title",
-		"body",
-		"head",
 		"images",
 		"embeds",
 		"plugins",
@@ -126,6 +124,7 @@ func configureDOMNode(specs *WebAPIConfig) {
 	htmlCollection := specs.Type("HTMLCollection")
 	htmlCollection.RunCustomCode = true
 
+	specs.Type("NonElementParentNode")
 	parentNode := specs.Type("ParentNode")
 	parentNode.Method("append").Argument("nodes").Decoder = "w.decodeNodeOrText"
 	parentNode.Method("prepend").Argument("nodes").Decoder = "w.decodeNodeOrText"

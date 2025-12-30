@@ -10,11 +10,15 @@ import (
 )
 
 type Document[T any] struct {
-	parentNode *ParentNode[T]
+	nonElementParentNode *NonElementParentNode[T]
+	parentNode           *ParentNode[T]
 }
 
 func NewDocument[T any](scriptHost js.ScriptEngine[T]) *Document[T] {
-	return &Document[T]{NewParentNode(scriptHost)}
+	return &Document[T]{
+		NewNonElementParentNode(scriptHost),
+		NewParentNode(scriptHost),
+	}
 }
 
 func (wrapper Document[T]) Initialize(jsClass js.Class[T]) {
@@ -52,6 +56,9 @@ func (w Document[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("doctype", w.doctype, nil)
 	jsClass.CreateAttribute("documentElement", w.documentElement, nil)
 	jsClass.CreateAttribute("location", w.location, nil)
+	jsClass.CreateAttribute("body", w.body, w.setBody)
+	jsClass.CreateAttribute("head", w.head, nil)
+	w.nonElementParentNode.installPrototype(jsClass)
 	w.parentNode.installPrototype(jsClass)
 }
 
@@ -274,5 +281,33 @@ func (w Document[T]) location(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 		return nil, err
 	}
 	result := instance.Location()
+	return codec.EncodeEntity(cbCtx, result)
+}
+
+func (w Document[T]) body(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	instance, err := js.As[html.HTMLDocument](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	result := instance.Body()
+	return codec.EncodeEntity(cbCtx, result)
+}
+
+func (w Document[T]) setBody(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	instance, err0 := js.As[html.HTMLDocument](cbCtx.Instance())
+	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeHTMLElement)
+	err = gosterror.First(err0, err1)
+	if err != nil {
+		return nil, err
+	}
+	return nil, instance.SetBody(val)
+}
+
+func (w Document[T]) head(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	instance, err := js.As[html.HTMLDocument](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	result := instance.Head()
 	return codec.EncodeEntity(cbCtx, result)
 }

@@ -14,7 +14,7 @@ type ElementContainer interface {
 // the DOM spec; they share a common set of functions operating on elements.
 type RootNode interface {
 	ElementContainer
-	GetElementById(string) Element
+	NonElementParentNode
 }
 
 type rootNode struct {

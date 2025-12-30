@@ -11,6 +11,10 @@ import (
 // [Node]
 type ElementParent = ParentNode
 
+type NonElementParentNode interface {
+	GetElementById(string) Element
+}
+
 // parentNode implements the functions defined in the [ParentNode] IDL Mixin
 // interface.
 type parentNode struct {

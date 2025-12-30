@@ -1,9 +1,11 @@
 package dom
 
 import (
+	"errors"
 	"log/slog"
 
 	"github.com/gost-dom/browser/dom/event"
+	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/internal/log"
 	"golang.org/x/net/html"
 )
@@ -20,6 +22,7 @@ type Document interface {
 	ElementOrDocument
 	ActiveElement() Element
 	Body() Element
+	SetBody(Element) error
 	Head() Element
 	CreateDocumentFragment() DocumentFragment
 	CreateAttribute(string) Attr
@@ -97,6 +100,13 @@ func (d *document) Body() Element {
 		}
 	}
 	return nil
+}
+
+func (d *document) SetBody(Element) error {
+	return errors.Join(
+		errors.New("Document.SetBody: not implemented"),
+		constants.ErrGostDomMissingFeature,
+	)
 }
 
 func (d *document) Head() Element {

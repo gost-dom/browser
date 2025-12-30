@@ -1,0 +1,36 @@
+// This file is generated. Do not edit.
+
+package dom
+
+import (
+	dom "github.com/gost-dom/browser/dom"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
+	js "github.com/gost-dom/browser/scripting/internal/js"
+)
+
+type NonElementParentNode[T any] struct{}
+
+func NewNonElementParentNode[T any](scriptHost js.ScriptEngine[T]) *NonElementParentNode[T] {
+	return &NonElementParentNode[T]{}
+}
+
+func (wrapper NonElementParentNode[T]) Initialize(jsClass js.Class[T]) {
+	wrapper.installPrototype(jsClass)
+}
+
+func (w NonElementParentNode[T]) installPrototype(jsClass js.Class[T]) {
+	jsClass.CreateOperation("getElementById", w.getElementById)
+}
+
+func (w NonElementParentNode[T]) getElementById(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	instance, errInst := js.As[dom.NonElementParentNode](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	elementId, errArg1 := js.ConsumeArgument(cbCtx, "elementId", nil, codec.DecodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result := instance.GetElementById(elementId)
+	return codec.EncodeEntity(cbCtx, result)
+}
