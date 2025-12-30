@@ -17,10 +17,6 @@ type WrapperStruct struct {
 
 func (s WrapperStruct) SpecName() string { return s.Data.SpecName() }
 
-func (s WrapperStruct) jsInstallerFunctionName() string {
-	return "install" + s.Data.Name()
-}
-
 // TypeDefinition renders the actual struct type definition
 func (ws WrapperStruct) TypeDefinition() g.Generator {
 	return g.StatementList(
