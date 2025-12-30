@@ -14,11 +14,11 @@ import (
 // type when generating code in the package the type is defined
 type IdlType struct {
 	idl.Type
-	TargetPackage string
+	// TargetPackage string
 }
 
 // Creates a new IdlType that will always be qualified
-func NewIdlType(t idl.Type) IdlType { return IdlType{t, ""} }
+func NewIdlType(t idl.Type) IdlType { return IdlType{t} }
 
 func InternalPackage(name string) string {
 	switch name {
@@ -31,18 +31,17 @@ func InternalPackage(name string) string {
 	default:
 		return ""
 	}
-
 }
 
-func TypeGen(name, targetPkg string) g.Generator {
-	if pkg := InternalPackage(name); pkg != "" && pkg != targetPkg {
+func TypeGen(name string) g.Generator {
+	if pkg := InternalPackage(name); pkg != "" /* && pkg != targetPkg */ {
 		return g.NewTypePackage(name, pkg)
 	}
 	return g.Id(name)
 }
 
 func (s IdlType) Generate() *jen.Statement {
-	if pkg := InternalPackage(s.Name); pkg != "" && pkg != s.TargetPackage {
+	if pkg := InternalPackage(s.Name); pkg != "" /* && pkg != s.TargetPackage */ {
 		return jen.Qual(pkg, s.Name)
 	}
 	switch s.Kind {
@@ -65,19 +64,6 @@ func (s IdlType) Generate() *jen.Statement {
 	default:
 		return jen.Id(s.Name)
 	}
-}
-
-// StructFieldType represents the type of a struct field
-type StructFieldType struct {
-	idl.Type
-	TargetPackage string
-}
-
-func (s StructFieldType) Generate() *jen.Statement {
-	if IdlType(s).IsString() && s.Nullable {
-		return jen.Op("*").Id("string")
-	}
-	return IdlType(s).Generate()
 }
 
 func (t IdlType) IsString() bool {
@@ -120,7 +106,7 @@ func (t IdlType) generateSequence() *jen.Statement {
 	if t.TypeParam == nil {
 		panic("IdlType.generateSequence: TypeParameter is nil for sequence type")
 	}
-	return jen.Op("[]").Add(IdlType{*t.TypeParam, t.TargetPackage}.Generate())
+	return jen.Op("[]").Add(IdlType{Type: *t.TypeParam}.Generate())
 }
 
 func FilterType(t idl.Type) idl.Type {
@@ -146,4 +132,16 @@ func unsupportedType(t idl.Type) bool {
 	default:
 		return false
 	}
+}
+
+// StructFieldType represents the type of a struct field
+type StructFieldType struct {
+	idl.Type
+}
+
+func (s StructFieldType) Generate() *jen.Statement {
+	if IdlType(s).IsString() && s.Nullable {
+		return jen.Op("*").Id("string")
+	}
+	return IdlType(s).Generate()
 }

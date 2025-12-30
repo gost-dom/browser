@@ -87,7 +87,7 @@ func generateInterface(webApi string, target string, idlInterface idl.Interface)
 		}
 		attributes = append(attributes, IdlInterfaceAttribute{
 			Name:     a.Name,
-			Type:     idltransform.IdlType{Type: attrType, TargetPackage: target},
+			Type:     idltransform.IdlType{Type: attrType},
 			ReadOnly: a.Readonly,
 			Rules:    attributeRule,
 		})
@@ -118,14 +118,14 @@ func generateInterface(webApi string, target string, idlInterface idl.Interface)
 			IdlInterfaceOperation{
 				o,
 				arguments,
-				idltransform.IdlType{Type: o.ReturnType, TargetPackage: target},
+				idltransform.IdlType{Type: o.ReturnType},
 				operationRule,
 				target,
 			},
 		)
 	}
 	for i, t := range idlInterface.IterableTypes {
-		iterableTypes[i] = idltransform.IdlType{Type: t, TargetPackage: target}
+		iterableTypes[i] = idltransform.IdlType{Type: t}
 	}
 	result.Attributes = attributes
 	result.Operations = operations

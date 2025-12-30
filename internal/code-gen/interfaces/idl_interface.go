@@ -40,7 +40,7 @@ func (i IdlInterface) Generate() *jen.Statement {
 		fields = append(fields, components)
 	}
 	if i.Inherits != "" {
-		fields = append(fields, idltransform.TypeGen(i.Inherits, i.TargetPkg))
+		fields = append(fields, idltransform.TypeGen(i.Inherits))
 	}
 
 	for _, incl := range i.Includes {
@@ -148,7 +148,7 @@ func (o IdlInterfaceOperation) Name() string      { return o.IdlOperation.Name }
 func (o IdlInterfaceOperation) Static() bool      { return o.IdlOperation.Static }
 
 func (o IdlInterfaceOperation) newIdlType(t idl.Type) g.Generator {
-	return idltransform.IdlType{Type: t, TargetPackage: o.Target}
+	return idltransform.IdlType{Type: t}
 }
 
 func (o IdlInterfaceOperation) argumentType(a IdlInterfaceOperationArgument) g.Generator {

@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/gost-dom/code-gen/customrules"
-	"github.com/gost-dom/code-gen/idltransform"
 	"github.com/gost-dom/code-gen/scripting/configuration"
 	"github.com/gost-dom/webref/idl"
 )
@@ -28,14 +27,6 @@ func (a ESOperationArgument) OptionalInGo() bool {
 func (a ESOperationArgument) VariadicInGo() bool {
 	return (a.CustomRule.Variadic || a.Variadic) && !a.CustomRule.Ignore
 }
-
-func (a ESOperationArgument) idlType() idltransform.IdlType {
-	return idltransform.NewIdlType(a.IdlArg.Type)
-}
-
-func (a ESOperationArgument) IsString() bool  { return a.idlType().IsString() }
-func (a ESOperationArgument) IsBoolean() bool { return a.idlType().IsBoolean() }
-func (a ESOperationArgument) IsInt() bool     { return a.idlType().IsInt() }
 
 func (a ESOperationArgument) DefaultValueInGo() (name string, ok bool) {
 	ok = a.Optional && a.ArgumentSpec.HasDefault

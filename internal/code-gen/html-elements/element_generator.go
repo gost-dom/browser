@@ -57,7 +57,7 @@ type baseGenerator struct {
 }
 
 func (g baseGenerator) newIdlType(t idl.Type) idltransform.IdlType {
-	return idltransform.IdlType{Type: t, TargetPackage: g.target}
+	return idltransform.IdlType{Type: t}
 }
 
 func CreateGenerator(req HTMLGeneratorReq, target string) (baseGenerator, error) {
