@@ -18,9 +18,7 @@ func ConfigureHTMLSpecs(htmlSpecs *WebAPIConfig) {
 	location := htmlSpecs.Type("Location")
 	location.Method("ancestorOrigins").SetNotImplemented()
 
-	htmlSvg := htmlSpecs.Type("HTMLOrSVGElement")
-	htmlSvg.Method("focus").SetCustomImplementation()
-	// htmlSvg.Method("dataset").SetCustomImplementation()
+	htmlSpecs.Type("HTMLOrSVGElement")
 
 	history := htmlSpecs.Type("History")
 	history.OverrideWrappedType = &GoType{

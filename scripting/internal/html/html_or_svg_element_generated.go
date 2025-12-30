@@ -28,6 +28,15 @@ func (w HTMLOrSVGElement[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("tabIndex", w.tabIndex, w.setTabIndex)
 }
 
+func (w HTMLOrSVGElement[T]) focus(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	instance, errInst := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	instance.Focus()
+	return nil, nil
+}
+
 func (w HTMLOrSVGElement[T]) blur(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if err != nil {
