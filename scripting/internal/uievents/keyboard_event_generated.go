@@ -16,16 +16,16 @@ func (wrapper KeyboardEvent[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w KeyboardEvent[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateOperation("getModifierState", w.getModifierState)
-	jsClass.CreateAttribute("key", w.key, nil)
-	jsClass.CreateAttribute("code", w.code, nil)
-	jsClass.CreateAttribute("location", w.location, nil)
-	jsClass.CreateAttribute("ctrlKey", w.ctrlKey, nil)
-	jsClass.CreateAttribute("shiftKey", w.shiftKey, nil)
-	jsClass.CreateAttribute("altKey", w.altKey, nil)
-	jsClass.CreateAttribute("metaKey", w.metaKey, nil)
-	jsClass.CreateAttribute("repeat", w.repeat, nil)
-	jsClass.CreateAttribute("isComposing", w.isComposing, nil)
+	jsClass.CreateOperation("getModifierState", KeyboardEvent_getModifierState)
+	jsClass.CreateAttribute("key", KeyboardEvent_key, nil)
+	jsClass.CreateAttribute("code", KeyboardEvent_code, nil)
+	jsClass.CreateAttribute("location", KeyboardEvent_location, nil)
+	jsClass.CreateAttribute("ctrlKey", KeyboardEvent_ctrlKey, nil)
+	jsClass.CreateAttribute("shiftKey", KeyboardEvent_shiftKey, nil)
+	jsClass.CreateAttribute("altKey", KeyboardEvent_altKey, nil)
+	jsClass.CreateAttribute("metaKey", KeyboardEvent_metaKey, nil)
+	jsClass.CreateAttribute("repeat", KeyboardEvent_repeat, nil)
+	jsClass.CreateAttribute("isComposing", KeyboardEvent_isComposing, nil)
 }
 
 func KeyboardEventConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
@@ -49,11 +49,11 @@ func KeyboardEventConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[
 	return codec.EncodeConstructedValue(cbCtx, &e)
 }
 
-func (w KeyboardEvent[T]) getModifierState(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.getModifierState: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func KeyboardEvent_getModifierState[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "KeyboardEvent.KeyboardEvent_getModifierState: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w KeyboardEvent[T]) key(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func KeyboardEvent_key[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	var eventInit uievents.KeyboardEventInit
 	eventInit, err = codec.RetrieveEventInit[uievents.KeyboardEventInit](cbCtx)
 	if err != nil {
@@ -63,7 +63,7 @@ func (w KeyboardEvent[T]) key(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w KeyboardEvent[T]) code(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func KeyboardEvent_code[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	var eventInit uievents.KeyboardEventInit
 	eventInit, err = codec.RetrieveEventInit[uievents.KeyboardEventInit](cbCtx)
 	if err != nil {
@@ -73,7 +73,7 @@ func (w KeyboardEvent[T]) code(cbCtx js.CallbackContext[T]) (res js.Value[T], er
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w KeyboardEvent[T]) location(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func KeyboardEvent_location[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	var eventInit uievents.KeyboardEventInit
 	eventInit, err = codec.RetrieveEventInit[uievents.KeyboardEventInit](cbCtx)
 	if err != nil {
@@ -83,7 +83,7 @@ func (w KeyboardEvent[T]) location(cbCtx js.CallbackContext[T]) (res js.Value[T]
 	return codec.EncodeInt(cbCtx, result)
 }
 
-func (w KeyboardEvent[T]) ctrlKey(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func KeyboardEvent_ctrlKey[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	var eventInit uievents.KeyboardEventInit
 	eventInit, err = codec.RetrieveEventInit[uievents.KeyboardEventInit](cbCtx)
 	if err != nil {
@@ -93,7 +93,7 @@ func (w KeyboardEvent[T]) ctrlKey(cbCtx js.CallbackContext[T]) (res js.Value[T],
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w KeyboardEvent[T]) shiftKey(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func KeyboardEvent_shiftKey[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	var eventInit uievents.KeyboardEventInit
 	eventInit, err = codec.RetrieveEventInit[uievents.KeyboardEventInit](cbCtx)
 	if err != nil {
@@ -103,7 +103,7 @@ func (w KeyboardEvent[T]) shiftKey(cbCtx js.CallbackContext[T]) (res js.Value[T]
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w KeyboardEvent[T]) altKey(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func KeyboardEvent_altKey[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	var eventInit uievents.KeyboardEventInit
 	eventInit, err = codec.RetrieveEventInit[uievents.KeyboardEventInit](cbCtx)
 	if err != nil {
@@ -113,7 +113,7 @@ func (w KeyboardEvent[T]) altKey(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w KeyboardEvent[T]) metaKey(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func KeyboardEvent_metaKey[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	var eventInit uievents.KeyboardEventInit
 	eventInit, err = codec.RetrieveEventInit[uievents.KeyboardEventInit](cbCtx)
 	if err != nil {
@@ -123,7 +123,7 @@ func (w KeyboardEvent[T]) metaKey(cbCtx js.CallbackContext[T]) (res js.Value[T],
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w KeyboardEvent[T]) repeat(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func KeyboardEvent_repeat[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	var eventInit uievents.KeyboardEventInit
 	eventInit, err = codec.RetrieveEventInit[uievents.KeyboardEventInit](cbCtx)
 	if err != nil {
@@ -133,7 +133,7 @@ func (w KeyboardEvent[T]) repeat(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w KeyboardEvent[T]) isComposing(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func KeyboardEvent_isComposing[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	var eventInit uievents.KeyboardEventInit
 	eventInit, err = codec.RetrieveEventInit[uievents.KeyboardEventInit](cbCtx)
 	if err != nil {

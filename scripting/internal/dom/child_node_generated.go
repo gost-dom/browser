@@ -19,25 +19,25 @@ func (wrapper ChildNode[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w ChildNode[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateOperation("before", w.before)
-	jsClass.CreateOperation("after", w.after)
-	jsClass.CreateOperation("replaceWith", w.replaceWith)
-	jsClass.CreateOperation("remove", w.remove)
+	jsClass.CreateOperation("before", ChildNode_before)
+	jsClass.CreateOperation("after", ChildNode_after)
+	jsClass.CreateOperation("replaceWith", ChildNode_replaceWith)
+	jsClass.CreateOperation("remove", ChildNode_remove)
 }
 
-func (w ChildNode[T]) before(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "ChildNode.before: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func ChildNode_before[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "ChildNode.ChildNode_before: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ChildNode[T]) after(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "ChildNode.after: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func ChildNode_after[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "ChildNode.ChildNode_after: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ChildNode[T]) replaceWith(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "ChildNode.replaceWith: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func ChildNode_replaceWith[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "ChildNode.ChildNode_replaceWith: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ChildNode[T]) remove(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func ChildNode_remove[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dom.ChildNode](cbCtx.Instance())
 	if err != nil {
 		return nil, err

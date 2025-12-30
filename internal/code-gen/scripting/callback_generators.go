@@ -67,7 +67,7 @@ func (cb CallbackMethods) ConstructorCallbackBody() g.Generator {
 func (cb CallbackMethods) MethodCallback(op model.Callback) g.Generator {
 	cbCtx := NewCallbackContext(g.Id("cbCtx"))
 	name := op.CallbackMethodName()
-	return cb.CallbackMethod(
+	return cb.CallbackFunction(
 		name,
 		renderIfElse(op.NotImplemented,
 			cb.ReturnNotImplementedError(name, cbCtx),
@@ -180,7 +180,7 @@ func (cb CallbackMethods) AttributeGetter(attr model.ESAttribute) g.Generator {
 	cbCtx := NewCallbackContext(g.Id("cbCtx"))
 	op := attr.Getter
 	name := op.CallbackMethodName()
-	return cb.CallbackMethod(name,
+	return cb.CallbackFunction(name,
 		renderIfElse(op.NotImplemented,
 			cb.ReturnNotImplementedError(name, cbCtx),
 			cb.AttributeGetterCallbackBody(attr),
@@ -251,7 +251,7 @@ func (cb CallbackMethods) AttributeSetter(attr model.ESAttribute) g.Generator {
 	cbCtx := NewCallbackContext(g.Id("cbCtx"))
 	op := attr.Setter
 	name := op.CallbackMethodName()
-	return cb.CallbackMethod(name,
+	return cb.CallbackFunction(name,
 		renderIfElse(op.NotImplemented,
 			cb.ReturnNotImplementedError(name, cbCtx),
 			cb.AttributeSetterCallbackBody(attr),

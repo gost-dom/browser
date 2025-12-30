@@ -66,7 +66,7 @@ func (i PrototypeInitializer) InstallFunctionHandlers(
 	renderedAny := false
 	stmts := g.StatementList()
 	for op := range i.Data.WrapperFunctionsToInstall() {
-		cb := receiver.Field(op.CallbackMethodName())
+		cb := g.Id(op.CallbackMethodName())
 		stmts.Append(class.CreateOperation(op.Name, cb))
 		renderedAny = true
 	}
@@ -107,10 +107,10 @@ func (i PrototypeInitializer) InstallAttributeHandler(
 	if getter == nil {
 		return g.Noop
 	}
-	getterFn := receiver.Field(getter.CallbackMethodName())
+	getterFn := g.Id(getter.CallbackMethodName())
 	setterFn := g.Nil
 	if setter != nil {
-		setterFn = receiver.Field(setter.CallbackMethodName())
+		setterFn = g.Id(setter.CallbackMethodName())
 	}
 
 	res := g.StatementList(

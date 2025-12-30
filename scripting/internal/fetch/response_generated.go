@@ -21,34 +21,34 @@ func (wrapper Response[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w Response[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateOperation("clone", w.clone)
-	jsClass.CreateAttribute("type", w.type_, nil)
-	jsClass.CreateAttribute("url", w.url, nil)
-	jsClass.CreateAttribute("redirected", w.redirected, nil)
-	jsClass.CreateAttribute("status", w.status, nil)
-	jsClass.CreateAttribute("ok", w.ok, nil)
-	jsClass.CreateAttribute("statusText", w.statusText, nil)
-	jsClass.CreateAttribute("headers", w.headers, nil)
+	jsClass.CreateOperation("clone", Response_clone)
+	jsClass.CreateAttribute("type", Response_type, nil)
+	jsClass.CreateAttribute("url", Response_url, nil)
+	jsClass.CreateAttribute("redirected", Response_redirected, nil)
+	jsClass.CreateAttribute("status", Response_status, nil)
+	jsClass.CreateAttribute("ok", Response_ok, nil)
+	jsClass.CreateAttribute("statusText", Response_statusText, nil)
+	jsClass.CreateAttribute("headers", Response_headers, nil)
 	w.body.installPrototype(jsClass)
 }
 
-func (w Response[T]) clone(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Response.clone: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Response_clone[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Response.Response_clone: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Response[T]) type_(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Response.type_: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Response_type[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Response.Response_type: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Response[T]) url(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Response.url: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Response_url[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Response.Response_url: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Response[T]) redirected(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Response.redirected: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Response_redirected[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Response.Response_redirected: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Response[T]) status(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Response_status[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[*fetch.Response](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -57,15 +57,15 @@ func (w Response[T]) status(cbCtx js.CallbackContext[T]) (res js.Value[T], err e
 	return codec.EncodeInt(cbCtx, result)
 }
 
-func (w Response[T]) ok(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Response.ok: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Response_ok[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Response.Response_ok: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Response[T]) statusText(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Response.statusText: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Response_statusText[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Response.Response_statusText: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Response[T]) headers(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Response_headers[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[*fetch.Response](cbCtx.Instance())
 	if err != nil {
 		return nil, err

@@ -20,9 +20,9 @@ func (wrapper MutationObserver[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w MutationObserver[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateOperation("observe", w.observe)
-	jsClass.CreateOperation("disconnect", w.disconnect)
-	jsClass.CreateOperation("takeRecords", w.takeRecords)
+	jsClass.CreateOperation("observe", MutationObserver_observe)
+	jsClass.CreateOperation("disconnect", MutationObserver_disconnect)
+	jsClass.CreateOperation("takeRecords", MutationObserver_takeRecords)
 }
 
 func MutationObserverConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
@@ -33,7 +33,7 @@ func MutationObserverConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Val
 	return CreateMutationObserver(cbCtx, callback)
 }
 
-func (w MutationObserver[T]) observe(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func MutationObserver_observe[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dominterfaces.MutationObserver](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -48,7 +48,7 @@ func (w MutationObserver[T]) observe(cbCtx js.CallbackContext[T]) (res js.Value[
 	return nil, errCall
 }
 
-func (w MutationObserver[T]) disconnect(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func MutationObserver_disconnect[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dominterfaces.MutationObserver](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -57,7 +57,7 @@ func (w MutationObserver[T]) disconnect(cbCtx js.CallbackContext[T]) (res js.Val
 	return nil, nil
 }
 
-func (w MutationObserver[T]) takeRecords(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func MutationObserver_takeRecords[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dominterfaces.MutationObserver](cbCtx.Instance())
 	if err != nil {
 		return nil, err

@@ -20,29 +20,29 @@ func (wrapper HTMLFormElement[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w HTMLFormElement[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateOperation("submit", w.submit)
-	jsClass.CreateOperation("requestSubmit", w.requestSubmit)
-	jsClass.CreateOperation("reset", w.reset)
-	jsClass.CreateOperation("checkValidity", w.checkValidity)
-	jsClass.CreateOperation("reportValidity", w.reportValidity)
-	jsClass.CreateAttribute("acceptCharset", w.acceptCharset, w.setAcceptCharset)
-	jsClass.CreateAttribute("action", w.action, w.setAction)
-	jsClass.CreateAttribute("autocomplete", w.autocomplete, w.setAutocomplete)
-	jsClass.CreateAttribute("enctype", w.enctype, w.setEnctype)
-	jsClass.CreateAttribute("encoding", w.encoding, w.setEncoding)
-	jsClass.CreateAttribute("method", w.method, w.setMethod)
-	jsClass.CreateAttribute("target", w.target, w.setTarget)
-	jsClass.CreateAttribute("rel", w.rel, w.setRel)
-	jsClass.CreateAttribute("relList", w.relList, nil)
-	jsClass.CreateAttribute("elements", w.elements, nil)
-	jsClass.CreateAttribute("length", w.length, nil)
+	jsClass.CreateOperation("submit", HTMLFormElement_submit)
+	jsClass.CreateOperation("requestSubmit", HTMLFormElement_requestSubmit)
+	jsClass.CreateOperation("reset", HTMLFormElement_reset)
+	jsClass.CreateOperation("checkValidity", HTMLFormElement_checkValidity)
+	jsClass.CreateOperation("reportValidity", HTMLFormElement_reportValidity)
+	jsClass.CreateAttribute("acceptCharset", HTMLFormElement_acceptCharset, HTMLFormElement_setAcceptCharset)
+	jsClass.CreateAttribute("action", HTMLFormElement_action, HTMLFormElement_setAction)
+	jsClass.CreateAttribute("autocomplete", HTMLFormElement_autocomplete, HTMLFormElement_setAutocomplete)
+	jsClass.CreateAttribute("enctype", HTMLFormElement_enctype, HTMLFormElement_setEnctype)
+	jsClass.CreateAttribute("encoding", HTMLFormElement_encoding, HTMLFormElement_setEncoding)
+	jsClass.CreateAttribute("method", HTMLFormElement_method, HTMLFormElement_setMethod)
+	jsClass.CreateAttribute("target", HTMLFormElement_target, HTMLFormElement_setTarget)
+	jsClass.CreateAttribute("rel", HTMLFormElement_rel, HTMLFormElement_setRel)
+	jsClass.CreateAttribute("relList", HTMLFormElement_relList, nil)
+	jsClass.CreateAttribute("elements", HTMLFormElement_elements, nil)
+	jsClass.CreateAttribute("length", HTMLFormElement_length, nil)
 }
 
 func HTMLFormElementConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w HTMLFormElement[T]) submit(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLFormElement_submit[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLFormElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func (w HTMLFormElement[T]) submit(cbCtx js.CallbackContext[T]) (res js.Value[T]
 	return nil, errCall
 }
 
-func (w HTMLFormElement[T]) requestSubmit(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLFormElement_requestSubmit[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[html.HTMLFormElement](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -64,27 +64,27 @@ func (w HTMLFormElement[T]) requestSubmit(cbCtx js.CallbackContext[T]) (res js.V
 	return nil, errCall
 }
 
-func (w HTMLFormElement[T]) reset(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.reset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func HTMLFormElement_reset[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.HTMLFormElement_reset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) checkValidity(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.checkValidity: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func HTMLFormElement_checkValidity[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.HTMLFormElement_checkValidity: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) reportValidity(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.reportValidity: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func HTMLFormElement_reportValidity[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.HTMLFormElement_reportValidity: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) acceptCharset(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.acceptCharset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func HTMLFormElement_acceptCharset[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.HTMLFormElement_acceptCharset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) setAcceptCharset(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.setAcceptCharset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func HTMLFormElement_setAcceptCharset[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.HTMLFormElement_setAcceptCharset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) action(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLFormElement_action[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLFormElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -93,7 +93,7 @@ func (w HTMLFormElement[T]) action(cbCtx js.CallbackContext[T]) (res js.Value[T]
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w HTMLFormElement[T]) setAction(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLFormElement_setAction[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.HTMLFormElement](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err = gosterror.First(err0, err1)
@@ -104,31 +104,31 @@ func (w HTMLFormElement[T]) setAction(cbCtx js.CallbackContext[T]) (res js.Value
 	return nil, nil
 }
 
-func (w HTMLFormElement[T]) autocomplete(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.autocomplete: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func HTMLFormElement_autocomplete[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.HTMLFormElement_autocomplete: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) setAutocomplete(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.setAutocomplete: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func HTMLFormElement_setAutocomplete[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.HTMLFormElement_setAutocomplete: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) enctype(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.enctype: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func HTMLFormElement_enctype[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.HTMLFormElement_enctype: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) setEnctype(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.setEnctype: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func HTMLFormElement_setEnctype[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.HTMLFormElement_setEnctype: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) encoding(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.encoding: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func HTMLFormElement_encoding[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.HTMLFormElement_encoding: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) setEncoding(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.setEncoding: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func HTMLFormElement_setEncoding[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.HTMLFormElement_setEncoding: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) method(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLFormElement_method[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLFormElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -137,7 +137,7 @@ func (w HTMLFormElement[T]) method(cbCtx js.CallbackContext[T]) (res js.Value[T]
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w HTMLFormElement[T]) setMethod(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLFormElement_setMethod[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.HTMLFormElement](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err = gosterror.First(err0, err1)
@@ -148,27 +148,27 @@ func (w HTMLFormElement[T]) setMethod(cbCtx js.CallbackContext[T]) (res js.Value
 	return nil, nil
 }
 
-func (w HTMLFormElement[T]) target(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.target: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func HTMLFormElement_target[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.HTMLFormElement_target: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) setTarget(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.setTarget: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func HTMLFormElement_setTarget[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.HTMLFormElement_setTarget: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) rel(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.rel: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func HTMLFormElement_rel[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.HTMLFormElement_rel: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) setRel(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.setRel: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func HTMLFormElement_setRel[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.HTMLFormElement_setRel: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) relList(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.relList: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func HTMLFormElement_relList[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.HTMLFormElement_relList: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w HTMLFormElement[T]) elements(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLFormElement_elements[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLFormElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -177,6 +177,6 @@ func (w HTMLFormElement[T]) elements(cbCtx js.CallbackContext[T]) (res js.Value[
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w HTMLFormElement[T]) length(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.length: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func HTMLFormElement_length[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "HTMLFormElement.HTMLFormElement_length: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

@@ -26,37 +26,37 @@ func (wrapper Document[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w Document[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateOperation("getElementsByTagName", w.getElementsByTagName)
-	jsClass.CreateOperation("getElementsByTagNameNS", w.getElementsByTagNameNS)
-	jsClass.CreateOperation("getElementsByClassName", w.getElementsByClassName)
-	jsClass.CreateOperation("createElement", w.createElement)
-	jsClass.CreateOperation("createElementNS", w.createElementNS)
-	jsClass.CreateOperation("createDocumentFragment", w.createDocumentFragment)
-	jsClass.CreateOperation("createTextNode", w.createTextNode)
-	jsClass.CreateOperation("createCDATASection", w.createCDATASection)
-	jsClass.CreateOperation("createComment", w.createComment)
-	jsClass.CreateOperation("createProcessingInstruction", w.createProcessingInstruction)
-	jsClass.CreateOperation("importNode", w.importNode)
-	jsClass.CreateOperation("adoptNode", w.adoptNode)
-	jsClass.CreateOperation("createAttribute", w.createAttribute)
-	jsClass.CreateOperation("createAttributeNS", w.createAttributeNS)
-	jsClass.CreateOperation("createEvent", w.createEvent)
-	jsClass.CreateOperation("createRange", w.createRange)
-	jsClass.CreateOperation("createNodeIterator", w.createNodeIterator)
-	jsClass.CreateOperation("createTreeWalker", w.createTreeWalker)
-	jsClass.CreateAttribute("implementation", w.implementation, nil)
-	jsClass.CreateAttribute("URL", w.URL, nil)
-	jsClass.CreateAttribute("documentURI", w.documentURI, nil)
-	jsClass.CreateAttribute("compatMode", w.compatMode, nil)
-	jsClass.CreateAttribute("characterSet", w.characterSet, nil)
-	jsClass.CreateAttribute("charset", w.charset, nil)
-	jsClass.CreateAttribute("inputEncoding", w.inputEncoding, nil)
-	jsClass.CreateAttribute("contentType", w.contentType, nil)
-	jsClass.CreateAttribute("doctype", w.doctype, nil)
-	jsClass.CreateAttribute("documentElement", w.documentElement, nil)
-	jsClass.CreateAttribute("location", w.location, nil, js.LegacyUnforgeable())
-	jsClass.CreateAttribute("body", w.body, w.setBody)
-	jsClass.CreateAttribute("head", w.head, nil)
+	jsClass.CreateOperation("getElementsByTagName", Document_getElementsByTagName)
+	jsClass.CreateOperation("getElementsByTagNameNS", Document_getElementsByTagNameNS)
+	jsClass.CreateOperation("getElementsByClassName", Document_getElementsByClassName)
+	jsClass.CreateOperation("createElement", Document_createElement)
+	jsClass.CreateOperation("createElementNS", Document_createElementNS)
+	jsClass.CreateOperation("createDocumentFragment", Document_createDocumentFragment)
+	jsClass.CreateOperation("createTextNode", Document_createTextNode)
+	jsClass.CreateOperation("createCDATASection", Document_createCDATASection)
+	jsClass.CreateOperation("createComment", Document_createComment)
+	jsClass.CreateOperation("createProcessingInstruction", Document_createProcessingInstruction)
+	jsClass.CreateOperation("importNode", Document_importNode)
+	jsClass.CreateOperation("adoptNode", Document_adoptNode)
+	jsClass.CreateOperation("createAttribute", Document_createAttribute)
+	jsClass.CreateOperation("createAttributeNS", Document_createAttributeNS)
+	jsClass.CreateOperation("createEvent", Document_createEvent)
+	jsClass.CreateOperation("createRange", Document_createRange)
+	jsClass.CreateOperation("createNodeIterator", Document_createNodeIterator)
+	jsClass.CreateOperation("createTreeWalker", Document_createTreeWalker)
+	jsClass.CreateAttribute("implementation", Document_implementation, nil)
+	jsClass.CreateAttribute("URL", Document_URL, nil)
+	jsClass.CreateAttribute("documentURI", Document_documentURI, nil)
+	jsClass.CreateAttribute("compatMode", Document_compatMode, nil)
+	jsClass.CreateAttribute("characterSet", Document_characterSet, nil)
+	jsClass.CreateAttribute("charset", Document_charset, nil)
+	jsClass.CreateAttribute("inputEncoding", Document_inputEncoding, nil)
+	jsClass.CreateAttribute("contentType", Document_contentType, nil)
+	jsClass.CreateAttribute("doctype", Document_doctype, nil)
+	jsClass.CreateAttribute("documentElement", Document_documentElement, nil)
+	jsClass.CreateAttribute("location", Document_location, nil, js.LegacyUnforgeable())
+	jsClass.CreateAttribute("body", Document_body, Document_setBody)
+	jsClass.CreateAttribute("head", Document_head, nil)
 	w.nonElementParentNode.installPrototype(jsClass)
 	w.parentNode.installPrototype(jsClass)
 }
@@ -65,7 +65,7 @@ func DocumentConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], e
 	return CreateDocument(cbCtx)
 }
 
-func (w Document[T]) getElementsByTagName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Document_getElementsByTagName[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[html.HTMLDocument](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -78,7 +78,7 @@ func (w Document[T]) getElementsByTagName(cbCtx js.CallbackContext[T]) (res js.V
 	return encodeHTMLCollection(cbCtx, result)
 }
 
-func (w Document[T]) getElementsByTagNameNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Document_getElementsByTagNameNS[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[html.HTMLDocument](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -93,11 +93,11 @@ func (w Document[T]) getElementsByTagNameNS(cbCtx js.CallbackContext[T]) (res js
 	return encodeHTMLCollection(cbCtx, result)
 }
 
-func (w Document[T]) getElementsByClassName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Document.getElementsByClassName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Document_getElementsByClassName[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.Document_getElementsByClassName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Document[T]) createElement(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Document_createElement[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[html.HTMLDocument](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -110,7 +110,7 @@ func (w Document[T]) createElement(cbCtx js.CallbackContext[T]) (res js.Value[T]
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w Document[T]) createElementNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Document_createElementNS[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[html.HTMLDocument](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -125,7 +125,7 @@ func (w Document[T]) createElementNS(cbCtx js.CallbackContext[T]) (res js.Value[
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w Document[T]) createDocumentFragment(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Document_createDocumentFragment[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLDocument](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -134,7 +134,7 @@ func (w Document[T]) createDocumentFragment(cbCtx js.CallbackContext[T]) (res js
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w Document[T]) createTextNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Document_createTextNode[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[html.HTMLDocument](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -147,11 +147,11 @@ func (w Document[T]) createTextNode(cbCtx js.CallbackContext[T]) (res js.Value[T
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w Document[T]) createCDATASection(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Document.createCDATASection: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Document_createCDATASection[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.Document_createCDATASection: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Document[T]) createComment(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Document_createComment[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[html.HTMLDocument](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -164,7 +164,7 @@ func (w Document[T]) createComment(cbCtx js.CallbackContext[T]) (res js.Value[T]
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w Document[T]) createProcessingInstruction(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Document_createProcessingInstruction[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[html.HTMLDocument](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -179,7 +179,7 @@ func (w Document[T]) createProcessingInstruction(cbCtx js.CallbackContext[T]) (r
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w Document[T]) importNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Document_importNode[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[html.HTMLDocument](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -194,11 +194,11 @@ func (w Document[T]) importNode(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w Document[T]) adoptNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Document.adoptNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Document_adoptNode[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.Document_adoptNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Document[T]) createAttribute(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Document_createAttribute[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[html.HTMLDocument](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -211,7 +211,7 @@ func (w Document[T]) createAttribute(cbCtx js.CallbackContext[T]) (res js.Value[
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w Document[T]) createAttributeNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Document_createAttributeNS[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[html.HTMLDocument](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -226,59 +226,59 @@ func (w Document[T]) createAttributeNS(cbCtx js.CallbackContext[T]) (res js.Valu
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w Document[T]) createEvent(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Document.createEvent: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Document_createEvent[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.Document_createEvent: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Document[T]) createRange(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Document.createRange: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Document_createRange[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.Document_createRange: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Document[T]) createNodeIterator(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Document.createNodeIterator: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Document_createNodeIterator[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.Document_createNodeIterator: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Document[T]) createTreeWalker(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Document.createTreeWalker: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Document_createTreeWalker[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.Document_createTreeWalker: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Document[T]) implementation(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Document.implementation: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Document_implementation[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.Document_implementation: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Document[T]) URL(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Document.URL: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Document_URL[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.Document_URL: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Document[T]) documentURI(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Document.documentURI: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Document_documentURI[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.Document_documentURI: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Document[T]) compatMode(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Document.compatMode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Document_compatMode[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.Document_compatMode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Document[T]) characterSet(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Document.characterSet: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Document_characterSet[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.Document_characterSet: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Document[T]) charset(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Document.charset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Document_charset[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.Document_charset: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Document[T]) inputEncoding(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Document.inputEncoding: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Document_inputEncoding[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.Document_inputEncoding: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Document[T]) contentType(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Document.contentType: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Document_contentType[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.Document_contentType: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Document[T]) doctype(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Document.doctype: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Document_doctype[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Document.Document_doctype: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Document[T]) documentElement(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Document_documentElement[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLDocument](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -287,7 +287,7 @@ func (w Document[T]) documentElement(cbCtx js.CallbackContext[T]) (res js.Value[
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w Document[T]) location(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Document_location[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLDocument](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -296,7 +296,7 @@ func (w Document[T]) location(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w Document[T]) body(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Document_body[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLDocument](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -305,7 +305,7 @@ func (w Document[T]) body(cbCtx js.CallbackContext[T]) (res js.Value[T], err err
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w Document[T]) setBody(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Document_setBody[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.HTMLDocument](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeHTMLElement)
 	err = gosterror.First(err0, err1)
@@ -315,7 +315,7 @@ func (w Document[T]) setBody(cbCtx js.CallbackContext[T]) (res js.Value[T], err 
 	return nil, instance.SetBody(val)
 }
 
-func (w Document[T]) head(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Document_head[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLDocument](cbCtx.Instance())
 	if err != nil {
 		return nil, err

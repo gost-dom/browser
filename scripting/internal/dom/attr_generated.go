@@ -20,17 +20,17 @@ func (wrapper Attr[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w Attr[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateAttribute("localName", w.localName, nil)
-	jsClass.CreateAttribute("name", w.name, nil)
-	jsClass.CreateAttribute("value", w.value, w.setValue)
-	jsClass.CreateAttribute("ownerElement", w.ownerElement, nil)
+	jsClass.CreateAttribute("localName", Attr_localName, nil)
+	jsClass.CreateAttribute("name", Attr_name, nil)
+	jsClass.CreateAttribute("value", Attr_value, Attr_setValue)
+	jsClass.CreateAttribute("ownerElement", Attr_ownerElement, nil)
 }
 
 func AttrConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w Attr[T]) localName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Attr_localName[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dom.Attr](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -39,7 +39,7 @@ func (w Attr[T]) localName(cbCtx js.CallbackContext[T]) (res js.Value[T], err er
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w Attr[T]) name(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Attr_name[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dom.Attr](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -48,7 +48,7 @@ func (w Attr[T]) name(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) 
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w Attr[T]) value(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Attr_value[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dom.Attr](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -57,7 +57,7 @@ func (w Attr[T]) value(cbCtx js.CallbackContext[T]) (res js.Value[T], err error)
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w Attr[T]) setValue(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Attr_setValue[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[dom.Attr](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err = gosterror.First(err0, err1)
@@ -68,7 +68,7 @@ func (w Attr[T]) setValue(cbCtx js.CallbackContext[T]) (res js.Value[T], err err
 	return nil, nil
 }
 
-func (w Attr[T]) ownerElement(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Attr_ownerElement[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dom.Attr](cbCtx.Instance())
 	if err != nil {
 		return nil, err

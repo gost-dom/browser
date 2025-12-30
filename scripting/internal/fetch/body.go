@@ -8,7 +8,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w Body[T]) json(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Body_json[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[fetch.Body](cbCtx.Instance())
 	if err != nil {
 		return nil, err

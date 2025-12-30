@@ -33,12 +33,14 @@ const (
 // Callback represents a Go function callback implementing a JS function.
 type Callback struct {
 	Name                 string
+	Interface            idl.Interface
 	Spec                 idl.Operation
 	Kind                 CallbackKind
 	NotImplemented       bool
 	RetType              idl.Type
 	HasError             bool
 	CustomImplementation bool
+	Ignored              bool
 	MethodCustomization  configuration.ESMethodWrapper
 	Arguments            []ESOperationArgument
 	ZeroAsNull           bool
@@ -48,7 +50,7 @@ type Callback struct {
 // function callback, i.e. the Go function to be executed when JavaScript code
 // calls a native function.
 func (o Callback) CallbackMethodName() string {
-	return idl.SanitizeName(o.Name)
+	return fmt.Sprintf("%s_%s", o.Interface.Name, o.Name)
 }
 
 // NativeFunctionName gets the name of the method in Go that implements the

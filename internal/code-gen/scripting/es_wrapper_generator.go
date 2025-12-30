@@ -53,6 +53,7 @@ func CreateConstructor(
 		// TODO: Fix for constructor overloads
 		result := createOperation(
 			model.CallbackKindCtor,
+			idlInterface,
 			idl.Operation{
 				InterfaceMember: idl.InterfaceMember{Name: "constructor"},
 				Arguments:       idlInterface.Constructors[0].Arguments,
@@ -84,6 +85,7 @@ func CreateInstanceMethods(
 				result,
 				createOperation(
 					model.CallbackKindOperation,
+					idlInterface,
 					operation,
 					intfRule,
 					interfaceConfig,
@@ -97,6 +99,7 @@ func CreateInstanceMethods(
 				result,
 				createOperation(
 					model.CallbackKindOperation,
+					idlInterface,
 					operation,
 					intfRule,
 					interfaceConfig,
@@ -131,9 +134,11 @@ func CreateAttributes(
 		}
 		getter = &model.Callback{
 			Name:                 attribute.Name,
+			Interface:            idlInterface,
 			Kind:                 model.CallbackKindGetter,
 			NotImplemented:       methodCustomization.NotImplemented,
 			CustomImplementation: methodCustomization.CustomImplementation,
+			Ignored:              methodCustomization.Ignored,
 			RetType:              attrType,
 			MethodCustomization:  methodCustomization,
 			ZeroAsNull:           customRule.ZeroAsNull,
@@ -175,6 +180,7 @@ func CreateAttributes(
 
 func createOperation(
 	kind model.CallbackKind,
+	idlInterface idl.Interface,
 	idlOperation idl.Operation,
 	intfRules customrules.InterfaceRule,
 	typeSpec *configuration.WebIDLConfig,
@@ -186,6 +192,7 @@ func createOperation(
 	op := model.Callback{
 		Name:                 idlOperation.Name,
 		Spec:                 idlOperation,
+		Interface:            idlInterface,
 		Kind:                 kind,
 		NotImplemented:       methodCustomization.NotImplemented,
 		CustomImplementation: methodCustomization.CustomImplementation,

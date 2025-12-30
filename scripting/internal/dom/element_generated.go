@@ -29,43 +29,43 @@ func (wrapper Element[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w Element[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateOperation("hasAttributes", w.hasAttributes)
-	jsClass.CreateOperation("getAttributeNames", w.getAttributeNames)
-	jsClass.CreateOperation("getAttribute", w.getAttribute)
-	jsClass.CreateOperation("getAttributeNS", w.getAttributeNS)
-	jsClass.CreateOperation("setAttribute", w.setAttribute)
-	jsClass.CreateOperation("setAttributeNS", w.setAttributeNS)
-	jsClass.CreateOperation("removeAttribute", w.removeAttribute)
-	jsClass.CreateOperation("removeAttributeNS", w.removeAttributeNS)
-	jsClass.CreateOperation("toggleAttribute", w.toggleAttribute)
-	jsClass.CreateOperation("hasAttribute", w.hasAttribute)
-	jsClass.CreateOperation("hasAttributeNS", w.hasAttributeNS)
-	jsClass.CreateOperation("getAttributeNode", w.getAttributeNode)
-	jsClass.CreateOperation("getAttributeNodeNS", w.getAttributeNodeNS)
-	jsClass.CreateOperation("setAttributeNode", w.setAttributeNode)
-	jsClass.CreateOperation("setAttributeNodeNS", w.setAttributeNodeNS)
-	jsClass.CreateOperation("removeAttributeNode", w.removeAttributeNode)
-	jsClass.CreateOperation("attachShadow", w.attachShadow)
-	jsClass.CreateOperation("closest", w.closest)
-	jsClass.CreateOperation("matches", w.matches)
-	jsClass.CreateOperation("getElementsByTagName", w.getElementsByTagName)
-	jsClass.CreateOperation("getElementsByTagNameNS", w.getElementsByTagNameNS)
-	jsClass.CreateOperation("getElementsByClassName", w.getElementsByClassName)
-	jsClass.CreateOperation("insertAdjacentElement", w.insertAdjacentElement)
-	jsClass.CreateOperation("insertAdjacentText", w.insertAdjacentText)
-	jsClass.CreateOperation("insertAdjacentHTML", w.insertAdjacentHTML)
-	jsClass.CreateAttribute("namespaceURI", w.namespaceURI, nil)
-	jsClass.CreateAttribute("prefix", w.prefix, nil)
-	jsClass.CreateAttribute("localName", w.localName, nil)
-	jsClass.CreateAttribute("tagName", w.tagName, nil)
-	jsClass.CreateAttribute("id", w.id, w.setID)
-	jsClass.CreateAttribute("className", w.className, w.setClassName)
-	jsClass.CreateAttribute("classList", w.classList, nil)
-	jsClass.CreateAttribute("slot", w.slot, w.setSlot)
-	jsClass.CreateAttribute("attributes", w.attributes, nil)
-	jsClass.CreateAttribute("shadowRoot", w.shadowRoot, nil)
-	jsClass.CreateAttribute("innerHTML", w.innerHTML, w.setInnerHTML)
-	jsClass.CreateAttribute("outerHTML", w.outerHTML, w.setOuterHTML)
+	jsClass.CreateOperation("hasAttributes", Element_hasAttributes)
+	jsClass.CreateOperation("getAttributeNames", Element_getAttributeNames)
+	jsClass.CreateOperation("getAttribute", Element_getAttribute)
+	jsClass.CreateOperation("getAttributeNS", Element_getAttributeNS)
+	jsClass.CreateOperation("setAttribute", Element_setAttribute)
+	jsClass.CreateOperation("setAttributeNS", Element_setAttributeNS)
+	jsClass.CreateOperation("removeAttribute", Element_removeAttribute)
+	jsClass.CreateOperation("removeAttributeNS", Element_removeAttributeNS)
+	jsClass.CreateOperation("toggleAttribute", Element_toggleAttribute)
+	jsClass.CreateOperation("hasAttribute", Element_hasAttribute)
+	jsClass.CreateOperation("hasAttributeNS", Element_hasAttributeNS)
+	jsClass.CreateOperation("getAttributeNode", Element_getAttributeNode)
+	jsClass.CreateOperation("getAttributeNodeNS", Element_getAttributeNodeNS)
+	jsClass.CreateOperation("setAttributeNode", Element_setAttributeNode)
+	jsClass.CreateOperation("setAttributeNodeNS", Element_setAttributeNodeNS)
+	jsClass.CreateOperation("removeAttributeNode", Element_removeAttributeNode)
+	jsClass.CreateOperation("attachShadow", Element_attachShadow)
+	jsClass.CreateOperation("closest", Element_closest)
+	jsClass.CreateOperation("matches", Element_matches)
+	jsClass.CreateOperation("getElementsByTagName", Element_getElementsByTagName)
+	jsClass.CreateOperation("getElementsByTagNameNS", Element_getElementsByTagNameNS)
+	jsClass.CreateOperation("getElementsByClassName", Element_getElementsByClassName)
+	jsClass.CreateOperation("insertAdjacentElement", Element_insertAdjacentElement)
+	jsClass.CreateOperation("insertAdjacentText", Element_insertAdjacentText)
+	jsClass.CreateOperation("insertAdjacentHTML", Element_insertAdjacentHTML)
+	jsClass.CreateAttribute("namespaceURI", Element_namespaceURI, nil)
+	jsClass.CreateAttribute("prefix", Element_prefix, nil)
+	jsClass.CreateAttribute("localName", Element_localName, nil)
+	jsClass.CreateAttribute("tagName", Element_tagName, nil)
+	jsClass.CreateAttribute("id", Element_id, Element_setID)
+	jsClass.CreateAttribute("className", Element_className, Element_setClassName)
+	jsClass.CreateAttribute("classList", Element_classList, nil)
+	jsClass.CreateAttribute("slot", Element_slot, Element_setSlot)
+	jsClass.CreateAttribute("attributes", Element_attributes, nil)
+	jsClass.CreateAttribute("shadowRoot", Element_shadowRoot, nil)
+	jsClass.CreateAttribute("innerHTML", Element_innerHTML, Element_setInnerHTML)
+	jsClass.CreateAttribute("outerHTML", Element_outerHTML, Element_setOuterHTML)
 	w.parentNode.installPrototype(jsClass)
 	w.nonDocumentTypeChildNode.installPrototype(jsClass)
 	w.childNode.installPrototype(jsClass)
@@ -75,15 +75,15 @@ func ElementConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], er
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w Element[T]) hasAttributes(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.hasAttributes: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Element_hasAttributes[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_hasAttributes: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Element[T]) getAttributeNames(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.getAttributeNames: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Element_getAttributeNames[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_getAttributeNames: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Element[T]) getAttribute(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Element_getAttribute[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.Element](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -96,11 +96,11 @@ func (w Element[T]) getAttribute(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 	return codec.EncodeNillableString(cbCtx, result, hasValue)
 }
 
-func (w Element[T]) getAttributeNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.getAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Element_getAttributeNS[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_getAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Element[T]) setAttribute(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Element_setAttribute[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.Element](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -115,11 +115,11 @@ func (w Element[T]) setAttribute(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 	return nil, nil
 }
 
-func (w Element[T]) setAttributeNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.setAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Element_setAttributeNS[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_setAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Element[T]) removeAttribute(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Element_removeAttribute[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.Element](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -132,15 +132,15 @@ func (w Element[T]) removeAttribute(cbCtx js.CallbackContext[T]) (res js.Value[T
 	return nil, nil
 }
 
-func (w Element[T]) removeAttributeNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.removeAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Element_removeAttributeNS[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_removeAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Element[T]) toggleAttribute(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.toggleAttribute: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Element_toggleAttribute[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_toggleAttribute: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Element[T]) hasAttribute(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Element_hasAttribute[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.Element](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -153,35 +153,35 @@ func (w Element[T]) hasAttribute(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w Element[T]) hasAttributeNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.hasAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Element_hasAttributeNS[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_hasAttributeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Element[T]) getAttributeNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.getAttributeNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Element_getAttributeNode[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_getAttributeNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Element[T]) getAttributeNodeNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.getAttributeNodeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Element_getAttributeNodeNS[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_getAttributeNodeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Element[T]) setAttributeNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.setAttributeNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Element_setAttributeNode[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_setAttributeNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Element[T]) setAttributeNodeNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.setAttributeNodeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Element_setAttributeNodeNS[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_setAttributeNodeNS: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Element[T]) removeAttributeNode(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.removeAttributeNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Element_removeAttributeNode[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_removeAttributeNode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Element[T]) attachShadow(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.attachShadow: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Element_attachShadow[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_attachShadow: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Element[T]) closest(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Element_closest[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.Element](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -197,7 +197,7 @@ func (w Element[T]) closest(cbCtx js.CallbackContext[T]) (res js.Value[T], err e
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w Element[T]) matches(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Element_matches[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.Element](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -213,7 +213,7 @@ func (w Element[T]) matches(cbCtx js.CallbackContext[T]) (res js.Value[T], err e
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w Element[T]) getElementsByTagName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Element_getElementsByTagName[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.Element](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -226,7 +226,7 @@ func (w Element[T]) getElementsByTagName(cbCtx js.CallbackContext[T]) (res js.Va
 	return encodeHTMLCollection(cbCtx, result)
 }
 
-func (w Element[T]) getElementsByTagNameNS(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Element_getElementsByTagNameNS[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.Element](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -241,11 +241,11 @@ func (w Element[T]) getElementsByTagNameNS(cbCtx js.CallbackContext[T]) (res js.
 	return encodeHTMLCollection(cbCtx, result)
 }
 
-func (w Element[T]) getElementsByClassName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.getElementsByClassName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Element_getElementsByClassName[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_getElementsByClassName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Element[T]) insertAdjacentElement(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Element_insertAdjacentElement[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.Element](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -263,7 +263,7 @@ func (w Element[T]) insertAdjacentElement(cbCtx js.CallbackContext[T]) (res js.V
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w Element[T]) insertAdjacentText(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Element_insertAdjacentText[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.Element](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -278,7 +278,7 @@ func (w Element[T]) insertAdjacentText(cbCtx js.CallbackContext[T]) (res js.Valu
 	return nil, errCall
 }
 
-func (w Element[T]) insertAdjacentHTML(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Element_insertAdjacentHTML[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.Element](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -293,15 +293,15 @@ func (w Element[T]) insertAdjacentHTML(cbCtx js.CallbackContext[T]) (res js.Valu
 	return nil, errCall
 }
 
-func (w Element[T]) namespaceURI(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.namespaceURI: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Element_namespaceURI[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_namespaceURI: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Element[T]) prefix(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.prefix: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Element_prefix[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_prefix: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Element[T]) localName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Element_localName[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dom.Element](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -310,7 +310,7 @@ func (w Element[T]) localName(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w Element[T]) tagName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Element_tagName[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dom.Element](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -319,7 +319,7 @@ func (w Element[T]) tagName(cbCtx js.CallbackContext[T]) (res js.Value[T], err e
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w Element[T]) id(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Element_id[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dom.Element](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -328,7 +328,7 @@ func (w Element[T]) id(cbCtx js.CallbackContext[T]) (res js.Value[T], err error)
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w Element[T]) setID(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Element_setID[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[dom.Element](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err = gosterror.First(err0, err1)
@@ -339,15 +339,15 @@ func (w Element[T]) setID(cbCtx js.CallbackContext[T]) (res js.Value[T], err err
 	return nil, nil
 }
 
-func (w Element[T]) className(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.className: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Element_className[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_className: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Element[T]) setClassName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.setClassName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Element_setClassName[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_setClassName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Element[T]) classList(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Element_classList[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dom.Element](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -356,15 +356,15 @@ func (w Element[T]) classList(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 	return encodeDOMTokenList(cbCtx, result)
 }
 
-func (w Element[T]) slot(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.slot: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Element_slot[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_slot: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Element[T]) setSlot(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.setSlot: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Element_setSlot[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_setSlot: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Element[T]) attributes(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Element_attributes[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dom.Element](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -373,11 +373,11 @@ func (w Element[T]) attributes(cbCtx js.CallbackContext[T]) (res js.Value[T], er
 	return encodeNamedNodeMap(cbCtx, result)
 }
 
-func (w Element[T]) shadowRoot(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.shadowRoot: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Element_shadowRoot[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_shadowRoot: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Element[T]) innerHTML(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Element_innerHTML[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dom.Element](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -386,7 +386,7 @@ func (w Element[T]) innerHTML(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w Element[T]) setInnerHTML(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Element_setInnerHTML[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[dom.Element](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err = gosterror.First(err0, err1)
@@ -396,7 +396,7 @@ func (w Element[T]) setInnerHTML(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 	return nil, instance.SetInnerHTML(val)
 }
 
-func (w Element[T]) outerHTML(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Element_outerHTML[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dom.Element](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -405,7 +405,7 @@ func (w Element[T]) outerHTML(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w Element[T]) setOuterHTML(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Element_setOuterHTML[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[dom.Element](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err = gosterror.First(err0, err1)

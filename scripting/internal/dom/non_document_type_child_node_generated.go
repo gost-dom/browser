@@ -19,11 +19,11 @@ func (wrapper NonDocumentTypeChildNode[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w NonDocumentTypeChildNode[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateAttribute("previousElementSibling", w.previousElementSibling, nil)
-	jsClass.CreateAttribute("nextElementSibling", w.nextElementSibling, nil)
+	jsClass.CreateAttribute("previousElementSibling", NonDocumentTypeChildNode_previousElementSibling, nil)
+	jsClass.CreateAttribute("nextElementSibling", NonDocumentTypeChildNode_nextElementSibling, nil)
 }
 
-func (w NonDocumentTypeChildNode[T]) previousElementSibling(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func NonDocumentTypeChildNode_previousElementSibling[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dom.NonDocumentTypeChildNode](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -32,7 +32,7 @@ func (w NonDocumentTypeChildNode[T]) previousElementSibling(cbCtx js.CallbackCon
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w NonDocumentTypeChildNode[T]) nextElementSibling(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func NonDocumentTypeChildNode_nextElementSibling[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dom.NonDocumentTypeChildNode](cbCtx.Instance())
 	if err != nil {
 		return nil, err

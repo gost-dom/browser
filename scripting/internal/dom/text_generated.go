@@ -18,18 +18,18 @@ func (wrapper Text[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w Text[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateOperation("splitText", w.splitText)
-	jsClass.CreateAttribute("wholeText", w.wholeText, nil)
+	jsClass.CreateOperation("splitText", Text_splitText)
+	jsClass.CreateAttribute("wholeText", Text_wholeText, nil)
 }
 
 func TextConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w Text[T]) splitText(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Text.splitText: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Text_splitText[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Text.Text_splitText: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Text[T]) wholeText(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Text.wholeText: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Text_wholeText[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Text.Text_wholeText: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

@@ -21,7 +21,7 @@ func (wrapper HTMLElement[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w HTMLElement[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateOperation("click", w.click)
+	jsClass.CreateOperation("click", HTMLElement_click)
 	w.htmlOrSVGElement.installPrototype(jsClass)
 }
 
@@ -29,7 +29,7 @@ func HTMLElementConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T]
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w HTMLElement[T]) click(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLElement_click[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err

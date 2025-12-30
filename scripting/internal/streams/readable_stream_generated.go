@@ -20,12 +20,12 @@ func (wrapper ReadableStream[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w ReadableStream[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateOperation("cancel", w.cancel)
-	jsClass.CreateOperation("getReader", w.getReader)
-	jsClass.CreateOperation("pipeThrough", w.pipeThrough)
-	jsClass.CreateOperation("pipeTo", w.pipeTo)
-	jsClass.CreateOperation("tee", w.tee)
-	jsClass.CreateAttribute("locked", w.locked, nil)
+	jsClass.CreateOperation("cancel", ReadableStream_cancel)
+	jsClass.CreateOperation("getReader", ReadableStream_getReader)
+	jsClass.CreateOperation("pipeThrough", ReadableStream_pipeThrough)
+	jsClass.CreateOperation("pipeTo", ReadableStream_pipeTo)
+	jsClass.CreateOperation("tee", ReadableStream_tee)
+	jsClass.CreateAttribute("locked", ReadableStream_locked, nil)
 }
 
 func ReadableStreamConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
@@ -38,11 +38,11 @@ func ReadableStreamConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value
 	return CreateReadableStream(cbCtx, underlyingSource, strategy...)
 }
 
-func (w ReadableStream[T]) cancel(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "ReadableStream.cancel: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func ReadableStream_cancel[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "ReadableStream.ReadableStream_cancel: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ReadableStream[T]) getReader(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func ReadableStream_getReader[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[streams.ReadableStream](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -55,18 +55,18 @@ func (w ReadableStream[T]) getReader(cbCtx js.CallbackContext[T]) (res js.Value[
 	return encodeReadableStreamReader(cbCtx, result)
 }
 
-func (w ReadableStream[T]) pipeThrough(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "ReadableStream.pipeThrough: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func ReadableStream_pipeThrough[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "ReadableStream.ReadableStream_pipeThrough: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ReadableStream[T]) pipeTo(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "ReadableStream.pipeTo: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func ReadableStream_pipeTo[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "ReadableStream.ReadableStream_pipeTo: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ReadableStream[T]) tee(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "ReadableStream.tee: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func ReadableStream_tee[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "ReadableStream.ReadableStream_tee: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w ReadableStream[T]) locked(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "ReadableStream.locked: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func ReadableStream_locked[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "ReadableStream.ReadableStream_locked: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

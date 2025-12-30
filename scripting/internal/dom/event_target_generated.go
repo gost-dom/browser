@@ -20,16 +20,16 @@ func (wrapper EventTarget[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w EventTarget[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateOperation("addEventListener", w.addEventListener)
-	jsClass.CreateOperation("removeEventListener", w.removeEventListener)
-	jsClass.CreateOperation("dispatchEvent", w.dispatchEvent)
+	jsClass.CreateOperation("addEventListener", EventTarget_addEventListener)
+	jsClass.CreateOperation("removeEventListener", EventTarget_removeEventListener)
+	jsClass.CreateOperation("dispatchEvent", EventTarget_dispatchEvent)
 }
 
 func EventTargetConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return CreateEventTarget(cbCtx)
 }
 
-func (w EventTarget[T]) addEventListener(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func EventTarget_addEventListener[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[event.EventTarget](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -45,7 +45,7 @@ func (w EventTarget[T]) addEventListener(cbCtx js.CallbackContext[T]) (res js.Va
 	return nil, nil
 }
 
-func (w EventTarget[T]) removeEventListener(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func EventTarget_removeEventListener[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[event.EventTarget](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -61,7 +61,7 @@ func (w EventTarget[T]) removeEventListener(cbCtx js.CallbackContext[T]) (res js
 	return nil, nil
 }
 
-func (w EventTarget[T]) dispatchEvent(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func EventTarget_dispatchEvent[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[event.EventTarget](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst

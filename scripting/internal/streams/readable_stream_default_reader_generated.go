@@ -19,8 +19,8 @@ func (wrapper ReadableStreamDefaultReader[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w ReadableStreamDefaultReader[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateOperation("read", w.read)
-	jsClass.CreateOperation("releaseLock", w.releaseLock)
+	jsClass.CreateOperation("read", ReadableStreamDefaultReader_read)
+	jsClass.CreateOperation("releaseLock", ReadableStreamDefaultReader_releaseLock)
 }
 
 func ReadableStreamDefaultReaderConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
@@ -31,7 +31,7 @@ func ReadableStreamDefaultReaderConstructor[T any](cbCtx js.CallbackContext[T]) 
 	return CreateReadableStreamDefaultReader(cbCtx, stream)
 }
 
-func (w ReadableStreamDefaultReader[T]) read(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func ReadableStreamDefaultReader_read[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[streams.ReadableStreamDefaultReader](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -40,6 +40,6 @@ func (w ReadableStreamDefaultReader[T]) read(cbCtx js.CallbackContext[T]) (res j
 	return encodePromiseReadableStreamReadResult(cbCtx, result)
 }
 
-func (w ReadableStreamDefaultReader[T]) releaseLock(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "ReadableStreamDefaultReader.releaseLock: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func ReadableStreamDefaultReader_releaseLock[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "ReadableStreamDefaultReader.ReadableStreamDefaultReader_releaseLock: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

@@ -20,20 +20,20 @@ func (wrapper History[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w History[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateOperation("go", w.go_)
-	jsClass.CreateOperation("back", w.back)
-	jsClass.CreateOperation("forward", w.forward)
-	jsClass.CreateOperation("pushState", w.pushState)
-	jsClass.CreateOperation("replaceState", w.replaceState)
-	jsClass.CreateAttribute("length", w.length, nil)
-	jsClass.CreateAttribute("state", w.state, nil)
+	jsClass.CreateOperation("go", History_go)
+	jsClass.CreateOperation("back", History_back)
+	jsClass.CreateOperation("forward", History_forward)
+	jsClass.CreateOperation("pushState", History_pushState)
+	jsClass.CreateOperation("replaceState", History_replaceState)
+	jsClass.CreateAttribute("length", History_length, nil)
+	jsClass.CreateAttribute("state", History_state, nil)
 }
 
 func HistoryConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w History[T]) go_(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func History_go[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -46,7 +46,7 @@ func (w History[T]) go_(cbCtx js.CallbackContext[T]) (res js.Value[T], err error
 	return nil, errCall
 }
 
-func (w History[T]) back(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func History_back[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -55,7 +55,7 @@ func (w History[T]) back(cbCtx js.CallbackContext[T]) (res js.Value[T], err erro
 	return nil, errCall
 }
 
-func (w History[T]) forward(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func History_forward[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -64,7 +64,7 @@ func (w History[T]) forward(cbCtx js.CallbackContext[T]) (res js.Value[T], err e
 	return nil, errCall
 }
 
-func (w History[T]) pushState(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func History_pushState[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -80,7 +80,7 @@ func (w History[T]) pushState(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 	return nil, errCall
 }
 
-func (w History[T]) replaceState(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func History_replaceState[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -96,7 +96,7 @@ func (w History[T]) replaceState(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 	return nil, errCall
 }
 
-func (w History[T]) length(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func History_length[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -105,7 +105,7 @@ func (w History[T]) length(cbCtx js.CallbackContext[T]) (res js.Value[T], err er
 	return codec.EncodeInt(cbCtx, result)
 }
 
-func (w History[T]) state(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func History_state[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if err != nil {
 		return nil, err

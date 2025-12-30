@@ -17,7 +17,7 @@ func (w DOMTokenList[T]) toString_(s js.Scope[T], val string) (js.Value[T], erro
 	return s.NewString(val), nil
 }
 
-func (l DOMTokenList[T]) toggle(args js.CallbackContext[T]) (res js.Value[T], err error) {
+func DOMTokenList_toggle[T any](args js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInstance := js.As[dom.DOMTokenList](args.Instance())
 	token, err0 := js.ConsumeArgument(args, "toggle", nil, codec.DecodeString)
 	force, found, err1 := js.ConsumeOptionalArg(args, "force", codec.DecodeBoolean)

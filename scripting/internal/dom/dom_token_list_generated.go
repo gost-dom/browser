@@ -21,23 +21,23 @@ func (wrapper DOMTokenList[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w DOMTokenList[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateOperation("item", w.item)
-	jsClass.CreateOperation("contains", w.contains)
-	jsClass.CreateOperation("add", w.add)
-	jsClass.CreateOperation("remove", w.remove)
-	jsClass.CreateOperation("toggle", w.toggle)
-	jsClass.CreateOperation("replace", w.replace)
-	jsClass.CreateOperation("supports", w.supports)
-	jsClass.CreateAttribute("length", w.length, nil)
-	jsClass.CreateAttribute("value", w.value, w.setValue)
-	jsClass.CreateOperation("toString", w.value)
+	jsClass.CreateOperation("item", DOMTokenList_item)
+	jsClass.CreateOperation("contains", DOMTokenList_contains)
+	jsClass.CreateOperation("add", DOMTokenList_add)
+	jsClass.CreateOperation("remove", DOMTokenList_remove)
+	jsClass.CreateOperation("toggle", DOMTokenList_toggle)
+	jsClass.CreateOperation("replace", DOMTokenList_replace)
+	jsClass.CreateOperation("supports", DOMTokenList_supports)
+	jsClass.CreateAttribute("length", DOMTokenList_length, nil)
+	jsClass.CreateAttribute("value", DOMTokenList_value, DOMTokenList_setValue)
+	jsClass.CreateOperation("toString", DOMTokenList_value)
 }
 
 func DOMTokenListConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w DOMTokenList[T]) item(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func DOMTokenList_item[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -50,7 +50,7 @@ func (w DOMTokenList[T]) item(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 	return codec.EncodeNillableString(cbCtx, result, hasValue)
 }
 
-func (w DOMTokenList[T]) contains(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func DOMTokenList_contains[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -63,7 +63,7 @@ func (w DOMTokenList[T]) contains(cbCtx js.CallbackContext[T]) (res js.Value[T],
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w DOMTokenList[T]) add(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func DOMTokenList_add[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -76,7 +76,7 @@ func (w DOMTokenList[T]) add(cbCtx js.CallbackContext[T]) (res js.Value[T], err 
 	return nil, errCall
 }
 
-func (w DOMTokenList[T]) remove(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func DOMTokenList_remove[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -89,7 +89,7 @@ func (w DOMTokenList[T]) remove(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 	return nil, errCall
 }
 
-func (w DOMTokenList[T]) replace(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func DOMTokenList_replace[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -107,11 +107,11 @@ func (w DOMTokenList[T]) replace(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w DOMTokenList[T]) supports(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "DOMTokenList.supports: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func DOMTokenList_supports[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "DOMTokenList.DOMTokenList_supports: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w DOMTokenList[T]) length(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func DOMTokenList_length[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -120,7 +120,7 @@ func (w DOMTokenList[T]) length(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 	return codec.EncodeInt(cbCtx, result)
 }
 
-func (w DOMTokenList[T]) value(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func DOMTokenList_value[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -129,7 +129,7 @@ func (w DOMTokenList[T]) value(cbCtx js.CallbackContext[T]) (res js.Value[T], er
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w DOMTokenList[T]) setValue(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func DOMTokenList_setValue[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[dom.DOMTokenList](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err = gosterror.First(err0, err1)

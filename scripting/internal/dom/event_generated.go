@@ -20,15 +20,15 @@ func (wrapper Event[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w Event[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateOperation("stopPropagation", w.stopPropagation)
-	jsClass.CreateOperation("preventDefault", w.preventDefault)
-	jsClass.CreateAttribute("type", w.type_, nil)
-	jsClass.CreateAttribute("target", w.target, nil)
-	jsClass.CreateAttribute("currentTarget", w.currentTarget, nil)
-	jsClass.CreateAttribute("eventPhase", w.eventPhase, nil)
-	jsClass.CreateAttribute("bubbles", w.bubbles, nil)
-	jsClass.CreateAttribute("cancelable", w.cancelable, nil)
-	jsClass.CreateAttribute("defaultPrevented", w.defaultPrevented, nil)
+	jsClass.CreateOperation("stopPropagation", Event_stopPropagation)
+	jsClass.CreateOperation("preventDefault", Event_preventDefault)
+	jsClass.CreateAttribute("type", Event_type, nil)
+	jsClass.CreateAttribute("target", Event_target, nil)
+	jsClass.CreateAttribute("currentTarget", Event_currentTarget, nil)
+	jsClass.CreateAttribute("eventPhase", Event_eventPhase, nil)
+	jsClass.CreateAttribute("bubbles", Event_bubbles, nil)
+	jsClass.CreateAttribute("cancelable", Event_cancelable, nil)
+	jsClass.CreateAttribute("defaultPrevented", Event_defaultPrevented, nil)
 }
 
 func EventConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
@@ -48,7 +48,7 @@ func EventConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err 
 	return codec.EncodeConstructedValue(cbCtx, &e)
 }
 
-func (w Event[T]) stopPropagation(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Event_stopPropagation[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -57,7 +57,7 @@ func (w Event[T]) stopPropagation(cbCtx js.CallbackContext[T]) (res js.Value[T],
 	return nil, nil
 }
 
-func (w Event[T]) preventDefault(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Event_preventDefault[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -66,7 +66,7 @@ func (w Event[T]) preventDefault(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 	return nil, nil
 }
 
-func (w Event[T]) type_(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Event_type[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -75,7 +75,7 @@ func (w Event[T]) type_(cbCtx js.CallbackContext[T]) (res js.Value[T], err error
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w Event[T]) target(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Event_target[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -84,7 +84,7 @@ func (w Event[T]) target(cbCtx js.CallbackContext[T]) (res js.Value[T], err erro
 	return encodeEventTarget(cbCtx, result)
 }
 
-func (w Event[T]) currentTarget(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Event_currentTarget[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -93,7 +93,7 @@ func (w Event[T]) currentTarget(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 	return encodeEventTarget(cbCtx, result)
 }
 
-func (w Event[T]) eventPhase(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Event_eventPhase[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -102,7 +102,7 @@ func (w Event[T]) eventPhase(cbCtx js.CallbackContext[T]) (res js.Value[T], err 
 	return encodeEventPhase(cbCtx, result)
 }
 
-func (w Event[T]) bubbles(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Event_bubbles[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -111,7 +111,7 @@ func (w Event[T]) bubbles(cbCtx js.CallbackContext[T]) (res js.Value[T], err err
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w Event[T]) cancelable(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Event_cancelable[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -120,7 +120,7 @@ func (w Event[T]) cancelable(cbCtx js.CallbackContext[T]) (res js.Value[T], err 
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w Event[T]) defaultPrevented(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Event_defaultPrevented[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[*event.Event](cbCtx.Instance())
 	if err != nil {
 		return nil, err

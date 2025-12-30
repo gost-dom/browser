@@ -16,10 +16,10 @@ func (wrapper PointerEvent[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w PointerEvent[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateAttribute("width", w.width, nil)
-	jsClass.CreateAttribute("height", w.height, nil)
-	jsClass.CreateAttribute("pressure", w.pressure, nil)
-	jsClass.CreateAttribute("tangentialPressure", w.tangentialPressure, nil)
+	jsClass.CreateAttribute("width", PointerEvent_width, nil)
+	jsClass.CreateAttribute("height", PointerEvent_height, nil)
+	jsClass.CreateAttribute("pressure", PointerEvent_pressure, nil)
+	jsClass.CreateAttribute("tangentialPressure", PointerEvent_tangentialPressure, nil)
 }
 
 func PointerEventConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
@@ -43,18 +43,18 @@ func PointerEventConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T
 	return codec.EncodeConstructedValue(cbCtx, &e)
 }
 
-func (w PointerEvent[T]) width(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "PointerEvent.width: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func PointerEvent_width[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "PointerEvent.PointerEvent_width: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w PointerEvent[T]) height(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "PointerEvent.height: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func PointerEvent_height[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "PointerEvent.PointerEvent_height: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w PointerEvent[T]) pressure(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "PointerEvent.pressure: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func PointerEvent_pressure[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "PointerEvent.PointerEvent_pressure: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w PointerEvent[T]) tangentialPressure(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "PointerEvent.tangentialPressure: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func PointerEvent_tangentialPressure[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "PointerEvent.PointerEvent_tangentialPressure: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

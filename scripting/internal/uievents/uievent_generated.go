@@ -22,8 +22,8 @@ func (wrapper UIEvent[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w UIEvent[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateAttribute("view", w.view, nil)
-	jsClass.CreateAttribute("detail", w.detail, nil)
+	jsClass.CreateAttribute("view", UIEvent_view, nil)
+	jsClass.CreateAttribute("detail", UIEvent_detail, nil)
 }
 
 func UIEventConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
@@ -47,10 +47,10 @@ func UIEventConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], er
 	return codec.EncodeConstructedValue(cbCtx, &e)
 }
 
-func (w UIEvent[T]) view(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "UIEvent.view: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func UIEvent_view[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "UIEvent.UIEvent_view: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w UIEvent[T]) detail(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "UIEvent.detail: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func UIEvent_detail[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "UIEvent.UIEvent_detail: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

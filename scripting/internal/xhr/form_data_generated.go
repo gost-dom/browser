@@ -21,12 +21,12 @@ func (wrapper FormData[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w FormData[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateOperation("append", w.append)
-	jsClass.CreateOperation("delete", w.delete)
-	jsClass.CreateOperation("get", w.get)
-	jsClass.CreateOperation("getAll", w.getAll)
-	jsClass.CreateOperation("has", w.has)
-	jsClass.CreateOperation("set", w.set)
+	jsClass.CreateOperation("append", FormData_append)
+	jsClass.CreateOperation("delete", FormData_delete)
+	jsClass.CreateOperation("get", FormData_get)
+	jsClass.CreateOperation("getAll", FormData_getAll)
+	jsClass.CreateOperation("has", FormData_has)
+	jsClass.CreateOperation("set", FormData_set)
 }
 
 func FormDataConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
@@ -47,7 +47,7 @@ func FormDataConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], e
 	return CreateFormData(cbCtx)
 }
 
-func (w FormData[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func FormData_append[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[*html.FormData](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -62,7 +62,7 @@ func (w FormData[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err e
 	return nil, nil
 }
 
-func (w FormData[T]) delete(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func FormData_delete[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[*html.FormData](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -75,7 +75,7 @@ func (w FormData[T]) delete(cbCtx js.CallbackContext[T]) (res js.Value[T], err e
 	return nil, nil
 }
 
-func (w FormData[T]) get(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func FormData_get[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[*html.FormData](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -88,7 +88,7 @@ func (w FormData[T]) get(cbCtx js.CallbackContext[T]) (res js.Value[T], err erro
 	return encodeFormDataEntryValue(cbCtx, result)
 }
 
-func (w FormData[T]) getAll(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func FormData_getAll[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[*html.FormData](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -101,7 +101,7 @@ func (w FormData[T]) getAll(cbCtx js.CallbackContext[T]) (res js.Value[T], err e
 	return encodeSequenceFormDataEntryValue(cbCtx, result)
 }
 
-func (w FormData[T]) has(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func FormData_has[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[*html.FormData](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -114,7 +114,7 @@ func (w FormData[T]) has(cbCtx js.CallbackContext[T]) (res js.Value[T], err erro
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w FormData[T]) set(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func FormData_set[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[*html.FormData](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst

@@ -21,12 +21,12 @@ func (wrapper Headers[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w Headers[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateOperation("append", w.append)
-	jsClass.CreateOperation("delete", w.delete)
-	jsClass.CreateOperation("get", w.get)
-	jsClass.CreateOperation("getSetCookie", w.getSetCookie)
-	jsClass.CreateOperation("has", w.has)
-	jsClass.CreateOperation("set", w.set)
+	jsClass.CreateOperation("append", Headers_append)
+	jsClass.CreateOperation("delete", Headers_delete)
+	jsClass.CreateOperation("get", Headers_get)
+	jsClass.CreateOperation("getSetCookie", Headers_getSetCookie)
+	jsClass.CreateOperation("has", Headers_has)
+	jsClass.CreateOperation("set", Headers_set)
 }
 
 func HeadersConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
@@ -37,7 +37,7 @@ func HeadersConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], er
 	return CreateHeaders(cbCtx, init...)
 }
 
-func (w Headers[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Headers_append[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[*fetch.Headers](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -52,7 +52,7 @@ func (w Headers[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err er
 	return nil, nil
 }
 
-func (w Headers[T]) delete(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Headers_delete[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[*fetch.Headers](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -65,7 +65,7 @@ func (w Headers[T]) delete(cbCtx js.CallbackContext[T]) (res js.Value[T], err er
 	return nil, nil
 }
 
-func (w Headers[T]) get(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Headers_get[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[*fetch.Headers](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -78,11 +78,11 @@ func (w Headers[T]) get(cbCtx js.CallbackContext[T]) (res js.Value[T], err error
 	return codec.EncodeNillableString(cbCtx, result, hasValue)
 }
 
-func (w Headers[T]) getSetCookie(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Headers.getSetCookie: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Headers_getSetCookie[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Headers.Headers_getSetCookie: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Headers[T]) has(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Headers_has[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[*fetch.Headers](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -95,7 +95,7 @@ func (w Headers[T]) has(cbCtx js.CallbackContext[T]) (res js.Value[T], err error
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w Headers[T]) set(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Headers_set[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[*fetch.Headers](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst

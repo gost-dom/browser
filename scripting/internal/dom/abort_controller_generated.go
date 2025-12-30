@@ -19,15 +19,15 @@ func (wrapper AbortController[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w AbortController[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateOperation("abort", w.abort)
-	jsClass.CreateAttribute("signal", w.signal, nil)
+	jsClass.CreateOperation("abort", AbortController_abort)
+	jsClass.CreateAttribute("signal", AbortController_signal, nil)
 }
 
 func AbortControllerConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return CreateAbortController(cbCtx)
 }
 
-func (w AbortController[T]) abort(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func AbortController_abort[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dominterfaces.AbortController](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -40,7 +40,7 @@ func (w AbortController[T]) abort(cbCtx js.CallbackContext[T]) (res js.Value[T],
 	return nil, nil
 }
 
-func (w AbortController[T]) signal(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func AbortController_signal[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dominterfaces.AbortController](cbCtx.Instance())
 	if err != nil {
 		return nil, err

@@ -6,7 +6,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w ParentNode[T]) decodeNodeOrText(s js.Scope[T], val js.Value[T]) (dom.Node, error) {
+func decodeNodeOrText[T any](s js.Scope[T], val js.Value[T]) (dom.Node, error) {
 	win, err := codec.GetWindow(s)
 	if err != nil {
 		return nil, err

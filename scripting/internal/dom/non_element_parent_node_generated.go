@@ -19,10 +19,10 @@ func (wrapper NonElementParentNode[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w NonElementParentNode[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateOperation("getElementById", w.getElementById)
+	jsClass.CreateOperation("getElementById", NonElementParentNode_getElementById)
 }
 
-func (w NonElementParentNode[T]) getElementById(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func NonElementParentNode_getElementById[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.NonElementParentNode](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst

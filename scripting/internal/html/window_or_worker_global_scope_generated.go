@@ -15,9 +15,9 @@ func (wrapper WindowOrWorkerGlobalScope[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w WindowOrWorkerGlobalScope[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateOperation("setTimeout", w.setTimeout)
-	jsClass.CreateOperation("clearTimeout", w.clearTimeout)
-	jsClass.CreateOperation("setInterval", w.setInterval)
-	jsClass.CreateOperation("clearInterval", w.clearInterval)
-	jsClass.CreateOperation("queueMicrotask", w.queueMicrotask)
+	jsClass.CreateOperation("setTimeout", WindowOrWorkerGlobalScope_setTimeout)
+	jsClass.CreateOperation("clearTimeout", WindowOrWorkerGlobalScope_clearTimeout)
+	jsClass.CreateOperation("setInterval", WindowOrWorkerGlobalScope_setInterval)
+	jsClass.CreateOperation("clearInterval", WindowOrWorkerGlobalScope_clearInterval)
+	jsClass.CreateOperation("queueMicrotask", WindowOrWorkerGlobalScope_queueMicrotask)
 }

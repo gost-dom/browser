@@ -22,7 +22,7 @@ func (wrapper HTMLAnchorElement[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w HTMLAnchorElement[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateAttribute("target", w.target, w.setTarget)
+	jsClass.CreateAttribute("target", HTMLAnchorElement_target, HTMLAnchorElement_setTarget)
 	w.htmlHyperlinkElementUtils.installPrototype(jsClass)
 }
 
@@ -30,7 +30,7 @@ func HTMLAnchorElementConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Va
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w HTMLAnchorElement[T]) target(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLAnchorElement_target[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLAnchorElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -39,7 +39,7 @@ func (w HTMLAnchorElement[T]) target(cbCtx js.CallbackContext[T]) (res js.Value[
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w HTMLAnchorElement[T]) setTarget(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLAnchorElement_setTarget[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.HTMLAnchorElement](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err = gosterror.First(err0, err1)

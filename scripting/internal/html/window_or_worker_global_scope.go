@@ -11,7 +11,7 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w WindowOrWorkerGlobalScope[T]) decodeTimerHandler(
+func decodeTimerHandler[T any](
 	scope js.Scope[T], v js.Value[T],
 ) (res htmlinterfaces.TimerHandler, err error) {
 	f, err := codec.DecodeFunction(scope, v)
@@ -26,13 +26,13 @@ func (w WindowOrWorkerGlobalScope[T]) decodeTimerHandler(
 	return res, nil
 }
 
-func (w WindowOrWorkerGlobalScope[T]) decodeVoidFunction(
+func WindowOrWorkerGlobalScope_decodeVoidFunction[T any](
 	scope js.Scope[T], v js.Value[T],
 ) (res htmlinterfaces.TimerHandler, err error) {
-	return w.decodeTimerHandler(scope, v)
+	return decodeTimerHandler(scope, v)
 }
 
-func (w WindowOrWorkerGlobalScope[T]) setTimeout(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func WindowOrWorkerGlobalScope_setTimeout[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	f, err1 := js.ConsumeArgument(cbCtx, "callback", nil, codec.DecodeFunction)
 	delay, err2 := js.ConsumeArgument(cbCtx, "delay", codec.ZeroValue, codec.DecodeInt)
 	err := errors.Join(err1, err2)
@@ -51,7 +51,7 @@ func (w WindowOrWorkerGlobalScope[T]) setTimeout(cbCtx js.CallbackContext[T]) (j
 	return cbCtx.NewUint32(uint32(handle)), nil
 }
 
-func (w WindowOrWorkerGlobalScope[T]) setInterval(
+func WindowOrWorkerGlobalScope_setInterval[T any](
 	cbCtx js.CallbackContext[T],
 ) (js.Value[T], error) {
 	f, err1 := js.ConsumeArgument(cbCtx, "callback", nil, codec.DecodeFunction)
@@ -71,7 +71,7 @@ func (w WindowOrWorkerGlobalScope[T]) setInterval(
 	return codec.EncodeInt(cbCtx, int(handle))
 }
 
-func (w WindowOrWorkerGlobalScope[T]) clearTimeout(
+func WindowOrWorkerGlobalScope_clearTimeout[T any](
 	cbCtx js.CallbackContext[T],
 ) (js.Value[T], error) {
 	handle, err := js.ConsumeArgument(cbCtx, "handle", nil, codec.DecodeInt)
@@ -81,7 +81,7 @@ func (w WindowOrWorkerGlobalScope[T]) clearTimeout(
 	return nil, nil
 }
 
-func (w WindowOrWorkerGlobalScope[T]) clearInterval(
+func WindowOrWorkerGlobalScope_clearInterval[T any](
 	cbCtx js.CallbackContext[T],
 ) (js.Value[T], error) {
 	handle, err := js.ConsumeArgument(cbCtx, "handle", nil, codec.DecodeInt)
@@ -91,7 +91,7 @@ func (w WindowOrWorkerGlobalScope[T]) clearInterval(
 	return nil, err
 }
 
-func (w WindowOrWorkerGlobalScope[T]) queueMicrotask(
+func WindowOrWorkerGlobalScope_queueMicrotask[T any](
 	cbCtx js.CallbackContext[T],
 ) (js.Value[T], error) {
 	f, err := js.ConsumeArgument(cbCtx, "callback", nil, codec.DecodeFunction)

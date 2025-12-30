@@ -20,15 +20,15 @@ func (wrapper HTMLOrSVGElement[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w HTMLOrSVGElement[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateOperation("focus", w.focus)
-	jsClass.CreateOperation("blur", w.blur)
-	jsClass.CreateAttribute("dataset", w.dataset, nil)
-	jsClass.CreateAttribute("nonce", w.nonce, w.setNonce)
-	jsClass.CreateAttribute("autofocus", w.autofocus, w.setAutofocus)
-	jsClass.CreateAttribute("tabIndex", w.tabIndex, w.setTabIndex)
+	jsClass.CreateOperation("focus", HTMLOrSVGElement_focus)
+	jsClass.CreateOperation("blur", HTMLOrSVGElement_blur)
+	jsClass.CreateAttribute("dataset", HTMLOrSVGElement_dataset, nil)
+	jsClass.CreateAttribute("nonce", HTMLOrSVGElement_nonce, HTMLOrSVGElement_setNonce)
+	jsClass.CreateAttribute("autofocus", HTMLOrSVGElement_autofocus, HTMLOrSVGElement_setAutofocus)
+	jsClass.CreateAttribute("tabIndex", HTMLOrSVGElement_tabIndex, HTMLOrSVGElement_setTabIndex)
 }
 
-func (w HTMLOrSVGElement[T]) focus(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLOrSVGElement_focus[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -37,7 +37,7 @@ func (w HTMLOrSVGElement[T]) focus(cbCtx js.CallbackContext[T]) (res js.Value[T]
 	return nil, nil
 }
 
-func (w HTMLOrSVGElement[T]) blur(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLOrSVGElement_blur[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -46,7 +46,7 @@ func (w HTMLOrSVGElement[T]) blur(cbCtx js.CallbackContext[T]) (res js.Value[T],
 	return nil, nil
 }
 
-func (w HTMLOrSVGElement[T]) dataset(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLOrSVGElement_dataset[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -55,7 +55,7 @@ func (w HTMLOrSVGElement[T]) dataset(cbCtx js.CallbackContext[T]) (res js.Value[
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w HTMLOrSVGElement[T]) nonce(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLOrSVGElement_nonce[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -64,7 +64,7 @@ func (w HTMLOrSVGElement[T]) nonce(cbCtx js.CallbackContext[T]) (res js.Value[T]
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w HTMLOrSVGElement[T]) setNonce(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLOrSVGElement_setNonce[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err = gosterror.First(err0, err1)
@@ -75,7 +75,7 @@ func (w HTMLOrSVGElement[T]) setNonce(cbCtx js.CallbackContext[T]) (res js.Value
 	return nil, nil
 }
 
-func (w HTMLOrSVGElement[T]) autofocus(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLOrSVGElement_autofocus[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -84,7 +84,7 @@ func (w HTMLOrSVGElement[T]) autofocus(cbCtx js.CallbackContext[T]) (res js.Valu
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w HTMLOrSVGElement[T]) setAutofocus(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLOrSVGElement_setAutofocus[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeBoolean)
 	err = gosterror.First(err0, err1)
@@ -95,7 +95,7 @@ func (w HTMLOrSVGElement[T]) setAutofocus(cbCtx js.CallbackContext[T]) (res js.V
 	return nil, nil
 }
 
-func (w HTMLOrSVGElement[T]) tabIndex(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLOrSVGElement_tabIndex[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -104,7 +104,7 @@ func (w HTMLOrSVGElement[T]) tabIndex(cbCtx js.CallbackContext[T]) (res js.Value
 	return codec.EncodeInt(cbCtx, result)
 }
 
-func (w HTMLOrSVGElement[T]) setTabIndex(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLOrSVGElement_setTabIndex[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.HTMLOrSVGElement](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeInt)
 	err = gosterror.First(err0, err1)

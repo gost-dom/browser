@@ -125,9 +125,9 @@ func configureDOMNode(specs *WebAPIConfig) {
 
 	specs.Type("NonElementParentNode")
 	parentNode := specs.Type("ParentNode")
-	parentNode.Method("append").Argument("nodes").Decoder = "w.decodeNodeOrText"
-	parentNode.Method("prepend").Argument("nodes").Decoder = "w.decodeNodeOrText"
-	parentNode.Method("replaceChildren").Argument("nodes").Decoder = "w.decodeNodeOrText"
+	parentNode.Method("append").Argument("nodes").Decoder = "decodeNodeOrText"
+	parentNode.Method("prepend").Argument("nodes").Decoder = "decodeNodeOrText"
+	parentNode.Method("replaceChildren").Argument("nodes").Decoder = "decodeNodeOrText"
 
 	domElement := specs.Type("Element")
 	domElement.RunCustomCode = true

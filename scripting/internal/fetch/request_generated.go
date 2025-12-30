@@ -22,23 +22,23 @@ func (wrapper Request[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w Request[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateOperation("clone", w.clone)
-	jsClass.CreateAttribute("method", w.method, nil)
-	jsClass.CreateAttribute("url", w.url, nil)
-	jsClass.CreateAttribute("headers", w.headers, nil)
-	jsClass.CreateAttribute("destination", w.destination, nil)
-	jsClass.CreateAttribute("referrer", w.referrer, nil)
-	jsClass.CreateAttribute("referrerPolicy", w.referrerPolicy, nil)
-	jsClass.CreateAttribute("mode", w.mode, nil)
-	jsClass.CreateAttribute("credentials", w.credentials, nil)
-	jsClass.CreateAttribute("cache", w.cache, nil)
-	jsClass.CreateAttribute("redirect", w.redirect, nil)
-	jsClass.CreateAttribute("integrity", w.integrity, nil)
-	jsClass.CreateAttribute("keepalive", w.keepalive, nil)
-	jsClass.CreateAttribute("isReloadNavigation", w.isReloadNavigation, nil)
-	jsClass.CreateAttribute("isHistoryNavigation", w.isHistoryNavigation, nil)
-	jsClass.CreateAttribute("signal", w.signal, nil)
-	jsClass.CreateAttribute("duplex", w.duplex, nil)
+	jsClass.CreateOperation("clone", Request_clone)
+	jsClass.CreateAttribute("method", Request_method, nil)
+	jsClass.CreateAttribute("url", Request_url, nil)
+	jsClass.CreateAttribute("headers", Request_headers, nil)
+	jsClass.CreateAttribute("destination", Request_destination, nil)
+	jsClass.CreateAttribute("referrer", Request_referrer, nil)
+	jsClass.CreateAttribute("referrerPolicy", Request_referrerPolicy, nil)
+	jsClass.CreateAttribute("mode", Request_mode, nil)
+	jsClass.CreateAttribute("credentials", Request_credentials, nil)
+	jsClass.CreateAttribute("cache", Request_cache, nil)
+	jsClass.CreateAttribute("redirect", Request_redirect, nil)
+	jsClass.CreateAttribute("integrity", Request_integrity, nil)
+	jsClass.CreateAttribute("keepalive", Request_keepalive, nil)
+	jsClass.CreateAttribute("isReloadNavigation", Request_isReloadNavigation, nil)
+	jsClass.CreateAttribute("isHistoryNavigation", Request_isHistoryNavigation, nil)
+	jsClass.CreateAttribute("signal", Request_signal, nil)
+	jsClass.CreateAttribute("duplex", Request_duplex, nil)
 	w.body.installPrototype(jsClass)
 }
 
@@ -52,15 +52,15 @@ func RequestConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], er
 	return CreateRequest(cbCtx, input, init...)
 }
 
-func (w Request[T]) clone(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Request.clone: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Request_clone[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Request.Request_clone: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) method(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Request.method: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Request_method[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Request.Request_method: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) url(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Request_url[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[*fetch.Request](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -69,7 +69,7 @@ func (w Request[T]) url(cbCtx js.CallbackContext[T]) (res js.Value[T], err error
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w Request[T]) headers(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func Request_headers[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[*fetch.Request](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -78,54 +78,54 @@ func (w Request[T]) headers(cbCtx js.CallbackContext[T]) (res js.Value[T], err e
 	return encodeHeaders(cbCtx, result)
 }
 
-func (w Request[T]) destination(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Request.destination: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Request_destination[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Request.Request_destination: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) referrer(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Request.referrer: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Request_referrer[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Request.Request_referrer: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) referrerPolicy(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Request.referrerPolicy: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Request_referrerPolicy[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Request.Request_referrerPolicy: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) mode(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Request.mode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Request_mode[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Request.Request_mode: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) credentials(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Request.credentials: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Request_credentials[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Request.Request_credentials: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) cache(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Request.cache: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Request_cache[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Request.Request_cache: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) redirect(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Request.redirect: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Request_redirect[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Request.Request_redirect: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) integrity(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Request.integrity: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Request_integrity[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Request.Request_integrity: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) keepalive(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Request.keepalive: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Request_keepalive[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Request.Request_keepalive: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) isReloadNavigation(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Request.isReloadNavigation: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Request_isReloadNavigation[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Request.Request_isReloadNavigation: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) isHistoryNavigation(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Request.isHistoryNavigation: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Request_isHistoryNavigation[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Request.Request_isHistoryNavigation: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) signal(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Request.signal: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Request_signal[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Request.Request_signal: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func (w Request[T]) duplex(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Request.duplex: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+func Request_duplex[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return codec.EncodeCallbackErrorf(cbCtx, "Request.Request_duplex: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

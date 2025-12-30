@@ -21,18 +21,18 @@ func (wrapper URLSearchParams[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w URLSearchParams[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateOperation("append", w.append)
-	jsClass.CreateOperation("delete", w.delete)
-	jsClass.CreateOperation("get", w.get)
-	jsClass.CreateOperation("getAll", w.getAll)
-	jsClass.CreateOperation("has", w.has)
-	jsClass.CreateOperation("set", w.set)
-	jsClass.CreateOperation("sort", w.sort)
-	jsClass.CreateOperation("toString", w.toString)
-	jsClass.CreateAttribute("size", w.size, nil)
+	jsClass.CreateOperation("append", URLSearchParams_append)
+	jsClass.CreateOperation("delete", URLSearchParams_delete)
+	jsClass.CreateOperation("get", URLSearchParams_get)
+	jsClass.CreateOperation("getAll", URLSearchParams_getAll)
+	jsClass.CreateOperation("has", URLSearchParams_has)
+	jsClass.CreateOperation("set", URLSearchParams_set)
+	jsClass.CreateOperation("sort", URLSearchParams_sort)
+	jsClass.CreateOperation("toString", URLSearchParams_toString)
+	jsClass.CreateAttribute("size", URLSearchParams_size, nil)
 }
 
-func (w URLSearchParams[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func URLSearchParams_append[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -47,7 +47,7 @@ func (w URLSearchParams[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T]
 	return nil, nil
 }
 
-func (w URLSearchParams[T]) delete(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func URLSearchParams_delete[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -68,7 +68,7 @@ func (w URLSearchParams[T]) delete(cbCtx js.CallbackContext[T]) (res js.Value[T]
 	return nil, nil
 }
 
-func (w URLSearchParams[T]) get(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func URLSearchParams_get[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -81,7 +81,7 @@ func (w URLSearchParams[T]) get(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 	return codec.EncodeNillableString(cbCtx, result, hasValue)
 }
 
-func (w URLSearchParams[T]) getAll(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func URLSearchParams_getAll[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -94,7 +94,7 @@ func (w URLSearchParams[T]) getAll(cbCtx js.CallbackContext[T]) (res js.Value[T]
 	return encodeSequenceString_(cbCtx, result)
 }
 
-func (w URLSearchParams[T]) has(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func URLSearchParams_has[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -115,7 +115,7 @@ func (w URLSearchParams[T]) has(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w URLSearchParams[T]) set(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func URLSearchParams_set[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -130,7 +130,7 @@ func (w URLSearchParams[T]) set(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 	return nil, nil
 }
 
-func (w URLSearchParams[T]) sort(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func URLSearchParams_sort[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -139,7 +139,7 @@ func (w URLSearchParams[T]) sort(cbCtx js.CallbackContext[T]) (res js.Value[T], 
 	return nil, nil
 }
 
-func (w URLSearchParams[T]) toString(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func URLSearchParams_toString[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -148,7 +148,7 @@ func (w URLSearchParams[T]) toString(cbCtx js.CallbackContext[T]) (res js.Value[
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w URLSearchParams[T]) size(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func URLSearchParams_size[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[urlinterfaces.URLSearchParams](cbCtx.Instance())
 	if err != nil {
 		return nil, err

@@ -20,17 +20,17 @@ func (wrapper HTMLInputElement[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w HTMLInputElement[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateOperation("checkValidity", w.checkValidity)
-	jsClass.CreateAttribute("name", w.name, w.setName)
-	jsClass.CreateAttribute("type", w.type_, w.setType)
-	jsClass.CreateAttribute("value", w.value, w.setValue)
+	jsClass.CreateOperation("checkValidity", HTMLInputElement_checkValidity)
+	jsClass.CreateAttribute("name", HTMLInputElement_name, HTMLInputElement_setName)
+	jsClass.CreateAttribute("type", HTMLInputElement_type, HTMLInputElement_setType)
+	jsClass.CreateAttribute("value", HTMLInputElement_value, HTMLInputElement_setValue)
 }
 
 func HTMLInputElementConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return cbCtx.ReturnWithTypeError("Illegal constructor")
 }
 
-func (w HTMLInputElement[T]) checkValidity(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLInputElement_checkValidity[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLInputElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -39,7 +39,7 @@ func (w HTMLInputElement[T]) checkValidity(cbCtx js.CallbackContext[T]) (res js.
 	return codec.EncodeBoolean(cbCtx, result)
 }
 
-func (w HTMLInputElement[T]) name(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLInputElement_name[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLInputElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -48,7 +48,7 @@ func (w HTMLInputElement[T]) name(cbCtx js.CallbackContext[T]) (res js.Value[T],
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w HTMLInputElement[T]) setName(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLInputElement_setName[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.HTMLInputElement](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err = gosterror.First(err0, err1)
@@ -59,7 +59,7 @@ func (w HTMLInputElement[T]) setName(cbCtx js.CallbackContext[T]) (res js.Value[
 	return nil, nil
 }
 
-func (w HTMLInputElement[T]) type_(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLInputElement_type[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLInputElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -68,7 +68,7 @@ func (w HTMLInputElement[T]) type_(cbCtx js.CallbackContext[T]) (res js.Value[T]
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w HTMLInputElement[T]) setType(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLInputElement_setType[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.HTMLInputElement](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err = gosterror.First(err0, err1)
@@ -79,7 +79,7 @@ func (w HTMLInputElement[T]) setType(cbCtx js.CallbackContext[T]) (res js.Value[
 	return nil, nil
 }
 
-func (w HTMLInputElement[T]) value(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLInputElement_value[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLInputElement](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -88,7 +88,7 @@ func (w HTMLInputElement[T]) value(cbCtx js.CallbackContext[T]) (res js.Value[T]
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w HTMLInputElement[T]) setValue(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLInputElement_setValue[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.HTMLInputElement](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err = gosterror.First(err0, err1)

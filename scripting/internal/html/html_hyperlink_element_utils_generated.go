@@ -20,21 +20,21 @@ func (wrapper HTMLHyperlinkElementUtils[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w HTMLHyperlinkElementUtils[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateAttribute("href", w.href, w.setHref)
-	jsClass.CreateOperation("toString", w.href)
-	jsClass.CreateAttribute("origin", w.origin, nil)
-	jsClass.CreateAttribute("protocol", w.protocol, w.setProtocol)
-	jsClass.CreateAttribute("username", w.username, w.setUsername)
-	jsClass.CreateAttribute("password", w.password, w.setPassword)
-	jsClass.CreateAttribute("host", w.host, w.setHost)
-	jsClass.CreateAttribute("hostname", w.hostname, w.setHostname)
-	jsClass.CreateAttribute("port", w.port, w.setPort)
-	jsClass.CreateAttribute("pathname", w.pathname, w.setPathname)
-	jsClass.CreateAttribute("search", w.search, w.setSearch)
-	jsClass.CreateAttribute("hash", w.hash, w.setHash)
+	jsClass.CreateAttribute("href", HTMLHyperlinkElementUtils_href, HTMLHyperlinkElementUtils_setHref)
+	jsClass.CreateOperation("toString", HTMLHyperlinkElementUtils_href)
+	jsClass.CreateAttribute("origin", HTMLHyperlinkElementUtils_origin, nil)
+	jsClass.CreateAttribute("protocol", HTMLHyperlinkElementUtils_protocol, HTMLHyperlinkElementUtils_setProtocol)
+	jsClass.CreateAttribute("username", HTMLHyperlinkElementUtils_username, HTMLHyperlinkElementUtils_setUsername)
+	jsClass.CreateAttribute("password", HTMLHyperlinkElementUtils_password, HTMLHyperlinkElementUtils_setPassword)
+	jsClass.CreateAttribute("host", HTMLHyperlinkElementUtils_host, HTMLHyperlinkElementUtils_setHost)
+	jsClass.CreateAttribute("hostname", HTMLHyperlinkElementUtils_hostname, HTMLHyperlinkElementUtils_setHostname)
+	jsClass.CreateAttribute("port", HTMLHyperlinkElementUtils_port, HTMLHyperlinkElementUtils_setPort)
+	jsClass.CreateAttribute("pathname", HTMLHyperlinkElementUtils_pathname, HTMLHyperlinkElementUtils_setPathname)
+	jsClass.CreateAttribute("search", HTMLHyperlinkElementUtils_search, HTMLHyperlinkElementUtils_setSearch)
+	jsClass.CreateAttribute("hash", HTMLHyperlinkElementUtils_hash, HTMLHyperlinkElementUtils_setHash)
 }
 
-func (w HTMLHyperlinkElementUtils[T]) href(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLHyperlinkElementUtils_href[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ func (w HTMLHyperlinkElementUtils[T]) href(cbCtx js.CallbackContext[T]) (res js.
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w HTMLHyperlinkElementUtils[T]) setHref(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLHyperlinkElementUtils_setHref[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err = gosterror.First(err0, err1)
@@ -54,7 +54,7 @@ func (w HTMLHyperlinkElementUtils[T]) setHref(cbCtx js.CallbackContext[T]) (res 
 	return nil, nil
 }
 
-func (w HTMLHyperlinkElementUtils[T]) origin(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLHyperlinkElementUtils_origin[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -63,7 +63,7 @@ func (w HTMLHyperlinkElementUtils[T]) origin(cbCtx js.CallbackContext[T]) (res j
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w HTMLHyperlinkElementUtils[T]) protocol(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLHyperlinkElementUtils_protocol[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -72,7 +72,7 @@ func (w HTMLHyperlinkElementUtils[T]) protocol(cbCtx js.CallbackContext[T]) (res
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w HTMLHyperlinkElementUtils[T]) setProtocol(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLHyperlinkElementUtils_setProtocol[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err = gosterror.First(err0, err1)
@@ -83,7 +83,7 @@ func (w HTMLHyperlinkElementUtils[T]) setProtocol(cbCtx js.CallbackContext[T]) (
 	return nil, nil
 }
 
-func (w HTMLHyperlinkElementUtils[T]) username(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLHyperlinkElementUtils_username[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -92,7 +92,7 @@ func (w HTMLHyperlinkElementUtils[T]) username(cbCtx js.CallbackContext[T]) (res
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w HTMLHyperlinkElementUtils[T]) setUsername(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLHyperlinkElementUtils_setUsername[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err = gosterror.First(err0, err1)
@@ -103,7 +103,7 @@ func (w HTMLHyperlinkElementUtils[T]) setUsername(cbCtx js.CallbackContext[T]) (
 	return nil, nil
 }
 
-func (w HTMLHyperlinkElementUtils[T]) password(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLHyperlinkElementUtils_password[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -112,7 +112,7 @@ func (w HTMLHyperlinkElementUtils[T]) password(cbCtx js.CallbackContext[T]) (res
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w HTMLHyperlinkElementUtils[T]) setPassword(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLHyperlinkElementUtils_setPassword[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err = gosterror.First(err0, err1)
@@ -123,7 +123,7 @@ func (w HTMLHyperlinkElementUtils[T]) setPassword(cbCtx js.CallbackContext[T]) (
 	return nil, nil
 }
 
-func (w HTMLHyperlinkElementUtils[T]) host(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLHyperlinkElementUtils_host[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -132,7 +132,7 @@ func (w HTMLHyperlinkElementUtils[T]) host(cbCtx js.CallbackContext[T]) (res js.
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w HTMLHyperlinkElementUtils[T]) setHost(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLHyperlinkElementUtils_setHost[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err = gosterror.First(err0, err1)
@@ -143,7 +143,7 @@ func (w HTMLHyperlinkElementUtils[T]) setHost(cbCtx js.CallbackContext[T]) (res 
 	return nil, nil
 }
 
-func (w HTMLHyperlinkElementUtils[T]) hostname(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLHyperlinkElementUtils_hostname[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -152,7 +152,7 @@ func (w HTMLHyperlinkElementUtils[T]) hostname(cbCtx js.CallbackContext[T]) (res
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w HTMLHyperlinkElementUtils[T]) setHostname(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLHyperlinkElementUtils_setHostname[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err = gosterror.First(err0, err1)
@@ -163,7 +163,7 @@ func (w HTMLHyperlinkElementUtils[T]) setHostname(cbCtx js.CallbackContext[T]) (
 	return nil, nil
 }
 
-func (w HTMLHyperlinkElementUtils[T]) port(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLHyperlinkElementUtils_port[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -172,7 +172,7 @@ func (w HTMLHyperlinkElementUtils[T]) port(cbCtx js.CallbackContext[T]) (res js.
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w HTMLHyperlinkElementUtils[T]) setPort(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLHyperlinkElementUtils_setPort[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err = gosterror.First(err0, err1)
@@ -183,7 +183,7 @@ func (w HTMLHyperlinkElementUtils[T]) setPort(cbCtx js.CallbackContext[T]) (res 
 	return nil, nil
 }
 
-func (w HTMLHyperlinkElementUtils[T]) pathname(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLHyperlinkElementUtils_pathname[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -192,7 +192,7 @@ func (w HTMLHyperlinkElementUtils[T]) pathname(cbCtx js.CallbackContext[T]) (res
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w HTMLHyperlinkElementUtils[T]) setPathname(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLHyperlinkElementUtils_setPathname[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err = gosterror.First(err0, err1)
@@ -203,7 +203,7 @@ func (w HTMLHyperlinkElementUtils[T]) setPathname(cbCtx js.CallbackContext[T]) (
 	return nil, nil
 }
 
-func (w HTMLHyperlinkElementUtils[T]) search(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLHyperlinkElementUtils_search[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -212,7 +212,7 @@ func (w HTMLHyperlinkElementUtils[T]) search(cbCtx js.CallbackContext[T]) (res j
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w HTMLHyperlinkElementUtils[T]) setSearch(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLHyperlinkElementUtils_setSearch[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err = gosterror.First(err0, err1)
@@ -223,7 +223,7 @@ func (w HTMLHyperlinkElementUtils[T]) setSearch(cbCtx js.CallbackContext[T]) (re
 	return nil, nil
 }
 
-func (w HTMLHyperlinkElementUtils[T]) hash(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLHyperlinkElementUtils_hash[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -232,7 +232,7 @@ func (w HTMLHyperlinkElementUtils[T]) hash(cbCtx js.CallbackContext[T]) (res js.
 	return codec.EncodeString(cbCtx, result)
 }
 
-func (w HTMLHyperlinkElementUtils[T]) setHash(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLHyperlinkElementUtils_setHash[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err0 := js.As[html.HTMLHyperlinkElementUtils](cbCtx.Instance())
 	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
 	err = gosterror.First(err0, err1)

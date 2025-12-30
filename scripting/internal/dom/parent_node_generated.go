@@ -19,23 +19,23 @@ func (wrapper ParentNode[T]) Initialize(jsClass js.Class[T]) {
 }
 
 func (w ParentNode[T]) installPrototype(jsClass js.Class[T]) {
-	jsClass.CreateOperation("prepend", w.prepend)
-	jsClass.CreateOperation("append", w.append)
-	jsClass.CreateOperation("replaceChildren", w.replaceChildren)
-	jsClass.CreateOperation("querySelector", w.querySelector)
-	jsClass.CreateOperation("querySelectorAll", w.querySelectorAll)
-	jsClass.CreateAttribute("children", w.children, nil)
-	jsClass.CreateAttribute("firstElementChild", w.firstElementChild, nil)
-	jsClass.CreateAttribute("lastElementChild", w.lastElementChild, nil)
-	jsClass.CreateAttribute("childElementCount", w.childElementCount, nil)
+	jsClass.CreateOperation("prepend", ParentNode_prepend)
+	jsClass.CreateOperation("append", ParentNode_append)
+	jsClass.CreateOperation("replaceChildren", ParentNode_replaceChildren)
+	jsClass.CreateOperation("querySelector", ParentNode_querySelector)
+	jsClass.CreateOperation("querySelectorAll", ParentNode_querySelectorAll)
+	jsClass.CreateAttribute("children", ParentNode_children, nil)
+	jsClass.CreateAttribute("firstElementChild", ParentNode_firstElementChild, nil)
+	jsClass.CreateAttribute("lastElementChild", ParentNode_lastElementChild, nil)
+	jsClass.CreateAttribute("childElementCount", ParentNode_childElementCount, nil)
 }
 
-func (w ParentNode[T]) prepend(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func ParentNode_prepend[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
 	}
-	nodes, errArg1 := js.ConsumeRestArguments(cbCtx, "nodes", w.decodeNodeOrText)
+	nodes, errArg1 := js.ConsumeRestArguments(cbCtx, "nodes", decodeNodeOrText)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -43,12 +43,12 @@ func (w ParentNode[T]) prepend(cbCtx js.CallbackContext[T]) (res js.Value[T], er
 	return nil, errCall
 }
 
-func (w ParentNode[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func ParentNode_append[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
 	}
-	nodes, errArg1 := js.ConsumeRestArguments(cbCtx, "nodes", w.decodeNodeOrText)
+	nodes, errArg1 := js.ConsumeRestArguments(cbCtx, "nodes", decodeNodeOrText)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -56,12 +56,12 @@ func (w ParentNode[T]) append(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 	return nil, errCall
 }
 
-func (w ParentNode[T]) replaceChildren(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func ParentNode_replaceChildren[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
 	}
-	nodes, errArg1 := js.ConsumeRestArguments(cbCtx, "nodes", w.decodeNodeOrText)
+	nodes, errArg1 := js.ConsumeRestArguments(cbCtx, "nodes", decodeNodeOrText)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -69,7 +69,7 @@ func (w ParentNode[T]) replaceChildren(cbCtx js.CallbackContext[T]) (res js.Valu
 	return nil, errCall
 }
 
-func (w ParentNode[T]) querySelector(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func ParentNode_querySelector[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -85,7 +85,7 @@ func (w ParentNode[T]) querySelector(cbCtx js.CallbackContext[T]) (res js.Value[
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w ParentNode[T]) querySelectorAll(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func ParentNode_querySelectorAll[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.ParentNode](cbCtx.Instance())
 	if errInst != nil {
 		return nil, errInst
@@ -101,7 +101,7 @@ func (w ParentNode[T]) querySelectorAll(cbCtx js.CallbackContext[T]) (res js.Val
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w ParentNode[T]) children(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func ParentNode_children[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -110,7 +110,7 @@ func (w ParentNode[T]) children(cbCtx js.CallbackContext[T]) (res js.Value[T], e
 	return encodeHTMLCollection(cbCtx, result)
 }
 
-func (w ParentNode[T]) firstElementChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func ParentNode_firstElementChild[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -119,7 +119,7 @@ func (w ParentNode[T]) firstElementChild(cbCtx js.CallbackContext[T]) (res js.Va
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w ParentNode[T]) lastElementChild(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func ParentNode_lastElementChild[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
 		return nil, err
@@ -128,7 +128,7 @@ func (w ParentNode[T]) lastElementChild(cbCtx js.CallbackContext[T]) (res js.Val
 	return codec.EncodeEntity(cbCtx, result)
 }
 
-func (w ParentNode[T]) childElementCount(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func ParentNode_childElementCount[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dom.ParentNode](cbCtx.Instance())
 	if err != nil {
 		return nil, err

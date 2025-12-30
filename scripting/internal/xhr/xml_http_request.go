@@ -49,7 +49,7 @@ func CreateXMLHttpRequest[T any](cbCtx js.CallbackContext[T]) (js.Value[T], erro
 	return codec.EncodeConstructedValue(cbCtx, result)
 }
 
-func (xhr XMLHttpRequest[T]) open(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func XMLHttpRequest_open[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	instance, errInstance := js.As[xhrint.XmlHttpRequest](cbCtx.Instance())
 	method, err0 := js.ConsumeArgument(cbCtx, "method", nil, codec.DecodeString)
 	url, err1 := js.ConsumeArgument(cbCtx, "url", nil, codec.DecodeString)
@@ -67,7 +67,7 @@ func (xhr XMLHttpRequest[T]) open(cbCtx js.CallbackContext[T]) (js.Value[T], err
 	return nil, nil
 }
 
-func (xhr XMLHttpRequest[T]) upload(cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+func XMLHttpRequest_upload[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return cbCtx.This(), nil
 }
 
