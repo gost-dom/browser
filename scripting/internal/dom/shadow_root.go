@@ -11,4 +11,3 @@ func newShadowRoot[T any](host js.ScriptEngine[T]) shadowRoot[T] {
 func shadowRootConstructor[T any](cb js.CallbackContext[T]) (js.Value[T], error) {
 	return nil, cb.NewTypeError("Illegal constructor")
 }
-func InitializeShadowRoot[T any](c js.Class[T]) {}
