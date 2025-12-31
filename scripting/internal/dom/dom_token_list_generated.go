@@ -11,8 +11,8 @@ import (
 
 type DOMTokenList[T any] struct{}
 
-func NewDOMTokenList[T any](scriptHost js.ScriptEngine[T]) *DOMTokenList[T] {
-	return &DOMTokenList[T]{}
+func NewDOMTokenList[T any](scriptHost js.ScriptEngine[T]) DOMTokenList[T] {
+	return DOMTokenList[T]{}
 }
 
 func (wrapper DOMTokenList[T]) Initialize(jsClass js.Class[T]) {

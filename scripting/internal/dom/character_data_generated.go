@@ -10,12 +10,12 @@ import (
 )
 
 type CharacterData[T any] struct {
-	nonDocumentTypeChildNode *NonDocumentTypeChildNode[T]
-	childNode                *ChildNode[T]
+	nonDocumentTypeChildNode NonDocumentTypeChildNode[T]
+	childNode                ChildNode[T]
 }
 
-func NewCharacterData[T any](scriptHost js.ScriptEngine[T]) *CharacterData[T] {
-	return &CharacterData[T]{
+func NewCharacterData[T any](scriptHost js.ScriptEngine[T]) CharacterData[T] {
+	return CharacterData[T]{
 		NewNonDocumentTypeChildNode(scriptHost),
 		NewChildNode(scriptHost),
 	}

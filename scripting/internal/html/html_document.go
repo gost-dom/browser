@@ -10,5 +10,5 @@ type HTMLDocument[T any] struct {
 }
 
 func NewHTMLDocument[T any](host js.ScriptEngine[T]) HTMLDocument[T] {
-	return HTMLDocument[T]{*dom.NewDocument(host)}
+	return HTMLDocument[T]{dom.NewDocument(host)}
 }

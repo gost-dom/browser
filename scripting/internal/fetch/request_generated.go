@@ -10,11 +10,11 @@ import (
 )
 
 type Request[T any] struct {
-	body *Body[T]
+	body Body[T]
 }
 
-func NewRequest[T any](scriptHost js.ScriptEngine[T]) *Request[T] {
-	return &Request[T]{NewBody(scriptHost)}
+func NewRequest[T any](scriptHost js.ScriptEngine[T]) Request[T] {
+	return Request[T]{NewBody(scriptHost)}
 }
 
 func (wrapper Request[T]) Initialize(jsClass js.Class[T]) {

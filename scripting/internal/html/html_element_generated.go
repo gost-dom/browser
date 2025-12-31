@@ -8,11 +8,11 @@ import (
 )
 
 type HTMLElement[T any] struct {
-	htmlOrSVGElement *HTMLOrSVGElement[T]
+	htmlOrSVGElement HTMLOrSVGElement[T]
 }
 
-func NewHTMLElement[T any](scriptHost js.ScriptEngine[T]) *HTMLElement[T] {
-	return &HTMLElement[T]{NewHTMLOrSVGElement(scriptHost)}
+func NewHTMLElement[T any](scriptHost js.ScriptEngine[T]) HTMLElement[T] {
+	return HTMLElement[T]{NewHTMLOrSVGElement(scriptHost)}
 }
 
 func (wrapper HTMLElement[T]) Initialize(jsClass js.Class[T]) {

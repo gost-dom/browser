@@ -10,8 +10,8 @@ import (
 
 type HTMLCollection[T any] struct{}
 
-func NewHTMLCollection[T any](scriptHost js.ScriptEngine[T]) *HTMLCollection[T] {
-	return &HTMLCollection[T]{}
+func NewHTMLCollection[T any](scriptHost js.ScriptEngine[T]) HTMLCollection[T] {
+	return HTMLCollection[T]{}
 }
 
 func (wrapper HTMLCollection[T]) Initialize(jsClass js.Class[T]) {

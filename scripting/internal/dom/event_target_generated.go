@@ -11,8 +11,8 @@ import (
 
 type EventTarget[T any] struct{}
 
-func NewEventTarget[T any](scriptHost js.ScriptEngine[T]) *EventTarget[T] {
-	return &EventTarget[T]{}
+func NewEventTarget[T any](scriptHost js.ScriptEngine[T]) EventTarget[T] {
+	return EventTarget[T]{}
 }
 
 func (wrapper EventTarget[T]) Initialize(jsClass js.Class[T]) {

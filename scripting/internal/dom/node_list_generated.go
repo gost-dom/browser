@@ -10,8 +10,8 @@ import (
 
 type NodeList[T any] struct{}
 
-func NewNodeList[T any](scriptHost js.ScriptEngine[T]) *NodeList[T] {
-	return &NodeList[T]{}
+func NewNodeList[T any](scriptHost js.ScriptEngine[T]) NodeList[T] {
+	return NodeList[T]{}
 }
 
 func (wrapper NodeList[T]) Initialize(jsClass js.Class[T]) {

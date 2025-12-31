@@ -10,8 +10,8 @@ import (
 
 type MutationRecord[T any] struct{}
 
-func NewMutationRecord[T any](scriptHost js.ScriptEngine[T]) *MutationRecord[T] {
-	return &MutationRecord[T]{}
+func NewMutationRecord[T any](scriptHost js.ScriptEngine[T]) MutationRecord[T] {
+	return MutationRecord[T]{}
 }
 
 func (wrapper MutationRecord[T]) Initialize(jsClass js.Class[T]) {

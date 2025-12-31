@@ -11,8 +11,8 @@ import (
 
 type Node[T any] struct{}
 
-func NewNode[T any](scriptHost js.ScriptEngine[T]) *Node[T] {
-	return &Node[T]{}
+func NewNode[T any](scriptHost js.ScriptEngine[T]) Node[T] {
+	return Node[T]{}
 }
 
 func (wrapper Node[T]) Initialize(jsClass js.Class[T]) {

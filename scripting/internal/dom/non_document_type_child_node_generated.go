@@ -10,8 +10,8 @@ import (
 
 type NonDocumentTypeChildNode[T any] struct{}
 
-func NewNonDocumentTypeChildNode[T any](scriptHost js.ScriptEngine[T]) *NonDocumentTypeChildNode[T] {
-	return &NonDocumentTypeChildNode[T]{}
+func NewNonDocumentTypeChildNode[T any](scriptHost js.ScriptEngine[T]) NonDocumentTypeChildNode[T] {
+	return NonDocumentTypeChildNode[T]{}
 }
 
 func (wrapper NonDocumentTypeChildNode[T]) Initialize(jsClass js.Class[T]) {

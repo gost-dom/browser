@@ -9,11 +9,11 @@ import (
 )
 
 type Window[T any] struct {
-	windowOrWorkerGlobalScope *WindowOrWorkerGlobalScope[T]
+	windowOrWorkerGlobalScope WindowOrWorkerGlobalScope[T]
 }
 
-func NewWindow[T any](scriptHost js.ScriptEngine[T]) *Window[T] {
-	return &Window[T]{NewWindowOrWorkerGlobalScope(scriptHost)}
+func NewWindow[T any](scriptHost js.ScriptEngine[T]) Window[T] {
+	return Window[T]{NewWindowOrWorkerGlobalScope(scriptHost)}
 }
 
 func (wrapper Window[T]) Initialize(jsClass js.Class[T]) {

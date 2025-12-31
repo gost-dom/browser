@@ -11,8 +11,8 @@ import (
 
 type HTMLHyperlinkElementUtils[T any] struct{}
 
-func NewHTMLHyperlinkElementUtils[T any](scriptHost js.ScriptEngine[T]) *HTMLHyperlinkElementUtils[T] {
-	return &HTMLHyperlinkElementUtils[T]{}
+func NewHTMLHyperlinkElementUtils[T any](scriptHost js.ScriptEngine[T]) HTMLHyperlinkElementUtils[T] {
+	return HTMLHyperlinkElementUtils[T]{}
 }
 
 func (wrapper HTMLHyperlinkElementUtils[T]) Initialize(jsClass js.Class[T]) {

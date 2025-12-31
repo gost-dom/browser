@@ -11,8 +11,8 @@ import (
 
 type XMLHttpRequest[T any] struct{}
 
-func NewXMLHttpRequest[T any](scriptHost js.ScriptEngine[T]) *XMLHttpRequest[T] {
-	return &XMLHttpRequest[T]{}
+func NewXMLHttpRequest[T any](scriptHost js.ScriptEngine[T]) XMLHttpRequest[T] {
+	return XMLHttpRequest[T]{}
 }
 
 func (wrapper XMLHttpRequest[T]) Initialize(jsClass js.Class[T]) {

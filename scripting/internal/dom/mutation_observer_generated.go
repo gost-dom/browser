@@ -11,8 +11,8 @@ import (
 
 type MutationObserver[T any] struct{}
 
-func NewMutationObserver[T any](scriptHost js.ScriptEngine[T]) *MutationObserver[T] {
-	return &MutationObserver[T]{}
+func NewMutationObserver[T any](scriptHost js.ScriptEngine[T]) MutationObserver[T] {
+	return MutationObserver[T]{}
 }
 
 func (wrapper MutationObserver[T]) Initialize(jsClass js.Class[T]) {

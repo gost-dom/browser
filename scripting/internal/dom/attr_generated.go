@@ -11,8 +11,8 @@ import (
 
 type Attr[T any] struct{}
 
-func NewAttr[T any](scriptHost js.ScriptEngine[T]) *Attr[T] {
-	return &Attr[T]{}
+func NewAttr[T any](scriptHost js.ScriptEngine[T]) Attr[T] {
+	return Attr[T]{}
 }
 
 func (wrapper Attr[T]) Initialize(jsClass js.Class[T]) {

@@ -10,8 +10,8 @@ import (
 
 type NonElementParentNode[T any] struct{}
 
-func NewNonElementParentNode[T any](scriptHost js.ScriptEngine[T]) *NonElementParentNode[T] {
-	return &NonElementParentNode[T]{}
+func NewNonElementParentNode[T any](scriptHost js.ScriptEngine[T]) NonElementParentNode[T] {
+	return NonElementParentNode[T]{}
 }
 
 func (wrapper NonElementParentNode[T]) Initialize(jsClass js.Class[T]) {

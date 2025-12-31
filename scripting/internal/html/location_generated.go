@@ -11,8 +11,8 @@ import (
 
 type Location[T any] struct{}
 
-func NewLocation[T any](scriptHost js.ScriptEngine[T]) *Location[T] {
-	return &Location[T]{}
+func NewLocation[T any](scriptHost js.ScriptEngine[T]) Location[T] {
+	return Location[T]{}
 }
 
 func (wrapper Location[T]) Initialize(jsClass js.Class[T]) {

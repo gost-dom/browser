@@ -5,12 +5,12 @@ package dom
 import js "github.com/gost-dom/browser/scripting/internal/js"
 
 type DocumentFragment[T any] struct {
-	nonElementParentNode *NonElementParentNode[T]
-	parentNode           *ParentNode[T]
+	nonElementParentNode NonElementParentNode[T]
+	parentNode           ParentNode[T]
 }
 
-func NewDocumentFragment[T any](scriptHost js.ScriptEngine[T]) *DocumentFragment[T] {
-	return &DocumentFragment[T]{
+func NewDocumentFragment[T any](scriptHost js.ScriptEngine[T]) DocumentFragment[T] {
+	return DocumentFragment[T]{
 		NewNonElementParentNode(scriptHost),
 		NewParentNode(scriptHost),
 	}

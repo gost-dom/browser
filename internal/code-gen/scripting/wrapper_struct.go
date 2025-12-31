@@ -46,7 +46,7 @@ func (g WrapperStruct) TypeGenerator() g.Generator {
 	for _, i := range includes {
 		wrapperStruct.Field(
 			gen.Id(LowerCaseFirstLetter(i.Name)),
-			generators.Raw(jen.Op("*").Add(g.WrapperStructTypeForName(i.Name).Generate())),
+			generators.Raw(g.WrapperStructTypeForName(i.Name).Generate()),
 		)
 	}
 	return wrapperStruct
@@ -64,7 +64,7 @@ func (wrapper WrapperStruct) ConstructorGenerator() g.Generator {
 				hostArg.Generate().Add(jsScriptEngine.Generate()),
 			).
 			Params(
-				wrapper.WrapperStructType().Pointer().Generate(),
+				wrapper.WrapperStructType().Generate(),
 			).
 			Block(wrapper.Body().Generate()))
 }
@@ -88,7 +88,7 @@ func (ws WrapperStruct) Body() g.Generator {
 	fieldInitializers = addLinesBetweenElements(fieldInitializers)
 
 	wrapperType := ws.WrapperStructTypeRetDef()
-	return generators.Return(wrapperType.CreateInstance(fieldInitializers...).Reference())
+	return generators.Return(wrapperType.CreateInstance(fieldInitializers...))
 }
 
 func (ws WrapperStruct) PlatformInfoArg() g.Generator { return generators.Id("info") }

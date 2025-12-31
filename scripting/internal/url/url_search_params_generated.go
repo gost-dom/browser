@@ -11,8 +11,8 @@ import (
 
 type URLSearchParams[T any] struct{}
 
-func NewURLSearchParams[T any](scriptHost js.ScriptEngine[T]) *URLSearchParams[T] {
-	return &URLSearchParams[T]{}
+func NewURLSearchParams[T any](scriptHost js.ScriptEngine[T]) URLSearchParams[T] {
+	return URLSearchParams[T]{}
 }
 
 func (wrapper URLSearchParams[T]) Initialize(jsClass js.Class[T]) {

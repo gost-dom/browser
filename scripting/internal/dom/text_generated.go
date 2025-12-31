@@ -9,8 +9,8 @@ import (
 
 type Text[T any] struct{}
 
-func NewText[T any](scriptHost js.ScriptEngine[T]) *Text[T] {
-	return &Text[T]{}
+func NewText[T any](scriptHost js.ScriptEngine[T]) Text[T] {
+	return Text[T]{}
 }
 
 func (wrapper Text[T]) Initialize(jsClass js.Class[T]) {

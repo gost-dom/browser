@@ -6,11 +6,11 @@ import (
 )
 
 type SVGElement[T any] struct {
-	htmlOrSVGElement *html.HTMLOrSVGElement[T]
+	htmlOrSVGElement html.HTMLOrSVGElement[T]
 }
 
-func NewSVGElement[T any](scriptHost js.ScriptEngine[T]) *SVGElement[T] {
-	return &SVGElement[T]{html.NewHTMLOrSVGElement(scriptHost)}
+func NewSVGElement[T any](scriptHost js.ScriptEngine[T]) SVGElement[T] {
+	return SVGElement[T]{html.NewHTMLOrSVGElement(scriptHost)}
 }
 
 func (wrapper SVGElement[T]) Initialize(jsClass js.Class[T]) {

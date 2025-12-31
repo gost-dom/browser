@@ -11,8 +11,8 @@ import (
 
 type FormData[T any] struct{}
 
-func NewFormData[T any](scriptHost js.ScriptEngine[T]) *FormData[T] {
-	return &FormData[T]{}
+func NewFormData[T any](scriptHost js.ScriptEngine[T]) FormData[T] {
+	return FormData[T]{}
 }
 
 func (wrapper FormData[T]) Initialize(jsClass js.Class[T]) {

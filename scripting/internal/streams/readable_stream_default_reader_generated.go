@@ -10,8 +10,8 @@ import (
 
 type ReadableStreamDefaultReader[T any] struct{}
 
-func NewReadableStreamDefaultReader[T any](scriptHost js.ScriptEngine[T]) *ReadableStreamDefaultReader[T] {
-	return &ReadableStreamDefaultReader[T]{}
+func NewReadableStreamDefaultReader[T any](scriptHost js.ScriptEngine[T]) ReadableStreamDefaultReader[T] {
+	return ReadableStreamDefaultReader[T]{}
 }
 
 func (wrapper ReadableStreamDefaultReader[T]) Initialize(jsClass js.Class[T]) {

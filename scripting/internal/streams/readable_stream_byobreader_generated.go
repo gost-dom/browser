@@ -9,8 +9,8 @@ import (
 
 type ReadableStreamBYOBReader[T any] struct{}
 
-func NewReadableStreamBYOBReader[T any](scriptHost js.ScriptEngine[T]) *ReadableStreamBYOBReader[T] {
-	return &ReadableStreamBYOBReader[T]{}
+func NewReadableStreamBYOBReader[T any](scriptHost js.ScriptEngine[T]) ReadableStreamBYOBReader[T] {
+	return ReadableStreamBYOBReader[T]{}
 }
 
 func (wrapper ReadableStreamBYOBReader[T]) Initialize(jsClass js.Class[T]) {

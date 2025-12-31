@@ -32,7 +32,7 @@ type KeyboardEvent[T any] struct {
 }
 
 func NewMouseEvent[T any](host js.ScriptEngine[T]) MouseEvent[T] {
-	return MouseEvent[T]{*NewUIEvent(host)}
+	return MouseEvent[T]{NewUIEvent(host)}
 }
 
 func NewPointerEvent[T any](host js.ScriptEngine[T]) PointerEvent[T] {
@@ -40,5 +40,5 @@ func NewPointerEvent[T any](host js.ScriptEngine[T]) PointerEvent[T] {
 }
 
 func NewKeyboardEvent[T any](host js.ScriptEngine[T]) KeyboardEvent[T] {
-	return KeyboardEvent[T]{*NewUIEvent(host)}
+	return KeyboardEvent[T]{NewUIEvent(host)}
 }

@@ -10,8 +10,8 @@ import (
 
 type NamedNodeMap[T any] struct{}
 
-func NewNamedNodeMap[T any](scriptHost js.ScriptEngine[T]) *NamedNodeMap[T] {
-	return &NamedNodeMap[T]{}
+func NewNamedNodeMap[T any](scriptHost js.ScriptEngine[T]) NamedNodeMap[T] {
+	return NamedNodeMap[T]{}
 }
 
 func (wrapper NamedNodeMap[T]) Initialize(jsClass js.Class[T]) {

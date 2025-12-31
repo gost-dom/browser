@@ -10,8 +10,8 @@ import (
 
 type AbortController[T any] struct{}
 
-func NewAbortController[T any](scriptHost js.ScriptEngine[T]) *AbortController[T] {
-	return &AbortController[T]{}
+func NewAbortController[T any](scriptHost js.ScriptEngine[T]) AbortController[T] {
+	return AbortController[T]{}
 }
 
 func (wrapper AbortController[T]) Initialize(jsClass js.Class[T]) {

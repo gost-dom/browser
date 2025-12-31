@@ -9,11 +9,11 @@ import (
 )
 
 type Response[T any] struct {
-	body *Body[T]
+	body Body[T]
 }
 
-func NewResponse[T any](scriptHost js.ScriptEngine[T]) *Response[T] {
-	return &Response[T]{NewBody(scriptHost)}
+func NewResponse[T any](scriptHost js.ScriptEngine[T]) Response[T] {
+	return Response[T]{NewBody(scriptHost)}
 }
 
 func (wrapper Response[T]) Initialize(jsClass js.Class[T]) {

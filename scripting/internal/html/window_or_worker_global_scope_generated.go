@@ -6,8 +6,8 @@ import js "github.com/gost-dom/browser/scripting/internal/js"
 
 type WindowOrWorkerGlobalScope[T any] struct{}
 
-func NewWindowOrWorkerGlobalScope[T any](scriptHost js.ScriptEngine[T]) *WindowOrWorkerGlobalScope[T] {
-	return &WindowOrWorkerGlobalScope[T]{}
+func NewWindowOrWorkerGlobalScope[T any](scriptHost js.ScriptEngine[T]) WindowOrWorkerGlobalScope[T] {
+	return WindowOrWorkerGlobalScope[T]{}
 }
 
 func (wrapper WindowOrWorkerGlobalScope[T]) Initialize(jsClass js.Class[T]) {

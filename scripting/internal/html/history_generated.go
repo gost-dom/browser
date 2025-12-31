@@ -11,8 +11,8 @@ import (
 
 type History[T any] struct{}
 
-func NewHistory[T any](scriptHost js.ScriptEngine[T]) *History[T] {
-	return &History[T]{}
+func NewHistory[T any](scriptHost js.ScriptEngine[T]) History[T] {
+	return History[T]{}
 }
 
 func (wrapper History[T]) Initialize(jsClass js.Class[T]) {

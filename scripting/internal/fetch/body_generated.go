@@ -10,8 +10,8 @@ import (
 
 type Body[T any] struct{}
 
-func NewBody[T any](scriptHost js.ScriptEngine[T]) *Body[T] {
-	return &Body[T]{}
+func NewBody[T any](scriptHost js.ScriptEngine[T]) Body[T] {
+	return Body[T]{}
 }
 
 func (wrapper Body[T]) Initialize(jsClass js.Class[T]) {

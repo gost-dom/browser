@@ -10,8 +10,8 @@ import (
 
 type HTMLTemplateElement[T any] struct{}
 
-func NewHTMLTemplateElement[T any](scriptHost js.ScriptEngine[T]) *HTMLTemplateElement[T] {
-	return &HTMLTemplateElement[T]{}
+func NewHTMLTemplateElement[T any](scriptHost js.ScriptEngine[T]) HTMLTemplateElement[T] {
+	return HTMLTemplateElement[T]{}
 }
 
 func (wrapper HTMLTemplateElement[T]) Initialize(jsClass js.Class[T]) {

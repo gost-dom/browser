@@ -10,11 +10,11 @@ import (
 )
 
 type HTMLAnchorElement[T any] struct {
-	htmlHyperlinkElementUtils *HTMLHyperlinkElementUtils[T]
+	htmlHyperlinkElementUtils HTMLHyperlinkElementUtils[T]
 }
 
-func NewHTMLAnchorElement[T any](scriptHost js.ScriptEngine[T]) *HTMLAnchorElement[T] {
-	return &HTMLAnchorElement[T]{NewHTMLHyperlinkElementUtils(scriptHost)}
+func NewHTMLAnchorElement[T any](scriptHost js.ScriptEngine[T]) HTMLAnchorElement[T] {
+	return HTMLAnchorElement[T]{NewHTMLHyperlinkElementUtils(scriptHost)}
 }
 
 func (wrapper HTMLAnchorElement[T]) Initialize(jsClass js.Class[T]) {

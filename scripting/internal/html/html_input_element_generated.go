@@ -11,8 +11,8 @@ import (
 
 type HTMLInputElement[T any] struct{}
 
-func NewHTMLInputElement[T any](scriptHost js.ScriptEngine[T]) *HTMLInputElement[T] {
-	return &HTMLInputElement[T]{}
+func NewHTMLInputElement[T any](scriptHost js.ScriptEngine[T]) HTMLInputElement[T] {
+	return HTMLInputElement[T]{}
 }
 
 func (wrapper HTMLInputElement[T]) Initialize(jsClass js.Class[T]) {

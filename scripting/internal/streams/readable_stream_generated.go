@@ -11,8 +11,8 @@ import (
 
 type ReadableStream[T any] struct{}
 
-func NewReadableStream[T any](scriptHost js.ScriptEngine[T]) *ReadableStream[T] {
-	return &ReadableStream[T]{}
+func NewReadableStream[T any](scriptHost js.ScriptEngine[T]) ReadableStream[T] {
+	return ReadableStream[T]{}
 }
 
 func (wrapper ReadableStream[T]) Initialize(jsClass js.Class[T]) {

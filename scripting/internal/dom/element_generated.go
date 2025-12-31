@@ -10,13 +10,13 @@ import (
 )
 
 type Element[T any] struct {
-	parentNode               *ParentNode[T]
-	nonDocumentTypeChildNode *NonDocumentTypeChildNode[T]
-	childNode                *ChildNode[T]
+	parentNode               ParentNode[T]
+	nonDocumentTypeChildNode NonDocumentTypeChildNode[T]
+	childNode                ChildNode[T]
 }
 
-func NewElement[T any](scriptHost js.ScriptEngine[T]) *Element[T] {
-	return &Element[T]{
+func NewElement[T any](scriptHost js.ScriptEngine[T]) Element[T] {
+	return Element[T]{
 		NewParentNode(scriptHost),
 		NewNonDocumentTypeChildNode(scriptHost),
 		NewChildNode(scriptHost),

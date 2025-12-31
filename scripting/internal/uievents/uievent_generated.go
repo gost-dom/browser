@@ -13,8 +13,8 @@ import (
 
 type UIEvent[T any] struct{}
 
-func NewUIEvent[T any](scriptHost js.ScriptEngine[T]) *UIEvent[T] {
-	return &UIEvent[T]{}
+func NewUIEvent[T any](scriptHost js.ScriptEngine[T]) UIEvent[T] {
+	return UIEvent[T]{}
 }
 
 func (wrapper UIEvent[T]) Initialize(jsClass js.Class[T]) {

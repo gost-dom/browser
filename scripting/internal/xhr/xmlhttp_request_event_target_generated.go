@@ -6,8 +6,8 @@ import js "github.com/gost-dom/browser/scripting/internal/js"
 
 type XMLHttpRequestEventTarget[T any] struct{}
 
-func NewXMLHttpRequestEventTarget[T any](scriptHost js.ScriptEngine[T]) *XMLHttpRequestEventTarget[T] {
-	return &XMLHttpRequestEventTarget[T]{}
+func NewXMLHttpRequestEventTarget[T any](scriptHost js.ScriptEngine[T]) XMLHttpRequestEventTarget[T] {
+	return XMLHttpRequestEventTarget[T]{}
 }
 
 func (wrapper XMLHttpRequestEventTarget[T]) Initialize(jsClass js.Class[T]) {

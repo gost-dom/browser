@@ -11,8 +11,8 @@ import (
 
 type HTMLOrSVGElement[T any] struct{}
 
-func NewHTMLOrSVGElement[T any](scriptHost js.ScriptEngine[T]) *HTMLOrSVGElement[T] {
-	return &HTMLOrSVGElement[T]{}
+func NewHTMLOrSVGElement[T any](scriptHost js.ScriptEngine[T]) HTMLOrSVGElement[T] {
+	return HTMLOrSVGElement[T]{}
 }
 
 func (wrapper HTMLOrSVGElement[T]) Initialize(jsClass js.Class[T]) {
