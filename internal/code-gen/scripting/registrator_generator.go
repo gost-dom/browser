@@ -8,7 +8,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/dave/jennifer/jen"
+	"github.com/gost-dom/code-gen/gen"
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/code-gen/scripting/configuration"
 	"github.com/gost-dom/code-gen/scripting/model"
@@ -87,9 +87,15 @@ func Write(api string, specs configuration.WebIdlConfigurations) error {
 		}
 	}
 
-	bootstrap := g.Raw(jen.Func().Id("Bootstrap").Types(jen.Id("T").Any()).Params(
-		jen.Add(engine.Generate()).Add(jsScriptEngine.Generate()),
-	).Block(statements.Generate()))
+	// bootstrap := g.Raw(jen.Func().Id("Bootstrap").Types(jen.Id("T").Any()).Params(
+	// 	jen.Add(engine.Generate()).Add(jsScriptEngine.Generate()),
+	// ).Block(statements.Generate()))
+	bootstrap := gen.NewFunction(
+		gen.FunctionName("Bootstrap"),
+		gen.FunctionTypeParam(gen.AnyConstraint(g.Id("T"))),
+		gen.FunctionParam(engine, jsScriptEngine),
+		gen.FunctionBody(statements),
+	)
 
 	writer, err := os.Create("register_generated.go")
 	if err != nil {

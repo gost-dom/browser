@@ -6,7 +6,7 @@ import (
 	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/gen"
-	variable "github.com/gost-dom/code-gen/gen/var"
+	"github.com/gost-dom/code-gen/gen/variable"
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/code-gen/scripting/model"
 	"github.com/gost-dom/code-gen/stdgen"
@@ -35,16 +35,24 @@ func (cb CallbackMethods) CallbackMethod(name string, body g.Generator) g.Genera
 }
 
 func (cb CallbackMethods) CallbackFunction(name string, body g.Generator) g.Generator {
-	return g.Raw(
-		jen.Func().
-			Id(name).
-			Types(jen.Id("T").Id("any")).
-			Params(cb.CbCtx().Generate().Add(jsCbCtx.Generate())).
-			Params(
-				g.Raw(jen.Id("res").Add(jsValue.Generate())),
-				g.Raw(jen.Id("err").Add(g.NewType("error").Generate())),
-			).
-			Block(body.Generate()),
+	// return g.Raw(
+	// 	jen.Func().
+	// 		Id(name).
+	// 		Types(jen.Id("T").Id("any")).
+	// 		Params(cb.CbCtx().Generate().Add(jsCbCtx.Generate())).
+	// 		Params(
+	// 			g.Raw(jen.Id("res").Add(jsValue.Generate())),
+	// 			g.Raw(jen.Id("err").Add(g.NewType("error").Generate())),
+	// 		).
+	// 		Block(body.Generate()),
+	// )
+	return gen.NewFunction(
+		gen.FunctionName(name),
+		gen.FunctionTypeParam(gen.AnyConstraint(g.Id("T"))),
+		gen.FunctionParam(cb.CbCtx(), jsCbCtx),
+		gen.FunctionNamedReturn(g.Id("res"), jsValue),
+		gen.FunctionNamedReturn(g.Id("err"), g.Id("error")),
+		gen.FunctionBody(body),
 	)
 }
 

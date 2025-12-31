@@ -8,7 +8,6 @@ import (
 	"github.com/gost-dom/code-gen/scripting/model"
 	"github.com/gost-dom/generators"
 	g "github.com/gost-dom/generators"
-	gen "github.com/gost-dom/generators"
 )
 
 var scriptHost = g.NewValue("scriptHost")
@@ -17,46 +16,46 @@ type WrapperStruct struct {
 	Data model.ESConstructorData
 }
 
-func (s WrapperStruct) InitializerName() string {
-	return fmt.Sprintf("Initialize%s", s.IdlName())
+func (ge WrapperStruct) InitializerName() string {
+	return fmt.Sprintf("Initialize%s", ge.IdlName())
 }
 
-func (s WrapperStruct) Initializer() g.Generator {
-	return g.Id(s.InitializerName())
+func (ge WrapperStruct) Initializer() g.Generator {
+	return g.Id(ge.InitializerName())
 }
 
-func (s WrapperStruct) SpecName() string { return s.Data.SpecName() }
+func (ge WrapperStruct) SpecName() string { return ge.Data.SpecName() }
 
 // TypeDefinition renders the actual struct type definition
-func (ws WrapperStruct) TypeDefinition() g.Generator {
+func (ge WrapperStruct) TypeDefinition() g.Generator {
 	return g.StatementList(
-		ws.TypeGenerator(),
-		ws.ConstructorGenerator(),
+		ge.TypeGenerator(),
+		ge.ConstructorGenerator(),
 	)
 }
 
-func (ws WrapperStruct) IdlName() string { return ws.Data.Name() }
+func (ge WrapperStruct) IdlName() string { return ge.Data.Name() }
 
-func (g WrapperStruct) WrapperStructTypeForName(name string) generators.Type {
+func (ge WrapperStruct) WrapperStructTypeForName(name string) generators.Type {
 	return generators.Type{
 		Generator: generators.Raw(jen.Id(name).Types(jen.Id("T"))),
 	}
 }
 
-func (g WrapperStruct) WrapperStructType() generators.Type {
-	return g.WrapperStructTypeForName(g.IdlName())
+func (ge WrapperStruct) WrapperStructType() generators.Type {
+	return ge.WrapperStructTypeForName(ge.IdlName())
 }
 
-func (g WrapperStruct) TypeGenerator() g.Generator {
-	includes := g.Data.Includes()
-	wrapperStruct := gen.NewStruct(
-		generators.Raw(jen.Id(g.IdlName()).Types(jen.Id("T").Any())),
+func (ge WrapperStruct) TypeGenerator() g.Generator {
+	includes := ge.Data.Includes()
+	wrapperStruct := g.NewStruct(
+		generators.Raw(jen.Id(ge.IdlName()).Types(jen.Id("T").Any())),
 	)
 
 	for _, i := range includes {
 		wrapperStruct.Field(
-			gen.Id(LowerCaseFirstLetter(i.Name)),
-			generators.Raw(g.WrapperStructTypeForName(i.Name).Generate()),
+			g.Id(LowerCaseFirstLetter(i.Name)),
+			generators.Raw(ge.WrapperStructTypeForName(i.Name).Generate()),
 		)
 	}
 	return wrapperStruct
@@ -67,31 +66,31 @@ func Initializer(d model.ESConstructorData) g.Generator {
 	return ws.Initializer()
 }
 
-func (wrapper WrapperStruct) ConstructorGenerator() g.Generator {
-	idlInterfaceName := wrapper.Data.Name()
+func (ge WrapperStruct) ConstructorGenerator() g.Generator {
+	idlInterfaceName := ge.Data.Name()
 	constructorName := ConstructorNameForInterface(idlInterfaceName)
 	hostArg := g.Id("scriptHost")
 
-	return gen.Raw(
+	return g.Raw(
 		jen.Func().Id(constructorName).
 			Types(jen.Id("T").Any()).
 			Params(
 				hostArg.Generate().Add(jsScriptEngine.Generate()),
 			).
 			Params(
-				wrapper.WrapperStructType().Generate(),
+				ge.WrapperStructType().Generate(),
 			).
-			Block(wrapper.Body().Generate()))
+			Block(ge.Body().Generate()))
 }
 
-func (ws WrapperStruct) WrapperStructTypeRetDef() g.Type {
+func (ge WrapperStruct) WrapperStructTypeRetDef() g.Type {
 	return generators.Type{
-		Generator: generators.Raw(jen.Id(ws.IdlName()).Types(jen.Id("T"))),
+		Generator: generators.Raw(jen.Id(ge.IdlName()).Types(jen.Id("T"))),
 	}
 }
 
-func (ws WrapperStruct) Body() g.Generator {
-	includes := ws.Data.Includes()
+func (ge WrapperStruct) Body() g.Generator {
+	includes := ge.Data.Includes()
 	fieldInitializers := make([]g.Generator, 0)
 	for _, i := range includes {
 		includeConstructorName := ConstructorNameForInterface(i.Name)
@@ -102,12 +101,12 @@ func (ws WrapperStruct) Body() g.Generator {
 	}
 	fieldInitializers = addLinesBetweenElements(fieldInitializers)
 
-	wrapperType := ws.WrapperStructTypeRetDef()
+	wrapperType := ge.WrapperStructTypeRetDef()
 	return generators.Return(wrapperType.CreateInstance(fieldInitializers...))
 }
 
-func (ws WrapperStruct) PlatformInfoArg() g.Generator { return generators.Id("info") }
+func (ge WrapperStruct) PlatformInfoArg() g.Generator { return generators.Id("info") }
 
-func (ws WrapperStruct) Callbacks() CallbackMethods {
-	return CallbackMethods{ws}
+func (ge WrapperStruct) Callbacks() CallbackMethods {
+	return CallbackMethods{ge}
 }

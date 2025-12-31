@@ -18,16 +18,14 @@ func CreateEventInitDecoder(name string, dict idl.Dictionary) g.Generator {
 	decoderName := fmt.Sprintf("decode%s", name)
 	eventType := g.NewTypePackage(name, packagenames.UIEvents)
 
-	return g.Raw(
-		jen.Func().Id(decoderName).
-			Types(jen.Id("T").Any()).
-			Params(
-				jen.Id("scope").Add(jsScope.Generate()),
-				jen.Id("options").Add(jsObject.Generate()),
-				jen.Id("init").Add(eventType.Pointer().Generate()),
-			).
-			Params(jen.Id("error")).
-			Block(createEventInitDecoderBody(dict).Generate()),
+	return gen.NewFunction(
+		gen.FunctionName(decoderName),
+		gen.FunctionTypeParam(gen.AnyConstraint(g.Id("T"))),
+		gen.FunctionParam(g.Id("scope"), jsScope),
+		gen.FunctionParam(g.Id("options"), jsObject),
+		gen.FunctionParam(g.Id("init"), eventType.Pointer()),
+		gen.FunctionReturnType(g.Id("error")),
+		gen.FunctionBody(createEventInitDecoderBody(dict)),
 	)
 }
 
