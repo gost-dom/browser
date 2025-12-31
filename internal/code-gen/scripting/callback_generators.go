@@ -18,34 +18,7 @@ type CallbackMethods struct{ WrapperStruct }
 func (cb CallbackMethods) Receiver() g.Value      { return g.NewValue("w") }
 func (cb CallbackMethods) CbCtx() CallbackContext { return NewCallbackContext(g.Id("cbCtx")) }
 
-func (cb CallbackMethods) CallbackMethod(name string, body g.Generator) g.Generator {
-	return g.FunctionDefinition{
-		Receiver: g.FunctionArgument{
-			Name: cb.Receiver(),
-			Type: cb.WrapperStructType(),
-		},
-		Name: name,
-		Args: g.Arg(cb.CbCtx(), jsCbCtx),
-		RtnTypes: g.List(
-			g.Raw(jen.Id("res").Add(jsValue.Generate())),
-			g.Raw(jen.Id("err").Add(g.NewType("error").Generate())),
-		),
-		Body: body,
-	}
-}
-
 func (cb CallbackMethods) CallbackFunction(name string, body g.Generator) g.Generator {
-	// return g.Raw(
-	// 	jen.Func().
-	// 		Id(name).
-	// 		Types(jen.Id("T").Id("any")).
-	// 		Params(cb.CbCtx().Generate().Add(jsCbCtx.Generate())).
-	// 		Params(
-	// 			g.Raw(jen.Id("res").Add(jsValue.Generate())),
-	// 			g.Raw(jen.Id("err").Add(g.NewType("error").Generate())),
-	// 		).
-	// 		Block(body.Generate()),
-	// )
 	return gen.NewFunction(
 		gen.FunctionName(name),
 		gen.FunctionTypeParam(gen.AnyConstraint(g.Id("T"))),

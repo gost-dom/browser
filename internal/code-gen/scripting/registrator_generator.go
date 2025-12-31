@@ -86,10 +86,6 @@ func Write(api string, specs configuration.WebIdlConfigurations) error {
 				))
 		}
 	}
-
-	// bootstrap := g.Raw(jen.Func().Id("Bootstrap").Types(jen.Id("T").Any()).Params(
-	// 	jen.Add(engine.Generate()).Add(jsScriptEngine.Generate()),
-	// ).Block(statements.Generate()))
 	bootstrap := gen.NewFunction(
 		gen.FunctionName("Bootstrap"),
 		gen.FunctionTypeParam(gen.AnyConstraint(g.Id("T"))),
