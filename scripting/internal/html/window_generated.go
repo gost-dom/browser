@@ -46,10 +46,6 @@ func InitializeWindow[T any](jsClass js.Class[T]) {
 	InitializeWindowOrWorkerGlobalScope(jsClass)
 }
 
-func WindowConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return cbCtx.ReturnWithTypeError("Illegal constructor")
-}
-
 func Window_close[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return codec.EncodeCallbackErrorf(cbCtx, "Window.Window_close: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

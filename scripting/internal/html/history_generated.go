@@ -19,10 +19,6 @@ func InitializeHistory[T any](jsClass js.Class[T]) {
 	jsClass.CreateAttribute("state", History_state, nil)
 }
 
-func HistoryConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return cbCtx.ReturnWithTypeError("Illegal constructor")
-}
-
 func History_go[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[htmlinterfaces.History](cbCtx.Instance())
 	if errInst != nil {

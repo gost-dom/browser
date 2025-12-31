@@ -16,10 +16,6 @@ func InitializeAttr[T any](jsClass js.Class[T]) {
 	jsClass.CreateAttribute("ownerElement", Attr_ownerElement, nil)
 }
 
-func AttrConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return cbCtx.ReturnWithTypeError("Illegal constructor")
-}
-
 func Attr_localName[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dom.Attr](cbCtx.Instance())
 	if err != nil {

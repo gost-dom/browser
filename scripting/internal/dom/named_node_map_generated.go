@@ -20,10 +20,6 @@ func InitializeNamedNodeMap[T any](jsClass js.Class[T]) {
 	NamedNodeMapCustomInitializer(jsClass)
 }
 
-func NamedNodeMapConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return cbCtx.ReturnWithTypeError("Illegal constructor")
-}
-
 func NamedNodeMap_item[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.NamedNodeMap](cbCtx.Instance())
 	if errInst != nil {

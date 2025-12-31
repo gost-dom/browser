@@ -76,13 +76,19 @@ func Write(api string, specs configuration.WebIdlConfigurations) error {
 	slices.SortStableFunc(enriched, IntfComparer(idlSpec).compare)
 	for _, typeInfo := range enriched {
 		if typeInfo.InstallConstructor() {
+			var constructor g.Generator
+			if typeInfo.AllowConstructor() {
+				constructor = g.Id(JsConstructorForInterface(typeInfo.Name()))
+			} else {
+				constructor = g.Nil
+			}
 			statements.Append(
 				g.ValueOf(Initializer(typeInfo)).Call(
 					jsCreateClass.Call(
 						engine,
 						g.Lit(typeInfo.Name()),
 						g.Lit(typeInfo.Extends()),
-						g.Id(JsConstructorForInterface(typeInfo.Name())),
+						constructor,
 					)),
 			)
 		}

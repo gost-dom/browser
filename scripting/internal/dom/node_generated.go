@@ -34,10 +34,6 @@ func InitializeNode[T any](jsClass js.Class[T]) {
 	jsClass.CreateAttribute("textContent", Node_textContent, Node_setTextContent)
 }
 
-func NodeConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return cbCtx.ReturnWithTypeError("Illegal constructor")
-}
-
 func Node_getRootNode[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.Node](cbCtx.Instance())
 	if errInst != nil {

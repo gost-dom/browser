@@ -44,10 +44,6 @@ func (c CallbackContext) Context() g.Value {
 	return c.Field("ScriptCtx").Call()
 }
 
-func (c CallbackContext) IllegalConstructor() g.Generator {
-	return c.ReturnWithTypeError("Illegal constructor")
-}
-
 func (c CallbackContext) NewTypeError(msg string) g.Generator {
 	return c.Field("NewTypeError").Call(g.Lit(msg))
 }

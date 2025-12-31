@@ -52,10 +52,6 @@ func InitializeElement[T any](jsClass js.Class[T]) {
 	InitializeChildNode(jsClass)
 }
 
-func ElementConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return cbCtx.ReturnWithTypeError("Illegal constructor")
-}
-
 func Element_hasAttributes[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_hasAttributes: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

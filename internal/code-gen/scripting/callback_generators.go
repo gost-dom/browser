@@ -30,16 +30,18 @@ func (cb CallbackMethods) CallbackFunction(name string, body g.Generator) g.Gene
 }
 
 func (cb CallbackMethods) ConstructorCallback() g.Generator {
+
+	if !cb.Data.AllowConstructor() {
+		return g.Noop
+	}
 	funcName := cb.Data.Name() + "Constructor"
 	return cb.CallbackFunction(funcName, cb.ConstructorCallbackBody())
+
 }
 
 func (cb CallbackMethods) ConstructorCallbackBody() g.Generator {
 	if cb.Data.IsEventType() {
 		return cb.EventConstructorCallbackBody()
-	}
-	if !cb.Data.AllowConstructor() {
-		return g.Return(cb.CbCtx().IllegalConstructor())
 	}
 	cons := *cb.Data.Constructor
 	return cb.OpCallbackGenerators(cons).ConstructorCallbackBody()

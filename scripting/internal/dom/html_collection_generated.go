@@ -15,10 +15,6 @@ func InitializeHTMLCollection[T any](jsClass js.Class[T]) {
 	HTMLCollectionCustomInitializer(jsClass)
 }
 
-func HTMLCollectionConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return cbCtx.ReturnWithTypeError("Illegal constructor")
-}
-
 func HTMLCollection_item[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.HTMLCollection](cbCtx.Instance())
 	if errInst != nil {

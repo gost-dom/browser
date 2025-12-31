@@ -23,9 +23,10 @@ var (
 
 	logErrAttr = g.NewValuePackage("ErrAttr", packagenames.Log)
 
-	jsAs           = g.NewTypePackage("As", packagenames.JS)
-	jsValue        = g.NewTypePackage("Value", packagenames.JS).TypeParam(g.Id("T"))
-	jsClass        = g.NewTypePackage("Class", packagenames.JS).TypeParam(g.Id("T"))
+	jsAs    = g.NewTypePackage("As", packagenames.JS)
+	jsValue = g.NewTypePackage("Value", packagenames.JS).TypeParam(g.Id("T"))
+	jsClass = g.NewTypePackage("Class", packagenames.JS).TypeParam(g.Id("T"))
+
 	jsObject       = g.NewTypePackage("Object", packagenames.JS).TypeParam(g.Id("T"))
 	jsCbCtx        = g.NewTypePackage("CallbackContext", packagenames.JS).TypeParam(g.Id("T"))
 	jsScope        = g.NewTypePackage("Scope", packagenames.JS).TypeParam(g.Id("T"))

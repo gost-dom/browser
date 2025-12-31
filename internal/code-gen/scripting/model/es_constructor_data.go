@@ -41,6 +41,9 @@ func (d ESConstructorData) InstallConstructor() bool {
 
 func (d ESConstructorData) AllowConstructor() bool {
 	// You _can_ create a Document, but not HTMLDocument, nor other nodes.
+	if d.IdlInterface.Name == "DocumentFragment" {
+		return true
+	}
 	if d.IdlInterface.Name == "Document" {
 		return true
 	}

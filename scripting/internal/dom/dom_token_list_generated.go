@@ -23,10 +23,6 @@ func InitializeDOMTokenList[T any](jsClass js.Class[T]) {
 	DOMTokenListCustomInitializer(jsClass)
 }
 
-func DOMTokenListConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return cbCtx.ReturnWithTypeError("Illegal constructor")
-}
-
 func DOMTokenList_item[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.DOMTokenList](cbCtx.Instance())
 	if errInst != nil {

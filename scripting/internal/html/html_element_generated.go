@@ -13,10 +13,6 @@ func InitializeHTMLElement[T any](jsClass js.Class[T]) {
 	InitializeHTMLOrSVGElement(jsClass)
 }
 
-func HTMLElementConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return cbCtx.ReturnWithTypeError("Illegal constructor")
-}
-
 func HTMLElement_click[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLElement](cbCtx.Instance())
 	if err != nil {

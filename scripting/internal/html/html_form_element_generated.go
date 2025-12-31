@@ -28,10 +28,6 @@ func InitializeHTMLFormElement[T any](jsClass js.Class[T]) {
 	jsClass.CreateAttribute("length", HTMLFormElement_length, nil)
 }
 
-func HTMLFormElementConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return cbCtx.ReturnWithTypeError("Illegal constructor")
-}
-
 func HTMLFormElement_submit[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLFormElement](cbCtx.Instance())
 	if err != nil {

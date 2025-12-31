@@ -14,10 +14,6 @@ func InitializeHTMLAnchorElement[T any](jsClass js.Class[T]) {
 	InitializeHTMLHyperlinkElementUtils(jsClass)
 }
 
-func HTMLAnchorElementConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return cbCtx.ReturnWithTypeError("Illegal constructor")
-}
-
 func HTMLAnchorElement_target[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLAnchorElement](cbCtx.Instance())
 	if err != nil {

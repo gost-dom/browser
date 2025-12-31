@@ -16,10 +16,6 @@ func InitializeHTMLInputElement[T any](jsClass js.Class[T]) {
 	jsClass.CreateAttribute("value", HTMLInputElement_value, HTMLInputElement_setValue)
 }
 
-func HTMLInputElementConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return cbCtx.ReturnWithTypeError("Illegal constructor")
-}
-
 func HTMLInputElement_checkValidity[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLInputElement](cbCtx.Instance())
 	if err != nil {

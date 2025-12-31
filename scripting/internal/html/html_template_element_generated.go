@@ -16,10 +16,6 @@ func InitializeHTMLTemplateElement[T any](jsClass js.Class[T]) {
 	jsClass.CreateAttribute("shadowRootSerializable", HTMLTemplateElement_shadowRootSerializable, HTMLTemplateElement_setShadowRootSerializable)
 }
 
-func HTMLTemplateElementConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return cbCtx.ReturnWithTypeError("Illegal constructor")
-}
-
 func HTMLTemplateElement_content[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLTemplateElement](cbCtx.Instance())
 	if err != nil {

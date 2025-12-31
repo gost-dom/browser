@@ -14,10 +14,6 @@ func InitializeNodeList[T any](jsClass js.Class[T]) {
 	NodeListCustomInitializer(jsClass)
 }
 
-func NodeListConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return cbCtx.ReturnWithTypeError("Illegal constructor")
-}
-
 func NodeList_item[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[dom.NodeList](cbCtx.Instance())
 	if errInst != nil {

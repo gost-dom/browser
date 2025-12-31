@@ -14,10 +14,6 @@ func InitializeAbortSignal[T any](jsClass js.Class[T]) {
 	jsClass.CreateAttribute("reason", AbortSignal_reason, nil)
 }
 
-func AbortSignalConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return cbCtx.ReturnWithTypeError("Illegal constructor")
-}
-
 func AbortSignal_throwIfAborted[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dominterfaces.AbortSignal](cbCtx.Instance())
 	if err != nil {

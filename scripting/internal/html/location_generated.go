@@ -26,10 +26,6 @@ func InitializeLocation[T any](jsClass js.Class[T]) {
 	jsClass.CreateAttribute("ancestorOrigins", Location_ancestorOrigins, nil, js.LegacyUnforgeable())
 }
 
-func LocationConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return cbCtx.ReturnWithTypeError("Illegal constructor")
-}
-
 func Location_assign[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInst := js.As[html.Location](cbCtx.Instance())
 	if errInst != nil {
