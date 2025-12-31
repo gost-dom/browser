@@ -29,6 +29,10 @@ func ConfigureScriptEngine[T any](e js.ScriptEngine[T]) {
 	if !ok {
 		panic(fmt.Sprintf("HTMLElement not configured: %s", constants.BUG_ISSUE_URL))
 	}
+
+	// Gost-DOM only specifically implements a few HTML element types. In order
+	// to support client code that checks for specific inheritance of HTML
+	// elements, create all the remaining classes.
 	for _, cls := range codec.HtmlElements {
 		if _, ok := e.Class(cls); !ok && cls != "HTMLElement" {
 			e.CreateClass(cls, element, js.IllegalConstructor)
