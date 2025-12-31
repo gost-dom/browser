@@ -51,7 +51,6 @@ func (i PrototypeInitializer) CreatePrototypeInitializerBody(
 func (i PrototypeInitializer) MixinsGenerator() g.Generator {
 	result := g.StatementList()
 	for _, mixin := range i.Data.Includes() {
-		// wrapperName := LowerCaseFirstLetter(mixin.Name)
 		// Note: This excludes mixins not known in this spec.
 		// Could the mixing come from another spec, then this will skip
 		// something we may want.
@@ -59,8 +58,6 @@ func (i PrototypeInitializer) MixinsGenerator() g.Generator {
 		if _, included := i.Data.Spec.DomSpec.Interfaces[mixin.Name]; included {
 			result.Append(
 				g.NewValue(fmt.Sprintf("Initialize%s", mixin.Name)).Call(g.Id("jsClass")),
-				// g.NewValue("w").Field(wrapperName).Field("installPrototype").Call(
-				// 	g.Id("jsClass")),
 			)
 		}
 	}
