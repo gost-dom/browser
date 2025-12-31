@@ -1,21 +1,14 @@
 package html
 
 import (
+	"fmt"
 	"time"
 
+	"github.com/gost-dom/browser/internal/constants"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/dom"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
-
-type unconstructable[T any] struct{}
-
-func NewUnconstructable[T any](host js.ScriptEngine[T]) unconstructable[T] {
-	return unconstructable[T]{}
-}
-
-func (w unconstructable[T]) Initialize(c js.Class[T]) {}
-func InitializeHtmlElement[T any](c js.Class[T])      {}
 
 func ConfigureScriptEngine[T any](e js.ScriptEngine[T]) {
 	Bootstrap(e)
@@ -32,9 +25,13 @@ func ConfigureScriptEngine[T any](e js.ScriptEngine[T]) {
 	//
 	// See also: https://developer.mozilla.org/en-US/docs/Web/API/HTMLDocument
 	dom.InitializeDocument(js.CreateClass(e, "HTMLDocument", "Document", js.IllegalConstructor))
+	element, ok := e.Class("HTMLElement")
+	if !ok {
+		panic(fmt.Sprintf("HTMLElement not configured: %s", constants.BUG_ISSUE_URL))
+	}
 	for _, cls := range codec.HtmlElements {
 		if _, ok := e.Class(cls); !ok && cls != "HTMLElement" {
-			InitializeHtmlElement(js.CreateClass(e, cls, "HTMLElement", js.IllegalConstructor))
+			e.CreateClass(cls, element, js.IllegalConstructor)
 		}
 	}
 }
