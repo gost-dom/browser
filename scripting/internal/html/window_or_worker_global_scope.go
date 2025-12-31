@@ -78,7 +78,7 @@ func WindowOrWorkerGlobalScope_clearTimeout[T any](
 	if err == nil {
 		cbCtx.Clock().Cancel(clock.TaskHandle(handle))
 	}
-	return nil, nil
+	return nil, err
 }
 
 func WindowOrWorkerGlobalScope_clearInterval[T any](
