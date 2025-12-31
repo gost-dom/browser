@@ -8,12 +8,6 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type customEvent[T any] struct{}
-
-func NewCustomEvent[T any](scriptHost js.ScriptEngine[T]) *customEvent[T] {
-	return &customEvent[T]{}
-}
-
 func customEventConstructor[T any](info js.CallbackContext[T]) (js.Value[T], error) {
 	arg, ok := info.ConsumeArg()
 	if !ok {
@@ -40,11 +34,11 @@ func customEventConstructor[T any](info js.CallbackContext[T]) (js.Value[T], err
 	return nil, nil
 }
 
-func (w customEvent[T]) Initialize(class js.Class[T]) {
-	class.CreateAttribute("detail", w.detail, nil)
+func InitializeCustomEvent[T any](class js.Class[T]) {
+	class.CreateAttribute("detail", customEvent_detail, nil)
 }
 
-func (w customEvent[T]) detail(info js.CallbackContext[T]) (js.Value[T], error) {
+func customEvent_detail[T any](info js.CallbackContext[T]) (js.Value[T], error) {
 	instance, err := js.As[*event.Event](info.Instance())
 	if err != nil {
 		return nil, err

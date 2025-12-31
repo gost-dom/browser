@@ -52,6 +52,11 @@ func (g WrapperStruct) TypeGenerator() g.Generator {
 	return wrapperStruct
 }
 
+func Initializer(d model.ESConstructorData) g.Generator {
+	ws := WrapperStruct{d}
+	return ws.WrapperStructType().CreateInstance().Field("Initialize")
+}
+
 func (wrapper WrapperStruct) ConstructorGenerator() g.Generator {
 	idlInterfaceName := wrapper.Data.Name()
 	constructorName := ConstructorNameForInterface(idlInterfaceName)

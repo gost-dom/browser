@@ -16,11 +16,11 @@ func domExceptionConstructor[T any](info js.CallbackContext[T]) (js.Value[T], er
 	return nil, nil
 }
 
-func (w domException[T]) Initialize(jsClass js.Class[T]) {
-	jsClass.CreateAttribute("code", w.code, nil)
-	jsClass.CreateAttribute("name", w.name, nil)
+func InitializeDomException[T any](jsClass js.Class[T]) {
+	jsClass.CreateAttribute("code", domException_code, nil)
+	jsClass.CreateAttribute("name", domException_name, nil)
 	// TODO: Check if the message shouldn't have been Error.prototype.message
-	jsClass.CreateAttribute("message", w.message, nil)
+	jsClass.CreateAttribute("message", domException_message, nil)
 }
 
 // decodeThisError retrieves the wrapped error object from the `this` object
@@ -37,7 +37,7 @@ func decodeThisError[T any, E error](cbCtx js.CallbackContext[T], res *E) (err e
 	return
 }
 
-func (w domException[T]) code(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func domException_code[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	var domErr dom.DOMError
 	if err = decodeThisError(cbCtx, &domErr); err == nil {
 		res = cbCtx.NewInt32(int32(domErr.Code))
@@ -45,7 +45,7 @@ func (w domException[T]) code(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 	return
 }
 
-func (w domException[T]) name(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func domException_name[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	var domErr dom.DOMError
 	if err = decodeThisError(cbCtx, &domErr); err == nil {
 		res = cbCtx.NewString(domErr.Code.String())
@@ -53,7 +53,7 @@ func (w domException[T]) name(cbCtx js.CallbackContext[T]) (res js.Value[T], err
 	return
 }
 
-func (w domException[T]) message(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func domException_message[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	var domErr dom.DOMError
 	if err = decodeThisError(cbCtx, &domErr); err == nil {
 		res = cbCtx.NewString(domErr.Message)

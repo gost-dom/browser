@@ -8,8 +8,8 @@ type Initializer[T any] interface {
 
 type InitializerFactory[T any, U Initializer[T]] = func(ScriptEngine[T]) U
 
-func RegisterClass[T any, U Initializer[T], V InitializerFactory[T, U]](
-	e ScriptEngine[T], className, superClassName string, constructorFactory V,
+func RegisterClass[T any](
+	e ScriptEngine[T], className, superClassName string, initialize func(Class[T]),
 	constructorCallback CallbackFunc[T],
 ) {
 	var superClass Class[T]
@@ -22,7 +22,6 @@ func RegisterClass[T any, U Initializer[T], V InitializerFactory[T, U]](
 			panic(msg)
 		}
 	}
-	wrapper := constructorFactory(e)
 	class := e.CreateClass(className, superClass, constructorCallback)
-	wrapper.Initialize(class)
+	initialize(class)
 }

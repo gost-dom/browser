@@ -15,6 +15,7 @@ func NewUnconstructable[T any](host js.ScriptEngine[T]) unconstructable[T] {
 }
 
 func (w unconstructable[T]) Initialize(c js.Class[T]) {}
+func InitializeHtmlElement[T any](c js.Class[T])      {}
 
 func ConfigureScriptEngine[T any](e js.ScriptEngine[T]) {
 	Bootstrap(e)
@@ -23,7 +24,7 @@ func ConfigureScriptEngine[T any](e js.ScriptEngine[T]) {
 	eventTarget, _ := e.Class("EventTarget")
 	window := e.ConfigureGlobalScope("Window", eventTarget)
 	w.Initialize(window)
-	js.RegisterClass(e, "DOMStringMap", "", NewDOMStringMap, js.IllegalConstructor)
+	js.RegisterClass(e, "DOMStringMap", "", DOMStringMap[T]{}.Initialize, js.IllegalConstructor)
 	installEventLoopGlobals(window)
 
 	// HTMLDocument exists as a separate class for historical reasons, but it
@@ -31,10 +32,16 @@ func ConfigureScriptEngine[T any](e js.ScriptEngine[T]) {
 	// inheritance relationship between the two, which is modelled here.
 	//
 	// See also: https://developer.mozilla.org/en-US/docs/Web/API/HTMLDocument
-	js.RegisterClass(e, "HTMLDocument", "Document", NewHTMLDocument, js.IllegalConstructor)
+	js.RegisterClass(
+		e,
+		"HTMLDocument",
+		"Document",
+		HTMLDocument[T]{}.Initialize,
+		js.IllegalConstructor,
+	)
 	for _, cls := range codec.HtmlElements {
 		if _, ok := e.Class(cls); !ok && cls != "HTMLElement" {
-			js.RegisterClass(e, cls, "HTMLElement", NewUnconstructable, js.IllegalConstructor)
+			js.RegisterClass(e, cls, "HTMLElement", InitializeHtmlElement, js.IllegalConstructor)
 		}
 	}
 }
