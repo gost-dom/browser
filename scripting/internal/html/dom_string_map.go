@@ -5,22 +5,16 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type DOMStringMap[T any] struct{}
-
-func NewDOMStringMap[T any](host js.ScriptEngine[T]) DOMStringMap[T] {
-	return DOMStringMap[T]{}
-}
-
-func (w DOMStringMap[T]) Initialize(class js.Class[T]) {
+func InitializeDOMStringMap[T any](class js.Class[T]) {
 	class.CreateNamedHandler(
-		js.WithGetterCallback(w.NamedPropertyGet),
-		js.WithSetterCallback(w.NamedPropertySet),
-		js.WithDeleterCallback(w.NamedPropertyDelete),
-		js.WithEnumeratorCallback(w.NamedPropertyEnumerator),
+		js.WithGetterCallback(DOMStringMap_NamedPropertyGet[T]),
+		js.WithSetterCallback(DOMStringMap_NamedPropertySet[T]),
+		js.WithDeleterCallback(DOMStringMap_NamedPropertyDelete[T]),
+		js.WithEnumeratorCallback(DOMStringMap_NamedPropertyEnumerator[T]),
 	)
 }
 
-func (w DOMStringMap[T]) NamedPropertyGet(
+func DOMStringMap_NamedPropertyGet[T any](
 	info js.CallbackScope[T], key js.Value[T],
 ) (js.Value[T], error) {
 	instance, err := js.As[*html.DOMStringMap](info.Instance())
@@ -36,7 +30,7 @@ func (w DOMStringMap[T]) NamedPropertyGet(
 	return nil, js.NotIntercepted
 }
 
-func (w DOMStringMap[T]) NamedPropertySet(
+func DOMStringMap_NamedPropertySet[T any](
 	info js.CallbackScope[T], key, value js.Value[T],
 ) error {
 	instance, err := js.As[*html.DOMStringMap](info.Instance())
@@ -50,7 +44,7 @@ func (w DOMStringMap[T]) NamedPropertySet(
 	return nil
 }
 
-func (w DOMStringMap[T]) NamedPropertyDelete(
+func DOMStringMap_NamedPropertyDelete[T any](
 	info js.CallbackScope[T], key js.Value[T],
 ) (bool, error) {
 	instance, err := js.As[*html.DOMStringMap](info.Instance())
@@ -64,7 +58,7 @@ func (w DOMStringMap[T]) NamedPropertyDelete(
 	return true, nil
 }
 
-func (w DOMStringMap[T]) NamedPropertyEnumerator(info js.CallbackScope[T]) ([]js.Value[T], error) {
+func DOMStringMap_NamedPropertyEnumerator[T any](info js.CallbackScope[T]) ([]js.Value[T], error) {
 	instance, err := js.As[*html.DOMStringMap](info.Instance())
 	if err != nil {
 		return nil, err
