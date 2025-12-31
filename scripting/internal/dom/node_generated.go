@@ -9,17 +9,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type Node[T any] struct{}
-
-func NewNode[T any](scriptHost js.ScriptEngine[T]) Node[T] {
-	return Node[T]{}
-}
-
-func (wrapper Node[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w Node[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeNode[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("getRootNode", Node_getRootNode)
 	jsClass.CreateOperation("cloneNode", Node_cloneNode)
 	jsClass.CreateOperation("isEqualNode", Node_isEqualNode)

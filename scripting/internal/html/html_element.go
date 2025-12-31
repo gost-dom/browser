@@ -6,11 +6,11 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w HTMLElement[T]) CustomInitializer(jsClass js.Class[T]) {
-	jsClass.CreateAttribute("style", w.style, nil)
+func HTMLElementCustomInitializer[T any](jsClass js.Class[T]) {
+	jsClass.CreateAttribute("style", HTMLElementstyle, nil)
 }
 
-func (w HTMLElement[T]) style(cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+func HTMLElementstyle[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[html.HTMLElement](cbCtx.Instance())
 	if err == nil {
 		var ok bool

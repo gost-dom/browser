@@ -9,23 +9,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type CharacterData[T any] struct {
-	nonDocumentTypeChildNode NonDocumentTypeChildNode[T]
-	childNode                ChildNode[T]
-}
-
-func NewCharacterData[T any](scriptHost js.ScriptEngine[T]) CharacterData[T] {
-	return CharacterData[T]{
-		NewNonDocumentTypeChildNode(scriptHost),
-		NewChildNode(scriptHost),
-	}
-}
-
-func (wrapper CharacterData[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w CharacterData[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeCharacterData[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("substringData", CharacterData_substringData)
 	jsClass.CreateOperation("appendData", CharacterData_appendData)
 	jsClass.CreateOperation("insertData", CharacterData_insertData)
@@ -33,8 +17,8 @@ func (w CharacterData[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateOperation("replaceData", CharacterData_replaceData)
 	jsClass.CreateAttribute("data", CharacterData_data, CharacterData_setData)
 	jsClass.CreateAttribute("length", CharacterData_length, nil)
-	w.nonDocumentTypeChildNode.installPrototype(jsClass)
-	w.childNode.installPrototype(jsClass)
+	InitializeNonDocumentTypeChildNode(jsClass)
+	InitializeChildNode(jsClass)
 }
 
 func CharacterDataConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

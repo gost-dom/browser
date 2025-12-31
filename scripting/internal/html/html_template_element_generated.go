@@ -8,17 +8,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type HTMLTemplateElement[T any] struct{}
-
-func NewHTMLTemplateElement[T any](scriptHost js.ScriptEngine[T]) HTMLTemplateElement[T] {
-	return HTMLTemplateElement[T]{}
-}
-
-func (wrapper HTMLTemplateElement[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w HTMLTemplateElement[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeHTMLTemplateElement[T any](jsClass js.Class[T]) {
 	jsClass.CreateAttribute("content", HTMLTemplateElement_content, nil)
 	jsClass.CreateAttribute("shadowRootMode", HTMLTemplateElement_shadowRootMode, HTMLTemplateElement_setShadowRootMode)
 	jsClass.CreateAttribute("shadowRootDelegatesFocus", HTMLTemplateElement_shadowRootDelegatesFocus, HTMLTemplateElement_setShadowRootDelegatesFocus)

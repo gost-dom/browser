@@ -8,19 +8,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type Response[T any] struct {
-	body Body[T]
-}
-
-func NewResponse[T any](scriptHost js.ScriptEngine[T]) Response[T] {
-	return Response[T]{NewBody(scriptHost)}
-}
-
-func (wrapper Response[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w Response[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeResponse[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("clone", Response_clone)
 	jsClass.CreateAttribute("type", Response_type, nil)
 	jsClass.CreateAttribute("url", Response_url, nil)
@@ -29,7 +17,7 @@ func (w Response[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("ok", Response_ok, nil)
 	jsClass.CreateAttribute("statusText", Response_statusText, nil)
 	jsClass.CreateAttribute("headers", Response_headers, nil)
-	w.body.installPrototype(jsClass)
+	InitializeBody(jsClass)
 }
 
 func Response_clone[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

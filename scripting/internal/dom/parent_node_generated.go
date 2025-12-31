@@ -8,17 +8,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type ParentNode[T any] struct{}
-
-func NewParentNode[T any](scriptHost js.ScriptEngine[T]) ParentNode[T] {
-	return ParentNode[T]{}
-}
-
-func (wrapper ParentNode[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w ParentNode[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeParentNode[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("prepend", ParentNode_prepend)
 	jsClass.CreateOperation("append", ParentNode_append)
 	jsClass.CreateOperation("replaceChildren", ParentNode_replaceChildren)

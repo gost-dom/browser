@@ -8,18 +8,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type NamedNodeMap[T any] struct{}
-
-func NewNamedNodeMap[T any](scriptHost js.ScriptEngine[T]) NamedNodeMap[T] {
-	return NamedNodeMap[T]{}
-}
-
-func (wrapper NamedNodeMap[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-	wrapper.CustomInitializer(jsClass)
-}
-
-func (w NamedNodeMap[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeNamedNodeMap[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("item", NamedNodeMap_item)
 	jsClass.CreateOperation("getNamedItem", NamedNodeMap_getNamedItem)
 	jsClass.CreateOperation("getNamedItemNS", NamedNodeMap_getNamedItemNS)
@@ -28,6 +17,7 @@ func (w NamedNodeMap[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateOperation("removeNamedItem", NamedNodeMap_removeNamedItem)
 	jsClass.CreateOperation("removeNamedItemNS", NamedNodeMap_removeNamedItemNS)
 	jsClass.CreateAttribute("length", NamedNodeMap_length, nil)
+	NamedNodeMapCustomInitializer(jsClass)
 }
 
 func NamedNodeMapConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

@@ -9,24 +9,14 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type Headers[T any] struct{}
-
-func NewHeaders[T any](scriptHost js.ScriptEngine[T]) Headers[T] {
-	return Headers[T]{}
-}
-
-func (wrapper Headers[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-	wrapper.CustomInitializer(jsClass)
-}
-
-func (w Headers[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeHeaders[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("append", Headers_append)
 	jsClass.CreateOperation("delete", Headers_delete)
 	jsClass.CreateOperation("get", Headers_get)
 	jsClass.CreateOperation("getSetCookie", Headers_getSetCookie)
 	jsClass.CreateOperation("has", Headers_has)
 	jsClass.CreateOperation("set", Headers_set)
+	HeadersCustomInitializer(jsClass)
 }
 
 func HeadersConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

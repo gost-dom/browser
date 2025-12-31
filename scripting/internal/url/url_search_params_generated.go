@@ -9,18 +9,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type URLSearchParams[T any] struct{}
-
-func NewURLSearchParams[T any](scriptHost js.ScriptEngine[T]) URLSearchParams[T] {
-	return URLSearchParams[T]{}
-}
-
-func (wrapper URLSearchParams[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-	wrapper.CustomInitializer(jsClass)
-}
-
-func (w URLSearchParams[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeURLSearchParams[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("append", URLSearchParams_append)
 	jsClass.CreateOperation("delete", URLSearchParams_delete)
 	jsClass.CreateOperation("get", URLSearchParams_get)
@@ -30,6 +19,7 @@ func (w URLSearchParams[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateOperation("sort", URLSearchParams_sort)
 	jsClass.CreateOperation("toString", URLSearchParams_toString)
 	jsClass.CreateAttribute("size", URLSearchParams_size, nil)
+	URLSearchParamsCustomInitializer(jsClass)
 }
 
 func URLSearchParams_append[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

@@ -8,17 +8,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type AbortSignal[T any] struct{}
-
-func NewAbortSignal[T any](scriptHost js.ScriptEngine[T]) AbortSignal[T] {
-	return AbortSignal[T]{}
-}
-
-func (wrapper AbortSignal[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w AbortSignal[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeAbortSignal[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("throwIfAborted", AbortSignal_throwIfAborted)
 	jsClass.CreateAttribute("aborted", AbortSignal_aborted, nil)
 	jsClass.CreateAttribute("reason", AbortSignal_reason, nil)

@@ -9,17 +9,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type HTMLInputElement[T any] struct{}
-
-func NewHTMLInputElement[T any](scriptHost js.ScriptEngine[T]) HTMLInputElement[T] {
-	return HTMLInputElement[T]{}
-}
-
-func (wrapper HTMLInputElement[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w HTMLInputElement[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeHTMLInputElement[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("checkValidity", HTMLInputElement_checkValidity)
 	jsClass.CreateAttribute("name", HTMLInputElement_name, HTMLInputElement_setName)
 	jsClass.CreateAttribute("type", HTMLInputElement_type, HTMLInputElement_setType)

@@ -8,21 +8,11 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type HTMLCollection[T any] struct{}
-
-func NewHTMLCollection[T any](scriptHost js.ScriptEngine[T]) HTMLCollection[T] {
-	return HTMLCollection[T]{}
-}
-
-func (wrapper HTMLCollection[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-	wrapper.CustomInitializer(jsClass)
-}
-
-func (w HTMLCollection[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeHTMLCollection[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("item", HTMLCollection_item)
 	jsClass.CreateOperation("namedItem", HTMLCollection_namedItem)
 	jsClass.CreateAttribute("length", HTMLCollection_length, nil)
+	HTMLCollectionCustomInitializer(jsClass)
 }
 
 func HTMLCollectionConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

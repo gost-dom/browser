@@ -8,17 +8,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type MutationRecord[T any] struct{}
-
-func NewMutationRecord[T any](scriptHost js.ScriptEngine[T]) MutationRecord[T] {
-	return MutationRecord[T]{}
-}
-
-func (wrapper MutationRecord[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w MutationRecord[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeMutationRecord[T any](jsClass js.Class[T]) {
 	jsClass.CreateAttribute("type", MutationRecord_type, nil)
 	jsClass.CreateAttribute("target", MutationRecord_target, nil)
 	jsClass.CreateAttribute("addedNodes", MutationRecord_addedNodes, nil)

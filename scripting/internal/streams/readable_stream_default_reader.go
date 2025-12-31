@@ -15,15 +15,6 @@ func CreateReadableStreamDefaultReader[T any](
 	)
 }
 
-func (w ReadableStreamDefaultReader[T]) decodeReadableStream(
-	s js.Scope[T], v js.Value[T],
-) (res string, err error) {
-	err = codec.UnsupportedOptionErrorf(
-		s, v, "streams", "ReadableStreamDefaultReader readableStream",
-	)
-	return
-}
-
 func encodePromiseReadableStreamReadResult[T any](
 	ctx js.CallbackContext[T], prom promise.Promise[streams.ReadResult]) (js.Value[T], error) {
 	return codec.EncodePromise(ctx, prom, encodeReadResult)

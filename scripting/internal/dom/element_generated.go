@@ -9,26 +9,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type Element[T any] struct {
-	parentNode               ParentNode[T]
-	nonDocumentTypeChildNode NonDocumentTypeChildNode[T]
-	childNode                ChildNode[T]
-}
-
-func NewElement[T any](scriptHost js.ScriptEngine[T]) Element[T] {
-	return Element[T]{
-		NewParentNode(scriptHost),
-		NewNonDocumentTypeChildNode(scriptHost),
-		NewChildNode(scriptHost),
-	}
-}
-
-func (wrapper Element[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-	wrapper.CustomInitializer(jsClass)
-}
-
-func (w Element[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeElement[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("hasAttributes", Element_hasAttributes)
 	jsClass.CreateOperation("getAttributeNames", Element_getAttributeNames)
 	jsClass.CreateOperation("getAttribute", Element_getAttribute)
@@ -66,9 +47,9 @@ func (w Element[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("shadowRoot", Element_shadowRoot, nil)
 	jsClass.CreateAttribute("innerHTML", Element_innerHTML, Element_setInnerHTML)
 	jsClass.CreateAttribute("outerHTML", Element_outerHTML, Element_setOuterHTML)
-	w.parentNode.installPrototype(jsClass)
-	w.nonDocumentTypeChildNode.installPrototype(jsClass)
-	w.childNode.installPrototype(jsClass)
+	InitializeParentNode(jsClass)
+	InitializeNonDocumentTypeChildNode(jsClass)
+	InitializeChildNode(jsClass)
 }
 
 func ElementConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

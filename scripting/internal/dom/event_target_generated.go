@@ -9,17 +9,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type EventTarget[T any] struct{}
-
-func NewEventTarget[T any](scriptHost js.ScriptEngine[T]) EventTarget[T] {
-	return EventTarget[T]{}
-}
-
-func (wrapper EventTarget[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w EventTarget[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeEventTarget[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("addEventListener", EventTarget_addEventListener)
 	jsClass.CreateOperation("removeEventListener", EventTarget_removeEventListener)
 	jsClass.CreateOperation("dispatchEvent", EventTarget_dispatchEvent)

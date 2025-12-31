@@ -9,17 +9,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type Attr[T any] struct{}
-
-func NewAttr[T any](scriptHost js.ScriptEngine[T]) Attr[T] {
-	return Attr[T]{}
-}
-
-func (wrapper Attr[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w Attr[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeAttr[T any](jsClass js.Class[T]) {
 	jsClass.CreateAttribute("localName", Attr_localName, nil)
 	jsClass.CreateAttribute("name", Attr_name, nil)
 	jsClass.CreateAttribute("value", Attr_value, Attr_setValue)

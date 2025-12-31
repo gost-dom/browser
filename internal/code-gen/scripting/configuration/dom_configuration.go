@@ -130,7 +130,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 	parentNode.Method("replaceChildren").Argument("nodes").Decoder = "decodeNodeOrText"
 
 	domElement := specs.Type("Element")
-	domElement.RunCustomCode = true
 
 	domElement.MarkMembersAsNotImplemented(
 		"hasAttributes",

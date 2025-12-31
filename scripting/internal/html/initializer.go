@@ -20,10 +20,9 @@ func InitializeHtmlElement[T any](c js.Class[T])      {}
 func ConfigureScriptEngine[T any](e js.ScriptEngine[T]) {
 	Bootstrap(e)
 
-	w := NewWindow(e)
 	eventTarget, _ := e.Class("EventTarget")
 	window := e.ConfigureGlobalScope("Window", eventTarget)
-	w.Initialize(window)
+	InitializeWindow(window)
 	js.RegisterClass(e, "DOMStringMap", "", DOMStringMap[T]{}.Initialize, js.IllegalConstructor)
 	installEventLoopGlobals(window)
 
@@ -36,7 +35,7 @@ func ConfigureScriptEngine[T any](e js.ScriptEngine[T]) {
 		e,
 		"HTMLDocument",
 		"Document",
-		HTMLDocument[T]{}.Initialize,
+		dom.InitializeDocument,
 		js.IllegalConstructor,
 	)
 	for _, cls := range codec.HtmlElements {

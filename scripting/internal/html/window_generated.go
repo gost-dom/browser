@@ -8,19 +8,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type Window[T any] struct {
-	windowOrWorkerGlobalScope WindowOrWorkerGlobalScope[T]
-}
-
-func NewWindow[T any](scriptHost js.ScriptEngine[T]) Window[T] {
-	return Window[T]{NewWindowOrWorkerGlobalScope(scriptHost)}
-}
-
-func (wrapper Window[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w Window[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeWindow[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("close", Window_close)
 	jsClass.CreateOperation("stop", Window_stop)
 	jsClass.CreateOperation("focus", Window_focus)
@@ -55,7 +43,7 @@ func (w Window[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("navigator", Window_navigator, nil)
 	jsClass.CreateAttribute("clientInformation", Window_clientInformation, nil)
 	jsClass.CreateAttribute("originAgentCluster", Window_originAgentCluster, nil)
-	w.windowOrWorkerGlobalScope.installPrototype(jsClass)
+	InitializeWindowOrWorkerGlobalScope(jsClass)
 }
 
 func WindowConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

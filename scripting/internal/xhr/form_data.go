@@ -6,7 +6,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w FormData[T]) CustomInitializer(class js.Class[T]) {
+func FormDataCustomInitializer[T any](class js.Class[T]) {
 	iterator := js.NewIterator2(
 		codec.EncodeString,
 		func(s js.Scope[T], v html.FormDataValue) (js.Value[T], error) {

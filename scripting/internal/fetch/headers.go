@@ -19,13 +19,6 @@ func CreateHeaders[T any](cbCtx js.CallbackContext[T], options ...[2]types.ByteS
 	return codec.EncodeConstructedValue(cbCtx, res)
 }
 
-func (w Headers[T]) decodeHeadersInit(
-	s js.Scope[T],
-	v js.Value[T],
-) (res [][2]types.ByteString, err error) {
-	return decodeHeadersInit(s, v)
-}
-
 func decodeHeadersInit[T any](
 	s js.Scope[T],
 	v js.Value[T],
@@ -92,7 +85,7 @@ func parseHeaderIterator2[T any](
 	return
 }
 
-func (w Headers[T]) CustomInitializer(jsClass js.Class[T]) {
+func HeadersCustomInitializer[T any](jsClass js.Class[T]) {
 	iterator := js.NewIterator2(codec.EncodeByteString[T], codec.EncodeByteString[T])
 	iterator.InstallPrototype(jsClass)
 }

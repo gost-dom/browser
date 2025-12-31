@@ -8,17 +8,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type Body[T any] struct{}
-
-func NewBody[T any](scriptHost js.ScriptEngine[T]) Body[T] {
-	return Body[T]{}
-}
-
-func (wrapper Body[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w Body[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeBody[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("arrayBuffer", Body_arrayBuffer)
 	jsClass.CreateOperation("blob", Body_blob)
 	jsClass.CreateOperation("bytes", Body_bytes)

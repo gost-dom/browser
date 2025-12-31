@@ -9,17 +9,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type HTMLOrSVGElement[T any] struct{}
-
-func NewHTMLOrSVGElement[T any](scriptHost js.ScriptEngine[T]) HTMLOrSVGElement[T] {
-	return HTMLOrSVGElement[T]{}
-}
-
-func (wrapper HTMLOrSVGElement[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w HTMLOrSVGElement[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeHTMLOrSVGElement[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("focus", HTMLOrSVGElement_focus)
 	jsClass.CreateOperation("blur", HTMLOrSVGElement_blur)
 	jsClass.CreateAttribute("dataset", HTMLOrSVGElement_dataset, nil)

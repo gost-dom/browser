@@ -1,8 +1,9 @@
 package scripting
 
 import (
+	"fmt"
+
 	"github.com/dave/jennifer/jen"
-	. "github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/code-gen/scripting/model"
 	g "github.com/gost-dom/generators"
 )
@@ -15,15 +16,16 @@ type PrototypeInitializer struct {
 }
 
 func (i PrototypeInitializer) Generate() *jen.Statement {
-	receiver := g.NewValue("w")
-	class := g.NewValue("jsClass")
-	wrapperType := i.WrapperStructType()
-	return g.FunctionDefinition{
-		Name:     "installPrototype",
-		Receiver: g.FunctionArgument{Name: receiver, Type: wrapperType},
-		Args:     g.Arg(class, jsClass),
-		Body:     i.Body(receiver),
-	}.Generate()
+	receiver := g.NewValue("wrapper")
+	init := PrototypeInitializer{i.WrapperStruct}
+	return g.StatementList(
+		g.Raw(jen.Func().
+			Add(jen.Id(i.InitializerName())).
+			Add(jen.Index(jen.Id("T").Id("any"))).
+			Params(jen.Id("jsClass").Add(jsClass.Generate())).
+			Block(init.Body(receiver).Generate()),
+		),
+	).Generate()
 }
 
 func (i PrototypeInitializer) Body(receiver g.Value) g.Generator {
@@ -40,21 +42,25 @@ func (i PrototypeInitializer) CreatePrototypeInitializerBody(
 	return g.StatementList(
 		i.InstallFunctionHandlers(receiver, class),
 		i.InstallAttributeHandlers(receiver, class),
+		renderIf(i.Data.RunCustomCode,
+			g.NewValue(fmt.Sprintf("%sCustomInitializer", i.IdlName())).Call(class),
+		),
 	)
 }
 
 func (i PrototypeInitializer) MixinsGenerator() g.Generator {
 	result := g.StatementList()
 	for _, mixin := range i.Data.Includes() {
-		wrapperName := LowerCaseFirstLetter(mixin.Name)
+		// wrapperName := LowerCaseFirstLetter(mixin.Name)
 		// Note: This excludes mixins not known in this spec.
 		// Could the mixing come from another spec, then this will skip
 		// something we may want.
 		// Not a problem yet ...
 		if _, included := i.Data.Spec.DomSpec.Interfaces[mixin.Name]; included {
 			result.Append(
-				g.NewValue("w").Field(wrapperName).Field("installPrototype").Call(
-					g.Id("jsClass")),
+				g.NewValue(fmt.Sprintf("Initialize%s", mixin.Name)).Call(g.Id("jsClass")),
+				// g.NewValue("w").Field(wrapperName).Field("installPrototype").Call(
+				// 	g.Id("jsClass")),
 			)
 		}
 	}

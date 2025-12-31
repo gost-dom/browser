@@ -9,17 +9,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type Event[T any] struct{}
-
-func NewEvent[T any](scriptHost js.ScriptEngine[T]) Event[T] {
-	return Event[T]{}
-}
-
-func (wrapper Event[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w Event[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeEvent[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("stopPropagation", Event_stopPropagation)
 	jsClass.CreateOperation("preventDefault", Event_preventDefault)
 	jsClass.CreateAttribute("type", Event_type, nil)

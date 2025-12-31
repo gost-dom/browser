@@ -9,17 +9,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type HTMLHyperlinkElementUtils[T any] struct{}
-
-func NewHTMLHyperlinkElementUtils[T any](scriptHost js.ScriptEngine[T]) HTMLHyperlinkElementUtils[T] {
-	return HTMLHyperlinkElementUtils[T]{}
-}
-
-func (wrapper HTMLHyperlinkElementUtils[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w HTMLHyperlinkElementUtils[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeHTMLHyperlinkElementUtils[T any](jsClass js.Class[T]) {
 	jsClass.CreateAttribute("href", HTMLHyperlinkElementUtils_href, HTMLHyperlinkElementUtils_setHref)
 	jsClass.CreateOperation("toString", HTMLHyperlinkElementUtils_href)
 	jsClass.CreateAttribute("origin", HTMLHyperlinkElementUtils_origin, nil)

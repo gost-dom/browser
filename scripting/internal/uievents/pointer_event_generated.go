@@ -11,11 +11,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (wrapper PointerEvent[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w PointerEvent[T]) installPrototype(jsClass js.Class[T]) {
+func InitializePointerEvent[T any](jsClass js.Class[T]) {
 	jsClass.CreateAttribute("width", PointerEvent_width, nil)
 	jsClass.CreateAttribute("height", PointerEvent_height, nil)
 	jsClass.CreateAttribute("pressure", PointerEvent_pressure, nil)

@@ -9,17 +9,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type History[T any] struct{}
-
-func NewHistory[T any](scriptHost js.ScriptEngine[T]) History[T] {
-	return History[T]{}
-}
-
-func (wrapper History[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w History[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeHistory[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("go", History_go)
 	jsClass.CreateOperation("back", History_back)
 	jsClass.CreateOperation("forward", History_forward)

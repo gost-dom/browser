@@ -9,21 +9,9 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type HTMLAnchorElement[T any] struct {
-	htmlHyperlinkElementUtils HTMLHyperlinkElementUtils[T]
-}
-
-func NewHTMLAnchorElement[T any](scriptHost js.ScriptEngine[T]) HTMLAnchorElement[T] {
-	return HTMLAnchorElement[T]{NewHTMLHyperlinkElementUtils(scriptHost)}
-}
-
-func (wrapper HTMLAnchorElement[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w HTMLAnchorElement[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeHTMLAnchorElement[T any](jsClass js.Class[T]) {
 	jsClass.CreateAttribute("target", HTMLAnchorElement_target, HTMLAnchorElement_setTarget)
-	w.htmlHyperlinkElementUtils.installPrototype(jsClass)
+	InitializeHTMLHyperlinkElementUtils(jsClass)
 }
 
 func HTMLAnchorElementConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

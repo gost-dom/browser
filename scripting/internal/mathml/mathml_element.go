@@ -6,5 +6,5 @@ import (
 )
 
 func InitializeMathMlElement[T any](jsClass js.Class[T]) {
-	html.HTMLOrSVGElement[T]{}.InstallPrototype(jsClass)
+	html.InitializeHTMLOrSVGElement(jsClass)
 }

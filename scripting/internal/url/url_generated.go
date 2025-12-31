@@ -9,11 +9,7 @@ import (
 	url "github.com/gost-dom/browser/url"
 )
 
-func (wrapper URL[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w URL[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeURL[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("toJSON", URL_toJSON)
 	jsClass.CreateAttribute("href", URL_href, URL_setHref)
 	jsClass.CreateOperation("toString", URL_href)

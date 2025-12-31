@@ -7,22 +7,10 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type HTMLElement[T any] struct {
-	htmlOrSVGElement HTMLOrSVGElement[T]
-}
-
-func NewHTMLElement[T any](scriptHost js.ScriptEngine[T]) HTMLElement[T] {
-	return HTMLElement[T]{NewHTMLOrSVGElement(scriptHost)}
-}
-
-func (wrapper HTMLElement[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-	wrapper.CustomInitializer(jsClass)
-}
-
-func (w HTMLElement[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeHTMLElement[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("click", HTMLElement_click)
-	w.htmlOrSVGElement.installPrototype(jsClass)
+	HTMLElementCustomInitializer(jsClass)
+	InitializeHTMLOrSVGElement(jsClass)
 }
 
 func HTMLElementConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

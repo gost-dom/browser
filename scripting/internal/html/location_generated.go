@@ -9,17 +9,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type Location[T any] struct{}
-
-func NewLocation[T any](scriptHost js.ScriptEngine[T]) Location[T] {
-	return Location[T]{}
-}
-
-func (wrapper Location[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w Location[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeLocation[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("assign", Location_assign)
 	jsClass.CreateOperation("replace", Location_replace)
 	jsClass.CreateOperation("reload", Location_reload)

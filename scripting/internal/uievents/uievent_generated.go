@@ -11,17 +11,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type UIEvent[T any] struct{}
-
-func NewUIEvent[T any](scriptHost js.ScriptEngine[T]) UIEvent[T] {
-	return UIEvent[T]{}
-}
-
-func (wrapper UIEvent[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w UIEvent[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeUIEvent[T any](jsClass js.Class[T]) {
 	jsClass.CreateAttribute("view", UIEvent_view, nil)
 	jsClass.CreateAttribute("detail", UIEvent_detail, nil)
 }

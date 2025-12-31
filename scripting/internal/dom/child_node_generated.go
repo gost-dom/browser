@@ -8,17 +8,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type ChildNode[T any] struct{}
-
-func NewChildNode[T any](scriptHost js.ScriptEngine[T]) ChildNode[T] {
-	return ChildNode[T]{}
-}
-
-func (wrapper ChildNode[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w ChildNode[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeChildNode[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("before", ChildNode_before)
 	jsClass.CreateOperation("after", ChildNode_after)
 	jsClass.CreateOperation("replaceWith", ChildNode_replaceWith)

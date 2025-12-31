@@ -16,10 +16,6 @@ func (gen ScriptingFileGenerator) Generate() *jen.Statement {
 	wrapper := WrapperStruct(gen)
 
 	return g.StatementList(
-		renderIf(!gen.Data.Spec.SkipWrapper, wrapper.TypeDefinition()),
-		g.Line,
-		HostInitializer{wrapper},
-		g.Line,
 		PrototypeInitializer{wrapper},
 		g.Line,
 		renderIf(gen.Data.WriteConstructor(), wrapper.Callbacks().ConstructorCallback()),

@@ -8,12 +8,12 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (l DOMTokenList[T]) CustomInitializer(class js.Class[T]) {
-	it := js.NewIterator(l.toString_)
+func DOMTokenListCustomInitializer[T any](class js.Class[T]) {
+	it := js.NewIterator(DOMTokenList_toString[T])
 	it.InstallPrototype(class)
 }
 
-func (w DOMTokenList[T]) toString_(s js.Scope[T], val string) (js.Value[T], error) {
+func DOMTokenList_toString[T any](s js.Scope[T], val string) (js.Value[T], error) {
 	return s.NewString(val), nil
 }
 

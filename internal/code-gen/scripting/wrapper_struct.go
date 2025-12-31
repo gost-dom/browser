@@ -1,6 +1,8 @@
 package scripting
 
 import (
+	"fmt"
+
 	"github.com/dave/jennifer/jen"
 	. "github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/code-gen/scripting/model"
@@ -13,6 +15,14 @@ var scriptHost = g.NewValue("scriptHost")
 
 type WrapperStruct struct {
 	Data model.ESConstructorData
+}
+
+func (s WrapperStruct) InitializerName() string {
+	return fmt.Sprintf("Initialize%s", s.IdlName())
+}
+
+func (s WrapperStruct) Initializer() g.Generator {
+	return g.Id(s.InitializerName())
 }
 
 func (s WrapperStruct) SpecName() string { return s.Data.SpecName() }
@@ -54,7 +64,7 @@ func (g WrapperStruct) TypeGenerator() g.Generator {
 
 func Initializer(d model.ESConstructorData) g.Generator {
 	ws := WrapperStruct{d}
-	return ws.WrapperStructType().CreateInstance().Field("Initialize")
+	return ws.Initializer()
 }
 
 func (wrapper WrapperStruct) ConstructorGenerator() g.Generator {

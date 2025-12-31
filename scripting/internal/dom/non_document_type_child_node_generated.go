@@ -8,17 +8,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type NonDocumentTypeChildNode[T any] struct{}
-
-func NewNonDocumentTypeChildNode[T any](scriptHost js.ScriptEngine[T]) NonDocumentTypeChildNode[T] {
-	return NonDocumentTypeChildNode[T]{}
-}
-
-func (wrapper NonDocumentTypeChildNode[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w NonDocumentTypeChildNode[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeNonDocumentTypeChildNode[T any](jsClass js.Class[T]) {
 	jsClass.CreateAttribute("previousElementSibling", NonDocumentTypeChildNode_previousElementSibling, nil)
 	jsClass.CreateAttribute("nextElementSibling", NonDocumentTypeChildNode_nextElementSibling, nil)
 }

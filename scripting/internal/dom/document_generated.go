@@ -9,23 +9,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type Document[T any] struct {
-	nonElementParentNode NonElementParentNode[T]
-	parentNode           ParentNode[T]
-}
-
-func NewDocument[T any](scriptHost js.ScriptEngine[T]) Document[T] {
-	return Document[T]{
-		NewNonElementParentNode(scriptHost),
-		NewParentNode(scriptHost),
-	}
-}
-
-func (wrapper Document[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w Document[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeDocument[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("getElementsByTagName", Document_getElementsByTagName)
 	jsClass.CreateOperation("getElementsByTagNameNS", Document_getElementsByTagNameNS)
 	jsClass.CreateOperation("getElementsByClassName", Document_getElementsByClassName)
@@ -57,8 +41,8 @@ func (w Document[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("location", Document_location, nil, js.LegacyUnforgeable())
 	jsClass.CreateAttribute("body", Document_body, Document_setBody)
 	jsClass.CreateAttribute("head", Document_head, nil)
-	w.nonElementParentNode.installPrototype(jsClass)
-	w.parentNode.installPrototype(jsClass)
+	InitializeNonElementParentNode(jsClass)
+	InitializeParentNode(jsClass)
 }
 
 func DocumentConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

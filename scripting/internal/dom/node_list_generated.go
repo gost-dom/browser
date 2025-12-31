@@ -8,20 +8,10 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type NodeList[T any] struct{}
-
-func NewNodeList[T any](scriptHost js.ScriptEngine[T]) NodeList[T] {
-	return NodeList[T]{}
-}
-
-func (wrapper NodeList[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-	wrapper.CustomInitializer(jsClass)
-}
-
-func (w NodeList[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeNodeList[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("item", NodeList_item)
 	jsClass.CreateAttribute("length", NodeList_length, nil)
+	NodeListCustomInitializer(jsClass)
 }
 
 func NodeListConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

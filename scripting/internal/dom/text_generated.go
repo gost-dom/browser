@@ -7,17 +7,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type Text[T any] struct{}
-
-func NewText[T any](scriptHost js.ScriptEngine[T]) Text[T] {
-	return Text[T]{}
-}
-
-func (wrapper Text[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w Text[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeText[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("splitText", Text_splitText)
 	jsClass.CreateAttribute("wholeText", Text_wholeText, nil)
 }

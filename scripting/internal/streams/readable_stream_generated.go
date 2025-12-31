@@ -9,17 +9,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type ReadableStream[T any] struct{}
-
-func NewReadableStream[T any](scriptHost js.ScriptEngine[T]) ReadableStream[T] {
-	return ReadableStream[T]{}
-}
-
-func (wrapper ReadableStream[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w ReadableStream[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeReadableStream[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("cancel", ReadableStream_cancel)
 	jsClass.CreateOperation("getReader", ReadableStream_getReader)
 	jsClass.CreateOperation("pipeThrough", ReadableStream_pipeThrough)

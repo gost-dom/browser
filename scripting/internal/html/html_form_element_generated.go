@@ -9,17 +9,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type HTMLFormElement[T any] struct{}
-
-func NewHTMLFormElement[T any](scriptHost js.ScriptEngine[T]) HTMLFormElement[T] {
-	return HTMLFormElement[T]{}
-}
-
-func (wrapper HTMLFormElement[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w HTMLFormElement[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeHTMLFormElement[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("submit", HTMLFormElement_submit)
 	jsClass.CreateOperation("requestSubmit", HTMLFormElement_requestSubmit)
 	jsClass.CreateOperation("reset", HTMLFormElement_reset)

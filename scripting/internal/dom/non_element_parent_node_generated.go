@@ -8,17 +8,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type NonElementParentNode[T any] struct{}
-
-func NewNonElementParentNode[T any](scriptHost js.ScriptEngine[T]) NonElementParentNode[T] {
-	return NonElementParentNode[T]{}
-}
-
-func (wrapper NonElementParentNode[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w NonElementParentNode[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeNonElementParentNode[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("getElementById", NonElementParentNode_getElementById)
 }
 

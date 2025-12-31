@@ -6,7 +6,7 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (w NamedNodeMap[T]) CustomInitializer(class js.Class[T]) {
+func NamedNodeMapCustomInitializer[T any](class js.Class[T]) {
 	iterator := js.NewIterator(
 		func(s js.Scope[T], instance dom.Attr) (js.Value[T], error) {
 			return codec.EncodeEntity(s, instance)

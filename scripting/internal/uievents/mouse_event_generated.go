@@ -11,11 +11,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (wrapper MouseEvent[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w MouseEvent[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeMouseEvent[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("getModifierState", MouseEvent_getModifierState)
 	jsClass.CreateAttribute("screenX", MouseEvent_screenX, nil)
 	jsClass.CreateAttribute("screenY", MouseEvent_screenY, nil)

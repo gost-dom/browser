@@ -9,17 +9,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type XMLHttpRequest[T any] struct{}
-
-func NewXMLHttpRequest[T any](scriptHost js.ScriptEngine[T]) XMLHttpRequest[T] {
-	return XMLHttpRequest[T]{}
-}
-
-func (wrapper XMLHttpRequest[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w XMLHttpRequest[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeXMLHttpRequest[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("open", XMLHttpRequest_open)
 	jsClass.CreateOperation("setRequestHeader", XMLHttpRequest_setRequestHeader)
 	jsClass.CreateOperation("send", XMLHttpRequest_send)

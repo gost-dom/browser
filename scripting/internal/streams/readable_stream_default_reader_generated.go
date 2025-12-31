@@ -8,17 +8,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type ReadableStreamDefaultReader[T any] struct{}
-
-func NewReadableStreamDefaultReader[T any](scriptHost js.ScriptEngine[T]) ReadableStreamDefaultReader[T] {
-	return ReadableStreamDefaultReader[T]{}
-}
-
-func (wrapper ReadableStreamDefaultReader[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w ReadableStreamDefaultReader[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeReadableStreamDefaultReader[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("read", ReadableStreamDefaultReader_read)
 	jsClass.CreateOperation("releaseLock", ReadableStreamDefaultReader_releaseLock)
 }

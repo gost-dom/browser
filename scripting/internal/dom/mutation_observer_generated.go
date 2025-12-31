@@ -9,17 +9,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type MutationObserver[T any] struct{}
-
-func NewMutationObserver[T any](scriptHost js.ScriptEngine[T]) MutationObserver[T] {
-	return MutationObserver[T]{}
-}
-
-func (wrapper MutationObserver[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w MutationObserver[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeMutationObserver[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("observe", MutationObserver_observe)
 	jsClass.CreateOperation("disconnect", MutationObserver_disconnect)
 	jsClass.CreateOperation("takeRecords", MutationObserver_takeRecords)

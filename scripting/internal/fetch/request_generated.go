@@ -9,19 +9,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type Request[T any] struct {
-	body Body[T]
-}
-
-func NewRequest[T any](scriptHost js.ScriptEngine[T]) Request[T] {
-	return Request[T]{NewBody(scriptHost)}
-}
-
-func (wrapper Request[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w Request[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeRequest[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("clone", Request_clone)
 	jsClass.CreateAttribute("method", Request_method, nil)
 	jsClass.CreateAttribute("url", Request_url, nil)
@@ -39,7 +27,7 @@ func (w Request[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("isHistoryNavigation", Request_isHistoryNavigation, nil)
 	jsClass.CreateAttribute("signal", Request_signal, nil)
 	jsClass.CreateAttribute("duplex", Request_duplex, nil)
-	w.body.installPrototype(jsClass)
+	InitializeBody(jsClass)
 }
 
 func RequestConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

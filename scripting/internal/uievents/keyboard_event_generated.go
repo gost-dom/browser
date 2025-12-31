@@ -11,11 +11,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func (wrapper KeyboardEvent[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-}
-
-func (w KeyboardEvent[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeKeyboardEvent[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("getModifierState", KeyboardEvent_getModifierState)
 	jsClass.CreateAttribute("key", KeyboardEvent_key, nil)
 	jsClass.CreateAttribute("code", KeyboardEvent_code, nil)

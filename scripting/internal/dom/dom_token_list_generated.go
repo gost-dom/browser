@@ -9,18 +9,7 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-type DOMTokenList[T any] struct{}
-
-func NewDOMTokenList[T any](scriptHost js.ScriptEngine[T]) DOMTokenList[T] {
-	return DOMTokenList[T]{}
-}
-
-func (wrapper DOMTokenList[T]) Initialize(jsClass js.Class[T]) {
-	wrapper.installPrototype(jsClass)
-	wrapper.CustomInitializer(jsClass)
-}
-
-func (w DOMTokenList[T]) installPrototype(jsClass js.Class[T]) {
+func InitializeDOMTokenList[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("item", DOMTokenList_item)
 	jsClass.CreateOperation("contains", DOMTokenList_contains)
 	jsClass.CreateOperation("add", DOMTokenList_add)
@@ -31,6 +20,7 @@ func (w DOMTokenList[T]) installPrototype(jsClass js.Class[T]) {
 	jsClass.CreateAttribute("length", DOMTokenList_length, nil)
 	jsClass.CreateAttribute("value", DOMTokenList_value, DOMTokenList_setValue)
 	jsClass.CreateOperation("toString", DOMTokenList_value)
+	DOMTokenListCustomInitializer(jsClass)
 }
 
 func DOMTokenListConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
