@@ -23,12 +23,6 @@ type ScriptEngine[T any] interface {
 	InstallPolyfill(script, src string)
 }
 
-// ScriptEngineFactory constructs ScriptEngine instances. Client code can
-// register a Configurator to define values in global JavaScript scope.
-type ScriptEngineFactory[T any] interface {
-	AddConfigurator(Configurer[T])
-}
-
 // A callback function that returns an "Illegal constructor" TypeError in
 // JavaScript. To be used for all classes that cannot be constructed by client
 // code directly.
