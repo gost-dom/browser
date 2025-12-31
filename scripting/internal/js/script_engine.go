@@ -29,6 +29,9 @@ type ScriptEngineFactory[T any] interface {
 	AddConfigurator(Configurer[T])
 }
 
+// A callback function that returns an "Illegal constructor" TypeError in
+// JavaScript. To be used for all classes that cannot be constructed by client
+// code directly.
 func IllegalConstructor[T any](ctx CallbackContext[T]) (Value[T], error) {
 	return nil, ctx.NewTypeError("Illegal constructor")
 }

@@ -31,6 +31,7 @@ var (
 	jsScope         = g.NewTypePackage("Scope", packagenames.JS).TypeParam(g.Id("T"))
 	jsScriptEngine  = g.NewTypePackage("ScriptEngine", packagenames.JS).TypeParam(g.Id("T"))
 	jsRegisterClass = g.NewValuePackage("RegisterClass", packagenames.JS)
+	jsCreateClass   = g.NewValuePackage("CreateClass", packagenames.JS)
 	jsDecodeInto    = g.NewValuePackage("DecodeInto", packagenames.JS)
 
 	errorsFirst = g.NewValuePackage("First", packagenames.Errors)

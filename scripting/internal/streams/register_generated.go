@@ -5,7 +5,7 @@ package streams
 import js "github.com/gost-dom/browser/scripting/internal/js"
 
 func Bootstrap[T any](e js.ScriptEngine[T]) {
-	js.RegisterClass(e, "ReadableStream", "", InitializeReadableStream, ReadableStreamConstructor)
-	js.RegisterClass(e, "ReadableStreamBYOBReader", "", InitializeReadableStreamBYOBReader, ReadableStreamBYOBReaderConstructor)
-	js.RegisterClass(e, "ReadableStreamDefaultReader", "", InitializeReadableStreamDefaultReader, ReadableStreamDefaultReaderConstructor)
+	InitializeReadableStream(js.CreateClass(e, "ReadableStream", "", ReadableStreamConstructor))
+	InitializeReadableStreamBYOBReader(js.CreateClass(e, "ReadableStreamBYOBReader", "", ReadableStreamBYOBReaderConstructor))
+	InitializeReadableStreamDefaultReader(js.CreateClass(e, "ReadableStreamDefaultReader", "", ReadableStreamDefaultReaderConstructor))
 }

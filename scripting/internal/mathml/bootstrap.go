@@ -3,11 +3,5 @@ package mathml
 import js "github.com/gost-dom/browser/scripting/internal/js"
 
 func ConfigureScriptEngine[T any](e js.ScriptEngine[T]) {
-	js.RegisterClass(
-		e,
-		"MathMLElement",
-		"Element",
-		InitializeMathMlElement[T],
-		js.IllegalConstructor,
-	)
+	InitializeMathMlElement[T](js.CreateClass(e, "MathMLElement", "Element", js.IllegalConstructor))
 }

@@ -23,7 +23,7 @@ func ConfigureScriptEngine[T any](e js.ScriptEngine[T]) {
 	eventTarget, _ := e.Class("EventTarget")
 	window := e.ConfigureGlobalScope("Window", eventTarget)
 	InitializeWindow(window)
-	js.RegisterClass(e, "DOMStringMap", "", DOMStringMap[T]{}.Initialize, js.IllegalConstructor)
+	DOMStringMap[T]{}.Initialize(js.CreateClass(e, "DOMStringMap", "", js.IllegalConstructor))
 	installEventLoopGlobals(window)
 
 	// HTMLDocument exists as a separate class for historical reasons, but it
@@ -31,16 +31,10 @@ func ConfigureScriptEngine[T any](e js.ScriptEngine[T]) {
 	// inheritance relationship between the two, which is modelled here.
 	//
 	// See also: https://developer.mozilla.org/en-US/docs/Web/API/HTMLDocument
-	js.RegisterClass(
-		e,
-		"HTMLDocument",
-		"Document",
-		dom.InitializeDocument,
-		js.IllegalConstructor,
-	)
+	dom.InitializeDocument(js.CreateClass(e, "HTMLDocument", "Document", js.IllegalConstructor))
 	for _, cls := range codec.HtmlElements {
 		if _, ok := e.Class(cls); !ok && cls != "HTMLElement" {
-			js.RegisterClass(e, cls, "HTMLElement", InitializeHtmlElement, js.IllegalConstructor)
+			InitializeHtmlElement(js.CreateClass(e, cls, "HTMLElement", js.IllegalConstructor))
 		}
 	}
 }

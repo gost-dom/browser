@@ -5,11 +5,11 @@ package html
 import js "github.com/gost-dom/browser/scripting/internal/js"
 
 func Bootstrap[T any](e js.ScriptEngine[T]) {
-	js.RegisterClass(e, "History", "", InitializeHistory, HistoryConstructor)
-	js.RegisterClass(e, "Location", "", InitializeLocation, LocationConstructor)
-	js.RegisterClass(e, "HTMLElement", "Element", InitializeHTMLElement, HTMLElementConstructor)
-	js.RegisterClass(e, "HTMLAnchorElement", "HTMLElement", InitializeHTMLAnchorElement, HTMLAnchorElementConstructor)
-	js.RegisterClass(e, "HTMLFormElement", "HTMLElement", InitializeHTMLFormElement, HTMLFormElementConstructor)
-	js.RegisterClass(e, "HTMLInputElement", "HTMLElement", InitializeHTMLInputElement, HTMLInputElementConstructor)
-	js.RegisterClass(e, "HTMLTemplateElement", "HTMLElement", InitializeHTMLTemplateElement, HTMLTemplateElementConstructor)
+	InitializeHistory(js.CreateClass(e, "History", "", HistoryConstructor))
+	InitializeLocation(js.CreateClass(e, "Location", "", LocationConstructor))
+	InitializeHTMLElement(js.CreateClass(e, "HTMLElement", "Element", HTMLElementConstructor))
+	InitializeHTMLAnchorElement(js.CreateClass(e, "HTMLAnchorElement", "HTMLElement", HTMLAnchorElementConstructor))
+	InitializeHTMLFormElement(js.CreateClass(e, "HTMLFormElement", "HTMLElement", HTMLFormElementConstructor))
+	InitializeHTMLInputElement(js.CreateClass(e, "HTMLInputElement", "HTMLElement", HTMLInputElementConstructor))
+	InitializeHTMLTemplateElement(js.CreateClass(e, "HTMLTemplateElement", "HTMLElement", HTMLTemplateElementConstructor))
 }

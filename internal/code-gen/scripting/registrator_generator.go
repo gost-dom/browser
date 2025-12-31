@@ -77,13 +77,21 @@ func Write(api string, specs configuration.WebIdlConfigurations) error {
 	for _, typeInfo := range enriched {
 		if typeInfo.InstallConstructor() {
 			statements.Append(
-				jsRegisterClass.Call(
-					engine,
-					g.Lit(typeInfo.Name()),
-					g.Lit(typeInfo.Extends()),
-					Initializer(typeInfo),
-					g.Id(JsConstructorForInterface(typeInfo.Name())),
-				))
+				g.ValueOf(Initializer(typeInfo)).Call(
+					jsCreateClass.Call(
+						engine,
+						g.Lit(typeInfo.Name()),
+						g.Lit(typeInfo.Extends()),
+						g.Id(JsConstructorForInterface(typeInfo.Name())),
+					)),
+				// jsRegisterClass.Call(
+				// 	engine,
+				// 	g.Lit(typeInfo.Name()),
+				// 	g.Lit(typeInfo.Extends()),
+				// 	Initializer(typeInfo),
+				// 	g.Id(JsConstructorForInterface(typeInfo.Name())),
+				// )
+			)
 		}
 	}
 	bootstrap := gen.NewFunction(

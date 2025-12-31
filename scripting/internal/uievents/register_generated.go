@@ -5,8 +5,8 @@ package uievents
 import js "github.com/gost-dom/browser/scripting/internal/js"
 
 func Bootstrap[T any](e js.ScriptEngine[T]) {
-	js.RegisterClass(e, "UIEvent", "Event", InitializeUIEvent, UIEventConstructor)
-	js.RegisterClass(e, "KeyboardEvent", "UIEvent", InitializeKeyboardEvent, KeyboardEventConstructor)
-	js.RegisterClass(e, "MouseEvent", "UIEvent", InitializeMouseEvent, MouseEventConstructor)
-	js.RegisterClass(e, "PointerEvent", "MouseEvent", InitializePointerEvent, PointerEventConstructor)
+	InitializeUIEvent(js.CreateClass(e, "UIEvent", "Event", UIEventConstructor))
+	InitializeKeyboardEvent(js.CreateClass(e, "KeyboardEvent", "UIEvent", KeyboardEventConstructor))
+	InitializeMouseEvent(js.CreateClass(e, "MouseEvent", "UIEvent", MouseEventConstructor))
+	InitializePointerEvent(js.CreateClass(e, "PointerEvent", "MouseEvent", PointerEventConstructor))
 }
