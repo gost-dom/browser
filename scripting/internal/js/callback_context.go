@@ -78,10 +78,6 @@ type CallbackScope[T any] interface {
 type CallbackContext[T any] interface {
 	ArgumentConsumer[T]
 	CallbackScope[T]
-
-	// ReturnWithValue(Value[T]) (Value[T], error)
-	// ReturnWithError(error) (Value[T], error)
-	ReturnWithTypeError(msg string) (Value[T], error)
 }
 
 type Callback[T any] interface {

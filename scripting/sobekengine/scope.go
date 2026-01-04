@@ -158,7 +158,7 @@ func (f scope) NewIterator(
 	var nextJs js.CallbackFunc[jsTypeParam] = func(cbCtx js.CallbackContext[jsTypeParam]) (js.Value[jsTypeParam], error) {
 		instance, ok := (cbCtx.This().NativeValue()).(*iterator)
 		if !ok {
-			return cbCtx.ReturnWithTypeError("Not an iterator instance")
+			return nil, cbCtx.NewTypeError("Not an iterator instance")
 		}
 		res := f.vm.NewObject()
 		item, err, ok := instance.next()

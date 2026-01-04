@@ -74,10 +74,6 @@ func (c v8CallbackScope) Eval(script, location string) (jsValue, error) {
 	return newV8Value(c.ScriptCtx(), v8Value), err
 }
 
-func (h *v8CallbackContext) ReturnWithTypeError(msg string) (jsValue, error) {
-	return nil, h.NewTypeError(msg)
-}
-
 func (h *v8CallbackContext) Args() []jsValue {
 	ctx := h.host.mustGetContext(h.v8Info.Context())
 	v8Args := h.v8Info.Args()

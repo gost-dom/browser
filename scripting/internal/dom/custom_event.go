@@ -11,7 +11,7 @@ import (
 func customEventConstructor[T any](info js.CallbackContext[T]) (js.Value[T], error) {
 	arg, ok := info.ConsumeArg()
 	if !ok {
-		return info.ReturnWithTypeError("Must have at least one constructor argument")
+		return nil, info.NewTypeError("Must have at least one constructor argument")
 	}
 	data := event.CustomEventInit{}
 	e := &event.Event{Type: arg.String()}

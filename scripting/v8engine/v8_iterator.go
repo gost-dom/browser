@@ -76,7 +76,7 @@ func (i v8Iterator) newIterator(
 func (i v8Iterator) next(cbCtx jsCallbackContext) (jsValue, error) {
 	instance, ok := (cbCtx.This().NativeValue()).(*jsIteratorInstance)
 	if !ok {
-		return cbCtx.ReturnWithTypeError("Not an iterator instance")
+		return nil, cbCtx.NewTypeError("Not an iterator instance")
 	}
 	next := instance.next
 	stop := instance.stop

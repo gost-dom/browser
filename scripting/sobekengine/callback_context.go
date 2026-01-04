@@ -96,7 +96,3 @@ func (c *callbackContext) ConsumeArg() (js.Value[jsTypeParam], bool) {
 	}
 	return newValue(c.scriptContext, c.args[index]), true
 }
-
-func (c *callbackContext) ReturnWithTypeError(msg string) (js.Value[jsTypeParam], error) {
-	return nil, c.NewTypeError(msg)
-}
