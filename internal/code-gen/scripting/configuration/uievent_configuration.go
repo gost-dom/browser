@@ -5,7 +5,6 @@ func ConfigureEventSpecs(s *WebAPIConfig) {
 	uiEvent.Method("view").SetNotImplemented()
 	uiEvent.Method("detail").SetNotImplemented()
 	mouseEvent := s.Type("MouseEvent")
-	mouseEvent.SkipWrapper = true
 
 	mouseEvent.Method("getModifierState").SetNotImplemented()
 	mouseEvent.Method("screenX").SetNotImplemented()
@@ -23,14 +22,12 @@ func ConfigureEventSpecs(s *WebAPIConfig) {
 	mouseEvent.Method("relatedTarget").SetNotImplemented()
 
 	keyboardEvent := s.Type("KeyboardEvent")
-	keyboardEvent.SkipWrapper = true
 
 	keyboardEvent.Method("getModifierState").SetNotImplemented()
 }
 
 func ConfigurePointerEventSpecs(s *WebAPIConfig) {
 	pointerEvent := s.Type("PointerEvent")
-	pointerEvent.SkipWrapper = true
 	pointerEvent.Method("getCoalescedEvents").Ignore()
 	pointerEvent.Method("getPredictedEvents").Ignore()
 	pointerEvent.Method("pointerId").Ignore()

@@ -9,8 +9,6 @@ func configureURLSpecs(urlSpecs *WebAPIConfig) {
 	// urlSearchParams.Method("get").SetCustomImplementation()
 
 	url := urlSpecs.Type("URL")
-	// TODO: Just need to use a different base class for non-nodes
-	url.SkipWrapper = true
 	url.OverrideWrappedType = &GoType{Package: packagenames.URL, Name: "URL", Pointer: true}
 	url.MarkMembersAsNotImplemented(
 		"setHref",

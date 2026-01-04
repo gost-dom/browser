@@ -22,13 +22,9 @@ type GoType struct {
 // All bindings will be generated using a set of defaults. Data in this
 // structure will allow deviating from the defaults.
 type WebIDLConfig struct {
-	DomSpec       *WebAPIConfig
-	TypeName      string
-	RunCustomCode bool
-	// SkipWrapper suppresses the generation of the "wrapper type". This is used
-	// for DomTokenList to include the iterator code as part of the wrapper
-	// type.
-	SkipWrapper         bool
+	DomSpec             *WebAPIConfig
+	TypeName            string
+	RunCustomCode       bool
 	SkipConstructor     bool
 	IncludeIterable     bool
 	IncludeIncludes     bool
