@@ -8,8 +8,8 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/gen"
+	"github.com/gost-dom/code-gen/idlspec"
 	"github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/code-gen/scripting/configuration"
@@ -33,16 +33,11 @@ func exposedTo(intf idl.Interface, globals []string) bool {
 // window scope, the operation belongs to the Window interface. In a Worker
 // scope, the operation belongs on the Worker interface.
 func classNameForMixin(globals []string, data model.ESConstructorData) string {
-	for _, name := range customrules.SpecNames() {
-		spec, err := idl.Load(name)
-		if err != nil {
-			panic(fmt.Sprintf("Unknown spec in custom_rules: %v", err))
-		}
-		for _, intf := range spec.Interfaces {
-			for _, incl := range intf.Includes {
-				if exposedTo(intf, globals) && incl.Name == data.Name() {
-					return intf.Name
-				}
+	for intf := range idlspec.IdlInterfaces() {
+		fmt.Println("Trying interface", intf.Name)
+		for _, incl := range intf.Includes {
+			if exposedTo(intf, globals) && incl.Name == data.Name() {
+				return intf.Name
 			}
 		}
 	}
