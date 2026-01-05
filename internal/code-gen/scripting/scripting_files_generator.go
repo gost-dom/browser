@@ -38,7 +38,10 @@ func writePackageFiles(packagePath string, spec *configuration.WebAPIConfig) err
 			errs[i] = err
 		} else {
 			defer writer.Close()
-			typeGenerationInformation := createData(data, specType, extra)
+			typeGenerationInformation, err := createData(data, specType, extra)
+			if err != nil {
+				return err
+			}
 			gen := ScriptingFileGenerator{
 				Data: typeGenerationInformation,
 			}

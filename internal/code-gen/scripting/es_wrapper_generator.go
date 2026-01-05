@@ -18,14 +18,16 @@ func createData(
 	spec idl.Spec,
 	interfaceConfig *configuration.WebIDLConfig,
 	extra []idl.Spec,
-) model.ESConstructorData {
+) (res model.ESConstructorData, err error) {
 	idlName, ok := spec.GetType(interfaceConfig.TypeName)
 	if !ok {
-		panic(fmt.Sprintf("cannot find type: %s", interfaceConfig.TypeName))
+		err = (fmt.Errorf("cannot find type: %s", interfaceConfig.TypeName))
+		return
 	}
 	idlInterface := idlName.IdlInterface
 	if idlInterface.Name != interfaceConfig.TypeName {
-		panic(fmt.Sprintf("createData error: %s = %s", idlInterface.Name, interfaceConfig.TypeName))
+		err = fmt.Errorf("createData error: %s = %s", idlInterface.Name, interfaceConfig.TypeName)
+		return
 	}
 	for _, e := range extra {
 		idlInterface = idlInterface.MergePartials(e)
@@ -40,7 +42,7 @@ func createData(
 		Constructor:   CreateConstructor(idlInterface, intfRules, interfaceConfig, idlName),
 		Operations:    CreateInstanceMethods(idlInterface, intfRules, interfaceConfig),
 		Attributes:    CreateAttributes(idlInterface, intfRules, interfaceConfig),
-	}
+	}, nil
 }
 
 func CreateConstructor(

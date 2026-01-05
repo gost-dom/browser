@@ -66,7 +66,10 @@ func Write(api string, specs configuration.WebIdlConfigurations) error {
 		}
 		types := spec.Types()
 		for _, t := range types {
-			typeInfo := createData(data, t, extra)
+			typeInfo, err := createData(data, t, extra)
+			if err != nil {
+				return err
+			}
 			if IsGlobal(typeInfo.IdlInterface) {
 				continue
 			}
