@@ -132,6 +132,14 @@ var rules = CustomRules{
 	"streams": streamsRules,
 }
 
+func SpecNames() []string {
+	var res = make([]string, 0, len(rules))
+	for name := range rules {
+		res = append(res, name)
+	}
+	return res
+}
+
 func makeAllRules() map[string]InterfaceRule {
 	res := make(map[string]InterfaceRule)
 	for _, v := range rules {

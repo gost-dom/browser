@@ -8,13 +8,46 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/gen"
+	"github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/code-gen/scripting/configuration"
 	"github.com/gost-dom/code-gen/scripting/model"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )
+
+func exposedTo(intf idl.Interface, globals []string) bool {
+	for _, global := range globals {
+		if slices.Contains(intf.Exposed, global) {
+			return true
+		}
+	}
+	return false
+}
+
+// classNameForMixin is necessary in order to install the operations and
+// attributes specified on a mixin. E.g., module "fetch" defines operation
+// "fetch" to be installed on "WindowOrWorkerGlobalScope". This means in a
+// window scope, the operation belongs to the Window interface. In a Worker
+// scope, the operation belongs on the Worker interface.
+func classNameForMixin(globals []string, data model.ESConstructorData) string {
+	for _, name := range customrules.SpecNames() {
+		spec, err := idl.Load(name)
+		if err != nil {
+			panic(fmt.Sprintf("Unknown spec in custom_rules: %v", err))
+		}
+		for _, intf := range spec.Interfaces {
+			for _, incl := range intf.Includes {
+				if exposedTo(intf, globals) && incl.Name == data.Name() {
+					return intf.Name
+				}
+			}
+		}
+	}
+	panic(fmt.Sprintf("Class name for mixin not found: %s", data.Name()))
+}
 
 func inheritanceHierarchy(spec idl.Spec, intf idl.Interface) string {
 	var res []string
@@ -51,13 +84,13 @@ func (c IntfComparer) compare(a, b model.ESConstructorData) int {
 
 func IsGlobal(intf idl.Interface) bool { return len(intf.Global) > 0 }
 
-func Write(api string, specs configuration.WebIdlConfigurations) error {
+func Write(api string, globals []string, specs configuration.WebIdlConfigurations) error {
 	idlSpec, err := idl.Load(api)
 	if err != nil {
 		return err
 	}
 	statements := g.StatementList()
-	engine := g.Id("e")
+	engine := g.NewValue("e")
 	var enriched []model.ESConstructorData
 	for _, spec := range slices.Collect(maps.Values(specs)) {
 		data, extra, err := configuration.LoadSpecs(spec)
@@ -86,13 +119,23 @@ func Write(api string, specs configuration.WebIdlConfigurations) error {
 				constructor = g.Nil
 			}
 			statements.Append(
-				g.ValueOf(Initializer(typeInfo)).Call(
+				Initializer(typeInfo).Call(
 					jsCreateClass.Call(
 						engine,
 						g.Lit(typeInfo.Name()),
 						g.Lit(typeInfo.Extends()),
 						constructor,
 					)),
+			)
+		}
+		if typeInfo.InstallPartial() {
+			name := classNameForMixin(globals, typeInfo)
+			instance := g.Id(internal.LowerCaseFirstLetter(name))
+			ok := g.Id("ok")
+			statements.Append(
+				g.AssignMany(g.List(instance, ok), engine.Field("Class").Call(g.Lit(name))),
+				g.IfStmt{Condition: gen.Not(ok), Block: gen.Panic(g.Lit(""))},
+				Initializer(typeInfo).Call(instance),
 			)
 		}
 	}
@@ -111,7 +154,7 @@ func Write(api string, specs configuration.WebIdlConfigurations) error {
 	return writeGenerator(writer, packagenames.ScriptPackageName(api), bootstrap)
 }
 
-func GenerateRegisterFunctions(spec string) error {
+func GenerateRegisterFunctions(spec string, globals []string) error {
 	specs := configuration.CreateV8SpecsForSpec(spec)
-	return Write(spec, specs)
+	return Write(spec, globals, specs)
 }
