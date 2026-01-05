@@ -117,7 +117,6 @@ func newEngine(configurators ...js.Configurer[jsTypeParam]) *v8ScriptEngine {
 }
 
 func init() {
-
 	defaultEngine = newEngine(
 		internal.CreateWindowsConfigurer[jsTypeParam](),
 	)

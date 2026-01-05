@@ -248,14 +248,6 @@ func (h *V8ScriptHost) CreateGlobalObject(name string) js.GlobalObject[jsTypePar
 	return result
 }
 
-func (host *V8ScriptHost) CreateFunction(
-	name string,
-	callback js.CallbackFunc[jsTypeParam],
-) {
-	ft := wrapV8Callback(host, callback.WithLog("", name))
-	host.windowTemplate.Set(name, ft)
-}
-
 func (host *V8ScriptHost) InstallPolyfill(script, src string) {
 	host.scripts = append(host.scripts, [2]string{script, src})
 }

@@ -14,7 +14,6 @@ type ScriptEngine[T any] interface {
 	CreateClass(name string, Parent Class[T], cb CallbackFunc[T]) Class[T]
 	Class(name string) (Class[T], bool)
 	CreateGlobalObject(name string) GlobalObject[T]
-	CreateFunction(name string, cb CallbackFunc[T])
 	SetUnhandledPromiseRejectionHandler(ErrorHandler[T])
 	ConfigureGlobalScope(name string, Parent Class[T]) Class[T]
 

@@ -139,10 +139,6 @@ func (i *scriptContext) Export(value any) (res any, err error) {
 	return
 }
 
-func (c *scriptContext) CreateFunction(name string, cb js.CallbackFunc[jsTypeParam]) {
-	c.vm.Set(name, wrapJSCallback(c, cb.WithLog("", name)))
-}
-
 func (c *scriptContext) compilePolyfill(script, src string) (*sobek.Program, error) {
 	if res, ok := cache.Get[*sobek.Program](c.cache, src); ok {
 		return res, nil
