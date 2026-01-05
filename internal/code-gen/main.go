@@ -44,14 +44,14 @@ func main() {
 	flag.StringVar(&packageName, "p", "", "Package to generate")
 	flag.Parse()
 
-	globals := []string{"Window"}
+	global := "Window"
 
 	switch generatorType {
 	case "script":
 		exitOnError(scripting.CreateJavaScriptMappings(packageName))
 		os.Exit(0)
 	case "script-bootstrap":
-		exitOnError(scripting.GenerateRegisterFunctions(packageName, globals))
+		exitOnError(scripting.GenerateRegisterFunctions(packageName, global))
 		os.Exit(0)
 	case "event-init-decoders":
 		if packageName == "" {
