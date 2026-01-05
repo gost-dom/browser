@@ -32,12 +32,13 @@ func exposedTo(intf idl.Interface, globals []string) bool {
 // "fetch" to be installed on "WindowOrWorkerGlobalScope". This means in a
 // window scope, the operation belongs to the Window interface. In a Worker
 // scope, the operation belongs on the Worker interface.
-func classNameForMixin(globals []string, data model.ESConstructorData) string {
+func classNameForMixin(global idl.Interface, data model.ESConstructorData) string {
 	for intf := range idlspec.IdlInterfaces() {
-		fmt.Println("Trying interface", intf.Name)
-		for _, incl := range intf.Includes {
-			if exposedTo(intf, globals) && incl.Name == data.Name() {
-				return intf.Name
+		if exposedTo(intf, global.Global) {
+			for _, incl := range intf.Includes {
+				if incl.Name == data.Name() {
+					return intf.Name
+				}
 			}
 		}
 	}
@@ -79,7 +80,7 @@ func (c IntfComparer) compare(a, b model.ESConstructorData) int {
 
 func IsGlobal(intf idl.Interface) bool { return len(intf.Global) > 0 }
 
-func Write(api string, globals []string, specs configuration.WebIdlConfigurations) error {
+func Write(api string, global idl.Interface, specs configuration.WebIdlConfigurations) error {
 	idlSpec, err := idl.Load(api)
 	if err != nil {
 		return err
@@ -124,7 +125,7 @@ func Write(api string, globals []string, specs configuration.WebIdlConfiguration
 			)
 		}
 		if typeInfo.InstallPartial() {
-			name := classNameForMixin(globals, typeInfo)
+			name := classNameForMixin(global, typeInfo)
 			instance := g.Id(internal.LowerCaseFirstLetter(name))
 			ok := g.Id("ok")
 			statements.Append(
@@ -151,7 +152,14 @@ func Write(api string, globals []string, specs configuration.WebIdlConfiguration
 	return writeGenerator(writer, packagenames.ScriptPackageName(api), bootstrap)
 }
 
-func GenerateRegisterFunctions(spec string, globals []string) error {
+func GenerateRegisterFunctions(spec string, global string) error {
+	globalIntf, ok := idlspec.Interface(global)
+	if !ok {
+		return fmt.Errorf("Global interface not found: %s", global)
+	}
+	if len(globalIntf.Global) == 0 {
+		return fmt.Errorf("Specified name has no exposed globals")
+	}
 	specs := configuration.CreateV8SpecsForSpec(spec)
-	return Write(spec, globals, specs)
+	return Write(spec, globalIntf, specs)
 }

@@ -52,6 +52,11 @@ func IdlInterfaces() iter.Seq[idl.Interface] {
 	}
 }
 
+func Interface(name string) (idl.Interface, bool) {
+	res, ok := names[name]
+	return res.intf, ok
+}
+
 func init() {
 	specs = make(map[string]spec)
 	names = make(map[string]intf)
