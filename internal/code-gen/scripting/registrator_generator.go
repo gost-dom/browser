@@ -18,23 +18,14 @@ import (
 	"github.com/gost-dom/webref/idl"
 )
 
-func exposedTo(intf idl.Interface, globals []string) bool {
-	for _, global := range globals {
-		if slices.Contains(intf.Exposed, global) {
-			return true
-		}
-	}
-	return false
-}
-
 // classNameForMixin is necessary in order to install the operations and
 // attributes specified on a mixin. E.g., module "fetch" defines operation
 // "fetch" to be installed on "WindowOrWorkerGlobalScope". This means in a
 // window scope, the operation belongs to the Window interface. In a Worker
 // scope, the operation belongs on the Worker interface.
-func classNameForMixin(global idl.Interface, data model.ESConstructorData) string {
+func classNameForMixin(r realm, data model.ESConstructorData) string {
 	for intf := range idlspec.IdlInterfaces() {
-		if exposedTo(intf, global.Global) {
+		if r.exposes(intf) {
 			for _, incl := range intf.Includes {
 				if incl.Name == data.Name() {
 					return intf.Name
@@ -80,7 +71,7 @@ func (c IntfComparer) compare(a, b model.ESConstructorData) int {
 
 func IsGlobal(intf idl.Interface) bool { return len(intf.Global) > 0 }
 
-func Write(api string, global idl.Interface, specs configuration.WebIdlConfigurations) error {
+func Write(api string, realm realm, specs configuration.WebIdlConfigurations) error {
 	idlSpec, err := idl.Load(api)
 	if err != nil {
 		return err
@@ -125,7 +116,7 @@ func Write(api string, global idl.Interface, specs configuration.WebIdlConfigura
 			)
 		}
 		if typeInfo.InstallPartial() {
-			name := classNameForMixin(global, typeInfo)
+			name := classNameForMixin(realm, typeInfo)
 			instance := g.Id(internal.LowerCaseFirstLetter(name))
 			ok := g.Id("ok")
 			statements.Append(
@@ -161,5 +152,5 @@ func GenerateRegisterFunctions(spec string, global string) error {
 		return fmt.Errorf("Specified name has no exposed globals")
 	}
 	specs := configuration.CreateV8SpecsForSpec(spec)
-	return Write(spec, globalIntf, specs)
+	return Write(spec, realm{globalIntf}, specs)
 }
