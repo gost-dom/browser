@@ -3,6 +3,10 @@ package fetch
 import "github.com/gost-dom/browser/scripting/internal/js"
 
 func ConfigureScriptEngine[T any](e js.ScriptEngine[T]) {
-	e.CreateFunction("fetch", Fetch)
 	Bootstrap(e)
+	window, ok := e.Class("Window")
+	if !ok {
+		panic("Window not installed")
+	}
+	InitializeWindowOrWorkerGlobalScope(window)
 }

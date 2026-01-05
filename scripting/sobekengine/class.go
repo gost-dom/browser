@@ -230,7 +230,8 @@ func newGlobalObject(c *scriptContext,
 	name string) *globalObjectClass {
 	return &globalObjectClass{
 		class{
-			ctx: c, name: name,
+			ctx:           c,
+			name:          name,
 			cb:            js.IllegalConstructor[jsTypeParam],
 			instanceAttrs: make(map[string]attributeHandler),
 		},

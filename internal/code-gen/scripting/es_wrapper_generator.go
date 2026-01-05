@@ -11,6 +11,26 @@ import (
 	"github.com/gost-dom/webref/idl"
 )
 
+func getIntf(
+	spec idl.Spec,
+	interfaceConfig *configuration.WebIDLConfig,
+) (res idl.TypeSpec, err error) {
+	name := interfaceConfig.TypeName
+	if !interfaceConfig.Partial {
+		idlName, ok := spec.GetType(name)
+		if ok {
+			return idlName, nil
+		}
+		err = (fmt.Errorf("cannot find type: %s", name))
+	} else {
+		res.Spec = &spec
+		res.IdlInterface.Name = name
+		res.IdlInterface.Partial = true
+		res.IdlInterface = res.IdlInterface.MergePartials(spec)
+	}
+	return
+}
+
 // createData combines the specific configuration with the corresponding web IDL
 // specification, containins information about the intention about _what_ to
 // generate, which methods, etc.
@@ -19,9 +39,8 @@ func createData(
 	interfaceConfig *configuration.WebIDLConfig,
 	extra []idl.Spec,
 ) (res model.ESConstructorData, err error) {
-	idlName, ok := spec.GetType(interfaceConfig.TypeName)
-	if !ok {
-		err = (fmt.Errorf("cannot find type: %s", interfaceConfig.TypeName))
+	var idlName idl.TypeSpec
+	if idlName, err = getIntf(spec, interfaceConfig); err != nil {
 		return
 	}
 	idlInterface := idlName.IdlInterface

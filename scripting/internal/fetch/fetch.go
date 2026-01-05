@@ -13,7 +13,7 @@ func encodeResponse[T any](info js.Scope[T], res *fetch.Response) (js.Value[T], 
 	return info.Constructor("Response").NewInstance(res)
 }
 
-func Fetch[T any](info js.CallbackContext[T]) (js.Value[T], error) {
+func WindowOrWorkerGlobalScope_fetch[T any](info js.CallbackContext[T]) (js.Value[T], error) {
 	win, err := codec.GetWindow(info)
 	if err != nil {
 		return nil, err

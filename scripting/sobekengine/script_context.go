@@ -218,7 +218,6 @@ func (c *scriptContext) ConfigureGlobalScope(
 	)
 	cls.prototype = constructor.Get("prototype").(*sobek.Object)
 	c.vm.Set(name, constructor)
-	// c.classes[name] = cls
 
 	if extends != nil {
 		if superclass, ok := extends.(*class); ok {
@@ -232,6 +231,9 @@ func (c *scriptContext) ConfigureGlobalScope(
 }
 
 func (c *scriptContext) Class(name string) (js.Class[jsTypeParam], bool) {
+	if c.global != nil && c.global.name == name {
+		return c.global, true
+	}
 	class, ok := c.classes[name]
 	return class, ok
 }

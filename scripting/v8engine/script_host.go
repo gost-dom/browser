@@ -233,6 +233,9 @@ func (h *V8ScriptHost) ConfigureGlobalScope(name string, extends jsClass) jsClas
 }
 
 func (h *V8ScriptHost) Class(name string) (js.Class[jsTypeParam], bool) {
+	if h.global != nil && h.global.v8Class.name == name {
+		return h.global, true
+	}
 	class, ok := h.globals.namedGlobals[name]
 	return class, ok
 }

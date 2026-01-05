@@ -53,8 +53,8 @@ func CreateWindowsConfigurer[T any]() *ScriptEngineConfigurer[T] {
 	result.AddConfigurerFunc(configureNatives)
 
 	result.AddConfigurerFunc(dom.ConfigureScriptEngine)
-	result.AddConfigurerFunc(fetch.ConfigureScriptEngine)
 	result.AddConfigurerFunc(html.ConfigureScriptEngine)
+	result.AddConfigurerFunc(fetch.ConfigureScriptEngine)
 	result.AddConfigurerFunc(svg.ConfigureScriptEngine)
 	result.AddConfigurerFunc(mathml.ConfigureScriptEngine)
 	result.AddConfigurerFunc(xhr.ConfigureScriptEngine)
