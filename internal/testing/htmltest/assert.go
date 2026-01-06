@@ -3,25 +3,31 @@ package htmltest
 import (
 	"fmt"
 	"testing"
-
-	"github.com/gost-dom/browser/html"
 )
 
+// Evaler is the interface for the single method Eval that executes JavaScript
+// and returns the evaluated value.
+type Evaler interface {
+	Eval(string) (any, error)
+}
+
+// JsAssert helps write tests for the state of values in the JavaScript realm.
 type JsAssert struct {
 	t   testing.TB
-	win html.Window
+	win Evaler
 }
 
 func (a JsAssert) mustEval(script string) any {
 	a.t.Helper()
 	res, err := a.win.Eval(script)
 	if err != nil {
-		a.t.Errorf("Script error: %s", script)
-		a.t.Fatal(err)
+		a.t.Fatalf("Script error: %v. Running %s", err, script)
 	}
 	return res
 }
 
+// Verifies that the target object is an instance of the expected class. Both
+// target and expected must be valid identifiers in global JavaScript scope.
 func (a JsAssert) InstanceOf(target, expected string) {
 	ok := a.mustEval(fmt.Sprintf("%s instanceof %s", target, expected)).(bool)
 	if !ok {

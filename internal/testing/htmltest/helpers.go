@@ -76,6 +76,8 @@ func (win WindowHelper) MustEval(script string) any {
 	return res
 }
 
+// Return a [JsAssert] value that can be used to verify the state of JavaScript
+// values.
 func (h WindowHelper) Assert() JsAssert { return JsAssert{h.t, h.Window} }
 
 func (win WindowHelper) HTMLDocument() HTMLDocumentHelper {
