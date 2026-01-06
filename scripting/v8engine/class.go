@@ -12,12 +12,12 @@ var _ jsClass = &v8Class{}
 var _ jsClass = &v8GlobalClass{}
 
 type v8Class struct {
-	host           *V8ScriptHost
-	ft             *v8go.FunctionTemplate
-	proto          *v8go.ObjectTemplate
-	inst           *v8go.ObjectTemplate
-	parent         *v8Class
-	instanceAtttrs []attribute
+	host          *V8ScriptHost
+	ft            *v8go.FunctionTemplate
+	proto         *v8go.ObjectTemplate
+	inst          *v8go.ObjectTemplate
+	parent        *v8Class
+	instanceAttrs []attribute
 
 	name string
 }
@@ -67,7 +67,7 @@ func newV8Class(
 		// But in practice, this doesn't happen. HTMLDocument should have a
 		// "location" own property, which is defined on Document. But without
 		// this workaround, that doesn't work.
-		for _, attr := range parent.instanceAtttrs {
+		for _, attr := range parent.instanceAttrs {
 			v8Getter := wrapV8Callback(host, attr.getter.WithLog(name, fmt.Sprintf("%s get", name)))
 			v8Setter := wrapV8Callback(host, attr.setter.WithLog(name, fmt.Sprintf("%s set", name)))
 			result.inst.SetAccessorProperty(attr.name, v8Getter, v8Setter, v8go.None)
@@ -105,7 +105,7 @@ func (c *v8Class) CreateAttribute(
 	v8Setter := wrapV8Callback(c.host, setter.WithLog(c.name, fmt.Sprintf("%s set", name)))
 	if o.InstanceMember {
 		c.inst.SetAccessorProperty(name, v8Getter, v8Setter, v8go.None)
-		c.instanceAtttrs = append(c.instanceAtttrs, attribute{
+		c.instanceAttrs = append(c.instanceAttrs, attribute{
 			name:   name,
 			getter: getter,
 			setter: setter,
