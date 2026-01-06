@@ -34,7 +34,6 @@ func InitializeElement[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("getElementsByClassName", Element_getElementsByClassName)
 	jsClass.CreateOperation("insertAdjacentElement", Element_insertAdjacentElement)
 	jsClass.CreateOperation("insertAdjacentText", Element_insertAdjacentText)
-	jsClass.CreateOperation("insertAdjacentHTML", Element_insertAdjacentHTML)
 	jsClass.CreateAttribute("namespaceURI", Element_namespaceURI, nil)
 	jsClass.CreateAttribute("prefix", Element_prefix, nil)
 	jsClass.CreateAttribute("localName", Element_localName, nil)
@@ -45,8 +44,6 @@ func InitializeElement[T any](jsClass js.Class[T]) {
 	jsClass.CreateAttribute("slot", Element_slot, Element_setSlot)
 	jsClass.CreateAttribute("attributes", Element_attributes, nil)
 	jsClass.CreateAttribute("shadowRoot", Element_shadowRoot, nil)
-	jsClass.CreateAttribute("innerHTML", Element_innerHTML, Element_setInnerHTML)
-	jsClass.CreateAttribute("outerHTML", Element_outerHTML, Element_setOuterHTML)
 	InitializeParentNode(jsClass)
 	InitializeNonDocumentTypeChildNode(jsClass)
 	InitializeChildNode(jsClass)
@@ -255,21 +252,6 @@ func Element_insertAdjacentText[T any](cbCtx js.CallbackContext[T]) (res js.Valu
 	return nil, errCall
 }
 
-func Element_insertAdjacentHTML[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	instance, errInst := js.As[dom.Element](cbCtx.Instance())
-	if errInst != nil {
-		return nil, errInst
-	}
-	position, errArg1 := js.ConsumeArgument(cbCtx, "position", nil, codec.DecodeString)
-	string, errArg2 := js.ConsumeArgument(cbCtx, "string", nil, codec.DecodeString)
-	err = gosterror.First(errArg1, errArg2)
-	if err != nil {
-		return nil, err
-	}
-	errCall := instance.InsertAdjacentHTML(position, string)
-	return nil, errCall
-}
-
 func Element_namespaceURI[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_namespaceURI: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
@@ -352,42 +334,4 @@ func Element_attributes[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], er
 
 func Element_shadowRoot[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_shadowRoot: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
-}
-
-func Element_innerHTML[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	instance, err := js.As[dom.Element](cbCtx.Instance())
-	if err != nil {
-		return nil, err
-	}
-	result := instance.InnerHTML()
-	return codec.EncodeString(cbCtx, result)
-}
-
-func Element_setInnerHTML[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	instance, err0 := js.As[dom.Element](cbCtx.Instance())
-	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
-	err = gosterror.First(err0, err1)
-	if err != nil {
-		return nil, err
-	}
-	return nil, instance.SetInnerHTML(val)
-}
-
-func Element_outerHTML[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	instance, err := js.As[dom.Element](cbCtx.Instance())
-	if err != nil {
-		return nil, err
-	}
-	result := instance.OuterHTML()
-	return codec.EncodeString(cbCtx, result)
-}
-
-func Element_setOuterHTML[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	instance, err0 := js.As[dom.Element](cbCtx.Instance())
-	val, err1 := js.ParseSetterArg(cbCtx, codec.DecodeString)
-	err = gosterror.First(err0, err1)
-	if err != nil {
-		return nil, err
-	}
-	return nil, instance.SetOuterHTML(val)
 }

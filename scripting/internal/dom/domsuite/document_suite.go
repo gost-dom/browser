@@ -34,6 +34,7 @@ func testDocument(t *testing.T, e html.ScriptEngine) {
 	t.Run("location", func(t *testing.T) {
 		win := browsertest.InitWindow(t, e)
 		win.MustRun(`
+			gost.assertInstanceOf(document, Document)
 			gost.assertInstanceOf(document.location, Location)
 			gost.assertEqual(document.location, window.location)
 		`)
