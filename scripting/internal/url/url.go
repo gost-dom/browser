@@ -94,8 +94,3 @@ func encodeSequenceString_[T any](
 	}
 	return cbCtx.NewArray(vs...), nil
 }
-
-func URLSearchParamsCustomInitializer[T any](class js.Class[T]) {
-	it := js.NewIterator2(codec.EncodeString[T], codec.EncodeString[T])
-	it.InstallPrototype(class)
-}

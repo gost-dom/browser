@@ -20,7 +20,7 @@ func InitializeDOMTokenList[T any](jsClass js.Class[T]) {
 	jsClass.CreateAttribute("length", DOMTokenList_length, nil)
 	jsClass.CreateAttribute("value", DOMTokenList_value, DOMTokenList_setValue)
 	jsClass.CreateOperation("toString", DOMTokenList_value)
-	DOMTokenListCustomInitializer(jsClass)
+	js.InstallIterator(jsClass, codec.EncodeString)
 }
 
 func DOMTokenList_item[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

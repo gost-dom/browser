@@ -2,6 +2,7 @@ package scripting
 
 import (
 	"fmt"
+	"log/slog"
 
 	"github.com/dave/jennifer/jen"
 	"github.com/gost-dom/code-gen/scripting/model"
@@ -39,6 +40,7 @@ func (i PrototypeInitializer) CreatePrototypeInitializerBody() g.Generator {
 	return g.StatementList(
 		i.InstallFunctionHandlers(class),
 		i.InstallAttributeHandlers(class),
+		i.InstallIterator(class),
 		renderIf(i.Data.RunCustomCode,
 			g.NewValue(fmt.Sprintf("%sCustomInitializer", i.IdlName())).Call(class),
 		),
@@ -81,6 +83,31 @@ func (i PrototypeInitializer) InstallAttributeHandlers(class class) g.Generator 
 		stmts.Append(i.InstallAttributeHandler(op, class))
 	}
 	return stmts
+}
+
+func (i PrototypeInitializer) InstallIterator(class class) g.Generator {
+	if i.Data.Spec.SkipIterable {
+		return g.Noop
+	}
+	types := i.Data.IdlInterface.IterableTypes
+	switch len(types) {
+	case 0:
+		return g.Noop
+	case 1:
+		return jsInstallIterator.Call(class, model.EncoderForIdlType(types[0]))
+	case 2:
+		return jsInstallIterator2.Call(
+			class,
+			model.EncoderForIdlType(types[0]),
+			model.EncoderForIdlType(types[1]),
+		)
+	case 3:
+		slog.Warn(
+			"Bad IDL data, more than two iterable types",
+			slog.String("Interface", i.IdlName()),
+		)
+	}
+	return g.Noop
 }
 
 func (i PrototypeInitializer) attributeOptions(attr model.ESAttribute) []g.Generator {
