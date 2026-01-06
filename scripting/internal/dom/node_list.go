@@ -6,13 +6,11 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func NodeListCustomInitializer[T any](class js.Class[T]) {
-	nodeListIterator := js.NewIterator(
-		func(s js.Scope[T], instance dom.Node) (js.Value[T], error) {
-			return codec.EncodeEntity(s, instance)
-		})
-	nodeListIterator.InstallPrototype(class)
+func encodeNode[T any](s js.Scope[T], n dom.Node) (js.Value[T], error) {
+	return codec.EncodeEntity(s, n)
+}
 
+func NodeListCustomInitializer[T any](class js.Class[T]) {
 	class.CreateIndexedHandler(
 		js.WithIndexedGetterCallback(
 			func(info js.CallbackScope[T], index int) (js.Value[T], error) {

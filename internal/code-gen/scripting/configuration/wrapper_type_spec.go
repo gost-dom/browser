@@ -26,7 +26,7 @@ type WebIDLConfig struct {
 	TypeName            string
 	RunCustomCode       bool
 	SkipConstructor     bool
-	IncludeIterable     bool
+	SkipIterable        bool
 	IncludeIncludes     bool
 	Customization       map[string]*ESMethodWrapper
 	OverrideWrappedType *GoType

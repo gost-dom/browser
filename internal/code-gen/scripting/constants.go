@@ -20,6 +20,8 @@ var (
 	jsThisLogAttr        = g.NewValuePackage("ThisLogAttr", packagenames.JS)
 	jsArgsLogAttr        = g.NewValuePackage("ArgsLogAttr", packagenames.JS)
 	jsLogAttr            = g.NewValuePackage("LogAttr", packagenames.JS)
+	jsInstallIterator    = g.NewValuePackage("InstallIterator", packagenames.JS)
+	jsInstallIterator2   = g.NewValuePackage("InstallIterator2", packagenames.JS)
 
 	logErrAttr = g.NewValuePackage("ErrAttr", packagenames.Log)
 

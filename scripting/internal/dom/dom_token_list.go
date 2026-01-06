@@ -8,10 +8,6 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func DOMTokenListCustomInitializer[T any](class js.Class[T]) {
-	js.InstallIterator(class, codec.EncodeString[T])
-}
-
 func DOMTokenList_toggle[T any](args js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, errInstance := js.As[dom.DOMTokenList](args.Instance())
 	token, err0 := js.ConsumeArgument(args, "toggle", nil, codec.DecodeString)

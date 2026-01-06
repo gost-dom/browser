@@ -84,8 +84,3 @@ func parseHeaderIterator2[T any](
 	}
 	return
 }
-
-func HeadersCustomInitializer[T any](jsClass js.Class[T]) {
-	iterator := js.NewIterator2(codec.EncodeByteString[T], codec.EncodeByteString[T])
-	iterator.InstallPrototype(jsClass)
-}
