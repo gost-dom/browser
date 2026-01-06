@@ -51,6 +51,7 @@ type Components interface {
 	// Methods are kept unexported to allow refactoring
 	component(key any) (val any, found bool)
 	setComponent(key any, val any)
+	entity() *Entity
 }
 
 type componentEntry struct {
@@ -78,6 +79,17 @@ func parseKey(key any) reflect.Value {
 	return v
 }
 
+func Nil(e Components) bool {
+	if e == nil {
+		return true
+	}
+	if e.entity() == nil {
+		return true
+	}
+	return false
+}
+
+func (e *Entity) entity() *Entity { return e }
 func (e *Entity) component(key any) (res any, ok bool) {
 	res, _, ok = e.find(parseKey(key))
 	return
