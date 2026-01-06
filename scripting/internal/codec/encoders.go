@@ -24,8 +24,8 @@ func getJsValue[T any](c entity.Components) (v js.Value[T]) {
 // EncodeEntity gets the JavaScript object that wraps a specific Go object. If
 // a wrapper already has been created, that wrapper is returned; otherwise a new
 // object is created with the correct prototype configured.
-func EncodeEntity[T any](s js.Scope[T], e entity.Components) (js.Value[T], error) {
-	if e == nil {
+func EncodeEntity[T any, U entity.Components](s js.Scope[T], e U) (js.Value[T], error) {
+	if entity.Nil(e) {
 		return s.Null(), nil
 	}
 
