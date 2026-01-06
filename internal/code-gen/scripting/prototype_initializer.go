@@ -16,32 +16,29 @@ type PrototypeInitializer struct {
 }
 
 func (i PrototypeInitializer) Generate() *jen.Statement {
-	receiver := g.NewValue("wrapper")
 	init := PrototypeInitializer{i.WrapperStruct}
 	return g.StatementList(
 		g.Raw(jen.Func().
 			Add(jen.Id(i.InitializerName())).
 			Add(jen.Index(jen.Id("T").Id("any"))).
 			Params(jen.Id("jsClass").Add(jsClass.Generate())).
-			Block(init.Body(receiver).Generate()),
+			Block(init.Body().Generate()),
 		),
 	).Generate()
 }
 
-func (i PrototypeInitializer) Body(receiver g.Value) g.Generator {
+func (i PrototypeInitializer) Body() g.Generator {
 	return g.StatementList(
-		i.CreatePrototypeInitializerBody(receiver),
+		i.CreatePrototypeInitializerBody(),
 		i.MixinsGenerator(),
 	)
 }
 
-func (i PrototypeInitializer) CreatePrototypeInitializerBody(
-	receiver g.Value,
-) g.Generator {
+func (i PrototypeInitializer) CreatePrototypeInitializerBody() g.Generator {
 	class := class{g.NewValue("jsClass")}
 	return g.StatementList(
-		i.InstallFunctionHandlers(receiver, class),
-		i.InstallAttributeHandlers(receiver, class),
+		i.InstallFunctionHandlers(class),
+		i.InstallAttributeHandlers(class),
 		renderIf(i.Data.RunCustomCode,
 			g.NewValue(fmt.Sprintf("%sCustomInitializer", i.IdlName())).Call(class),
 		),
@@ -63,9 +60,7 @@ func (i PrototypeInitializer) MixinsGenerator() g.Generator {
 	}
 	return result
 }
-func (i PrototypeInitializer) InstallFunctionHandlers(
-	receiver g.Value, class class,
-) g.Generator {
+func (i PrototypeInitializer) InstallFunctionHandlers(class class) g.Generator {
 	renderedAny := false
 	stmts := g.StatementList()
 	for op := range i.Data.WrapperFunctionsToInstall() {
@@ -80,13 +75,10 @@ func (i PrototypeInitializer) InstallFunctionHandlers(
 	}
 }
 
-func (i PrototypeInitializer) InstallAttributeHandlers(
-	receiver g.Value,
-	class class,
-) g.Generator {
+func (i PrototypeInitializer) InstallAttributeHandlers(class class) g.Generator {
 	stmts := g.StatementList()
 	for op := range i.Data.AttributesToInstall() {
-		stmts.Append(i.InstallAttributeHandler(op, receiver, class))
+		stmts.Append(i.InstallAttributeHandler(op, class))
 	}
 	return stmts
 }
@@ -102,7 +94,6 @@ func (i PrototypeInitializer) attributeOptions(attr model.ESAttribute) []g.Gener
 
 func (i PrototypeInitializer) InstallAttributeHandler(
 	op model.ESAttribute,
-	receiver g.Value,
 	class class,
 ) g.Generator {
 	getter := op.Getter
