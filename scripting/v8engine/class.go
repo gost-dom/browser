@@ -41,8 +41,16 @@ func newV8Class(
 	}
 	result.inst.SetInternalFieldCount(1)
 	for parent != nil {
-		// V8 docs says that inherited classes _does_ get the instance
-		// attributes of parent classes. But ...
+		// Set accessor properties of inherited classes on the instance
+		// template.
+		//
+		// According to the V8 docs, this shouldn't have been necessary;
+		// instances of inherited classes should also contain attributes defined
+		// on the InstanceTemplate of the parent classes.
+		//
+		// But in practice, this doesn't happen. HTMLDocument should have a
+		// "location" own property, which is defined on Document. But without
+		// this workaround, that doesn't work.
 		for _, attr := range parent.instanceAtttrs {
 			v8Getter := wrapV8Callback(host, attr.getter.WithLog(name, fmt.Sprintf("%s get", name)))
 			v8Setter := wrapV8Callback(host, attr.setter.WithLog(name, fmt.Sprintf("%s set", name)))
