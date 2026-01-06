@@ -40,6 +40,9 @@ func (cb CallbackMethods) ConstructorCallback() g.Generator {
 }
 
 func (cb CallbackMethods) ConstructorCallbackBody() g.Generator {
+	if cb.Data.Constructor == nil {
+		return g.Noop
+	}
 	if cb.Data.IsEventType() {
 		return cb.EventConstructorCallbackBody()
 	}
