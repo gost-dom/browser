@@ -22,6 +22,13 @@ type ValueResolver[T, U any] func(s Scope[U], value T) (Value[U], error)
 func InstallIterator[T, U any](class Class[U], entityLookup ValueResolver[T, U]) {
 	NewIterator(entityLookup).InstallPrototype(class)
 }
+func InstallIterator2[K, V, U any](
+	class Class[U],
+	keyLookup ValueResolver[K, U],
+	valueLookup ValueResolver[V, U],
+) {
+	NewIterator2(keyLookup, valueLookup).InstallPrototype(class)
+}
 
 func NewIterator[T, U any](entityLookup ValueResolver[T, U]) Iterator[T, U] {
 	return Iterator[T, U]{entityLookup}

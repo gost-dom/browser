@@ -7,13 +7,13 @@ import (
 )
 
 func FormDataCustomInitializer[T any](class js.Class[T]) {
-	iterator := js.NewIterator2(
+	js.InstallIterator2(
+		class,
 		codec.EncodeString,
 		func(s js.Scope[T], v html.FormDataValue) (js.Value[T], error) {
 			return codec.EncodeString(s, string(v))
 		},
 	)
-	iterator.InstallPrototype(class)
 }
 
 func CreateFormData[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
