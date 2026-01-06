@@ -11,18 +11,35 @@ var _ jsClass = &v8Class{}
 var _ jsClass = &v8GlobalClass{}
 
 type v8Class struct {
-	host  *V8ScriptHost
-	ft    *v8go.FunctionTemplate
-	proto *v8go.ObjectTemplate
-	inst  *v8go.ObjectTemplate
+	host   *V8ScriptHost
+	ft     *v8go.FunctionTemplate
+	proto  *v8go.ObjectTemplate
+	inst   *v8go.ObjectTemplate
+	parent *v8Class
 
 	name string
 }
 
-func newV8Class(host *V8ScriptHost, name string, ft *v8go.FunctionTemplate) v8Class {
-	result := v8Class{host, ft, ft.PrototypeTemplate(), ft.InstanceTemplate(), name}
+func newV8Class(
+	host *V8ScriptHost,
+	name string,
+	cb js.CallbackFunc[jsTypeParam],
+	parent *v8Class,
+) *v8Class {
+	ft := wrapV8Callback(host, cb.WithLog(name, "Constructor"))
+	result := v8Class{
+		host:   host,
+		ft:     ft,
+		proto:  ft.PrototypeTemplate(),
+		inst:   ft.InstanceTemplate(),
+		name:   name,
+		parent: parent,
+	}
 	result.inst.SetInternalFieldCount(1)
-	return result
+	if parent != nil {
+		ft.Inherit(parent.ft)
+	}
+	return &result
 }
 
 func (c v8Class) CreateIteratorMethod(cb js.CallbackFunc[jsTypeParam]) {
@@ -74,11 +91,16 @@ func (c v8Class) CreateNamedHandler(opts ...js.NamedHandlerOption[jsTypeParam]) 
 /* -------- v8GlobalClass -------- */
 
 type v8GlobalClass struct {
-	v8Class v8Class
+	v8Class *v8Class
 }
 
-func newV8GlobalClass(host *V8ScriptHost, name string, ft *v8go.FunctionTemplate) *v8GlobalClass {
-	return &v8GlobalClass{newV8Class(host, name, ft)}
+func newV8GlobalClass(
+	host *V8ScriptHost,
+	name string,
+	cb js.CallbackFunc[jsTypeParam],
+	parent *v8Class,
+) *v8GlobalClass {
+	return &v8GlobalClass{newV8Class(host, name, cb, parent)}
 }
 
 func (c v8GlobalClass) CreateOperation(name string, cb js.CallbackFunc[jsTypeParam]) {

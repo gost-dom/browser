@@ -18,7 +18,7 @@ import (
 )
 
 type globals struct {
-	namedGlobals map[string]v8Class
+	namedGlobals map[string]*v8Class
 }
 
 type hostOptions struct {
@@ -220,22 +220,23 @@ func (host *V8ScriptHost) CreateClass(
 	extends js.Class[jsTypeParam],
 	callback js.CallbackFunc[jsTypeParam],
 ) js.Class[jsTypeParam] {
-	ft := wrapV8Callback(host, callback.WithLog(name, "Constructor"))
-	result := newV8Class(host, name, ft)
+	var parent *v8Class
 	if extends != nil {
-		ft.Inherit(extends.(v8Class).ft)
+		parent = extends.(*v8Class)
 	}
-	host.windowTemplate.Set(name, ft)
+	result := newV8Class(host, name, callback, parent)
+	host.windowTemplate.Set(name, result.ft)
 	host.globals.namedGlobals[name] = result
 	return result
 }
 
-func (h *V8ScriptHost) ConfigureGlobalScope(name string, parent jsClass) jsClass {
-	h.global = newV8GlobalClass(h, name, wrapV8Callback(h, js.IllegalConstructor[jsTypeParam]))
-	h.windowTemplate.Set(name, h.global.v8Class.ft)
-	if parent != nil {
-		h.global.v8Class.ft.Inherit(parent.(v8Class).ft)
+func (h *V8ScriptHost) ConfigureGlobalScope(name string, extends jsClass) jsClass {
+	var parent *v8Class
+	if extends != nil {
+		parent = extends.(*v8Class)
 	}
+	h.global = newV8GlobalClass(h, name, js.IllegalConstructor, parent)
+	h.windowTemplate.Set(name, h.global.v8Class.ft)
 	return h.global
 }
 

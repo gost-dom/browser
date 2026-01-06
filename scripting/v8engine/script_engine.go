@@ -68,7 +68,7 @@ func (e *v8ScriptEngine) createHost(config html.ScriptEngineOptions) *V8ScriptHo
 		iso:        v8go.NewIsolate(),
 		httpClient: config.HttpClient,
 		logger:     config.Logger,
-		globals:    globals{make(map[string]v8Class)},
+		globals:    globals{make(map[string]*v8Class)},
 		contexts:   make(map[*v8go.Context]*V8ScriptContext),
 	}
 	host.iso.SetPromiseRejectedCallback(host.promiseRejected)

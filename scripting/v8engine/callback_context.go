@@ -280,7 +280,7 @@ func wrapV8Callback(
 
 type v8Constructable struct {
 	ctx  *V8ScriptContext
-	ctor v8Class
+	ctor *v8Class
 }
 
 func (c v8Constructable) NewInstance(nativeValue any) (jsObject, error) {

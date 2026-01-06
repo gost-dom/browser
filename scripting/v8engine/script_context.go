@@ -102,7 +102,7 @@ func (c *V8ScriptContext) Constructor(name string) js.Constructor[jsTypeParam] {
 	return v8Constructable{c, c.getConstructor(name)}
 }
 
-func (c *V8ScriptContext) getConstructor(name string) v8Class {
+func (c *V8ScriptContext) getConstructor(name string) *v8Class {
 	prototype, ok := c.host.globals.namedGlobals[name]
 	if !ok {
 		panic(fmt.Sprintf("Unrecognised constructor name: %s. %s", name, constants.BUG_ISSUE_URL))
