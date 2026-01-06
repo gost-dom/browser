@@ -12,11 +12,16 @@ import (
 func testDocument(t *testing.T, e html.ScriptEngine) {
 	t.Run("Global scope configuration", func(t *testing.T) {
 		win := browsertest.InitWindow(t, e)
+
+		win.Assert().InstanceOf("document", "HTMLDocument")
+
 		win.MustRun(`
-			gost.assertInstanceOf(document, HTMLDocument)
-			const docPrototype = HTMLDocument.prototype
-			gost.assertEqual(docPrototype.constructor.name, "HTMLDocument")
+			const docPrototype = Document.prototype
+			const htmlDocPrototype = HTMLDocument.prototype
+			gost.assertEqual(docPrototype.constructor.name, "Document")
+			gost.assertEqual(htmlDocPrototype.constructor.name, "HTMLDocument")
 			gost.assertTrue(Object.getOwnPropertyNames(docPrototype).includes("createElement"))
+			gost.assertFalse(Object.getOwnPropertyNames(htmlDocPrototype).includes("createElement"))
 			gost.assertInheritsFrom(HTMLDocument, Document)
 			gost.assertEqual(Document.prototype.constructor.name, "Document")
 

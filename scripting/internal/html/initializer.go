@@ -24,7 +24,7 @@ func ConfigureScriptEngine[T any](e js.ScriptEngine[T]) {
 	// inheritance relationship between the two, which is modelled here.
 	//
 	// See also: https://developer.mozilla.org/en-US/docs/Web/API/HTMLDocument
-	dom.InitializeDocument(js.CreateClass(e, "HTMLDocument", "Document", js.IllegalConstructor))
+	js.CreateClass(e, "HTMLDocument", "Document", js.IllegalConstructor)
 	element, ok := e.Class("HTMLElement")
 	if !ok {
 		panic(fmt.Sprintf("HTMLElement not configured: %s", constants.BUG_ISSUE_URL))

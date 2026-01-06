@@ -12,6 +12,7 @@ type class struct {
 	prototype      *sobek.Object
 	indexedHandler *js.IndexedHandlerCallbacks[jsTypeParam]
 	instanceAttrs  map[string]attributeHandler
+	parent         *class
 
 	namedHandlerCallbacks *js.NamedHandlerCallbacks[jsTypeParam]
 }

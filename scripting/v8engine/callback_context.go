@@ -285,10 +285,11 @@ type v8Constructable struct {
 
 func (c v8Constructable) NewInstance(nativeValue any) (jsObject, error) {
 	val, err := c.ctor.ft.InstanceTemplate().NewInstance(c.ctx.v8ctx)
-	obj := newV8Object(c.ctx, val).(*v8Object)
-	if err == nil {
-		obj.SetNativeValue(nativeValue)
-		c.ctx.addDisposer(obj)
+	if err != nil {
+		return nil, fmt.Errorf("%s constructor: %w", c.ctor.name, err)
 	}
+	obj := newV8Object(c.ctx, val).(*v8Object)
+	obj.SetNativeValue(nativeValue)
+	c.ctx.addDisposer(obj)
 	return obj, err
 }

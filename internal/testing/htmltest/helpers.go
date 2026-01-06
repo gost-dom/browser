@@ -76,6 +76,8 @@ func (win WindowHelper) MustEval(script string) any {
 	return res
 }
 
+func (h WindowHelper) Assert() JsAssert { return JsAssert{h.t, h.Window} }
+
 func (win WindowHelper) HTMLDocument() HTMLDocumentHelper {
 	return NewHTMLDocumentHelper(win.t, win.Document())
 }

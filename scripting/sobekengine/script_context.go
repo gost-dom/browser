@@ -169,7 +169,17 @@ func (c *scriptContext) CreateClass(
 	name string, extends js.Class[jsTypeParam],
 	cb js.CallbackFunc[jsTypeParam],
 ) js.Class[jsTypeParam] {
-	cls := &class{ctx: c, cb: cb, name: name, instanceAttrs: make(map[string]attributeHandler)}
+	var parent *class
+	if extends != nil {
+		parent = extends.(*class)
+	}
+	cls := &class{
+		ctx:           c,
+		parent:        parent,
+		cb:            cb,
+		name:          name,
+		instanceAttrs: make(map[string]attributeHandler),
+	}
 	constructor := c.vm.ToValue(cls.constructorCb).(*sobek.Object)
 	constructor.DefineDataProperty(
 		"name",
@@ -243,10 +253,17 @@ func (class *class) constructorCb(call sobek.ConstructorCall, r *sobek.Runtime) 
 	return nil
 }
 
-func (class *class) installInstance(this **sobek.Object, native any) {
+func (class *class) installAttrs(this *sobek.Object) {
 	for _, v := range class.instanceAttrs {
-		v.install(*this)
+		v.install(this)
 	}
+	if class.parent != nil {
+		class.parent.installAttrs(this)
+	}
+}
+
+func (class *class) installInstance(this **sobek.Object, native any) {
+	class.installAttrs(*this)
 
 	if class.namedHandlerCallbacks != nil {
 		// This implementation is somewhat fragile if the object need own
