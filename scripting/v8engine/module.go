@@ -21,7 +21,7 @@ type V8Module struct {
 func (mod V8Module) Run() error {
 	p, err := mod.module.Evaluate(mod.ctx.v8ctx)
 	if err != nil {
-		err = fmt.Errorf("gost-com/v8engine: run module: %w", err)
+		err = fmt.Errorf("gost-dom/v8engine: run module: %w", err)
 	} else {
 		if _, err = awaitPromise(mod.ctx.v8ctx, p); err != nil {
 			err = fmt.Errorf("gost-dom/v8engine: awaiting module: %w", err)

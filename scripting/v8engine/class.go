@@ -31,7 +31,7 @@ func jsClassToV8Class(cls js.Class[jsTypeParam]) *v8Class {
 		// This shouldn't be possible, as js.Class[T] is created with an
 		// unexported type. So the only instances that the caller can have of
 		// that type, are values create by this package.
-		panic(fmt.Sprintf("gost-com/v8engine: jsClass not a *v8Class. %s", constants.BUG_ISSUE_URL))
+		panic(fmt.Sprintf("gost-dom/v8engine: jsClass not a *v8Class. %s", constants.BUG_ISSUE_URL))
 	}
 	return res
 }
