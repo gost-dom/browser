@@ -164,7 +164,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 	)
 
 	domTokenList := specs.Type("DOMTokenList")
-	domTokenList.RunCustomCode = true
 
 	// Toggle has custom implementation, because the force option has behaviour that
 	// doesn't make supermuch sense to have in the internal DOM implementation

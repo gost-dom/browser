@@ -11,6 +11,7 @@ import (
 func InitializeNodeList[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("item", NodeList_item)
 	jsClass.CreateAttribute("length", NodeList_length, nil)
+	js.InstallIterator(jsClass, encodeNode)
 	NodeListCustomInitializer(jsClass)
 }
 

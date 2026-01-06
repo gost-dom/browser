@@ -22,6 +22,5 @@ func configureXHRSpecs(xhrModule *WebAPIConfig) {
 	xhr.Method("upload").SetCustomImplementation()
 	xhr.Method("onreadystatechange").Ignore()
 
-	formData := xhrModule.Type("FormData")
-	formData.RunCustomCode = true
+	xhrModule.Type("FormData")
 }

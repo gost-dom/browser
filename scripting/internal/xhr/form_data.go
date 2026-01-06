@@ -6,16 +6,6 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func FormDataCustomInitializer[T any](class js.Class[T]) {
-	js.InstallIterator2(
-		class,
-		codec.EncodeString,
-		func(s js.Scope[T], v html.FormDataValue) (js.Value[T], error) {
-			return codec.EncodeString(s, string(v))
-		},
-	)
-}
-
 func CreateFormData[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	value := html.NewFormData()
 	return codec.EncodeConstructedValue(cbCtx, value)
@@ -49,7 +39,7 @@ func decodeFormDataValue[T any](
 }
 
 func encodeFormDataEntryValue[T any](
-	cbCtx js.CallbackContext[T],
+	cbCtx js.Scope[T],
 	val html.FormDataValue,
 ) (js.Value[T], error) {
 	return codec.EncodeString(cbCtx, string(val))

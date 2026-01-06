@@ -19,7 +19,7 @@ func InitializeURLSearchParams[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("sort", URLSearchParams_sort)
 	jsClass.CreateOperation("toString", URLSearchParams_toString)
 	jsClass.CreateAttribute("size", URLSearchParams_size, nil)
-	URLSearchParamsCustomInitializer(jsClass)
+	js.InstallIterator2(jsClass, codec.EncodeString, codec.EncodeString)
 }
 
 func URLSearchParams_append[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
