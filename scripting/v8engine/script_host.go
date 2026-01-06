@@ -220,22 +220,14 @@ func (host *V8ScriptHost) CreateClass(
 	extends js.Class[jsTypeParam],
 	callback js.CallbackFunc[jsTypeParam],
 ) js.Class[jsTypeParam] {
-	var parent *v8Class
-	if extends != nil {
-		parent = extends.(*v8Class)
-	}
-	result := newV8Class(host, name, callback, parent)
+	result := newV8Class(host, name, callback, extends)
 	host.windowTemplate.Set(name, result.ft)
 	host.globals.namedGlobals[name] = result
 	return result
 }
 
 func (h *V8ScriptHost) ConfigureGlobalScope(name string, extends jsClass) jsClass {
-	var parent *v8Class
-	if extends != nil {
-		parent = extends.(*v8Class)
-	}
-	h.global = newV8GlobalClass(h, name, js.IllegalConstructor, parent)
+	h.global = newV8GlobalClass(h, name, js.IllegalConstructor, extends)
 	h.windowTemplate.Set(name, h.global.v8Class.ft)
 	return h.global
 }

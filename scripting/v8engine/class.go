@@ -3,6 +3,7 @@ package v8engine
 import (
 	"fmt"
 
+	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
 )
@@ -21,13 +22,28 @@ type v8Class struct {
 	name string
 }
 
+func jsClassToV8Class(cls js.Class[jsTypeParam]) *v8Class {
+	if cls == nil {
+		return nil
+	}
+	res, ok := cls.(*v8Class)
+	if !ok {
+		// This shouldn't be possible, as js.Class[T] is created with an
+		// unexported type. So the only instances that the caller can have of
+		// that type, are values create by this package.
+		panic(fmt.Sprintf("gost-com/v8engine: jsClass not a *v8Class. %s", constants.BUG_ISSUE_URL))
+	}
+	return res
+}
+
 func newV8Class(
 	host *V8ScriptHost,
 	name string,
 	cb js.CallbackFunc[jsTypeParam],
-	parent *v8Class,
+	extends jsClass,
 ) *v8Class {
 	ft := wrapV8Callback(host, cb.WithLog(name, "Constructor"))
+	parent := jsClassToV8Class(extends)
 	if parent != nil {
 		ft.Inherit(parent.ft)
 	}
@@ -128,9 +144,9 @@ func newV8GlobalClass(
 	host *V8ScriptHost,
 	name string,
 	cb js.CallbackFunc[jsTypeParam],
-	parent *v8Class,
+	extends jsClass,
 ) *v8GlobalClass {
-	return &v8GlobalClass{newV8Class(host, name, cb, parent)}
+	return &v8GlobalClass{newV8Class(host, name, cb, extends)}
 }
 
 func (c v8GlobalClass) CreateOperation(name string, cb js.CallbackFunc[jsTypeParam]) {
