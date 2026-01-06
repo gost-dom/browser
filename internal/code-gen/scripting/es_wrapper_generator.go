@@ -2,6 +2,7 @@ package scripting
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/scripting/configuration"
@@ -23,10 +24,18 @@ func getIntf(
 		}
 		err = (fmt.Errorf("cannot find type: %s", name))
 	} else {
-		res.Spec = &spec
-		res.IdlInterface.Name = name
-		res.IdlInterface.Partial = true
-		res.IdlInterface = res.IdlInterface.MergePartials(spec)
+		partials := slices.Collect(spec.Partials(name))
+		if len(partials) == 0 {
+			err = fmt.Errorf("No partials: %s", name)
+		} else {
+			res.Spec = &spec
+			res.IdlInterface = partials[0]
+			for _, p := range partials[1:] {
+				res.IdlInterface.Attributes = append(res.IdlInterface.Attributes, p.Attributes...)
+				res.IdlInterface.Operations = append(res.IdlInterface.Operations, p.Operations...)
+			}
+			fmt.Println("Created partial: ", res.IdlInterface.Partial)
+		}
 	}
 	return
 }
@@ -37,7 +46,7 @@ func getIntf(
 func createData(
 	spec idl.Spec,
 	interfaceConfig *configuration.WebIDLConfig,
-	extra []idl.Spec,
+	_ []idl.Spec,
 ) (res model.ESConstructorData, err error) {
 	var idlName idl.TypeSpec
 	if idlName, err = getIntf(spec, interfaceConfig); err != nil {
@@ -48,11 +57,7 @@ func createData(
 		err = fmt.Errorf("createData error: %s = %s", idlInterface.Name, interfaceConfig.TypeName)
 		return
 	}
-	for _, e := range extra {
-		idlInterface = idlInterface.MergePartials(e)
-	}
-	specRules := customrules.GetSpecRules(interfaceConfig.DomSpec.Name)
-	intfRules := specRules[interfaceConfig.TypeName]
+	intfRules := customrules.GetInterfaceRule(interfaceConfig.TypeName)
 	return model.ESConstructorData{
 		Spec:          interfaceConfig,
 		CustomRule:    intfRules,

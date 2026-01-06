@@ -150,6 +150,17 @@ func makeAllRules() map[string]InterfaceRule {
 	return res
 }
 
+func GetInterfaceRule(name string) InterfaceRule {
+	for _, v := range rules {
+		for n, r := range v {
+			if n == name {
+				return r
+			}
+		}
+	}
+	return InterfaceRule{}
+}
+
 var AllRules = makeAllRules()
 
 func GetSpecRules(specName string) SpecRules {

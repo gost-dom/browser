@@ -75,6 +75,8 @@ func (d ESConstructorData) GetInternalPackage() string {
 		return pkg
 	}
 	switch d.Name() {
+	case "Element":
+		return packagenames.Dom
 	case "Event", "EventTarget":
 		return packagenames.Events
 	case "MutationObserver", "MutationRecord":

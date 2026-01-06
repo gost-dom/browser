@@ -15,6 +15,52 @@ func ConfigureHTMLSpecs(htmlSpecs *WebAPIConfig) {
 	global.Method("clearInterval").SetCustomImplementation()
 	global.Method("queueMicrotask").SetCustomImplementation()
 
+	document := htmlSpecs.Type("Document")
+	document.Partial = true
+	document.OverrideWrappedType = &GoType{
+		Package: packagenames.Html,
+		Name:    "HTMLDocument",
+	}
+	document.MarkMembersAsIgnored(
+		"fgColor", "linkColor", "vlinkColor", "alinkColor", "bgColor", "anchors", "applets", "all",
+		"readyState",
+
+		// HTML spec
+		"clear",
+		"captureEvents",
+		"releaseEvents",
+		"getElementsByName",
+		"open",
+		"close",
+		"write",
+		"writeln",
+		"hasFocus",
+		"execCommand",
+		"queryCommandEnabled", "queryCommandIndeterm",
+		"queryCommandState",
+		"queryCommandSupported",
+		"queryCommandValue",
+		"domain",
+		"referrer",
+		"cookie",
+		"dir",
+
+		// TODO: Use these
+		"title",
+		"images",
+		"embeds",
+		"plugins",
+		"forms",
+		"links",
+		"scripts",
+		"currentScript",
+		"defaultView",
+		"designMode",
+		"hidden",
+		"visibilityState",
+		"lastModified",
+	)
+
 	location := htmlSpecs.Type("Location")
 	location.Method("ancestorOrigins").SetNotImplemented()
 
@@ -41,6 +87,15 @@ func ConfigureHTMLSpecs(htmlSpecs *WebAPIConfig) {
 	anchor.Method("referrerPolicy").Ignore()
 	anchor.Method("relList").Ignore()
 	anchor.Method("text").Ignore()
+	element := htmlSpecs.Type("Element")
+	element.Partial = true
+	element.MarkMembersAsIgnored(
+		// HTMX fails if these exist but throw
+		"webkitMatchesSelector",
+
+		"setHTMLUnsafe",
+		"getHTML",
+	)
 }
 
 func configureWindow(htmlSpecs *WebAPIConfig) {

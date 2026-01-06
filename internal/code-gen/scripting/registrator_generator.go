@@ -116,7 +116,10 @@ func Write(api string, realm realm, specs configuration.WebIdlConfigurations) er
 			)
 		}
 		if typeInfo.InstallPartial() {
-			name := classNameForMixin(realm, typeInfo)
+			name := typeInfo.Name()
+			if typeInfo.IdlInterface.Mixin {
+				name = classNameForMixin(realm, typeInfo)
+			}
 			instance := g.Id(internal.LowerCaseFirstLetter(name))
 			ok := g.Id("ok")
 			statements.Append(
