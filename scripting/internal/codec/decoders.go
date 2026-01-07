@@ -96,6 +96,8 @@ func DecodeEvent[T any](
 	return nil
 }
 
+func DecodeAny[T any](_ js.Scope[T], v js.Value[T]) (any, error) { return v, nil }
+
 func DecodeEventInit[T any](
 	_ js.Scope[T],
 	val js.Value[T],

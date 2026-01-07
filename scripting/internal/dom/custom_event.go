@@ -5,8 +5,20 @@ import (
 
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/internal/constants"
+	"github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
+
+func decodeCustomEventInit[T any](
+	s js.Scope[T],
+	v js.Value[T],
+	init *event.CustomEventInit,
+) (err error) {
+	if obj, ok := v.AsObject(); ok {
+		init.Detail, err = obj.Get("detail")
+	}
+	return
+}
 
 func customEventConstructor[T any](info js.CallbackContext[T]) (js.Value[T], error) {
 	arg, ok := info.ConsumeArg()
@@ -34,8 +46,8 @@ func customEventConstructor[T any](info js.CallbackContext[T]) (js.Value[T], err
 	return nil, nil
 }
 
-func InitializeCustomEvent[T any](class js.Class[T]) {
-	class.CreateAttribute("detail", customEvent_detail, nil)
+func encodeAny[T any](s js.Scope[T], v any) (js.Value[T], error) {
+	return codec.EncodeAny(s, v)
 }
 
 func customEvent_detail[T any](info js.CallbackContext[T]) (js.Value[T], error) {

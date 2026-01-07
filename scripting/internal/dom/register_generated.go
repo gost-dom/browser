@@ -14,6 +14,7 @@ func Bootstrap[T any](e js.ScriptEngine[T]) {
 	InitializeMutationRecord(js.CreateClass(e, "MutationRecord", "", nil))
 	InitializeNamedNodeMap(js.CreateClass(e, "NamedNodeMap", "", nil))
 	InitializeNodeList(js.CreateClass(e, "NodeList", "", nil))
+	InitializeCustomEvent(js.CreateClass(e, "CustomEvent", "Event", CustomEventConstructor))
 	InitializeAbortSignal(js.CreateClass(e, "AbortSignal", "EventTarget", nil))
 	InitializeNode(js.CreateClass(e, "Node", "EventTarget", nil))
 	InitializeAttr(js.CreateClass(e, "Attr", "Node", nil))
