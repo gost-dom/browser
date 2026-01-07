@@ -1,6 +1,8 @@
 package codec
 
 import (
+	"fmt"
+
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/promise"
 	"github.com/gost-dom/browser/internal/types"
@@ -168,4 +170,14 @@ func EncodePromise[T, U any](
 			return nil, res.Err
 		}
 	})
+}
+
+func EncodeAny[T any](scope js.Scope[T], v any) (js.Value[T], error) {
+	if v == nil {
+		return nil, nil
+	}
+	if res, ok := v.(js.Value[T]); ok {
+		return res, nil
+	}
+	return nil, fmt.Errorf("gost-dom/codec: EncodeAny: %v: %T a JavaScript value", v, v)
 }

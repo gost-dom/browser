@@ -7,5 +7,4 @@ func ConfigureScriptEngine[T any](e js.ScriptEngine[T]) {
 	InitializeDomException(js.CreateClass(e, "DOMException", "", domExceptionConstructor))
 	Bootstrap(e)
 	js.CreateClass(e, "ShadowRoot", "DocumentFragment", shadowRootConstructor)
-	InitializeCustomEvent(js.CreateClass(e, "CustomEvent", "Event", customEventConstructor))
 }

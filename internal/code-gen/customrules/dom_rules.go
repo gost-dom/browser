@@ -48,6 +48,9 @@ var domRules = SpecRules{
 			Arguments: ArgumentRules{"options": {ZeroAsDefault: true, Variadic: true}},
 		},
 	}},
+	"CustomEvent": {
+		InterfacePackage: packagenames.Events,
+	},
 	"DOMTokenList": {Operations: OperationRules{
 		"add":     {HasError: true},
 		"remove":  {HasError: true},

@@ -62,10 +62,14 @@ func (cb CallbackMethods) MethodCallback(op model.Callback) g.Generator {
 	)
 }
 
-func EventInitDictType(name, domspec string) g.Generator {
+func EventInitDictType(data model.ESConstructorData, domspec string) g.Generator {
+	name := fmt.Sprintf("%sInit", data.IdlInterface.Name)
 	switch name {
 	case "EventInit":
 		return g.NewTypePackage(name, packagenames.Events)
+	}
+	if data.CustomRule.InterfacePackage != "" {
+		return g.NewTypePackage(name, string(data.CustomRule.InterfacePackage))
 	}
 	return g.NewTypePackage(name, packagenames.PackageName(domspec))
 }
@@ -81,7 +85,7 @@ func (m CallbackMethods) EventConstructorCallbackBody() g.Generator {
 	cons := *m.Data.Constructor
 
 	eventInitType := cons.Arguments[1].IdlArg.Type.Name // "KeyboardEventInit"
-	goEventInitType := EventInitDictType(eventInitType, m.SpecName())
+	goEventInitType := EventInitDictType(m.Data, m.SpecName())
 
 	// For the base event, we don't configure an EventInit
 	isBaseEvent := m.Data.Name() == "Event"
@@ -184,21 +188,19 @@ func (cb CallbackMethods) AttributeGetterCallbackBody(
 	attrRule := cb.Data.CustomRule.Attributes[attr.Name]
 	name := model.IdlNameToGoName(attr.Getter.Name)
 
-	eventInitType := fmt.Sprintf("%sInit", cb.IdlName())
-
 	if cb.Data.IsEvent() {
 		eventInit := g.NewValue("eventInit")
-		eventInitTyep := EventInitDictType(eventInitType, cb.SpecName())
+		eventInitType := EventInitDictType(cb.Data, cb.SpecName())
 		err := g.Id("err")
 
 		transforms = g.StatementList(
 			variable.New(
 				variable.Name(eventInit),
-				variable.Type(eventInitTyep)),
+				variable.Type(eventInitType)),
 			g.ReassignMany(g.List(eventInit, err),
 				g.NewValuePackage(
 					"RetrieveEventInit", packagenames.Codec,
-				).TypeParam(eventInitTyep).Call(cb.CbCtx()),
+				).TypeParam(eventInitType).Call(cb.CbCtx()),
 			),
 			ReturnIfError(err),
 		)

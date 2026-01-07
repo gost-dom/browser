@@ -4,6 +4,7 @@ func ConfigureDOMSpecs(domSpecs *WebAPIConfig) {
 	configureDOMNode(domSpecs)
 	configureDOMEvent(domSpecs)
 	domSpecs.AddSearchModule("html")
+	domSpecs.Type("CustomEvent").MarkMembersAsIgnored("initCustomEvent")
 }
 
 func configureDOMNode(specs *WebAPIConfig) {
