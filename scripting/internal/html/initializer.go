@@ -25,14 +25,23 @@ func ConfigureScriptEngine[T any](e js.ScriptEngine[T]) {
 	//
 	// See also: https://developer.mozilla.org/en-US/docs/Web/API/HTMLDocument
 	js.CreateClass(e, "HTMLDocument", "Document", js.IllegalConstructor)
+	installHtmlElementTypes(e)
+}
+
+// installHtmlElementTypes adds classes for all the HTML element types work which
+// there isn't yet an explicit implementation. This enables JavaScript code to
+// type check on element types even though there is no explicit implementation.
+//
+// E.g., there isn't an explicit implementation of heading elements, so the
+// following code would fail if these elements are not created (true at the time of writing this):
+//
+//	const e = document.getElementById("heading")
+//	if (e instanceof HTMLHeadingElement) { /* ... */ }
+func installHtmlElementTypes[T any](e js.ScriptEngine[T]) {
 	element, ok := e.Class("HTMLElement")
 	if !ok {
 		panic(fmt.Sprintf("HTMLElement not configured: %s", constants.BUG_ISSUE_URL))
 	}
-
-	// Gost-DOM only specifically implements a few HTML element types. In order
-	// to support client code that checks for specific inheritance of HTML
-	// elements, create all the remaining classes.
 	for _, cls := range codec.HtmlElements {
 		if _, ok := e.Class(cls); !ok && cls != "HTMLElement" {
 			e.CreateClass(cls, element, js.IllegalConstructor)
