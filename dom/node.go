@@ -140,6 +140,7 @@ type observer interface {
 }
 
 type Node interface {
+	// Deprecated: This will be removed
 	entity.ObjectIder
 	entity.Components
 	event.EventTarget

@@ -10,14 +10,15 @@ import (
 //
 // The value is a 32bit integer so it can accurately be represented by a
 // JavaScript number.
+//
+// Deprecated: This is no longer used and will be removed in a future version
 type ObjectId = int32
 
 var idSeq atomic.Int32
 
 // NewObjectId returns a new guaranteed atomically unique ObjectId.
 //
-// Warning: This solution is temporary, and a different solution is intended to
-// be used, so function will likely disappear in the future.
+// Deprecated: This is no longer used and will be removed in a future version
 func NewObjectId() ObjectId {
 	return idSeq.Add(1)
 }
@@ -26,8 +27,7 @@ func NewObjectId() ObjectId {
 // from the DOM. It is part of a solution to ensure the same JS object is
 // returned for the same DOM element.
 //
-// Warning: This solution is temporary, and a different solution is intended to
-// be used. Do not rely on this value.
+// Deprecated: This is no longer used and will be removed in a future version
 type ObjectIder interface {
 	ObjectId() ObjectId
 }
@@ -60,6 +60,8 @@ type componentEntry struct {
 
 // Entity is the default Entity implementation. The zero value will generate a
 // unique [ObjectId] the first time it is read.
+//
+// Deprecated: This is no longer used and will be removed in a future version
 type Entity struct {
 	objectId   ObjectId
 	components []componentEntry
@@ -117,6 +119,7 @@ func (e *Entity) find(v reflect.Value) (any, int, bool) {
 	return nil, -1, false
 }
 
+// Deprecated: This is no longer used and will be removed in a future version
 func (e *Entity) ObjectId() ObjectId {
 	if e.objectId == 0 {
 		e.objectId = NewObjectId()
