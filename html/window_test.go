@@ -9,9 +9,9 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
-	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/html"
+	. "github.com/gost-dom/browser/internal/dom"
 	"github.com/gost-dom/browser/internal/testing/browsertest"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
@@ -32,7 +32,7 @@ func (s *WindowTestSuite) TestDocumentIsAnHTMLDocument() {
 func (s *WindowTestSuite) TestDocumentWithDOCTYPE() {
 	win, err := NewWindowReader(strings.NewReader("<!DOCTYPE HTML><html><body></body></html>"), nil)
 	s.Expect(err).ToNot(HaveOccurred())
-	s.Expect(win.Document().FirstChild().NodeType()).To(Equal(dom.NodeTypeDocumentType))
+	s.Expect(win.Document().FirstChild().NodeType()).To(Equal(NodeTypeDocumentType))
 }
 
 func TestWindow(t *testing.T) {

@@ -1,8 +1,8 @@
 package scripttests
 
 import (
-	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
+	. "github.com/gost-dom/browser/internal/dom"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 )
@@ -173,15 +173,15 @@ func (s *ElementSuite) TestElementSiblings() {
 		<script>const e = document.getElementById("e-2")</script>
 	</body>`)
 	s.Expect(win.Eval(`e.previousSibling.nodeType`)).
-		To(BeEquivalentTo(dom.NodeTypeText), "nextSibling node type")
+		To(BeEquivalentTo(NodeTypeText), "nextSibling node type")
 	s.Expect(win.Eval(`e.previousElementSibling.nodeType`)).
-		To(BeEquivalentTo(dom.NodeTypeElement), "nextElementSibling node type")
+		To(BeEquivalentTo(NodeTypeElement), "nextElementSibling node type")
 	s.Expect(win.Eval(`e.previousElementSibling.id`)).To(Equal("e-1"), "nextElementSibling id")
 
 	s.Expect(win.Eval(`e.nextSibling.nodeType`)).
-		To(BeEquivalentTo(dom.NodeTypeText), "nextSibling node type")
+		To(BeEquivalentTo(NodeTypeText), "nextSibling node type")
 	s.Expect(win.Eval(`e.nextElementSibling.nodeType`)).
-		To(BeEquivalentTo(dom.NodeTypeElement), "nextElementSibling node type")
+		To(BeEquivalentTo(NodeTypeElement), "nextElementSibling node type")
 	s.Expect(win.Eval(`e.nextElementSibling.id`)).To(Equal("e-3"), "nextElementSibling id")
 }
 

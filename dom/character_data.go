@@ -4,6 +4,8 @@ import (
 	"strings"
 	"unicode/utf8"
 
+	intdom "github.com/gost-dom/browser/internal/dom"
+
 	"golang.org/x/net/html"
 )
 
@@ -86,7 +88,7 @@ func (n *comment) Render(builder *strings.Builder) {
 }
 
 func (n *comment) NodeType() NodeType {
-	return NodeTypeComment
+	return intdom.NodeTypeComment
 }
 
 func (n *comment) createHtmlNode() *html.Node {
@@ -124,7 +126,7 @@ func (n *textNode) Render(builder *strings.Builder) {
 	builder.WriteString(n.Data())
 }
 
-func (n *textNode) NodeType() NodeType { return NodeTypeText }
+func (n *textNode) NodeType() NodeType { return intdom.NodeTypeText }
 
 func (n *textNode) createHtmlNode() *html.Node {
 	return &html.Node{
@@ -175,7 +177,7 @@ func (n *processingInstruction) Render(builder *strings.Builder) {
 }
 
 // NodeType implements [Node]
-func (n *processingInstruction) NodeType() NodeType { return NodeTypeProcessingInstruction }
+func (n *processingInstruction) NodeType() NodeType { return intdom.NodeTypeProcessingInstruction }
 
 func (n *processingInstruction) createHtmlNode() *html.Node {
 	return &html.Node{

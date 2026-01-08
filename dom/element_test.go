@@ -4,7 +4,8 @@ import (
 	"testing"
 
 	"github.com/gost-dom/browser/dom"
-	. "github.com/gost-dom/browser/dom"
+	. "github.com/gost-dom/browser/internal/dom"
+
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
@@ -26,7 +27,7 @@ func (s *ElementTestSuite) SetupTest() {
 func (s *ElementTestSuite) TestInsertAdjacentText() {
 	elm := s.doc.CreateElement("div")
 	err := elm.InsertAdjacentText("invalid-position", "content")
-	s.Assert().ErrorIs(err, ErrSyntax)
+	s.Assert().ErrorIs(err, dom.ErrSyntax)
 }
 
 func (s *ElementTestSuite) TestGetSetAttribute() {

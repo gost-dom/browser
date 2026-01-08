@@ -5,109 +5,18 @@ import (
 	"fmt"
 	"log/slog"
 	"slices"
-	"strconv"
 	"strings"
 
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/internal/constants"
-	. "github.com/gost-dom/browser/internal/dom"
+
+	intdom "github.com/gost-dom/browser/internal/dom"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
 	"golang.org/x/net/html"
 )
 
-type NodeType int
-
-const (
-	NodeTypeElement               NodeType = 1
-	NodeTypeAttribute             NodeType = 2
-	NodeTypeText                  NodeType = 3
-	NodeTypeCDataSection          NodeType = 4
-	NodeTypeProcessingInstruction NodeType = 7
-	NodeTypeComment               NodeType = 8
-	NodeTypeDocument              NodeType = 9
-	NodeTypeDocumentType          NodeType = 10
-	NodeTypeDocumentFragment      NodeType = 11
-)
-
-// canHaveChildren returns true for note types that allow child nodes
-func (t NodeType) canHaveChildren() bool {
-	switch t {
-	case NodeTypeElement:
-		return true
-	case NodeTypeDocument:
-		return true
-	case NodeTypeDocumentFragment:
-		return true
-	default:
-		return false
-	}
-}
-
-// isCharacterDataNode returns true the 4 node types that are [Characterdata]
-// nodes.
-//
-// [Characterdata]: https://developer.mozilla.org/en-US/docs/Web/API/CharacterData
-func (t NodeType) isCharacterDataNode() bool {
-	switch t {
-	case NodeTypeText:
-		return true
-	case NodeTypeCDataSection:
-		return true
-	case NodeTypeComment:
-		return true
-	case NodeTypeProcessingInstruction:
-		return true
-	default:
-		return false
-	}
-}
-
-// canBeAChild returns true for node types that are allowed as children. Node,
-// special rules may apply, such as a document node can only contain one child
-// element.
-func (t NodeType) canBeAChild() bool {
-	if t.isCharacterDataNode() {
-		return true
-	}
-	switch t {
-	case NodeTypeDocumentFragment:
-		return true
-	case NodeTypeDocumentType:
-		return true
-	case NodeTypeElement:
-		return true
-	default:
-		return false
-	}
-}
-
-// String returns name of the node type. For invalid values, a string
-// representation of the integer value is returned.
-func (t NodeType) String() string {
-	switch t {
-	case NodeTypeElement:
-		return "Element"
-	case NodeTypeAttribute:
-		return "Attribute"
-	case NodeTypeText:
-		return "Text"
-	case NodeTypeCDataSection:
-		return "CDataSection"
-	case NodeTypeProcessingInstruction:
-		return "ProcessingInstruction"
-	case NodeTypeComment:
-		return "Comment"
-	case NodeTypeDocument:
-		return "Document"
-	case NodeTypeDocumentType:
-		return "DocumentType"
-	case NodeTypeDocumentFragment:
-		return "DocumentFragment"
-	default:
-		return strconv.Itoa(int(t))
-	}
-}
+type NodeType = intdom.NodeType
 
 type GetRootNodeOptions bool
 
@@ -385,13 +294,13 @@ func (n *node) assertCanAddNode(newNode Node) error {
 	}
 	parentType := n.self().NodeType()
 	childType := newNode.NodeType()
-	if !parentType.canHaveChildren() {
+	if !parentType.CanHaveChildren() {
 		return newDomErrorCode(
 			fmt.Sprintf("May not add children to node type %s", parentType),
 			hierarchy_request_err,
 		)
 	}
-	if !childType.canBeAChild() {
+	if !childType.CanBeAChild() {
 		return newDomErrorCode(
 			fmt.Sprintf("May not add an node type %s as a child", childType), hierarchy_request_err,
 		)
@@ -399,12 +308,12 @@ func (n *node) assertCanAddNode(newNode Node) error {
 	if newNode.Contains(n.self()) {
 		return newDomError("May not add a parent as a child")
 	}
-	if childType == NodeTypeText && parentType == NodeTypeDocument {
+	if childType == intdom.NodeTypeText && parentType == intdom.NodeTypeDocument {
 		return newDomErrorCode(
 			"Text nodes may not be direct descendants of a document", hierarchy_request_err,
 		)
 	}
-	if childType == NodeTypeDocumentType && parentType != NodeTypeDocument {
+	if childType == intdom.NodeTypeDocumentType && parentType != intdom.NodeTypeDocument {
 		return newDomError("Document type may only be a parent of Document")
 	}
 	if doc, isDoc := n.self().(Document); isDoc {
@@ -420,7 +329,7 @@ func (n *node) assertCanAddNode(newNode Node) error {
 					"Document can have only one child element", hierarchy_request_err)
 			}
 			for _, n := range fragment.nodes() {
-				if n.NodeType() == NodeTypeText {
+				if n.NodeType() == intdom.NodeTypeText {
 					return newDomErrorCode(
 						"Text nodes may not be direct descendants of a document",
 						hierarchy_request_err,
@@ -531,9 +440,9 @@ func (n *node) replaceNodes(index, count int, node Node) error {
 
 func (n *node) ReplaceChild(node, child Node) (Node, error) {
 	nodeType := n.self().NodeType()
-	if nodeType != NodeTypeDocument &&
-		nodeType != NodeTypeDocumentFragment &&
-		nodeType != NodeTypeElement {
+	if nodeType != intdom.NodeTypeDocument &&
+		nodeType != intdom.NodeTypeDocumentFragment &&
+		nodeType != intdom.NodeTypeElement {
 		return nil, newDomError("HierarchyRequestError")
 	}
 	if child.ParentNode() != n.self() {
@@ -643,9 +552,10 @@ func (n *node) TextContent() string {
 }
 
 func (n *node) renderChildren(builder *strings.Builder) {
-	childRenderer, ok := entity.ComponentType[ChildrenRenderer](n.self())
+	// childRenderer, ok := entity.ComponentType[ChildrenRenderer](n.self())
+	childRenderer, ok := entity.ComponentType[intdom.ChildrenRenderer](n)
 	if !ok {
-		childRenderer, ok = n.self().(ChildrenRenderer)
+		childRenderer, ok = n.self().(intdom.ChildrenRenderer)
 	}
 	if ok {
 		childRenderer.RenderChildren(builder)
@@ -654,7 +564,7 @@ func (n *node) renderChildren(builder *strings.Builder) {
 
 func (n *node) RenderChildren(builder *strings.Builder) {
 	for _, child := range n.children {
-		if renderer, ok := child.(Renderer); ok {
+		if renderer, ok := child.(intdom.Renderer); ok {
 			renderer.Render(builder)
 		}
 	}

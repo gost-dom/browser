@@ -1,6 +1,9 @@
 package dom
 
-import "golang.org/x/net/html"
+import (
+	intdom "github.com/gost-dom/browser/internal/dom"
+	"golang.org/x/net/html"
+)
 
 type DocumentType interface {
 	Node
@@ -22,7 +25,7 @@ func NewDocumentType(name string, ownerDocument Document) DocumentType {
 }
 
 func (t *documentType) Name() string       { return t.name }
-func (t *documentType) NodeType() NodeType { return NodeTypeDocumentType }
+func (t *documentType) NodeType() NodeType { return intdom.NodeTypeDocumentType }
 func (t *documentType) NodeName() string   { return t.Name() }
 
 func (t *documentType) cloneNode(doc Document, deep bool) Node {
