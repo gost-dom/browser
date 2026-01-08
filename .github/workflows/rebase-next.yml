@@ -35,7 +35,7 @@ jobs:
       run: |
         git config --global user.name "${GITHUB_ACTOR}"
         git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-        git rebase origin/main
+        git merge origin/main
 
     - name: Set up Go
       uses: actions/setup-go@v5
