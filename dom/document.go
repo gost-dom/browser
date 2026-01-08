@@ -6,6 +6,7 @@ import (
 
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/internal/constants"
+	intdom "github.com/gost-dom/browser/internal/dom"
 	"github.com/gost-dom/browser/internal/log"
 	"golang.org/x/net/html"
 )
@@ -165,7 +166,7 @@ func (d *document) createHtmlNode() *html.Node {
 	}
 }
 
-func (d *document) NodeType() NodeType { return NodeTypeDocument }
+func (d *document) NodeType() NodeType { return intdom.NodeTypeDocument }
 
 func (d *document) SetActiveElement(e Element) {
 	d.activeElement = e

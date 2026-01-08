@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/gost-dom/browser/internal/constants"
-	. "github.com/gost-dom/browser/internal/dom"
+	int "github.com/gost-dom/browser/internal/dom"
 	"github.com/gost-dom/browser/internal/entity"
 
 	"golang.org/x/net/html"
@@ -64,7 +64,7 @@ type element struct {
 	namespace    string
 	attributes   Attributes
 	selfElement  Element
-	selfRenderer Renderer
+	selfRenderer int.Renderer
 	// We might want a "prototype" as a value, rather than a Go type, as new types
 	// can be created at runtime. But if so, we probably want them on the node
 	// type.
@@ -116,7 +116,7 @@ func (e *element) SetSelf(n Node) {
 	} else {
 		panic("Setting a non-element as element self")
 	}
-	if self, ok := n.(Renderer); ok {
+	if self, ok := n.(int.Renderer); ok {
 		e.selfRenderer = self
 	} else {
 		panic("Setting a non-renderer as element self")
@@ -166,10 +166,10 @@ func (e *element) SetOuterHTML(html string) error {
 	if parent == nil {
 		return nil
 	}
-	if parent.NodeType() == NodeTypeDocument {
+	if parent.NodeType() == int.NodeTypeDocument {
 		return newDomError("NoModificationAllowed")
 	}
-	if parent.NodeType() == NodeTypeDocumentFragment {
+	if parent.NodeType() == int.NodeTypeDocumentFragment {
 		return fmt.Errorf(
 			"SetOuterHTML not yet supported when parent is a fragment. %s",
 			constants.BUG_ISSUE_DETAILS,
@@ -357,7 +357,7 @@ func (n *element) InsertAdjacentHTML(position string, text string) error {
 	return err
 }
 
-func (n *element) NodeType() NodeType { return NodeTypeElement }
+func (n *element) NodeType() NodeType { return int.NodeTypeElement }
 
 func (e *element) Render(writer *strings.Builder) {
 	renderElement(e, writer)

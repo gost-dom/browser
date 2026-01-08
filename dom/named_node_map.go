@@ -4,6 +4,7 @@ import (
 	"iter"
 
 	"github.com/gost-dom/browser/dom/event"
+	intdom "github.com/gost-dom/browser/internal/dom"
 	"github.com/gost-dom/browser/internal/entity"
 	"golang.org/x/net/html"
 )
@@ -110,7 +111,7 @@ func (a *attr) OwnerElement() Element { return a.ownerElement }
 func (a *attr) Prefix() string        { return "" }
 func (a *attr) Value() string         { return a.attr.Val }
 func (a *attr) SetValue(val string)   { a.attr.Val = val }
-func (a *attr) NodeType() NodeType    { return NodeTypeAttribute }
+func (a *attr) NodeType() NodeType    { return intdom.NodeTypeAttribute }
 
 func (a *attr) AppendChild(newChild Node) (Node, error) {
 	return nil, newDomError("Atrribute cannot have a child")

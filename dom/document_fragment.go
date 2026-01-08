@@ -1,6 +1,9 @@
 package dom
 
-import "golang.org/x/net/html"
+import (
+	intdom "github.com/gost-dom/browser/internal/dom"
+	"golang.org/x/net/html"
+)
 
 type DocumentFragment interface {
 	RootNode
@@ -38,6 +41,6 @@ func (d *documentFragment) createHtmlNode() *html.Node {
 	}
 }
 
-func (d *documentFragment) NodeType() NodeType { return NodeTypeDocumentFragment }
+func (d *documentFragment) NodeType() NodeType { return intdom.NodeTypeDocumentFragment }
 
 func (d *documentFragment) NodeName() string { return "#document-fragment" }
