@@ -134,7 +134,9 @@ func Write(api string, globals []string, specs configuration.WebIdlConfiguration
 			ok := g.Id("ok")
 			statements.Append(
 				g.AssignMany(g.List(instance, ok), engine.Field("Class").Call(g.Lit(name))),
-				g.IfStmt{Condition: gen.Not(ok), Block: gen.Panic(g.Lit(""))},
+				g.IfStmt{Condition: gen.Not(ok), Block: gen.Panic(g.Lit(
+					fmt.Sprintf("gost-dom/%s: %s: class not registered", api, name),
+				))},
 				Initializer(typeInfo).Call(instance),
 			)
 		}

@@ -10,7 +10,7 @@ func Bootstrap[T any](e js.ScriptEngine[T]) {
 	InitializeResponse(js.CreateClass(e, "Response", "", ResponseConstructor))
 	window, ok := e.Class("Window")
 	if !ok {
-		panic("")
+		panic("gost-dom/fetch: Window: class not registered")
 	}
 	InitializeWindowOrWorkerGlobalScope(window)
 }
