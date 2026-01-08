@@ -2,10 +2,6 @@ package event
 
 import "github.com/gost-dom/browser/internal/entity"
 
-type Entity interface {
-	ObjectId() entity.ObjectId
-}
-
 /* -------- event -------- */
 
 // Event corresponds to a [DOM Event] dispatched by a [DOM EventTarget].
