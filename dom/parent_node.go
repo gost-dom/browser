@@ -38,7 +38,7 @@ func (n parentNode) Prepend(nodes ...Node) (err error) {
 func (n parentNode) ReplaceChildren(nodes ...Node) (err error) {
 	node := n.collapseNodes(nodes)
 	if err = n.node.assertCanAddNode(node); err == nil {
-		return n.node.replaceNodes(0, n.node.childNodes.Length(), node)
+		return n.node.replaceNodes(0, len(n.node.children), node)
 	}
 	return
 }
@@ -85,7 +85,7 @@ func expandNode(node Node) []Node {
 	}
 
 	if _, ok := node.(DocumentFragment); ok {
-		return slices.Clone(node.ChildNodes().All())
+		return slices.Clone(node.nodes())
 	} else {
 		return []Node{node}
 	}
@@ -133,5 +133,5 @@ func (n parentNode) QuerySelectorAll(pattern string) (NodeList, error) {
 	for i, node := range nodes {
 		result[i] = m[node]
 	}
-	return &nodeList{nodes: result}, nil
+	return &nodeList{nodes: &result}, nil
 }

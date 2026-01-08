@@ -16,17 +16,37 @@ type NodeList interface {
 
 type nodeList struct {
 	entity.Entity
-	nodes []Node
+	nodes *[]Node
 }
 
-func (l *nodeList) Length() int { return len(l.nodes) }
+func (l *nodeList) empty() bool { return l == nil || l.nodes == nil }
+
+func (l *nodeList) Length() int {
+	if l.empty() {
+		return 0
+	}
+	return len(*l.nodes)
+}
 
 func (l *nodeList) Item(index int) Node {
-	if index >= len(l.nodes) {
+	if index >= l.Length() {
 		return nil
 	}
-	return l.nodes[index]
+	return (*l.nodes)[index]
 }
 
-func (l *nodeList) All() []Node           { return l.nodes }
-func (l *nodeList) setNodes(nodes []Node) { l.nodes = nodes }
+func (l *nodeList) All() []Node {
+	if l.empty() {
+		return nil
+	}
+	return *l.nodes
+}
+func (l *nodeList) setNodes(nodes []Node) {
+	if l == nil {
+		panic("nodeList.setNodes: nodelist is nil")
+	}
+	if l.nodes == nil {
+		panic("nodeList.setNodes: nodelist.nodes is nil")
+	}
+	*l.nodes = nodes
+}
