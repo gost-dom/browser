@@ -578,10 +578,7 @@ func (n *node) LastChild() Node {
 
 func (n *node) NextSibling() Node {
 	children := n.ParentNode().nodes()
-	idx := slices.IndexFunc(
-		children,
-		func(child Node) bool { return n.ObjectId() == child.ObjectId() },
-	) + 1
+	idx := slices.IndexFunc(children, func(c Node) bool { return n.IsSameNode(c) }) + 1
 	if idx == 0 {
 		panic("We should exist in our parent's collection")
 	}
@@ -596,10 +593,7 @@ func (n *node) PreviousSibling() Node {
 		return nil
 	}
 	children := parent.nodes()
-	idx := slices.IndexFunc(
-		children,
-		func(child Node) bool { return n.ObjectId() == child.ObjectId() },
-	)
+	idx := slices.IndexFunc(children, func(c Node) bool { return n.IsSameNode(c) })
 	if idx == -1 {
 		panic("We should exist in our parent's collection")
 	}
