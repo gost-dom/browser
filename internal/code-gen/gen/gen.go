@@ -13,6 +13,10 @@ func Not(expr g.Generator) g.Generator {
 	return g.Raw(jen.Op("!").Add(expr.Generate()))
 }
 
+func Panic(expr g.Generator) g.Generator {
+	return g.Raw(jen.Panic(expr.Generate()))
+}
+
 func AnyConstraint(t g.Generator) g.Generator {
 	return g.Raw(t.Generate().Any())
 }

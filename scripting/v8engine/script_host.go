@@ -233,6 +233,9 @@ func (h *V8ScriptHost) ConfigureGlobalScope(name string, extends jsClass) jsClas
 }
 
 func (h *V8ScriptHost) Class(name string) (js.Class[jsTypeParam], bool) {
+	if h.global != nil && h.global.v8Class.name == name {
+		return h.global, true
+	}
 	class, ok := h.globals.namedGlobals[name]
 	return class, ok
 }
@@ -243,14 +246,6 @@ func (h *V8ScriptHost) CreateGlobalObject(name string) js.GlobalObject[jsTypePar
 	result := newV8GlobalObject(h, tmpl)
 	h.windowTemplate.Set(name, tmpl)
 	return result
-}
-
-func (host *V8ScriptHost) CreateFunction(
-	name string,
-	callback js.CallbackFunc[jsTypeParam],
-) {
-	ft := wrapV8Callback(host, callback.WithLog("", name))
-	host.windowTemplate.Set(name, ft)
 }
 
 func (host *V8ScriptHost) InstallPolyfill(script, src string) {

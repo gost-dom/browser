@@ -1,7 +1,14 @@
 package dom
 
-import "github.com/gost-dom/browser/internal/entity"
+import (
+	"slices"
 
+	"github.com/gost-dom/browser/internal/entity"
+)
+
+// NodeList corresponds to the NodeList IDL interface.
+//
+// see also: https://developer.mozilla.org/en-US/docs/Web/API/NodeList
 type NodeList interface {
 	entity.Components
 	Length() int
@@ -10,23 +17,46 @@ type NodeList interface {
 	// is out of range, the function returns nil.
 	Item(index int) Node
 
+	// Deprecated: Will converted into a iter.Seq return type
 	All() []Node
-	setNodes([]Node)
 }
 
+// nodeList wraps a slice of Node values, and implements the NodeList interface
+// for it. It uses a pointer value to support live collections.
 type nodeList struct {
 	entity.Entity
-	nodes []Node
+	nodes *[]Node
 }
 
-func (l *nodeList) Length() int { return len(l.nodes) }
+func newStaticNodeList(n []Node) NodeList {
+	data := slices.Clone(n)
+	return &nodeList{nodes: &data}
+}
+
+func newDynamicNodeList(n *[]Node) NodeList {
+	return &nodeList{nodes: n}
+}
+
+func (l *nodeList) empty() bool { return l == nil || l.nodes == nil }
+
+func (l *nodeList) Length() int {
+	if l.empty() {
+		return 0
+	}
+	return len(*l.nodes)
+}
 
 func (l *nodeList) Item(index int) Node {
-	if index >= len(l.nodes) {
+	if index >= l.Length() || index < 0 {
 		return nil
 	}
-	return l.nodes[index]
+	return (*l.nodes)[index]
 }
 
-func (l *nodeList) All() []Node           { return l.nodes }
-func (l *nodeList) setNodes(nodes []Node) { l.nodes = nodes }
+// Deprecated: Will converted into a iter.Seq return type
+func (l *nodeList) All() []Node {
+	if l.empty() {
+		return nil
+	}
+	return *l.nodes
+}

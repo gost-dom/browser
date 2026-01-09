@@ -34,7 +34,7 @@ func (d rootNodeHelper) GetElementById(id string) Element {
 				return elm
 			}
 		}
-		for _, child := range node.ChildNodes().All() {
+		for _, child := range node.nodes() {
 			if found := search(child); found != nil {
 				return found
 			}

@@ -30,6 +30,7 @@ type WebIDLConfig struct {
 	IncludeIncludes     bool
 	Customization       map[string]*ESMethodWrapper
 	OverrideWrappedType *GoType
+	Partial             bool
 }
 
 func (c WebIDLConfig) SpecName() string { return c.DomSpec.Name }

@@ -19,9 +19,9 @@ func (ge WrapperStruct) SpecName() string { return ge.Data.SpecName() }
 
 func (ge WrapperStruct) IdlName() string { return ge.Data.Name() }
 
-func Initializer(d model.ESConstructorData) g.Generator {
+func Initializer(d model.ESConstructorData) g.Value {
 	ws := WrapperStruct{d}
-	return g.Id(ws.InitializerName())
+	return g.NewValue(ws.InitializerName())
 }
 
 func (ge WrapperStruct) Callbacks() CallbackMethods {

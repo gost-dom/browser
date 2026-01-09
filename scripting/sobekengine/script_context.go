@@ -139,10 +139,6 @@ func (i *scriptContext) Export(value any) (res any, err error) {
 	return
 }
 
-func (c *scriptContext) CreateFunction(name string, cb js.CallbackFunc[jsTypeParam]) {
-	c.vm.Set(name, wrapJSCallback(c, cb.WithLog("", name)))
-}
-
 func (c *scriptContext) compilePolyfill(script, src string) (*sobek.Program, error) {
 	if res, ok := cache.Get[*sobek.Program](c.cache, src); ok {
 		return res, nil
@@ -218,7 +214,6 @@ func (c *scriptContext) ConfigureGlobalScope(
 	)
 	cls.prototype = constructor.Get("prototype").(*sobek.Object)
 	c.vm.Set(name, constructor)
-	// c.classes[name] = cls
 
 	if extends != nil {
 		if superclass, ok := extends.(*class); ok {
@@ -232,6 +227,9 @@ func (c *scriptContext) ConfigureGlobalScope(
 }
 
 func (c *scriptContext) Class(name string) (js.Class[jsTypeParam], bool) {
+	if c.global != nil && c.global.name == name {
+		return c.global, true
+	}
 	class, ok := c.classes[name]
 	return class, ok
 }

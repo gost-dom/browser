@@ -318,7 +318,7 @@ func (n *element) insertAdjacentNode(position string, node Node) error {
 		reference = n.getSelf()
 	case "afterbegin":
 		parent = n
-		reference = n.ChildNodes().Item(0)
+		reference = n.FirstChild()
 	case "beforeend":
 		parent = n
 		reference = nil
@@ -415,12 +415,11 @@ func (e *element) Closest(pattern string) (Element, error) {
 }
 
 func (e *element) String() string {
-	childLen := e.ChildNodes().Length()
-
 	id, found := e.GetAttribute("id")
 	if found {
 		id = "id='" + id + "'"
 	}
+	childLen := len(e.nodes())
 	return fmt.Sprintf("<%s %s(child count=%d) />", e.tagName, id, childLen)
 }
 
