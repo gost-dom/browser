@@ -152,10 +152,8 @@ func makeAllRules() map[string]InterfaceRule {
 
 func GetInterfaceRule(name string) InterfaceRule {
 	for _, v := range rules {
-		for n, r := range v {
-			if n == name {
-				return r
-			}
+		if r, ok := v[name]; ok {
+			return r
 		}
 	}
 	return InterfaceRule{}
