@@ -53,7 +53,6 @@ func (l *nodeList) Item(index int) Node {
 	return (*l.nodes)[index]
 }
 
-// Deprecated: Will converted into a iter.Seq return type
 func (l *nodeList) All() iter.Seq[Node] {
 	return func(yield func(Node) bool) {
 		for i := range l.Length() {
