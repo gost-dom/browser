@@ -281,7 +281,7 @@ func (n *node) isEqualNode(other Node) bool {
 	if l != len(cmp) {
 		return false
 	}
-	for i := 0; i < l; i++ {
+	for i := range l {
 		if !n.children[i].IsEqualNode(cmp[i]) {
 			return false
 		}
@@ -623,7 +623,6 @@ func (n *node) SetSelf(node Node) {
 }
 
 func (n *node) getSelf() Node { return n.self }
-func (n *node) prt() *node    { return n }
 
 func (n *node) SetTextContent(val string) {
 	for x := n.FirstChild(); x != nil; x = n.FirstChild() {
