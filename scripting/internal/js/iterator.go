@@ -28,7 +28,7 @@ func InstallIterator[T, U any](class Class[U], entityLookup ValueResolver[T, U])
 	NewIterator(entityLookup).InstallPrototype(class)
 }
 
-// InstallIterator creates prototype operations the web IDL key/value iterables
+// InstallIterator2 creates prototype operations the web IDL key/value iterables
 // should implement, including Symbol.iterator and entries. This requires that
 // instances must wrap a value providing method All() returning an iter.Seq2[K,V].
 //
