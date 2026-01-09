@@ -415,12 +415,11 @@ func (e *element) Closest(pattern string) (Element, error) {
 }
 
 func (e *element) String() string {
-	childLen := e.nodes()
-
 	id, found := e.GetAttribute("id")
 	if found {
 		id = "id='" + id + "'"
 	}
+	childLen := len(e.nodes())
 	return fmt.Sprintf("<%s %s(child count=%d) />", e.tagName, id, childLen)
 }
 
