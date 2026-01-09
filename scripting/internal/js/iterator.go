@@ -19,9 +19,20 @@ type Iterator[E, T any] struct {
 
 type ValueResolver[T, U any] func(s Scope[U], value T) (Value[U], error)
 
+// InstallIterator creates prototype operations the web IDL value iterables
+// should implement, including Symbol.iterator and entries. This requires that
+// instances must wrap a value providing method All() returning an iter.Seq[T].
+//
+// See also: https://webidl.spec.whatwg.org/#idl-iterable
 func InstallIterator[T, U any](class Class[U], entityLookup ValueResolver[T, U]) {
 	NewIterator(entityLookup).InstallPrototype(class)
 }
+
+// InstallIterator creates prototype operations the web IDL key/value iterables
+// should implement, including Symbol.iterator and entries. This requires that
+// instances must wrap a value providing method All() returning an iter.Seq2[K,V].
+//
+// See also: https://webidl.spec.whatwg.org/#idl-iterable
 func InstallIterator2[K, V, U any](
 	class Class[U],
 	keyLookup ValueResolver[K, U],
@@ -30,6 +41,7 @@ func InstallIterator2[K, V, U any](
 	NewIterator2(keyLookup, valueLookup).InstallPrototype(class)
 }
 
+// Deprecated: Use InstallIterator
 func NewIterator[T, U any](entityLookup ValueResolver[T, U]) Iterator[T, U] {
 	return Iterator[T, U]{entityLookup}
 }
@@ -97,6 +109,7 @@ type Iterator2[K, V, U any] struct {
 	valueLookup ValueResolver[V, U]
 }
 
+// Deprecated: Use InstallIterator2
 func NewIterator2[K, V, U any](
 	keyLookup ValueResolver[K, U],
 	valueLookup ValueResolver[V, U],
