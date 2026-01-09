@@ -71,7 +71,7 @@ func (s *WindowLocationTestSuite) GetLink(text string) html.HTMLElement {
 	s.T().Helper()
 	nodes, err := s.window.Document().QuerySelectorAll("a")
 	s.Expect(err).ToNot(HaveOccurred())
-	for _, n := range nodes.All() {
+	for n := range nodes.All() {
 		if n.TextContent() == text {
 			return n.(html.HTMLElement)
 		}

@@ -394,7 +394,11 @@ func (e *element) Matches(pattern string) (res bool, err error) {
 	dummy.Append(clone)
 	el, err := dummy.QuerySelectorAll(pattern)
 	if err == nil {
-		return slices.Contains(el.All(), clone), nil
+		for e := range el.All() {
+			if e == clone {
+				return true, nil
+			}
+		}
 	}
 	return false, err
 }
