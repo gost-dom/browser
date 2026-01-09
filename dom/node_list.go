@@ -1,6 +1,10 @@
 package dom
 
-import "github.com/gost-dom/browser/internal/entity"
+import (
+	"slices"
+
+	"github.com/gost-dom/browser/internal/entity"
+)
 
 // NodeList corresponds to the NodeList IDL interface.
 //
@@ -13,6 +17,7 @@ type NodeList interface {
 	// is out of range, the function returns nil.
 	Item(index int) Node
 
+	// Deprecated: Will converted into a iter.Seq return type
 	All() []Node
 }
 
@@ -21,6 +26,15 @@ type NodeList interface {
 type nodeList struct {
 	entity.Entity
 	nodes *[]Node
+}
+
+func newStaticNodeList(n []Node) NodeList {
+	data := slices.Clone(n)
+	return &nodeList{nodes: &data}
+}
+
+func newDynamicNodeList(n *[]Node) NodeList {
+	return &nodeList{nodes: n}
 }
 
 func (l *nodeList) empty() bool { return l == nil || l.nodes == nil }
@@ -39,6 +53,7 @@ func (l *nodeList) Item(index int) Node {
 	return (*l.nodes)[index]
 }
 
+// Deprecated: Will converted into a iter.Seq return type
 func (l *nodeList) All() []Node {
 	if l.empty() {
 		return nil

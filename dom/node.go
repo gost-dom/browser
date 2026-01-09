@@ -257,8 +257,8 @@ func (n *node) ChildNodes() NodeList {
 	if res, ok := entity.ComponentType[NodeList](n); ok {
 		return res
 	}
-	res := &nodeList{nodes: &n.children}
-	entity.SetComponentType[NodeList](n, res)
+	res := newDynamicNodeList(&n.children)
+	entity.SetComponentType(n, res)
 	return res
 }
 
@@ -526,8 +526,8 @@ func (n *node) replaceNodes(index, count int, node Node) error {
 		Type:            ChangeEventChildList,
 		PreviousSibling: prevSibling,
 		NextSibling:     nextSibling,
-		AddedNodes:      &nodeList{nodes: &newNodes},
-		RemovedNodes:    &nodeList{nodes: &removedNodes},
+		AddedNodes:      newStaticNodeList(newNodes),
+		RemovedNodes:    newStaticNodeList(removedNodes),
 	})
 	return nil
 }
