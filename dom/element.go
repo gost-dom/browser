@@ -394,8 +394,8 @@ func (e *element) Matches(pattern string) (res bool, err error) {
 	dummy.Append(clone)
 	el, err := dummy.QuerySelectorAll(pattern)
 	if err == nil {
-		for e := range el.All() {
-			if e == clone {
+		for ee := range el.All() {
+			if ee == clone {
 				return true, nil
 			}
 		}
