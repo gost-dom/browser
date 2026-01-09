@@ -31,7 +31,7 @@ jobs:
         ref: 'next'
         fetch-depth: 0
 
-    - name: Rebase to main
+    - name: Merge with main
       run: |
         git config --global user.name "${GITHUB_ACTOR}"
         git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
@@ -53,4 +53,4 @@ jobs:
 
     - name: Push
       run: |
-        git push -f
+        git push
