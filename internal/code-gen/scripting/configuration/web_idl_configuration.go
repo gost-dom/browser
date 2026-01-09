@@ -41,9 +41,7 @@ func (c *WebAPIConfig) AddSearchModule(name string) {
 	c.PartialSearchModules = append(c.PartialSearchModules, name)
 }
 
-// LoadSpec loads relevant [idl.Spec] for the configured package. The main spec
-// is returned in the spec return value. Extra specs, e.g., to search for
-// partial interfaces are returned in the extra return value.
+// LoadSpec loads relevant [idl.Spec] for the configured package
 func LoadSpecs(c *WebAPIConfig) (spec idl.Spec, err error) {
 	if spec, err = idl.Load(c.Name); err != nil {
 		return
