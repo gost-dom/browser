@@ -1,14 +1,17 @@
 // Package idlspec helps loading relevant specs from the webref module.
 //
-// # This package may be solving two different
+// This package may be solving two different problems.
 //
-// - Gost-DOM doesn't rely on all webref specs.
-// - Exposed names are to be treated globally. When one
+//   - Gost-DOM only relies on a subset of webref specs.
+//   - Exposed names are to be treated globally. When one package define an
+//     interface or interface mixin with a specific name, this is the type
+//     referenced in all mixins.
 //
 // An example for the latter. The fetch IDL specs defines "partial interface
 // mixin WindowOrWorkerGlobalScope". As this is an "interface mixin", the
 // operations should be installed on all classes that has this mixing. And as
-// it's a partial, that information is not present in this file.
+// it's a partial, the information about the real name of the IDL interface that
+// need to implement the interface is not present in the idl file.
 //
 // There is exactly one spec containing "interface mixin
 // WindowOrWorkerGlobalScope", the HTML specs, which reveals that Window and
@@ -29,7 +32,6 @@ type spec struct {
 	name    string
 	idlSpec idl.Spec
 	rules   customrules.SpecRules
-	err     error
 }
 
 type intf struct {
@@ -66,7 +68,7 @@ func init() {
 		if err != nil {
 			panic(fmt.Sprintf("Error loading spec: %v", err))
 		}
-		specs[name] = spec{name, idlSpec, rule, err}
+		specs[name] = spec{name, idlSpec, rule}
 		for intfName, i := range idlSpec.Interfaces {
 			names[intfName] = intf{
 				spec: name,
