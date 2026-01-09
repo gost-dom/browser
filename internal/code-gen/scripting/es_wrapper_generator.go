@@ -34,7 +34,6 @@ func getIntf(
 				res.IdlInterface.Attributes = append(res.IdlInterface.Attributes, p.Attributes...)
 				res.IdlInterface.Operations = append(res.IdlInterface.Operations, p.Operations...)
 			}
-			fmt.Println("Created partial: ", res.IdlInterface.Partial)
 		}
 	}
 	return
