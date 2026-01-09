@@ -31,14 +31,14 @@ func mustQuerySelector(c dom.ElementContainer, pattern string) dom.Element {
 	return r
 }
 
-func mustQuerySelectorAll(c dom.ElementContainer, pattern string) []dom.Node {
+func mustQuerySelectorAll(c dom.ElementContainer, pattern string) dom.NodeList {
 	// The error is only because of a bad pattern, which is static in tests; so
 	// panic. The test code is wrong, not the system.
 	r, err := c.QuerySelectorAll(pattern)
 	if err != nil {
 		panic(err)
 	}
-	return r.All()
+	return r
 }
 
 func HaveH1(expected string) GomegaMatcher {
@@ -54,11 +54,10 @@ func HaveH1(expected string) GomegaMatcher {
 	return gcustom.MakeMatcher(
 		func(d html.HTMLDocument) (bool, error) {
 			h1Elements := mustQuerySelectorAll(d, "h1")
-			data.H1ElementCount = len(h1Elements)
-			if data.H1ElementCount != 1 {
+			if h1Elements.Length() != 1 {
 				return false, nil
 			}
-			data.Actual = h1Elements[0].TextContent()
+			data.Actual = h1Elements.Item(0).TextContent()
 			return data.Matcher.Match(data.Actual)
 		}).WithTemplate(`Expected: {{.FormattedActual}}
 {{.To}} have an <h1> with text content {{.Data.Expected}}

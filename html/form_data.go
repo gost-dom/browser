@@ -34,7 +34,7 @@ func NewFormData() *FormData {
 func NewFormDataForm(form HTMLFormElement) *FormData {
 	inputs := form.Elements()
 	formData := NewFormData()
-	for _, input := range inputs.All() {
+	for input := range inputs.All() {
 		if input, ok := input.(HTMLInputElement); ok {
 			name := input.Name()
 			if name == "" {

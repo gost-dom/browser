@@ -29,9 +29,11 @@ func formatNodeList(value any) (result string, ok bool) {
 	if list, ok = value.(dom.NodeList); ok {
 		b := strings.Builder{}
 		b.WriteString("NodeList{")
-		for i, n := range list.All() {
-			if i > 0 {
+		var nonEmpty bool
+		for n := range list.All() {
+			if !nonEmpty {
 				b.WriteString(", ")
+				nonEmpty = true
 			}
 			b.WriteString(fmt.Sprintf("%v", n))
 		}

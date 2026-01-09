@@ -275,7 +275,7 @@ func (r MutationRecorder) AddedNodes() []dom.Node {
 	lists := make([][]dom.Node, len(r.Records))
 	for i, r := range r.Records {
 		if nodes := r.AddedNodes; nodes != nil {
-			lists[i] = nodes.All()
+			lists[i] = slices.Collect(nodes.All())
 		}
 	}
 	return slices.Concat(lists...)
@@ -285,7 +285,7 @@ func (r MutationRecorder) RemovedNodes() []dom.Node {
 	lists := make([][]dom.Node, len(r.Records))
 	for i, r := range r.Records {
 		if nodes := r.RemovedNodes; nodes != nil {
-			lists[i] = nodes.All()
+			lists[i] = slices.Collect(nodes.All())
 		}
 	}
 	return slices.Concat(lists...)
