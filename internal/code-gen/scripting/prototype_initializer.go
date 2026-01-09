@@ -101,7 +101,7 @@ func (i PrototypeInitializer) InstallIterator(class class) g.Generator {
 			model.EncoderForIdlType(types[0]),
 			model.EncoderForIdlType(types[1]),
 		)
-	case 3:
+	default:
 		slog.Warn(
 			"Bad IDL data, more than two iterable types",
 			slog.String("Interface", i.IdlName()),
