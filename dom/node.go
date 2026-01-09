@@ -500,7 +500,7 @@ func (n *node) replaceNodes(index, count int, node Node) error {
 	sameParent := node != nil && node.ParentNode() == n.self
 	if sameParent {
 		if currentIdx == -1 {
-			panic("replaceNodes: ad state - node has no index in it's parent collection")
+			panic("replaceNodes: bad state - node has no index in it's parent collection")
 		}
 		if currentIdx >= end {
 			currentIdx = currentIdx - count + 1
