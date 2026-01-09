@@ -2,6 +2,9 @@ package dom
 
 import "github.com/gost-dom/browser/internal/entity"
 
+// NodeList corresponds to the NodeList IDL interface.
+//
+// see also: https://developer.mozilla.org/en-US/docs/Web/API/NodeList
 type NodeList interface {
 	entity.Components
 	Length() int
@@ -14,6 +17,8 @@ type NodeList interface {
 	setNodes([]Node)
 }
 
+// nodeList wraps a slice of Node values, and implements the NodeList interface
+// for it. It uses a pointer value to support live collections.
 type nodeList struct {
 	entity.Entity
 	nodes *[]Node
