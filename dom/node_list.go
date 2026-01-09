@@ -1,6 +1,7 @@
 package dom
 
 import (
+	"iter"
 	"slices"
 
 	"github.com/gost-dom/browser/internal/entity"
@@ -17,8 +18,7 @@ type NodeList interface {
 	// is out of range, the function returns nil.
 	Item(index int) Node
 
-	// Deprecated: Will converted into a iter.Seq return type
-	All() []Node
+	All() iter.Seq[Node]
 }
 
 // nodeList wraps a slice of Node values, and implements the NodeList interface
@@ -54,9 +54,12 @@ func (l *nodeList) Item(index int) Node {
 }
 
 // Deprecated: Will converted into a iter.Seq return type
-func (l *nodeList) All() []Node {
-	if l.empty() {
-		return nil
+func (l *nodeList) All() iter.Seq[Node] {
+	return func(yield func(Node) bool) {
+		for i := range l.Length() {
+			if !yield(l.Item(i)) {
+				return
+			}
+		}
 	}
-	return *l.nodes
 }

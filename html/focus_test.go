@@ -22,7 +22,7 @@ func TestFocusEvents(t *testing.T) {
 	}
 	nodes, err := doc.QuerySelectorAll("div, input, button")
 	assert.NoError(err)
-	for _, e := range nodes.All() {
+	for e := range nodes.All() {
 		id, _ := (e.(Element).GetAttribute("id"))
 		e.AddEventListener("focus", logHandler(id))
 		e.AddEventListener("blur", logHandler(id))

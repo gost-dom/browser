@@ -1,6 +1,8 @@
 package mutation_test
 
 import (
+	"iter"
+
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/internal/dom/mutation"
 	. "github.com/gost-dom/browser/internal/dom/mutation"
@@ -56,11 +58,11 @@ func HaveTarget(t dom.Node) types.GomegaMatcher {
 
 func HaveNoAddedNodes() types.GomegaMatcher {
 	return gcustom.MakeMatcher(func(r mutation.Record) (bool, error) {
-		var nodes []dom.Node
+		var l int
 		if r.AddedNodes != nil {
-			nodes = r.AddedNodes.All()
+			l = r.AddedNodes.Length()
 		}
-		return len(nodes) == 0, nil
+		return l == 0, nil
 	})
 }
 
@@ -89,7 +91,7 @@ func HavePrevSibling(node dom.Node) types.GomegaMatcher {
 
 func HaveAddedNodes(nodes ...any) types.GomegaMatcher {
 	var Data struct {
-		Actual  []dom.Node
+		Actual  iter.Seq[dom.Node]
 		Matcher types.GomegaMatcher
 	}
 	matchers := make([]types.GomegaMatcher, len(nodes))
@@ -109,14 +111,12 @@ func HaveAddedNodes(nodes ...any) types.GomegaMatcher {
 
 func HaveRemovedNodes(nodes ...dom.Node) types.GomegaMatcher {
 	var Data struct {
-		Actual  []dom.Node
+		Actual  iter.Seq[dom.Node]
 		Matcher types.GomegaMatcher
 	}
 	Data.Matcher = HaveExactElements(nodes)
 	return gcustom.MakeMatcher(func(r mutation.Record) (bool, error) {
-		// if r.RemovedNodes != nil {
 		Data.Actual = r.RemovedNodes.All()
-		// }
 		return Data.Matcher.Match(Data.Actual)
 	}).WithTemplate("Have removed nodes\nActual: {{ .Data.Actual }}\n{{ .Data.Matcher.Formatted }}", &Data)
 }

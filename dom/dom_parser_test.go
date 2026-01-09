@@ -2,6 +2,7 @@ package dom_test
 
 import (
 	"fmt"
+	"slices"
 	"testing"
 
 	"github.com/gost-dom/browser/dom"
@@ -142,7 +143,7 @@ func MatchStructure(name string, children ...types.GomegaMatcher) types.GomegaMa
 			panic(fmt.Sprintf("Unknown type %T for element", elm))
 		}
 		res.Name = element.NodeName()
-		res.Children = element.ChildNodes().All()
+		res.Children = slices.Collect(element.ChildNodes().All())
 		return
 	}, And(
 		HaveField("Name", Equal(name)),
