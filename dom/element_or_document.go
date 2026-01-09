@@ -25,9 +25,9 @@ type elementOrDocument struct {
 }
 
 func (e elementOrDocument) GetElementsByTagName(name string) HTMLCollection {
-	return newLiveHtmlCollection(e.node.self, tagNamePredicate{"", name})
+	return newLiveHtmlCollection(e.node.self(), tagNamePredicate{"", name})
 }
 
 func (e elementOrDocument) GetElementsByTagNameNS(ns, name string) HTMLCollection {
-	return newLiveHtmlCollection(e.node.self, tagNamePredicate{ns, name})
+	return newLiveHtmlCollection(e.node.self(), tagNamePredicate{ns, name})
 }

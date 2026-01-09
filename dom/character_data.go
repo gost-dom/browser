@@ -44,7 +44,7 @@ func (d *characterData) SetData(data string) {
 	oldValue := d.data
 	d.data = data
 	d.notify(ChangeEvent{
-		Target:   d.self,
+		Target:   d.self(),
 		Type:     ChangeEventCData,
 		OldValue: oldValue,
 	})
