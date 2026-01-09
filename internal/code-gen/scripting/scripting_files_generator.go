@@ -23,7 +23,7 @@ func writeGenerator(writer io.Writer, packagePath string, generator g.Generator)
 }
 
 func writePackageFiles(packagePath string, spec *configuration.WebAPIConfig) error {
-	data, extra, err := configuration.LoadSpecs(spec)
+	data, err := configuration.LoadSpecs(spec)
 	if err != nil {
 		return err
 	}
@@ -38,7 +38,7 @@ func writePackageFiles(packagePath string, spec *configuration.WebAPIConfig) err
 			errs[i] = err
 		} else {
 			defer writer.Close()
-			typeGenerationInformation, err := createData(data, specType, extra)
+			typeGenerationInformation, err := createData(data, specType)
 			if err != nil {
 				return err
 			}

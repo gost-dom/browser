@@ -80,13 +80,13 @@ func Write(api string, realm realm, specs configuration.WebIdlConfigurations) er
 	engine := g.NewValue("e")
 	var enriched []model.ESConstructorData
 	for _, spec := range slices.Collect(maps.Values(specs)) {
-		data, extra, err := configuration.LoadSpecs(spec)
+		data, err := configuration.LoadSpecs(spec)
 		if err != nil {
 			return err
 		}
 		types := spec.Types()
 		for _, t := range types {
-			typeInfo, err := createData(data, t, extra)
+			typeInfo, err := createData(data, t)
 			if err != nil {
 				return err
 			}
