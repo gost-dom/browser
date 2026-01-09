@@ -96,6 +96,10 @@ func DecodeEvent[T any](
 	return nil
 }
 
+// DecodeAny returns the native JavaScript value and is used where a Go
+// implementation merely has a slot for client code to store a value. When the
+// client code is JavaScript, the value will be the JavaScript object. One
+// example is the Detail property of a CustomEvent.
 func DecodeAny[T any](_ js.Scope[T], v js.Value[T]) (any, error) { return v, nil }
 
 func DecodeEventInit[T any](
