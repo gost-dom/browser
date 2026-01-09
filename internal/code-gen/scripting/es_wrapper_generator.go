@@ -46,7 +46,6 @@ func getIntf(
 func createData(
 	spec idl.Spec,
 	interfaceConfig *configuration.WebIDLConfig,
-	_ []idl.Spec,
 ) (res model.ESConstructorData, err error) {
 	var idlName idl.TypeSpec
 	if idlName, err = getIntf(spec, interfaceConfig); err != nil {
