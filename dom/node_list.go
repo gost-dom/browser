@@ -14,7 +14,6 @@ type NodeList interface {
 	Item(index int) Node
 
 	All() []Node
-	setNodes([]Node)
 }
 
 // nodeList wraps a slice of Node values, and implements the NodeList interface
@@ -45,13 +44,4 @@ func (l *nodeList) All() []Node {
 		return nil
 	}
 	return *l.nodes
-}
-func (l *nodeList) setNodes(nodes []Node) {
-	if l == nil {
-		panic("nodeList.setNodes: nodelist is nil")
-	}
-	if l.nodes == nil {
-		panic("nodeList.setNodes: nodelist.nodes is nil")
-	}
-	*l.nodes = nodes
 }
