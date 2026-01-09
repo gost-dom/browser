@@ -172,6 +172,7 @@ func EncodePromise[T, U any](
 	})
 }
 
+// EncodeAny assumes that value v is a direct JavaScript. See also [DecodeAny]
 func EncodeAny[T any](scope js.Scope[T], v any) (js.Value[T], error) {
 	if v == nil {
 		return nil, nil
@@ -179,5 +180,5 @@ func EncodeAny[T any](scope js.Scope[T], v any) (js.Value[T], error) {
 	if res, ok := v.(js.Value[T]); ok {
 		return res, nil
 	}
-	return nil, fmt.Errorf("gost-dom/codec: EncodeAny: %v: %T a JavaScript value", v, v)
+	return nil, fmt.Errorf("gost-dom/codec: EncodeAny: %v: %T is not a JavaScript value", v, v)
 }
