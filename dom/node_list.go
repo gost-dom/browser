@@ -29,7 +29,7 @@ func (l *nodeList) Length() int {
 }
 
 func (l *nodeList) Item(index int) Node {
-	if index >= l.Length() {
+	if index >= l.Length() || index < 0 {
 		return nil
 	}
 	return (*l.nodes)[index]
