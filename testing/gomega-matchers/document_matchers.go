@@ -54,7 +54,8 @@ func HaveH1(expected string) GomegaMatcher {
 	return gcustom.MakeMatcher(
 		func(d html.HTMLDocument) (bool, error) {
 			h1Elements := mustQuerySelectorAll(d, "h1")
-			if h1Elements.Length() != 1 {
+			data.H1ElementCount = h1Elements.Length()
+			if data.H1ElementCount != 1 {
 				return false, nil
 			}
 			data.Actual = h1Elements.Item(0).TextContent()
