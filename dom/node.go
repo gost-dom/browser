@@ -183,7 +183,7 @@ type Node interface {
 
 	Observe(observer) Closer
 
-	getSelf() Node
+	self() Node
 	setParent(Node)
 	setOwnerDocument(owner Document)
 	nodes() []Node
@@ -199,7 +199,6 @@ type Node interface {
 type node struct {
 	event.EventTarget
 	entity.Entity
-	self Node
 	// revision of the node is incremented on any change. Used by
 	// LiveHtmlCollection to check if a note has been changed.
 	rev       int
@@ -217,7 +216,7 @@ func newNode(ownerDocument Document) node {
 }
 
 func (n *node) CloneNode(deep bool) Node {
-	return n.self.cloneNode(n.OwnerDocument(), deep)
+	return n.self().cloneNode(n.OwnerDocument(), deep)
 }
 
 func (n *node) cloneChildren() []Node {
@@ -236,7 +235,7 @@ func (n *node) cloneChildren() []Node {
 // [MDN docs for appendChild]: https://developer.mozilla.org/en-US/docs/Web/API/Node/appendChild
 func (n *node) AppendChild(node Node) (Node, error) {
 	n.Logger().Debug("Node.AppendChild", "target", n.String(), "child", node.NodeName())
-	_, err := n.self.InsertBefore(node, nil)
+	_, err := n.self().InsertBefore(node, nil)
 	return node, err
 }
 
@@ -271,7 +270,7 @@ func (n *node) Observe(observer observer) Closer {
 func (n *node) IsEqualNode(other Node) bool { return n.isEqualNode(other) }
 
 func (n *node) isEqualNode(other Node) bool {
-	if n.self.NodeType() != other.NodeType() {
+	if n.self().NodeType() != other.NodeType() {
 		return false
 	}
 	l := len(n.children)
@@ -296,14 +295,14 @@ func (n *node) GetRootNode(options ...GetRootNodeOptions) Node {
 		n.Logger().Warn("Node.GetRootNode: composed not yet implemented")
 	}
 	if n.parent == nil {
-		return n.self
+		return n.self()
 	} else {
 		return n.parent.GetRootNode(options...)
 	}
 }
 
 func (n *node) Contains(node Node) bool {
-	if n.self == node {
+	if n.self() == node {
 		return true
 	}
 	for _, c := range n.nodes() {
@@ -329,7 +328,7 @@ func (n *node) setOwnerDocument(owner Document) {
 }
 func (n *node) setParent(parent Node) {
 	if n.parent != nil {
-		n.parent.RemoveChild(n.getSelf())
+		n.parent.RemoveChild(n.self())
 	}
 	if parent != nil {
 		parentOwner := parent.nodeDocument()
@@ -342,7 +341,7 @@ func (n *node) setParent(parent Node) {
 }
 
 func (n *node) Connected() {
-	if p := n.getSelf().ParentNode(); p != nil {
+	if p := n.self().ParentNode(); p != nil {
 		p.Connected()
 	}
 }
@@ -355,7 +354,7 @@ func (n *node) IsConnected() (result bool) {
 }
 
 func (n *node) IsSameNode(other Node) (result bool) {
-	return n.getSelf() == other
+	return n.self() == other
 }
 
 func (n *node) NodeName() string {
@@ -384,7 +383,7 @@ func (n *node) assertCanAddNode(newNode Node) error {
 	if newNode == nil {
 		return nil
 	}
-	parentType := n.getSelf().NodeType()
+	parentType := n.self().NodeType()
 	childType := newNode.NodeType()
 	if !parentType.canHaveChildren() {
 		return newDomErrorCode(
@@ -397,7 +396,7 @@ func (n *node) assertCanAddNode(newNode Node) error {
 			fmt.Sprintf("May not add an node type %s as a child", childType), hierarchy_request_err,
 		)
 	}
-	if newNode.Contains(n.getSelf()) {
+	if newNode.Contains(n.self()) {
 		return newDomError("May not add a parent as a child")
 	}
 	if childType == NodeTypeText && parentType == NodeTypeDocument {
@@ -408,7 +407,7 @@ func (n *node) assertCanAddNode(newNode Node) error {
 	if childType == NodeTypeDocumentType && parentType != NodeTypeDocument {
 		return newDomError("Document type may only be a parent of Document")
 	}
-	if doc, isDoc := n.getSelf().(Document); isDoc {
+	if doc, isDoc := n.self().(Document); isDoc {
 		if doc.ChildElementCount() > 0 {
 			return newDomErrorCode(
 				"Document can have only one child element",
@@ -495,7 +494,7 @@ func (n *node) replaceNodes(index, count int, node Node) error {
 	currentIdx := slices.Index(children, node)
 	removedNodes := slices.Clone(children[start:end])
 	children = slices.Replace(children, start, end, newNodes...)
-	sameParent := node != nil && node.ParentNode() == n.self
+	sameParent := node != nil && node.ParentNode() == n.self()
 	if sameParent {
 		if currentIdx == -1 {
 			panic("replaceNodes: bad state - node has no index in it's parent collection")
@@ -512,7 +511,7 @@ func (n *node) replaceNodes(index, count int, node Node) error {
 			node.setParent(nil)
 		}
 		for _, node := range newNodes {
-			node.setParent(n.self)
+			node.setParent(n.self())
 			if node.IsConnected() {
 				node.Connected()
 			}
@@ -520,7 +519,7 @@ func (n *node) replaceNodes(index, count int, node Node) error {
 	}
 
 	n.notify(ChangeEvent{
-		Target:          n.self,
+		Target:          n.self(),
 		Type:            ChangeEventChildList,
 		PreviousSibling: prevSibling,
 		NextSibling:     nextSibling,
@@ -531,14 +530,13 @@ func (n *node) replaceNodes(index, count int, node Node) error {
 }
 
 func (n *node) ReplaceChild(node, child Node) (Node, error) {
-
-	_, isDocument := n.self.(Document)
-	_, isDocumentFragment := n.self.(DocumentFragment)
-	_, isElement := n.self.(Element)
-	if !isDocument && !isDocumentFragment && !isElement {
+	nodeType := n.self().NodeType()
+	if nodeType != NodeTypeDocument &&
+		nodeType != NodeTypeDocumentFragment &&
+		nodeType != NodeTypeElement {
 		return nil, newDomError("HierarchyRequestError")
 	}
-	if child.ParentNode() != n.self {
+	if child.ParentNode() != n.self() {
 		return nil, newDomError("NotFoundError")
 	}
 	for i, c := range n.children {
@@ -556,7 +554,7 @@ func (n *node) ReplaceChild(node, child Node) (Node, error) {
 }
 
 func (n *node) OwnerDocument() Document {
-	if _, isDoc := n.getSelf().(Document); isDoc {
+	if _, isDoc := n.self().(Document); isDoc {
 		return nil
 	}
 	return n.nodeDocument()
@@ -617,14 +615,17 @@ func (n *node) nodes() []Node {
 }
 
 func (n *node) SetSelf(node Node) {
-	n.self = node
+	entity.SetComponentType(n, node)
 	event.SetEventTargetSelf(node)
 	if doc, ok := node.(Document); ok {
 		n.document = doc
 	}
 }
 
-func (n *node) getSelf() Node { return n.self }
+func (n *node) self() Node {
+	res, _ := entity.ComponentType[Node](n)
+	return res
+}
 
 func (n *node) SetTextContent(val string) {
 	for x := n.FirstChild(); x != nil; x = n.FirstChild() {
@@ -642,9 +643,9 @@ func (n *node) TextContent() string {
 }
 
 func (n *node) renderChildren(builder *strings.Builder) {
-	childRenderer, ok := entity.ComponentType[ChildrenRenderer](n.self)
+	childRenderer, ok := entity.ComponentType[ChildrenRenderer](n.self())
 	if !ok {
-		childRenderer, ok = n.self.(ChildrenRenderer)
+		childRenderer, ok = n.self().(ChildrenRenderer)
 	}
 	if ok {
 		childRenderer.RenderChildren(builder)
@@ -659,7 +660,7 @@ func (n *node) RenderChildren(builder *strings.Builder) {
 	}
 }
 
-func (n *node) String() string { return n.self.NodeName() }
+func (n *node) String() string { return n.self().NodeName() }
 
 func (n *node) revision() int { return n.rev }
 

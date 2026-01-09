@@ -9,7 +9,7 @@ type childNode struct {
 }
 
 func (n childNode) Remove() {
-	s := n.node.self
+	s := n.node.self()
 	if s == nil {
 		panic("NIL SELF")
 	}

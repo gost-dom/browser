@@ -85,7 +85,7 @@ func (d *document) cloneNode(doc Document, deep bool) Node {
 }
 
 func (d *document) ImportNode(n Node, deep bool) Node {
-	return n.cloneNode(d.getSelf().(Document), deep)
+	return n.cloneNode(d.self().(Document), deep)
 }
 
 func (d *document) Body() Element {

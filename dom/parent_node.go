@@ -23,14 +23,14 @@ type parentNode struct {
 
 func (n parentNode) Append(nodes ...Node) (err error) {
 	if node := n.collapseNodes(nodes); node != nil {
-		_, err = n.node.self.InsertBefore(node, nil)
+		_, err = n.node.self().InsertBefore(node, nil)
 	}
 	return
 }
 
 func (n parentNode) Prepend(nodes ...Node) (err error) {
 	if node := n.collapseNodes(nodes); node != nil {
-		_, err = n.node.self.InsertBefore(node, n.node.FirstChild())
+		_, err = n.node.self().InsertBefore(node, n.node.FirstChild())
 	}
 	return
 }
@@ -92,7 +92,7 @@ func expandNode(node Node) []Node {
 }
 
 func (n parentNode) Children() HTMLCollection {
-	return newHtmlCollection(n.node.getSelf())
+	return newHtmlCollection(n.node.self())
 }
 
 func (n parentNode) FirstElementChild() Element {
@@ -126,7 +126,7 @@ func (n parentNode) QuerySelectorAll(pattern string) (NodeList, error) {
 	if err != nil {
 		return nil, err
 	}
-	htmlNode, m := toHtmlNodeAndMap(n.node.getSelf())
+	htmlNode, m := toHtmlNodeAndMap(n.node.self())
 
 	nodes := sel.Select(htmlNode)
 	result := make([]Node, len(nodes))

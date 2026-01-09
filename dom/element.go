@@ -177,7 +177,7 @@ func (e *element) SetOuterHTML(html string) error {
 	}
 	fragment, err := ParseFragment(e.nodeDocument(), strings.NewReader(html))
 	if err == nil {
-		_, err = parent.ReplaceChild(fragment, e.getSelf())
+		_, err = parent.ReplaceChild(fragment, e.self())
 	}
 	return err
 }
@@ -246,7 +246,7 @@ func (e *element) SetAttributeNode(node Attr) (Attr, error) {
 
 func (e *element) attributeChangedEvent(attr Attr, oldVal string) ChangeEvent {
 	return ChangeEvent{
-		Target:   e.self,
+		Target:   e.self(),
 		Type:     ChangeEventAttributes,
 		Attr:     attr,
 		OldValue: oldVal,
@@ -315,7 +315,7 @@ func (n *element) insertAdjacentNode(position string, node Node) error {
 	switch position {
 	case "beforebegin":
 		parent = n.ParentNode()
-		reference = n.getSelf()
+		reference = n.self()
 	case "afterbegin":
 		parent = n
 		reference = n.FirstChild()
@@ -390,7 +390,7 @@ func (e *element) Matches(pattern string) (res bool, err error) {
 	// uses a library for CSS selectors, but that library doesn't support the
 	// "Matches" function.
 	dummy := e.OwnerDocument().CreateElement("div")
-	clone := e.self.CloneNode(true)
+	clone := e.self().CloneNode(true)
 	dummy.Append(clone)
 	el, err := dummy.QuerySelectorAll(pattern)
 	if err == nil {
