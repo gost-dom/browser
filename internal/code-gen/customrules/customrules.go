@@ -137,15 +137,16 @@ var rules = CustomRules{
 
 type Spec string
 
-// DependsOn indicates wither Spec s depends on Spec other. This is a simple
+// DependsOn indicates whether Spec s depends on Spec other. This is a simple
 // implementation that doesn't perform a true dependency analysis, but merely
 // build from the knowledge we currently have.
 //
-// - dom defines fundamental types, such as EventTarget, and AbortSignale
+// - dom defines fundamental types, such as EventTarget, and AbortSignal
 // - html depends on dom and defines the global objects
 // - Other packages _may_ append to the global scope, e.g. fetch does this.
 //
-// This simple implementation works for the current scope
+// This simple implementation works for the current limited no of supported web
+// APIs. More APIs may require a more complex dependency analysis.
 func (s Spec) DependsOn(other Spec) bool {
 	if s == other {
 		return false
@@ -159,9 +160,9 @@ func (s Spec) DependsOn(other Spec) bool {
 	return false
 }
 
-// Returns the configured specs in a stable correct order. I.e., a depepndt
-// module is before it's dependees. Other packages are sorted alphabetically to
-// provide a consistent output.
+// Returns the configured specs in a stable correct order. I.e., a dependency
+// before its dependents. Other packages are sorted alphabetically to provide a
+// consistent output.
 func Specs() []Spec {
 	var res = make([]Spec, 0, len(rules))
 	for name := range rules {
