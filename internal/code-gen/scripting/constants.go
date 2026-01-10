@@ -66,3 +66,7 @@ func ConstructorNameForInterface(name string) string {
 func JsConstructorForInterface(name string) string {
 	return fmt.Sprintf("%s%s", name, "Constructor")
 }
+
+func MustGetClass(e scriptEngine, className string) g.Generator {
+	return g.NewValuePackage("MustGetClass", packagenames.JS).Call(e, g.Lit(className))
+}

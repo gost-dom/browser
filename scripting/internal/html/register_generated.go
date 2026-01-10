@@ -5,16 +5,8 @@ package html
 import js "github.com/gost-dom/browser/scripting/internal/js"
 
 func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
-	document, ok := e.Class("Document")
-	if !ok {
-		panic("gost-dom/html: Document: class not registered")
-	}
-	InitializeDocument(document)
-	element, ok := e.Class("Element")
-	if !ok {
-		panic("gost-dom/html: Element: class not registered")
-	}
-	InitializeElement(element)
+	InitializeDocument(js.MustGetClass(e, "Document"))
+	InitializeElement(js.MustGetClass(e, "Element"))
 	InitializeHistory(js.CreateClass(e, "History", "", nil))
 	InitializeLocation(js.CreateClass(e, "Location", "", nil))
 	InitializeHTMLElement(js.CreateClass(e, "HTMLElement", "Element", nil))
@@ -22,22 +14,10 @@ func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
 	InitializeHTMLFormElement(js.CreateClass(e, "HTMLFormElement", "HTMLElement", nil))
 	InitializeHTMLInputElement(js.CreateClass(e, "HTMLInputElement", "HTMLElement", nil))
 	InitializeHTMLTemplateElement(js.CreateClass(e, "HTMLTemplateElement", "HTMLElement", nil))
-	eventTarget, ok := e.Class("EventTarget")
-	if !ok {
-		panic("gost-dom/html: EventTarget: class not registered")
-	}
-	InitializeWindow(e.ConfigureGlobalScope("Window", eventTarget))
+	InitializeWindow(e.ConfigureGlobalScope("Window", js.MustGetClass(e, "EventTarget")))
 }
 
 func ConfigureDedicatedWorkerGlobalScopeRealm[T any](e js.ScriptEngine[T]) {
-	document, ok := e.Class("Document")
-	if !ok {
-		panic("gost-dom/html: Document: class not registered")
-	}
-	InitializeDocument(document)
-	element, ok := e.Class("Element")
-	if !ok {
-		panic("gost-dom/html: Element: class not registered")
-	}
-	InitializeElement(element)
+	InitializeDocument(js.MustGetClass(e, "Document"))
+	InitializeElement(js.MustGetClass(e, "Element"))
 }

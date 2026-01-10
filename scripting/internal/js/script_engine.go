@@ -1,5 +1,7 @@
 package js
 
+import "fmt"
+
 type ErrorHandler[T any] interface {
 	HandleError(Scope[T], error)
 }
@@ -27,4 +29,12 @@ type ScriptEngine[T any] interface {
 // code directly.
 func IllegalConstructor[T any](ctx CallbackContext[T]) (Value[T], error) {
 	return nil, ctx.NewTypeError("Illegal constructor")
+}
+
+func MustGetClass[T any](e ScriptEngine[T], className string) Class[T] {
+	res, ok := e.Class(className)
+	if !ok {
+		panic(fmt.Sprintf("gost-dom/scripting: %s: class not registered", className))
+	}
+	return res
 }

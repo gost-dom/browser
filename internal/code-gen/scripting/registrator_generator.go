@@ -11,7 +11,6 @@ import (
 	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/gen"
 	"github.com/gost-dom/code-gen/idlspec"
-	"github.com/gost-dom/code-gen/internal"
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/code-gen/scripting/configuration"
 	"github.com/gost-dom/code-gen/scripting/model"
@@ -95,9 +94,6 @@ func RegisterRealm(
 			if err != nil {
 				return nil, err
 			}
-			// if IsGlobal(typeInfo.IdlInterface) {
-			// 	continue
-			// }
 			enriched = append(enriched, typeInfo)
 		}
 	}
@@ -113,8 +109,8 @@ func RegisterRealm(
 			baseClassId := g.Nil
 			if IsGlobal(typeInfo.IdlInterface) {
 				if inherits := realm.global.Inheritance; inherits != "" {
-					baseClassId = g.Id(internal.LowerCaseFirstLetter(inherits))
-					statements.Append(baseClass(engine, api, inherits, baseClassId))
+					// baseClassId = g.Id(internal.LowerCaseFirstLetter(inherits))
+					baseClassId = baseClass(engine, inherits)
 				}
 			}
 
@@ -122,7 +118,6 @@ func RegisterRealm(
 				Initializer(typeInfo).Call(
 					renderIfElse(IsGlobal(typeInfo.IdlInterface),
 						engine.ConfigureGlobalScope(realm.global.Name, baseClassId),
-						//e.ConfigureGlobalScope("Window", eventTarget)
 						jsCreateClass.Call(
 							engine,
 							g.Lit(typeInfo.Name()),
@@ -136,10 +131,8 @@ func RegisterRealm(
 			if typeInfo.IdlInterface.Mixin {
 				name = classNameForMixin(realm, typeInfo)
 			}
-			instance := g.Id(internal.LowerCaseFirstLetter(name))
 			statements.Append(
-				baseClass(engine, api, name, instance),
-				Initializer(typeInfo).Call(instance),
+				Initializer(typeInfo).Call(baseClass(engine, name)),
 			)
 		}
 	}
@@ -151,20 +144,8 @@ func RegisterRealm(
 	), nil
 }
 
-func baseClass(
-	engine scriptEngine,
-	api string,
-	className string,
-	instance g.Generator,
-) g.Generator {
-	ok := g.Id("ok")
-	return g.StatementList(
-		g.AssignMany(g.List(instance, ok), engine.Field("Class").Call(g.Lit(className))),
-		g.IfStmt{Condition: gen.Not(ok), Block: gen.Panic(g.Lit(
-			fmt.Sprintf("gost-dom/%s: %s: class not registered", api, className),
-		))},
-	)
-
+func baseClass(engine scriptEngine, className string) g.Generator {
+	return MustGetClass(engine, className)
 }
 
 func GenerateRegisterFunctions(spec string, globals []string) error {

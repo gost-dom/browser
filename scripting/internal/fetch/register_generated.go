@@ -8,20 +8,12 @@ func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
 	InitializeHeaders(js.CreateClass(e, "Headers", "", HeadersConstructor))
 	InitializeRequest(js.CreateClass(e, "Request", "", RequestConstructor))
 	InitializeResponse(js.CreateClass(e, "Response", "", ResponseConstructor))
-	window, ok := e.Class("Window")
-	if !ok {
-		panic("gost-dom/fetch: Window: class not registered")
-	}
-	InitializeWindowOrWorkerGlobalScope(window)
+	InitializeWindowOrWorkerGlobalScope(js.MustGetClass(e, "Window"))
 }
 
 func ConfigureDedicatedWorkerGlobalScopeRealm[T any](e js.ScriptEngine[T]) {
 	InitializeHeaders(js.CreateClass(e, "Headers", "", HeadersConstructor))
 	InitializeRequest(js.CreateClass(e, "Request", "", RequestConstructor))
 	InitializeResponse(js.CreateClass(e, "Response", "", ResponseConstructor))
-	workerGlobalScope, ok := e.Class("WorkerGlobalScope")
-	if !ok {
-		panic("gost-dom/fetch: WorkerGlobalScope: class not registered")
-	}
-	InitializeWindowOrWorkerGlobalScope(workerGlobalScope)
+	InitializeWindowOrWorkerGlobalScope(js.MustGetClass(e, "WorkerGlobalScope"))
 }
