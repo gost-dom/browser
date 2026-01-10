@@ -8,3 +8,8 @@ func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
 	InitializeURL(js.CreateClass(e, "URL", "", URLConstructor))
 	InitializeURLSearchParams(js.CreateClass(e, "URLSearchParams", "", URLSearchParamsConstructor))
 }
+
+func ConfigureDedicatedWorkerGlobalScopeRealm[T any](e js.ScriptEngine[T]) {
+	InitializeURL(js.CreateClass(e, "URL", "", URLConstructor))
+	InitializeURLSearchParams(js.CreateClass(e, "URLSearchParams", "", URLSearchParamsConstructor))
+}

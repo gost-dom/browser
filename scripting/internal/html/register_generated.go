@@ -23,3 +23,16 @@ func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
 	InitializeHTMLInputElement(js.CreateClass(e, "HTMLInputElement", "HTMLElement", nil))
 	InitializeHTMLTemplateElement(js.CreateClass(e, "HTMLTemplateElement", "HTMLElement", nil))
 }
+
+func ConfigureDedicatedWorkerGlobalScopeRealm[T any](e js.ScriptEngine[T]) {
+	document, ok := e.Class("Document")
+	if !ok {
+		panic("gost-dom/html: Document: class not registered")
+	}
+	InitializeDocument(document)
+	element, ok := e.Class("Element")
+	if !ok {
+		panic("gost-dom/html: Element: class not registered")
+	}
+	InitializeElement(element)
+}

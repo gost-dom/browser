@@ -102,7 +102,7 @@ func RegisterRealm(
 	}
 	slices.SortStableFunc(enriched, IntfComparer(idlSpec).compare)
 	for _, typeInfo := range enriched {
-		if typeInfo.InstallConstructor() {
+		if typeInfo.InstallConstructor() && realm.exposes(typeInfo.IdlInterface) {
 			var constructor g.Generator
 			if typeInfo.AllowConstructor() {
 				constructor = g.Id(JsConstructorForInterface(typeInfo.Name()))
@@ -142,15 +142,6 @@ func RegisterRealm(
 		gen.FunctionBody(statements),
 	), nil
 }
-
-// func Write(api string, realm realm, specs configuration.WebIdlConfigurations) error {
-// 	writer, err := os.Create("register_generated.go")
-// 	if err != nil {
-// 		return err
-// 	}
-//
-// 	return writeGenerator(writer, packagenames.ScriptPackageName(api), bootstrap)
-// }
 
 func GenerateRegisterFunctions(spec string, globals []string) error {
 	gen := g.StatementList()

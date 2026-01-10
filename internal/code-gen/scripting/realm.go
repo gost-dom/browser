@@ -17,6 +17,14 @@ type realm struct {
 
 // exposes returns whether interface i is exposed in the realm.
 func (r realm) exposes(i idl.Interface) bool {
+	if len(i.Exposed) == 0 {
+		// Workaround for a webref bug where Exposed=* isn't included in the
+		// exposed list
+		return true
+	}
+	if slices.Contains(i.Exposed, "*") {
+		return true
+	}
 	for _, global := range r.global.Global {
 		if slices.Contains(i.Exposed, global) {
 			return true

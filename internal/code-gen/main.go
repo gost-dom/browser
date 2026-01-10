@@ -44,7 +44,7 @@ func main() {
 	flag.StringVar(&packageName, "p", "", "Package to generate")
 	flag.Parse()
 
-	globals := []string{"Window" /*, "DedicatedWorkerGlobalScope" */}
+	globals := []string{"Window", "DedicatedWorkerGlobalScope"}
 
 	switch generatorType {
 	case "script":

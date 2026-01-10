@@ -9,3 +9,9 @@ func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
 	InitializeReadableStreamBYOBReader(js.CreateClass(e, "ReadableStreamBYOBReader", "", ReadableStreamBYOBReaderConstructor))
 	InitializeReadableStreamDefaultReader(js.CreateClass(e, "ReadableStreamDefaultReader", "", ReadableStreamDefaultReaderConstructor))
 }
+
+func ConfigureDedicatedWorkerGlobalScopeRealm[T any](e js.ScriptEngine[T]) {
+	InitializeReadableStream(js.CreateClass(e, "ReadableStream", "", ReadableStreamConstructor))
+	InitializeReadableStreamBYOBReader(js.CreateClass(e, "ReadableStreamBYOBReader", "", ReadableStreamBYOBReaderConstructor))
+	InitializeReadableStreamDefaultReader(js.CreateClass(e, "ReadableStreamDefaultReader", "", ReadableStreamDefaultReaderConstructor))
+}

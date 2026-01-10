@@ -9,3 +9,9 @@ func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
 	InitializeXMLHttpRequestEventTarget(js.CreateClass(e, "XMLHttpRequestEventTarget", "EventTarget", nil))
 	InitializeXMLHttpRequest(js.CreateClass(e, "XMLHttpRequest", "XMLHttpRequestEventTarget", XMLHttpRequestConstructor))
 }
+
+func ConfigureDedicatedWorkerGlobalScopeRealm[T any](e js.ScriptEngine[T]) {
+	InitializeFormData(js.CreateClass(e, "FormData", "", FormDataConstructor))
+	InitializeXMLHttpRequestEventTarget(js.CreateClass(e, "XMLHttpRequestEventTarget", "EventTarget", nil))
+	InitializeXMLHttpRequest(js.CreateClass(e, "XMLHttpRequest", "XMLHttpRequestEventTarget", XMLHttpRequestConstructor))
+}

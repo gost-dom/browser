@@ -24,3 +24,11 @@ func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
 	InitializeElement(js.CreateClass(e, "Element", "Node", nil))
 	InitializeText(js.CreateClass(e, "Text", "CharacterData", nil))
 }
+
+func ConfigureDedicatedWorkerGlobalScopeRealm[T any](e js.ScriptEngine[T]) {
+	InitializeAbortController(js.CreateClass(e, "AbortController", "", AbortControllerConstructor))
+	InitializeEvent(js.CreateClass(e, "Event", "", EventConstructor))
+	InitializeEventTarget(js.CreateClass(e, "EventTarget", "", EventTargetConstructor))
+	InitializeCustomEvent(js.CreateClass(e, "CustomEvent", "Event", CustomEventConstructor))
+	InitializeAbortSignal(js.CreateClass(e, "AbortSignal", "EventTarget", nil))
+}
