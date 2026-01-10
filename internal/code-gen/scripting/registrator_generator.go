@@ -168,6 +168,7 @@ func GenerateRegisterFunctions(spec string, globals []string) error {
 	if err != nil {
 		return err
 	}
+	defer writer.Close()
 
 	return writeGenerator(writer, packagenames.ScriptPackageName(spec), gen)
 }
@@ -195,5 +196,6 @@ func GenerateCombinedRegisterFunctions(globals []string) error {
 	if err != nil {
 		return err
 	}
+	defer writer.Close()
 	return writeGenerator(writer, packagenames.ScriptingInt, res)
 }
