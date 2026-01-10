@@ -31,7 +31,12 @@ func IllegalConstructor[T any](ctx CallbackContext[T]) (Value[T], error) {
 	return nil, ctx.NewTypeError("Illegal constructor")
 }
 
+// MustGetClass finds a previously registered class. Returns nil if className is
+// empty. Panics if className is non-empty and not previously registered.
 func MustGetClass[T any](e ScriptEngine[T], className string) Class[T] {
+	if className == "" {
+		return nil
+	}
 	res, ok := e.Class(className)
 	if !ok {
 		panic(fmt.Sprintf("gost-dom/scripting: %s: class not registered", className))

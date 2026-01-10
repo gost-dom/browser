@@ -106,18 +106,17 @@ func RegisterRealm(
 			} else {
 				constructor = g.Nil
 			}
-			baseClassId := g.Nil
+			baseClass := g.Nil
 			if IsGlobal(typeInfo.IdlInterface) {
 				if inherits := realm.global.Inheritance; inherits != "" {
-					// baseClassId = g.Id(internal.LowerCaseFirstLetter(inherits))
-					baseClassId = baseClass(engine, inherits)
+					baseClass = mustGetClass(engine, inherits)
 				}
 			}
 
 			statements.Append(
 				Initializer(typeInfo).Call(
 					renderIfElse(IsGlobal(typeInfo.IdlInterface),
-						engine.ConfigureGlobalScope(realm.global.Name, baseClassId),
+						engine.ConfigureGlobalScope(realm.global.Name, baseClass),
 						jsCreateClass.Call(
 							engine,
 							g.Lit(typeInfo.Name()),
@@ -132,7 +131,7 @@ func RegisterRealm(
 				name = classNameForMixin(realm, typeInfo)
 			}
 			statements.Append(
-				Initializer(typeInfo).Call(baseClass(engine, name)),
+				Initializer(typeInfo).Call(mustGetClass(engine, name)),
 			)
 		}
 	}
@@ -144,7 +143,7 @@ func RegisterRealm(
 	), nil
 }
 
-func baseClass(engine scriptEngine, className string) g.Generator {
+func mustGetClass(engine scriptEngine, className string) g.Generator {
 	return MustGetClass(engine, className)
 }
 

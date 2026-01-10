@@ -1,7 +1,5 @@
 package js
 
-import "fmt"
-
 // CreateClass creates a new JavaScript "class" with a constructor, implementing
 // an IDL interface. If inherits is non-empty, the new class will inherit from
 // the named class. If constructor is nil, [IllegalConstructor] will be used.
@@ -15,18 +13,8 @@ func CreateClass[T any](
 	className, inherits string,
 	constructorCallback CallbackFunc[T],
 ) Class[T] {
-	var superClass Class[T]
-	if inherits != "" {
-		var ok bool
-		if superClass, ok = e.Class(inherits); !ok {
-			msg := fmt.Sprintf(
-				"gost-dom/js: CreateClass: %s: not registered", inherits,
-			)
-			panic(msg)
-		}
-	}
 	if constructorCallback == nil {
 		constructorCallback = IllegalConstructor
 	}
-	return e.CreateClass(className, superClass, constructorCallback)
+	return e.CreateClass(className, MustGetClass(e, inherits), constructorCallback)
 }
