@@ -13,9 +13,11 @@ type htmlCollection struct{ node Node }
 func newHtmlCollection(n Node) HTMLCollection { return htmlCollection{n} }
 
 func (c htmlCollection) All() []Element {
-	nodes := c.node.nodes()
-	res := make([]Element, 0, len(nodes))
-	for _, n := range nodes {
+	nodes := c.node.ChildNodes()
+	l := nodes.Length()
+	res := make([]Element, 0, l)
+	for i := range l {
+		n := nodes.Item(i)
 		if e, ok := n.(Element); ok {
 			res = append(res, e)
 		}

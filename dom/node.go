@@ -16,6 +16,16 @@ import (
 	"golang.org/x/net/html"
 )
 
+func getNode(n *intdom.Node) Node {
+	if n == nil {
+		return nil
+	}
+	if res, ok := entity.ComponentType[Node](n); ok {
+		return res
+	}
+	return nil
+}
+
 type NodeType = intdom.NodeType
 
 type GetRootNodeOptions bool
@@ -95,7 +105,6 @@ type Node interface {
 	self() Node
 	setParent(Node)
 	setOwnerDocument(owner Document)
-	nodes() []Node
 	assertCanAddNode(Node) error
 	cloneChildren() []Node
 	createHtmlNode() *html.Node
@@ -103,22 +112,22 @@ type Node interface {
 	notify(ChangeEvent)
 	cloneNode(Document, bool) Node
 	revision() int // Internal optimizations
+	ptr() *node
 }
 
 type node struct {
 	event.EventTarget
-	entity.Entity
+	*intdom.Node
 	// revision of the node is incremented on any change. Used by
 	// LiveHtmlCollection to check if a note has been changed.
 	rev       int
-	children  []Node
-	parent    Node
 	document  Document
 	observers []observer
 }
 
 func newNode(ownerDocument Document) node {
 	return node{
+		Node:        intdom.NewNode(),
 		EventTarget: event.NewEventTarget(),
 		document:    ownerDocument,
 	}
@@ -129,9 +138,9 @@ func (n *node) CloneNode(deep bool) Node {
 }
 
 func (n *node) cloneChildren() []Node {
-	nodes := make([]Node, len(n.children))
-	for i, n := range n.children {
-		nodes[i] = n.CloneNode(true)
+	nodes := make([]Node, len(n.Children))
+	for i, n := range n.Children {
+		nodes[i] = getNode(n).CloneNode(true)
 	}
 	return nodes
 }
@@ -163,7 +172,8 @@ func (n *node) ChildNodes() NodeList {
 	if res, ok := entity.ComponentType[NodeList](n); ok {
 		return res
 	}
-	res := newDynamicNodeList(&n.children)
+
+	res := newDynamicNodeList(&(n.Node.Children))
 	entity.SetComponentType(n, res)
 	return res
 }
@@ -182,13 +192,13 @@ func (n *node) isEqualNode(other Node) bool {
 	if n.self().NodeType() != other.NodeType() {
 		return false
 	}
-	l := len(n.children)
-	cmp := other.nodes()
-	if l != len(cmp) {
+	l := len(n.Children)
+	cmp := other.ChildNodes()
+	if l != cmp.Length() {
 		return false
 	}
 	for i := range l {
-		if !n.children[i].IsEqualNode(cmp[i]) {
+		if !getNode(n.Children[i]).IsEqualNode(cmp.Item(i)) {
 			return false
 		}
 	}
@@ -203,10 +213,10 @@ func (n *node) GetRootNode(options ...GetRootNodeOptions) Node {
 	if len(options) > 1 {
 		n.Logger().Warn("Node.GetRootNode: composed not yet implemented")
 	}
-	if n.parent == nil {
+	if n.Parent == nil {
 		return n.self()
 	} else {
-		return n.parent.GetRootNode(options...)
+		return getNode(n.Parent).GetRootNode(options...)
 	}
 }
 
@@ -214,15 +224,15 @@ func (n *node) Contains(node Node) bool {
 	if n.self() == node {
 		return true
 	}
-	for _, c := range n.nodes() {
-		if c == node || c.Contains(node) {
+	for _, c := range n.Children {
+		if c == node.ptr().Node || getNode(c).Contains(node) {
 			return true
 		}
 	}
 	return false
 }
 
-func (n *node) ParentNode() Node { return n.parent }
+func (n *node) ParentNode() Node { return getNode(n.Parent) }
 
 func (n *node) ParentElement() Element {
 	r, _ := n.ParentNode().(Element)
@@ -231,21 +241,23 @@ func (n *node) ParentElement() Element {
 
 func (n *node) setOwnerDocument(owner Document) {
 	n.document = owner
-	for _, n := range n.children {
-		n.setOwnerDocument(owner)
+	for _, n := range n.Children {
+		getNode(n).setOwnerDocument(owner)
 	}
 }
 func (n *node) setParent(parent Node) {
-	if n.parent != nil {
-		n.parent.RemoveChild(n.self())
+	if n.Parent != nil {
+		getNode(n.Parent).RemoveChild(n.self())
 	}
 	if parent != nil {
 		parentOwner := parent.nodeDocument()
 		if n.document != parentOwner {
 			n.setOwnerDocument(parentOwner)
 		}
+		n.Parent = parent.ptr().Node
+	} else {
+		n.Parent = nil
 	}
-	n.parent = parent
 	n.SetParentTarget(parent)
 }
 
@@ -256,8 +268,8 @@ func (n *node) Connected() {
 }
 
 func (n *node) IsConnected() (result bool) {
-	if n.parent != nil {
-		result = n.parent.IsConnected()
+	if n.Parent != nil {
+		result = getNode(n.Parent).IsConnected()
 	}
 	return
 }
@@ -271,7 +283,7 @@ func (n *node) NodeName() string {
 }
 
 func (n *node) RemoveChild(node Node) (Node, error) {
-	idx := slices.Index(n.children, node)
+	idx := slices.Index(n.Children, node.ptr().Node)
 	if idx == -1 {
 		return nil, newDomError(
 			"Node.removeChild: The node to be removed is not a child of this node",
@@ -328,7 +340,7 @@ func (n *node) assertCanAddNode(newNode Node) error {
 				return newDomErrorCode(
 					"Document can have only one child element", hierarchy_request_err)
 			}
-			for _, n := range fragment.nodes() {
+			for n := range fragment.ChildNodes().All() {
 				if n.NodeType() == intdom.NodeTypeText {
 					return newDomErrorCode(
 						"Text nodes may not be direct descendants of a document",
@@ -342,9 +354,9 @@ func (n *node) assertCanAddNode(newNode Node) error {
 }
 
 func (n *node) childElements() []Element {
-	res := make([]Element, 0, len(n.children))
-	for _, n := range n.children {
-		if e, ok := n.(Element); ok {
+	res := make([]Element, 0, len(n.Children))
+	for _, n := range n.Children {
+		if e, ok := getNode(n).(Element); ok {
 			res = append(res, e)
 		}
 	}
@@ -354,9 +366,9 @@ func (n *node) childElements() []Element {
 func (n *node) insertBefore(node Node, referenceNode Node) error {
 	var index int
 	if referenceNode == nil {
-		index = len(n.children)
+		index = len(n.Children)
 	} else {
-		index = slices.Index(n.children, referenceNode)
+		index = slices.Index(n.Children, referenceNode.ptr().Node)
 		if index == -1 {
 			return errors.New("Reference node not found")
 		}
@@ -390,17 +402,21 @@ func (n *node) replaceNodes(index, count int, node Node) error {
 		nextSibling Node
 	)
 	newNodes := expandNode(node)
-	children := slices.Clone(n.children)
+	children := slices.Clone(n.Children)
 	start := index
 	end := index + count
 	if start > 0 {
-		prevSibling = children[start-1]
+		prevSibling = getNode(children[start-1])
 	}
 	if end < len(children) {
-		nextSibling = children[end]
+		nextSibling = getNode(children[end])
 	}
 
-	currentIdx := slices.Index(children, node)
+	var searchNode *intdom.Node
+	if node != nil {
+		searchNode = node.ptr().Node
+	}
+	currentIdx := slices.Index(children, searchNode)
 	removedNodes := slices.Clone(children[start:end])
 	children = slices.Replace(children, start, end, newNodes...)
 	sameParent := node != nil && node.ParentNode() == n.self()
@@ -413,16 +429,16 @@ func (n *node) replaceNodes(index, count int, node Node) error {
 		}
 		children = slices.Delete(children, currentIdx, currentIdx+1)
 	}
-	n.children = children
+	n.Children = children
 
 	if !sameParent {
 		for _, node := range removedNodes {
-			node.setParent(nil)
+			getNode(node).setParent(nil)
 		}
 		for _, node := range newNodes {
-			node.setParent(n.self())
-			if node.IsConnected() {
-				node.Connected()
+			getNode(node).setParent(n.self())
+			if getNode(node).IsConnected() {
+				getNode(node).Connected()
 			}
 		}
 	}
@@ -448,10 +464,10 @@ func (n *node) ReplaceChild(node, child Node) (Node, error) {
 	if child.ParentNode() != n.self() {
 		return nil, newDomError("NotFoundError")
 	}
-	for i, c := range n.children {
-		if c == child {
+	for i, c := range n.Children {
+		if getNode(c) == child {
 			err := n.replaceNodes(i, 1, node)
-			return c, err
+			return getNode(c), err
 		}
 	}
 	panic(
@@ -474,18 +490,18 @@ func (n *node) nodeDocument() Document {
 }
 
 func (n *node) FirstChild() Node {
-	if len(n.children) == 0 {
+	if len(n.Children) == 0 {
 		return nil
 	}
-	return n.children[0]
+	return getNode(n.Children[0])
 }
 
 func (n *node) LastChild() Node {
-	l := len(n.children)
+	l := len(n.Children)
 	if l == 0 {
 		return nil
 	}
-	return n.children[l-1]
+	return getNode(n.Children[l-1])
 }
 
 func (n *node) NextSibling() Node {
@@ -493,35 +509,37 @@ func (n *node) NextSibling() Node {
 	if parent == nil {
 		return nil
 	}
-	children := parent.nodes()
-	idx := slices.IndexFunc(children, func(c Node) bool { return n.IsSameNode(c) }) + 1
+	children := parent.ptr().Children
+	idx := slices.IndexFunc(
+		children,
+		func(c *intdom.Node) bool { return n.IsSameNode(getNode(c)) },
+	) + 1
 	if idx == -1 {
 		panic("We should exist in our parent's collection")
 	}
 	if idx >= len(children) {
 		return nil
 	}
-	return children[idx]
+	return getNode(children[idx])
 }
+
 func (n *node) PreviousSibling() Node {
 	parent := n.ParentNode()
 	if parent == nil {
 		return nil
 	}
-	children := parent.nodes()
-	idx := slices.IndexFunc(children, func(c Node) bool { return n.IsSameNode(c) })
+	children := parent.ptr().Children
+	idx := slices.IndexFunc(children, func(c *intdom.Node) bool { return n.IsSameNode(getNode(c)) })
 	if idx == -1 {
 		panic("We should exist in our parent's collection")
 	}
 	if idx == 0 {
 		return nil
 	}
-	return children[idx-1]
+	return getNode(children[idx-1])
 }
 
-func (n *node) nodes() []Node {
-	return n.children
-}
+func (n *node) ptr() *node { return n }
 
 func (n *node) SetSelf(node Node) {
 	entity.SetComponentType(n, node)
@@ -545,14 +563,13 @@ func (n *node) SetTextContent(val string) {
 
 func (n *node) TextContent() string {
 	b := &strings.Builder{}
-	for _, node := range n.children {
-		b.WriteString(node.TextContent())
+	for _, node := range n.Children {
+		b.WriteString(getNode(node).TextContent())
 	}
 	return b.String()
 }
 
 func (n *node) renderChildren(builder *strings.Builder) {
-	// childRenderer, ok := entity.ComponentType[ChildrenRenderer](n.self())
 	childRenderer, ok := entity.ComponentType[intdom.ChildrenRenderer](n)
 	if !ok {
 		childRenderer, ok = n.self().(intdom.ChildrenRenderer)
@@ -563,8 +580,8 @@ func (n *node) renderChildren(builder *strings.Builder) {
 }
 
 func (n *node) RenderChildren(builder *strings.Builder) {
-	for _, child := range n.children {
-		if renderer, ok := child.(intdom.Renderer); ok {
+	for _, child := range n.Children {
+		if renderer, ok := getNode(child).(intdom.Renderer); ok {
 			renderer.Render(builder)
 		}
 	}
@@ -579,8 +596,8 @@ func (n *node) notify(event ChangeEvent) {
 	for _, o := range n.observers {
 		o.Process(event)
 	}
-	if n.parent != nil {
-		n.parent.notify(event)
+	if n.Parent != nil {
+		getNode(n.Parent).notify(event)
 	}
 }
 
@@ -620,8 +637,8 @@ func (n nodeIterator) toHtmlNode(m map[*html.Node]Node) *html.Node {
 	if m != nil {
 		m[htmlNode] = n.Node
 	}
-	for _, child := range n.nodes() {
-		htmlNode.AppendChild(nodeIterator{child}.toHtmlNode(m))
+	for _, child := range n.ptr().Children {
+		htmlNode.AppendChild(nodeIterator{getNode(child)}.toHtmlNode(m))
 	}
 	return htmlNode
 }
