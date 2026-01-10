@@ -151,10 +151,10 @@ func GenerateRegisterFunctions(spec string, globals []string) error {
 	for _, global := range globals {
 		globalIntf, ok := idlspec.Interface(global)
 		if !ok {
-			return fmt.Errorf("Global interface not found: %s", global)
+			return fmt.Errorf("GenerateRegisterFunctions: IDL interface not found: %s", global)
 		}
 		if len(globalIntf.Global) == 0 {
-			return fmt.Errorf("Specified name has no exposed globals")
+			return fmt.Errorf("GenerateRegisterFunctions: IDL interface has no globals: %s", global)
 		}
 		gen.Append(g.Line)
 		specs := configuration.CreateV8SpecsForSpec(spec)
