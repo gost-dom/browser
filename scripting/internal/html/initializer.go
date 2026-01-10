@@ -11,8 +11,6 @@ import (
 )
 
 func ConfigureScriptEngine[T any](e js.ScriptEngine[T]) {
-	ConfigureWindowRealm(e)
-
 	InitializeDOMStringMap(js.CreateClass(e, "DOMStringMap", "", js.IllegalConstructor))
 	window, _ := e.Class("Window")
 	installEventLoopGlobals(window)
