@@ -132,6 +132,29 @@ var rules = CustomRules{
 	"streams": streamsRules,
 }
 
+type Spec string
+
+func (s Spec) DependsOn(other Spec) bool {
+	if s == other {
+		return false
+	}
+	if other == "dom" {
+		return true
+	}
+	if other == "html" && s != "dom" {
+		return true
+	}
+	return false
+}
+
+func Specs() []Spec {
+	var res = make([]Spec, 0, len(rules))
+	for name := range rules {
+		res = append(res, Spec(name))
+	}
+	return res
+}
+
 func SpecNames() []string {
 	var res = make([]string, 0, len(rules))
 	for name := range rules {

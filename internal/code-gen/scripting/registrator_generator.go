@@ -170,33 +170,16 @@ func GenerateRegisterFunctions(spec string, globals []string) error {
 	return writeGenerator(writer, packagenames.ScriptPackageName(spec), gen)
 }
 
-type Spec string
-
-func (s Spec) dependsOn(other Spec) bool {
-	if s == other {
-		return false
-	}
-	if other == "dom" {
-		return true
-	}
-	if other == "html" && s != "dom" {
-		return true
-	}
-	return false
-}
-
-func specNames() []string {
-	names := customrules.SpecNames()
-	slices.SortFunc(names, func(a, b string) int {
-		x := Spec(a)
-		y := Spec(b)
-		if x.dependsOn(y) {
+func specNames() []customrules.Spec {
+	names := customrules.Specs()
+	slices.SortFunc(names, func(a, b customrules.Spec) int {
+		if a.DependsOn(b) {
 			return 1
 		}
-		if y.dependsOn(x) {
+		if b.DependsOn(a) {
 			return -1
 		}
-		return strings.Compare(a, b)
+		return strings.Compare(string(a), string(b))
 	})
 	return names
 }
@@ -209,7 +192,7 @@ func GenerateCombinedRegisterFunctions(globals []string) error {
 
 		body := g.StatementList()
 		for _, name := range specNames() {
-			pkg := packagenames.ScriptPackageName(name)
+			pkg := packagenames.ScriptPackageName(string(name))
 			body.Append(g.NewValuePackage(fnName, pkg).Call(e))
 		}
 		res.Append(g.Line)
