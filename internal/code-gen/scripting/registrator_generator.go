@@ -173,20 +173,6 @@ func GenerateRegisterFunctions(spec string, globals []string) error {
 	return writeGenerator(writer, packagenames.ScriptPackageName(spec), gen)
 }
 
-func specNames() []customrules.Spec {
-	names := customrules.Specs()
-	slices.SortFunc(names, func(a, b customrules.Spec) int {
-		if a.DependsOn(b) {
-			return 1
-		}
-		if b.DependsOn(a) {
-			return -1
-		}
-		return strings.Compare(string(a), string(b))
-	})
-	return names
-}
-
 func GenerateCombinedRegisterFunctions(globals []string) error {
 	res := g.StatementList()
 	for _, global := range globals {
@@ -194,7 +180,7 @@ func GenerateCombinedRegisterFunctions(globals []string) error {
 		e := g.Id("e")
 
 		body := g.StatementList()
-		for _, name := range specNames() {
+		for _, name := range customrules.Specs() {
 			pkg := packagenames.ScriptPackageName(string(name))
 			body.Append(g.NewValuePackage(fnName, pkg).Call(e))
 		}

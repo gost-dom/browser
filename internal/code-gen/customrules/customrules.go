@@ -13,6 +13,8 @@ package customrules
 
 import (
 	"reflect"
+	"slices"
+	"strings"
 
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/webref/idl"
@@ -157,11 +159,23 @@ func (s Spec) DependsOn(other Spec) bool {
 	return false
 }
 
+// Returns the configured specs in a stable correct order. I.e., a depepndt
+// module is before it's dependees. Other packages are sorted alphabetically to
+// provide a consistent output.
 func Specs() []Spec {
 	var res = make([]Spec, 0, len(rules))
 	for name := range rules {
 		res = append(res, Spec(name))
 	}
+	slices.SortFunc(res, func(a, b Spec) int {
+		if a.DependsOn(b) {
+			return 1
+		}
+		if b.DependsOn(a) {
+			return -1
+		}
+		return strings.Compare(string(a), string(b))
+	})
 	return res
 }
 
