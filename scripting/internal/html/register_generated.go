@@ -16,5 +16,3 @@ func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
 	InitializeHTMLTemplateElement(js.CreateClass(e, "HTMLTemplateElement", "HTMLElement", nil))
 	InitializeWindow(e.ConfigureGlobalScope("Window", js.MustGetClass(e, "EventTarget")))
 }
-
-func ConfigureDedicatedWorkerGlobalScopeRealm[T any](e js.ScriptEngine[T]) {}

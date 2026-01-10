@@ -71,16 +71,16 @@ func (c IntfComparer) compare(a, b model.ESConstructorData) int {
 
 func IsGlobal(intf idl.Interface) bool { return len(intf.Global) > 0 }
 
-func RegisterRealm(
+func InstallersForRealm(
 	api string,
 	realm realm,
 	specs configuration.WebIdlConfigurations,
-) (g.Generator, error) {
+) ([]g.Generator, error) {
+	res := make([]g.Generator, 0, 20)
 	idlSpec, err := idl.Load(api)
 	if err != nil {
 		return nil, err
 	}
-	statements := g.StatementList()
 	engine := scriptEngine{g.NewValue("e")}
 	var enriched []model.ESConstructorData
 	for _, spec := range slices.Collect(maps.Values(specs)) {
@@ -113,7 +113,7 @@ func RegisterRealm(
 				}
 			}
 
-			statements.Append(
+			res = append(res,
 				Initializer(typeInfo).Call(
 					renderIfElse(IsGlobal(typeInfo.IdlInterface),
 						engine.ConfigureGlobalScope(realm.global.Name, baseClass),
@@ -132,12 +132,26 @@ func RegisterRealm(
 			}
 			original, _ := idlspec.Interface(name)
 			if realm.exposes(original) {
-				statements.Append(
+				res = append(res,
 					Initializer(typeInfo).Call(MustGetClass(engine, name)),
 				)
 			}
 		}
 	}
+	return res, nil
+}
+
+func RegisterRealm(
+	api string,
+	realm realm,
+	specs configuration.WebIdlConfigurations,
+) (g.Generator, error) {
+	engine := scriptEngine{g.NewValue("e")}
+	res, err := InstallersForRealm(api, realm, specs)
+	if err != nil {
+		return nil, err
+	}
+	statements := g.StatementList(res...)
 	return gen.NewFunction(
 		gen.FunctionName(fmt.Sprintf("Configure%sRealm", realm.global.Name)),
 		gen.FunctionTypeParam(gen.AnyConstraint(g.Id("T"))),
@@ -158,11 +172,18 @@ func GenerateRegisterFunctions(spec string, globals []string) error {
 		}
 		gen.Append(g.Line)
 		specs := configuration.CreateV8SpecsForSpec(spec)
-		res, err := RegisterRealm(spec, realm{globalIntf}, specs)
+
+		installers, err := InstallersForRealm(spec, realm{globalIntf}, specs)
 		if err != nil {
 			return err
 		}
-		gen.Append(res)
+		if len(installers) > 0 {
+			res, err := RegisterRealm(spec, realm{globalIntf}, specs)
+			if err != nil {
+				return err
+			}
+			gen.Append(res)
+		}
 	}
 	writer, err := os.Create("register_generated.go")
 	if err != nil {
@@ -181,8 +202,25 @@ func GenerateCombinedRegisterFunctions(globals []string) error {
 
 		body := g.StatementList()
 		for _, name := range customrules.Specs() {
-			pkg := packagenames.ScriptPackageName(string(name))
-			body.Append(g.NewValuePackage(fnName, pkg).Call(e))
+			globalIntf, ok := idlspec.Interface(global)
+			if !ok {
+				return fmt.Errorf("GenerateRegisterFunctions: IDL interface not found: %s", global)
+			}
+			if len(globalIntf.Global) == 0 {
+				return fmt.Errorf(
+					"GenerateRegisterFunctions: IDL interface has no globals: %s",
+					global,
+				)
+			}
+			specs := configuration.CreateV8SpecsForSpec(string(name))
+			installers, err := InstallersForRealm(string(name), realm{globalIntf}, specs)
+			if err != nil {
+				return err
+			}
+			if len(installers) > 0 {
+				pkg := packagenames.ScriptPackageName(string(name))
+				body.Append(g.NewValuePackage(fnName, pkg).Call(e))
+			}
 		}
 		res.Append(g.Line)
 		res.Append(gen.NewFunction(

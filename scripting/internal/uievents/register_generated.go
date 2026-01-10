@@ -10,5 +10,3 @@ func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
 	InitializeMouseEvent(js.CreateClass(e, "MouseEvent", "UIEvent", MouseEventConstructor))
 	InitializePointerEvent(js.CreateClass(e, "PointerEvent", "MouseEvent", PointerEventConstructor))
 }
-
-func ConfigureDedicatedWorkerGlobalScopeRealm[T any](e js.ScriptEngine[T]) {}
