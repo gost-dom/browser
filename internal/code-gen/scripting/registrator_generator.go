@@ -71,10 +71,14 @@ func (c IntfComparer) compare(a, b model.ESConstructorData) int {
 
 func IsGlobal(intf idl.Interface) bool { return len(intf.Global) > 0 }
 
-func Write(api string, realm realm, specs configuration.WebIdlConfigurations) error {
+func RegisterRealm(
+	api string,
+	realm realm,
+	specs configuration.WebIdlConfigurations,
+) (g.Generator, error) {
 	idlSpec, err := idl.Load(api)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	statements := g.StatementList()
 	engine := g.NewValue("e")
@@ -82,13 +86,13 @@ func Write(api string, realm realm, specs configuration.WebIdlConfigurations) er
 	for _, spec := range slices.Collect(maps.Values(specs)) {
 		data, err := configuration.LoadSpecs(spec)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		types := spec.Types()
 		for _, t := range types {
 			typeInfo, err := createData(data, t)
 			if err != nil {
-				return err
+				return nil, err
 			}
 			if IsGlobal(typeInfo.IdlInterface) {
 				continue
@@ -131,29 +135,45 @@ func Write(api string, realm realm, specs configuration.WebIdlConfigurations) er
 			)
 		}
 	}
-	bootstrap := gen.NewFunction(
+	return gen.NewFunction(
 		gen.FunctionName(fmt.Sprintf("Configure%sRealm", realm.global.Name)),
 		gen.FunctionTypeParam(gen.AnyConstraint(g.Id("T"))),
 		gen.FunctionParam(engine, jsScriptEngine),
 		gen.FunctionBody(statements),
-	)
+	), nil
+}
 
+// func Write(api string, realm realm, specs configuration.WebIdlConfigurations) error {
+// 	writer, err := os.Create("register_generated.go")
+// 	if err != nil {
+// 		return err
+// 	}
+//
+// 	return writeGenerator(writer, packagenames.ScriptPackageName(api), bootstrap)
+// }
+
+func GenerateRegisterFunctions(spec string, globals []string) error {
+	gen := g.StatementList()
+	for _, global := range globals {
+		globalIntf, ok := idlspec.Interface(global)
+		if !ok {
+			return fmt.Errorf("Global interface not found: %s", global)
+		}
+		if len(globalIntf.Global) == 0 {
+			return fmt.Errorf("Specified name has no exposed globals")
+		}
+		gen.Append(g.Line)
+		specs := configuration.CreateV8SpecsForSpec(spec)
+		res, err := RegisterRealm(spec, realm{globalIntf}, specs)
+		if err != nil {
+			return err
+		}
+		gen.Append(res)
+	}
 	writer, err := os.Create("register_generated.go")
 	if err != nil {
 		return err
 	}
 
-	return writeGenerator(writer, packagenames.ScriptPackageName(api), bootstrap)
-}
-
-func GenerateRegisterFunctions(spec string, global string) error {
-	globalIntf, ok := idlspec.Interface(global)
-	if !ok {
-		return fmt.Errorf("Global interface not found: %s", global)
-	}
-	if len(globalIntf.Global) == 0 {
-		return fmt.Errorf("Specified name has no exposed globals")
-	}
-	specs := configuration.CreateV8SpecsForSpec(spec)
-	return Write(spec, realm{globalIntf}, specs)
+	return writeGenerator(writer, packagenames.ScriptPackageName(spec), gen)
 }
