@@ -13,10 +13,8 @@ import (
 func ConfigureScriptEngine[T any](e js.ScriptEngine[T]) {
 	ConfigureWindowRealm(e)
 
-	eventTarget, _ := e.Class("EventTarget")
-	window := e.ConfigureGlobalScope("Window", eventTarget)
-	InitializeWindow(window)
 	InitializeDOMStringMap(js.CreateClass(e, "DOMStringMap", "", js.IllegalConstructor))
+	window, _ := e.Class("Window")
 	installEventLoopGlobals(window)
 
 	// HTMLDocument exists as a separate class for historical reasons, but it

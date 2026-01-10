@@ -82,7 +82,7 @@ func RegisterRealm(
 		return nil, err
 	}
 	statements := g.StatementList()
-	engine := g.NewValue("e")
+	engine := scriptEngine{g.NewValue("e")}
 	var enriched []model.ESConstructorData
 	for _, spec := range slices.Collect(maps.Values(specs)) {
 		data, err := configuration.LoadSpecs(spec)
@@ -95,9 +95,9 @@ func RegisterRealm(
 			if err != nil {
 				return nil, err
 			}
-			if IsGlobal(typeInfo.IdlInterface) {
-				continue
-			}
+			// if IsGlobal(typeInfo.IdlInterface) {
+			// 	continue
+			// }
 			enriched = append(enriched, typeInfo)
 		}
 	}
@@ -110,14 +110,25 @@ func RegisterRealm(
 			} else {
 				constructor = g.Nil
 			}
+			baseClassId := g.Nil
+			if IsGlobal(typeInfo.IdlInterface) {
+				if inherits := realm.global.Inheritance; inherits != "" {
+					baseClassId = g.Id(internal.LowerCaseFirstLetter(inherits))
+					statements.Append(baseClass(engine, api, inherits, baseClassId))
+				}
+			}
+
 			statements.Append(
 				Initializer(typeInfo).Call(
-					jsCreateClass.Call(
-						engine,
-						g.Lit(typeInfo.Name()),
-						g.Lit(typeInfo.Extends()),
-						constructor,
-					)),
+					renderIfElse(IsGlobal(typeInfo.IdlInterface),
+						engine.ConfigureGlobalScope(realm.global.Name, baseClassId),
+						//e.ConfigureGlobalScope("Window", eventTarget)
+						jsCreateClass.Call(
+							engine,
+							g.Lit(typeInfo.Name()),
+							g.Lit(typeInfo.Extends()),
+							constructor,
+						))),
 			)
 		}
 		if typeInfo.InstallPartial() {
@@ -126,12 +137,8 @@ func RegisterRealm(
 				name = classNameForMixin(realm, typeInfo)
 			}
 			instance := g.Id(internal.LowerCaseFirstLetter(name))
-			ok := g.Id("ok")
 			statements.Append(
-				g.AssignMany(g.List(instance, ok), engine.Field("Class").Call(g.Lit(name))),
-				g.IfStmt{Condition: gen.Not(ok), Block: gen.Panic(g.Lit(
-					fmt.Sprintf("gost-dom/%s: %s: class not registered", api, name),
-				))},
+				baseClass(engine, api, name, instance),
 				Initializer(typeInfo).Call(instance),
 			)
 		}
@@ -142,6 +149,22 @@ func RegisterRealm(
 		gen.FunctionParam(engine, jsScriptEngine),
 		gen.FunctionBody(statements),
 	), nil
+}
+
+func baseClass(
+	engine scriptEngine,
+	api string,
+	className string,
+	instance g.Generator,
+) g.Generator {
+	ok := g.Id("ok")
+	return g.StatementList(
+		g.AssignMany(g.List(instance, ok), engine.Field("Class").Call(g.Lit(className))),
+		g.IfStmt{Condition: gen.Not(ok), Block: gen.Panic(g.Lit(
+			fmt.Sprintf("gost-dom/%s: %s: class not registered", api, className),
+		))},
+	)
+
 }
 
 func GenerateRegisterFunctions(spec string, globals []string) error {

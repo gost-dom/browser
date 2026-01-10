@@ -22,6 +22,11 @@ func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
 	InitializeHTMLFormElement(js.CreateClass(e, "HTMLFormElement", "HTMLElement", nil))
 	InitializeHTMLInputElement(js.CreateClass(e, "HTMLInputElement", "HTMLElement", nil))
 	InitializeHTMLTemplateElement(js.CreateClass(e, "HTMLTemplateElement", "HTMLElement", nil))
+	eventTarget, ok := e.Class("EventTarget")
+	if !ok {
+		panic("gost-dom/html: EventTarget: class not registered")
+	}
+	InitializeWindow(e.ConfigureGlobalScope("Window", eventTarget))
 }
 
 func ConfigureDedicatedWorkerGlobalScopeRealm[T any](e js.ScriptEngine[T]) {
