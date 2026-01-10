@@ -56,12 +56,12 @@ func CreateWindowsConfigurer[T any]() *ScriptEngineConfigurer[T] {
 	// Must be installed after dom.
 	result.AddConfigurerFunc(html.ConfigureScriptEngine)
 	// Must be installed after html - as it depends on Window
-	result.AddConfigurerFunc(fetch.ConfigureScriptEngine)
+	result.AddConfigurerFunc(fetch.ConfigureWindowRealm)
 	result.AddConfigurerFunc(svg.ConfigureScriptEngine)
 	result.AddConfigurerFunc(mathml.ConfigureScriptEngine)
-	result.AddConfigurerFunc(xhr.ConfigureScriptEngine)
-	result.AddConfigurerFunc(url.Bootstrap)
-	result.AddConfigurerFunc(uievents.Bootstrap)
+	result.AddConfigurerFunc(xhr.ConfigureWindowRealm)
+	result.AddConfigurerFunc(url.ConfigureWindowRealm)
+	result.AddConfigurerFunc(uievents.ConfigureWindowRealm)
 	result.AddConfigurerFunc(streams.ConfigureWindowRealm)
 	result.AddConfigurerFunc(fileapi.ConfigureWindowRealm)
 	result.AddConfigurerFunc(InstallPolyfills)

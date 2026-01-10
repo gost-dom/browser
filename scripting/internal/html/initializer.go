@@ -11,7 +11,7 @@ import (
 )
 
 func ConfigureScriptEngine[T any](e js.ScriptEngine[T]) {
-	Bootstrap(e)
+	ConfigureWindowRealm(e)
 
 	eventTarget, _ := e.Class("EventTarget")
 	window := e.ConfigureGlobalScope("Window", eventTarget)

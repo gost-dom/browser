@@ -4,7 +4,7 @@ package uievents
 
 import js "github.com/gost-dom/browser/scripting/internal/js"
 
-func Bootstrap[T any](e js.ScriptEngine[T]) {
+func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
 	InitializeUIEvent(js.CreateClass(e, "UIEvent", "Event", UIEventConstructor))
 	InitializeKeyboardEvent(js.CreateClass(e, "KeyboardEvent", "UIEvent", KeyboardEventConstructor))
 	InitializeMouseEvent(js.CreateClass(e, "MouseEvent", "UIEvent", MouseEventConstructor))

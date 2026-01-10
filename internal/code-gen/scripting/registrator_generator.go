@@ -132,7 +132,7 @@ func Write(api string, realm realm, specs configuration.WebIdlConfigurations) er
 		}
 	}
 	bootstrap := gen.NewFunction(
-		gen.FunctionName("Bootstrap"),
+		gen.FunctionName(fmt.Sprintf("Configure%sRealm", realm.global.Name)),
 		gen.FunctionTypeParam(gen.AnyConstraint(g.Id("T"))),
 		gen.FunctionParam(engine, jsScriptEngine),
 		gen.FunctionBody(statements),

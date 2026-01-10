@@ -4,7 +4,7 @@ package dom
 
 import js "github.com/gost-dom/browser/scripting/internal/js"
 
-func Bootstrap[T any](e js.ScriptEngine[T]) {
+func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
 	InitializeAbortController(js.CreateClass(e, "AbortController", "", AbortControllerConstructor))
 	InitializeDOMTokenList(js.CreateClass(e, "DOMTokenList", "", nil))
 	InitializeEvent(js.CreateClass(e, "Event", "", EventConstructor))

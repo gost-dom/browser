@@ -4,7 +4,7 @@ package html
 
 import js "github.com/gost-dom/browser/scripting/internal/js"
 
-func Bootstrap[T any](e js.ScriptEngine[T]) {
+func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
 	document, ok := e.Class("Document")
 	if !ok {
 		panic("gost-dom/html: Document: class not registered")
