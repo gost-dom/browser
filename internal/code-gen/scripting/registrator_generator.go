@@ -130,9 +130,12 @@ func RegisterRealm(
 			if typeInfo.IdlInterface.Mixin {
 				name = classNameForMixin(realm, typeInfo)
 			}
-			statements.Append(
-				Initializer(typeInfo).Call(mustGetClass(engine, name)),
-			)
+			original, _ := idlspec.Interface(name)
+			if realm.exposes(original) {
+				statements.Append(
+					Initializer(typeInfo).Call(mustGetClass(engine, name)),
+				)
+			}
 		}
 	}
 	return gen.NewFunction(

@@ -17,7 +17,4 @@ func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
 	InitializeWindow(e.ConfigureGlobalScope("Window", js.MustGetClass(e, "EventTarget")))
 }
 
-func ConfigureDedicatedWorkerGlobalScopeRealm[T any](e js.ScriptEngine[T]) {
-	InitializeDocument(js.MustGetClass(e, "Document"))
-	InitializeElement(js.MustGetClass(e, "Element"))
-}
+func ConfigureDedicatedWorkerGlobalScopeRealm[T any](e js.ScriptEngine[T]) {}
