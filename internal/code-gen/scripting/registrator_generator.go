@@ -8,6 +8,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/gen"
 	"github.com/gost-dom/code-gen/idlspec"
 	"github.com/gost-dom/code-gen/internal"
@@ -167,4 +168,61 @@ func GenerateRegisterFunctions(spec string, globals []string) error {
 	}
 
 	return writeGenerator(writer, packagenames.ScriptPackageName(spec), gen)
+}
+
+type Spec string
+
+func (s Spec) dependsOn(other Spec) bool {
+	if s == other {
+		return false
+	}
+	if other == "dom" {
+		return true
+	}
+	if other == "html" && s != "dom" {
+		return true
+	}
+	return false
+}
+
+func specNames() []string {
+	names := customrules.SpecNames()
+	slices.SortFunc(names, func(a, b string) int {
+		x := Spec(a)
+		y := Spec(b)
+		if x.dependsOn(y) {
+			return 1
+		}
+		if y.dependsOn(x) {
+			return -1
+		}
+		return strings.Compare(a, b)
+	})
+	return names
+}
+
+func GenerateCombinedRegisterFunctions(globals []string) error {
+	res := g.StatementList()
+	for _, global := range globals {
+		fnName := fmt.Sprintf("Configure%sRealm", global)
+		e := g.Id("e")
+
+		body := g.StatementList()
+		for _, name := range specNames() {
+			pkg := packagenames.ScriptPackageName(name)
+			body.Append(g.NewValuePackage(fnName, pkg).Call(e))
+		}
+		res.Append(g.Line)
+		res.Append(gen.NewFunction(
+			gen.FunctionName(fnName),
+			gen.FunctionTypeParam(gen.AnyConstraint(nil)),
+			gen.FunctionParam(e, jsScriptEngine),
+			gen.FunctionBody(body),
+		))
+	}
+	writer, err := os.Create("register_generated.go")
+	if err != nil {
+		return err
+	}
+	return writeGenerator(writer, packagenames.ScriptingInt, res)
 }

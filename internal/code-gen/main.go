@@ -53,6 +53,9 @@ func main() {
 	case "script-bootstrap":
 		exitOnError(scripting.GenerateRegisterFunctions(packageName, globals))
 		os.Exit(0)
+	case "script-bootstrappers":
+		exitOnError(scripting.GenerateCombinedRegisterFunctions(globals))
+		os.Exit(0)
 	case "event-init-decoders":
 		if packageName == "" {
 			panic("Missing package spec")

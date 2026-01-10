@@ -18,5 +18,8 @@ func Panic(expr g.Generator) g.Generator {
 }
 
 func AnyConstraint(t g.Generator) g.Generator {
+	if t == nil {
+		t = g.Id("T")
+	}
 	return g.Raw(t.Generate().Any())
 }

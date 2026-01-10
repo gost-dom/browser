@@ -17,6 +17,7 @@ const (
 	Events         = Dom + "/event"
 	Html           = BASE_PKG + "/html"
 	Scripting      = BASE_PKG + "/scripting"
+	ScriptingInt   = BASE_PKG + "/scripting/internal"
 	JSDom          = BASE_PKG + "/scripting/internal/dom"
 	Log            = BASE_PKG + "/internal/log"
 	Fetch          = BASE_PKG + "/internal/fetch"
@@ -35,7 +36,7 @@ const (
 )
 
 func ScriptPackageName(api string) string {
-	return Scripting + "/internal/" + api
+	return ScriptingInt + "/" + api
 }
 
 var names = map[string]string{
