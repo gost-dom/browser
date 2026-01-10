@@ -423,7 +423,7 @@ func (e *element) String() string {
 	if found {
 		id = "id='" + id + "'"
 	}
-	childLen := len(e.nodes())
+	childLen := len(e.ptr().Node.Children)
 	return fmt.Sprintf("<%s %s(child count=%d) />", e.tagName, id, childLen)
 }
 

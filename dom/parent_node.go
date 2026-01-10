@@ -3,6 +3,7 @@ package dom
 import (
 	"slices"
 
+	intdom "github.com/gost-dom/browser/internal/dom"
 	"github.com/gost-dom/css"
 )
 
@@ -38,7 +39,7 @@ func (n parentNode) Prepend(nodes ...Node) (err error) {
 func (n parentNode) ReplaceChildren(nodes ...Node) (err error) {
 	node := n.collapseNodes(nodes)
 	if err = n.node.assertCanAddNode(node); err == nil {
-		return n.node.replaceNodes(0, len(n.node.children), node)
+		return n.node.replaceNodes(0, len(n.node.ptr().Children), node)
 	}
 	return
 }
@@ -79,15 +80,15 @@ func collapseNodes(owner Document, nodes []Node) Node {
 // - A nil value returns a nil slice (empty slice)
 // - A [DocumentFragment] returns its children
 // - Any other node returns a single-element slice of itself.
-func expandNode(node Node) []Node {
+func expandNode(node Node) []*intdom.Node {
 	if node == nil {
 		return nil
 	}
 
 	if _, ok := node.(DocumentFragment); ok {
-		return slices.Clone(node.nodes())
+		return slices.Clone(node.ptr().Children)
 	} else {
-		return []Node{node}
+		return []*intdom.Node{node.ptr().Node}
 	}
 }
 
@@ -129,9 +130,9 @@ func (n parentNode) QuerySelectorAll(pattern string) (NodeList, error) {
 	htmlNode, m := toHtmlNodeAndMap(n.node.self())
 
 	nodes := sel.Select(htmlNode)
-	result := make([]Node, len(nodes))
+	result := make([]*intdom.Node, len(nodes))
 	for i, node := range nodes {
-		result[i] = m[node]
+		result[i] = m[node].ptr().Node
 	}
 	return &nodeList{nodes: &result}, nil
 }

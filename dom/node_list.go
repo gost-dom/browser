@@ -4,6 +4,7 @@ import (
 	"iter"
 	"slices"
 
+	intdom "github.com/gost-dom/browser/internal/dom"
 	"github.com/gost-dom/browser/internal/entity"
 )
 
@@ -25,15 +26,15 @@ type NodeList interface {
 // for it. It uses a pointer value to support live collections.
 type nodeList struct {
 	entity.Entity
-	nodes *[]Node
+	nodes *[]*intdom.Node
 }
 
-func newStaticNodeList(n []Node) NodeList {
+func newStaticNodeList(n []*intdom.Node) NodeList {
 	data := slices.Clone(n)
 	return &nodeList{nodes: &data}
 }
 
-func newDynamicNodeList(n *[]Node) NodeList {
+func newDynamicNodeList(n *[]*intdom.Node) NodeList {
 	return &nodeList{nodes: n}
 }
 
@@ -50,7 +51,7 @@ func (l *nodeList) Item(index int) Node {
 	if index >= l.Length() || index < 0 {
 		return nil
 	}
-	return (*l.nodes)[index]
+	return getNode((*l.nodes)[index])
 }
 
 func (l *nodeList) All() iter.Seq[Node] {

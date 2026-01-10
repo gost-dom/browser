@@ -92,7 +92,7 @@ func (d *document) ImportNode(n Node, deep bool) Node {
 func (d *document) Body() Element {
 	root := d.DocumentElement()
 	if root != nil {
-		for _, child := range root.nodes() {
+		for child := range root.ChildNodes().All() {
 			if e, ok := child.(Element); ok {
 				if e.TagName() == "BODY" {
 					return e
@@ -113,7 +113,7 @@ func (d *document) SetBody(Element) error {
 func (d *document) Head() Element {
 	root := d.DocumentElement()
 	if root != nil {
-		for _, child := range root.nodes() {
+		for child := range root.ChildNodes().All() {
 			if e, ok := child.(Element); ok {
 				if e.TagName() == "HEAD" {
 					return e
@@ -145,7 +145,7 @@ func (d *document) CreateDocumentFragment() DocumentFragment {
 }
 
 func (d *document) DocumentElement() Element {
-	for _, c := range d.nodes() {
+	for c := range d.ChildNodes().All() {
 		if e, ok := c.(Element); ok {
 			return e
 		}
