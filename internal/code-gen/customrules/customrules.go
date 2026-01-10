@@ -135,6 +135,15 @@ var rules = CustomRules{
 
 type Spec string
 
+// DependsOn indicates wither Spec s depends on Spec other. This is a simple
+// implementation that doesn't perform a true dependency analysis, but merely
+// build from the knowledge we currently have.
+//
+// - dom defines fundamental types, such as EventTarget, and AbortSignale
+// - html depends on dom and defines the global objects
+// - Other packages _may_ append to the global scope, e.g. fetch does this.
+//
+// This simple implementation works for the current scope
 func (s Spec) DependsOn(other Spec) bool {
 	if s == other {
 		return false
