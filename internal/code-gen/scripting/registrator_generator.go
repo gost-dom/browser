@@ -109,7 +109,7 @@ func RegisterRealm(
 			baseClass := g.Nil
 			if IsGlobal(typeInfo.IdlInterface) {
 				if inherits := realm.global.Inheritance; inherits != "" {
-					baseClass = mustGetClass(engine, inherits)
+					baseClass = MustGetClass(engine, inherits)
 				}
 			}
 
@@ -133,7 +133,7 @@ func RegisterRealm(
 			original, _ := idlspec.Interface(name)
 			if realm.exposes(original) {
 				statements.Append(
-					Initializer(typeInfo).Call(mustGetClass(engine, name)),
+					Initializer(typeInfo).Call(MustGetClass(engine, name)),
 				)
 			}
 		}
@@ -144,10 +144,6 @@ func RegisterRealm(
 		gen.FunctionParam(engine, jsScriptEngine),
 		gen.FunctionBody(statements),
 	), nil
-}
-
-func mustGetClass(engine scriptEngine, className string) g.Generator {
-	return MustGetClass(engine, className)
 }
 
 func GenerateRegisterFunctions(spec string, globals []string) error {
