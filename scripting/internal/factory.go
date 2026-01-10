@@ -47,7 +47,7 @@ func handleUnhandledPromiseRejection[T any](scope js.Scope[T], err error) {
 // specs.
 func CreateWindowsConfigurer[T any]() *ScriptEngineConfigurer[T] {
 	result := NewScriptEngineConfigurer[T]()
-	// Basic script enging configuration, set unhandled promise rejection
+	// Basic script engine configuration, set unhandled promise rejection
 	// handler, and console logs
 	result.AddConfigurerFunc(configureNatives)
 	result.AddConfigurerFunc(dom.ConfigureErrors)
