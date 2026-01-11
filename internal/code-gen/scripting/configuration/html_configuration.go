@@ -8,12 +8,7 @@ func ConfigureHTMLSpecs(htmlSpecs *WebAPIConfig) {
 	configureHTMLFormElement(htmlSpecs)
 	configureHTMLInputElement(htmlSpecs)
 	configureWindow(htmlSpecs)
-	global := htmlSpecs.Type("WindowOrWorkerGlobalScope")
-	global.Method("setTimeout").SetCustomImplementation()
-	global.Method("setInterval").SetCustomImplementation()
-	global.Method("clearTimeout").SetCustomImplementation()
-	global.Method("clearInterval").SetCustomImplementation()
-	global.Method("queueMicrotask").SetCustomImplementation()
+	htmlSpecs.Type("WindowOrWorkerGlobalScope")
 
 	document := htmlSpecs.Type("Document")
 	document.Partial = true

@@ -233,12 +233,13 @@ func createOperation(
 		if arg := methodCustomization.Argument(idlArg.Name); arg != nil {
 			esArgumentSpec = *arg
 		}
+		argRules := opRules.Arguments[idlArg.Name]
 		esArg := model.ESOperationArgument{
 			Name:         idlArg.Name,
 			IdlArg:       idlArg,
 			Optional:     idlArg.Optional,
 			ArgumentSpec: esArgumentSpec,
-			Ignore:       esArgumentSpec.Ignored,
+			Ignore:       esArgumentSpec.Ignored || argRules.Ignore,
 			CustomRule:   opRules.Argument(idlArg.Name),
 			Variadic:     idlArg.Variadic,
 		}
