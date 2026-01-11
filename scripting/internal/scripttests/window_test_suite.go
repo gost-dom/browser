@@ -2,6 +2,7 @@ package scripttests
 
 import (
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/testing/browsertest"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 )
 
@@ -73,6 +74,7 @@ func (s *WindowTestSuite) TestDOMContentLoaded() {
 }
 
 func (s *WindowTestSuite) TestLocation() {
-	s.OpenWindow("http://location.example.com/foo", nil)
-	s.Expect(s.Eval("location.href")).To(Equal("http://location.example.com/foo"))
+	b := browsertest.InitBrowser(s.T(), nil, s.engine)
+	w := b.OpenWindow("http://location.example.com/foo")
+	s.Expect(w.MustEval("location.href")).To(Equal("http://location.example.com/foo"))
 }

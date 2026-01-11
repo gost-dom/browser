@@ -1,8 +1,6 @@
 package scripttests
 
 import (
-	"net/http"
-
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/testing/browsertest"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
@@ -22,12 +20,6 @@ func (s *ScriptHostSuite) MustLoadHTML(html string) {
 
 func (s *ScriptHostSuite) SetupTest() {
 	s.Window = browsertest.InitWindow(s.T(), s.engine)
-}
-
-func (s *ScriptHostSuite) OpenWindow(location string, h http.Handler) html.Window {
-	b := browsertest.InitBrowser(s.T(), h, s.engine)
-	s.Window = b.OpenWindow(location)
-	return s.Window
 }
 
 func (s *ScriptHostSuite) TeardownTest() {
