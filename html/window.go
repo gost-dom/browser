@@ -16,6 +16,7 @@ import (
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/internal/entity"
+	htmlinterfaces "github.com/gost-dom/browser/internal/interfaces/html-interfaces"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/url"
 )
@@ -136,6 +137,7 @@ type Window interface {
 	BrowsingContext
 	entity.ObjectIder
 	entity.Components
+	htmlinterfaces.WindowOrWorkerGlobalScope
 	Document() HTMLDocument
 	Close()
 	Clock() Clock
@@ -161,6 +163,7 @@ type Window interface {
 type window struct {
 	event.EventTarget
 	entity.Entity
+	windowOrWorkerGlobalScope
 	document            HTMLDocument
 	history             *History
 	scriptEngineFactory ScriptHost
@@ -183,6 +186,8 @@ func newWindow(windowOptions ...WindowOption) *window {
 	}
 	baseLocation := options.BaseLocation
 	win := &window{
+		windowOrWorkerGlobalScope: windowOrWorkerGlobalScope{clock: options.Clock},
+
 		EventTarget: event.NewEventTarget(),
 		httpClient:  options.HttpClient,
 		// baseLocation:        options.BaseLocation,
