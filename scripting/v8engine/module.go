@@ -27,7 +27,7 @@ func (mod V8Module) Run() error {
 			err = fmt.Errorf("gost-dom/v8engine: awaiting module: %w", err)
 		}
 	}
-	mod.ctx.clock.Tick()
+	mod.ctx.tick()
 	return err
 }
 

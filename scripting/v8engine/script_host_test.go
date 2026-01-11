@@ -19,7 +19,7 @@ func TestScriptHostDocumentScriptLoading(t *testing.T) {
 `)
 	host := New()
 	t.Cleanup(host.Close)
-	options := html.WindowOptions{ScriptHost: host}
+	options := html.WindowOptions{ScriptHost: host, Clock: host.clock}
 	win, err := html.NewWindowReader(reader, nil, options)
 	Expect(err).ToNot(HaveOccurred())
 	defer win.Close()

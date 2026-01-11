@@ -25,7 +25,7 @@ func newScope(ctx *scriptContext) scope {
 
 func (s scope) GlobalThis() jsObject { return s.global }
 
-func (s scope) Clock() *clock.Clock { return s.clock }
+func (s scope) Clock() *clock.Clock { return s.host.clock }
 func (s scope) Constructor(name string) js.Constructor[jsTypeParam] {
 	if class, ok := s.classes[name]; ok {
 		return class

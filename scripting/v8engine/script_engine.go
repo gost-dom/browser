@@ -54,6 +54,7 @@ func (e *v8ScriptEngine) newHost(options html.ScriptEngineOptions) *V8ScriptHost
 		host.disposed = false
 		host.logger = options.Logger
 		host.httpClient = options.HttpClient
+		host.clock = options.Clock
 	} else {
 		host = e.createHost(options)
 	}
@@ -70,6 +71,7 @@ func (e *v8ScriptEngine) createHost(config html.ScriptEngineOptions) *V8ScriptHo
 		logger:     config.Logger,
 		globals:    globals{make(map[string]*v8Class)},
 		contexts:   make(map[*v8go.Context]*V8ScriptContext),
+		clock:      config.Clock,
 	}
 	host.iso.SetPromiseRejectedCallback(host.promiseRejected)
 	host.windowTemplate = v8go.NewObjectTemplate(host.iso)

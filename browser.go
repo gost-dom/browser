@@ -9,6 +9,7 @@ import (
 
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/clock"
 	. "github.com/gost-dom/browser/internal/gosthttp"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/url"
@@ -85,6 +86,7 @@ type Browser struct {
 	Client     http.Client
 	ScriptHost ScriptHost
 	Logger     log.Logger
+	Clock      *clock.Clock
 	ctx        context.Context
 	windows    []Window
 	closed     bool
@@ -117,17 +119,20 @@ func New(options ...BrowserOption) *Browser {
 	}
 	engine := config.engine
 	var host html.ScriptHost
+	c := clock.New(clock.WithLogger(config.logger))
 	if engine != nil {
 		host = engine.NewHost(
 			html.ScriptEngineOptions{
 				Logger:     config.logger,
 				HttpClient: &config.client,
+				Clock:      c,
 			})
 	}
 	b := &Browser{
 		Client:     config.client,
 		Logger:     config.logger,
 		ScriptHost: host,
+		Clock:      c,
 		ctx:        config.ctx,
 	}
 	if config.ctx != nil {
@@ -185,6 +190,7 @@ func (b *Browser) createOptions(location string) WindowOptions {
 		BaseLocation: location,
 		Logger:       b.Logger,
 		Context:      b.ctx,
+		Clock:        b.Clock,
 	}
 }
 

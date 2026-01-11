@@ -29,6 +29,7 @@ type scriptHost struct {
 	logger      *slog.Logger
 	initializer *internal.ScriptEngineConfigurer[jsTypeParam]
 	cache       *cache.Cache
+	clock       *clock.Clock
 }
 
 type propertyNameMapper struct{}
@@ -58,7 +59,6 @@ func (h *scriptHost) NewContext(bc html.BrowsingContext) html.ScriptContext {
 		host:         h,
 		cache:        h.cache,
 		vm:           vm,
-		clock:        clock.New(),
 		browsingCtx:  bc,
 		wrappedGoObj: sobek.NewSymbol(internal_symbol_name),
 		classes:      make(map[string]*class),

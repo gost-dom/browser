@@ -58,6 +58,7 @@ type V8ScriptHost struct {
 	disposed        bool
 	iterator        v8Iterator
 	global          *v8GlobalClass
+	clock           *clock.Clock
 
 	unhandledPromiseRejectionHandler js.ErrorHandler[jsTypeParam]
 }
@@ -127,6 +128,7 @@ func New(opts ...HostOption) *V8ScriptHost {
 	return defaultEngine.newHost(html.ScriptEngineOptions{
 		Logger:     config.logger,
 		HttpClient: config.httpClient,
+		Clock:      clock.New(clock.WithLogger(config.logger)),
 	})
 }
 
@@ -175,7 +177,6 @@ func (host *V8ScriptHost) NewContext(bc html.BrowsingContext) html.ScriptContext
 	v8ctx := v8go.NewContext(host.iso, host.windowTemplate)
 	context := &V8ScriptContext{
 		host:        host,
-		clock:       clock.New(clock.WithLogger(bc.Logger())),
 		v8ctx:       v8ctx,
 		browsingCtx: bc,
 		resolver:    moduleResolver{host: host},

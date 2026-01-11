@@ -8,7 +8,6 @@ import (
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/cache"
-	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/gosthttp"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting/internal/js"
@@ -19,7 +18,6 @@ import (
 type scriptContext struct {
 	host         *scriptHost
 	vm           *sobek.Runtime
-	clock        *clock.Clock
 	cache        *cache.Cache
 	browsingCtx  html.BrowsingContext
 	classes      map[string]*class
@@ -27,7 +25,8 @@ type scriptContext struct {
 	global       *globalObjectClass
 }
 
-func (c *scriptContext) Clock() html.Clock         { return c.clock }
+func (c *scriptContext) tick() error               { return c.host.clock.Tick() }
+func (c *scriptContext) Clock() html.Clock         { return c.host.clock }
 func (c *scriptContext) Context() context.Context  { return c.browsingCtx.Context() }
 func (c *scriptContext) globalThis() *sobek.Object { return c.vm.GlobalObject() }
 
@@ -50,7 +49,7 @@ func (i *scriptContext) run(script, location string) (sobek.Value, error) {
 		return nil, html.ErrCancelled
 	default:
 		res, err := i.vm.RunScript(location, script)
-		i.clock.Tick()
+		i.tick()
 		return res, err
 	}
 }

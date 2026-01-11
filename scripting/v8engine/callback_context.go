@@ -110,7 +110,7 @@ func newV8Scope(ctx *V8ScriptContext) v8Scope {
 
 func (s v8Scope) Logger() *slog.Logger { return s.host.Logger() }
 func (s v8Scope) GlobalThis() jsObject { return s.global }
-func (s v8Scope) Clock() *clock.Clock  { return s.clock }
+func (s v8Scope) Clock() *clock.Clock  { return s.host.clock }
 
 func (f v8Scope) iso() *v8go.Isolate { return f.host.iso }
 func (f v8Scope) Undefined() jsValue { return f.toJSValue(v8go.Undefined(f.iso())) }

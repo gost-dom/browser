@@ -8,7 +8,6 @@ import (
 	"runtime/debug"
 
 	"github.com/gost-dom/browser/html"
-	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/gosthttp"
@@ -26,7 +25,6 @@ type V8ScriptContext struct {
 	v8ctx       *v8.Context
 	browsingCtx html.BrowsingContext
 	disposers   []js.Disposable
-	clock       *clock.Clock
 	disposed    bool
 	global      jsObject
 	resolver    moduleResolver
@@ -34,6 +32,7 @@ type V8ScriptContext struct {
 
 func (c *V8ScriptContext) iso() *v8.Isolate         { return c.host.iso }
 func (c *V8ScriptContext) Context() context.Context { return c.browsingCtx.Context() }
+func (c *V8ScriptContext) tick() error              { return c.host.clock.Tick() }
 
 func (h *V8ScriptHost) getContext(v8ctx *v8.Context) (*V8ScriptContext, bool) {
 	h.mu.Lock()
@@ -85,7 +84,7 @@ func (context *V8ScriptContext) initializeGlobals() error {
 		script := s[0]
 		src := s[1]
 		_, err := context.v8ctx.RunScript(script, src)
-		context.clock.Tick()
+		err = errors.Join(err, context.tick())
 		if err != nil {
 			return fmt.Errorf("gost-dom/v8engine: install globals (%s): %w", src, err)
 		}
@@ -110,7 +109,7 @@ func (c *V8ScriptContext) getConstructor(name string) *v8Class {
 	return prototype
 }
 
-func (ctx *V8ScriptContext) Clock() html.Clock { return ctx.clock }
+func (ctx *V8ScriptContext) Clock() html.Clock { return ctx.host.clock }
 
 func (host *V8ScriptHost) addContext(ctx *V8ScriptContext) {
 	host.mu.Lock()
@@ -143,7 +142,7 @@ func (ctx *V8ScriptContext) runScript(script string) (res *v8.Value, err error) 
 		return nil, html.ErrCancelled
 	default:
 		res, err = ctx.v8ctx.RunScript(script, "")
-		ctx.clock.Tick()
+		ctx.tick()
 		return
 	}
 }

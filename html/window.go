@@ -13,6 +13,7 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/dom/event"
+	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
@@ -25,6 +26,7 @@ var ErrCancelled = errors.New("Cancelled")
 type ScriptEngineOptions struct {
 	HttpClient *http.Client
 	Logger     *slog.Logger
+	Clock      *clock.Clock
 }
 
 // ScriptEngine represents a JavaScript interpreter with a specific global scope
@@ -167,6 +169,7 @@ type window struct {
 	logger              *slog.Logger
 	deferredScripts     []*htmlScriptElement
 	context             context.Context
+	clock               *clock.Clock
 }
 
 func newWindow(windowOptions ...WindowOption) *window {
@@ -187,6 +190,7 @@ func newWindow(windowOptions ...WindowOption) *window {
 		logger:              options.Logger,
 		history:             new(History),
 		context:             ctx,
+		clock:               options.Clock,
 	}
 	if baseLocation == "" {
 		baseLocation = "about:blank"
@@ -394,7 +398,7 @@ func (w *window) ScriptContext() ScriptContext { return w.scriptContext }
 
 func (w *window) Location() Location { return w.document.Location() }
 
-func (w *window) Clock() Clock { return w.scriptContext.Clock() }
+func (w *window) Clock() Clock { return w.clock }
 
 func (w *window) LocationHREF() string {
 
@@ -430,6 +434,7 @@ func (w *window) window() *window { return w }
 
 type WindowOptions struct {
 	ScriptHost
+	Clock        *clock.Clock
 	HttpClient   http.Client
 	BaseLocation string
 	Logger       *slog.Logger
@@ -458,6 +463,10 @@ func WindowOptionHost(host ScriptHost) WindowOptionFunc {
 
 func WindowOptionHTTPClient(client http.Client) WindowOptionFunc {
 	return func(options *WindowOptions) { options.HttpClient = client }
+}
+
+func WindowOptionClock(c *clock.Clock) WindowOptionFunc {
+	return func(options *WindowOptions) { options.Clock = c }
 }
 
 func (o WindowOptions) Apply(options *WindowOptions) {

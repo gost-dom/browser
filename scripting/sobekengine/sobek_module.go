@@ -22,5 +22,5 @@ func (m sobekModule) Run() error {
 	if p.State() != sobek.PromiseStateFulfilled {
 		return p.Result().Export().(error)
 	}
-	return m.ctx.clock.Tick()
+	return m.ctx.tick()
 }

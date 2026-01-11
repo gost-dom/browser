@@ -18,6 +18,7 @@ func (e *scriptEngine) NewHost(opts html.ScriptEngineOptions) html.ScriptHost {
 		httpClient:  opts.HttpClient,
 		initializer: e.initializer,
 		cache:       &e.cache,
+		clock:       opts.Clock,
 	}
 	return &res
 }
