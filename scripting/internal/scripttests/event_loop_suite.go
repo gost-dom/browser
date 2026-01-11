@@ -14,7 +14,6 @@ import (
 type EventLoopTestSuite struct {
 	suite.Suite
 	e html.ScriptEngine
-	// ctx html.ScriptContext
 	w htmltest.WindowHelper
 }
 
