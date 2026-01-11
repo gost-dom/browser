@@ -25,7 +25,12 @@ type scriptContext struct {
 	global       *globalObjectClass
 }
 
-func (c *scriptContext) tick() error               { return c.host.clock.Tick() }
+func (c *scriptContext) tick() error {
+	if c.host.clock != nil {
+		return c.host.clock.Tick()
+	}
+	return nil
+}
 func (c *scriptContext) Clock() html.Clock         { return c.host.clock }
 func (c *scriptContext) Context() context.Context  { return c.browsingCtx.Context() }
 func (c *scriptContext) globalThis() *sobek.Object { return c.vm.GlobalObject() }

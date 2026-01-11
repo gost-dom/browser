@@ -32,7 +32,12 @@ type V8ScriptContext struct {
 
 func (c *V8ScriptContext) iso() *v8.Isolate         { return c.host.iso }
 func (c *V8ScriptContext) Context() context.Context { return c.browsingCtx.Context() }
-func (c *V8ScriptContext) tick() error              { return c.host.clock.Tick() }
+func (c *V8ScriptContext) tick() error {
+	if c.host.clock != nil {
+		return c.host.clock.Tick()
+	}
+	return nil
+}
 
 func (h *V8ScriptHost) getContext(v8ctx *v8.Context) (*V8ScriptContext, bool) {
 	h.mu.Lock()

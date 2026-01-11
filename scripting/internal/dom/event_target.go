@@ -1,8 +1,6 @@
 package dom
 
 import (
-	"errors"
-
 	"github.com/gost-dom/browser/dom/event"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
@@ -22,9 +20,7 @@ func (l eventListener[T]) HandleEvent(e *event.Event) error {
 	event, err := codec.EncodeEntity(l.s, e)
 	if err == nil {
 		global := l.s.GlobalThis()
-		_, err1 := f.Call(global, event)
-		err2 := l.s.Clock().Tick()
-		err = errors.Join(err1, err2)
+		_, err = f.Call(global, event)
 	}
 	return err
 }
