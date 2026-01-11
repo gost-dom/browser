@@ -18,14 +18,15 @@ func testAnimationFrameProvider(t *testing.T, e html.ScriptEngine) {
 		win := browsertest.InitWindow(t, e, browsertest.WithMinLogLevel(slog.LevelInfo))
 		win.MustRun(`gost.assertEqual(typeof requestAnimationFrame, "function")`)
 		win.MustRun(`
-		let called = false
-		requestAnimationFrame(() => { 
-			called = true 
-		})
-	`)
+			let called = false
+			requestAnimationFrame(() => { 
+				called = true 
+			})
+		`)
 		win.Clock().Advance(time.Millisecond)
+		win.Assert().False("called")
 		win.MustRun(`gost.assertFalse(called)`)
 		win.Clock().Advance(20 * time.Millisecond)
-		win.MustRun(`gost.assertTrue(called)`)
+		win.Assert().True("called")
 	})
 }
