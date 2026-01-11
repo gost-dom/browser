@@ -5,4 +5,7 @@
 //
 // Clever in itself; but the wrong failing source code line would show up in the
 // test output, despite having called t.Helper() where possible.
+//
+// This package will eventually be removed, when tests depending on this have
+// been updated.
 package jsassert

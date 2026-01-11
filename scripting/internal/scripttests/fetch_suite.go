@@ -8,6 +8,7 @@ import (
 	"github.com/gost-dom/browser"
 	"github.com/gost-dom/browser/html"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
+	"github.com/gost-dom/browser/internal/testing/browsertest"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
@@ -15,30 +16,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type FetchSuite struct {
-	ScriptHostSuite
-}
-
-func NewFetchSuite(h html.ScriptEngine) *FetchSuite {
-	return &FetchSuite{ScriptHostSuite: *NewScriptHostSuite(h)}
-}
-
-func (s *FetchSuite) TestRequestURL() {
-	s.NewWindowLocation("https://example.com/pages/page-1")
-	s.Expect(s.Eval(`
-		const req = new Request("page-2")
-		req.url
-	`)).To(Equal("https://example.com/pages/page-2"))
-}
-
-func (s *FetchSuite) TestPrototypes() {
-	s.Expect(s.Eval(`typeof fetch`)).To(Equal("function"), "fetch is a function")
-	s.Expect(s.Eval(`typeof Response`)).To(Equal("function"), "Response is a constructor")
-	s.Expect(s.Eval(`typeof Request`)).To(Equal("function"), "Request is a constructor")
-}
-
 func testFetch(t *testing.T, e html.ScriptEngine) {
 	t.Parallel()
+
+	t.Run("Prototypes", func(t *testing.T) {
+		w := browsertest.InitWindow(t, e)
+		assert.Equal(t, "function", w.MustEval(`typeof fetch`), "fetch is a function")
+		assert.Equal(t, "function", w.MustEval(`typeof Response`), "Response is a constructor")
+		assert.Equal(t, "function", w.MustEval(`typeof Request`), "Request is a constructor")
+	})
 
 	t.Run(
 		"Abort using AbortController and AbortSignal",
@@ -231,6 +217,16 @@ func testReadableStream(t *testing.T, e html.ScriptEngine) {
 }
 
 func testRequest(t *testing.T, e html.ScriptEngine) {
+	t.Run("Uses document location", func(t *testing.T) {
+		b := browsertest.InitBrowser(t, nil, e)
+		w := b.OpenWindow("https://example.com/pages/page-1")
+		assert.Equal(t,
+			"https://example.com/pages/page-2",
+			w.MustEval(`
+				const req = new Request("page-2")
+				req.url
+		`))
+	})
 	t.Run("Headers return SameObject", func(t *testing.T) {
 		win := initWindow(t, e, nil)
 		res := win.MustEval(`

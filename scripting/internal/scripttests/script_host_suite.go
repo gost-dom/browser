@@ -24,13 +24,6 @@ func (s *ScriptHostSuite) SetupTest() {
 	s.Window = browsertest.InitWindow(s.T(), s.engine)
 }
 
-// NewWindowLocation replaces the window. The new window has the specified
-// location, but doesn't actually load the content.
-func (s *ScriptHostSuite) NewWindowLocation(location string) {
-	b := browsertest.InitBrowser(s.T(), nil, s.engine)
-	s.Window = b.OpenWindow(location)
-}
-
 func (s *ScriptHostSuite) OpenWindow(location string, h http.Handler) html.Window {
 	b := browsertest.InitBrowser(s.T(), h, s.engine)
 	s.Window = b.OpenWindow(location)
