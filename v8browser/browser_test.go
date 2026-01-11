@@ -224,7 +224,7 @@ func cookieHandler(w http.ResponseWriter, r *http.Request) {
 	if c, _ := r.Cookie("gost"); c != nil {
 		gost = c.Value
 	}
-	w.Header().Add("Set-Cookie", "gost=Hello, World!")
+	w.Header().Set("Set-Cookie", "gost=Hello, World!")
 	fmt.Fprintf(w, `<body><div id="gost">%s</div></body>`, gost)
 }
 
