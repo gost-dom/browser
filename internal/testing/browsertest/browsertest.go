@@ -87,7 +87,7 @@ func InitBrowser(
 }
 
 func dummyHttpServer(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Content-Type", "text/html")
+	w.Header().Set("Content-Type", "text/html")
 	fmt.Fprint(w, "<body><h1>Dummy page</h1></body>")
 }
 
