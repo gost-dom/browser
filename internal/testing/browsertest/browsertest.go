@@ -88,7 +88,7 @@ func InitBrowser(
 
 func dummyHttpServer(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "text/html")
-	fmt.Fprint(w, "<body><h1>Dummy pate</h1></body>")
+	fmt.Fprint(w, "<body><h1>Dummy page</h1></body>")
 }
 
 // InitWindow creates a browser and an empty window with a script engine and a
