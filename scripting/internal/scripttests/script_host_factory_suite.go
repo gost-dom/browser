@@ -2,6 +2,7 @@ package scripttests
 
 import (
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/testing/browsertest"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
 )
@@ -9,19 +10,11 @@ import (
 type ScriptHostFactorySuite struct {
 	gosttest.GomegaSuite
 	factory html.ScriptEngine
-	host    html.ScriptHost
 	Window  htmltest.WindowHelper
 }
 
 func (s *ScriptHostFactorySuite) SetupTest() {
-	logger := gosttest.NewTestLogger(s.T())
-	s.host = s.factory.NewHost(html.ScriptEngineOptions{
-		Logger: logger,
-	})
-	s.Window = htmltest.NewWindowHelper(s.T(), html.NewWindow(html.WindowOptions{
-		Logger:     gosttest.NewTestLogger(s.T()),
-		ScriptHost: s.host,
-	}))
+	s.Window = browsertest.InitWindow(s.T(), s.factory)
 }
 
 func NewScriptHostFactorySuite(f html.ScriptEngine) *ScriptHostFactorySuite {

@@ -2,6 +2,7 @@ package scripttests
 
 import (
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/testing/browsertest"
 	. "github.com/onsi/gomega"
 )
 
@@ -19,10 +20,7 @@ func (s *LocationSuite) TestGlobalScope() {
 }
 
 func (s *LocationSuite) TestHrefEqualsDocumentLocation() {
-	window := html.NewWindow(
-		html.WindowOptions{
-			BaseLocation: "http://example.com/foo",
-			ScriptHost:   s.Host(),
-		})
+	b := browsertest.InitBrowser(s.T(), nil, s.engine)
+	window := b.OpenWindow("http://example.com/foo")
 	s.Expect(window.Eval("location.href")).To(Equal("http://example.com/foo"))
 }

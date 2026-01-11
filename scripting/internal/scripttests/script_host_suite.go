@@ -1,11 +1,10 @@
 package scripttests
 
 import (
-	"log/slog"
 	"net/http"
 
 	"github.com/gost-dom/browser/html"
-	"github.com/gost-dom/browser/internal/gosthttp"
+	"github.com/gost-dom/browser/internal/testing/browsertest"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
 )
@@ -13,7 +12,6 @@ import (
 type ScriptHostSuite struct {
 	gosttest.GomegaSuite
 	engine html.ScriptEngine
-	host   html.ScriptHost
 	Window htmltest.WindowHelper
 }
 
@@ -22,47 +20,25 @@ func (s *ScriptHostSuite) MustLoadHTML(html string) {
 	s.Assert().NoError(s.Window.LoadHTML(html))
 }
 
-func (s *ScriptHostSuite) Host() html.ScriptHost {
-	if s.host == nil {
-		s.host = s.engine.NewHost(html.ScriptEngineOptions{})
-	}
-	return s.host
-}
 func (s *ScriptHostSuite) SetupTest() {
-	s.Window = htmltest.NewWindowHelper(s.T(), html.NewWindow(html.WindowOptions{
-		Logger:     gosttest.NewTestLogger(s.T()),
-		ScriptHost: s.Host(),
-	}))
+	s.Window = browsertest.InitWindow(s.T(), s.engine)
 }
 
 // NewWindowLocation replaces the window. The new window has the specified
 // location, but doesn't actually load the content.
 func (s *ScriptHostSuite) NewWindowLocation(location string) {
-	s.Window = htmltest.NewWindowHelper(s.T(), html.NewWindow(html.WindowOptions{
-		Logger:       gosttest.NewTestLogger(s.T(), gosttest.MinLogLevel(slog.LevelDebug)),
-		ScriptHost:   s.Host(),
-		BaseLocation: location,
-	}))
+	b := browsertest.InitBrowser(s.T(), nil, s.engine)
+	s.Window = b.OpenWindow(location)
 }
 
 func (s *ScriptHostSuite) OpenWindow(location string, h http.Handler) html.Window {
-	s.Window = htmltest.NewWindowHelper(s.T(), html.NewWindow(html.WindowOptions{
-		BaseLocation: location,
-		HttpClient:   gosthttp.NewHttpClientFromHandler(h),
-		Logger:       gosttest.NewTestLogger(s.T()),
-		ScriptHost:   s.Host(),
-	}))
+	b := browsertest.InitBrowser(s.T(), h, s.engine)
+	s.Window = b.OpenWindow(location)
 	return s.Window
 }
 
 func (s *ScriptHostSuite) TeardownTest() {
 	s.Window.Close()
-}
-
-func (s *ScriptHostSuite) TearDownSuite() {
-	if s.host != nil {
-		s.host.Close()
-	}
 }
 
 // Runs a script and returns the evaluated value as a native Go value.

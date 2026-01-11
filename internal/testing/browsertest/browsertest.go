@@ -1,6 +1,7 @@
 package browsertest
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 	"testing"
@@ -24,6 +25,13 @@ func withWindowOption(wo windowOption) InitOption {
 	return func(o *option) {
 		o.windowOptions = append(o.windowOptions, wo)
 	}
+}
+
+// By default, log entries of Error log level cause the test to fail. This
+// option will suppress that behaviour; for when verifying explicit error
+// scenarios.
+func WithIgnoreErrorLogs() InitOption {
+	return WithLogOption(gosttest.AllowErrors())
 }
 
 func WithLogOption(lo gosttest.HandlerOption) InitOption {
@@ -65,6 +73,9 @@ func InitBrowser(
 	for _, opt := range opts {
 		opt(&o)
 	}
+	if handler == nil {
+		handler = http.HandlerFunc(dummyHttpServer)
+	}
 	logger := gosttest.NewTestLogger(t, o.logOptions...)
 	b := htmltest.NewBrowserHelper(t, browser.New(
 		browser.WithScriptEngine(engine),
@@ -73,6 +84,11 @@ func InitBrowser(
 	))
 	t.Cleanup(b.Close)
 	return b
+}
+
+func dummyHttpServer(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "text/html")
+	fmt.Fprint(w, "<body><h1>Dummy pate</h1></body>")
 }
 
 // InitWindow creates a browser and an empty window with a script engine and a

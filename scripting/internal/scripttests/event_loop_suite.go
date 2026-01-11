@@ -4,6 +4,8 @@ import (
 	"time"
 
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/testing/browsertest"
+	"github.com/gost-dom/browser/testing/gosttest"
 	"github.com/onsi/gomega"
 	. "github.com/onsi/gomega"
 	"github.com/stretchr/testify/suite"
@@ -11,16 +13,16 @@ import (
 
 type EventLoopTestSuite struct {
 	suite.Suite
-	host html.ScriptHost
-	ctx  html.ScriptContext
+	e   html.ScriptEngine
+	ctx html.ScriptContext
 }
 
 func NewEventLoopTestSuite(e html.ScriptEngine) *EventLoopTestSuite {
-	return &EventLoopTestSuite{host: e.NewHost(html.ScriptEngineOptions{})}
+	return &EventLoopTestSuite{e: e}
 }
 
 func (s *EventLoopTestSuite) SetupTest() {
-	w := html.NewWindow(html.WindowOptionHost(s.host))
+	w := browsertest.InitWindow(s.T(), s.e)
 	s.ctx = w.ScriptContext()
 }
 
@@ -45,7 +47,7 @@ func (s *EventLoopTestSuite) TestClearTimeout() {
 	Expect := gomega.NewWithT(s.T()).Expect
 	Expect(
 		s.ctx.Eval(`
-				let val; 
+				let val;
 				let handle = setTimeout(() => { val = 42 }, 1);
 				clearTimeout(handle);
 				val`,
@@ -57,19 +59,20 @@ func (s *EventLoopTestSuite) TestClearTimeout() {
 
 func (s *EventLoopTestSuite) TestDispatchError() {
 	Expect := gomega.NewWithT(s.T()).Expect
+	w := browsertest.InitWindow(s.T(), s.e, browsertest.WithLogOption(gosttest.AllowErrors()))
 	Expect(
-		s.ctx.Eval(`
+		w.MustEval(`
 				let val;
 				window.addEventListener('error', () => {
 					val = 42;
 				});
 				setTimeout(() => {
 					throw new Error()
-				}, 0); 
+				}, 0);
 				val`,
 		),
 	).To(BeNil())
-	Expect(s.ctx.Eval(`val`)).To(BeEquivalentTo(42))
+	Expect(w.MustEval(`val`)).To(BeEquivalentTo(42))
 }
 
 func (s *EventLoopTestSuite) TestQueueMicrotask() {
