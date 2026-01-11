@@ -140,15 +140,15 @@ func (ctx *V8ScriptContext) addDisposer(disposer js.Disposable) {
 	ctx.disposers = append(ctx.disposers, disposer)
 }
 
-func (ctx *V8ScriptContext) runScript(script string) (res *v8.Value, err error) {
+func (ctx *V8ScriptContext) runScript(script string) (*v8.Value, error) {
 	goCtx := ctx.Context()
 	select {
 	case <-goCtx.Done():
 		return nil, html.ErrCancelled
 	default:
-		res, err = ctx.v8ctx.RunScript(script, "")
-		ctx.tick()
-		return
+		res, err := ctx.v8ctx.RunScript(script, "")
+		err = errors.Join(err, ctx.tick())
+		return res, err
 	}
 }
 
