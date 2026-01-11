@@ -25,7 +25,7 @@ func testAnimationFrameProvider(t *testing.T, e html.ScriptEngine) {
 		`)
 		win.Clock().Advance(time.Millisecond)
 		win.Assert().False("called")
-		win.MustRun(`gost.assertFalse(called)`)
+
 		win.Clock().Advance(20 * time.Millisecond)
 		win.Assert().True("called")
 	})
