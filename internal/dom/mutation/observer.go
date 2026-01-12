@@ -12,13 +12,8 @@ type Callback interface {
 	HandleMutation([]Record, *Observer)
 }
 
-type Flusher interface {
-	Flush()
-}
-
 type Flushers interface {
-	AddFlusher(Flusher)
-	RemoveFlusher(Flusher)
+	AddMicrotask(func() error)
 }
 
 type CallbackFunc func([]Record, *Observer)
@@ -71,7 +66,6 @@ type ObserveOption = func(*Options)
 //
 // Panics if the observer does not have a handler.
 func (o *Observer) Observe(node dom.Node, options ...func(*Options)) error {
-	o.Flushers.AddFlusher(o)
 	o.assertCanObserve()
 
 	o.options = Options{}
@@ -117,7 +111,6 @@ func (o Observer) assertCanObserve() {
 }
 
 func (o *Observer) Disconnect() {
-	o.Flushers.RemoveFlusher(o)
 	if o.closer != nil {
 		o.closer.Close()
 		o.closer = nil
@@ -168,15 +161,16 @@ func (o *Observer) Process(e dom.ChangeEvent) {
 		r.PreviousSibling = e.PreviousSibling
 		r.NextSibling = e.NextSibling
 	}
+	if len(o.pending) == 0 {
+		o.Flushers.AddMicrotask(o.flush)
+	}
 	o.pending = append(o.pending, r)
 }
 
-// Flush sends recorded events to the registered event handler. You generally
-// don't need to call flush, as events should be pushed when returning to the
-// "event loop".
-func (o *Observer) Flush() {
+func (o *Observer) flush() error {
 	records := o.TakeRecords()
 	if len(records) > 0 {
 		o.Callback.HandleMutation(records, o)
 	}
+	return nil
 }

@@ -10,7 +10,6 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/gost-dom/browser/internal/dom/mutation"
 	"github.com/gost-dom/browser/internal/log"
 )
 
@@ -84,7 +83,6 @@ type futureTask struct {
 type Clock struct {
 	Time   time.Time
 	Logger *slog.Logger
-	mutation.FlusherSet
 
 	// Sets the number of times a task is allowed to run without seeing a
 	// reduction in task list size. I.e., the task list doesn't need to be
@@ -180,7 +178,6 @@ func (c *Clock) runMicrotasksAndFlush() []error {
 			}
 		}
 	}
-	c.FlusherSet.Flush()
 	return errs
 }
 
