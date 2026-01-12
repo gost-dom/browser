@@ -17,12 +17,8 @@ type MutationTestHelper struct {
 }
 
 func (h *MutationTestHelper) Clear() {
-	h.Flush()
+	h.RunMicrotasks()
 	h.MutationRecorder.Clear()
-}
-
-func (h *MutationTestHelper) Flush() {
-	h.MutationRecorder.Flush()
 }
 
 func initMutationRecorder(target dom.Node, options ...func(*Options)) *MutationTestHelper {
@@ -128,7 +124,7 @@ func HaveRecorded(expected ...types.GomegaMatcher) types.GomegaMatcher {
 	}
 	return gomega.WithTransform(
 		func(h *MutationTestHelper) []mutation.Record {
-			h.Flush()
+			h.RunMicrotasks()
 			return h.Records
 		},
 		HaveExactElements(tmp...),

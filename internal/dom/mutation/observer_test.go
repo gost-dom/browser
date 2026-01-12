@@ -6,6 +6,7 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/clock"
 	. "github.com/gost-dom/browser/internal/dom/mutation"
 	"github.com/gost-dom/browser/internal/gosterror"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
@@ -166,8 +167,8 @@ func (s *MutationObserverTestSuite) TestAttributeChanges() {
 	parent.SetAttribute("data-y", "New y value")
 	parent.SetAttribute("data-z", "New z value")
 
-	rec1.Flush()
-	childRecorder.Flush()
+	rec1.RunMicrotasks()
+	childRecorder.RunMicrotasks()
 
 	s.Assert().Equal(1, len(childRecorder.Records))
 	s.Assert().Equal(3, len(rec1.Records))
@@ -238,12 +239,24 @@ source: https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver/observ
 */
 
 type MutationRecorder struct {
-	FlusherSet
-	Records []Record
+	Microtasks []func() error
+	Records    []Record
 }
 
 func (r *MutationRecorder) Clear() {
 	r.Records = nil
+}
+
+func (r *MutationRecorder) QueueMicrotask(f clock.TaskCallback) {
+	r.Microtasks = append(r.Microtasks, f)
+}
+
+func (r *MutationRecorder) RunMicrotasks() {
+	tasks := r.Microtasks
+	r.Microtasks = nil
+	for _, t := range tasks {
+		t()
+	}
 }
 
 func (r *MutationRecorder) HandleMutation(recs []Record, _ *Observer) {

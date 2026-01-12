@@ -24,6 +24,8 @@ import (
 var ErrTooManyRedirects = errors.New("Too many redirects")
 var ErrCancelled = errors.New("Cancelled")
 
+type Task = func() error
+
 type ScriptEngineOptions struct {
 	HttpClient *http.Client
 	Logger     *slog.Logger
