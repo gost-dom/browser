@@ -6,6 +6,7 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/clock"
 	. "github.com/gost-dom/browser/internal/dom/mutation"
 	"github.com/gost-dom/browser/internal/gosterror"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
@@ -246,7 +247,7 @@ func (r *MutationRecorder) Clear() {
 	r.Records = nil
 }
 
-func (r *MutationRecorder) AddMicrotask(f func() error) {
+func (r *MutationRecorder) QueueMicrotask(f clock.TaskCallback) {
 	r.Microtasks = append(r.Microtasks, f)
 }
 

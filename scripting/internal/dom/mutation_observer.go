@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/gost-dom/browser/internal/clock"
 	mutation "github.com/gost-dom/browser/internal/dom/mutation"
 	"github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
@@ -25,21 +24,13 @@ func (cb MutationCallback[T]) HandleMutation(recs []mutation.Record, obs *mutati
 	}
 }
 
-type clockWrapper struct {
-	*clock.Clock
-}
-
-func (w clockWrapper) AddMicrotask(cb func() error) {
-	w.Clock.AddMicrotask(clock.TaskCallback(cb))
-}
-
 func CreateMutationObserver[T any](
 	cbCtx js.CallbackContext[T],
 	cb mutation.Callback,
 ) (js.Value[T], error) {
 	return codec.EncodeConstructedValue(
 		cbCtx,
-		mutation.NewObserver(clockWrapper{cbCtx.Clock()}, cb),
+		mutation.NewObserver(cbCtx.Clock(), cb),
 	)
 }
 

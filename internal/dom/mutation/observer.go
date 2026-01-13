@@ -2,6 +2,7 @@ package mutation
 
 import (
 	"github.com/gost-dom/browser/dom"
+	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/gosterror"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
 )
@@ -13,7 +14,7 @@ type Callback interface {
 }
 
 type Flushers interface {
-	AddMicrotask(func() error)
+	QueueMicrotask(clock.TaskCallback)
 }
 
 type CallbackFunc func([]Record, *Observer)
@@ -162,7 +163,7 @@ func (o *Observer) Process(e dom.ChangeEvent) {
 		r.NextSibling = e.NextSibling
 	}
 	if len(o.pending) == 0 {
-		o.Flushers.AddMicrotask(o.flush)
+		o.Flushers.QueueMicrotask(o.flush)
 	}
 	o.pending = append(o.pending, r)
 }
