@@ -23,9 +23,6 @@ func decode(s string) g.Generator {
 }
 
 func DecodersForArg(arg model.ESOperationArgument) []g.Generator {
-	// if t := arg.CustomRule.GoType; !t.Zero() {
-	// 	return g.List(customrules.GoTypeGenerator(t))
-	// }
 	if d := arg.ArgumentSpec.Decoder; d != "" {
 		return g.List(g.Id(d))
 	}
