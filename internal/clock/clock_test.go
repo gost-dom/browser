@@ -114,11 +114,12 @@ func (s *ClockTestSuite) TestImmediatesAreExecutedBeforeScheduledTasks() {
 	c.AddSafeTask(
 		func() {
 			s.log("A")
-			c.AddSafeMicrotask(func() {
+			c.AddMicrotask(func() error {
 				s.log("A2")
-				c.AddSafeMicrotask(func() { s.log("A2A") })
+				c.AddMicrotask(func() error { s.log("A2A"); return nil })
+				return nil
 			})
-			c.AddSafeMicrotask(func() { s.log("A3") })
+			c.AddMicrotask(func() error { s.log("A3"); return nil })
 		},
 		1*time.Millisecond,
 	)
@@ -139,7 +140,7 @@ func (s *ClockTestSuite) TestTick() {
 		func() { s.log("Task") },
 		0,
 	)
-	c.AddSafeMicrotask(func() { s.log("Microtask") })
+	c.AddMicrotask(func() error { s.log("Microtask"); return nil })
 	c.Tick()
 	s.Assert().Equal([]string{"Microtask", "Task"}, s.logs)
 }
@@ -147,7 +148,7 @@ func (s *ClockTestSuite) TestTick() {
 func (s *ClockTestSuite) TestImmediatesPanicWhenListDoesntReduce() {
 	c := clock.New(clock.OfIsoString("2025-02-01T12:00:00Z"))
 	var task clock.SafeTaskCallback
-	task = func() { c.AddSafeMicrotask(task) }
+	task = func() { c.AddMicrotask(func() error { task(); return nil }) }
 
 	c.AddSafeTask(task, 1*time.Millisecond)
 
@@ -204,8 +205,9 @@ func (s *ClockTestSuite) TestProcessEvents() {
 	c := clock.New()
 	e := c.BeginEvent()
 	go func() {
-		e.AddSafeEvent(func() {
+		e.AddEvent(func() error {
 			count++
+			return nil
 		})
 	}()
 
@@ -223,11 +225,11 @@ func (s *ClockTestSuite) TestProcessEventsUntil() {
 	c := clock.New()
 	e1 := c.BeginEvent()
 	go func() {
-		e1.AddSafeEvent(func() { count++ })
+		e1.AddEvent(func() error { count++; return nil })
 	}()
 	e2 := c.BeginEvent()
 	go func() {
-		e2.AddSafeEvent(func() { count++ })
+		e2.AddEvent(func() error { count++; return nil })
 	}()
 
 	s.Assert().Equal(0, count, "count before ProcessEventsWhile")

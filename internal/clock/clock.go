@@ -277,15 +277,6 @@ func (c *EventLoopCallback) AddEvent(cb TaskCallback) {
 	c.clock.addEvent(cb)
 }
 
-// AddSafeEvent is like [Clock.addEvent], but with a simpler interface for
-// events that cannot fail with an error.
-//
-// [EventLoopCallback.AddEvent]/[EventLoopCallback.AddSafeEvent] may only be
-// called once. Multiple calls will panic.
-func (c *EventLoopCallback) AddSafeEvent(cb SafeTaskCallback) {
-	c.AddEvent(cb.toTask())
-}
-
 // BeginEvent tells the event loop that an event is expected to be added in the
 // future. This should be called on the event loop goroutine.
 //
@@ -362,10 +353,6 @@ func (c *Clock) processEventsWhile(ctx context.Context, f func() bool, name stri
 	return errors.Join(errs...)
 }
 
-// AddSafeMicrotask is a version of AddMicrotask, where the caller can guarantee
-// the task doesn't generate an error.
-func (c *Clock) AddSafeMicrotask(task SafeTaskCallback) { c.AddMicrotask(task.toTask()) }
-
 func (c *Clock) generateHandle() TaskHandle {
 	c.nextHandle++
 	return c.nextHandle
@@ -388,14 +375,14 @@ func (c *Clock) insertTask(future futureTask) TaskHandle {
 // the delay is negative.
 //
 // [SetInterval]: https://developer.mozilla.org/en-US/docs/Web/API/Window/setInterval
-func (c *Clock) SetInterval(task SafeTaskCallback, delay time.Duration) TaskHandle {
+func (c *Clock) SetInterval(task TaskCallback, delay time.Duration) TaskHandle {
 	if delay < 0 {
 		panic(fmt.Sprintf("Clock.SetInterval: negative delay: %d", delay))
 	}
 	return c.insertTask(
 		futureTask{
 			time:   c.Time.Add(delay),
-			task:   task.toTask(),
+			task:   task,
 			repeat: true,
 			delay:  delay,
 		})

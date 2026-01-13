@@ -14,10 +14,11 @@ func decodeTimerHandler[T any](
 	if err != nil {
 		return nil, err
 	}
-	res = func() {
+	res = func() error {
 		if _, err := f.Call(scope.GlobalThis()); err != nil {
 			dom.HandleJSCallbackError(scope, "TimerHandler", err)
 		}
+		return nil
 	}
 	return res, nil
 }
