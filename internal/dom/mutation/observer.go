@@ -13,7 +13,7 @@ type Callback interface {
 	HandleMutation([]Record, *Observer)
 }
 
-type Flushers interface {
+type MicrotaskQueuer interface {
 	QueueMicrotask(clock.TaskCallback)
 }
 
@@ -35,12 +35,12 @@ func (f RecordCallbackFunc) HandleMutation(r []Record, _ *Observer) { f(r) }
 // Client code must first call [MutationObserver.Observe], specifying what to
 // listen for.
 //
-// The Observer must be initialized with both a [Flushers], allowing it to
+// The Observer must be initialized with both a [MicrotaskQueuer], allowing it to
 // register to receive notifications; and a Callback.
 //
 // [MutationObserver]: https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
 type Observer struct {
-	Flushers Flushers
+	Flushers MicrotaskQueuer
 	Callback Callback
 	pending  []Record
 	closer   dom.Closer
@@ -48,10 +48,10 @@ type Observer struct {
 	target   dom.Node
 }
 
-// NewObserver creates a new observer registering with the [Flushers] f and the
+// NewObserver creates a new observer registering with the [MicrotaskQueuer] f and the
 // callback cb. NewObserver doesn't do anything except setting exported fields.
 // The function panics if either f or cb are nil.
-func NewObserver(f Flushers, cb Callback) *Observer {
+func NewObserver(f MicrotaskQueuer, cb Callback) *Observer {
 	if f == nil {
 		panic("mutation: NewObserver: f cannot be nil")
 	}

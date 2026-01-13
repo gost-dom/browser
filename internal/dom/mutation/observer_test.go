@@ -247,8 +247,8 @@ func (r *MutationRecorder) Clear() {
 	r.Records = nil
 }
 
-func (r *MutationRecorder) QueueMicrotask(f clock.TaskCallback) {
-	r.Microtasks = append(r.Microtasks, f)
+func (r *MutationRecorder) QueueMicrotask(cb clock.TaskCallback) {
+	r.Microtasks = append(r.Microtasks, cb)
 }
 
 func (r *MutationRecorder) RunMicrotasks() {

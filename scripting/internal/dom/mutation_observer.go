@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	mutation "github.com/gost-dom/browser/internal/dom/mutation"
+	htmlinterfaces "github.com/gost-dom/browser/internal/interfaces/html-interfaces"
 	"github.com/gost-dom/browser/scripting/internal/codec"
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -28,9 +29,16 @@ func CreateMutationObserver[T any](
 	cbCtx js.CallbackContext[T],
 	cb mutation.Callback,
 ) (js.Value[T], error) {
+	instance, errInst := js.As[htmlinterfaces.WindowOrWorkerGlobalScope](
+		cbCtx.GlobalThis().NativeValue(),
+		nil,
+	)
+	if errInst != nil {
+		return nil, errInst
+	}
 	return codec.EncodeConstructedValue(
 		cbCtx,
-		mutation.NewObserver(cbCtx.Clock(), cb),
+		mutation.NewObserver(instance, cb),
 	)
 }
 
