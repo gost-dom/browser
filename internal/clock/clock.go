@@ -107,7 +107,7 @@ type Clock struct {
 	stack int
 }
 
-func (c *Clock) RunMicrotasks() error { return c.MicrotaskQueue.RunMicrotasks() }
+func (c *Clock) runMicrotasks() error { return c.MicrotaskQueue.RunMicrotasks() }
 
 // Creates a new clock. If the options don't set a specific time, the clock is
 // initialised with the current system time as the initial simulated wall clock
@@ -153,7 +153,7 @@ func (c *Clock) runWhile(predicate func() bool) []error {
 	var errs []error
 	minLength := len(c.tasks)
 	count := 0
-	errs = append(errs, c.RunMicrotasks())
+	errs = append(errs, c.runMicrotasks())
 	for predicate() {
 		task := c.tasks[0]
 		c.tasks = c.tasks[1:]
@@ -165,7 +165,7 @@ func (c *Clock) runWhile(predicate func() bool) []error {
 			task.time = task.time.Add(task.delay)
 			c.insertTask(task)
 		}
-		errs = append(errs, c.RunMicrotasks())
+		errs = append(errs, c.runMicrotasks())
 		newLength := len(c.tasks)
 		if newLength < minLength {
 			minLength = newLength
@@ -190,7 +190,7 @@ func (c *Clock) runWhile(predicate func() bool) []error {
 func (c *Clock) Advance(d time.Duration) error {
 	c.logger().Debug("Clock.Advance", "duration", d, "clock", c)
 	endTime := c.Time.Add(d)
-	errs := []error{c.RunMicrotasks()}
+	errs := []error{c.runMicrotasks()}
 	errs = append(errs, c.runWhile(func() bool {
 		return len(c.tasks) > 0 && !c.tasks[0].time.After(endTime)
 	})...)
