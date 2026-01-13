@@ -14,7 +14,7 @@ func (w windowOrWorkerGlobalScope) SetTimeout(
 	task clock.TaskCallback,
 	delay time.Duration,
 ) clock.TaskHandle {
-	return w.clock.SetTimeout(func() error { task(); return nil }, delay)
+	return w.clock.SetTimeout(task, delay)
 }
 
 func (w windowOrWorkerGlobalScope) ClearTimeout(handle clock.TaskHandle) {
