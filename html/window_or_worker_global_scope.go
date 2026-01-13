@@ -33,5 +33,5 @@ func (w windowOrWorkerGlobalScope) ClearInterval(handle clock.TaskHandle) {
 }
 
 func (w windowOrWorkerGlobalScope) QueueMicrotask(task clock.TaskCallback) {
-	w.clock.AddMicrotask(task)
+	w.clock.QueueMicrotask(task)
 }

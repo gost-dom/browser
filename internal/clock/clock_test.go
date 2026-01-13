@@ -116,12 +116,12 @@ func (s *ClockTestSuite) TestImmediatesAreExecutedBeforeScheduledTasks() {
 	c.SetTimeout(
 		wrapTask(func() {
 			s.log("A")
-			c.AddMicrotask(func() error {
+			c.QueueMicrotask(func() error {
 				s.log("A2")
-				c.AddMicrotask(func() error { s.log("A2A"); return nil })
+				c.QueueMicrotask(func() error { s.log("A2A"); return nil })
 				return nil
 			})
-			c.AddMicrotask(func() error { s.log("A3"); return nil })
+			c.QueueMicrotask(func() error { s.log("A3"); return nil })
 		}),
 		1*time.Millisecond,
 	)
@@ -139,7 +139,7 @@ func (s *ClockTestSuite) TestImmediatesAreExecutedBeforeScheduledTasks() {
 func (s *ClockTestSuite) TestTick() {
 	c := clock.New()
 	c.QueueMacrotask(wrapTask(func() { s.log("Task") }))
-	c.AddMicrotask(func() error { s.log("Microtask"); return nil })
+	c.QueueMicrotask(func() error { s.log("Microtask"); return nil })
 	c.Tick()
 	s.Assert().Equal([]string{"Microtask", "Task"}, s.logs)
 }
@@ -147,7 +147,7 @@ func (s *ClockTestSuite) TestTick() {
 func (s *ClockTestSuite) TestImmediatesPanicWhenListDoesntReduce() {
 	c := clock.New(clock.OfIsoString("2025-02-01T12:00:00Z"))
 	var task clock.TaskCallback
-	task = wrapTask(func() { c.AddMicrotask(wrapTask(func() { task() })) })
+	task = wrapTask(func() { c.QueueMicrotask(wrapTask(func() { task() })) })
 
 	c.SetTimeout(task, 1*time.Millisecond)
 
@@ -157,7 +157,7 @@ func (s *ClockTestSuite) TestImmediatesPanicWhenListDoesntReduce() {
 func (s *ClockTestSuite) TestImmediatesPropagateErrors() {
 	c := clock.New(clock.OfIsoString("2025-02-01T12:00:00Z"))
 	c.SetTimeout(wrapTask(func() {
-		c.AddMicrotask(func() error { return errors.New("Microtask error") })
+		c.QueueMicrotask(func() error { return errors.New("Microtask error") })
 	}), 1*time.Millisecond)
 
 	err := c.RunAll()

@@ -243,13 +243,13 @@ func (c *Clock) Cancel(handle TaskHandle) {
 	}
 }
 
-// AddMicrotask adds a task to the "microtask queue".
+// QueueMicrotask adds a task to the "microtask queue".
 //
 // This shouldn't be called from Go code. Microtasks are a property of
 // JavaScript execution and should really be carried out by the javascript
 // engine.
-func (c *Clock) AddMicrotask(task TaskCallback) {
-	c.logger().Debug("Clock.AddMicrotask")
+func (c *Clock) QueueMicrotask(task TaskCallback) {
+	c.logger().Debug("Clock.QueueMicrotask")
 	c.microtasks = append(c.microtasks, task)
 }
 
