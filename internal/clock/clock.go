@@ -149,14 +149,33 @@ func (c *Clock) logger() *slog.Logger {
 	return l
 }
 
+func (c *Clock) peek() (res futureTask, ok bool) {
+	if len(c.tasks) > 0 {
+		ok = true
+		res = c.tasks[0]
+	}
+	return
+}
+
+func (c *Clock) dequeue() (res futureTask, ok bool) {
+	if len(c.tasks) > 0 {
+		ok = true
+		res = c.tasks[0]
+		c.tasks = c.tasks[1:]
+	}
+	return
+}
+
 func (c *Clock) runWhile(predicate func() bool) []error {
-	var errs []error
+	errs := []error{c.runMicrotasks()}
+
 	minLength := len(c.tasks)
 	count := 0
-	errs = append(errs, c.runMicrotasks())
 	for predicate() {
-		task := c.tasks[0]
-		c.tasks = c.tasks[1:]
+		task, ok := c.dequeue()
+		if !ok {
+			break
+		}
 		c.Time = task.time
 		if err := task.task(); err != nil {
 			errs = append(errs, err)
@@ -165,7 +184,6 @@ func (c *Clock) runWhile(predicate func() bool) []error {
 			task.time = task.time.Add(task.delay)
 			c.insertTask(task)
 		}
-		errs = append(errs, c.runMicrotasks())
 		newLength := len(c.tasks)
 		if newLength < minLength {
 			minLength = newLength
@@ -192,7 +210,8 @@ func (c *Clock) Advance(d time.Duration) error {
 	endTime := c.Time.Add(d)
 	errs := []error{c.runMicrotasks()}
 	errs = append(errs, c.runWhile(func() bool {
-		return len(c.tasks) > 0 && !c.tasks[0].time.After(endTime)
+		task, ok := c.peek()
+		return ok && !task.time.After(endTime)
 	})...)
 	c.Time = endTime
 	return errors.Join(errs...)
@@ -289,9 +308,9 @@ func (c *EventLoopCallback) AddEvent(cb TaskCallback) {
 // event to the event loop.
 func (c *Clock) BeginEvent() *EventLoopCallback {
 	c.logger().Debug("Clock.BeginEvent")
+
 	c.pendingEvents++
 	if c.events == nil {
-		c.logger().Debug("Clock.BeginEvent: initialize channel")
 		bufSize := c.EventBufSize
 		if bufSize == 0 {
 			bufSize = DefaultEventBufSize
