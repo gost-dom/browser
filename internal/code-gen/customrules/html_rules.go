@@ -1,8 +1,12 @@
 package customrules
 
-import "github.com/gost-dom/webref/idl"
+import (
+	"github.com/gost-dom/code-gen/gotypes"
+	"github.com/gost-dom/webref/idl"
+)
 
-var timeDuration = GoType{Package: "time", Name: "Duration"}
+var timeDuration = gotypes.TimeDuration
+var taskHandle = gotypes.TaskHandle
 
 var htmlRules = SpecRules{
 	"DOMStringMap": {OutputType: OutputTypeStruct},
@@ -41,14 +45,20 @@ var htmlRules = SpecRules{
 		"focus": {Arguments: ArgumentRules{"options": {Ignore: true}}},
 	}},
 	"WindowOrWorkerGlobalScope": {Operations: OperationRules{
-		"setTimeout": {Arguments: ArgumentRules{
-			"timeout":   {GoType: timeDuration},
-			"arguments": {Ignore: true},
-		}},
-		"setInterval": {Arguments: ArgumentRules{
-			"timeout":   {GoType: timeDuration},
-			"arguments": {Ignore: true},
-		}},
+		"setTimeout": {
+			ReturnType: taskHandle,
+			Arguments: ArgumentRules{
+				"timeout":   {GoType: timeDuration},
+				"arguments": {Ignore: true},
+			}},
+		"setInterval": {
+			ReturnType: taskHandle,
+			Arguments: ArgumentRules{
+				"timeout":   {GoType: timeDuration},
+				"arguments": {Ignore: true},
+			}},
+		"clearTimeout":  {Arguments: ArgumentRules{"id": {GoType: taskHandle}}},
+		"clearInterval": {Arguments: ArgumentRules{"id": {GoType: taskHandle}}},
 	}},
 }
 

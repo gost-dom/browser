@@ -225,6 +225,9 @@ func (o IdlInterfaceOperation) HasError() bool {
 // return (string, bool), indicating if the attribute was found. If hasError is
 // true, an error return type will be added as well.
 func (o IdlInterfaceOperation) ReturnParams() []g.Generator {
+	if !o.Rules.ReturnType.Zero() {
+		return g.List(customrules.GoTypeGenerator(o.Rules.ReturnType))
+	}
 	result := make([]g.Generator, 1, 3)
 	s := o.ReturnType
 	result[0] = s

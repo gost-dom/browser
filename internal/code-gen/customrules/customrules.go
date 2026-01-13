@@ -96,6 +96,7 @@ type OperationRule struct {
 	// By default, an operation is assumed to not generate an error. Override
 	// the behaviour by setting this to true.
 	HasError    bool
+	ReturnType  GoType
 	Arguments   ArgumentRules
 	DocComments string
 

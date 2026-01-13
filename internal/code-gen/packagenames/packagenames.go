@@ -14,6 +14,7 @@ const (
 
 	Dom            = BASE_PKG + "/dom"
 	Entity         = BASE_PKG + "/internal/entity"
+	Clock          = BASE_PKG + "/internal/clock"
 	Events         = Dom + "/event"
 	Html           = BASE_PKG + "/html"
 	Scripting      = BASE_PKG + "/scripting"

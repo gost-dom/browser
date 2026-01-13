@@ -10,23 +10,26 @@ type windowOrWorkerGlobalScope struct {
 	clock *clock.Clock
 }
 
-func (w windowOrWorkerGlobalScope) SetTimeout(task clock.TaskCallback, delay time.Duration) int {
-	return int(w.clock.SetTimeout(func() error { task(); return nil }, delay))
+func (w windowOrWorkerGlobalScope) SetTimeout(
+	task clock.TaskCallback,
+	delay time.Duration,
+) clock.TaskHandle {
+	return w.clock.SetTimeout(func() error { task(); return nil }, delay)
 }
 
-func (w windowOrWorkerGlobalScope) ClearTimeout(handle int) {
-	w.clock.Cancel(clock.TaskHandle(handle))
+func (w windowOrWorkerGlobalScope) ClearTimeout(handle clock.TaskHandle) {
+	w.clock.Cancel(handle)
 }
 
 func (w windowOrWorkerGlobalScope) SetInterval(
 	task clock.TaskCallback,
 	delay time.Duration,
-) int {
-	return int(w.clock.SetInterval(task, delay))
+) clock.TaskHandle {
+	return w.clock.SetInterval(task, delay)
 }
 
-func (w windowOrWorkerGlobalScope) ClearInterval(handle int) {
-	w.clock.Cancel(clock.TaskHandle(handle))
+func (w windowOrWorkerGlobalScope) ClearInterval(handle clock.TaskHandle) {
+	w.clock.Cancel(handle)
 }
 
 func (w windowOrWorkerGlobalScope) QueueMicrotask(task clock.TaskCallback) {

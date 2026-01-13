@@ -50,10 +50,12 @@ func (gen OpCallbackMethods) NativeMethodCall(
 ) g.Generator {
 	name := op.NativeFunctionName() + methodPostFix
 	eval := gen.instance().Field(name).Call(args...)
+	rules := gen.Data.CustomRule.Operations[op.Name]
 	return ReturnValueGenerator{
-		Data: gen.Data,
-		Op:   op,
-		Ctx:  gen.CbCtx(),
+		Data:   gen.Data,
+		Op:     op,
+		Ctx:    gen.CbCtx(),
+		GoType: rules.ReturnType,
 	}.Transform(eval)
 }
 

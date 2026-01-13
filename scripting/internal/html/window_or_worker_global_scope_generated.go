@@ -30,7 +30,7 @@ func WindowOrWorkerGlobalScope_setTimeout[T any](cbCtx js.CallbackContext[T]) (r
 		return nil, err
 	}
 	result := instance.SetTimeout(handler, timeout)
-	return codec.EncodeInt(cbCtx, result)
+	return encodeTaskHandle(cbCtx, result)
 }
 
 func WindowOrWorkerGlobalScope_clearTimeout[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
@@ -38,7 +38,7 @@ func WindowOrWorkerGlobalScope_clearTimeout[T any](cbCtx js.CallbackContext[T]) 
 	if errInst != nil {
 		return nil, errInst
 	}
-	id, errArg1 := js.ConsumeArgument(cbCtx, "id", codec.ZeroValue, codec.DecodeInt)
+	id, errArg1 := js.ConsumeArgument(cbCtx, "id", codec.ZeroValue, decodeTaskHandle)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
@@ -59,7 +59,7 @@ func WindowOrWorkerGlobalScope_setInterval[T any](cbCtx js.CallbackContext[T]) (
 		return nil, err
 	}
 	result := instance.SetInterval(handler, timeout)
-	return codec.EncodeInt(cbCtx, result)
+	return encodeTaskHandle(cbCtx, result)
 }
 
 func WindowOrWorkerGlobalScope_clearInterval[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
@@ -67,7 +67,7 @@ func WindowOrWorkerGlobalScope_clearInterval[T any](cbCtx js.CallbackContext[T])
 	if errInst != nil {
 		return nil, errInst
 	}
-	id, errArg1 := js.ConsumeArgument(cbCtx, "id", codec.ZeroValue, codec.DecodeInt)
+	id, errArg1 := js.ConsumeArgument(cbCtx, "id", codec.ZeroValue, decodeTaskHandle)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
