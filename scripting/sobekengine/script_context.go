@@ -31,7 +31,6 @@ func (c *scriptContext) tick() error {
 	}
 	return nil
 }
-func (c *scriptContext) Clock() html.Clock         { return c.host.clock }
 func (c *scriptContext) Context() context.Context  { return c.browsingCtx.Context() }
 func (c *scriptContext) globalThis() *sobek.Object { return c.vm.GlobalObject() }
 

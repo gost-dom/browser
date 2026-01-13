@@ -114,8 +114,6 @@ func (c *V8ScriptContext) getConstructor(name string) *v8Class {
 	return prototype
 }
 
-func (ctx *V8ScriptContext) Clock() html.Clock { return ctx.host.clock }
-
 func (host *V8ScriptHost) addContext(ctx *V8ScriptContext) {
 	host.mu.Lock()
 	defer host.mu.Unlock()
