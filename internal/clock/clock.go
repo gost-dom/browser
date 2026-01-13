@@ -400,8 +400,8 @@ func (c *Clock) SetTimeout(task TaskCallback, delay time.Duration) TaskHandle {
 	})
 }
 
-// EnqueueMacrotask places a task on the macrotask queue.
-func (c *Clock) EnqueueMacrotask(task TaskCallback) TaskHandle {
+// QueueMacrotask places a task on the macrotask queue.
+func (c *Clock) QueueMacrotask(task TaskCallback) TaskHandle {
 	return c.SetTimeout(task, 0)
 }
 

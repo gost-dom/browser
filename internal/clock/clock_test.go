@@ -138,7 +138,7 @@ func (s *ClockTestSuite) TestImmediatesAreExecutedBeforeScheduledTasks() {
 
 func (s *ClockTestSuite) TestTick() {
 	c := clock.New()
-	c.EnqueueMacrotask(wrapTask(func() { s.log("Task") }))
+	c.QueueMacrotask(wrapTask(func() { s.log("Task") }))
 	c.AddMicrotask(func() error { s.log("Microtask"); return nil })
 	c.Tick()
 	s.Assert().Equal([]string{"Microtask", "Task"}, s.logs)
