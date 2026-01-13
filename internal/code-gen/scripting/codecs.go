@@ -29,10 +29,9 @@ func DecodersForArg(arg model.ESOperationArgument) []g.Generator {
 
 	argType := arg.IdlArg.Type
 	argRules := arg.CustomRule
-	if argRules.GoType.Name != "" {
+	if !argRules.GoType.Zero() {
 		return DecodersForGoType(argType, argRules.GoType)
 	}
-
 	if argRules.OverridesType() {
 		argType = argRules.Type
 	}
