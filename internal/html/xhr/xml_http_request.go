@@ -146,9 +146,7 @@ func (req *xmlHttpRequest) Send(body io.Reader) error {
 	}
 	if req.async {
 		req.DispatchEvent(&event.Event{Type: XHREventLoadstart})
-		req.clock.AddSafeTask(func() {
-			req.send(body)
-		}, 0)
+		req.clock.EnqueueMacrotask(clock.SafeTask(func() { req.send(body) }))
 		return nil
 	}
 	return req.send(body)

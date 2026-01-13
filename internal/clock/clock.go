@@ -23,11 +23,9 @@ type TaskHandle uint32
 // A TaskCallback is the callback registered for a [futureTask].
 type TaskCallback func() error
 
-// A SafeTaskCallback is the callback that registered for a [futureTask] that
-// can't generate an err.r
-type SafeTaskCallback func()
-
-func (t SafeTaskCallback) toTask() TaskCallback { return func() error { t(); return nil } }
+// SafeTask creates a TaskCallback with a nil error from a simple callback
+// function which cannot produce an error
+func SafeTask(cb func()) TaskCallback { return func() error { cb(); return nil } }
 
 // A futureTask represents a task to run when simulated time advances past the
 // specified Time value.
@@ -402,10 +400,9 @@ func (c *Clock) SetTimeout(task TaskCallback, delay time.Duration) TaskHandle {
 	})
 }
 
-// Schedules a task to run at a specified time in the future. Panics if the time
-// is in the past.
-func (c *Clock) AddSafeTask(task SafeTaskCallback, delay time.Duration) TaskHandle {
-	return c.SetTimeout(task.toTask(), delay)
+// EnqueueMacrotask places a task on the macrotask queue.
+func (c *Clock) EnqueueMacrotask(task TaskCallback) TaskHandle {
+	return c.SetTimeout(task, 0)
 }
 
 // Keeps running as long as there are tasks in the task queue. New tasks

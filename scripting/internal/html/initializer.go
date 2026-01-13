@@ -54,11 +54,12 @@ func requestAnimationFrame[T any](cbCtx js.CallbackContext[T]) (js.Value[T], err
 	if err != nil {
 		return nil, err
 	}
-	cbCtx.Clock().AddSafeTask(
-		func() {
+	cbCtx.Clock().SetTimeout(
+		func() error {
 			if _, err := f.Call(cbCtx.GlobalThis()); err != nil {
 				dom.HandleJSCallbackError(cbCtx, "requestAnimationFrame", err)
 			}
+			return nil
 		}, 10*time.Millisecond)
 	return nil, err
 }

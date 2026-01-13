@@ -13,6 +13,8 @@ import (
 const feb1st2025_noon int64 = 1738411200
 const feb1st2025_noon_milli int64 = feb1st2025_noon * 1000
 
+func wrapTask(cb func()) clock.TaskCallback { return func() error { cb(); return nil } }
+
 type ClockTestSuite struct {
 	suite.Suite
 	logs []string
@@ -34,8 +36,8 @@ func (s *ClockTestSuite) TestNewClock() {
 func (s *ClockTestSuite) TestAdvance() {
 	c := clock.New(clock.OfIsoString("2025-02-01T12:00:00Z"))
 
-	c.AddSafeTask(func() { s.log("A") }, 101*time.Millisecond)
-	c.AddSafeTask(func() { s.log("B") }, 100*time.Millisecond)
+	c.SetTimeout(wrapTask(func() { s.log("A") }), 101*time.Millisecond)
+	c.SetTimeout(wrapTask(func() { s.log("B") }), 100*time.Millisecond)
 	s.Assert().NoError(c.Advance(10 * time.Millisecond))
 	s.Assert().Equal(feb1st2025_noon_milli+10, c.Time.UnixMilli())
 
@@ -46,10 +48,10 @@ func (s *ClockTestSuite) TestAdvance() {
 
 func (s *ClockTestSuite) TestCancelTask() {
 	c := clock.New()
-	c.AddSafeTask(func() { s.log("A") }, 100*time.Millisecond)
-	c.AddSafeTask(func() { s.log("B1") }, 200*time.Millisecond)
-	handle := c.AddSafeTask(func() { s.log("B2") }, 200*time.Millisecond)
-	c.AddSafeTask(func() { s.log("C") }, 300*time.Millisecond)
+	c.SetTimeout(wrapTask(func() { s.log("A") }), 100*time.Millisecond)
+	c.SetTimeout(wrapTask(func() { s.log("B1") }), 200*time.Millisecond)
+	handle := c.SetTimeout(wrapTask(func() { s.log("B2") }), 200*time.Millisecond)
+	c.SetTimeout(wrapTask(func() { s.log("C") }), 300*time.Millisecond)
 
 	c.Advance(150 * time.Millisecond)
 	c.Cancel(handle)
@@ -79,7 +81,7 @@ func (s *ClockTestSuite) TestRunAll() {
 	var runCount int
 	task := func() { runCount++ }
 	c := clock.New(clock.OfIsoString("2025-02-01T12:00:00Z"))
-	c.AddSafeTask(task, 100*time.Millisecond)
+	c.SetTimeout(wrapTask(task), 100*time.Millisecond)
 	c.RunAll()
 	s.Assert().Equal(1, runCount)
 	s.Assert().Equal(feb1st2025_noon_milli+100, c.Time.UnixMilli())
@@ -87,9 +89,9 @@ func (s *ClockTestSuite) TestRunAll() {
 
 func (s *ClockTestSuite) TestOrderedExecution() {
 	c := clock.New(clock.OfIsoString("2025-02-01T12:00:00Z"))
-	c.AddSafeTask(func() { s.log("B") }, 200*time.Millisecond)
-	c.AddSafeTask(func() { s.log("A") }, 100*time.Millisecond)
-	c.AddSafeTask(func() { s.log("C") }, 300*time.Millisecond)
+	c.SetTimeout(wrapTask(func() { s.log("B") }), 200*time.Millisecond)
+	c.SetTimeout(wrapTask(func() { s.log("A") }), 100*time.Millisecond)
+	c.SetTimeout(wrapTask(func() { s.log("C") }), 300*time.Millisecond)
 	err := c.RunAll()
 	s.Assert().NoError(err)
 	s.Assert().Equal([]string{"A", "B", "C"}, s.logs)
@@ -99,8 +101,8 @@ func (s *ClockTestSuite) TestOrderedExecution() {
 func (s *ClockTestSuite) TestErrorsAreReturned() {
 	c := clock.New(clock.OfIsoString("2025-02-01T12:00:00Z"))
 	c.SetTimeout(func() error { s.log("B"); return errors.New("Error B") }, 200*time.Millisecond)
-	c.AddSafeTask(func() { s.log("A") }, 100*time.Millisecond)
-	c.AddSafeTask(func() { s.log("C") }, 300*time.Millisecond)
+	c.SetTimeout(wrapTask(func() { s.log("A") }), 100*time.Millisecond)
+	c.SetTimeout(wrapTask(func() { s.log("C") }), 300*time.Millisecond)
 
 	err := c.RunAll()
 	s.Assert().Error(err)
@@ -111,8 +113,8 @@ func (s *ClockTestSuite) TestErrorsAreReturned() {
 
 func (s *ClockTestSuite) TestImmediatesAreExecutedBeforeScheduledTasks() {
 	c := clock.New(clock.OfIsoString("2025-02-01T12:00:00Z"))
-	c.AddSafeTask(
-		func() {
+	c.SetTimeout(
+		wrapTask(func() {
 			s.log("A")
 			c.AddMicrotask(func() error {
 				s.log("A2")
@@ -120,7 +122,7 @@ func (s *ClockTestSuite) TestImmediatesAreExecutedBeforeScheduledTasks() {
 				return nil
 			})
 			c.AddMicrotask(func() error { s.log("A3"); return nil })
-		},
+		}),
 		1*time.Millisecond,
 	)
 	c.SetTimeout(
@@ -136,10 +138,7 @@ func (s *ClockTestSuite) TestImmediatesAreExecutedBeforeScheduledTasks() {
 
 func (s *ClockTestSuite) TestTick() {
 	c := clock.New()
-	c.AddSafeTask(
-		func() { s.log("Task") },
-		0,
-	)
+	c.EnqueueMacrotask(wrapTask(func() { s.log("Task") }))
 	c.AddMicrotask(func() error { s.log("Microtask"); return nil })
 	c.Tick()
 	s.Assert().Equal([]string{"Microtask", "Task"}, s.logs)
@@ -147,19 +146,19 @@ func (s *ClockTestSuite) TestTick() {
 
 func (s *ClockTestSuite) TestImmediatesPanicWhenListDoesntReduce() {
 	c := clock.New(clock.OfIsoString("2025-02-01T12:00:00Z"))
-	var task clock.SafeTaskCallback
-	task = func() { c.AddMicrotask(func() error { task(); return nil }) }
+	var task clock.TaskCallback
+	task = wrapTask(func() { c.AddMicrotask(wrapTask(func() { task() })) })
 
-	c.AddSafeTask(task, 1*time.Millisecond)
+	c.SetTimeout(task, 1*time.Millisecond)
 
 	s.Assert().Panics(func() { c.RunAll() })
 }
 
 func (s *ClockTestSuite) TestImmediatesPropagateErrors() {
 	c := clock.New(clock.OfIsoString("2025-02-01T12:00:00Z"))
-	c.AddSafeTask(func() {
+	c.SetTimeout(wrapTask(func() {
 		c.AddMicrotask(func() error { return errors.New("Microtask error") })
-	}, 1*time.Millisecond)
+	}), 1*time.Millisecond)
 
 	err := c.RunAll()
 	s.Assert().Error(err, "Microtask error")
@@ -167,31 +166,31 @@ func (s *ClockTestSuite) TestImmediatesPropagateErrors() {
 
 func (s *ClockTestSuite) TestRepeatingTasksGeneratePanicOnRunAll() {
 	c := clock.New(clock.OfIsoString("2025-02-01T12:00:00Z"))
-	var task clock.SafeTaskCallback
-	task = func() {
-		c.AddSafeTask(task, 100*time.Millisecond)
-	}
-	c.AddSafeTask(task, 100*time.Millisecond)
+	var task clock.TaskCallback
+	task = wrapTask(func() {
+		c.SetTimeout(task, 100*time.Millisecond)
+	})
+	c.SetTimeout(task, 100*time.Millisecond)
 
 	s.Assert().Panics(func() { c.RunAll() })
 }
 
 func (s *ClockTestSuite) TestSingleRepeatingTask() {
 	c := clock.New()
-	var task clock.SafeTaskCallback
-	task = func() {
-		c.AddSafeTask(func() {}, 1*time.Millisecond)
-	}
-	c.AddSafeTask(task, 1*time.Millisecond)
+	var task clock.TaskCallback
+	task = wrapTask(func() {
+		c.SetTimeout(wrapTask(func() {}), 1*time.Millisecond)
+	})
+	c.SetTimeout(task, 1*time.Millisecond)
 
 	s.Assert().NotPanics(func() { c.Advance(100 * time.Millisecond) })
 }
 
 func (s *ClockTestSuite) TestRepeatingTasksGeneratePanicOnRunAdvance() {
 	c := clock.New(clock.OfIsoString("2025-02-01T12:00:00Z"))
-	var task clock.SafeTaskCallback
-	task = func() { c.AddSafeTask(task, 1*time.Millisecond) }
-	c.AddSafeTask(task, 1*time.Millisecond)
+	var task clock.TaskCallback
+	task = wrapTask(func() { c.SetTimeout(task, 1*time.Millisecond) })
+	c.SetTimeout(task, 1*time.Millisecond)
 
 	s.Assert().Panics(func() { c.Advance(1000 * time.Millisecond) })
 }
