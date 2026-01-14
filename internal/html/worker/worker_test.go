@@ -61,27 +61,26 @@ func TestWorkerSetTimeout(t *testing.T) {
 
 func TestWorkerWindowMessaging(t *testing.T) {
 	ctx := t.Context()
-	synctest.Test(t, func(t *testing.T) {
+	workerClock := clock.New()
+	win := browsertest.InitWindow(t, nil)
+	worker := worker.FromWindow(win, workerClock)
 
-		win := browsertest.InitWindow(t, nil)
-		worker := worker.FromWindow(win)
+	var eventDatas []any
 
-		var data []any
-
-		win.AddEventListener("message", event.NewEventHandlerFunc(func(e *event.Event) error {
-			init, ok := e.Data.(htmlinterfaces.MessageEventInit)
-			if !ok {
-				t.Errorf("Incorrect event init. Expected: MessageEventInit. Got: %T", e.Data)
-			}
-			data = append(data, init)
-			return nil
-		}))
-		worker.Enqueue(func(scope htmlinterfaces.WorkerGlobalScope) error {
-			scope.PostMessage("Hello")
-			return nil
-		})
-		synctest.Wait()
-		win.Clock().ProcessEvents(ctx)
-		assert.Equal(t, []any{"Hello"}, data)
+	win.AddEventListener("message", event.NewEventHandlerFunc(func(e *event.Event) error {
+		init, ok := e.Data.(htmlinterfaces.MessageEventInit)
+		if !ok {
+			t.Errorf("Incorrect event init. Expected: MessageEventInit. Got: %T", e.Data)
+		}
+		eventDatas = append(eventDatas, init.Data)
+		return nil
+	}))
+	worker.Enqueue(func(scope htmlinterfaces.WorkerGlobalScope) error {
+		scope.PostMessage("Hello")
+		scope.PostMessage("World!")
+		return nil
 	})
+	workerClock.ProcessEvents(ctx)
+	win.Clock().ProcessEvents(ctx)
+	assert.Equal(t, []any{"Hello", "World!"}, eventDatas)
 }

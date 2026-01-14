@@ -20,6 +20,7 @@ type browserConfig struct {
 	logger *slog.Logger
 	engine ScriptEngine
 	ctx    context.Context
+	clock  *clock.Clock
 }
 
 type BrowserOption func(*browserConfig)
@@ -43,6 +44,10 @@ func WithHandler(h http.Handler) BrowserOption {
 
 func WithScriptEngine(engine html.ScriptEngine) BrowserOption {
 	return func(b *browserConfig) { b.engine = engine }
+}
+
+func WithClock(c *clock.Clock) BrowserOption {
+	return func(b *browserConfig) { b.clock = c }
 }
 
 // WithContext passes a [context.Context] than can trigger cancellation, e.g.:
@@ -119,7 +124,10 @@ func New(options ...BrowserOption) *Browser {
 	}
 	engine := config.engine
 	var host html.ScriptHost
-	c := clock.New(clock.WithLogger(config.logger))
+	c := config.clock
+	if c == nil {
+		c = clock.New(clock.WithLogger(config.logger))
+	}
 	if engine != nil {
 		host = engine.NewHost(
 			html.ScriptEngineOptions{
