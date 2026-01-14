@@ -134,6 +134,13 @@ func New(options ...NewClockOption) *Clock {
 	return c
 }
 
+func (c *Clock) Close() {
+	if c.events == nil {
+		close(c.events)
+		c.events = nil
+	}
+}
+
 func (c *Clock) setLogger(l *slog.Logger) *slog.Logger {
 	if l == nil {
 		l = log.Default()
@@ -508,7 +515,7 @@ func (c *Clock) QueueMacrotask(task TaskCallback) TaskHandle {
 // Returns an error if any of the added tasks generate an error. Panics if the
 // task list doesn't decrease in size. See [Clock] documentation for more info.
 func (c *Clock) RunAll() error {
-	errs := c.runWhile(func() bool { return len(c.tasks) > 0 })
+	errs := c.runWhile(func() bool { return c.length() > 0 })
 
 	return errors.Join(errs...)
 }
