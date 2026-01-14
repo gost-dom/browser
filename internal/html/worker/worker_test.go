@@ -48,12 +48,12 @@ func TestWorkerSetTimeout(t *testing.T) {
 		synctest.Wait() // Make sure setTimeout has been called
 
 		// Wait 99 milliseconds. callback shouldn't have been called
-		c.Advance(99 * time.Millisecond)
+		clock.Advance(c, 99*time.Millisecond)
 		synctest.Wait()
 		assert.False(t, called)
 
 		// Wait one more millisecond, callback should have been called.
-		c.Advance(1 * time.Millisecond)
+		clock.Advance(c, 1*time.Millisecond)
 		synctest.Wait()
 		assert.True(t, called, "callback should be called after one more millisecond")
 	})

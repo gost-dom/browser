@@ -422,7 +422,7 @@ func (w *window) ScriptContext() ScriptContext { return w.scriptContext }
 
 func (w *window) Location() Location { return w.document.Location() }
 
-func (w *window) Clock() Clock { return w.clock }
+func (w *window) Clock() Clock { return clockWrapper{w.clock} }
 
 func (w *window) LocationHREF() string {
 	return w.Location().Href()

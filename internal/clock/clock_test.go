@@ -38,10 +38,10 @@ func (s *ClockTestSuite) TestAdvance() {
 
 	c.SetTimeout(wrapTask(func() { s.log("A") }), 101*time.Millisecond)
 	c.SetTimeout(wrapTask(func() { s.log("B") }), 100*time.Millisecond)
-	s.Assert().NoError(c.Advance(10 * time.Millisecond))
+	s.Assert().NoError(clock.Advance(c, 10*time.Millisecond))
 	s.Assert().Equal(feb1st2025_noon_milli+10, c.Time.UnixMilli())
 
-	s.Assert().NoError(c.Advance(90 * time.Millisecond))
+	s.Assert().NoError(clock.Advance(c, 90*time.Millisecond))
 	s.Assert().Equal(feb1st2025_noon_milli+100, c.Time.UnixMilli())
 	s.Assert().Equal([]string{"B"}, s.logs)
 }
@@ -53,9 +53,9 @@ func (s *ClockTestSuite) TestCancelTask() {
 	handle := c.SetTimeout(wrapTask(func() { s.log("B2") }), 200*time.Millisecond)
 	c.SetTimeout(wrapTask(func() { s.log("C") }), 300*time.Millisecond)
 
-	c.Advance(150 * time.Millisecond)
+	clock.Advance(c, 150*time.Millisecond)
 	c.Cancel(handle)
-	c.Advance(150 * time.Millisecond)
+	clock.Advance(c, 150*time.Millisecond)
 
 	s.Assert().Equal([]string{"A", "B1", "C"}, s.logs)
 }
@@ -140,7 +140,7 @@ func (s *ClockTestSuite) TestSingleRepeatingTask() {
 	})
 	c.SetTimeout(task, 1*time.Millisecond)
 
-	s.Assert().NotPanics(func() { c.Advance(100 * time.Millisecond) })
+	s.Assert().NotPanics(func() { clock.Advance(c, 100*time.Millisecond) })
 }
 
 func (s *ClockTestSuite) TestRepeatingTasksGeneratePanicOnRunAdvance() {
@@ -149,7 +149,7 @@ func (s *ClockTestSuite) TestRepeatingTasksGeneratePanicOnRunAdvance() {
 	task = wrapTask(func() { c.SetTimeout(task, 1*time.Millisecond) })
 	c.SetTimeout(task, 1*time.Millisecond)
 
-	s.Assert().Panics(func() { c.Advance(1000 * time.Millisecond) })
+	s.Assert().Panics(func() { clock.Advance(c, 1000*time.Millisecond) })
 }
 
 func (s *ClockTestSuite) TestProcessEvents() {
