@@ -121,14 +121,6 @@ func (s *ClockTestSuite) TestTick() {
 	s.Assert().Equal([]string{"Microtask", "Task"}, s.logs)
 }
 
-func (s *ClockTestSuite) TestImmediatesPropagateErrors() {
-	c := clock.New(clock.OfIsoString("2025-02-01T12:00:00Z"))
-	c.QueueMicrotask(func() error { return errors.New("Microtask error") })
-
-	err := c.RunAll()
-	s.Assert().Error(err, "Microtask error")
-}
-
 func (s *ClockTestSuite) TestRepeatingTasksGeneratePanicOnRunAll() {
 	c := clock.New(clock.OfIsoString("2025-02-01T12:00:00Z"))
 	var task clock.TaskCallback

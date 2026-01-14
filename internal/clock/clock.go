@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log/slog"
 	"slices"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -101,6 +102,7 @@ type Clock struct {
 	// example, settling promises when fetch requests succeed.
 	events        chan (TaskCallback)
 	pendingEvents int
+	mu            sync.RWMutex
 
 	// stack contains the depth of nested calls to [*Clock.Do], keeping track of
 	// when to run microtasks.
@@ -150,6 +152,9 @@ func (c *Clock) logger() *slog.Logger {
 }
 
 func (c *Clock) peek() (res futureTask, ok bool) {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
 	if len(c.tasks) > 0 {
 		ok = true
 		res = c.tasks[0]
@@ -158,6 +163,9 @@ func (c *Clock) peek() (res futureTask, ok bool) {
 }
 
 func (c *Clock) dequeue() (res futureTask, ok bool) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	if len(c.tasks) > 0 {
 		ok = true
 		res = c.tasks[0]
@@ -166,10 +174,16 @@ func (c *Clock) dequeue() (res futureTask, ok bool) {
 	return
 }
 
-func (c *Clock) runWhile(predicate func() bool) []error {
-	errs := []error{c.runMicrotasks()}
+func (c *Clock) length() int {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return len(c.tasks)
+}
 
-	minLength := len(c.tasks)
+func (c *Clock) runWhile(predicate func() bool) []error {
+	var errs []error
+
+	minLength := c.length()
 	count := 0
 	for predicate() {
 		task, ok := c.dequeue()
@@ -184,7 +198,7 @@ func (c *Clock) runWhile(predicate func() bool) []error {
 			task.time = task.time.Add(task.delay)
 			c.insertTask(task)
 		}
-		newLength := len(c.tasks)
+		newLength := c.length()
 		if newLength < minLength {
 			minLength = newLength
 			count = 0
@@ -220,7 +234,7 @@ func (c *Clock) Advance(d time.Duration) error {
 func (c *Clock) LogValue() slog.Value {
 	return slog.GroupValue(
 		slog.Any("microtasks", c.MicrotaskQueue),
-		slog.Int("noTasks", len(c.tasks)),
+		slog.Int("noTasks", c.length()),
 	)
 }
 
@@ -261,6 +275,9 @@ func (c *Clock) tick() error { return c.Advance(0) }
 // [clearTimeout]: https://developer.mozilla.org/en-US/docs/Web/API/Window/clearTimeout
 // [clearInterval]: https://developer.mozilla.org/en-US/docs/Web/API/Window/clearInterval
 func (c *Clock) Cancel(handle TaskHandle) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	idx := slices.IndexFunc(
 		c.tasks,
 		func(t futureTask) bool { return t.handle == handle },
@@ -433,6 +450,9 @@ func (c *Clock) generateHandle() TaskHandle {
 }
 
 func (c *Clock) insertTask(future futureTask) TaskHandle {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	if future.handle == 0 {
 		future.handle = c.generateHandle()
 	}

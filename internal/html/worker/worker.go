@@ -3,6 +3,8 @@ package worker
 import (
 	"errors"
 
+	"github.com/gost-dom/browser/dom/event"
+	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
 	htmlinterfaces "github.com/gost-dom/browser/internal/interfaces/html-interfaces"
 )
@@ -10,7 +12,7 @@ import (
 const queue_size = 32
 
 // TODO: This should be WindowOrWorkerGlobalScope
-type GlobalScope = htmlinterfaces.WindowOrWorkerGlobalScope
+type GlobalScope = htmlinterfaces.WorkerGlobalScope
 
 type WorkItem func(GlobalScope) error
 
@@ -23,6 +25,9 @@ type Worker struct {
 	queue  chan queueItem
 	clock  *clock.Clock
 	global *workerGlobalScope
+
+	winClock       *clock.Clock
+	winEventTarget event.EventTarget
 }
 
 // TODO: Implement global scope
@@ -42,6 +47,14 @@ func New(c *clock.Clock) *Worker {
 		}
 	}()
 	return res
+}
+
+func FromWindow(win html.Window) *Worker {
+	c := win.Clock().(*clock.Clock)
+	w := New(c)
+	w.winClock = c
+	w.winEventTarget = win
+	return w
 }
 
 func (w *Worker) Close() { close(w.queue) }

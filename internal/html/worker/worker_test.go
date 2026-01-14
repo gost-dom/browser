@@ -6,8 +6,11 @@ import (
 	"testing/synctest"
 	"time"
 
+	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/html/worker"
+	htmlinterfaces "github.com/gost-dom/browser/internal/interfaces/html-interfaces"
+	"github.com/gost-dom/browser/internal/testing/browsertest"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -53,5 +56,32 @@ func TestWorkerSetTimeout(t *testing.T) {
 		c.Advance(1 * time.Millisecond)
 		synctest.Wait()
 		assert.True(t, called, "callback should be called after one more millisecond")
+	})
+}
+
+func TestWorkerWindowMessaging(t *testing.T) {
+	ctx := t.Context()
+	synctest.Test(t, func(t *testing.T) {
+
+		win := browsertest.InitWindow(t, nil)
+		worker := worker.FromWindow(win)
+
+		var data []any
+
+		win.AddEventListener("message", event.NewEventHandlerFunc(func(e *event.Event) error {
+			init, ok := e.Data.(htmlinterfaces.MessageEventInit)
+			if !ok {
+				t.Errorf("Incorrect event init. Expected: MessageEventInit. Got: %T", e.Data)
+			}
+			data = append(data, init)
+			return nil
+		}))
+		worker.Enqueue(func(scope htmlinterfaces.WorkerGlobalScope) error {
+			scope.PostMessage("Hello")
+			return nil
+		})
+		synctest.Wait()
+		win.Clock().ProcessEvents(ctx)
+		assert.Equal(t, []any{"Hello"}, data)
 	})
 }
