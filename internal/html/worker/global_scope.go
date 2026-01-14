@@ -3,11 +3,12 @@ package worker
 import (
 	"time"
 
+	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/internal/clock"
 	htmlinterfaces "github.com/gost-dom/browser/internal/interfaces/html-interfaces"
 )
 
-var _ htmlinterfaces.WindowOrWorkerGlobalScope = &workerGlobalScope{}
+var _ htmlinterfaces.WorkerGlobalScope = &workerGlobalScope{}
 
 type workerGlobalScope struct{ worker *Worker }
 
@@ -25,6 +26,24 @@ func (g *workerGlobalScope) SetTimeout(
 			return nil
 		}, delay)
 	return handle
+}
+
+// PostMessage causes a MessageEvent to be emitted in the main event loop.
+//
+// In JavaScript, postMessage sends a message to the Window object. This
+// implementation just needs to know the main event loop, and the event target
+// where the message should be emitted.
+func (s *workerGlobalScope) PostMessage(data any) {
+	e := s.worker.winClock.BeginEvent()
+	e.AddEvent(func() error {
+		s.worker.winEventTarget.DispatchEvent(&event.Event{
+			Type: "message",
+			Data: htmlinterfaces.MessageEventInit{
+				Data: data,
+			},
+		})
+		return nil
+	})
 }
 
 func (g *workerGlobalScope) ClearTimeout(clock.TaskHandle) {

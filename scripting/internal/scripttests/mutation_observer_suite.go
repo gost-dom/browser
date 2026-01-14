@@ -32,10 +32,8 @@ func testMutationObserver(t *testing.T, e html.ScriptEngine) {
 	`))
 	g := gomega.NewWithT(t)
 	g.Expect(win.Eval("events.join(',')")).To(Equal("childList"))
-
-	parent := win.Document().GetElementById("parent").(html.HTMLElement)
-	parent.SetInnerHTML(`<div id="bar"></div>`)
-	win.Clock().RunAll()
-
+	win.MustRun(`
+		document.getElementById("parent").innerHTML='<div id="bar"></div>'
+	`)
 	g.Expect(win.Eval("events.join(',')")).To(Equal("childList,childList"))
 }
