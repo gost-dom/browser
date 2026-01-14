@@ -518,3 +518,8 @@ func WindowResolveHref(w BrowsingContext, href string) *url.URL {
 		),
 	)
 }
+
+// Deprecated: This is a temporary solution to get native *clock.Clock to allow
+// workers and windows to share the same simulated time. The alternative would
+// be to introduce a breaking change on the interface.
+func WindowClock(w Window) *clock.Clock { return w.window().clock }
