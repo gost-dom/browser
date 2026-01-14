@@ -66,7 +66,7 @@ func New(c *clock.Clock, opts ...clockOption) *Worker {
 
 func FromWindow(win html.Window, c *clock.Clock) *Worker {
 	w := New(c)
-	w.winClock = win.Clock().(*clock.Clock)
+	w.winClock = html.WindowClock(win)
 	w.winEventTarget = win
 	return w
 }
