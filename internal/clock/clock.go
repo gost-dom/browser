@@ -256,7 +256,7 @@ func (c *Clock) exit() error {
 	if c.stack > 0 {
 		return nil
 	}
-	return c.Tick()
+	return Tick(c)
 }
 
 // Do wraps a task call and runs microtasks when it has completed. Nested tasks
@@ -269,10 +269,6 @@ func (c *Clock) Do(f func() error) (err error) {
 
 	return f()
 }
-
-// Tick runs all tasks scheduled for immediate execution. This is synonymous
-// with calling Advance(0).
-func (c *Clock) Tick() error { return c.Advance(0) }
 
 // Cancel removes the task that have been added using [Clock.SetTimeout] or
 // [Clock.SetInterval]. This corresponds to either [clearTimeout] or
@@ -552,4 +548,10 @@ func OfIsoString(iso string) NewClockOption {
 
 func Advance(c *Clock, d time.Duration) error {
 	return c.Advance(d)
+}
+
+// Tick runs all tasks scheduled for immediate execution. This is synonymous
+// with calling Advance(0).
+func Tick(c *Clock) error {
+	return Advance(c, 0)
 }

@@ -97,7 +97,10 @@ func (i *scriptContext) RunFunction(str string, arguments ...any) (res any, err 
 			for i, a := range arguments {
 				var ok bool
 				if values[i], ok = a.(sobek.Value); !ok {
-					err = fmt.Errorf("gost-dom/sobek: scriptContext.RunFunction: argument %d was not a js Value", i)
+					err = fmt.Errorf(
+						"gost-dom/sobek: scriptContext.RunFunction: argument %d was not a js Value",
+						i,
+					)
 				}
 			}
 			res, err = c(sobek.Undefined(), values...)
