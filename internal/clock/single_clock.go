@@ -103,8 +103,6 @@ func (c *singleClock) Close() {
 	}
 }
 
-func (c *singleClock) Time() time.Time { return c.time }
-
 func (c *singleClock) setLogger(l *slog.Logger) *slog.Logger {
 	if l == nil {
 		l = log.Default()
@@ -151,6 +149,9 @@ func (c *singleClock) length() int {
 	return len(c.tasks)
 }
 
+func (c *singleClock) Time() time.Time     { return c.time }
+func (c *singleClock) SetTime(t time.Time) { c.time = t }
+
 func (c *singleClock) runWhile(predicate func() bool) []error {
 	var errs []error
 
@@ -183,25 +184,6 @@ func (c *singleClock) runWhile(predicate func() bool) []error {
 		}
 	}
 	return errs
-}
-
-// Advances the clock by the specified amount of time. Any new tasks being
-// registered while running will be executed; if they are scheduled _before_ the
-// timeout. When returning, the clock time will be the current time + the
-// duration.
-//
-// Returns an error if any of the added tasks generate an error. Panics if the
-// task list doesn't decrease in size. See [Clock] documentation for more info.
-func (c *singleClock) advance(d time.Duration) error {
-	c.logger().Debug("Clock.Advance", "duration", d, "clock", c)
-	endTime := c.time.Add(d)
-	errs := []error{c.runMicrotasks()}
-	errs = append(errs, c.runWhile(func() bool {
-		task, ok := c.peek()
-		return ok && !task.time.After(endTime)
-	})...)
-	c.time = endTime
-	return errors.Join(errs...)
 }
 
 func (c *singleClock) LogValue() slog.Value {

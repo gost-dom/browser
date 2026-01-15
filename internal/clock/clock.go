@@ -19,21 +19,23 @@ func KeepCurrentTime() ProcessEventOption {
 }
 
 type Clock interface {
+	runMicrotasks() error
 	QueueMicrotask(TaskCallback)
 	QueueMacrotask(TaskCallback) TaskHandle
 	SetTimeout(TaskCallback, time.Duration) TaskHandle
 	SetInterval(TaskCallback, time.Duration) TaskHandle
 	Cancel(TaskHandle)
-	advance(time.Duration) error
 	ProcessEvents(context.Context, ...ProcessEventOption) error
 	ProcessEventsWhile(context.Context, func() bool, ...ProcessEventOption) error
 	BeginEvent() *EventLoopCallback
 	Close()
 	Time() time.Time
+	SetTime(time.Time)
 	runWhile(predicate func() bool) []error
 	length() int
 	enter()
 	exit() error
+	peek() (futureTask, bool)
 }
 
 // Creates a new clock. If the options don't set a specific time, the clock is
@@ -59,8 +61,22 @@ func New(options ...NewClockOption) Clock {
 	return c
 }
 
+// Advances the clock by the specified amount of time. Any new tasks being
+// registered while running will be executed; if they are scheduled _before_ the
+// timeout. When returning, the clock time will be the current time + the
+// duration.
+//
+// Returns an error if any of the added tasks generate an error. Panics if the
+// task list doesn't decrease in size. See [Clock] documentation for more info.
 func Advance(c Clock, d time.Duration) error {
-	return c.advance(d)
+	endTime := c.Time().Add(d)
+	errs := []error{c.runMicrotasks()}
+	errs = append(errs, c.runWhile(func() bool {
+		task, ok := c.peek()
+		return ok && !task.time.After(endTime)
+	})...)
+	c.SetTime(endTime)
+	return errors.Join(errs...)
 }
 
 // Tick runs all tasks scheduled for immediate execution. This is synonymous
