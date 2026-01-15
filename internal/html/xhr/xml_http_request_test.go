@@ -28,7 +28,7 @@ type XMLHTTPRequestTestSuite struct {
 	reqErr         error
 	responseHeader http.Header
 	xhr            xhr.XmlHttpRequest
-	timer          *clock.Clock
+	timer          clock.Clock
 }
 
 func TestXMLHTTPRequest(t *testing.T) {

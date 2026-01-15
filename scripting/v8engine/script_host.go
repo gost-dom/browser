@@ -58,7 +58,7 @@ type V8ScriptHost struct {
 	disposed        bool
 	iterator        v8Iterator
 	global          *v8GlobalClass
-	clock           *clock.Clock
+	clock           clock.Clock
 
 	unhandledPromiseRejectionHandler js.ErrorHandler[jsTypeParam]
 }

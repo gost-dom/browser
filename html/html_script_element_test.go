@@ -34,7 +34,7 @@ type dummyScriptContext struct {
 	host        *dummyScriptHost
 	browsingCtx html.BrowsingContext
 	client      http.Client
-	clock       *clock.Clock
+	clock       clock.Clock
 }
 
 func (c dummyScriptContext) Close() {}

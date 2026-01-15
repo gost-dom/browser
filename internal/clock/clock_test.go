@@ -30,7 +30,7 @@ func (s *ClockTestSuite) log(l string) {
 
 func (s *ClockTestSuite) TestNewClock() {
 	c := clock.New(clock.OfIsoString("2025-02-01T12:00:00Z"))
-	s.Assert().Equal(feb1st2025_noon, c.Time.Unix())
+	s.Assert().Equal(feb1st2025_noon, c.Time().Unix())
 }
 
 func (s *ClockTestSuite) TestAdvance() {
@@ -39,10 +39,10 @@ func (s *ClockTestSuite) TestAdvance() {
 	c.SetTimeout(wrapTask(func() { s.log("A") }), 101*time.Millisecond)
 	c.SetTimeout(wrapTask(func() { s.log("B") }), 100*time.Millisecond)
 	s.Assert().NoError(clock.Advance(c, 10*time.Millisecond))
-	s.Assert().Equal(feb1st2025_noon_milli+10, c.Time.UnixMilli())
+	s.Assert().Equal(feb1st2025_noon_milli+10, c.Time().UnixMilli())
 
 	s.Assert().NoError(clock.Advance(c, 90*time.Millisecond))
-	s.Assert().Equal(feb1st2025_noon_milli+100, c.Time.UnixMilli())
+	s.Assert().Equal(feb1st2025_noon_milli+100, c.Time().UnixMilli())
 	s.Assert().Equal([]string{"B"}, s.logs)
 }
 
@@ -73,8 +73,8 @@ func (s *ClockTestSuite) TestInitialTimeIsRelevant() {
 	// This is pretty vague specification, but the test is not too specific
 	// about what the time should be, to allow some deliberate jitter in the
 	// clock. Just make sure we're in the right ballpark of a sensible default.
-	s.Assert().True(c.Time.After(currentTime.Add(-time.Second)))
-	s.Assert().True(c.Time.Before(currentTime.Add(time.Second)))
+	s.Assert().True(c.Time().After(currentTime.Add(-time.Second)))
+	s.Assert().True(c.Time().Before(currentTime.Add(time.Second)))
 }
 
 func (s *ClockTestSuite) TestRunAll() {
@@ -84,7 +84,7 @@ func (s *ClockTestSuite) TestRunAll() {
 	c.SetTimeout(wrapTask(task), 100*time.Millisecond)
 	clock.RunAll(c)
 	s.Assert().Equal(1, runCount)
-	s.Assert().Equal(feb1st2025_noon_milli+100, c.Time.UnixMilli())
+	s.Assert().Equal(feb1st2025_noon_milli+100, c.Time().UnixMilli())
 }
 
 func (s *ClockTestSuite) TestOrderedExecution() {
@@ -95,7 +95,7 @@ func (s *ClockTestSuite) TestOrderedExecution() {
 	err := clock.RunAll(c)
 	s.Assert().NoError(err)
 	s.Assert().Equal([]string{"A", "B", "C"}, s.logs)
-	s.Assert().Equal(feb1st2025_noon_milli+300, c.Time.UnixMilli())
+	s.Assert().Equal(feb1st2025_noon_milli+300, c.Time().UnixMilli())
 }
 
 func (s *ClockTestSuite) TestErrorsAreReturned() {
@@ -108,7 +108,7 @@ func (s *ClockTestSuite) TestErrorsAreReturned() {
 	s.Assert().Error(err)
 	// Subsequent tasks should be performed
 	s.Assert().Equal([]string{"A", "B", "C"}, s.logs)
-	s.Assert().Equal(feb1st2025_noon_milli+300, c.Time.UnixMilli())
+	s.Assert().Equal(feb1st2025_noon_milli+300, c.Time().UnixMilli())
 }
 
 func (s *ClockTestSuite) TestTick() {
@@ -193,10 +193,10 @@ func (s *ClockTestSuite) TestProcessEventsWithKeepCurrentTimeDoesNotFireFutureTi
 	s.Require().NoError(c.ProcessEvents(ctx, clock.KeepCurrentTime()))
 	s.Assert().Equal(1, eventCount, "posted event should be processed")
 	s.Assert().False(fired, "future timer must not fire from ProcessEvents")
-	s.Assert().Equal(feb1st2025_noon_milli, c.Time.UnixMilli(), "clock should have advanced")
+	s.Assert().Equal(feb1st2025_noon_milli, c.Time().UnixMilli(), "clock should have advanced")
 
 	// The timer is still pending and fires on explicit Advance.
-	s.Require().NoError(c.Advance(60 * time.Second))
+	s.Require().NoError(clock.Advance(c, 60*time.Second))
 	s.Assert().True(fired, "timer fires when its scheduled time is reached")
 }
 
@@ -218,10 +218,10 @@ func (s *ClockTestSuite) TestProcessEventsWithDefaultOptionsAdvanceTime() {
 	s.Assert().Equal(1, eventCount, "posted event should be processed")
 	s.Assert().True(fired, "future timer must not fire from ProcessEvents")
 	s.Assert().
-		Equal(feb1st2025_noon_milli+60000, c.Time.UnixMilli(), "clock should not advance")
+		Equal(feb1st2025_noon_milli+60000, c.Time().UnixMilli(), "clock should not advance")
 
 	// The timer is still pending and fires on explicit Advance.
-	s.Require().NoError(c.Advance(60 * time.Second))
+	s.Require().NoError(clock.Advance(c, 60*time.Second))
 	s.Assert().True(fired, "timer fires when its scheduled time is reached")
 }
 

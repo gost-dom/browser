@@ -16,7 +16,7 @@ import (
 type windowOption func(html.Window)
 
 type option struct {
-	clock         *clock.Clock
+	clock         clock.Clock
 	logOptions    []gosttest.HandlerOption
 	windowOptions []windowOption
 }
@@ -29,7 +29,7 @@ func withWindowOption(wo windowOption) InitOption {
 	}
 }
 
-func WithClock(c *clock.Clock) InitOption {
+func WithClock(c clock.Clock) InitOption {
 	return func(o *option) { o.clock = c }
 }
 

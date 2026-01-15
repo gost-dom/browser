@@ -7,7 +7,7 @@ import (
 )
 
 type clockWrapper struct {
-	*clock.Clock
+	clock.Clock
 }
 
 func (w clockWrapper) Advance(d time.Duration) error {

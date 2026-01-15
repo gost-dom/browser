@@ -29,7 +29,7 @@ type scriptHost struct {
 	logger      *slog.Logger
 	initializer *internal.ScriptEngineConfigurer[jsTypeParam]
 	cache       *cache.Cache
-	clock       *clock.Clock
+	clock       clock.Clock
 }
 
 type propertyNameMapper struct{}

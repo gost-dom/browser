@@ -20,7 +20,7 @@ type browserConfig struct {
 	logger *slog.Logger
 	engine ScriptEngine
 	ctx    context.Context
-	clock  *clock.Clock
+	clock  clock.Clock
 }
 
 type BrowserOption func(*browserConfig)
@@ -46,7 +46,7 @@ func WithScriptEngine(engine html.ScriptEngine) BrowserOption {
 	return func(b *browserConfig) { b.engine = engine }
 }
 
-func WithClock(c *clock.Clock) BrowserOption {
+func WithClock(c clock.Clock) BrowserOption {
 	return func(b *browserConfig) { b.clock = c }
 }
 
@@ -91,7 +91,7 @@ type Browser struct {
 	Client     http.Client
 	ScriptHost ScriptHost
 	Logger     log.Logger
-	Clock      *clock.Clock
+	Clock      clock.Clock
 	ctx        context.Context
 	windows    []Window
 	closed     bool

@@ -30,18 +30,18 @@ func WithContext(ctx context.Context) clockOption {
 
 type Worker struct {
 	queue  chan queueItem
-	clock  *clock.Clock
+	clock  clock.Clock
 	global *workerGlobalScope
 	ctx    context.Context
 
-	winClock       *clock.Clock
+	winClock       clock.Clock
 	winEventTarget event.EventTarget
 }
 
 // TODO: Implement global scope
 func (w *Worker) scope() GlobalScope { return w.global }
 
-func New(c *clock.Clock, opts ...clockOption) *Worker {
+func New(c clock.Clock, opts ...clockOption) *Worker {
 	res := &Worker{
 		queue: make(chan queueItem, queue_size),
 		clock: c,
@@ -64,7 +64,7 @@ func New(c *clock.Clock, opts ...clockOption) *Worker {
 	return res
 }
 
-func FromWindow(win html.Window, c *clock.Clock) *Worker {
+func FromWindow(win html.Window, c clock.Clock) *Worker {
 	w := New(c)
 	w.winClock = html.WindowClock(win)
 	w.winEventTarget = win
@@ -94,4 +94,4 @@ func (w Worker) Enqueue(item WorkItem) error {
 	}
 }
 
-func (w *Worker) Clock() *clock.Clock { return w.clock }
+func (w *Worker) Clock() clock.Clock { return w.clock }

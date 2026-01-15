@@ -29,7 +29,7 @@ type Task = func() error
 type ScriptEngineOptions struct {
 	HttpClient *http.Client
 	Logger     *slog.Logger
-	Clock      *clock.Clock
+	Clock      clock.Clock
 }
 
 // ScriptEngine represents a JavaScript interpreter with a specific global scope
@@ -467,7 +467,7 @@ func (w *window) window() *window { return w }
 
 type WindowOptions struct {
 	ScriptHost
-	Clock        *clock.Clock
+	Clock        clock.Clock
 	HttpClient   http.Client
 	BaseLocation string
 	Logger       *slog.Logger
@@ -498,7 +498,7 @@ func WindowOptionHTTPClient(client http.Client) WindowOptionFunc {
 	return func(options *WindowOptions) { options.HttpClient = client }
 }
 
-func WindowOptionClock(c *clock.Clock) WindowOptionFunc {
+func WindowOptionClock(c clock.Clock) WindowOptionFunc {
 	return func(options *WindowOptions) { options.Clock = c }
 }
 
@@ -522,4 +522,4 @@ func WindowResolveHref(w BrowsingContext, href string) *url.URL {
 // Deprecated: This is a temporary solution to get native *clock.Clock to allow
 // workers and windows to share the same simulated time. The alternative would
 // be to introduce a breaking change on the interface.
-func WindowClock(w Window) *clock.Clock { return w.window().clock }
+func WindowClock(w Window) clock.Clock { return w.window().clock }
