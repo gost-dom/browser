@@ -13,3 +13,5 @@ type clockWrapper struct {
 func (w clockWrapper) Advance(d time.Duration) error {
 	return clock.Advance(w.Clock, d)
 }
+
+func (w clockWrapper) RunAll() error { return clock.RunAll(w.Clock) }

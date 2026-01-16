@@ -354,7 +354,7 @@ func (c *Clock) wrapFn(f func() bool, opts ...ProcessEventOption) func(*[]error)
 		if opt.keepCurrentTime {
 			*errs = append(*errs, c.runDueTasks()...)
 		} else {
-			*errs = append(*errs, c.RunAll())
+			*errs = append(*errs, RunAll(c))
 		}
 		return f()
 	}
@@ -504,18 +504,6 @@ func (c *Clock) QueueMacrotask(task TaskCallback) TaskHandle {
 	return c.SetTimeout(task, 0)
 }
 
-// Keeps running as long as there are tasks in the task queue. New tasks
-// appended while running will also run. When returning, the current time will
-// be the time of the last executed task.
-//
-// Returns an error if any of the added tasks generate an error. Panics if the
-// task list doesn't decrease in size. See [Clock] documentation for more info.
-func (c *Clock) RunAll() error {
-	errs := c.runWhile(func() bool { return c.length() > 0 })
-
-	return errors.Join(errs...)
-}
-
 /* -------- Options -------- */
 
 // NewClockOption are used to initialize a new [Clock]
@@ -554,4 +542,16 @@ func Advance(c *Clock, d time.Duration) error {
 // with calling Advance(0).
 func Tick(c *Clock) error {
 	return Advance(c, 0)
+}
+
+// Keeps running as long as there are tasks in the task queue. New tasks
+// appended while running will also run. When returning, the current time will
+// be the time of the last executed task.
+//
+// Returns an error if any of the added tasks generate an error. Panics if the
+// task list doesn't decrease in size. See [Clock] documentation for more info.
+func RunAll(c *Clock) error {
+	errs := c.runWhile(func() bool { return c.length() > 0 })
+
+	return errors.Join(errs...)
 }

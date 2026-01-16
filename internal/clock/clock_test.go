@@ -82,7 +82,7 @@ func (s *ClockTestSuite) TestRunAll() {
 	task := func() { runCount++ }
 	c := clock.New(clock.OfIsoString("2025-02-01T12:00:00Z"))
 	c.SetTimeout(wrapTask(task), 100*time.Millisecond)
-	c.RunAll()
+	clock.RunAll(c)
 	s.Assert().Equal(1, runCount)
 	s.Assert().Equal(feb1st2025_noon_milli+100, c.Time.UnixMilli())
 }
@@ -92,7 +92,7 @@ func (s *ClockTestSuite) TestOrderedExecution() {
 	c.SetTimeout(wrapTask(func() { s.log("B") }), 200*time.Millisecond)
 	c.SetTimeout(wrapTask(func() { s.log("A") }), 100*time.Millisecond)
 	c.SetTimeout(wrapTask(func() { s.log("C") }), 300*time.Millisecond)
-	err := c.RunAll()
+	err := clock.RunAll(c)
 	s.Assert().NoError(err)
 	s.Assert().Equal([]string{"A", "B", "C"}, s.logs)
 	s.Assert().Equal(feb1st2025_noon_milli+300, c.Time.UnixMilli())
@@ -104,7 +104,7 @@ func (s *ClockTestSuite) TestErrorsAreReturned() {
 	c.SetTimeout(wrapTask(func() { s.log("A") }), 100*time.Millisecond)
 	c.SetTimeout(wrapTask(func() { s.log("C") }), 300*time.Millisecond)
 
-	err := c.RunAll()
+	err := clock.RunAll(c)
 	s.Assert().Error(err)
 	// Subsequent tasks should be performed
 	s.Assert().Equal([]string{"A", "B", "C"}, s.logs)
@@ -129,7 +129,7 @@ func (s *ClockTestSuite) TestRepeatingTasksGeneratePanicOnRunAll() {
 	})
 	c.SetTimeout(task, 100*time.Millisecond)
 
-	s.Assert().Panics(func() { c.RunAll() })
+	s.Assert().Panics(func() { clock.RunAll(c) })
 }
 
 func (s *ClockTestSuite) TestSingleRepeatingTask() {
