@@ -31,11 +31,12 @@ type Clock interface {
 	Close()
 	Time() time.Time
 	SetTime(time.Time)
-	runWhile(predicate func() bool) []error
 	length() int
 	enter()
 	exit() error
 	peek() (futureTask, bool)
+	dequeue() (futureTask, bool)
+	insertTask(future futureTask) TaskHandle
 }
 
 // Creates a new clock. If the options don't set a specific time, the clock is
@@ -71,7 +72,7 @@ func New(options ...NewClockOption) Clock {
 func Advance(c Clock, d time.Duration) error {
 	endTime := c.Time().Add(d)
 	errs := []error{c.runMicrotasks()}
-	errs = append(errs, c.runWhile(func() bool {
+	errs = append(errs, runWhile(c, func() bool {
 		task, ok := c.peek()
 		return ok && !task.time.After(endTime)
 	})...)
@@ -92,7 +93,7 @@ func Tick(c Clock) error {
 // Returns an error if any of the added tasks generate an error. Panics if the
 // task list doesn't decrease in size. See [Clock] documentation for more info.
 func RunAll(c Clock) error {
-	errs := c.runWhile(func() bool { return c.length() > 0 })
+	errs := runWhile(c, func() bool { return c.length() > 0 })
 
 	return errors.Join(errs...)
 }
@@ -106,4 +107,38 @@ func Do(c Clock, f func() error) (err error) {
 	}()
 
 	return f()
+}
+
+func runWhile(c Clock, predicate func() bool) []error {
+	var errs []error
+
+	minLength := c.length()
+	count := 0
+	for predicate() {
+		task, ok := c.dequeue()
+		if !ok {
+			break
+		}
+		c.SetTime(task.time)
+		if err := task.task(); err != nil {
+			errs = append(errs, err)
+		}
+		if task.repeat {
+			task.time = task.time.Add(task.delay)
+			c.insertTask(task)
+		}
+		newLength := c.length()
+		if newLength < minLength {
+			minLength = newLength
+			count = 0
+		} else {
+			count++
+			if count > maxIterationsWithoutDecrement {
+				panic(
+					"singleClock: Size of pending tasks isn't decreasing. Are tasks adding new tasks?",
+				)
+			}
+		}
+	}
+	return errs
 }
