@@ -268,12 +268,6 @@ func (c *singleClock) addEvent(task TaskCallback) {
 	c.events <- task
 }
 
-func (c *singleClock) runDueTasks() []error {
-	return c.runWhile(func() bool {
-		return len(c.tasks) > 0 && !c.tasks[0].time.After(c.Time())
-	})
-}
-
 func (c *singleClock) wrapFn(f func() bool, opts ...ProcessEventOption) func(*[]error) bool {
 	var opt processEventOptions
 	for _, oo := range opts {
@@ -281,7 +275,7 @@ func (c *singleClock) wrapFn(f func() bool, opts ...ProcessEventOption) func(*[]
 	}
 	return func(errs *[]error) bool {
 		if opt.keepCurrentTime {
-			*errs = append(*errs, c.runDueTasks()...)
+			*errs = append(*errs, runDueTasks(c)...)
 		} else {
 			*errs = append(*errs, RunAll(c))
 		}

@@ -18,7 +18,7 @@ func KeepCurrentTime() ProcessEventOption {
 	}
 }
 
-type Clock interface {
+type WorkTasks interface {
 	runMicrotasks() error
 	QueueMicrotask(TaskCallback)
 	QueueMacrotask(TaskCallback) TaskHandle
@@ -27,16 +27,20 @@ type Clock interface {
 	Cancel(TaskHandle)
 	ProcessEvents(context.Context, ...ProcessEventOption) error
 	ProcessEventsWhile(context.Context, func() bool, ...ProcessEventOption) error
+	processEventsWhile(context.Context, func(*[]error) bool, string) error
 	BeginEvent() *EventLoopCallback
 	Close()
-	Time() time.Time
-	SetTime(time.Time)
 	length() int
 	enter()
 	exit() error
 	peek() (futureTask, bool)
 	dequeue() (futureTask, bool)
 	insertTask(future futureTask) TaskHandle
+}
+
+type Clock interface {
+	WorkTasks
+	Timer
 }
 
 // Creates a new clock. If the options don't set a specific time, the clock is
@@ -59,7 +63,12 @@ func New(options ...NewClockOption) Clock {
 	if c.time.IsZero() {
 		c.time = time.Now()
 	}
-	return c
+	return clock{c, new(timer)}
+}
+
+type clock struct {
+	WorkTasks
+	*timer
 }
 
 // Advances the clock by the specified amount of time. Any new tasks being
@@ -141,4 +150,39 @@ func runWhile(c Clock, predicate func() bool) []error {
 		}
 	}
 	return errs
+}
+
+func runDueTasks(c Clock) []error {
+	return runWhile(c, func() bool {
+		t, ok := c.peek()
+		return ok && t.time.After(c.Time())
+		// return len(c.tasks) > 0 && !c.tasks[0].time.After(c.Time())
+	})
+}
+
+func wrapFn(c Clock, f func() bool, opts ...ProcessEventOption) func(*[]error) bool {
+	var opt processEventOptions
+	for _, oo := range opts {
+		oo(&opt)
+	}
+	return func(errs *[]error) bool {
+		if opt.keepCurrentTime {
+			*errs = append(*errs, runDueTasks(c)...)
+		} else {
+			*errs = append(*errs, RunAll(c))
+		}
+		return f()
+	}
+}
+
+// ProcessEvents processes all enqueued tasks and all pending events.
+func ProcessEvents(ctx context.Context, c Clock, opts ...ProcessEventOption) error {
+	return c.processEventsWhile(
+		ctx,
+		wrapFn(c, func() bool {
+			_, ok := c.peek()
+			return ok
+		}, opts...),
+		"ProcessEvents",
+	)
 }
