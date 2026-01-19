@@ -2,7 +2,12 @@ package events
 
 // GeneratedEventInitNames is a positive list of "EventInit" dictionary types to
 // generate code for.
-var GeneratedEventInitNames = []string{
-	"EventModifierInit",
-	"KeyboardEventInit",
+var GeneratedEventInitNames = map[string][]string{
+	"uievents": {
+		"EventModifierInit",
+		"KeyboardEventInit",
+	},
+	"html": {
+		"MessageEventInit",
+	},
 }
