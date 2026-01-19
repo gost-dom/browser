@@ -67,7 +67,7 @@ func CreateEventInitDecoders(pkg string) error {
 		return fmt.Errorf("CreateEventInitDecoders: load pkg %s: %w", pkg, err)
 	}
 	statements := g.StatementList()
-	for _, name := range events.GeneratedEventInitNames {
+	for _, name := range events.GeneratedEventInitNames[pkg] {
 		dict, ok := spec.Dictionaries[name]
 		if !ok {
 			return fmt.Errorf("CreateEventInitDecoders: %s: dictionary not found", name)
