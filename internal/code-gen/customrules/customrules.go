@@ -224,6 +224,7 @@ type AttributeRule struct {
 	// Go.
 	NotImplemented bool
 	GoType         GoType
+	Encoder        GoFunction
 	OverrideType   IdlTyper
 	SetterHasError bool
 	// Callable indicates that the attribute is implemented using methods in Go,

@@ -7,10 +7,11 @@ import (
 )
 
 type ReturnValueGenerator struct {
-	Data   model.ESConstructorData
-	Op     model.Callback
-	Ctx    CallbackContext
-	GoType customrules.GoType
+	Data    model.ESConstructorData
+	Op      model.Callback
+	Ctx     CallbackContext
+	GoType  customrules.GoType
+	Encoder customrules.GoFunction
 }
 
 func (gen ReturnValueGenerator) Transform(call g.Generator) g.Generator {
@@ -56,6 +57,6 @@ func (gen ReturnValueGenerator) encodeReturnValue(
 	cbCtx CallbackContext,
 	val []g.Generator,
 ) g.Generator {
-	encoder := gen.Op.Encoder(cbCtx, gen.Data, gen.GoType)
+	encoder := gen.Op.Encoder(cbCtx, gen.Data, gen.GoType, gen.Encoder)
 	return encoder.Call(val...)
 }

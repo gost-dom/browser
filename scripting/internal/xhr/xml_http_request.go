@@ -71,10 +71,6 @@ func XMLHttpRequest_upload[T any](cbCtx js.CallbackContext[T]) (js.Value[T], err
 	return cbCtx.This(), nil
 }
 
-func encodeAny[T any](s js.Scope[T], val string) (js.Value[T], error) {
-	return codec.EncodeString(s, val)
-}
-
 func decodeXMLHttpRequestResponseType[T any](
 	s js.Scope[T], val js.Value[T],
 ) (string, error) {

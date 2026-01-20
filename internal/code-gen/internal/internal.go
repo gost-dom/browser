@@ -48,8 +48,8 @@ type BoundFunction struct {
 	values []g.Generator
 }
 
-func BindValues(val g.Value, values ...g.Generator) BoundFunction {
-	return BoundFunction{val, values}
+func BindValues(val g.Generator, values ...g.Generator) BoundFunction {
+	return BoundFunction{g.ValueOf(val), values}
 }
 
 func (f BoundFunction) Call(values ...g.Generator) g.Value {

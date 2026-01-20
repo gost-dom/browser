@@ -42,5 +42,5 @@ func CustomEvent_detail[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], er
 		return nil, err
 	}
 	result := eventInit.Detail
-	return encodeAny(cbCtx, result)
+	return codec.EncodeAny(cbCtx, result)
 }

@@ -7,6 +7,7 @@ import (
 )
 
 type GoType = gotypes.GoType
+type GoFunction = gotypes.GoFunction
 
 type GoTypeGenerator GoType
 

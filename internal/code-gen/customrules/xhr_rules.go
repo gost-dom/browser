@@ -1,6 +1,9 @@
 package customrules
 
-import "github.com/gost-dom/webref/idl"
+import (
+	"github.com/gost-dom/code-gen/packagenames"
+	"github.com/gost-dom/webref/idl"
+)
 
 var xhrRules = SpecRules{
 	"XMLHttpRequest": {Operations: OperationRules{
@@ -8,6 +11,8 @@ var xhrRules = SpecRules{
 		"send":                  {HasError: true},
 		"abort":                 {HasError: true},
 		"overrideMimeType":      {HasError: true},
+	}, Attributes: AttributeRules{
+		"response": {Encoder: GoFunction{Name: "EncodeString", Package: packagenames.Codec}},
 	}},
 	"FormData": {
 		OutputType: OutputTypeStruct,

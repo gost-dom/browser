@@ -226,10 +226,11 @@ func (cb CallbackMethods) AttributeGetterCallbackBody(
 		),
 		transforms,
 		ReturnValueGenerator{
-			Data:   cb.Data,
-			Op:     *attr.Getter,
-			Ctx:    cb.CbCtx(),
-			GoType: attrRule.GoType,
+			Data:    cb.Data,
+			Op:      *attr.Getter,
+			Ctx:     cb.CbCtx(),
+			GoType:  attrRule.GoType,
+			Encoder: attrRule.Encoder,
 		}.Transform(call),
 	)
 	return statements

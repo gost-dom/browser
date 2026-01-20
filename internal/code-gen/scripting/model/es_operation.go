@@ -15,6 +15,7 @@ import (
 
 var encodeString = g.NewValuePackage("EncodeString", packagenames.Codec)
 var encodeByteString = g.NewValuePackage("EncodeByteString", packagenames.Codec)
+var encodeAny = g.NewValuePackage("EncodeAny", packagenames.Codec)
 var encodeNillableString = g.NewValuePackage("EncodeNillableString", packagenames.Codec)
 var encodeNullableString = g.NewValuePackage("EncodeNullableString", packagenames.Codec)
 var encodeOptionalString = g.NewValuePackage("EncodeOptionalString", packagenames.Codec)
@@ -128,7 +129,11 @@ func (o Callback) Encoder(
 	cbCtx g.Generator,
 	data ESConstructorData,
 	goType customrules.GoType,
+	encoder customrules.GoFunction,
 ) internal.BoundFunction {
+	if !encoder.IsZero() {
+		return internal.BindValues(encoder, cbCtx)
+	}
 	if goType.Name != "" {
 		return internal.BindValues(encodeGoType(goType), cbCtx)
 	}
@@ -138,6 +143,8 @@ func (o Callback) Encoder(
 	t := idltransform.FilterType(o.RetType)
 	idlType := idltransform.NewIdlType(t)
 	switch {
+	case idlType.Name == "any":
+		return internal.BindValues(encodeAny, cbCtx)
 	case idlType.IsInt():
 		return internal.BindValues(encodeInt, cbCtx)
 	case idlType.IsBoolean():

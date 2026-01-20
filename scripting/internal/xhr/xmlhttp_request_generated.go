@@ -206,7 +206,7 @@ func XMLHttpRequest_response[T any](cbCtx js.CallbackContext[T]) (res js.Value[T
 		return nil, err
 	}
 	result := instance.Response()
-	return encodeAny(cbCtx, result)
+	return codec.EncodeString(cbCtx, result)
 }
 
 func XMLHttpRequest_responseText[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
