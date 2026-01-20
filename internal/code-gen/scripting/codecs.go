@@ -17,6 +17,7 @@ var decodeDuration = g.NewValuePackage("DecodeDuration", packagenames.Codec)
 var decodeByteString = g.NewValuePackage("DecodeByteString", packagenames.Codec)
 var decodeBoolean = g.NewValuePackage("DecodeBoolean", packagenames.Codec)
 var decodeInt = g.NewValuePackage("DecodeInt", packagenames.Codec)
+var decodeAny = g.NewValuePackage("DecodeAny", packagenames.Codec)
 
 func decode(s string) g.Generator {
 	return g.NewValuePackage(fmt.Sprintf("Decode%s", s), packagenames.Codec)
@@ -77,6 +78,8 @@ func decoderForType(argType idl.Type) g.Generator {
 		return decodeBoolean
 	case idlType.IsInt():
 		return decodeInt
+	case idlType.Name == "any":
+		return decodeAny
 	}
 	switch argType.Name {
 	case "Node", "HTMLElement", "EventInit":

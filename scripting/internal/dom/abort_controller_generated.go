@@ -22,7 +22,7 @@ func AbortController_abort[T any](cbCtx js.CallbackContext[T]) (res js.Value[T],
 	if errInst != nil {
 		return nil, errInst
 	}
-	reason, errArg1 := js.ConsumeArgument(cbCtx, "reason", codec.ZeroValue, decodeAny)
+	reason, errArg1 := js.ConsumeArgument(cbCtx, "reason", codec.ZeroValue, codec.DecodeAny)
 	if errArg1 != nil {
 		return nil, errArg1
 	}
