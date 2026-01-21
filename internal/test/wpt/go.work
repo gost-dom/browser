@@ -3,4 +3,5 @@ go 1.25.3
 use (
 	.
 	../../..
+	../../../scripting/v8engine
 )
