@@ -1,5 +1,10 @@
 package js
 
+import (
+	"errors"
+	"fmt"
+)
+
 // Value represents a value in JavaScript. Referential equality cannot be used
 // to check if to Value instances represent the same value in JavaScript. Use
 // StrictEquals to check if two values are equal.
@@ -110,4 +115,52 @@ func AsFunction[T any](v Value[T]) (Function[T], bool) {
 		return nil, false
 	}
 	return v.AsFunction()
+}
+
+func Clone[T any](v Value[T], s Scope[T]) (Value[T], error) {
+	return clone(v, s, nil)
+}
+
+func clone[T any](v Value[T], s Scope[T], objects []Value[T]) (Value[T], error) {
+	switch {
+	case v.IsNull():
+		return s.Null(), nil
+	case v.IsUndefined():
+		return s.Undefined(), nil
+	case v.IsString():
+		return s.NewString(v.String()), nil
+	case v.IsFunction():
+		//TODO: Use correct error
+		return nil, errors.New("Serialize function")
+	}
+	if o, ok := v.AsObject(); ok {
+		return cloneObject(o, s, objects)
+	}
+	return nil, fmt.Errorf("Unable to clone value: %v", v)
+}
+
+func cloneObject[T any](o Object[T], s Scope[T], knownObjects []Value[T]) (Value[T], error) {
+	for _, known := range knownObjects {
+		if o.StrictEquals(known) {
+			return known, nil
+		}
+	}
+	res := s.NewObject()
+	knownObjects = append(knownObjects, res)
+	keys, err := o.Keys()
+	if err != nil {
+		return nil, err
+	}
+	for _, k := range keys {
+		oldV, err := o.Get(k)
+		if err != nil {
+			return nil, err
+		}
+		newV, err := clone(oldV, s, knownObjects)
+		if err != nil {
+			return nil, err
+		}
+		res.Set(k, newV)
+	}
+	return res, nil
 }
