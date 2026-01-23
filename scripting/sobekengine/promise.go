@@ -18,5 +18,5 @@ func newPromise(ctx *scriptContext) promise {
 	}
 }
 
-func (p promise) Resolve(value js.Value[jsTypeParam]) { p.resolve(value.Self().value) }
-func (p promise) Reject(value js.Value[jsTypeParam])  { p.reject(value.Self().value) }
+func (p promise) Resolve(value js.Value[jsTypeParam]) { p.resolve(unwrapValue(value)) }
+func (p promise) Reject(value js.Value[jsTypeParam])  { p.reject(unwrapValue(value)) }
