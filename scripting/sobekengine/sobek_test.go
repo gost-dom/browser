@@ -3,7 +3,9 @@ package sobekengine
 import (
 	"testing"
 
+	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/scripting/internal"
+	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/browser/scripting/internal/scripttests"
 	"github.com/gost-dom/browser/scripting/internal/testing/jsassert"
 )
@@ -33,6 +35,12 @@ func TestDatastar(t *testing.T) {
 
 func TestBasics(t *testing.T) {
 	scripttests.RunBasicSuite(t, assertEngine)
+}
+
+func TestSobekEngine(t *testing.T) {
+	scripttests.RunScriptEngineSuites(t,
+		func(c js.Configurer[jsTypeParam]) html.ScriptEngine { return newEngine(c) },
+	)
 }
 
 func init() {
