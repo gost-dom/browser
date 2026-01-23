@@ -2,7 +2,6 @@ package v8engine
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"net/http"
 	"testing"
@@ -14,7 +13,6 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/browser/scripting/internal/scripttests"
 	"github.com/onsi/gomega"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestScriptHostDocumentScriptLoading(t *testing.T) {
@@ -46,65 +44,8 @@ func (c dummyContext) HTTPClient() http.Client  { return *http.DefaultClient }
 func (c dummyContext) LocationHREF() string     { return "http://example.com" }
 func (c dummyContext) Logger() *slog.Logger     { return nil }
 
-func TestClone(t *testing.T) {
-	type T = jsTypeParam
-	type Global = entity.Entity
-
-	e := newEngine(js.ConfigurerFunc[jsTypeParam](func(e js.ScriptEngine[jsTypeParam]) {
-		global := e.ConfigureGlobalScope("Global", nil)
-		global.CreateOperation("store", func(ctx js.CallbackContext[T]) (js.Value[T], error) {
-			t.Log("Store called")
-			v, ok := ctx.ConsumeArg()
-			if !ok {
-				return nil, ctx.NewTypeError("Missing argument")
-			}
-			c, err := js.As[entity.Components](ctx.GlobalThis().NativeValue(), nil)
-			if err != nil {
-				return nil, err
-			}
-			entity.SetComponentType(c, v)
-			return nil, nil
-		})
-
-		global.CreateOperation("get", func(ctx js.CallbackContext[T]) (js.Value[T], error) {
-			c, err := js.As[entity.Components](ctx.GlobalThis().NativeValue(), nil)
-			if err != nil {
-				return nil, err
-			}
-			val, ok := entity.ComponentType[js.Value[T]](c)
-			if !ok {
-				return nil, fmt.Errorf("Value missing")
-			}
-			fmt.Println("Cloning")
-
-			res, err := js.Clone(val, ctx)
-			if err != nil {
-				fmt.Printf("Clone err: %v\n", err)
-			}
-			fmt.Println("Cloned")
-			return res, err
-		})
-	}))
-
-	global1 := new(Global)
-	global2 := new(Global)
-
-	c1 := e.NewHost(html.ScriptEngineOptions{}).NewContext(dummyContext{global1, t.Context()})
-	c2 := e.NewHost(html.ScriptEngineOptions{}).NewContext(dummyContext{global2, t.Context()})
-
-	assert.NoError(t, c1.Run(`
-		const a = {
-			foo: "hello"
-		}
-		globalThis.store(a)
-	`))
-	val, ok := entity.ComponentType[js.Value[T]](global1)
-	assert.True(t, ok)
-	entity.SetComponentType(global2, val)
-
-	res, err := c2.Eval(`
-		globalThis.get().foo
-	`)
-	assert.NoError(t, err)
-	assert.Equal(t, "hello", res)
+func TestV8Engine(t *testing.T) {
+	scripttests.RunScriptEngineSuites(t,
+		func(c js.Configurer[jsTypeParam]) html.ScriptEngine { return newEngine(c) },
+	)
 }
