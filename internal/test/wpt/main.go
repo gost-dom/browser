@@ -26,16 +26,16 @@ import (
 // waiting for HTTP responses when downloading the individual test case.
 var MAX_CONCURRENT_TESTS = runtime.NumCPU()
 
-type WebPlatformTest struct {
-	url     string
-	options options
-}
-
 type WptSuiteResult struct {
 	TestCases   []WebPlatformTestCase
 	TotalCount  int
 	PassedCount int
 	Error       error
+}
+
+type WebPlatformTest struct {
+	url     string
+	options options
 }
 
 func (s WebPlatformTest) Run(
@@ -59,19 +59,43 @@ func (s WebPlatformTest) Run(
 		browser.WithContext(ctx),
 		browser.WithLogger(l),
 	)
-	defer b.Close()
+	defer func() {
+		defer func() {
+			if err := recover(); err != nil {
+				l.Error("Error closing browser", slog.Any("err", err))
+			}
+		}()
+		b.Close()
+	}()
+
 	var win html.Window
 
-	win, res.Error = b.Open(s.url)
-	l.Debug("Window opened")
+	l.Debug("Open window", slog.String("url", s.url))
+	win, res.Error = s.openWindow(b)
 	if res.Error == nil {
-		res.Error = win.Clock().ProcessEvents(ctx)
+		l.Debug("ProcessEvents")
+		res.Error = s.processEvents(ctx, win)
 	}
-	l.Debug("Events processed")
 	if res.Error != nil {
 		return
 	}
 	return s.parseResults(win)
+}
+
+func (t WebPlatformTest) openWindow(b *browser.Browser) (html.Window, error) {
+	win, err := b.Open(t.url)
+	if err != nil {
+		err = fmt.Errorf("Open window: %w", err)
+	}
+	return win, err
+}
+
+func (t WebPlatformTest) processEvents(ctx context.Context, win html.Window) error {
+	err := win.Clock().ProcessEvents(ctx)
+	if err != nil {
+		err = fmt.Errorf("Process events: %w", err)
+	}
+	return err
 }
 
 func (s WebPlatformTest) parseResults(win html.Window) (res WptSuiteResult) {
@@ -112,8 +136,6 @@ type WebPlatformTestCase struct {
 func RunTestCase(
 	ctx context.Context, tc TestCase, log *slog.Logger, o options,
 ) (res WptSuiteResult, err error) {
-	path := tc.Path
-	log = log.With(slog.String("TestCase", path))
 	log.Info("Start test")
 	ch := make(chan WptSuiteResult, 1)
 
@@ -168,6 +190,7 @@ func testResults(
 		defer func() { close(res) }()
 
 		for testCase := range tests {
+			log := log.With(slog.String("TestCase", strings.TrimSpace(testCase.Path)))
 			resultChan := make(chan testResult)
 			select {
 			case res <- resultChan:
@@ -261,7 +284,7 @@ type staticTestCaseSource struct {
 	baseHref string
 }
 
-func (s staticTestCaseSource) testCases(ctx context.Context) <-chan TestCase {
+func (s staticTestCaseSource) testCases(ctx context.Context) (<-chan TestCase, <-chan error) {
 	res := make(chan TestCase)
 	go func() {
 		defer close(res)
@@ -272,7 +295,7 @@ func (s staticTestCaseSource) testCases(ctx context.Context) <-chan TestCase {
 			}
 		}
 	}()
-	return res
+	return res, make(chan error)
 }
 
 func loadTestSource(o options) testCaseLoader {
@@ -297,7 +320,7 @@ func loadTestSource(o options) testCaseLoader {
 // channel of TestCases. The source should ideally return a buffered channel.
 // The buffer size determines how many test cases can run in parallel
 type testCaseLoader interface {
-	testCases(ctx context.Context) <-chan TestCase
+	testCases(ctx context.Context) (<-chan TestCase, <-chan error)
 }
 
 func parseOptions() options {
@@ -332,7 +355,8 @@ func main() {
 	testCount := 0
 	passedTestCount := 0
 
-	for pending := range testResults(ctx, source.testCases(ctx), logger, o) {
+	testCases, errCh := source.testCases(ctx)
+	for pending := range testResults(ctx, testCases, logger, o) {
 		testCaseResult := pending.result()
 		var (
 			testCase = testCaseResult.testCase
@@ -402,6 +426,13 @@ func main() {
 
 			tbody.AppendChild(tr)
 		}
+	}
+	select {
+	case err := <-errCh:
+		if err != nil {
+			errs = append(errs, err)
+		}
+	default:
 	}
 	summary.AppendChild(
 		element("p", fmt.Sprintf("Passed test suites %d/%d", passedSuiteCount, suiteCount)),

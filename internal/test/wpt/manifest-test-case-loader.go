@@ -14,15 +14,16 @@ type manifestTestCaseSource struct {
 	filter  func(t TestCase) bool
 }
 
-func (s manifestTestCaseSource) testCases(ctx context.Context) <-chan TestCase {
+func (s manifestTestCaseSource) testCases(ctx context.Context) (<-chan TestCase, <-chan error) {
 	return s.filteredTests(ctx)
 }
 
-func (s manifestTestCaseSource) filteredTests(ctx context.Context) <-chan TestCase {
+func (s manifestTestCaseSource) filteredTests(ctx context.Context) (<-chan TestCase, <-chan error) {
 	ch := make(chan TestCase, 8)
+	testCases, errors := s.loadManifest(ctx)
 	go func() {
 		defer func() { close(ch) }()
-		for testCase := range s.loadManifest(ctx) {
+		for testCase := range testCases {
 			if s.filter == nil || s.filter(testCase) {
 				select {
 				case ch <- testCase:
@@ -32,12 +33,13 @@ func (s manifestTestCaseSource) filteredTests(ctx context.Context) <-chan TestCa
 			}
 		}
 	}()
-	return ch
+	return ch, errors
 }
 
 func (s manifestTestCaseSource) loadManifest(
 	ctx context.Context,
-) <-chan TestCase {
+) (<-chan TestCase, <-chan error) {
+
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, s.href, nil)
 	if err != nil {
 		panic(fmt.Sprintf("load manifest: create request: %v", err))
@@ -46,13 +48,17 @@ func (s manifestTestCaseSource) loadManifest(
 	if err != nil {
 		panic(fmt.Sprintf("load manifest: %v", err))
 	}
-	ch := make(chan TestCase)
+	ch := make(chan TestCase, 1)
+	errCh := make(chan error, 1)
 	go func() {
 		defer func() {
 			res.Body.Close()
 			close(ch)
 		}()
-		ParseManifestTo(ctx, res.Body, ch, s.options.Logger())
+		if err := ParseManifestTo(ctx, res.Body, ch, s.options.Logger()); err != nil {
+			s.options.logger.Error("ERROR LOADING MANIFEST", "err", err)
+			errCh <- err
+		}
 	}()
-	return ch
+	return ch, errCh
 }

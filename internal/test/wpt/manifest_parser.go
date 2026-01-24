@@ -9,10 +9,20 @@ import (
 	"strings"
 )
 
-func ParseManifestTo(ctx context.Context, m io.Reader, ch chan<- TestCase, l *slog.Logger) {
+type MaybeError[T any] struct {
+	Value T
+	Err   error
+}
+
+func ParseManifestTo(
+	ctx context.Context,
+	m io.Reader,
+	ch chan<- TestCase,
+	l *slog.Logger,
+) error {
 	d := jsontext.NewDecoder(m)
 	var p = parser{logger: l}
-	p.parse(ctx, ch, d)
+	return p.parse(ctx, ch, d)
 }
 
 type parser struct {
@@ -21,32 +31,47 @@ type parser struct {
 	prefix []string
 }
 
-func (p *parser) parse(ctx context.Context, ch chan<- TestCase, d *jsontext.Decoder) {
+func (p *parser) parse(
+	ctx context.Context,
+	ch chan<- TestCase,
+	d *jsontext.Decoder,
+) error {
 	t, err := d.ReadToken()
 	if err != nil {
-		panic(err)
+		return err
 	}
 	switch t.Kind() {
 	case '[':
-		p.parseArray(ctx, ch, d)
+		if err := p.parseArray(ctx, ch, d); err != nil {
+			return err
+		}
 	case '{':
-		p.parseObject(ctx, ch, d)
+		if err := p.parseObject(ctx, ch, d); err != nil {
+			return err
+		}
 	case '"':
 		p.prefix = append(p.prefix, t.String())
 	}
+	return nil
 }
 
-func (p *parser) parseArray(ctx context.Context, ch chan<- TestCase, d *jsontext.Decoder) {
+func (p *parser) parseArray(
+	ctx context.Context,
+	ch chan<- TestCase,
+	d *jsontext.Decoder,
+) error {
 	for {
 		t, err := d.ReadToken()
 		if err != nil {
-			panic(err)
+			return err
 		}
 		switch t.Kind() {
 		case ']':
-			return
+			return nil
 		case '[':
-			p.parseArray(ctx, ch, d)
+			if err := p.parseArray(ctx, ch, d); err != nil {
+				return err
+			}
 		case '"':
 			name := t.String()
 			if isTestFile(name) {
@@ -56,7 +81,7 @@ func (p *parser) parseArray(ctx context.Context, ch chan<- TestCase, d *jsontext
 					PathElements: strings.Split(name, "/"),
 				}:
 				case <-ctx.Done():
-					return
+					return nil
 				}
 			}
 		}
@@ -82,15 +107,19 @@ func isTestFile(fileName string) bool {
 	return path.Ext(fileName) == ".html"
 }
 
-func (p parser) parseObject(ctx context.Context, ch chan<- TestCase, d *jsontext.Decoder) {
+func (p parser) parseObject(
+	ctx context.Context,
+	ch chan<- TestCase,
+	d *jsontext.Decoder,
+) error {
 	for {
 		t, err := d.ReadToken()
 		if err != nil {
-			panic(err)
+			return err
 		}
 		switch t.Kind() {
 		case '}':
-			return
+			return nil
 		case '"':
 			logger := p.logger
 			prefix := p.prefix
@@ -103,11 +132,13 @@ func (p parser) parseObject(ctx context.Context, ch chan<- TestCase, d *jsontext
 					select {
 					case ch <- testCase:
 					case <-ctx.Done():
-						return
+						return nil
 					}
 				}
 			}
-			p.parse(ctx, ch, d)
+			if err := p.parse(ctx, ch, d); err != nil {
+				return err
+			}
 
 			p.prefix = prefix
 			p.logger = logger
