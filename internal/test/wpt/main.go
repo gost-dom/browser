@@ -194,9 +194,7 @@ func testResults(
 			resultChan := make(chan testResult)
 			select {
 			case res <- resultChan:
-				grp.Add(1)
-				go func() {
-					defer grp.Add(-1)
+				grp.Go(func() {
 
 					testCaseRes, err := RunTestCase(ctx, testCase, log, o)
 					if err == nil && len(testCaseRes.TestCases) == 0 {
@@ -210,7 +208,7 @@ func testResults(
 						res:      testCaseRes,
 						err:      err,
 					}
-				}()
+				})
 			case <-ctx.Done():
 				return
 			}
