@@ -9,11 +9,6 @@ import (
 	"strings"
 )
 
-type MaybeError[T any] struct {
-	Value T
-	Err   error
-}
-
 func ParseManifestTo(
 	ctx context.Context,
 	m io.Reader,
