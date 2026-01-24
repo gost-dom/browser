@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"os"
 	"os/signal"
+	"runtime"
 	"strconv"
 	"strings"
 	"sync"
@@ -20,6 +21,10 @@ import (
 	"github.com/gost-dom/browser/scripting/v8engine"
 	xhtml "golang.org/x/net/html"
 )
+
+// Start more concurrent tests than we have CPUs. Each test has idle time, e.g.,
+// waiting for HTTP responses when downloading the individual test case.
+var MAX_CONCURRENT_TESTS = runtime.NumCPU()
 
 type WebPlatformTest struct {
 	url     string
@@ -157,7 +162,7 @@ func testResults(
 	log *slog.Logger,
 	o options,
 ) <-chan pendingTest {
-	res := make(chan pendingTest, 64)
+	res := make(chan pendingTest, MAX_CONCURRENT_TESTS)
 	go func() {
 		var grp sync.WaitGroup
 		defer func() { close(res) }()
