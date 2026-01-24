@@ -24,7 +24,7 @@ import (
 
 // Start more concurrent tests than we have CPUs. Each test has idle time, e.g.,
 // waiting for HTTP responses when downloading the individual test case.
-var MAX_CONCURRENT_TESTS = runtime.NumCPU()
+var MAX_CONCURRENT_TESTS = runtime.NumCPU() * 2
 
 type WptSuiteResult struct {
 	TestCases   []WebPlatformTestCase
@@ -195,7 +195,6 @@ func testResults(
 			select {
 			case res <- resultChan:
 				grp.Go(func() {
-
 					testCaseRes, err := RunTestCase(ctx, testCase, log, o)
 					if err == nil && len(testCaseRes.TestCases) == 0 {
 						err = errors.New("Test suite returned no results")
