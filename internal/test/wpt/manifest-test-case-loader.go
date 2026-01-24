@@ -14,13 +14,19 @@ type manifestTestCaseSource struct {
 	filter  func(t TestCase) bool
 }
 
-func (s manifestTestCaseSource) testCases(ctx context.Context) (<-chan TestCase, <-chan error) {
-	return s.filteredTests(ctx)
+func (s manifestTestCaseSource) testCases(
+	ctx context.Context,
+	cancel context.CancelCauseFunc,
+) <-chan TestCase {
+	return s.filteredTests(ctx, cancel)
 }
 
-func (s manifestTestCaseSource) filteredTests(ctx context.Context) (<-chan TestCase, <-chan error) {
+func (s manifestTestCaseSource) filteredTests(
+	ctx context.Context,
+	cancelCause context.CancelCauseFunc,
+) <-chan TestCase {
 	ch := make(chan TestCase, 8)
-	testCases, errors := s.loadManifest(ctx)
+	testCases := s.loadManifest(ctx, cancelCause)
 	go func() {
 		defer func() { close(ch) }()
 		for testCase := range testCases {
@@ -33,23 +39,22 @@ func (s manifestTestCaseSource) filteredTests(ctx context.Context) (<-chan TestC
 			}
 		}
 	}()
-	return ch, errors
+	return ch
 }
 
 func (s manifestTestCaseSource) loadManifest(
 	ctx context.Context,
-) (<-chan TestCase, <-chan error) {
-
+	cancelCause context.CancelCauseFunc,
+) <-chan TestCase {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, s.href, nil)
 	if err != nil {
-		panic(fmt.Sprintf("load manifest: create request: %v", err))
+		cancelCause(fmt.Errorf("load manifest: create request: %w", err))
 	}
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		panic(fmt.Sprintf("load manifest: %v", err))
+		cancelCause(fmt.Errorf("load manifest: %w", err))
 	}
 	ch := make(chan TestCase, 1)
-	errCh := make(chan error, 1)
 	go func() {
 		defer func() {
 			res.Body.Close()
@@ -57,8 +62,8 @@ func (s manifestTestCaseSource) loadManifest(
 		}()
 		if err := ParseManifestTo(ctx, res.Body, ch, s.options.Logger()); err != nil {
 			s.options.logger.Error("ERROR LOADING MANIFEST", "err", err)
-			errCh <- err
+			cancelCause(err)
 		}
 	}()
-	return ch, errCh
+	return ch
 }

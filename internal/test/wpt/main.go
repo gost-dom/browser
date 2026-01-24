@@ -284,7 +284,10 @@ type staticTestCaseSource struct {
 	baseHref string
 }
 
-func (s staticTestCaseSource) testCases(ctx context.Context) (<-chan TestCase, <-chan error) {
+func (s staticTestCaseSource) testCases(
+	ctx context.Context,
+	cancel context.CancelCauseFunc,
+) <-chan TestCase {
 	res := make(chan TestCase)
 	go func() {
 		defer close(res)
@@ -295,7 +298,7 @@ func (s staticTestCaseSource) testCases(ctx context.Context) (<-chan TestCase, <
 			}
 		}
 	}()
-	return res, make(chan error)
+	return res
 }
 
 func loadTestSource(o options) testCaseLoader {
@@ -318,9 +321,13 @@ func loadTestSource(o options) testCaseLoader {
 
 // testCaseLoader is the interface for the method testCases() that return a
 // channel of TestCases. The source should ideally return a buffered channel.
-// The buffer size determines how many test cases can run in parallel
+// The buffer size determines how many test cases can run in parallel.
+//
+// If an error occurrs during loading tests cases, e.g., a HTTP disconnection,
+// or invalid JSON is returned, the implementer must close the returned channel
+// and call cancelCause with an error describing the calse
 type testCaseLoader interface {
-	testCases(ctx context.Context) (<-chan TestCase, <-chan error)
+	testCases(ctx context.Context, cancelCause context.CancelCauseFunc) <-chan TestCase
 }
 
 func parseOptions() options {
@@ -337,6 +344,7 @@ func parseOptions() options {
 
 func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	ctx, cancelCause := context.WithCancelCause(ctx)
 	defer stop()
 
 	var o = parseOptions()
@@ -355,7 +363,7 @@ func main() {
 	testCount := 0
 	passedTestCount := 0
 
-	testCases, errCh := source.testCases(ctx)
+	testCases := source.testCases(ctx, cancelCause)
 	for pending := range testResults(ctx, testCases, logger, o) {
 		testCaseResult := pending.result()
 		var (
@@ -428,8 +436,9 @@ func main() {
 		}
 	}
 	select {
-	case err := <-errCh:
-		if err != nil {
+	case <-ctx.Done():
+		err := context.Cause(ctx)
+		if err != nil && !errors.Is(err, context.Canceled) {
 			errs = append(errs, err)
 		}
 	default:
