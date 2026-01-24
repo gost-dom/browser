@@ -3,6 +3,7 @@ package log
 import (
 	"io"
 	"log/slog"
+	"runtime/debug"
 )
 
 type LogSource interface{ Logger() *slog.Logger }
@@ -41,6 +42,10 @@ func ErrAttr(err error) slog.Attr {
 	// TODO: This used to contain logic, but not anymore. Candidate for
 	// deletion. Only value now is consistent record key.
 	return slog.Any("err", err)
+}
+
+func StackAttr() slog.Attr {
+	return slog.Any("stack", string(debug.Stack()))
 }
 
 // ReplaceStackAttr removes "stack" entries from log output. While stack output
