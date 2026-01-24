@@ -23,7 +23,7 @@ func NewHTMLScriptElement(ownerDocument HTMLDocument) HTMLElement {
 func (e *htmlScriptElement) Connected() {
 	l := e.logger()
 	if src := e.src(); src != "" {
-		l = l.With(slog.String("src", e.src()))
+		l = l.With(slog.String("src", src))
 	}
 	l.Debug("<script> connected", "element", e)
 	var (
