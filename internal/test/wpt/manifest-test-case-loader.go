@@ -42,24 +42,33 @@ func (s manifestTestCaseSource) filteredTests(
 	return ch
 }
 
+func (s manifestTestCaseSource) fetchManifest(ctx context.Context) (res *http.Response, err error) {
+	var req *http.Request
+	req, err = http.NewRequestWithContext(ctx, http.MethodGet, s.href, nil)
+	if err != nil {
+		err = fmt.Errorf("load manifest: create request: %w", err)
+		return
+	}
+	res, err = http.DefaultClient.Do(req)
+	if err != nil {
+		err = fmt.Errorf("load manifest: %w", err)
+	}
+	return
+}
+
 func (s manifestTestCaseSource) loadManifest(
 	ctx context.Context,
 	cancelCause context.CancelCauseFunc,
 ) <-chan TestCase {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, s.href, nil)
-	if err != nil {
-		cancelCause(fmt.Errorf("load manifest: create request: %w", err))
-	}
-	res, err := http.DefaultClient.Do(req)
-	if err != nil {
-		cancelCause(fmt.Errorf("load manifest: %w", err))
-	}
 	ch := make(chan TestCase, 1)
 	go func() {
-		defer func() {
-			res.Body.Close()
-			close(ch)
-		}()
+		defer close(ch)
+		res, err := s.fetchManifest(ctx)
+		if err != nil {
+			cancelCause(err)
+			return
+		}
+		defer res.Body.Close()
 		if err := ParseManifestTo(ctx, res.Body, ch, s.options.Logger()); err != nil {
 			s.options.logger.Error("ERROR LOADING MANIFEST", "err", err)
 			cancelCause(err)
