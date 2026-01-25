@@ -16,13 +16,6 @@ type manifestTestCaseSource struct {
 
 func (s manifestTestCaseSource) testCases(
 	ctx context.Context,
-	cancel context.CancelCauseFunc,
-) <-chan TestCase {
-	return s.filteredTests(ctx, cancel)
-}
-
-func (s manifestTestCaseSource) filteredTests(
-	ctx context.Context,
 	cancelCause context.CancelCauseFunc,
 ) <-chan TestCase {
 	ch := make(chan TestCase, 8)
