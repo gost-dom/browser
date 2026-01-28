@@ -4,10 +4,71 @@ JavaScript execution is performed by an _optional script engine_. I.e., you can
 create a browser without one, and it'll just execute behaviour for `<script>`
 blocks.
 
-There are two script engines in the code base
+## Optional Sub-Modules
 
-- `scripting/v8engine` - Uses V8
-- `scripting/sobekengine` - 
+The script engines are provided as separate Go modules to avoid requiring
+heavy dependencies (like V8) when they're not needed. This follows the same
+pattern as the AWS SDK v2 for Go.
+
+The main module (`github.com/gost-dom/browser`) has no JavaScript engine
+dependencies. To use JavaScript execution, import the desired engine sub-module:
+
+### Using V8 Engine
+
+```go
+import (
+    "github.com/gost-dom/browser"
+    "github.com/gost-dom/browser/scripting/v8engine"
+)
+
+func main() {
+    b := browser.New(browser.WithScriptEngine(v8engine.DefaultEngine()))
+    // ...
+}
+```
+
+Or use the convenience package:
+
+```go
+import "github.com/gost-dom/browser/v8browser"
+
+func main() {
+    b := v8browser.New()
+    // ...
+}
+```
+
+### Using Sobek Engine (Pure Go)
+
+```go
+import (
+    "github.com/gost-dom/browser"
+    "github.com/gost-dom/browser/scripting/sobekengine"
+)
+
+func main() {
+    b := browser.New(browser.WithScriptEngine(sobekengine.DefaultEngine()))
+    // ...
+}
+```
+
+### Without JavaScript
+
+```go
+import "github.com/gost-dom/browser"
+
+func main() {
+    b := browser.New()  // No script engine, `<script>` blocks are ignored
+    // ...
+}
+```
+
+## Available Engines
+
+There are two script engines available:
+
+- `github.com/gost-dom/browser/scripting/v8engine` - Uses V8
+- `github.com/gost-dom/browser/scripting/sobekengine` - Pure Go JavaScript engine 
 
 ## Pros and cons
 
