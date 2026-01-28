@@ -2,6 +2,7 @@ package sobekengine
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/grafana/sobek"
 )
@@ -21,7 +22,15 @@ func (m sobekModule) Run() error {
 		p := m.record.Evaluate(m.ctx.vm)
 
 		if p.State() != sobek.PromiseStateFulfilled {
-			return p.Result().Export().(error)
+			res := p.Result().Export()
+			if res == nil {
+				return nil
+			}
+			err, ok := res.(error)
+			if !ok {
+				err = fmt.Errorf("run module: %v", res)
+			}
+			return err
 		}
 		return nil
 	})
