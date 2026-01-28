@@ -228,6 +228,11 @@ func (c *Clock) LogValue() slog.Value {
 
 func (c *Clock) enter() { c.stack++ }
 func (c *Clock) exit() error {
+	if c.stack <= 0 {
+		// Not fool-proof, help prevent future code changes resulting in
+		// unbalanced enter/exit calls.
+		panic("Unbalanced enter/exit calls")
+	}
 	c.stack--
 	if c.stack > 0 {
 		return nil
@@ -246,7 +251,7 @@ func (c *Clock) Do(f func() error) (err error) {
 	return f()
 }
 
-// Tick runs all tasks scheduled for immediate execution. This is synonymous
+// tick runs all tasks scheduled for immediate execution. This is synonymous
 // with calling Advance(0).
 func (c *Clock) tick() error { return c.Advance(0) }
 
