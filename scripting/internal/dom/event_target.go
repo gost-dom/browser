@@ -18,19 +18,6 @@ func newEventListener[T any](s js.Scope[T], val js.Function[T]) event.EventHandl
 func (l eventListener[T]) HandleEvent(e *event.Event) error {
 	f := l.val
 	event, err := codec.EncodeEntity(l.s, e)
-	/*
-		return l.s.Clock().Do(func() error {
-			if err == nil {
-				global := l.s.GlobalThis()
-				res, err := f.Call(global, event)
-				cancel := js.IsBoolean(res) && !res.Boolean() || err != nil
-				if cancel {
-					e.PreventDefault()
-				}
-			}
-			return err
-		})
-	*/
 	if err == nil {
 		global := l.s.GlobalThis()
 		var res js.Value[T]
