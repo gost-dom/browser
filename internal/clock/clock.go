@@ -97,7 +97,10 @@ type Clock struct {
 	// example, settling promises when fetch requests succeed.
 	events        chan (TaskCallback)
 	pendingEvents int
-	stack         int
+
+	// stack contains the depth of nested calls to [*Clock.Do], keeping track of
+	// when to run microtasks.
+	stack int
 }
 
 // Creates a new clock. If the options don't set a specific time, the clock is
