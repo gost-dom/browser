@@ -122,32 +122,6 @@ func EncodeConstructedValue[T any](s js.CallbackScope[T], val any) (js.Value[T],
 	return nil, nil
 }
 
-// EncodePromiseFunc returnes a JavaScript Promise that will settle with the result
-// of running function f. Function f must be safe to run concurrently, as it
-// will execute in a separate goroutine.
-//
-// The promise will not settile immediately after f finishes, but will be
-// deferred to run on the "main loop" that the embedder controls.
-func EncodePromiseFunc[T any](
-	c js.Scope[T],
-	f func() (js.Value[T], error),
-) (js.Value[T], error) {
-	p := c.NewPromise()
-	e := c.Clock().BeginEvent()
-	go func() {
-		r, err := f()
-		e.AddEvent(func() error {
-			if err == nil {
-				p.Resolve(r)
-			} else {
-				p.Reject(js.ToJsError(c, err))
-			}
-			return nil
-		})
-	}()
-	return p, nil
-}
-
 type Encoder[T, U any] = func(js.Scope[T], U) (js.Value[T], error)
 
 // EncodePromise converts a [promise.Promise] value to a JavaScript Promise
@@ -162,14 +136,24 @@ func EncodePromise[T, U any](
 	prom promise.Promise[U],
 	encoder Encoder[T, U],
 ) (js.Value[T], error) {
-	return EncodePromiseFunc(scope, func() (js.Value[T], error) {
-		res := <-prom
-		if res.Err == nil {
-			return encoder(scope, res.Value)
-		} else {
-			return nil, res.Err
-		}
-	})
+	p := scope.NewPromise()
+	e := scope.Clock().BeginEvent()
+	go func() {
+		promRes := <-prom
+		e.AddEvent(func() error {
+			err := promRes.Err
+			var res js.Value[T]
+			if err == nil {
+				if res, err = encoder(scope, promRes.Value); err == nil {
+					p.Resolve(res)
+					return nil
+				}
+			}
+			p.Reject(js.ToJsError(scope, err))
+			return nil
+		})
+	}()
+	return p, nil
 }
 
 // EncodeAny assumes that value v is a direct JavaScript. See also [DecodeAny]

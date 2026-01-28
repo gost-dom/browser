@@ -32,11 +32,11 @@ type V8ScriptContext struct {
 
 func (c *V8ScriptContext) iso() *v8.Isolate         { return c.host.iso }
 func (c *V8ScriptContext) Context() context.Context { return c.browsingCtx.Context() }
-func (c *V8ScriptContext) tick() error {
+func (c *V8ScriptContext) do(f func() error) error {
 	if c.host.clock != nil {
-		return c.host.clock.Tick()
+		return c.host.clock.Do(f)
 	}
-	return nil
+	return f()
 }
 
 func (h *V8ScriptHost) getContext(v8ctx *v8.Context) (*V8ScriptContext, bool) {
@@ -85,17 +85,18 @@ func (context *V8ScriptContext) initializeGlobals() error {
 			return err
 		}
 	}
-	for _, s := range context.host.scripts {
-		script := s[0]
-		src := s[1]
-		_, err := context.v8ctx.RunScript(script, src)
-		err = errors.Join(err, context.tick())
-		if err != nil {
-			return fmt.Errorf("gost-dom/v8engine: install globals (%s): %w", src, err)
+	return context.do(func() error {
+		for _, s := range context.host.scripts {
+			script := s[0]
+			src := s[1]
+			_, err := context.v8ctx.RunScript(script, src)
+			if err != nil {
+				return fmt.Errorf("gost-dom/v8engine: install globals (%s): %w", src, err)
+			}
 		}
-	}
 
-	return nil
+		return nil
+	})
 }
 
 // Constructor returns the V8 FunctionTemplate with the specified name.
@@ -144,8 +145,12 @@ func (ctx *V8ScriptContext) runScript(script string) (*v8.Value, error) {
 	case <-goCtx.Done():
 		return nil, html.ErrCancelled
 	default:
-		res, err := ctx.v8ctx.RunScript(script, "")
-		err = errors.Join(err, ctx.tick())
+		var res *v8.Value
+		var err error
+		err = ctx.do(func() error {
+			res, err = ctx.v8ctx.RunScript(script, "")
+			return err
+		})
 		return res, err
 	}
 }

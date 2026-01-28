@@ -1,8 +1,6 @@
 package dom
 
 import (
-	"errors"
-
 	"github.com/gost-dom/browser/dom/event"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
@@ -20,11 +18,26 @@ func newEventListener[T any](s js.Scope[T], val js.Function[T]) event.EventHandl
 func (l eventListener[T]) HandleEvent(e *event.Event) error {
 	f := l.val
 	event, err := codec.EncodeEntity(l.s, e)
+	/*
+		return l.s.Clock().Do(func() error {
+			if err == nil {
+				global := l.s.GlobalThis()
+				res, err := f.Call(global, event)
+				cancel := js.IsBoolean(res) && !res.Boolean() || err != nil
+				if cancel {
+					e.PreventDefault()
+				}
+			}
+			return err
+		})
+	*/
 	if err == nil {
 		global := l.s.GlobalThis()
-		res, err1 := f.Call(global, event)
-		err2 := l.s.Clock().Tick()
-		err = errors.Join(err1, err2)
+		var res js.Value[T]
+		err = l.s.Clock().Do(func() error {
+			res, err = f.Call(global, event)
+			return err
+		})
 		cancel := js.IsBoolean(res) && !res.Boolean() || err != nil
 		if cancel {
 			e.PreventDefault()

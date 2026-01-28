@@ -87,15 +87,16 @@ func (f ConfigurerFunc[T]) Configure(e ScriptEngine[T]) { f(e) }
 type Promise[T any] interface {
 	Value[T]
 	Resolve(Value[T])
+
 	// Reject rejects the promise with an Error instance, representing a Go
 	// error value. This is based on two assumptions
 	//
-	// - You always want to reject with Error values.
-	// - The cause will be an instance of a Go error value.
+	//  - You always want to reject with Error values.
+	//  - The cause will be an instance of a Go error value.
 	//
 	// So while you can reject with any value in JavaScript, it is best practice
-	// to only use Error values, and this assumes that all API calls will follow
-	// this practice.
+	// to only use instances of the Error class. This implementation assumes
+	// that all API implementations follow that practice.
 	Reject(Value[T])
 }
 

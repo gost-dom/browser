@@ -1,8 +1,6 @@
 package v8engine
 
 import (
-	"errors"
-
 	"github.com/gost-dom/v8go"
 )
 
@@ -22,10 +20,13 @@ func (f v8Function) Call(this jsObject, args ...jsValue) (jsValue, error) {
 		v8Args[i] = toV8Value(a)
 	}
 	var res jsValue
-	v, err := f.v8fn.Call(assertV8Object(this).Object, v8Args...)
-	err = errors.Join(err, f.ctx.tick())
-	if err == nil {
-		res = newV8Value(f.ctx, v)
-	}
+	var err error
+	err = f.ctx.do(func() error {
+		v, err := f.v8fn.Call(assertV8Object(this).Object, v8Args...)
+		if err == nil {
+			res = newV8Value(f.ctx, v)
+		}
+		return err
+	})
 	return res, err
 }

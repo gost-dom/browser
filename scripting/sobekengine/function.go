@@ -1,7 +1,6 @@
 package sobekengine
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/gost-dom/browser/scripting/internal/js"
@@ -29,7 +28,12 @@ func (f function) Call(
 	for i, a := range args {
 		v[i] = unwrapValue(a)
 	}
-	res, err := f.f(unwrapValue(this), v...)
-	err = errors.Join(err, f.ctx.tick())
-	return newValue(f.ctx, res), err
+	var err error
+	var val sobek.Value
+	err = f.ctx.do(func() error {
+		val, err = f.f(unwrapValue(this), v...)
+		return err
+	})
+	// err = errors.Join(err, f.ctx.tick())
+	return newValue(f.ctx, val), err
 }

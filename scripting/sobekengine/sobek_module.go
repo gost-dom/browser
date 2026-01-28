@@ -16,11 +16,13 @@ func (m sobekModule) Eval() (any, error) {
 }
 
 func (m sobekModule) Run() error {
-	m.ctx.logger().Debug("Evaluate module", "vm", m.ctx.vm)
-	p := m.record.Evaluate(m.ctx.vm)
+	return m.ctx.do(func() error {
+		m.ctx.logger().Debug("Evaluate module", "vm", m.ctx.vm)
+		p := m.record.Evaluate(m.ctx.vm)
 
-	if p.State() != sobek.PromiseStateFulfilled {
-		return p.Result().Export().(error)
-	}
-	return m.ctx.tick()
+		if p.State() != sobek.PromiseStateFulfilled {
+			return p.Result().Export().(error)
+		}
+		return nil
+	})
 }

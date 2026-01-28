@@ -97,6 +97,7 @@ type Clock struct {
 	// example, settling promises when fetch requests succeed.
 	events        chan (TaskCallback)
 	pendingEvents int
+	stack         int
 }
 
 // Creates a new clock. If the options don't set a specific time, the clock is
@@ -222,9 +223,29 @@ func (c *Clock) LogValue() slog.Value {
 	)
 }
 
+func (c *Clock) enter() { c.stack++ }
+func (c *Clock) exit() error {
+	c.stack--
+	if c.stack > 0 {
+		return nil
+	}
+	return c.tick()
+}
+
+// Do wraps a task call and runs microtasks when it has completed. Nested tasks
+// will not trigger microtasks; only when the original root task completes.
+func (c *Clock) Do(f func() error) (err error) {
+	c.enter()
+	defer func() {
+		err = errors.Join(err, c.exit())
+	}()
+
+	return f()
+}
+
 // Tick runs all tasks scheduled for immediate execution. This is synonymous
 // with calling Advance(0).
-func (c *Clock) Tick() error { return c.Advance(0) }
+func (c *Clock) tick() error { return c.Advance(0) }
 
 // Cancel removes the task that have been added using [Clock.SetTimeout] or
 // [Clock.SetInterval]. This corresponds to either [clearTimeout] or

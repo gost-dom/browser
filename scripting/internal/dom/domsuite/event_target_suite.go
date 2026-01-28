@@ -166,7 +166,7 @@ func testEventTarget(t *testing.T, e html.ScriptEngine) {
 			let callCount = 0
 			window.addEventListener("error", () => {
 				callCount++
-			throw new Error()
+				throw new Error()
 			})
 			window.addEventListener("custom", () => {
 				throw new Error

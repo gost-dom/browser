@@ -25,11 +25,11 @@ type scriptContext struct {
 	global       *globalObjectClass
 }
 
-func (c *scriptContext) tick() error {
+func (c *scriptContext) do(f func() error) error {
 	if c.host.clock != nil {
-		return c.host.clock.Tick()
+		return c.host.clock.Do(f)
 	}
-	return nil
+	return f()
 }
 func (c *scriptContext) Context() context.Context  { return c.browsingCtx.Context() }
 func (c *scriptContext) globalThis() *sobek.Object { return c.vm.GlobalObject() }
@@ -52,8 +52,12 @@ func (i *scriptContext) run(script, location string) (sobek.Value, error) {
 	case <-i.Context().Done():
 		return nil, html.ErrCancelled
 	default:
-		res, err := i.vm.RunScript(location, script)
-		i.tick()
+		var err error
+		var res sobek.Value
+		err = i.do(func() error {
+			res, err = i.vm.RunScript(location, script)
+			return err
+		})
 		return res, err
 	}
 }

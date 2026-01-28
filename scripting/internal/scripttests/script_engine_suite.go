@@ -8,6 +8,7 @@ import (
 
 	"github.com/gost-dom/browser"
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/testing/browsertest"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/onsi/gomega"
@@ -71,11 +72,26 @@ func testScriptEngineBehaviour(t *testing.T, e html.ScriptEngine) {
 		g.Expect(win.Run(`
 		new Promise((resolve, reject) => { setTimeout(reject, 1000) })
 	`)).To(Succeed())
-
 		win.Clock().Advance(time.Millisecond * 999)
 		g.Expect(recorder.FilterLevel(slog.LevelError)).To(gomega.HaveLen(0))
 		win.Clock().Advance(time.Millisecond * 1)
 		g.Expect(recorder.FilterLevel(slog.LevelError)).To(gomega.HaveLen(1))
+	})
 
+	t.Run("Microtasks", func(t *testing.T) {
+		win := browsertest.InitWindow(t, e)
+		win.MustRun(`
+			let values = []
+			queueMicrotask(() => { values.push("a") })
+			window.addEventListener("gost", () => {
+				queueMicrotask(() => { values.push("b") })
+			})
+			window.dispatchEvent(new Event("gost"))
+			let tmp = values.join(",")
+			queueMicrotask(() => { values.push("c") })
+		`)
+		values := win.MustEval("values.join(',')")
+		assert.Equal(t, "a,b,c", values)
+		assert.Equal(t, "", win.MustEval("tmp"))
 	})
 }

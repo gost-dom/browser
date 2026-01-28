@@ -47,7 +47,7 @@ codegen: codegen-clean codegen-build
 
 .PHONY: test test-watch test-browser test-v8 test-sobek test-wpt
 test:
-	$(GO_TEST) -v -vet=all ./...
+	$(GO_TEST) -v -race -vet=all ./...
 
 test-wpt:
 	$(MAKE) -C internal/test/wpt test
