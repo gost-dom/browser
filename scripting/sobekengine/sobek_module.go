@@ -23,9 +23,6 @@ func (m sobekModule) Run() error {
 
 		if p.State() != sobek.PromiseStateFulfilled {
 			res := p.Result().Export()
-			if res == nil {
-				return nil
-			}
 			err, ok := res.(error)
 			if !ok {
 				err = fmt.Errorf("run module: %v", res)
