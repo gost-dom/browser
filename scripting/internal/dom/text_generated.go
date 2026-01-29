@@ -12,6 +12,17 @@ func InitializeText[T any](jsClass js.Class[T]) {
 	jsClass.CreateAttribute("wholeText", Text_wholeText, nil)
 }
 
+func TextConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	data, found, errArg := js.ConsumeOptionalArg(cbCtx, "data", codec.DecodeString)
+	if found {
+		if errArg != nil {
+			return nil, errArg
+		}
+		return CreateTextData(cbCtx, data)
+	}
+	return CreateText(cbCtx)
+}
+
 func Text_splitText[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return codec.EncodeCallbackErrorf(cbCtx, "Text.Text_splitText: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
