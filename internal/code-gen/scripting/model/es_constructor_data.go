@@ -42,18 +42,18 @@ func (d ESConstructorData) InstallConstructor() bool {
 func (d ESConstructorData) InstallPartial() bool { return d.IdlInterface.Partial }
 
 func (d ESConstructorData) AllowConstructor() bool {
-	// You _can_ create a Document, but not HTMLDocument, nor other nodes.
-	if d.IdlInterface.Name == "DocumentFragment" {
-		return true
-	}
-	if d.IdlInterface.Name == "Document" {
-		return true
-	}
-	if IsNodeType(d.IdlInterface.Name) {
-		return false
-	}
 	if d.Constructor == nil {
 		return false
+	}
+	for cons := range d.IdlInterface.InternalSpec.Constructors() {
+		// I can't find documenation; but constructors with [HTMLContructor]
+		// extended attribute are not constructable; i.e., they throw an
+		// "invalid constructor" TypeError
+		for _, attr := range cons.ExtAttrs {
+			if attr.Name == "HTMLConstructor" {
+				return false
+			}
+		}
 	}
 	return true
 }

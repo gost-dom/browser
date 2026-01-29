@@ -22,7 +22,7 @@ func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
 	InitializeDocument(js.CreateClass(e, "Document", "Node", DocumentConstructor))
 	InitializeDocumentFragment(js.CreateClass(e, "DocumentFragment", "Node", DocumentFragmentConstructor))
 	InitializeElement(js.CreateClass(e, "Element", "Node", nil))
-	InitializeText(js.CreateClass(e, "Text", "CharacterData", nil))
+	InitializeText(js.CreateClass(e, "Text", "CharacterData", TextConstructor))
 }
 
 func ConfigureDedicatedWorkerGlobalScopeRealm[T any](e js.ScriptEngine[T]) {
