@@ -104,7 +104,6 @@ type Node interface {
 
 	self() Node
 	setParent(Node)
-	setOwnerDocument(owner Document)
 	assertCanAddNode(Node) error
 	cloneChildren() []Node
 	createHtmlNode() *html.Node
@@ -245,12 +244,6 @@ func (n *node) ParentElement() Element {
 	return r
 }
 
-func (n *node) setOwnerDocument(owner Document) {
-	n.Node.OwnerDocument = nodePtr(owner)
-	for _, n := range n.Children {
-		getNode(n).setOwnerDocument(owner)
-	}
-}
 func (n *node) setParent(parent Node) {
 	if n.Parent != nil {
 		getNode(n.Parent).RemoveChild(n.self())
@@ -258,7 +251,7 @@ func (n *node) setParent(parent Node) {
 	if parent != nil {
 		parentOwner := parent.nodeDocument()
 		if n.OwnerDocument() != parentOwner {
-			n.setOwnerDocument(parentOwner)
+			n.Node.SetOwnerDocument(nodePtr(parentOwner))
 		}
 		n.Parent = parent.ptr().Node
 	} else {
