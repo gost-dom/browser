@@ -24,3 +24,13 @@ func NewNode(ownerDocument *Node, nodeType NodeType) *Node {
 	}
 	return &Node{OwnerDocument: ownerDocument, Type: nodeType}
 }
+
+func (n *Node) SetOwnerDocument(ownerDocument *Node) {
+	if ownerDocument != nil && ownerDocument.Type != NodeTypeDocument {
+		panic(fmt.Sprintf("Invalid owner document: %v", ownerDocument.Type))
+	}
+	n.OwnerDocument = ownerDocument
+	for _, c := range n.Children {
+		c.SetOwnerDocument(ownerDocument)
+	}
+}
