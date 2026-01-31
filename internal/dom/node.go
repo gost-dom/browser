@@ -15,12 +15,12 @@ type Node struct {
 	Parent   *Node
 	Type     NodeType
 
-	ownerDocument *Node
+	OwnerDocument *Node
 }
 
 func NewNode(ownerDocument *Node, nodeType NodeType) *Node {
 	if ownerDocument != nil && ownerDocument.Type != NodeTypeDocument {
 		panic(fmt.Sprintf("Invalid owner document: %v", ownerDocument.Type))
 	}
-	return &Node{ownerDocument: ownerDocument, Type: nodeType}
+	return &Node{OwnerDocument: ownerDocument, Type: nodeType}
 }
