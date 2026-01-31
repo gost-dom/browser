@@ -47,7 +47,7 @@ func newAttr(n, v string, doc Document) Attr { return newAttrNS("", n, v, doc) }
 
 func newAttrNS(ns, n, v string, doc Document) Attr {
 	res := &attr{
-		node: newNode(doc),
+		node: newNode(doc, intdom.NodeTypeAttribute),
 		attr: &html.Attribute{
 			Namespace: ns,
 			Key:       n,
@@ -111,7 +111,6 @@ func (a *attr) OwnerElement() Element { return a.ownerElement }
 func (a *attr) Prefix() string        { return "" }
 func (a *attr) Value() string         { return a.attr.Val }
 func (a *attr) SetValue(val string)   { a.attr.Val = val }
-func (a *attr) NodeType() NodeType    { return intdom.NodeTypeAttribute }
 
 func (a *attr) AppendChild(newChild Node) (Node, error) {
 	return nil, newDomError("Atrribute cannot have a child")

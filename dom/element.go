@@ -76,7 +76,7 @@ func NewElement(tagName string, ownerDocument Document) Element {
 
 func newElementNS(ns, tagName string, ownerDocument Document) Element {
 	res := &element{
-		node:       newNode(ownerDocument),
+		node:       newNode(ownerDocument, int.NodeTypeElement),
 		tagName:    strings.ToLower(tagName),
 		namespace:  ns,
 		attributes: Attributes(nil),
@@ -356,8 +356,6 @@ func (n *element) InsertAdjacentHTML(position string, text string) error {
 	}
 	return err
 }
-
-func (n *element) NodeType() NodeType { return int.NodeTypeElement }
 
 func (e *element) Render(writer *strings.Builder) {
 	renderElement(e, writer)

@@ -125,9 +125,16 @@ type node struct {
 	observers []observer
 }
 
-func newNode(ownerDocument Document) node {
+func nodePtr(n Node) *intdom.Node {
+	if n == nil {
+		return nil
+	}
+	return n.ptr().Node
+}
+
+func newNode(ownerDocument Document, nodeType NodeType) node {
 	return node{
-		Node:        intdom.NewNode(),
+		Node:        intdom.NewNode(nodePtr(ownerDocument), nodeType),
 		EventTarget: event.NewEventTarget(),
 		document:    ownerDocument,
 	}
@@ -600,6 +607,8 @@ func (n *node) notify(event ChangeEvent) {
 		getNode(n.Parent).notify(event)
 	}
 }
+
+func (n *node) NodeType() NodeType { return n.ptr().Type }
 
 func (n *node) Logger() (res *slog.Logger) {
 	if docLogger, ok := n.document.(log.LogSource); ok {
