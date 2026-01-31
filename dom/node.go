@@ -248,15 +248,7 @@ func (n *node) setParent(parent Node) {
 	if n.Parent != nil {
 		getNode(n.Parent).RemoveChild(n.self())
 	}
-	if parent != nil {
-		parentOwner := parent.nodeDocument()
-		if n.OwnerDocument() != parentOwner {
-			n.Node.SetOwnerDocument(nodePtr(parentOwner))
-		}
-		n.Parent = parent.ptr().Node
-	} else {
-		n.Parent = nil
-	}
+	n.Node.SetParent(nodePtr(parent))
 	n.SetParentTarget(parent)
 }
 
