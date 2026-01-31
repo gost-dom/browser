@@ -16,7 +16,7 @@ type documentFragment struct {
 }
 
 func NewDocumentFragment(ownerDocument Document) DocumentFragment {
-	result := &documentFragment{node: newNode(ownerDocument)}
+	result := &documentFragment{node: newNode(ownerDocument, intdom.NodeTypeDocumentFragment)}
 	result.parentNode = parentNode{&result.node}
 	result.rootNode = rootNode{&result.node}
 	result.SetSelf(result)
@@ -40,7 +40,5 @@ func (d *documentFragment) createHtmlNode() *html.Node {
 		Type: html.DocumentNode,
 	}
 }
-
-func (d *documentFragment) NodeType() NodeType { return intdom.NodeTypeDocumentFragment }
 
 func (d *documentFragment) NodeName() string { return "#document-fragment" }

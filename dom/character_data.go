@@ -29,8 +29,8 @@ type characterData struct {
 	data string
 }
 
-func newCharacterData(text string, ownerDocument Document) *characterData {
-	res := &characterData{node: newNode(ownerDocument), data: text}
+func newCharacterData(text string, ownerDocument Document, typ NodeType) *characterData {
+	res := &characterData{node: newNode(ownerDocument, typ), data: text}
 	res.childNode = childNode{&res.node}
 	return res
 }
@@ -76,7 +76,7 @@ type comment struct {
 }
 
 func NewComment(text string, ownerDocument Document) Comment {
-	result := &comment{newCharacterData(text, ownerDocument)}
+	result := &comment{newCharacterData(text, ownerDocument, intdom.NodeTypeComment)}
 	result.SetSelf(result)
 	return result
 }
@@ -85,10 +85,6 @@ func (n *comment) Render(builder *strings.Builder) {
 	builder.WriteString("<!--")
 	builder.WriteString(n.Data())
 	builder.WriteString("-->")
-}
-
-func (n *comment) NodeType() NodeType {
-	return intdom.NodeTypeComment
 }
 
 func (n *comment) createHtmlNode() *html.Node {
@@ -113,7 +109,7 @@ type textNode struct {
 }
 
 func NewText(text string, ownerDocument Document) Text {
-	result := &textNode{newCharacterData(text, ownerDocument)}
+	result := &textNode{newCharacterData(text, ownerDocument, intdom.NodeTypeText)}
 	result.SetSelf(result)
 	return result
 }
@@ -125,8 +121,6 @@ func (n *textNode) cloneNode(doc Document, _ bool) Node {
 func (n *textNode) Render(builder *strings.Builder) {
 	builder.WriteString(n.Data())
 }
-
-func (n *textNode) NodeType() NodeType { return intdom.NodeTypeText }
 
 func (n *textNode) createHtmlNode() *html.Node {
 	return &html.Node{
@@ -159,7 +153,10 @@ type processingInstruction struct {
 //
 // Deprecated: This only exists to support Web Platform Tests
 func NewProcessingInstruction(target, data string, ownerDocument Document) ProcessingInstruction {
-	result := &processingInstruction{newCharacterData(data, ownerDocument), target}
+	result := &processingInstruction{
+		newCharacterData(data, ownerDocument, intdom.NodeTypeProcessingInstruction),
+		target,
+	}
 	result.SetSelf(result)
 	return result
 }
@@ -175,9 +172,6 @@ func (n *processingInstruction) Render(builder *strings.Builder) {
 	builder.WriteString(n.Data())
 	builder.WriteString("?>")
 }
-
-// NodeType implements [Node]
-func (n *processingInstruction) NodeType() NodeType { return intdom.NodeTypeProcessingInstruction }
 
 func (n *processingInstruction) createHtmlNode() *html.Node {
 	return &html.Node{

@@ -48,7 +48,7 @@ type document struct {
 }
 
 func NewDocument(parentEventTarget event.EventTarget) Document {
-	result := &document{node: newNode(nil)}
+	result := &document{node: newNode(nil, intdom.NodeTypeDocument)}
 	result.parentNode = parentNode{&result.node}
 	result.rootNode = rootNode{&result.node}
 	result.elementOrDocument = elementOrDocument{&result.node}

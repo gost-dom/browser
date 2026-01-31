@@ -1,6 +1,10 @@
 package dom
 
-import "github.com/gost-dom/browser/internal/entity"
+import (
+	"fmt"
+
+	"github.com/gost-dom/browser/internal/entity"
+)
 
 type Node struct {
 	entity.Entity
@@ -9,8 +13,14 @@ type Node struct {
 	rev      int
 	Children []*Node
 	Parent   *Node
+	Type     NodeType
+
+	ownerDocument *Node
 }
 
-func NewNode() *Node {
-	return &Node{}
+func NewNode(ownerDocument *Node, nodeType NodeType) *Node {
+	if ownerDocument != nil && ownerDocument.Type != NodeTypeDocument {
+		panic(fmt.Sprintf("Invalid owner document: %v", ownerDocument.Type))
+	}
+	return &Node{ownerDocument: ownerDocument, Type: nodeType}
 }

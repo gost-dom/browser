@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/gost-dom/browser/internal/constants"
+	int "github.com/gost-dom/browser/internal/dom"
 	intdom "github.com/gost-dom/browser/internal/dom"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/namespace"
@@ -77,7 +78,7 @@ func NewElement(tagName string, ownerDocument Document) Element {
 
 func newElementNS(ns, tagName string, ownerDocument Document) Element {
 	res := &element{
-		node:       newNode(ownerDocument),
+		node:       newNode(ownerDocument, int.NodeTypeElement),
 		tagName:    tagName,
 		namespace:  ns,
 		attributes: Attributes(nil),
@@ -369,8 +370,6 @@ func (n *element) InsertAdjacentHTML(position string, text string) error {
 	}
 	return err
 }
-
-func (n *element) NodeType() NodeType { return intdom.NodeTypeElement }
 
 func (e *element) Render(writer *strings.Builder) {
 	renderElement(e, writer)
