@@ -125,23 +125,23 @@ func (d *document) Head() Element {
 }
 
 func (d *document) CreateAttributeNS(ns, name string) Attr {
-	return newAttrNS(ns, name, "", d.document)
+	return newAttrNS(ns, name, "", d)
 }
 
-func (d *document) CreateAttribute(name string) Attr  { return newAttr(name, "", d.document) }
-func (d *document) CreateElement(name string) Element { return NewElement(name, d.document) }
+func (d *document) CreateAttribute(name string) Attr  { return newAttr(name, "", d) }
+func (d *document) CreateElement(name string) Element { return NewElement(name, d) }
 func (d *document) CreateText(data string) Text       { return d.CreateTextNode(data) }
-func (d *document) CreateTextNode(data string) Text   { return NewText(data, d.document) }
-func (d *document) CreateComment(data string) Comment { return NewComment(data, d.document) }
+func (d *document) CreateTextNode(data string) Text   { return NewText(data, d) }
+func (d *document) CreateComment(data string) Comment { return NewComment(data, d) }
 func (d *document) CreateElementNS(ns string, name string) Element {
-	return newElementNS(ns, name, d.document)
+	return newElementNS(ns, name, d)
 }
 func (d *document) CreateDocumentType(name string) DocumentType {
-	return NewDocumentType(name, d.document)
+	return NewDocumentType(name, d)
 }
 
 func (d *document) CreateDocumentFragment() DocumentFragment {
-	return NewDocumentFragment(d.document)
+	return NewDocumentFragment(d)
 }
 
 func (d *document) DocumentElement() Element {
@@ -166,12 +166,10 @@ func (d *document) createHtmlNode() *html.Node {
 	}
 }
 
-func (d *document) NodeType() NodeType { return intdom.NodeTypeDocument }
-
 func (d *document) SetActiveElement(e Element) {
 	d.activeElement = e
 }
 
 func (d *document) CreateProcessingInstruction(target string, data string) ProcessingInstruction {
-	return NewProcessingInstruction(target, data, d.document)
+	return NewProcessingInstruction(target, data, d)
 }

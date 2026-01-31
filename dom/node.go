@@ -120,8 +120,8 @@ type node struct {
 	*intdom.Node
 	// revision of the node is incremented on any change. Used by
 	// LiveHtmlCollection to check if a note has been changed.
-	rev       int
-	document  Document
+	rev int
+	// document  Document
 	observers []observer
 }
 
@@ -136,7 +136,6 @@ func newNode(ownerDocument Document, nodeType NodeType) node {
 	return node{
 		Node:        intdom.NewNode(nodePtr(ownerDocument), nodeType),
 		EventTarget: event.NewEventTarget(),
-		document:    ownerDocument,
 	}
 }
 
@@ -247,7 +246,7 @@ func (n *node) ParentElement() Element {
 }
 
 func (n *node) setOwnerDocument(owner Document) {
-	n.document = owner
+	n.Node.OwnerDocument = nodePtr(owner)
 	for _, n := range n.Children {
 		getNode(n).setOwnerDocument(owner)
 	}
@@ -258,7 +257,7 @@ func (n *node) setParent(parent Node) {
 	}
 	if parent != nil {
 		parentOwner := parent.nodeDocument()
-		if n.document != parentOwner {
+		if n.OwnerDocument() != parentOwner {
 			n.setOwnerDocument(parentOwner)
 		}
 		n.Parent = parent.ptr().Node
@@ -493,7 +492,13 @@ func (n *node) OwnerDocument() Document {
 }
 
 func (n *node) nodeDocument() Document {
-	return n.document
+	if n == nil {
+		return nil
+	}
+	if res := getNode(n.Node.OwnerDocument); res != nil {
+		return res.(Document)
+	}
+	return nil
 }
 
 func (n *node) FirstChild() Node {
@@ -552,7 +557,7 @@ func (n *node) SetSelf(node Node) {
 	entity.SetComponentType(n, node)
 	event.SetEventTargetSelf(node)
 	if doc, ok := node.(Document); ok {
-		n.document = doc
+		n.Node.OwnerDocument = nodePtr(doc)
 	}
 }
 
@@ -611,7 +616,7 @@ func (n *node) notify(event ChangeEvent) {
 func (n *node) NodeType() NodeType { return n.ptr().Type }
 
 func (n *node) Logger() (res *slog.Logger) {
-	if docLogger, ok := n.document.(log.LogSource); ok {
+	if docLogger, ok := n.OwnerDocument().(log.LogSource); ok {
 		res = docLogger.Logger()
 	}
 	if res == nil {
