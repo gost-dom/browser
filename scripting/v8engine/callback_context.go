@@ -116,7 +116,8 @@ func (f v8Scope) iso() *v8go.Isolate { return f.host.iso }
 func (f v8Scope) Undefined() jsValue { return f.toJSValue(v8go.Undefined(f.iso())) }
 func (f v8Scope) Null() jsValue      { return f.toJSValue(v8go.Null(f.iso())) }
 
-func (f v8Scope) NewString(val string) jsValue { return f.newV8Value(val) }
+func (f v8Scope) NewString(val string) jsValue  { return f.newV8Value(val) }
+func (f v8Scope) NewNumber(val float64) jsValue { return f.newV8Value(val) }
 
 func (f v8Scope) NewObject() jsObject {
 	val, err := f.V8ScriptContext.v8ctx.RunScript("({})", "gost-dom/object")

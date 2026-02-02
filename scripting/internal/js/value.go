@@ -20,6 +20,7 @@ type Value[T any] interface {
 	Self() T
 
 	String() string
+	Number() float64
 	Int32() int32
 	Uint32() uint32
 	Boolean() bool
@@ -28,6 +29,7 @@ type Value[T any] interface {
 	IsNull() bool
 	IsSymbol() bool
 	IsString() bool
+	IsNumber() bool
 	IsObject() bool
 	IsBoolean() bool
 	IsFunction() bool
@@ -129,6 +131,10 @@ func clone[T any](v Value[T], s Scope[T], objects []Value[T]) (Value[T], error) 
 		return s.Undefined(), nil
 	case v.IsString():
 		return s.NewString(v.String()), nil
+	case v.IsNumber():
+		return s.NewNumber(v.Number()), nil
+	case v.IsBoolean():
+		return s.NewBoolean(v.Boolean()), nil
 	case v.IsFunction():
 		//TODO: Use correct error
 		return nil, errors.New("Serialize function")

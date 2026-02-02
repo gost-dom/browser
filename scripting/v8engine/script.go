@@ -26,22 +26,20 @@ func (s V8Script) Eval() (any, error) {
 }
 
 func v8ValueToGoValue(result *v8go.Value) (any, error) {
-	if result == nil {
+	switch {
+	case result == nil:
 		return nil, nil
-	}
-	if result.IsBoolean() {
+	case result.IsBoolean():
 		return result.Boolean(), nil
-	}
-	if result.IsInt32() {
+	case result.IsInt32():
 		return result.Int32(), nil
-	}
-	if result.IsString() {
+	case result.IsNumber():
+		return result.Number(), nil
+	case result.IsString():
 		return result.String(), nil
-	}
-	if result.IsNull() {
+	case result.IsNull():
 		return nil, nil
-	}
-	if result.IsUndefined() {
+	case result.IsUndefined():
 		return nil, nil
 	}
 	if o, err := result.AsObject(); err == nil {
