@@ -130,6 +130,8 @@ func Clone[T any](v Value[T], s Scope[T]) (Value[T], error) {
 
 func clone[T any](v Value[T], s Scope[T], objects *[][2]Value[T]) (Value[T], error) {
 	switch {
+	case v == nil || v.IsUndefined():
+		return s.Undefined(), nil
 	case v.IsNull():
 		return s.Null(), nil
 	case v.IsUndefined():
