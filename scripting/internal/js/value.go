@@ -43,6 +43,12 @@ type Value[T any] interface {
 	StrictEquals(Value[T]) bool
 }
 
+// IsNullish returns whether a JavaScript value is null or undefined.
+func IsNullish[T any](v Value[T]) bool { return v == nil || v.IsNull() || v.IsUndefined() }
+
+func IsUndefined[T any](v Value[T]) bool { return v == nil || v.IsUndefined() }
+func IsBoolean[T any](v Value[T]) bool   { return v != nil && v.IsBoolean() }
+
 type Function[T any] interface {
 	Value[T]
 
@@ -109,11 +115,6 @@ type Promise[T any] interface {
 	// that all API implementations follow that practice.
 	Reject(Value[T])
 }
-
-// IsNullish returns whether a JavaScript value is null or undefined.
-func IsNullish[T any](v Value[T]) bool { return v == nil || v.IsNull() || v.IsUndefined() }
-
-func IsBoolean[T any](v Value[T]) bool { return v != nil && v.IsBoolean() }
 
 func AsFunction[T any](v Value[T]) (Function[T], bool) {
 	if IsNullish(v) {

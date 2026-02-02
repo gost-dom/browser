@@ -48,8 +48,6 @@ func ConsumeArgument[T, U any](
 	}
 }
 
-func IsUndefined[T any](v Value[T]) bool { return v == nil || v.IsUndefined() }
-
 func ConsumeRestArguments[T, U any](
 	args CallbackContext[U],
 	name string,
