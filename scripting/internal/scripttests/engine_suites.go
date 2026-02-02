@@ -63,11 +63,16 @@ func RunScriptEngineSuites[T any](t *testing.T, f ScriptEngineFactory[T]) {
 	)
 
 	assert.NoError(t, c1.Run(`
+		const b = {
+			id: "b",
+		}
 		const a = {
 			stringVal: "hello",
 			numberVal: 42.5,
 			trueVal: true,
 			falseVal: false,
+			b1: b,
+			b2: b,
 		}
 		globalThis.store(a)
 	`))
@@ -80,4 +85,5 @@ func RunScriptEngineSuites[T any](t *testing.T, f ScriptEngineFactory[T]) {
 	assert.Equal(t, 42.5, c2.MustEval("cloned.numberVal"))
 	assert.True(t, c2.MustEval("cloned.trueVal").(bool))
 	assert.False(t, c2.MustEval("cloned.falseVal").(bool))
+	assert.True(t, c2.MustEval("cloned.b1 === cloned.b2").(bool))
 }
