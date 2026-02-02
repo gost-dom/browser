@@ -6,6 +6,7 @@ import (
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/entity"
+	"github.com/gost-dom/browser/internal/testing/htmltest"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/stretchr/testify/assert"
 )
@@ -43,7 +44,7 @@ func RunScriptEngineSuites[T any](t *testing.T, f ScriptEngineFactory[T]) {
 
 			res, err := js.Clone(val, ctx)
 			if err != nil {
-				fmt.Printf("Clone err: %v\n", err)
+				t.Errorf("Clone error: %v", err)
 			}
 			return res, err
 		})
@@ -52,12 +53,21 @@ func RunScriptEngineSuites[T any](t *testing.T, f ScriptEngineFactory[T]) {
 	global1 := new(Global)
 	global2 := new(Global)
 
-	c1 := e.NewHost(html.ScriptEngineOptions{}).NewContext(dummyContext{global1, t.Context()})
-	c2 := e.NewHost(html.ScriptEngineOptions{}).NewContext(dummyContext{global2, t.Context()})
+	c1 := htmltest.NewScriptContextHelper(
+		t,
+		e.NewHost(html.ScriptEngineOptions{}).NewContext(dummyContext{global1, t.Context()}),
+	)
+	c2 := htmltest.NewScriptContextHelper(
+		t,
+		e.NewHost(html.ScriptEngineOptions{}).NewContext(dummyContext{global2, t.Context()}),
+	)
 
 	assert.NoError(t, c1.Run(`
 		const a = {
-			foo: "hello"
+			stringVal: "hello",
+			numberVal: 42.5,
+			trueVal: true,
+			falseVal: false,
 		}
 		globalThis.store(a)
 	`))
@@ -65,9 +75,9 @@ func RunScriptEngineSuites[T any](t *testing.T, f ScriptEngineFactory[T]) {
 	assert.True(t, ok)
 	entity.SetComponentType(global2, val)
 
-	res, err := c2.Eval(`
-		globalThis.get().foo
-	`)
-	assert.NoError(t, err)
-	assert.Equal(t, "hello", res)
+	assert.NoError(t, c2.Run("const cloned = globalThis.get()"))
+	assert.Equal(t, "hello", c2.MustEval("cloned.stringVal"))
+	assert.Equal(t, 42.5, c2.MustEval("cloned.numberVal"))
+	assert.True(t, c2.MustEval("cloned.trueVal").(bool))
+	assert.False(t, c2.MustEval("cloned.falseVal").(bool))
 }

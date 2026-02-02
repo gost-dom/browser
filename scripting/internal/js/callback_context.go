@@ -169,6 +169,7 @@ type ValueFactory[T any] interface {
 
 	NewPromise() Promise[T]
 	NewString(string) Value[T]
+	NewNumber(float64) Value[T]
 	NewBoolean(bool) Value[T]
 	NewObject() Object[T]
 	NewFunction(Callback[T]) Function[T]

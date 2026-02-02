@@ -100,6 +100,10 @@ func (f scope) NewString(v string) js.Value[jsTypeParam] {
 	return newValue(f.scriptContext, f.vm.ToValue(v))
 }
 
+func (f scope) NewNumber(v float64) js.Value[jsTypeParam] {
+	return newValue(f.scriptContext, f.vm.ToValue(v))
+}
+
 // NewTypeError implements [js.ValueFactory].
 func (c scope) NewTypeError(v string) js.Error[jsTypeParam] {
 	sobekErrVal := c.vm.NewTypeError(v)
