@@ -78,7 +78,7 @@ func RunScriptEngineSuites[T any](t *testing.T, f ScriptEngineFactory[T]) {
 			b2: b,
 			arr1: arr,
 			arr2: arr,
-			// recursiveArray,
+			recursiveArray,
 		}
 		globalThis.store(a)
 	`))
