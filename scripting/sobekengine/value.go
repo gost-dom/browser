@@ -84,10 +84,8 @@ func (v value) IsFunction() bool {
 }
 
 func (v value) String() string { return v.value.String() }
-func (v value) Number() float64 {
-	res, _ := v.value.Export().(float64)
-	return res
-}
+
+func (v value) Number() float64 { return v.value.ToFloat() }
 
 func (v value) Boolean() bool  { return v.value.ToBoolean() }
 func (v value) Int32() int32   { return int32(v.value.ToInteger()) }
