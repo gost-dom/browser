@@ -16,9 +16,9 @@ func NewScriptContextHelper(t testing.TB, ctx html.ScriptContext) ScriptContextH
 }
 
 func (h ScriptContextHelper) MustEval(script string) any {
+	h.t.Helper()
 	res, err := h.Eval(script)
 	if err != nil {
-		h.t.Helper()
 		h.t.Fatalf("Script error: %v", err)
 	}
 	return res
