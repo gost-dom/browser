@@ -3,6 +3,8 @@ package js
 import (
 	"errors"
 	"fmt"
+
+	"github.com/gost-dom/browser/internal/constants"
 )
 
 // Value represents a value in JavaScript. Referential equality cannot be used
@@ -33,6 +35,7 @@ type Value[T any] interface {
 	IsObject() bool
 	IsBoolean() bool
 	IsFunction() bool
+	IsArray() bool
 
 	AsFunction() (Function[T], bool)
 	AsObject() (Object[T], bool)
@@ -136,6 +139,8 @@ func clone[T any](v Value[T], s Scope[T], objects *[][2]Value[T]) (Value[T], err
 		return s.NewNumber(v.Number()), nil
 	case v.IsBoolean():
 		return s.NewBoolean(v.Boolean()), nil
+	case v.IsArray():
+		return cloneArray(v, s, objects)
 	case v.IsFunction():
 		//TODO: Use correct error
 		return nil, errors.New("Serialize function")
@@ -146,13 +151,53 @@ func clone[T any](v Value[T], s Scope[T], objects *[][2]Value[T]) (Value[T], err
 	return nil, fmt.Errorf("Unable to clone value: %v", v)
 }
 
-func cloneObject[T any](o Object[T], s Scope[T], knownObjects *[][2]Value[T]) (Value[T], error) {
+func findKnownValue[T any](o Value[T], knownObjects *[][2]Value[T]) (Value[T], bool) {
 	for _, pair := range *knownObjects {
 		known := pair[0]
 		res := pair[1]
 		if o.StrictEquals(known) {
-			return res, nil
+			return res, true
 		}
+	}
+	return nil, false
+}
+
+func cloneArray[T any](
+	v Value[T],
+	s Scope[T],
+	knownObjects *[][2]Value[T],
+) (Value[T], error) {
+	if existing, ok := findKnownValue(v, knownObjects); ok {
+		return existing, nil
+	}
+	o, ok := v.AsObject()
+	if !ok {
+		return nil, fmt.Errorf(
+			"Object was an array, but not convertible to object. %w",
+			constants.ErrGostDomBug,
+		)
+	}
+	res := s.NewArray()
+	*knownObjects = append(*knownObjects, [2]Value[T]{v, res})
+
+	for v, err := range Iterate(o) {
+		if err != nil {
+			return nil, err
+		}
+		cloned, err := clone(v, s, knownObjects)
+		if err != nil {
+			return nil, err
+		}
+		res.Push(cloned)
+	}
+	// TODO: Potential bug here, if the array references itself recursively,
+	// this would lead to a stack overflow error.
+	return res, nil
+}
+
+func cloneObject[T any](o Object[T], s Scope[T], knownObjects *[][2]Value[T]) (Value[T], error) {
+	if existing, ok := findKnownValue(o, knownObjects); ok {
+		return existing, nil
 	}
 	res := s.NewObject()
 	*knownObjects = append(*knownObjects, [2]Value[T]{o, res})

@@ -68,6 +68,7 @@ func (v v8Value) IsString() bool    { return v.Value.IsString() }
 func (v v8Value) IsNumber() bool    { return v.Value.IsNumber() }
 func (v v8Value) IsSymbol() bool    { return v.Value.IsSymbol() }
 func (v v8Value) IsObject() bool    { return v.Value.IsObject() }
+func (v v8Value) IsArray() bool     { return v.Value.IsArray() }
 func (v v8Value) IsFunction() bool  { return v.Value.IsFunction() }
 
 func (v v8Value) StrictEquals(

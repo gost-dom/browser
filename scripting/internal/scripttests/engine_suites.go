@@ -66,6 +66,9 @@ func RunScriptEngineSuites[T any](t *testing.T, f ScriptEngineFactory[T]) {
 		const b = {
 			id: "b",
 		}
+		const arr = [1,2,3]
+		const recursiveArray = [1,2,3]
+		recursiveArray.push(recursiveArray)
 		const a = {
 			stringVal: "hello",
 			numberVal: 42.5,
@@ -73,6 +76,9 @@ func RunScriptEngineSuites[T any](t *testing.T, f ScriptEngineFactory[T]) {
 			falseVal: false,
 			b1: b,
 			b2: b,
+			arr1: arr,
+			arr2: arr,
+			// recursiveArray,
 		}
 		globalThis.store(a)
 	`))
@@ -86,4 +92,5 @@ func RunScriptEngineSuites[T any](t *testing.T, f ScriptEngineFactory[T]) {
 	assert.True(t, c2.MustEval("cloned.trueVal").(bool))
 	assert.False(t, c2.MustEval("cloned.falseVal").(bool))
 	assert.True(t, c2.MustEval("cloned.b1 === cloned.b2").(bool))
+	assert.Equal(t, "1,2,3", c2.MustEval("cloned.arr1.join(',')"))
 }
