@@ -8,6 +8,7 @@ import (
 type jsTypeParam = value
 type jsValue = js.Value[jsTypeParam]
 type jsObject = js.Object[jsTypeParam]
+type jsArray = js.Array[jsTypeParam]
 type jsFunction = js.Function[jsTypeParam]
 type jsError = js.Error[jsTypeParam]
 

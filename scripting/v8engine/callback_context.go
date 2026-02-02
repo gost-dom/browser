@@ -196,7 +196,7 @@ func (f v8Scope) JSONParse(val string) (jsValue, error) {
 
 }
 
-func (f v8Scope) NewArray(values ...jsValue) jsValue {
+func (f v8Scope) NewArray(values ...jsValue) jsArray {
 	// Total hack, v8go doesn't expose Array values, so we polyfill the engine
 	var err error
 	arrayOf, err := f.v8ctx.RunScript("Array.of", "gost-polyfills-array")
@@ -209,7 +209,11 @@ func (f v8Scope) NewArray(values ...jsValue) jsValue {
 		if err != nil {
 			panic(err)
 		}
-		return res
+		obj, ok := res.AsObject()
+		if !ok {
+			panic("not ok")
+		}
+		return newV8Array(f.V8ScriptContext, obj.(*v8Object).Object)
 	} else {
 		panic("Array.of is not a function")
 	}
