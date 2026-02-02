@@ -1,12 +1,17 @@
 package scripttests
 
 import (
+	"context"
+	"log/slog"
+	"net/http"
 	"testing"
 
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/testing/browsertest"
 	"github.com/gost-dom/browser/scripting/internal/dom/domsuite"
 	"github.com/gost-dom/browser/scripting/internal/html/htmlsuite"
+	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/browser/scripting/internal/uievents/uieventssuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -28,9 +33,11 @@ func RunBasicSuite(t *testing.T, e html.ScriptEngine) {
 	assert.True(t, w.MustEval("window === globalThis").(bool))
 }
 
+type ScriptEngineFactory[T any] = func(js.Configurer[T]) html.ScriptEngine
+
 func RunSuites(t *testing.T, e html.ScriptEngine) {
 	t.Run("ScriptEngineBehaviour", func(t *testing.T) { testScriptEngineBehaviour(t, e) })
-	t.Run("SharowRoot", runSuite(NewShadowRootSuite(e)))
+	t.Run("ShadowRoot", runSuite(NewShadowRootSuite(e)))
 	t.Run("DocumentFragment", runSuite(NewDocumentFragmentSuite(e)))
 	t.Run("XMLHttpRequest", runSuite(NewXMLHttpRequestSuite(e)))
 	t.Run("Location", runSuite(NewLocationSuite(e)))
@@ -58,3 +65,13 @@ func RunSuites(t *testing.T, e html.ScriptEngine) {
 	t.Run("html", func(t *testing.T) { htmlsuite.RunHtmlSuite(t, e) })
 	t.Run("dom", func(t *testing.T) { domsuite.RunDomSuite(t, e) })
 }
+
+type dummyContext struct {
+	*entity.Entity
+	ctx context.Context
+}
+
+func (c dummyContext) Context() context.Context { return c.ctx }
+func (c dummyContext) HTTPClient() http.Client  { return *http.DefaultClient }
+func (c dummyContext) LocationHREF() string     { return "http://example.com" }
+func (c dummyContext) Logger() *slog.Logger     { return nil }

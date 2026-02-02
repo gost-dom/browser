@@ -1,5 +1,12 @@
 package js
 
+import (
+	"errors"
+	"fmt"
+
+	"github.com/gost-dom/browser/internal/constants"
+)
+
 // Value represents a value in JavaScript. Referential equality cannot be used
 // to check if to Value instances represent the same value in JavaScript. Use
 // StrictEquals to check if two values are equal.
@@ -15,6 +22,7 @@ type Value[T any] interface {
 	Self() T
 
 	String() string
+	Number() float64
 	Int32() int32
 	Uint32() uint32
 	Boolean() bool
@@ -23,15 +31,23 @@ type Value[T any] interface {
 	IsNull() bool
 	IsSymbol() bool
 	IsString() bool
+	IsNumber() bool
 	IsObject() bool
 	IsBoolean() bool
 	IsFunction() bool
+	IsArray() bool
 
 	AsFunction() (Function[T], bool)
 	AsObject() (Object[T], bool)
 
 	StrictEquals(Value[T]) bool
 }
+
+// IsNullish returns whether a JavaScript value is null or undefined.
+func IsNullish[T any](v Value[T]) bool { return v == nil || v.IsNull() || v.IsUndefined() }
+
+func IsUndefined[T any](v Value[T]) bool { return v == nil || v.IsUndefined() }
+func IsBoolean[T any](v Value[T]) bool   { return v != nil && v.IsBoolean() }
 
 type Function[T any] interface {
 	Value[T]
@@ -100,14 +116,108 @@ type Promise[T any] interface {
 	Reject(Value[T])
 }
 
-// IsNullish returns whether a JavaScript value is null or undefined.
-func IsNullish[T any](v Value[T]) bool { return v == nil || v.IsNull() || v.IsUndefined() }
-
-func IsBoolean[T any](v Value[T]) bool { return v != nil && v.IsBoolean() }
-
 func AsFunction[T any](v Value[T]) (Function[T], bool) {
 	if IsNullish(v) {
 		return nil, false
 	}
 	return v.AsFunction()
+}
+
+func Clone[T any](v Value[T], s Scope[T]) (Value[T], error) {
+	var objects [][2]Value[T]
+	return clone(v, s, &objects)
+}
+
+func clone[T any](v Value[T], s Scope[T], objects *[][2]Value[T]) (Value[T], error) {
+	switch {
+	case v == nil || v.IsUndefined():
+		return s.Undefined(), nil
+	case v.IsNull():
+		return s.Null(), nil
+	case v.IsUndefined():
+		return s.Undefined(), nil
+	case v.IsString():
+		return s.NewString(v.String()), nil
+	case v.IsNumber():
+		return s.NewNumber(v.Number()), nil
+	case v.IsBoolean():
+		return s.NewBoolean(v.Boolean()), nil
+	case v.IsArray():
+		return cloneArray(v, s, objects)
+	case v.IsFunction():
+		//TODO: Use correct error
+		return nil, errors.New("Serialize function")
+	}
+	if o, ok := v.AsObject(); ok {
+		return cloneObject(o, s, objects)
+	}
+	return nil, fmt.Errorf("Unable to clone value: %v", v)
+}
+
+func findKnownValue[T any](o Value[T], knownObjects *[][2]Value[T]) (Value[T], bool) {
+	for _, pair := range *knownObjects {
+		known := pair[0]
+		res := pair[1]
+		if o.StrictEquals(known) {
+			return res, true
+		}
+	}
+	return nil, false
+}
+
+func cloneArray[T any](
+	v Value[T],
+	s Scope[T],
+	knownObjects *[][2]Value[T],
+) (Value[T], error) {
+	if existing, ok := findKnownValue(v, knownObjects); ok {
+		return existing, nil
+	}
+	o, ok := v.AsObject()
+	if !ok {
+		return nil, fmt.Errorf(
+			"Object was an array, but not convertible to object. %w",
+			constants.ErrGostDomBug,
+		)
+	}
+	res := s.NewArray()
+	*knownObjects = append(*knownObjects, [2]Value[T]{v, res})
+
+	for v, err := range Iterate(o) {
+		if err != nil {
+			return nil, err
+		}
+		cloned, err := clone(v, s, knownObjects)
+		if err != nil {
+			return nil, err
+		}
+		res.Push(cloned)
+	}
+	// TODO: Potential bug here, if the array references itself recursively,
+	// this would lead to a stack overflow error.
+	return res, nil
+}
+
+func cloneObject[T any](o Object[T], s Scope[T], knownObjects *[][2]Value[T]) (Value[T], error) {
+	if existing, ok := findKnownValue(o, knownObjects); ok {
+		return existing, nil
+	}
+	res := s.NewObject()
+	*knownObjects = append(*knownObjects, [2]Value[T]{o, res})
+	keys, err := o.Keys()
+	if err != nil {
+		return nil, err
+	}
+	for _, k := range keys {
+		oldV, err := o.Get(k)
+		if err != nil {
+			return nil, err
+		}
+		newV, err := clone(oldV, s, knownObjects)
+		if err != nil {
+			return nil, err
+		}
+		res.Set(k, newV)
+	}
+	return res, nil
 }

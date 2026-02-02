@@ -169,6 +169,7 @@ type ValueFactory[T any] interface {
 
 	NewPromise() Promise[T]
 	NewString(string) Value[T]
+	NewNumber(float64) Value[T]
 	NewBoolean(bool) Value[T]
 	NewObject() Object[T]
 	NewFunction(Callback[T]) Function[T]
@@ -179,7 +180,7 @@ type ValueFactory[T any] interface {
 
 	// NewArray creates a JavaScript array containing the values. If any value
 	// is nil, it will become undefined in the resulting array.
-	NewArray(...Value[T]) Value[T]
+	NewArray(...Value[T]) Array[T]
 	// NewIterator returns an object implementing the [Iterator protocol]
 	//
 	// [Iterator protocol]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterator_protocol

@@ -8,6 +8,7 @@ import (
 type jsTypeParam = value
 type jsValue = js.Value[jsTypeParam]
 type jsObject = js.Object[jsTypeParam]
+type jsArray = js.Array[jsTypeParam]
 type jsFunction = js.Function[jsTypeParam]
 type jsError = js.Error[jsTypeParam]
 
@@ -40,16 +41,19 @@ func (v value) AsFunction() (js.Function[jsTypeParam], bool) {
 }
 
 func (v value) AsObject() (jsObject, bool) {
-	if o := v.value.ToObject(v.ctx.vm); o != nil {
-		return newObject(v.ctx, o), true
+	if !v.IsObject() {
+		return nil, false
 	}
-	return nil, false
+	o := v.value.ToObject(v.ctx.vm)
+	return newObject(v.ctx, o), true
 }
 
 func (v value) IsNull() bool { return sobek.IsNull(v.value) }
 
 func (v value) IsUndefined() bool { return sobek.IsUndefined(v.value) }
 func (v value) IsString() bool    { return sobek.IsString(v.value) }
+func (v value) IsNumber() bool    { return sobek.IsNumber(v.value) }
+func (v value) IsArray() bool     { return v.ctx.isArray(v) }
 
 func (v value) IsBoolean() bool {
 	// Sobek doesn't expose an IsBoolean function, so resort to calling 'typeof'
@@ -80,6 +84,9 @@ func (v value) IsFunction() bool {
 }
 
 func (v value) String() string { return v.value.String() }
+
+func (v value) Number() float64 { return v.value.ToFloat() }
+
 func (v value) Boolean() bool  { return v.value.ToBoolean() }
 func (v value) Int32() int32   { return int32(v.value.ToInteger()) }
 func (v value) Uint32() uint32 { return uint32(v.value.ToInteger()) }

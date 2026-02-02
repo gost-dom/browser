@@ -14,6 +14,7 @@ type jsValue = js.Value[*v8Value]
 type jsClass = js.Class[*v8Value]
 type jsFunction = js.Function[*v8Value]
 type jsObject = js.Object[*v8Value]
+type jsArray = js.Array[*v8Value]
 type jsError = js.Error[*v8Value]
 
 func toV8Value(v jsValue) *v8go.Value {
@@ -54,17 +55,20 @@ func (v *v8Value) v8Value() *v8go.Value {
 	return v.Value
 }
 
-func (v v8Value) String() string { return v.Value.String() }
-func (v v8Value) Int32() int32   { return v.Value.Int32() }
-func (v v8Value) Uint32() uint32 { return v.Value.Uint32() }
-func (v v8Value) Boolean() bool  { return v.Value.Boolean() }
+func (v v8Value) String() string  { return v.Value.String() }
+func (v v8Value) Number() float64 { return v.Value.Number() }
+func (v v8Value) Int32() int32    { return v.Value.Int32() }
+func (v v8Value) Uint32() uint32  { return v.Value.Uint32() }
+func (v v8Value) Boolean() bool   { return v.Value.Boolean() }
 
 func (v v8Value) IsUndefined() bool { return v.Value == nil || v.Value.IsUndefined() }
 func (v v8Value) IsNull() bool      { return v.Value.IsNull() }
 func (v v8Value) IsBoolean() bool   { return v.Value.IsBoolean() }
 func (v v8Value) IsString() bool    { return v.Value.IsString() }
+func (v v8Value) IsNumber() bool    { return v.Value.IsNumber() }
 func (v v8Value) IsSymbol() bool    { return v.Value.IsSymbol() }
 func (v v8Value) IsObject() bool    { return v.Value.IsObject() }
+func (v v8Value) IsArray() bool     { return v.Value.IsArray() }
 func (v v8Value) IsFunction() bool  { return v.Value.IsFunction() }
 
 func (v v8Value) StrictEquals(
