@@ -120,10 +120,11 @@ func AsFunction[T any](v Value[T]) (Function[T], bool) {
 }
 
 func Clone[T any](v Value[T], s Scope[T]) (Value[T], error) {
-	return clone(v, s, nil)
+	var objects [][2]Value[T]
+	return clone(v, s, &objects)
 }
 
-func clone[T any](v Value[T], s Scope[T], objects []Value[T]) (Value[T], error) {
+func clone[T any](v Value[T], s Scope[T], objects *[][2]Value[T]) (Value[T], error) {
 	switch {
 	case v.IsNull():
 		return s.Null(), nil
@@ -145,14 +146,16 @@ func clone[T any](v Value[T], s Scope[T], objects []Value[T]) (Value[T], error) 
 	return nil, fmt.Errorf("Unable to clone value: %v", v)
 }
 
-func cloneObject[T any](o Object[T], s Scope[T], knownObjects []Value[T]) (Value[T], error) {
-	for _, known := range knownObjects {
+func cloneObject[T any](o Object[T], s Scope[T], knownObjects *[][2]Value[T]) (Value[T], error) {
+	for _, pair := range *knownObjects {
+		known := pair[0]
+		res := pair[1]
 		if o.StrictEquals(known) {
-			return known, nil
+			return res, nil
 		}
 	}
 	res := s.NewObject()
-	knownObjects = append(knownObjects, res)
+	*knownObjects = append(*knownObjects, [2]Value[T]{o, res})
 	keys, err := o.Keys()
 	if err != nil {
 		return nil, err
