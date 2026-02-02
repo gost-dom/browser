@@ -53,6 +53,7 @@ func (v value) IsNull() bool { return sobek.IsNull(v.value) }
 func (v value) IsUndefined() bool { return sobek.IsUndefined(v.value) }
 func (v value) IsString() bool    { return sobek.IsString(v.value) }
 func (v value) IsNumber() bool    { return sobek.IsNumber(v.value) }
+func (v value) IsArray() bool     { return v.ctx.isArray(v) }
 
 func (v value) IsBoolean() bool {
 	// Sobek doesn't expose an IsBoolean function, so resort to calling 'typeof'

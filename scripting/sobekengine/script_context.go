@@ -371,7 +371,17 @@ func (c *scriptContext) typeOf(v value) string {
 		panic(err)
 	}
 	return res.String()
+}
 
+func (c *scriptContext) isArray(v value) bool {
+	vm := c.vm
+	fn, _ := vm.RunString("x => Array.isArray(x)")
+	fnn, _ := sobek.AssertFunction(fn)
+	res, err := fnn(vm.GlobalObject(), v.value)
+	if err != nil {
+		panic(err)
+	}
+	return res.ToBoolean()
 }
 
 /* -------- script -------- */
