@@ -64,12 +64,12 @@ func (f scope) JSONStringify(v js.Value[jsTypeParam]) string {
 	panic(fmt.Sprintf("gost-dom/sobekhost: JSONStringify only supports objects. Got: %v", v))
 }
 
-func (f scope) NewArray(v ...js.Value[jsTypeParam]) js.Value[jsTypeParam] {
+func (f scope) NewArray(v ...js.Value[jsTypeParam]) jsArray {
 	arr := make([]any, len(v))
 	for i, val := range v {
 		arr[i] = unwrapValue(val)
 	}
-	return newObject(f.scriptContext, f.vm.NewArray(arr...))
+	return newArray(f.scriptContext, f.vm.NewArray(arr...))
 }
 
 func (f scope) NewBoolean(v bool) js.Value[jsTypeParam] {
