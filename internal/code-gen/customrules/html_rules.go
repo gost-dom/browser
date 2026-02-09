@@ -2,6 +2,7 @@ package customrules
 
 import (
 	"github.com/gost-dom/code-gen/gotypes"
+	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/webref/idl"
 )
 
@@ -74,6 +75,11 @@ var htmlRules = SpecRules{
 		"clearTimeout":  {Arguments: ArgumentRules{"id": {GoType: taskHandle}}},
 		"clearInterval": {Arguments: ArgumentRules{"id": {GoType: taskHandle}}},
 	}},
+	"MessagePort": {
+		InterfacePackage: packagenames.HTMLInterfaces,
+		Operations: OperationRules{
+			"postMessage": {Ignore: true},
+		}},
 }
 
 func init() {

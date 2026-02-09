@@ -37,3 +37,13 @@ func TestHTMLInterfaceWindowOrWorkerGlobalScope(t *testing.T) {
 	Expect(gen).ToNot(HaveRenderedSubstring("\tOrigin()"))
 	Expect(gen).To(HaveRenderedSubstring("\tSetTimeout(TimerHandler, time.Duration"))
 }
+func TestMessagePortDoesntEmbedEventTarget(t *testing.T) {
+	// The specialized EventTarget IDL interfaces contains on... attributes for
+	// the events. We want to expose those to JavaScript, but not the
+	// implementation interfaces.
+	Expect := gomega.NewWithT(t).Expect
+	gen := generateHtmlIntf(t, "MessagePort")
+
+	Expect(gen).To(HaveRenderedSubstring("interface {\n\tevent.EventTarget"))
+	Expect(gen).ToNot(HaveRenderedSubstring("\tMessageEventTarget"))
+}

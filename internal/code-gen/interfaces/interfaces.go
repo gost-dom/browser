@@ -2,6 +2,7 @@ package interfaces
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/gost-dom/code-gen/customrules"
 	htmlelements "github.com/gost-dom/code-gen/html-elements"
@@ -69,6 +70,9 @@ func generateInterface(webApi string, target string, idlInterface idl.Interface)
 	}
 
 	for idx, i := range idlInterface.Includes {
+		if strings.HasSuffix(i.Name, "EventTarget") && i.Name != "EventTarget" {
+			continue
+		}
 		includes[idx] = IdlInterfaceInclude{i}
 	}
 
