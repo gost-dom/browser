@@ -75,6 +75,7 @@ var htmlRules = SpecRules{
 		"clearTimeout":  {Arguments: ArgumentRules{"id": {GoType: taskHandle}}},
 		"clearInterval": {Arguments: ArgumentRules{"id": {GoType: taskHandle}}},
 	}},
+	"MessageChannel": {InterfacePackage: packagenames.HTMLInterfaces},
 	"MessagePort": {
 		InterfacePackage: packagenames.HTMLInterfaces,
 		Operations: OperationRules{

@@ -10,7 +10,7 @@ var PackageInterfacesConfiguration = map[string]PackageInterfaces{
 		webApi: "html",
 		interfaces: []string{
 			"WindowOrWorkerGlobalScope",
-			"History", "MessagePort",
+			"History", "MessagePort", "MessageChannel",
 		},
 	},
 	"dom": {
