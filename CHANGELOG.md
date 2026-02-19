@@ -1,6 +1,52 @@
 # Changelog - Gost-DOM
 
 
+## [0.11.0](https://github.com/gost-dom/browser/compare/v0.10.3...v0.11.0) (2026-02-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* Remove deprecated domparser.ParseReader
+* Adds a new return value to class list functions
+
+### Features
+
+* Document.CreateAttributeNS ([0b4733f](https://github.com/gost-dom/browser/commit/0b4733f5ac51342a401b8c48cd012b2119cf39ad))
+* Document.CreateElementNS ([9a91e3d](https://github.com/gost-dom/browser/commit/9a91e3d0eb54a653b090a4b5dffbb735069d6849))
+* Element/Attr.NamespaceURI ([44dbbd0](https://github.com/gost-dom/browser/commit/44dbbd052424a20e43fd7f6e1f08716857bf6344))
+* Element/Document.GetElementsByTagName ([635c200](https://github.com/gost-dom/browser/commit/635c20020d1c298684abffe268f48619cd41bd4e))
+* GetElementsByTagName returns a live collection ([657552f](https://github.com/gost-dom/browser/commit/657552f4591e146269e6e1357fd84b8f887ca3f9))
+* Handle rejected promises when using sobek ([7dc34a3](https://github.com/gost-dom/browser/commit/7dc34a3cbcd7d92c9858f3d2d71b2accdb6b1590))
+* Implement basic DOMException in JS ([aaadea8](https://github.com/gost-dom/browser/commit/aaadea8ecfe646a8f52df1944a8312366aa69e5d))
+* Implement node.NodeValue ([69d7cd2](https://github.com/gost-dom/browser/commit/69d7cd2ab65c74042de383b6bf4271d26ec1322e))
+* Move Location to Document ([26c7d12](https://github.com/gost-dom/browser/commit/26c7d12a17daee0269c28cbae787165d41e54f3a))
+* Move Location() to HTMLDocument ([fb2cc95](https://github.com/gost-dom/browser/commit/fb2cc95f768f8a0b5121b3db0e0f06af8b667284))
+* new Document() returns a document with `null` location ([599c82c](https://github.com/gost-dom/browser/commit/599c82c061057657bbe093d8372ea30885f9ce1b))
+* Properly throw DOMExceptions in JavaScript ([87b7902](https://github.com/gost-dom/browser/commit/87b79024a55d3ba6e716528ca499863ae8336815))
+* Remove deprecated domparser.ParseReader ([edc93af](https://github.com/gost-dom/browser/commit/edc93af86c5528378dcd5c0606abd7641ddc8fae))
+* Return an error when running a script with a cancelled context ([af71820](https://github.com/gost-dom/browser/commit/af71820d7aea1864670ae2149bce9f5e574c7e34))
+* SyntaxError are properly reported to JS ([a1dbc49](https://github.com/gost-dom/browser/commit/a1dbc497d1c3d0832de4baedb3ef5512a73f9bd9))
+
+
+### Bug Fixes
+
+* addEventListener didn't respect `once` option ([590ada4](https://github.com/gost-dom/browser/commit/590ada4bf5ca4c07730d7dbb19e1deee0d78dae7))
+* Document methods on Document ([c880722](https://github.com/gost-dom/browser/commit/c88072234427414c2043d0fd8aedc159216f7035))
+* Document.CloneNode() doesn't panic ([62d1193](https://github.com/gost-dom/browser/commit/62d11939b93252bbff79fe3122be7d274ad962a4))
+* Document.GetElementsByTagName with invalid name ([8c41d6c](https://github.com/gost-dom/browser/commit/8c41d6c6bdfa94f3222908f93aa2dedb1eaa67a3))
+* Don't panic on negative DOMTokenList index ([6c08555](https://github.com/gost-dom/browser/commit/6c0855586b8d504c82e48e424fbdcc85c26d463a))
+* Element.classlist trims whitespace ([726d46f](https://github.com/gost-dom/browser/commit/726d46f174e59f626834fa188b3507f84ab4a68d))
+* Element.InsertAdjacentText returns SyntaxError on invalid position ([0e2454c](https://github.com/gost-dom/browser/commit/0e2454c065f8e073b801928f9b34aa8e41c29c97))
+* Error in error event handler would cause a stack overflow ([d8c94f7](https://github.com/gost-dom/browser/commit/d8c94f709c9e4c9adbbb578ebfb8f1e471dba136))
+* Fix race condition ([4be6c0c](https://github.com/gost-dom/browser/commit/4be6c0c30b0a35b0799ddcbdbe6a49aff737a0bd))
+* Handle JavaScript event handler returning "false" ([637bde0](https://github.com/gost-dom/browser/commit/637bde01fb0f0d56bed98c046aec40258ce1fb0a))
+* Infinite event handler recursion ([4a6e5ed](https://github.com/gost-dom/browser/commit/4a6e5ed623645ba45d238739162c59f887c1c40d))
+* insertAdjacentElement with same parent ([9435f52](https://github.com/gost-dom/browser/commit/9435f52507b893c4522981d2e375ce9b90030077))
+* Node.Contains should return true when passing itself ([59ed99b](https://github.com/gost-dom/browser/commit/59ed99bfb1b01b8bba852e2e478462b80861ad08))
+* Resolve relative script URLs correctly ([f3b0287](https://github.com/gost-dom/browser/commit/f3b028708eedf6adbac48c9b3dd22059beae3df6))
+* Return HierarchyRequestError from assertCanAddNode ([580648c](https://github.com/gost-dom/browser/commit/580648cdd5f64caa859cc020e29d30e9c7a25898))
+* Validate input for DOMTokenList functions ([5595f74](https://github.com/gost-dom/browser/commit/5595f74433670293193098638fbd1cdacf81264f))
+
 ## [0.10.3](https://github.com/gost-dom/browser/compare/v0.10.2...v0.10.3) (2025-12-07)
 
 
