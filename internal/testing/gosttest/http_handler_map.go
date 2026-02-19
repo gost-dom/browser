@@ -3,6 +3,7 @@ package gosttest
 import (
 	"fmt"
 	"net/http"
+	"testing"
 )
 
 // HttpHandlerMap is a simple [http.Handler] implementing a mux (router) based
@@ -13,6 +14,13 @@ import (
 // Combine with handlers like [StaticHTML], [StaticJS], or [StaticJSON]
 // makes it easy build the necessary context for a many test cases.
 type HttpHandlerMap map[string]http.Handler
+
+func TestLoggerMiddleware(t testing.TB, h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		t.Logf("Request: %s %s", r.Method, r.URL.Path)
+		h.ServeHTTP(w, r)
+	})
+}
 
 // A simple [http.Handler] that serves static file content. This type is a pair
 // of MIMEType and body content.
@@ -39,10 +47,10 @@ func StaticJS(js string) StaticFile { return StaticFile{"text/javascript", js} }
 func StaticJSON(json string) StaticFile { return StaticFile{"application/json", json} }
 
 func (s HttpHandlerMap) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		return
-	}
+	// if r.Method != "GET" {
+	// 	w.WriteHeader(http.StatusMethodNotAllowed)
+	// 	return
+	// }
 	if content, found := s[r.URL.Path]; found {
 		content.ServeHTTP(w, r)
 	} else {
