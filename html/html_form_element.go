@@ -8,6 +8,7 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/dom/event"
+	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/url"
 )
 
@@ -127,6 +128,8 @@ func (e *htmlFormElement) submitFormData(formData *FormData) error {
 		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	}
 	if err != nil {
+		l := e.logger()
+		l.Error("Error creating request for form", log.ErrAttr(err))
 		return err
 	}
 	return e.htmlDocument.window().fetchRequest(req)

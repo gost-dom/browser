@@ -1,6 +1,7 @@
 package html_test
 
 import (
+	"log/slog"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -9,6 +10,7 @@ import (
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/gosthttp"
+	"github.com/gost-dom/browser/internal/testing/browsertest"
 	"github.com/gost-dom/browser/internal/testing/eventtest"
 	"github.com/gost-dom/browser/internal/testing/fixtures"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
@@ -16,6 +18,7 @@ import (
 	"github.com/gost-dom/browser/internal/testing/htmltest"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 	"github.com/gost-dom/fixture"
+	"github.com/stretchr/testify/assert"
 )
 
 type HTTPHandlerFixture struct{ *http.ServeMux }
@@ -296,6 +299,7 @@ func TestHTMLFormElementSubmitInputWithClickResetButton(t *testing.T) {
 }
 
 func TestResubmitFormOn307Redirects(t *testing.T) {
+	assert := assert.New(t)
 	w, setup := fixture.Init(t, &HTMLFormSubmitInputFixture{})
 	w.BaseLocation = "http://example.com/forms"
 	setup.Setup()
@@ -309,6 +313,25 @@ func TestResubmitFormOn307Redirects(t *testing.T) {
 	form.SetAction("/form-destination")
 	form.Submit()
 
-	w.Assert().Equal(1, len(rec.Requests), "Request sent to the redirected location")
-	w.Assert().Equal([]string{"bar"}, rec.Single().PostForm["foo"])
+	assert.Equal(1, len(rec.Requests), "Request sent to the redirected location")
+	assert.Equal([]string{"bar"}, rec.Single().PostForm["foo"])
+}
+
+func TestFormSubmitDisplaysPageOnNewLocation(t *testing.T) {
+	h := gosttest.HttpHandlerMap{
+		"/": gosttest.StaticHTML(`<body>
+			<form method="post" action="/post/action">
+				<input type="submit" id="btn">Submit</input>
+			</form>
+		</body>`),
+		"/post/action": gosttest.StaticHTML(`<body><h1>Target page</h1></body>`),
+	}
+	b := browsertest.InitBrowser(t, h, nil, browsertest.WithMinLogLevel(slog.LevelDebug))
+	win := b.OpenWindow("http://example.com/")
+	t.Log(win.HTMLDocument().DocumentElement().OuterHTML())
+	btn := win.HTMLDocument().GetHTMLElementById("btn")
+	btn.Click()
+	t.Log(win.HTMLDocument().Body().OuterHTML())
+	h1 := win.HTMLDocument().MustQuerySelectorHTML("h1")
+	assert.Equal(t, "Target page", h1.TextContent())
 }

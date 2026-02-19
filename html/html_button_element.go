@@ -1,6 +1,10 @@
 package html
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/gost-dom/browser/internal/log"
+)
 
 type HTMLButtonElement interface {
 	HTMLElement
@@ -39,7 +43,9 @@ func (e *htmlButtonElement) trySubmitForm() {
 		parent = parent.ParentNode()
 	}
 	if form != nil {
-		form.RequestSubmit(e)
+		if err := form.RequestSubmit(e); err != nil {
+			e.logger().Error("Button click, error submitting form", log.ErrAttr(err))
+		}
 	}
 }
 

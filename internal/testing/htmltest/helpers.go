@@ -146,6 +146,14 @@ func NewHTMLParentNodeHelper(t testing.TB, n dom.ElementParent) HTMLParentNodeHe
 	return HTMLParentNodeHelper{t, n}
 }
 
+func (h HTMLParentNodeHelper) MustQuerySelectorHTML(pattern string) HTMLElementHelper {
+	res := h.QuerySelectorHTML(pattern)
+	if res.HTMLElement == nil {
+		h.t.Fatalf("QuerySelector returned nil: %s", pattern)
+	}
+	return res
+}
+
 func (h HTMLParentNodeHelper) QuerySelectorHTML(pattern string) (res HTMLElementHelper) {
 	h.t.Helper()
 	e, err := h.ElementParent.QuerySelector(pattern)
