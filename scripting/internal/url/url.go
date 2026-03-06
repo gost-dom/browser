@@ -2,7 +2,6 @@ package url
 
 import (
 	"fmt"
-	"runtime/cgo"
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/constants"
@@ -17,10 +16,6 @@ type URL[T any] struct {
 func NewURL[T any](host js.ScriptEngine[T]) URL[T] {
 	return URL[T]{}
 }
-
-type handleDisposable cgo.Handle
-
-func (h handleDisposable) Dispose() { cgo.Handle(h).Delete() }
 
 func CreateURL[T any](
 	cbCtx js.CallbackContext[T],
