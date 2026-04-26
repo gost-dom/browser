@@ -151,10 +151,10 @@ func configureDOMNode(specs *WebAPIConfig) {
 		"prefix",
 		"shadowRoot",
 		"slot",
-		"className",
 		"decodeShadowRootInit",
 		"attachShadow",
 	)
+	domElement.Method("className").SetCustomImplementation()
 
 	domElement.MarkMembersAsIgnored(
 		// HTMX fails if these exist but throw

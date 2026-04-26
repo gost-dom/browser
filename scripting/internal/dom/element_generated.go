@@ -298,14 +298,6 @@ func Element_setID[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err err
 	return nil, nil
 }
 
-func Element_className[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_className: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
-}
-
-func Element_setClassName[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Element.Element_setClassName: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
-}
-
 func Element_classList[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[dom.Element](cbCtx.Instance())
 	if err != nil {

@@ -21,3 +21,27 @@ func encodeNamedNodeMap[T any](
 func decodeElement[T any](s js.Scope[T], v js.Value[T]) (dom.Element, error) {
 	return codec.DecodeAs[dom.Element](s, v)
 }
+
+func Element_className[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	instance, err := js.As[dom.Element](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	if className, ok := instance.GetAttribute("class"); ok {
+		return codec.EncodeString(cbCtx, className)
+	}
+	return cbCtx.Null(), nil
+}
+
+func Element_setClassName[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	instance, err := js.As[dom.Element](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	className, err := js.ConsumeArgument(cbCtx, "qualifiedName", nil, codec.DecodeString)
+	if err != nil {
+		return nil, err
+	}
+	instance.SetAttribute("class", className)
+	return nil, nil
+}
