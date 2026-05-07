@@ -27,6 +27,8 @@ var domRules = SpecRules{
 			"createElementNS": {Arguments: ArgumentRules{
 				"options": {Ignore: true, Variadic: true}, // TODO: Get this working
 			}},
+			"createAttribute":   {HasError: true},
+			"createAttributeNS": {HasError: true},
 		},
 		Attributes: AttributeRules{
 			"body": {SetterHasError: true},
@@ -66,6 +68,7 @@ var domRules = SpecRules{
 			"appendChild":  {HasError: true},
 			"removeChild":  {HasError: true},
 			"replaceChild": {HasError: true},
+			"setAttribute": {HasError: true},
 		},
 		Attributes: AttributeRules{
 			"nodeType": {GoType: GoType{

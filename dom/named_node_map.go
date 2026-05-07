@@ -42,9 +42,29 @@ type attr struct {
 	attr         *html.Attribute
 }
 
-func newAttr(n, v string, doc Document) Attr { return newAttrNS("", n, v, doc) }
+func newAttr(n, v string, doc Document) (Attr, error) { return newAttrNS("", n, v, doc) }
 
-func newAttrNS(ns, n, v string, doc Document) Attr {
+func newAttrNS(ns, n, v string, doc Document) (Attr, error) {
+	prefix := decodeAttrQualifiedName(n).prefix
+	switch prefix {
+	case "xml":
+		{
+			if ns != "http://www.w3.org/XML/1998/namespace" {
+				return nil, newDomErrorCode("xml prefix has wrong namespaceURI",
+					invalid_character_err,
+				)
+			}
+		}
+	case "xmlns":
+		{
+			if ns != "http://www.w3.org/2000/xmlns/" {
+				return nil, newDomErrorCode(
+					"xml prefix has wrong namespaceURI",
+					invalid_character_err,
+				)
+			}
+		}
+	}
 	res := &attr{
 		node: newNode(doc),
 		attr: &html.Attribute{
@@ -55,7 +75,7 @@ func newAttrNS(ns, n, v string, doc Document) Attr {
 	}
 	res.SetSelf(res)
 	event.SetEventTargetSelf(res)
-	return res
+	return res, nil
 }
 
 func (a *attr) setParent(parent Node) {
@@ -72,7 +92,11 @@ func (a *attr) htmlAttr() html.Attribute {
 }
 
 func (a *attr) cloneNode(doc Document, deep bool) Node {
-	return newAttrNS(a.attr.Namespace, a.attr.Key, a.attr.Val, doc)
+	res, err := newAttrNS(a.attr.Namespace, a.attr.Key, a.attr.Val, doc)
+	if err != nil {
+		panic("clone attribute: attribute not value")
+	}
+	return res
 }
 
 func (m *namedNodeMap) All() iter.Seq[Attr] {
@@ -103,11 +127,12 @@ func (m *namedNodeMap) Item(index int) Attr {
 	return result
 }
 
-func (a *attr) LocalName() string     { return a.attr.Key }
+func (a *attr) LocalName() string     { return decodeAttrQualifiedName(a.attr.Key).localName }
+func (a *attr) NodeName() string      { return a.Name() }
 func (a *attr) Name() string          { return a.attr.Key }
 func (a *attr) NamespaceURI() string  { return a.attr.Namespace }
 func (a *attr) OwnerElement() Element { return a.ownerElement }
-func (a *attr) Prefix() string        { return "" }
+func (a *attr) Prefix() string        { return decodeAttrQualifiedName(a.attr.Key).prefix }
 func (a *attr) Value() string         { return a.attr.Val }
 func (a *attr) SetValue(val string)   { a.attr.Val = val }
 func (a *attr) NodeType() NodeType    { return NodeTypeAttribute }

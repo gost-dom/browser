@@ -70,7 +70,8 @@ func (s *ElementTestSuite) TestAttributeNodesAreMutable() {
 
 func (s *ElementTestSuite) TestSetAttributeNodeAddsNew() {
 	elm := s.doc.CreateElement("div")
-	attr := s.doc.CreateAttribute("class")
+	attr, err := s.doc.CreateAttribute("class")
+	s.Expect(err).ToNot(HaveOccurred())
 	attr.SetValue("foo")
 	result, err := elm.SetAttributeNode(attr)
 	s.Expect(err).ToNot(HaveOccurred())
@@ -83,7 +84,8 @@ func (s *ElementTestSuite) TestSetAttributeNodeAddsNew() {
 func (s *ElementTestSuite) TestAttributeNodeUpdatesExisting() {
 	elm := s.doc.CreateElement("div")
 	elm.SetAttribute("class", "bar")
-	attr := s.doc.CreateAttribute("class")
+	attr, err := s.doc.CreateAttribute("class")
+	s.Expect(err).ToNot(HaveOccurred())
 	attr.SetValue("foo")
 	result, err := elm.SetAttributeNode(attr)
 	s.Expect(err).ToNot(HaveOccurred())

@@ -27,12 +27,15 @@ func (e *htmlAnchorElement) Click() {
 	}
 }
 
-func (e *htmlAnchorElement) SetAttribute(name string, val string) {
+func (e *htmlAnchorElement) SetAttribute(name string, val string) error {
 	win := e.window().History().window
-	e.htmlElement.SetAttribute(name, val)
+	if err := e.htmlElement.SetAttribute(name, val); err != nil {
+		return err
+	}
 	if name == "href" {
 		e.URL = win.resolveHref(val)
 	}
+	return nil
 }
 
 func (e *htmlAnchorElement) setUrl(f func(*url.URL, string), val string) {

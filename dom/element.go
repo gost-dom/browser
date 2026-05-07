@@ -27,7 +27,7 @@ type Element interface {
 	Closest(string) (Element, error)
 	HasAttribute(name string) bool
 	GetAttribute(name string) (string, bool)
-	SetAttribute(name string, value string)
+	SetAttribute(name string, value string) error
 	RemoveAttribute(name string)
 	GetAttributeNode(string) Attr
 	SetAttributeNode(Attr) (Attr, error)
@@ -282,14 +282,19 @@ func (e *element) Attributes() NamedNodeMap {
 	return &namedNodeMap{ownerElement: e}
 }
 
-func (e *element) SetAttribute(name string, value string) {
+func (e *element) SetAttribute(name string, value string) error {
 	if a := e.GetAttributeNode(name); a != nil {
 		prevVal := a.Value()
 		a.SetValue(value)
 		e.notify(e.attributeChangedEvent(a, prevVal))
 	} else {
-		e.SetAttributeNode(newAttr(name, value, e.OwnerDocument()))
+		if attr, err := newAttr(name, value, e.OwnerDocument()); err == nil {
+			e.SetAttributeNode(attr)
+		} else {
+			return err
+		}
 	}
+	return nil
 }
 
 func (e *element) createHtmlNode() *html.Node {
