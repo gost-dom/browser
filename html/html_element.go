@@ -3,7 +3,6 @@ package html
 import (
 	"log/slog"
 	"strconv"
-	"strings"
 
 	"github.com/gost-dom/browser/dom"
 	. "github.com/gost-dom/browser/internal/dom"
@@ -59,10 +58,6 @@ func (e *htmlElement) SetSelf(self dom.Node) {
 func (e *htmlElement) getHTMLDocument() HTMLDocument { return e.htmlDocument }
 
 func (e *htmlElement) window() Window { return e.htmlDocument.window() }
-
-func (e *htmlElement) TagName() string {
-	return strings.ToUpper(e.Element.TagName())
-}
 
 func (e *htmlElement) click() bool { return uievents.Click(e.Element) }
 func (e *htmlElement) Click()      { e.click() }

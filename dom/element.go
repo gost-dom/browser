@@ -7,7 +7,9 @@ import (
 
 	"github.com/gost-dom/browser/internal/constants"
 	. "github.com/gost-dom/browser/internal/dom"
+	intdom "github.com/gost-dom/browser/internal/dom"
 	"github.com/gost-dom/browser/internal/entity"
+	"github.com/gost-dom/browser/internal/namespace"
 
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
@@ -77,7 +79,7 @@ func NewElement(tagName string, ownerDocument Document) Element {
 func newElementNS(ns, tagName string, ownerDocument Document) Element {
 	res := &element{
 		node:       newNode(ownerDocument),
-		tagName:    strings.ToLower(tagName),
+		tagName:    tagName,
 		namespace:  ns,
 		attributes: Attributes(nil),
 	}
@@ -128,11 +130,20 @@ func (e *element) NodeName() string {
 	return e.selfElement.TagName()
 }
 
-func (e *element) TagName() string { return e.tagName }
+func (e *element) TagName() string {
+	doc := e.document
+	if doc != nil && intdom.IsHTMLDocument(doc) {
+		ns := e.NamespaceURI()
+		if ns == "" || ns == namespace.HTML {
+			return strings.ToUpper(e.tagName)
+		}
+	}
+	return strings.ToLower(e.tagName)
+}
 
 func (e *element) Namespace() string    { return e.namespace }
 func (e *element) NamespaceURI() string { return e.namespace }
-func (e *element) LocalName() string    { return e.tagName }
+func (e *element) LocalName() string    { return e.TagName() }
 
 func (e *element) ID() string {
 	id, _ := e.GetAttribute("id")

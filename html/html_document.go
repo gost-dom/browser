@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/gost-dom/browser/dom"
+	intdom "github.com/gost-dom/browser/internal/dom"
 )
 
 type HTMLDocument interface {
@@ -70,6 +71,7 @@ func NewValidHTMLDocument(window Window, options ...func(HTMLDocument)) HTMLDocu
 func NewEmptyHtmlDocument(window Window) HTMLDocument {
 	var result HTMLDocument = &htmlDocument{dom.NewDocument(window), window, nil}
 	result.SetSelf(result)
+	intdom.SetIsHTMLDocument(result, true)
 	return result
 }
 
