@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"runtime"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -100,7 +101,7 @@ func (t WebPlatformTest) processEvents(ctx context.Context, win html.Window) err
 
 func (s WebPlatformTest) parseResults(win html.Window) (res WptSuiteResult) {
 	r, _ := win.Document().QuerySelectorAll("#results > tbody > tr")
-	rows := r.All()
+	rows := slices.Collect(r.All())
 	res = WptSuiteResult{
 		TestCases: make([]WebPlatformTestCase, len(rows)),
 	}
