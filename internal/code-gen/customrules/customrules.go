@@ -12,6 +12,8 @@
 package customrules
 
 import (
+	"fmt"
+	"maps"
 	"reflect"
 	"slices"
 	"strings"
@@ -55,7 +57,7 @@ type InterfaceRule struct {
 	Operations       OperationRules
 	Attributes       AttributeRules
 	// IsEntity indicates that the type must have "entity" semantics, i.e.
-	// identity is omportant. Everything type returned from an attribute with
+	// identity is important. Everything returned from an attribute with
 	// [SameObject] must have entity semantics.
 	IsEntity bool
 }
@@ -190,11 +192,46 @@ func SpecNames() []string {
 	return res
 }
 
+func mergeOrPanic[T comparable](a, b T) T {
+	var empty T
+	if a != empty && b != empty {
+		panic(fmt.Sprintf("Both A and B are not empty.\n\t%v\n\t%v", a, b))
+	}
+	if a == empty {
+		return b
+	} else {
+		return a
+	}
+}
+
+func mergeRule(a, b InterfaceRule) InterfaceRule {
+	res := InterfaceRule{
+		mergeOrPanic(a.OverrideTypeName, b.OverrideTypeName),
+		mergeOrPanic(a.InterfacePackage, b.InterfacePackage),
+		mergeOrPanic(a.OutputType, b.OutputType),
+		a.Operations,
+		a.Attributes,
+		mergeOrPanic(a.IsEntity, b.IsEntity),
+	}
+	if res.Operations == nil {
+		res.Operations = b.Operations
+	} else {
+		maps.Copy(res.Operations, b.Operations)
+	}
+	if res.Attributes == nil {
+		res.Attributes = b.Attributes
+	} else {
+		maps.Copy(res.Attributes, b.Attributes)
+	}
+	return res
+}
+
 func makeAllRules() map[string]InterfaceRule {
 	res := make(map[string]InterfaceRule)
 	for _, v := range rules {
 		for n, r := range v {
-			res[n] = r
+			e := res[n]
+			res[n] = mergeRule(e, r)
 		}
 	}
 	return res
