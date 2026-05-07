@@ -72,6 +72,8 @@ func (d *htmlDocument) CreateElement(name string) dom.Element {
 		return NewHtmlFormElement(d)
 	case "input":
 		return NewHTMLInputElement(d)
+	case "textarea":
+		return NewHTMLTextAreaElement(d)
 	case "button":
 		return NewHTMLButtonElement(d)
 	case "script":
