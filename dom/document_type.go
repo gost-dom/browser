@@ -37,6 +37,7 @@ func (t *documentType) Name() string       { return t.name }
 func (t *documentType) PublicId() string   { return t.publicID }
 func (t *documentType) SystemId() string   { return t.systemID }
 func (t *documentType) NodeType() NodeType { return NodeTypeDocumentType }
+func (t *documentType) NodeName() string   { return t.Name() }
 
 func (t *documentType) IsEqualNode(n Node) bool {
 	other, ok := n.(*documentType)
