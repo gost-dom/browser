@@ -10,6 +10,7 @@ import (
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/url"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func SetTestingT(w html.Window, val testing.TB) {
@@ -53,11 +54,14 @@ type WindowHelper struct {
 func NewWindowHTML(t testing.TB, s string) WindowHelper {
 	t.Helper()
 	win, err := html.NewWindowReader(strings.NewReader(s), url.ParseURL(s))
-	assert.NoError(t, err, "htmltest: NewWindowHTML")
+	require.NoError(t, err, "htmltest: NewWindowHTML")
 	return NewWindowHelper(t, win)
 }
 
 func NewWindowHelper(t testing.TB, win html.Window) WindowHelper {
+	if win == nil {
+		win = html.NewWindow()
+	}
 	h := WindowHelper{win, t}
 	SetTestingT(win, t)
 	return h

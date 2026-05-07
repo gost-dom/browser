@@ -5,6 +5,7 @@ import (
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/input/key"
+	htmlinterfaces "github.com/gost-dom/browser/internal/interfaces/html-interfaces"
 	"github.com/gost-dom/browser/internal/uievents"
 )
 
@@ -23,7 +24,7 @@ func (c KeyboardController) SendKey(k key.Key) {
 	eventInit := k.EventInit()
 	active := c.Window.Document().ActiveElement()
 	switch e := active.(type) {
-	case html.HTMLInputElement:
+	case htmlinterfaces.HTMLInputtableElement:
 		if k.Down {
 			if !uievents.KeydownInit(e, eventInit) {
 				return

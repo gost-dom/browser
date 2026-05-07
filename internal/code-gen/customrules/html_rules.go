@@ -64,6 +64,38 @@ var htmlRules = SpecRules{
 
 func init() {
 	IgnoreMembers(htmlRules,
+		Overrides{"HTMLTextAreaElement": {
+			Operations: []string{
+				"checkValidity",
+				"setCustomValidity",
+				"reportValidity",
+				"select",
+				"setRangeText",
+				"setSelectionRange",
+			},
+			Attributes: []string{
+				"autocomplete",
+				"cols", "rows",
+				"dirName",
+				"disabled",
+				"minLength", "maxLength",
+				"name",
+				"placeholder",
+				"readOnly",
+				"required",
+				"wrap",
+				"type",
+				"defaultValue",
+				"textLength",
+				"willValidate",
+				"validity",
+				"form",
+				"labels",
+				"validationMessage",
+				"selectionStart", "selectionEnd", "selectionDirection",
+			},
+		}})
+	IgnoreMembers(htmlRules,
 		Overrides{"WindowOrWorkerGlobalScope": {
 			Operations: []string{
 				"atob",

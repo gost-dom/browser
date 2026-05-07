@@ -11,6 +11,7 @@ func RunHtmlSuite(t *testing.T, e html.ScriptEngine) {
 		return func(t *testing.T) { test(t, e) }
 	}
 
+	t.Run("Document", wrapSuite(testHTMLDocument))
 	t.Run("Element", wrapSuite(testHTMLElement))
 	t.Run("AnimationFrameProvider", wrapSuite(testAnimationFrameProvider))
 	t.Run("HTMLAnchorElement", wrapSuite(testHtmlAnchorElement))

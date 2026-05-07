@@ -14,5 +14,6 @@ func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
 	InitializeHTMLFormElement(js.CreateClass(e, "HTMLFormElement", "HTMLElement", nil))
 	InitializeHTMLInputElement(js.CreateClass(e, "HTMLInputElement", "HTMLElement", nil))
 	InitializeHTMLTemplateElement(js.CreateClass(e, "HTMLTemplateElement", "HTMLElement", nil))
+	InitializeHTMLTextAreaElement(js.CreateClass(e, "HTMLTextAreaElement", "HTMLElement", nil))
 	InitializeWindow(e.ConfigureGlobalScope("Window", js.MustGetClass(e, "EventTarget")))
 }
