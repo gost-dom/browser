@@ -4,7 +4,7 @@ RAW := $(if $(filter $(MAKELEVEL),0),-r,)
 
 GOW_FLAGS := $(RAW)
 
-GO_TEST := GOEXPERIMENT=synctest go test
+GO_TEST := go test
 
 # Expects an existing stable version of `gow`.
 GOW := go run github.com/mitranim/gow  $(GOW_FLAGS)
