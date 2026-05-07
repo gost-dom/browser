@@ -127,13 +127,14 @@ func (r ArgumentRule) OverridesType() bool {
 }
 
 var rules = CustomRules{
-	"dom":      domRules,
-	"fetch":    fetchRules,
-	"html":     htmlRules,
-	"url":      urlRules,
-	"xhr":      xhrRules,
-	"streams":  streamsRules,
-	"uievents": SpecRules{},
+	"dom":          domRules,
+	"fetch":        fetchRules,
+	"html":         htmlRules,
+	"url":          urlRules,
+	"xhr":          xhrRules,
+	"streams":      streamsRules,
+	"uievents":     SpecRules{},
+	"cssom-view-1": cssomViewRules,
 }
 
 type Spec string

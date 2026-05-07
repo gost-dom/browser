@@ -3,6 +3,7 @@
 package internal
 
 import (
+	cssomview1 "github.com/gost-dom/browser/scripting/internal/cssom-view-1"
 	dom "github.com/gost-dom/browser/scripting/internal/dom"
 	fetch "github.com/gost-dom/browser/scripting/internal/fetch"
 	html "github.com/gost-dom/browser/scripting/internal/html"
@@ -16,6 +17,7 @@ import (
 func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
 	dom.ConfigureWindowRealm(e)
 	html.ConfigureWindowRealm(e)
+	cssomview1.ConfigureWindowRealm(e)
 	fetch.ConfigureWindowRealm(e)
 	streams.ConfigureWindowRealm(e)
 	uievents.ConfigureWindowRealm(e)

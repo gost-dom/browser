@@ -9,6 +9,7 @@ import (
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/testing/browsertest"
+	"github.com/gost-dom/browser/scripting/internal/cssom-view-1/cssomviewsuite"
 	"github.com/gost-dom/browser/scripting/internal/dom/domsuite"
 	"github.com/gost-dom/browser/scripting/internal/html/htmlsuite"
 	"github.com/gost-dom/browser/scripting/internal/js"
@@ -64,6 +65,7 @@ func RunSuites(t *testing.T, e html.ScriptEngine) {
 	t.Run("Error handling", func(t *testing.T) { testErrorHandling(t, e) })
 	t.Run("html", func(t *testing.T) { htmlsuite.RunHtmlSuite(t, e) })
 	t.Run("dom", func(t *testing.T) { domsuite.RunDomSuite(t, e) })
+	t.Run("cssom", func(t *testing.T) { cssomviewsuite.RunDomSuite(t, e) })
 }
 
 type dummyContext struct {

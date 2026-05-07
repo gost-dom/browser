@@ -8,6 +8,8 @@ func CreateV8SpecsForSpec(spec string) WebIdlConfigurations {
 	specs := NewWrapperGeneratorsSpec()
 
 	switch spec {
+	case "cssom-view", "cssom-view-1":
+		ConfigureCssomView(specs.Module("cssom-view-1"))
 	case "dom":
 		ConfigureDOMSpecs(specs.Module("dom"))
 	case "uievents":
