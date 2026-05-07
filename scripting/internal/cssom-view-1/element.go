@@ -1,0 +1,18 @@
+package cssomview1
+
+import js "github.com/gost-dom/browser/scripting/internal/js"
+
+func Element_getBoundingClientRect[T any](
+	cbCtx js.CallbackContext[T],
+) (res js.Value[T], err error) {
+	obj := cbCtx.NewObject()
+	obj.Set("x", cbCtx.NewNumber(0))
+	obj.Set("y", cbCtx.NewNumber(0))
+	obj.Set("width", cbCtx.NewNumber(0))
+	obj.Set("height", cbCtx.NewNumber(0))
+	obj.Set("top", cbCtx.NewNumber(0))
+	obj.Set("right", cbCtx.NewNumber(0))
+	obj.Set("bottom", cbCtx.NewNumber(0))
+	obj.Set("left", cbCtx.NewNumber(0))
+	return obj, nil
+}

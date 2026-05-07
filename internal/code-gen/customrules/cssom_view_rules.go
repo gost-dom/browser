@@ -3,13 +3,12 @@ package customrules
 var cssomViewRules = SpecRules{
 	"Element": {
 		Operations: OperationRules{
-			"getClientRects":        {Ignore: true},
-			"getBoundingClientRect": {Ignore: true},
-			"checkVisibility":       {Ignore: true},
-			"scrollIntoView":        {Ignore: true},
-			"scroll":                {Ignore: true},
-			"scrollTo":              {Ignore: true},
-			"scrollBy":              {Ignore: true},
+			"getClientRects":  {Ignore: true},
+			"checkVisibility": {Ignore: true},
+			"scrollIntoView":  {Ignore: true},
+			"scroll":          {Ignore: true},
+			"scrollTo":        {Ignore: true},
+			"scrollBy":        {Ignore: true},
 		},
 		Attributes: AttributeRules{
 			"scrollTop":      {Ignore: true},
