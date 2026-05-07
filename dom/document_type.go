@@ -15,7 +15,7 @@ type documentType struct {
 }
 
 func NewDocumentType(name string, ownerDocument Document) DocumentType {
-	res := &documentType{node: newNode(ownerDocument)}
+	res := &documentType{node: newNode(ownerDocument), name: name}
 	res.childNode = childNode{&res.node}
 	res.SetSelf(res)
 	return res
@@ -23,6 +23,7 @@ func NewDocumentType(name string, ownerDocument Document) DocumentType {
 
 func (t *documentType) Name() string       { return t.name }
 func (t *documentType) NodeType() NodeType { return NodeTypeDocumentType }
+func (t *documentType) NodeName() string   { return t.Name() }
 
 func (t *documentType) cloneNode(doc Document, deep bool) Node {
 	return NewDocumentType(t.name, doc)
