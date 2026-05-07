@@ -270,7 +270,7 @@ func (n *node) IsSameNode(other Node) (result bool) {
 }
 
 func (n *node) NodeName() string {
-	return "#node"
+	return n.Node.NodeName()
 }
 
 func (n *node) RemoveChild(node Node) (Node, error) {

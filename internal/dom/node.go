@@ -11,9 +11,12 @@ type Node struct {
 	// revision of the node is incremented on any change. Used by
 	// LiveHtmlCollection to check if a node has been changed.
 	rev      int
+	Target   string
 	Children []*Node
 	Parent   *Node
 	Type     NodeType
+	// For attributes, the fully qualified node name. For elements, the tag name
+	Name string
 
 	OwnerDocument *Node
 }
@@ -43,5 +46,29 @@ func (n *Node) SetParent(parent *Node) {
 	} else {
 		n.SetOwnerDocument(parent.OwnerDocument)
 		n.Parent = parent
+	}
+}
+
+// Returns node's nodename
+//
+// spec: https://dom.spec.whatwg.org/#dom-node-nodename
+func (n *Node) NodeName() string {
+	switch n.Type {
+	case NodeTypeDocumentType, NodeTypeElement, NodeTypeAttribute:
+		return n.Name
+	case NodeTypeText:
+		return "#text"
+	case NodeTypeCDataSection:
+		return "#cdata-section"
+	case NodeTypeProcessingInstruction:
+		return n.Target
+	case NodeTypeComment:
+		return "#comment"
+	case NodeTypeDocument:
+		return "#document"
+	case NodeTypeDocumentFragment:
+		return "#document-fragment"
+	default:
+		panic("gost: Node.NodeName(): invalid node type")
 	}
 }

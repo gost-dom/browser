@@ -87,6 +87,7 @@ func newElementNS(ns, tagName string, ownerDocument Document) Element {
 	res.parentNode = parentNode{&res.node}
 	res.elementOrDocument = elementOrDocument{&res.node}
 	res.SetSelf(res)
+	res.node.Name = res.TagName()
 	return res
 }
 
@@ -126,12 +127,8 @@ func (e *element) SetSelf(n Node) {
 	e.node.SetSelf(n)
 }
 
-func (e *element) NodeName() string {
-	return e.selfElement.TagName()
-}
-
 func (e *element) TagName() string {
-	doc := e.document
+	doc := e.nodeDocument()
 	if doc != nil && intdom.IsHTMLDocument(doc) {
 		ns := e.NamespaceURI()
 		if ns == "" || ns == namespace.HTML {

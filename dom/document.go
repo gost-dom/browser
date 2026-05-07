@@ -156,7 +156,6 @@ func (d *document) DocumentElement() Element {
 	return nil
 }
 
-func (d *document) NodeName() string  { return "#document" }
 func (d *document) IsConnected() bool { return true }
 
 func (d *document) GetElementById(id string) Element {

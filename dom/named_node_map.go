@@ -66,8 +66,10 @@ func newAttrNS(ns, n, v string, doc Document) (Attr, error) {
 			}
 		}
 	}
+	node := newNode(doc, intdom.NodeTypeAttribute)
+	node.Name = n
 	res := &attr{
-		node: newNode(doc, intdom.NodeTypeAttribute),
+		node: node,
 		attr: &html.Attribute{
 			Namespace: ns,
 			Key:       n,
@@ -129,7 +131,6 @@ func (m *namedNodeMap) Item(index int) Attr {
 }
 
 func (a *attr) LocalName() string     { return decodeAttrQualifiedName(a.attr.Key).localName }
-func (a *attr) NodeName() string      { return a.Name() }
 func (a *attr) Name() string          { return a.attr.Key }
 func (a *attr) NamespaceURI() string  { return a.attr.Namespace }
 func (a *attr) OwnerElement() Element { return a.ownerElement }

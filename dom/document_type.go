@@ -14,26 +14,25 @@ type DocumentType interface {
 type documentType struct {
 	node
 	childNode
-	name string
 }
 
 func NewDocumentType(name string, ownerDocument Document) DocumentType {
-	res := &documentType{node: newNode(ownerDocument, intdom.NodeTypeDocumentType), name: name}
+	res := &documentType{node: newNode(ownerDocument, intdom.NodeTypeDocumentType)}
+	res.Node.Name = name
 	res.childNode = childNode{&res.node}
 	res.SetSelf(res)
 	return res
 }
 
-func (t *documentType) Name() string     { return t.name }
-func (t *documentType) NodeName() string { return t.Name() }
+func (t *documentType) Name() string { return t.Node.Name }
 
 func (t *documentType) cloneNode(doc Document, deep bool) Node {
-	return NewDocumentType(t.name, doc)
+	return NewDocumentType(t.Name(), doc)
 }
 
 func (t *documentType) createHtmlNode() *html.Node {
 	return &html.Node{
 		Type: html.DoctypeNode,
-		Data: t.name,
+		Data: t.Name(),
 	}
 }

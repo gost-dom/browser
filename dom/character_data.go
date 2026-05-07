@@ -129,7 +129,6 @@ func (n *textNode) createHtmlNode() *html.Node {
 	}
 }
 
-func (n *textNode) NodeName() string    { return "#text" }
 func (n *textNode) TextContent() string { return n.Data() }
 
 /* -------- ProcessingInstruction -------- */
@@ -179,7 +178,5 @@ func (n *processingInstruction) createHtmlNode() *html.Node {
 		Data: n.Data(),
 	}
 }
-
-func (n *processingInstruction) NodeName() string { return n.target }
 
 func (n *processingInstruction) TextContent() string { return "" }
