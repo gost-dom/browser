@@ -7,6 +7,7 @@ func ConfigureHTMLSpecs(htmlSpecs *WebAPIConfig) {
 	configureHTMLElement(htmlSpecs)
 	configureHTMLFormElement(htmlSpecs)
 	configureHTMLInputElement(htmlSpecs)
+	htmlSpecs.Type("HTMLTextAreaElement")
 	configureWindow(htmlSpecs)
 	htmlSpecs.Type("WindowOrWorkerGlobalScope")
 
