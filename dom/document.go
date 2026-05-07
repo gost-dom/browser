@@ -27,8 +27,8 @@ type Document interface {
 	SetBody(Element) error
 	Head() Element
 	CreateDocumentFragment() DocumentFragment
-	CreateAttribute(string) Attr
-	CreateAttributeNS(string, string) Attr
+	CreateAttribute(string) (Attr, error)
+	CreateAttributeNS(string, string) (Attr, error)
 	CreateTextNode(data string) Text
 	CreateCDATASection(data string) (CDATASection, error)
 	CreateComment(data string) Comment
@@ -127,16 +127,29 @@ func (d *document) Head() Element {
 	return nil
 }
 
-func (d *document) CreateAttributeNS(ns, name string) Attr {
+func (d *document) CreateAttributeNS(ns, name string) (Attr, error) {
 	return newAttrNS(ns, name, "", d.document)
 }
 
-func (d *document) CreateAttribute(name string) Attr  { return newAttr(name, "", d.document) }
-func (d *document) CreateElement(name string) Element { return NewElement(name, d.document) }
-func (d *document) CreateText(data string) Text       { return d.CreateTextNode(data) }
-func (d *document) CreateTextNode(data string) Text   { return NewText(data, d.document) }
-func (d *document) CreateCDATASection(data string) (CDATASection, error) {
+func (d *document) CreateAttribute(name string) (Attr, error) {
+	return newAttr(name, "", d.document)
+}
 
+func (d *document) CreateElement(
+	name string,
+) Element {
+	return NewElement(name, d.document)
+}
+func (d *document) CreateText(data string) Text     { return d.CreateTextNode(data) }
+func (d *document) CreateTextNode(data string) Text { return NewText(data, d.document) }
+
+func (d *document) CreateComment(
+	data string,
+) Comment {
+	return NewComment(data, d.document)
+}
+
+func (d *document) CreateCDATASection(data string) (CDATASection, error) {
 	if intdom.IsHTMLDocument(d) {
 		return nil, newDomErrorCode("Operation is not supported", not_supported_err)
 	}
@@ -145,10 +158,11 @@ func (d *document) CreateCDATASection(data string) (CDATASection, error) {
 	}
 	return NewCDATASection(data, d.document), nil
 }
-func (d *document) CreateComment(data string) Comment { return NewComment(data, d.document) }
+
 func (d *document) CreateElementNS(ns string, name string) Element {
 	return newElementNS(ns, name, d.document)
 }
+
 func (d *document) CreateDocumentType(name string) DocumentType {
 	return NewDocumentType(name, "", "", d.document)
 }

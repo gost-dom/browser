@@ -200,7 +200,10 @@ func Document_createAttribute[T any](cbCtx js.CallbackContext[T]) (res js.Value[
 	if errArg1 != nil {
 		return nil, errArg1
 	}
-	result := instance.CreateAttribute(localName)
+	result, errCall := instance.CreateAttribute(localName)
+	if errCall != nil {
+		return nil, errCall
+	}
 	return codec.EncodeEntity(cbCtx, result)
 }
 
@@ -215,7 +218,10 @@ func Document_createAttributeNS[T any](cbCtx js.CallbackContext[T]) (res js.Valu
 	if err != nil {
 		return nil, err
 	}
-	result := instance.CreateAttributeNS(namespace, qualifiedName)
+	result, errCall := instance.CreateAttributeNS(namespace, qualifiedName)
+	if errCall != nil {
+		return nil, errCall
+	}
 	return codec.EncodeEntity(cbCtx, result)
 }
 

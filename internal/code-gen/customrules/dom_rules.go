@@ -29,6 +29,8 @@ var domRules = SpecRules{
 				"options": {Ignore: true, Variadic: true}, // TODO: Get this working
 			}},
 			"createCDATASection": {HasError: true},
+			"createAttribute":    {HasError: true},
+			"createAttributeNS":  {HasError: true},
 		},
 	},
 	"Event": {OutputType: OutputTypeStruct,
@@ -65,6 +67,7 @@ var domRules = SpecRules{
 			"appendChild":  {HasError: true},
 			"removeChild":  {HasError: true},
 			"replaceChild": {HasError: true},
+			"setAttribute": {HasError: true},
 		},
 		Attributes: AttributeRules{
 			"nodeType": {GoType: GoType{
