@@ -39,7 +39,7 @@ func Document_createRange[T any](cbCtx js.CallbackContext[T]) (js.Value[T], erro
 		return nil, err
 	}
 	r := &dom.Range{}
-	r.SetStart(instance, 0)
-	r.SetEnd(instance, 0)
+	r.SetStart(instance.DocumentElement(), 0)
+	r.SetEnd(instance.DocumentElement(), 0)
 	return encodeRange(cbCtx, r)
 }
