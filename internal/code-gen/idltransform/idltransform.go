@@ -28,6 +28,8 @@ func InternalPackage(name string) string {
 		}
 	}
 	switch name {
+	case "DocumentFragment":
+		return packagenames.Dom
 	case "AbortController", "AbortSignal":
 		return packagenames.DomInterfaces
 	case "EventHandler", "EventTarget":

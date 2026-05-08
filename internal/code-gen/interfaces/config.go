@@ -26,6 +26,9 @@ var PackageInterfacesConfiguration = map[string]PackageInterfaces{
 			"AbortSignal",
 			"AbortController",
 			"MutationObserver",
+			"Range",
+			"AbstractRange",
+			"StaticRange",
 		},
 	},
 	"html": {

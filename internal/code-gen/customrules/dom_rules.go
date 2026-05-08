@@ -119,6 +119,15 @@ var domRules = SpecRules{
 				},
 			},
 		}},
+	"Range": {
+		InterfacePackage: DomInterfaces,
+	},
+	"StaticRange": {
+		InterfacePackage: DomInterfaces,
+	},
+	"AbstractRange": {
+		InterfacePackage: DomInterfaces,
+	},
 }
 
 var parentNodeQueryOperation = OperationRule{HasError: true}

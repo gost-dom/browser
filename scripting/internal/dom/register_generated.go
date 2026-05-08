@@ -6,6 +6,7 @@ import js "github.com/gost-dom/browser/scripting/internal/js"
 
 func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
 	InitializeAbortController(js.CreateClass(e, "AbortController", "", AbortControllerConstructor))
+	InitializeAbstractRange(js.CreateClass(e, "AbstractRange", "", nil))
 	InitializeDOMImplementation(js.CreateClass(e, "DOMImplementation", "", nil))
 	InitializeDOMTokenList(js.CreateClass(e, "DOMTokenList", "", nil))
 	InitializeEvent(js.CreateClass(e, "Event", "", EventConstructor))
@@ -15,6 +16,7 @@ func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
 	InitializeMutationRecord(js.CreateClass(e, "MutationRecord", "", nil))
 	InitializeNamedNodeMap(js.CreateClass(e, "NamedNodeMap", "", nil))
 	InitializeNodeList(js.CreateClass(e, "NodeList", "", nil))
+	InitializeRange(js.CreateClass(e, "Range", "AbstractRange", RangeConstructor))
 	InitializeCustomEvent(js.CreateClass(e, "CustomEvent", "Event", CustomEventConstructor))
 	InitializeAbortSignal(js.CreateClass(e, "AbortSignal", "EventTarget", nil))
 	InitializeNode(js.CreateClass(e, "Node", "EventTarget", nil))

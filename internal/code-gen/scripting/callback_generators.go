@@ -30,7 +30,6 @@ func (cb CallbackMethods) CallbackFunction(name string, body g.Generator) g.Gene
 }
 
 func (cb CallbackMethods) ConstructorCallback() g.Generator {
-
 	if !cb.Data.AllowConstructor() {
 		return g.Noop
 	}

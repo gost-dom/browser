@@ -9,6 +9,8 @@ func ConfigureDOMSpecs(domSpecs *WebAPIConfig) {
 	domImplementation := domSpecs.Type("DOMImplementation")
 	domImplementation.Method("createHTMLDocument").SetCustomImplementation()
 	domImplementation.Method("createDocument").SetCustomImplementation()
+	domSpecs.Type("AbstractRange")
+	domSpecs.Type("Range").SkipConstructor = true
 }
 
 func configureDOMNode(specs *WebAPIConfig) {
