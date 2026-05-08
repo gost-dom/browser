@@ -32,3 +32,7 @@ func Document_implementation[T any](cbCtx js.CallbackContext[T]) (js.Value[T], e
 	}
 	return codec.EncodeEntityScopedWithPrototype(cbCtx, implementation, "DOMImplementation")
 }
+
+func Document_createRange[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	return nil, nil
+}

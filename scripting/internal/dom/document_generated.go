@@ -223,10 +223,6 @@ func Document_createEvent[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], 
 	return codec.EncodeCallbackErrorf(cbCtx, "Document.Document_createEvent: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func Document_createRange[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Document.Document_createRange: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
-}
-
 func Document_createNodeIterator[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return codec.EncodeCallbackErrorf(cbCtx, "Document.Document_createNodeIterator: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
