@@ -34,3 +34,10 @@ func TestCharacterDataRemove(t *testing.T) {
 	assert.Equal(t, "<p>Para1</p><p>Para2</p>", doc.Body().InnerHTML())
 	assert.Equal(t, 2, doc.Body().ChildNodes().Length())
 }
+
+func TestCDataSection(t *testing.T) {
+	doc := htmltest.ParseHTMLDocument(t, "<body></body>")
+	doc.Body().Append(doc.CreateCDATASection("Foo bar < > &"))
+
+	assert.Equal(t, "<![CDATA[Foo bar < > &]]>", doc.Body().InnerHTML())
+}

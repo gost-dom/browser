@@ -129,7 +129,16 @@ func Document_createTextNode[T any](cbCtx js.CallbackContext[T]) (res js.Value[T
 }
 
 func Document_createCDATASection[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Document.Document_createCDATASection: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	instance, errInst := js.As[html.HTMLDocument](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	data, errArg1 := js.ConsumeArgument(cbCtx, "data", nil, codec.DecodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result := instance.CreateCDATASection(data)
+	return codec.EncodeEntity(cbCtx, result)
 }
 
 func Document_createComment[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

@@ -73,9 +73,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 		"inputEncoding",
 		"charset", "characterSet",
 		"compatMode",
-
-		// Custom Implementation
-		"createCDATASection",
 	)
 
 	document.MarkMembersAsIgnored(

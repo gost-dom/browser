@@ -10,7 +10,7 @@ import (
 /* -------- CharacterData -------- */
 
 // CharacterData is a "base type" for [Text], [Comment], and
-// [CDataSection], and [ProcessingInstruction].
+// [CDATASection], and [ProcessingInstruction].
 //
 // See also: https://developer.mozilla.org/en-US/docs/Web/API/CharacterData
 type CharacterData interface {
@@ -110,10 +110,14 @@ type textNode struct {
 	*characterData
 }
 
-func NewText(text string, ownerDocument Document) Text {
+func newText(text string, ownerDocument Document) *textNode {
 	result := &textNode{newCharacterData(text, ownerDocument)}
 	result.SetSelf(result)
 	return result
+}
+
+func NewText(text string, ownerDocument Document) Text {
+	return newText(text, ownerDocument)
 }
 
 func (n *textNode) cloneNode(doc Document, _ bool) Node {
@@ -135,6 +139,44 @@ func (n *textNode) createHtmlNode() *html.Node {
 
 func (n *textNode) NodeName() string    { return "#text" }
 func (n *textNode) TextContent() string { return n.Data() }
+
+/* -------- CDATASection -------- */
+
+type CDATASection interface {
+	Text
+}
+
+type cdataSection struct {
+	*textNode
+}
+
+func NewCDATASection(text string, ownerDocument Document) Text {
+	result := &cdataSection{newText(text, ownerDocument)}
+	result.SetSelf(result)
+	return result
+}
+
+func (n *cdataSection) cloneNode(doc Document, _ bool) Node {
+	return NewCDATASection(n.data, doc)
+}
+
+func (n *cdataSection) Render(builder *strings.Builder) {
+	builder.WriteString("<![CDATA[")
+	builder.WriteString(n.data)
+	builder.WriteString("]]>")
+}
+
+func (n *cdataSection) NodeType() NodeType { return NodeTypeCDataSection }
+
+func (n *cdataSection) createHtmlNode() *html.Node {
+	return &html.Node{
+		Type: html.TextNode,
+		Data: n.Data(),
+	}
+}
+
+func (n *cdataSection) NodeName() string    { return "#cdata-section" }
+func (n *cdataSection) TextContent() string { return n.Data() }
 
 /* -------- ProcessingInstruction -------- */
 
