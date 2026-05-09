@@ -121,12 +121,39 @@ var domRules = SpecRules{
 		}},
 	"Range": {
 		InterfacePackage: DomInterfaces,
+		Operations: OperationRules{
+			"setStart": {HasError: true},
+			"setEnd":   {HasError: true},
+
+			"cloneContents":           {Ignore: true},
+			"cloneRange":              {Ignore: true},
+			"collapse":                {Ignore: true},
+			"commonAncestorContainer": {Ignore: true},
+			"setStartAfter":           {Ignore: true},
+			"setStartBefore":          {Ignore: true},
+			"setEndBefore":            {Ignore: true},
+			"setEndAfter":             {Ignore: true},
+			"selectNode":              {Ignore: true},
+			"selectNodeContents":      {Ignore: true},
+			"compareBoundaryPoints":   {Ignore: true},
+			"deleteContents":          {Ignore: true},
+			"extractContents":         {Ignore: true},
+			"insertNode":              {Ignore: true},
+			"surroundContents":        {Ignore: true},
+			"isPointInRange":          {Ignore: true},
+			"comparePoint":            {Ignore: true},
+			"intersectsNode":          {Ignore: true},
+		},
+		Attributes: AttributeRules{
+			"commonAncestorContainer": {Ignore: true},
+		},
 	},
 	"StaticRange": {
 		InterfacePackage: DomInterfaces,
 	},
 	"AbstractRange": {
 		InterfacePackage: DomInterfaces,
+		Attributes:       AttributeRules{},
 	},
 }
 

@@ -34,5 +34,12 @@ func Document_implementation[T any](cbCtx js.CallbackContext[T]) (js.Value[T], e
 }
 
 func Document_createRange[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
-	return nil, nil
+	instance, err := js.As[html.HTMLDocument](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	r := &dom.Range{}
+	r.SetStart(instance, 0)
+	r.SetEnd(instance, 0)
+	return encodeRange(cbCtx, r)
 }

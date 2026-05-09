@@ -7,7 +7,8 @@ test:
 				 dom/nodes/Document-getElementById \
 				 dom/nodes/Element-childElement \
 				 dom/nodes/Element-insert \
-				 dom/nodes/CharacterData-appendChild
+				 dom/nodes/CharacterData-appendChild \
+				 dom/ranges/Range-attributes
 
 ci:
 	./ci
