@@ -411,11 +411,13 @@ func (n *node) assertCanAddNode(newNode Node) error {
 		return newDomError("Document type may only be a parent of Document")
 	}
 	if doc, isDoc := n.getSelf().(Document); isDoc {
-		if doc.ChildElementCount() > 0 {
-			return newDomErrorCode(
-				"Document can have only one child element",
-				hierarchy_request_err,
-			)
+		if childType == NodeTypeElement {
+			if doc.ChildElementCount() > 0 {
+				return newDomErrorCode(
+					"Document can have only one child element",
+					hierarchy_request_err,
+				)
+			}
 		}
 		if fragment, isFragment := newNode.(DocumentFragment); isFragment {
 			if fragment.ChildElementCount() > 0 {

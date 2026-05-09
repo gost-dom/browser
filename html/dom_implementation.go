@@ -21,3 +21,9 @@ func (i *DOMImplementation) CreateDocument(
 }
 
 func (i *DOMImplementation) HasFeature() bool { return true }
+
+func (i *DOMImplementation) CreateDocumentType(
+	qualifiedName, publicID, systemID string,
+) dom.DocumentType {
+	return dom.NewDocumentType(qualifiedName, publicID, systemID, nil)
+}

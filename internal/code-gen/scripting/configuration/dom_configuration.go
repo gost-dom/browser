@@ -4,6 +4,7 @@ func ConfigureDOMSpecs(domSpecs *WebAPIConfig) {
 	configureDOMNode(domSpecs)
 	configureDOMEvent(domSpecs)
 	domSpecs.AddSearchModule("html")
+	domSpecs.Type("DocumentType")
 	domSpecs.Type("CustomEvent").MarkMembersAsIgnored("initCustomEvent")
 	domImplementation := domSpecs.Type("DOMImplementation")
 	domImplementation.Method("createHTMLDocument").SetCustomImplementation()
@@ -68,7 +69,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 		"createRange",
 		"createEvent",
 		"documentURI",
-		"doctype",
 		"contentType",
 		"inputEncoding",
 		"charset", "characterSet",

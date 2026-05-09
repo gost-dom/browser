@@ -252,7 +252,12 @@ func Document_contentType[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], 
 }
 
 func Document_doctype[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Document.Document_doctype: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	instance, err := js.As[html.HTMLDocument](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	result := instance.Doctype()
+	return codec.EncodeEntity(cbCtx, result)
 }
 
 func Document_documentElement[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

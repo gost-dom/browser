@@ -34,6 +34,7 @@ type Document interface {
 	CreateElement(string) Element
 	CreateProcessingInstruction(string, string) ProcessingInstruction
 	DocumentElement() Element
+	Doctype() DocumentType
 	ImportNode(Node, bool) Node
 }
 
@@ -136,7 +137,7 @@ func (d *document) CreateElementNS(ns string, name string) Element {
 	return newElementNS(ns, name, d.document)
 }
 func (d *document) CreateDocumentType(name string) DocumentType {
-	return NewDocumentType(name, d.document)
+	return NewDocumentType(name, "", "", d.document)
 }
 
 func (d *document) CreateDocumentFragment() DocumentFragment {
@@ -146,6 +147,15 @@ func (d *document) CreateDocumentFragment() DocumentFragment {
 func (d *document) DocumentElement() Element {
 	for _, c := range d.nodes() {
 		if e, ok := c.(Element); ok {
+			return e
+		}
+	}
+	return nil
+}
+
+func (d *document) Doctype() DocumentType {
+	for _, c := range d.nodes() {
+		if e, ok := c.(DocumentType); ok {
 			return e
 		}
 	}

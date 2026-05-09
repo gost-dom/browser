@@ -22,6 +22,7 @@ func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
 	InitializeCharacterData(js.CreateClass(e, "CharacterData", "Node", nil))
 	InitializeDocument(js.CreateClass(e, "Document", "Node", DocumentConstructor))
 	InitializeDocumentFragment(js.CreateClass(e, "DocumentFragment", "Node", DocumentFragmentConstructor))
+	InitializeDocumentType(js.CreateClass(e, "DocumentType", "Node", nil))
 	InitializeElement(js.CreateClass(e, "Element", "Node", nil))
 	InitializeText(js.CreateClass(e, "Text", "CharacterData", TextConstructor))
 }

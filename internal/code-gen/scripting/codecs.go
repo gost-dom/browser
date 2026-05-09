@@ -82,7 +82,7 @@ func decoderForType(argType idl.Type) g.Generator {
 		return decodeAny
 	}
 	switch argType.Name {
-	case "Node", "HTMLElement", "EventInit":
+	case "Node", "HTMLElement", "EventInit", "DocumentType":
 		return decode(argType.Name)
 	}
 	name := fmt.Sprintf("decode%s", model.IdlNameToGoName(argType.Name))

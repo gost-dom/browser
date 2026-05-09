@@ -57,6 +57,7 @@ func NewValidHTMLDocument(window Window, options ...func(HTMLDocument)) HTMLDocu
 		doc.CreateElement("head"),
 		doc.CreateElement("body"),
 	)
+	doc.AppendChild(doc.CreateDocumentType("html"))
 	doc.AppendChild(docEl)
 	for _, o := range options {
 		o(doc)

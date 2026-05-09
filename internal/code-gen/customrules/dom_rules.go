@@ -117,14 +117,10 @@ var domRules = SpecRules{
 		IsEntity:         true,
 		InterfacePackage: packagenames.Html,
 		Operations: OperationRules{
-			"createDocumentType": {Ignore: true},
 			"createHTMLDocument": {
 				ReturnType: gotypes.GoType{
 					Name:    "HTMLDocument",
 					Package: packagenames.Html,
-				},
-				Arguments: ArgumentRules{
-					"title": {ZeroAsDefault: true},
 				},
 			},
 		}},

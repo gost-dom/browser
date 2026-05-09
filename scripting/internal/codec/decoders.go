@@ -40,6 +40,18 @@ func DecodeDuration[T any](_ js.Scope[T], v js.Value[T]) (time.Duration, error) 
 	return time.Millisecond * time.Duration(v.Int32()), nil
 }
 
+func DecodeDocumentType[T any](s js.Scope[T], v js.Value[T]) (dom.DocumentType, error) {
+	if js.IsNullish(v) {
+		return nil, nil
+	}
+	if obj, ok := v.AsObject(); ok {
+		if docType, ok := obj.NativeValue().(dom.DocumentType); ok {
+			return docType, nil
+		}
+	}
+	return nil, s.NewTypeError("Value is not a node")
+}
+
 func DecodeNode[T any](s js.Scope[T], v js.Value[T]) (dom.Node, error) {
 	if js.IsNullish(v) {
 		return nil, nil

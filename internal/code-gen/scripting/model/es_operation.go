@@ -115,7 +115,8 @@ func (o Callback) EncodeAsSimpleJSLookup() bool {
 		"Location",
 		"Document",
 		"HTMLDocument",
-		"XMLDocument":
+		"XMLDocument",
+		"DocumentType":
 		return true
 	default:
 		return false

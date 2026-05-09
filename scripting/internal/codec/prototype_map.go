@@ -39,6 +39,8 @@ func LookupJSPrototype(entity any) string {
 		return "Document"
 	case dom.DocumentFragment:
 		return "DocumentFragment"
+	case dom.DocumentType:
+		return "DocumentType"
 	case dom.NamedNodeMap:
 		return "NamedNodeMap"
 	case dom.Attr:

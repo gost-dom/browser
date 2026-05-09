@@ -18,7 +18,7 @@ import (
 	"github.com/gost-dom/browser"
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
-	"github.com/gost-dom/browser/scripting/v8engine"
+	"github.com/gost-dom/browser/scripting/sobekengine"
 	xhtml "golang.org/x/net/html"
 )
 
@@ -55,7 +55,7 @@ func (s WebPlatformTest) Run(
 		}
 	}()
 	b := browser.New(
-		browser.WithScriptEngine(v8engine.DefaultEngine()),
+		browser.WithScriptEngine(sobekengine.DefaultEngine()),
 		browser.WithContext(ctx),
 		browser.WithLogger(l),
 	)
