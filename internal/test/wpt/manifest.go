@@ -81,8 +81,8 @@ type TestCase struct {
 	Path         string
 }
 
-func (c TestCase) URL() string {
-	return fmt.Sprintf("https://wpt.live/%s", c.Path)
+func (c TestCase) URL(wptURL string) string {
+	return fmt.Sprintf("%s/%s", wptURL, c.Path)
 }
 
 func (m Manifest) All() iter.Seq[TestCase] {

@@ -144,7 +144,7 @@ func RunTestCase(
 
 	go func() {
 		suite := WebPlatformTest{
-			url:     tc.URL(),
+			url:     tc.URL(o.wptURL),
 			options: o,
 		}
 		select {
@@ -223,7 +223,9 @@ type options struct {
 	logType      string
 	logNoColor   bool
 	file         string
+	manifest     string
 	includes     []string
+	wptURL       string
 	ignorePanics bool
 }
 
@@ -301,12 +303,11 @@ func (s staticTestCaseSource) testCases(
 func loadTestSource(o options) testCaseLoader {
 	if o.file != "" {
 		return staticTestCaseSource{
-			baseHref: "https://wpt.live/",
+			baseHref: o.wptURL,
 			files:    []string{o.file},
 		}
 	} else {
 		return manifestTestCaseSource{
-			href:    "https://wpt.live/MANIFEST.json",
 			options: o,
 			filter: pathFilter{
 				included: o.includes,
@@ -330,6 +331,8 @@ type testCaseLoader interface {
 func parseOptions() options {
 	var o options
 	flag.StringVar(&o.file, "file", "", "")
+	flag.StringVar(&o.manifest, "wpt-manifest", "../../../../wpt/MANIFEST.json", "")
+	flag.StringVar(&o.wptURL, "wpt-url", "http://localhost:8000", "")
 	flag.StringVar(&o.logLevel, "log-level", "warn", "")
 	flag.StringVar(&o.logType, "log-type", "", "")
 	flag.BoolVar(&o.logNoColor, "no-color", false, "")
@@ -396,9 +399,9 @@ func main() {
 
 		body.AppendChild(
 			element("div", element("span", "Full path: "), element("a",
-				xhtml.Attribute{Key: "href", Val: testCase.URL()},
+				xhtml.Attribute{Key: "href", Val: testCase.URL(o.wptURL)},
 				xhtml.Attribute{Key: "target", Val: "_blank"},
-				testCase.URL())),
+				testCase.URL(o.wptURL))),
 		)
 
 		tbl := element("table")

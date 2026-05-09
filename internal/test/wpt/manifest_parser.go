@@ -21,9 +21,10 @@ func ParseManifestTo(
 }
 
 type parser struct {
-	logger *slog.Logger
-	ignore bool
-	prefix []string
+	options options
+	logger  *slog.Logger
+	ignore  bool
+	prefix  []string
 }
 
 func (p *parser) parse(
