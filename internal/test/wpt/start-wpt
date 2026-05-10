@@ -1,0 +1,4 @@
+#!/bin/sh
+
+./wpt make-hosts-file | tee -a /etc/hosts
+./wpt serve

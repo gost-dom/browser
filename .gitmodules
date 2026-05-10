@@ -2,3 +2,6 @@
 	path = code-gen/webref/definitions
 	url = https://github.com/w3c/webref.git
   ignore = untracked
+[submodule "internal/test/wpt/wpt-suite"]
+	path = internal/test/wpt/wpt-suite
+	url = https://github.com/web-platform-tests/wpt.git

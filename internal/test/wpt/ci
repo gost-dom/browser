@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+# Run the WPT web server in a docker container:
+#
+# - Build the image, sourcing from WPT's github repo
+#   - Building the image builds a MANIFEST.json file
+# - Start a new container from the image
+#   - Trap script termination, and remove the container afterwards
+# - Copy the MANIFEST.json from the container to the host FS
+#
+# Now we're ready to start the tests
+docker build . -t wpt-image
+docker run -d -p 8000:8000 --name wpt wpt-image
+trap "trap - SIGTERM && docker rm -f wpt" SIGINT SIGTERM EXIT
+
+docker cp wpt:/wpt/MANIFEST.json manifest.json
+# docker start wpt
+
+MAX_WAIT=30
+END_TIME=$((SECONDS + MAX_WAIT))
+
+echo "Wait"
+# Wait for the server to be listening
+until curl --output /dev/null --silent --head --fail http://localhost:8000; do
+    if [ $SECONDS -ge $END_TIME ]; then
+        echo "WPT server didn't come alive within $MAX_WAIT seconds."
+        docker logs wpt
+        exit 1
+    fi
+    printf "."
+    sleep 1
+done
+
+make test

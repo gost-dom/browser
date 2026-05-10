@@ -45,7 +45,7 @@ codegen-build-watch:
 codegen: codegen-clean codegen-build
 	go generate ./...
 
-.PHONY: test test-watch test-browser test-v8 test-sobek test-wpt
+.PHONY: test test-watch test-browser test-v8 test-sobek
 test:
 	$(GO_TEST) -v -race -vet=all ./...
 

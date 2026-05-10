@@ -331,7 +331,7 @@ type testCaseLoader interface {
 func parseOptions() options {
 	var o options
 	flag.StringVar(&o.file, "file", "", "")
-	flag.StringVar(&o.manifest, "wpt-manifest", "../../../../wpt/MANIFEST.json", "")
+	flag.StringVar(&o.manifest, "wpt-manifest", "manifest.json", "")
 	flag.StringVar(&o.wptURL, "wpt-url", "http://localhost:8000", "")
 	flag.StringVar(&o.logLevel, "log-level", "warn", "")
 	flag.StringVar(&o.logType, "log-type", "", "")
@@ -453,6 +453,7 @@ func main() {
 		errs = append(errs, err)
 	}
 	if err := errors.Join(errs...); err != nil {
+		fmt.Println(err)
 		os.Exit(1)
 	}
 }

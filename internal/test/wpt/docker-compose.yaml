@@ -1,0 +1,11 @@
+services:
+  wpt:
+    image: python:3
+    ports:
+      - "8000:8000"
+      - "8122:8122"
+    volumes:
+      - "./wpt-suite/:/wpt/"
+      - "./wpt-config.json:/wpt/config.json"
+    working_dir: /wpt
+    command: ./wpt serve

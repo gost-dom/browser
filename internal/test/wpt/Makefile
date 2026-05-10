@@ -1,3 +1,6 @@
+wpt-suite/MANIFEST.json:
+	cd wpt-suite && ./wpt manifest
+
 .PHONY: test
 test:
 	GOEXPERIMENT=jsonv2 go run . --log-type pretty \
