@@ -5,6 +5,9 @@ func ConfigureDOMSpecs(domSpecs *WebAPIConfig) {
 	configureDOMEvent(domSpecs)
 	domSpecs.AddSearchModule("html")
 	domSpecs.Type("CustomEvent").MarkMembersAsIgnored("initCustomEvent")
+	domImplementation := domSpecs.Type("DOMImplementation")
+	domImplementation.Method("createHTMLDocument").SetCustomImplementation()
+	domImplementation.Method("createDocument").SetCustomImplementation()
 }
 
 func configureDOMNode(specs *WebAPIConfig) {
@@ -56,6 +59,7 @@ func configureDOMNode(specs *WebAPIConfig) {
 
 	specs.Type("NonDocumentTypeChildNode")
 	document := specs.Type("Document")
+	document.Method("implementation").CustomImplementation = true
 	document.MarkMembersAsNotImplemented(
 		"createNodeIterator",
 		"createTreeWalker",
@@ -63,7 +67,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 		"adoptNode",
 		"createRange",
 		"createEvent",
-		"implementation",
 		"documentURI",
 		"doctype",
 		"contentType",

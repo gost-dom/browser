@@ -1,0 +1,21 @@
+package dom
+
+import (
+	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/scripting/internal/codec"
+	js "github.com/gost-dom/browser/scripting/internal/js"
+)
+
+func DOMImplementation_createHTMLDocument[T any](
+	cbCtx js.CallbackContext[T],
+) (res js.Value[T], err error) {
+	doc := html.NewHTMLDocument(nil)
+	return codec.EncodeEntity(cbCtx, doc)
+}
+
+func DOMImplementation_createDocument[T any](
+	cbCtx js.CallbackContext[T],
+) (res js.Value[T], err error) {
+	doc := html.NewEmptyHtmlDocument(nil)
+	return codec.EncodeEntity(cbCtx, doc)
+}

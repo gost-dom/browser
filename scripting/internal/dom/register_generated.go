@@ -6,6 +6,7 @@ import js "github.com/gost-dom/browser/scripting/internal/js"
 
 func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
 	InitializeAbortController(js.CreateClass(e, "AbortController", "", AbortControllerConstructor))
+	InitializeDOMImplementation(js.CreateClass(e, "DOMImplementation", "", nil))
 	InitializeDOMTokenList(js.CreateClass(e, "DOMTokenList", "", nil))
 	InitializeEvent(js.CreateClass(e, "Event", "", EventConstructor))
 	InitializeEventTarget(js.CreateClass(e, "EventTarget", "", EventTargetConstructor))

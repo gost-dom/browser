@@ -3,6 +3,8 @@ package model
 import (
 	"fmt"
 
+	"github.com/gost-dom/code-gen/gotypes"
+	"github.com/gost-dom/code-gen/packagenames"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )
@@ -23,4 +25,8 @@ func EncoderForIdlType(t idl.Type) g.Value {
 		return encodeByteString
 	}
 	return g.NewValue(fmt.Sprintf("encode%s", t.Name))
+}
+
+var encoders = map[gotypes.GoType]g.Value{
+	{Name: "Document", Package: packagenames.Dom}: encodeEntity,
 }

@@ -80,7 +80,7 @@ func IsNodeType(typeName string) bool {
 	switch loweredName {
 	case "node", "text", "cdata", "comment", "processinginstruction":
 		return true
-	case "document":
+	case "document", "xmldocument", "htmldocument":
 		return true
 	case "documentfragment":
 		return true
@@ -107,7 +107,15 @@ func (o Callback) EncodeAsSimpleJSLookup() bool {
 		return true
 	}
 	switch o.RetType.Name {
-	case "Attr", "NodeList", "HTMLFormControlsCollection", "Comment", "DOMStringMap", "Location":
+	case "Attr",
+		"NodeList",
+		"HTMLFormControlsCollection",
+		"Comment",
+		"DOMStringMap",
+		"Location",
+		"Document",
+		"HTMLDocument",
+		"XMLDocument":
 		return true
 	default:
 		return false
@@ -122,6 +130,9 @@ func hasStringOkReturn(data ESConstructorData, cb Callback) bool {
 }
 
 func encodeGoType(t customrules.GoType) g.Value {
+	if encoder, ok := encoders[t]; ok {
+		return encoder
+	}
 	return g.NewValue(fmt.Sprintf("encode%s", t.Name))
 }
 

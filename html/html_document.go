@@ -50,6 +50,17 @@ func NewHTMLDocument(window Window) HTMLDocument {
 	return doc
 }
 
+func NewValidHTMLDocument(window Window) HTMLDocument {
+	doc := NewEmptyHtmlDocument(window)
+	docEl := doc.CreateElement("html")
+	docEl.Append(
+		doc.CreateElement("head"),
+		doc.CreateElement("body"),
+	)
+	doc.AppendChild(docEl)
+	return doc
+}
+
 // NewEmptyHtmlDocument creates an HTML document without any content.
 func NewEmptyHtmlDocument(window Window) HTMLDocument {
 	var result HTMLDocument = &htmlDocument{dom.NewDocument(window), window, nil}

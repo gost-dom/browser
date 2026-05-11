@@ -223,10 +223,6 @@ func Document_createTreeWalker[T any](cbCtx js.CallbackContext[T]) (res js.Value
 	return codec.EncodeCallbackErrorf(cbCtx, "Document.Document_createTreeWalker: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func Document_implementation[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Document.Document_implementation: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
-}
-
 func Document_URL[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return codec.EncodeCallbackErrorf(cbCtx, "Document.Document_URL: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }

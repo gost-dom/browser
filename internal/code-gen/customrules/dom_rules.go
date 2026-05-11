@@ -1,6 +1,7 @@
 package customrules
 
 import (
+	"github.com/gost-dom/code-gen/gotypes"
 	"github.com/gost-dom/code-gen/packagenames"
 	"github.com/gost-dom/webref/idl"
 )
@@ -111,6 +112,22 @@ var domRules = SpecRules{
 		InterfacePackage: DomInterfaces,
 		OutputType:       OutputTypeStruct,
 	},
+	"DOMImplementation": {
+		OutputType:       OutputTypeStruct,
+		IsEntity:         true,
+		InterfacePackage: packagenames.Html,
+		Operations: OperationRules{
+			"createDocumentType": {Ignore: true},
+			"createHTMLDocument": {
+				ReturnType: gotypes.GoType{
+					Name:    "HTMLDocument",
+					Package: packagenames.Html,
+				},
+				Arguments: ArgumentRules{
+					"title": {ZeroAsDefault: true},
+				},
+			},
+		}},
 }
 
 var parentNodeQueryOperation = OperationRule{HasError: true}
