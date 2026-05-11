@@ -19,7 +19,7 @@ func NewHTMLScriptElement(ownerDocument HTMLDocument) HTMLElement {
 }
 
 func (e *htmlScriptElement) Connected() {
-	e.logger().Debug("<script> connected", "element", e)
+	e.logger().Info("<script> connected", "element", e, "src", e.src())
 	var (
 		err         error
 		deferScript bool
@@ -60,10 +60,11 @@ func (e *htmlScriptElement) compile() (script Script, deferred bool, err error) 
 }
 
 func (e *htmlScriptElement) run() {
+	e.logger().Info("Run script", "src", e.src())
 	if err := e.script.Run(); err != nil {
-		e.logger().Error("Script error", "src", e.src, log.ErrAttr(err))
+		e.logger().Error("Script error", "src", e.src(), log.ErrAttr(err))
 	}
-	e.logger().Debug("Script execution completed", "src", e.src)
+	e.logger().Debug("Script execution completed", "src", e.src())
 }
 
 func (e *htmlScriptElement) src() string {
