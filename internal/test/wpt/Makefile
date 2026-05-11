@@ -12,4 +12,4 @@ test:
 # WIP target is used to run tests for currently worked on feature
 .PHONY: wip
 wip:
-	GOEXPERIMENT=jsonv2 go run . dom/events/Event
+	GOEXPERIMENT=jsonv2 go run . dom/nodes/DOMImplementation
