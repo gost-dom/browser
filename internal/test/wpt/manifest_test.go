@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-//go:embed manifest.json
+//go:embed test-manifest.json
 var manifest []byte
 var nullLog = slog.New(slog.NewTextHandler(io.Discard, nil))
 
