@@ -50,7 +50,7 @@ func NewHTMLDocument(window Window) HTMLDocument {
 	return doc
 }
 
-func NewValidHTMLDocument(window Window) HTMLDocument {
+func NewValidHTMLDocument(window Window, options ...func(HTMLDocument)) HTMLDocument {
 	doc := NewEmptyHtmlDocument(window)
 	docEl := doc.CreateElement("html")
 	docEl.Append(
@@ -58,6 +58,9 @@ func NewValidHTMLDocument(window Window) HTMLDocument {
 		doc.CreateElement("body"),
 	)
 	doc.AppendChild(docEl)
+	for _, o := range options {
+		o(doc)
+	}
 	return doc
 }
 

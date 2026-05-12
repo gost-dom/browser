@@ -15,6 +15,7 @@ func RunDomSuite(t *testing.T, e html.ScriptEngine) {
 	}
 
 	t.Run("Document", wrapSuite(testDocument))
+	t.Run("DOMImplementation", wrapSuite(testDomImplementation))
 	t.Run("EventTarget", wrapSuite(testEventTarget))
 	t.Run("Text", wrapSuite(testText))
 }
