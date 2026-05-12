@@ -20,8 +20,4 @@ func (i *DOMImplementation) CreateDocument(
 	return dom.NewDocument(nil)
 }
 
-func (i *DOMImplementation) CreateHTMLDocument(title string) HTMLDocument {
-	return NewValidHTMLDocument(nil)
-}
-
 func (i *DOMImplementation) HasFeature() bool { return true }
