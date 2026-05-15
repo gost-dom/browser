@@ -11,6 +11,7 @@ import (
 	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/gosthttp"
+	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/browser/url"
@@ -183,13 +184,21 @@ func (ctx *V8ScriptContext) DownloadScript(src string) (html.Script, error) {
 func (ctx *V8ScriptContext) DownloadModule(src string) (html.Script, error) {
 	url := html.WindowResolveHref(ctx.browsingCtx, src)
 	module, err := ctx.resolver.downloadAndCompile(ctx.Context(), ctx.logger(), url)
-	if err = module.InstantiateModule(ctx.v8ctx, &ctx.resolver); err != nil {
+	if err != nil {
+		return nil, fmt.Errorf("gost: v8engine: module download: %w", err)
+	}
+	if err := module.InstantiateModule(ctx.v8ctx, &ctx.resolver); err != nil {
 		return nil, fmt.Errorf("gost: v8engine: module instantiation: %w", err)
 	}
 	return V8Module{ctx, module, ctx.logger(), url}, nil
 }
 
-func (ctx *V8ScriptContext) logger() *slog.Logger { return ctx.host.logger }
+func (ctx *V8ScriptContext) logger() *slog.Logger {
+	if ctx.host.logger == nil {
+		return log.Default()
+	}
+	return ctx.host.logger
+}
 
 type resolvedModule struct {
 	scriptID int
