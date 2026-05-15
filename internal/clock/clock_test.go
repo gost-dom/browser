@@ -217,6 +217,34 @@ func (s *ClockTestSuite) TestProcessEvents() {
 	s.Assert().Equal(1, count, "count before processEvents")
 }
 
+// ProcessEvents waits for pending async work (microtasks, fetches, posted
+// events), not unrelated future timers. A long setTimeout armed before the
+// call must not fire — otherwise frameworks like htmx, which arm a defensive
+// abort timer on every request, get their requests cancelled mid-flight.
+func (s *ClockTestSuite) TestProcessEventsDoesNotFireFutureTimers() {
+	ctx, cancel := context.WithTimeout(s.T().Context(), time.Millisecond)
+	defer cancel()
+
+	c := clock.New(clock.OfIsoString("2025-02-01T12:00:00Z"))
+	var fired bool
+	c.SetTimeout(wrapTask(func() { fired = true }), 60*time.Second)
+
+	var eventCount int
+	e := c.BeginEvent()
+	go func() {
+		e.AddEvent(func() error { eventCount++; return nil })
+	}()
+
+	s.Require().NoError(c.ProcessEvents(ctx))
+	s.Assert().Equal(1, eventCount, "posted event should be processed")
+	s.Assert().False(fired, "future timer must not fire from ProcessEvents")
+	s.Assert().Equal(feb1st2025_noon_milli, c.Time.UnixMilli(), "clock should not advance")
+
+	// The timer is still pending and fires on explicit Advance.
+	s.Require().NoError(c.Advance(60 * time.Second))
+	s.Assert().True(fired, "timer fires when its scheduled time is reached")
+}
+
 func (s *ClockTestSuite) TestProcessEventsUntil() {
 	var count int
 

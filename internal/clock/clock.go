@@ -361,7 +361,7 @@ func (c *Clock) ProcessEventsWhile(ctx context.Context, f func() bool) error {
 
 func (c *Clock) processEventsWhile(ctx context.Context, f func() bool, name string) error {
 	errs := make([]error, 0, 1+c.pendingEvents*2)
-	errs = append(errs, c.RunAll()) // Run microtasks first
+	errs = append(errs, c.runDueTasks()...)
 	c.logger().Debug("Clock.processEventsWhile", "pendingCount", c.pendingEvents, "this", c)
 	for f() {
 		c.logger().Debug("Clock.ProcessEvents: waiting")
@@ -372,12 +372,22 @@ func (c *Clock) processEventsWhile(ctx context.Context, f func() bool, name stri
 			c.logger().
 				Debug("clock.ProcessEvent: processed", "pendingCount", c.pendingEvents, log.ErrAttr(err))
 			errs = append(errs, err)
-			errs = append(errs, c.RunAll())
+			errs = append(errs, c.runDueTasks()...)
 		case <-ctx.Done():
 			return fmt.Errorf("Clock.%s: timeout waiting for event", name)
 		}
 	}
 	return errors.Join(errs...)
+}
+
+// runDueTasks drains microtasks and any timers whose scheduled time has
+// already passed, but leaves future-scheduled timers alone. This is what
+// ProcessEvents needs: progress real async work without fast-forwarding
+// through unrelated long-delay timeouts.
+func (c *Clock) runDueTasks() []error {
+	return c.runWhile(func() bool {
+		return len(c.tasks) > 0 && !c.tasks[0].time.After(c.Time)
+	})
 }
 
 func (c *Clock) generateHandle() TaskHandle {
