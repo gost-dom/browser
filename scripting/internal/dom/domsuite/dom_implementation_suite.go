@@ -43,5 +43,7 @@ func testDomImplementation(t *testing.T, e html.ScriptEngine) {
 				`domImplementation.createHTMLDocument("Test Doc").querySelector("title").textContent`,
 			),
 		)
+
+		assert.Equal(t, "about:blank", win.MustEval(`domImplementation.createHTMLDocument().URL`))
 	})
 }

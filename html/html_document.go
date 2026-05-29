@@ -14,6 +14,7 @@ type HTMLDocument interface {
 	setActiveElement(e dom.Element)
 	location() *location
 	setLocation(*location)
+	URL() string
 }
 
 type htmlDocument struct {
@@ -111,6 +112,12 @@ func (d *htmlDocument) Location() Location {
 
 func (d *htmlDocument) location() *location     { return d.docLocation }
 func (d *htmlDocument) setLocation(l *location) { d.docLocation = l }
+func (d *htmlDocument) URL() string {
+	if location := d.Location(); location != nil {
+		return location.Href()
+	}
+	return "about:blank"
+}
 
 func (d *htmlDocument) window() *window {
 	if d.win == nil {
