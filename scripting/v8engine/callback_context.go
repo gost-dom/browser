@@ -266,6 +266,15 @@ func wrapV8Callback(
 	return v8go.NewFunctionTemplateWithError(
 		host.iso,
 		func(info *v8go.FunctionCallbackInfo) (res *v8go.Value, err error) {
+			defer func() {
+				if recovered := recover(); recovered != nil {
+					err = fmt.Errorf(
+						"gost-dom/v8engine: panic in function callback: %v\n%s",
+						recovered,
+						constants.BUG_ISSUE_URL,
+					)
+				}
+			}()
 			cbCtx := newCallbackContext(host, info)
 			var result jsValue
 			result, err = callback(cbCtx)

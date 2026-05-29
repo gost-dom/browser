@@ -1,6 +1,8 @@
 package html
 
 import (
+	"log/slog"
+
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/internal/log"
 )
@@ -27,7 +29,7 @@ func (e *htmlScriptElement) Connected() {
 	window := e.htmlDocument.window()
 	e.script, deferScript, err = e.compile()
 	if err != nil {
-		e.logger().Error("HTMLScriptElement: script error", log.ErrAttr(err))
+		e.logger().Error("HTMLScriptElement: script compile error", log.ErrAttr(err))
 		return
 	}
 	if deferScript {
@@ -39,24 +41,39 @@ func (e *htmlScriptElement) Connected() {
 
 func (e *htmlScriptElement) compile() (script Script, deferred bool, err error) {
 	src, hasSrc := e.GetAttribute("src")
-	window := e.htmlDocument.window()
 	if !hasSrc {
-		script, err = window.scriptContext.Compile(e.TextContent())
-		if err != nil {
-			e.logger().Debug("HTMLScriptElement: compile error", "script", e.TextContent())
-		}
+		script, err := e.compileInline()
+		return script, false, err
 	} else {
-		src = window.resolveHref(src).Href()
-		scriptType, _ := e.GetAttribute("type")
-		if scriptType == "module" {
-			script, err = window.scriptContext.DownloadModule(src)
-			deferred = true
-		} else {
-			script, err = window.scriptContext.DownloadScript(src)
-			_, deferred = e.GetAttribute("defer")
-		}
+		return e.downloadAndCompile(src)
+	}
+}
+
+func (e *htmlScriptElement) downloadAndCompile(
+	src string,
+) (script Script, deferred bool, err error) {
+	window := e.htmlDocument.window()
+	src = window.resolveHref(src).Href()
+	scriptType, _ := e.GetAttribute("type")
+	if scriptType == "module" {
+		script, err = window.scriptContext.DownloadModule(src)
+		deferred = true
+	} else {
+		script, err = window.scriptContext.DownloadScript(src)
+		_, deferred = e.GetAttribute("defer")
 	}
 	return
+}
+
+func (e *htmlScriptElement) compileInline() (Script, error) {
+	window := e.htmlDocument.window()
+	script, err := window.scriptContext.Compile(e.TextContent())
+	if err != nil {
+		e.logger().Warn("HTMLScriptElement: compile error",
+			slog.String("script", e.TextContent()),
+			log.ErrAttr(err))
+	}
+	return script, err
 }
 
 func (e *htmlScriptElement) run() {
