@@ -408,7 +408,6 @@ func (w *window) Location() Location { return w.document.Location() }
 func (w *window) Clock() Clock { return w.clock }
 
 func (w *window) LocationHREF() string {
-
 	return w.Location().Href()
 }
 
@@ -423,7 +422,11 @@ func (w *window) ObjectId() entity.ObjectId { return -1 }
 // resolveHref takes an href from a <a> tag, or action from a <form> tag and
 // resolves an absolute URL that must be requested.
 func (w *window) resolveHref(href string) *url.URL {
-	r, err := url.NewUrlBase(href, w.Location().Href())
+	base := ""
+	if w != nil && w.Location() != nil {
+		base = w.Location().Href()
+	}
+	r, err := url.NewUrlBase(href, base)
 	if err != nil {
 		panic(fmt.Errorf("gost-dom/html: resolveHref: %w\n%w", err, constants.ErrGostDomBug))
 	}

@@ -28,10 +28,9 @@ func (e *htmlAnchorElement) Click() {
 }
 
 func (e *htmlAnchorElement) SetAttribute(name string, val string) {
-	win := e.window().History().window
 	e.htmlElement.SetAttribute(name, val)
 	if name == "href" {
-		e.URL = win.resolveHref(val)
+		e.URL = e.resolveHref(val)
 	}
 }
 
@@ -52,9 +51,16 @@ func (e *htmlAnchorElement) getUrl(f func(*url.URL) string) string {
 	return f(e.URL)
 }
 
+func (e *htmlAnchorElement) resolveHref(href string) *url.URL {
+	w := e.window()
+	if w == nil {
+		return url.ParseURL(href)
+	}
+	return w.resolveHref(href)
+}
+
 func (e *htmlAnchorElement) SetHref(val string) {
-	window := e.getHTMLDocument().window()
-	newUrl := window.resolveHref(val)
+	newUrl := e.resolveHref(val)
 	e.URL = newUrl
 	e.updateDataAttribute()
 }
