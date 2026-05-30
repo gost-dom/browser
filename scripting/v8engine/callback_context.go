@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"iter"
 	"log/slog"
+	"runtime/debug"
 
 	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/constants"
+	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/v8go"
 	v8 "github.com/gost-dom/v8go"
@@ -273,6 +275,9 @@ func wrapV8Callback(
 						recovered,
 						constants.BUG_ISSUE_URL,
 					)
+					host.Logger().Error(
+						"V8 callback panic",
+						log.ErrAttr(err), "Stack", string(debug.Stack()))
 				}
 			}()
 			cbCtx := newCallbackContext(host, info)
