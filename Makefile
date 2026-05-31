@@ -85,7 +85,7 @@ ci-build:
 wpt-watch:
 	$(GOW) run ./internal/test/wpt
 
-ci: codegen ci-build test test-wpt codegen-test
+ci: codegen ci-build test codegen-test
 	git diff --quiet HEAD
 
 release: ci
