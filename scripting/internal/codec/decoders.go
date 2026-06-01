@@ -49,7 +49,7 @@ func DecodeDocumentType[T any](s js.Scope[T], v js.Value[T]) (dom.DocumentType, 
 			return docType, nil
 		}
 	}
-	return nil, s.NewTypeError("Value is not a node")
+	return nil, s.NewTypeError("Value is not DocumentType")
 }
 
 func DecodeNode[T any](s js.Scope[T], v js.Value[T]) (dom.Node, error) {
