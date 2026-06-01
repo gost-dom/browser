@@ -8,7 +8,7 @@ name: Rebase next
 
 on:
   push:
-    branches: [ "main", "tmp" ]
+    branches: [ "tmp" ]
 
 jobs:
   build:
