@@ -22,8 +22,9 @@ func NewHTMLAnchorElement(ownerDoc HTMLDocument) HTMLAnchorElement {
 func (e *htmlAnchorElement) Click() {
 	result := e.htmlElement.click()
 	if href := e.Href(); result && href != "" {
-		w := e.window()
-		w.Navigate(w.resolveHref(href).Href())
+		if w := e.window(); w != nil {
+			w.Navigate(w.resolveHref(href).Href())
+		}
 	}
 }
 
