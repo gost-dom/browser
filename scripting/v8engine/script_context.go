@@ -11,7 +11,6 @@ import (
 	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/gosthttp"
-	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/gost-dom/browser/url"
@@ -193,12 +192,7 @@ func (ctx *V8ScriptContext) DownloadModule(src string) (html.Script, error) {
 	return V8Module{ctx, module, ctx.logger(), url}, nil
 }
 
-func (ctx *V8ScriptContext) logger() *slog.Logger {
-	if ctx.host.logger == nil {
-		return log.Default()
-	}
-	return ctx.host.logger
-}
+func (ctx *V8ScriptContext) logger() *slog.Logger { return ctx.host.Logger() }
 
 type resolvedModule struct {
 	scriptID int
