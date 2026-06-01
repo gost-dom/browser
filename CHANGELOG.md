@@ -1,6 +1,20 @@
 # Changelog - Gost-DOM
 
 
+## [0.11.1](https://github.com/gost-dom/browser/compare/v0.11.0...v0.11.1) (2026-06-01)
+
+
+### Features
+
+* Implement basic <textarea> support ([c493291](https://github.com/gost-dom/browser/commit/c493291d77ebfc0002189962627db0a84efcaf01))
+* **scripting:** Implement element.className ([3d8558c](https://github.com/gost-dom/browser/commit/3d8558c42ba70f32bdeb4d21730a1c9b74e9fa72))
+
+
+### Bug Fixes
+
+* **clock:** don't fire future timers during ProcessEvents ([35deed2](https://github.com/gost-dom/browser/commit/35deed2b259fc15d55ff87d65db64944dc009ced))
+* **v8engine:** handle nil logger and module download errors ([7ee89ef](https://github.com/gost-dom/browser/commit/7ee89ef7630a5a1a939783269167ee357bf2686f))
+
 ## [0.11.0](https://github.com/gost-dom/browser/compare/v0.10.3...v0.11.0) (2026-02-19)
 
 
