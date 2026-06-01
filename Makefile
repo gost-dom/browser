@@ -88,5 +88,11 @@ wpt-watch:
 ci: codegen ci-build test codegen-test
 	git diff --quiet HEAD
 
-release: ci
+.PHONY: assert-main-branch
+assert-main-branch:
+	# Verify current branch is "main", and that it's ahead of origin/main
+	[ $$(git branch --show-current) = "main" ]
+	git merge-base --is-ancestor origin/main main
+
+release: assert-main-branch ci
 	pnpm run release
