@@ -38,6 +38,12 @@ func (t *documentType) PublicId() string   { return t.publicID }
 func (t *documentType) SystemId() string   { return t.systemID }
 func (t *documentType) NodeType() NodeType { return NodeTypeDocumentType }
 
+func (t *documentType) IsEqualNode(n Node) bool {
+	other, ok := n.(*documentType)
+	return ok && other.name == t.name && other.publicID == t.publicID &&
+		other.systemID == t.systemID
+}
+
 func (t *documentType) cloneNode(doc Document, deep bool) Node {
 	return NewDocumentType(t.name, t.publicID, t.systemID, doc)
 }
