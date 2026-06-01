@@ -411,6 +411,14 @@ func (n *node) assertCanAddNode(newNode Node) error {
 		return newDomError("Document type may only be a parent of Document")
 	}
 	if doc, isDoc := n.getSelf().(Document); isDoc {
+		if childType == NodeTypeDocumentType {
+			if doc.Doctype() != nil {
+				return newDomErrorCode(
+					"Document can have only one document type",
+					hierarchy_request_err,
+				)
+			}
+		}
 		if childType == NodeTypeElement {
 			if doc.ChildElementCount() > 0 {
 				return newDomErrorCode(
