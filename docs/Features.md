@@ -59,6 +59,9 @@ implementations to be build independently.
 ### DOM API
 
 - Only supports HTML documents. No support for XML or XHTML documents, as well as namespaces.
+  - _Some_ preliminary support for non-HTML documents exists, as well as
+    `document.implementation`. This is **very** experimental. It primarily
+    exists to fill enough gaps for web platform tests run for other DOM features.
 - `Element.outerHTML` and `innerHTML` output is not properly escaped.
 - No support for shadow DOM.
 - MutationObserver - [In progress](https://github.com/gost-dom/browser/issues/65)

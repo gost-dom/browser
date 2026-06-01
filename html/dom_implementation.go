@@ -6,6 +6,10 @@ import (
 	// dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
 )
 
+// DOMImplementation is highly experimental implementation of the dom.implementation
+//
+// This primarily exists to fill enough gaps to run Web Platform Tests
+// exercising other features.
 type DOMImplementation struct {
 	entity.Entity
 	OwnerDocument dom.Document
