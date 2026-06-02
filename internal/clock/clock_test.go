@@ -238,7 +238,7 @@ func (s *ClockTestSuite) TestProcessEventsWithKeepCurrentTimeDoesNotFireFutureTi
 	s.Require().NoError(c.ProcessEvents(ctx, clock.KeepCurrentTime()))
 	s.Assert().Equal(1, eventCount, "posted event should be processed")
 	s.Assert().False(fired, "future timer must not fire from ProcessEvents")
-	s.Assert().Equal(feb1st2025_noon_milli, c.Time.UnixMilli(), "clock should not advance")
+	s.Assert().Equal(feb1st2025_noon_milli, c.Time.UnixMilli(), "clock should have advanced")
 
 	// The timer is still pending and fires on explicit Advance.
 	s.Require().NoError(c.Advance(60 * time.Second))
