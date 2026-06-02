@@ -342,13 +342,28 @@ func (c *Clock) addEvent(task TaskCallback) {
 	c.events <- task
 }
 
+func (c *Clock) wrapFn(f func() bool, opts ...ProcessEventOption) func(*[]error) bool {
+	var opt processEventOptions
+	for _, oo := range opts {
+		oo(&opt)
+	}
+	return func(errs *[]error) bool {
+		if opt.keepCurrentTime {
+			*errs = append(*errs, c.runDueTasks()...)
+		} else {
+			*errs = append(*errs, c.RunAll())
+		}
+		return f()
+	}
+}
+
 // ProcessEvents processes all pending events.
 func (c *Clock) ProcessEvents(ctx context.Context, opts ...ProcessEventOption) error {
 	return c.processEventsWhile(
 		ctx,
-		func() bool { return c.pendingEvents > 0 },
+		c.wrapFn(func() bool { return c.pendingEvents > 0 }, opts...),
 		"ProcessEvents",
-		opts...)
+	)
 }
 
 // ProcessEvents processes pending events as long as predicate p evaluates to
@@ -378,27 +393,17 @@ func (c *Clock) ProcessEventsWhile(
 	f func() bool,
 	opts ...ProcessEventOption,
 ) error {
-	return c.processEventsWhile(ctx, f, "ProcessEventsWhile", opts...)
+	return c.processEventsWhile(ctx, c.wrapFn(f, opts...), "ProcessEventsWhile")
 }
 
 func (c *Clock) processEventsWhile(
 	ctx context.Context,
-	f func() bool,
+	f func(*[]error) bool,
 	name string,
-	opts ...ProcessEventOption,
 ) error {
-	var opt processEventOptions
-	for _, oo := range opts {
-		oo(&opt)
-	}
 	errs := make([]error, 0, 1+c.pendingEvents*2)
-	if opt.keepCurrentTime {
-		errs = append(errs, c.runDueTasks()...)
-	} else {
-		errs = append(errs, c.RunAll())
-	}
 	c.logger().Debug("Clock.processEventsWhile", "pendingCount", c.pendingEvents, "this", c)
-	for f() {
+	for f(&errs) {
 		c.logger().Debug("Clock.ProcessEvents: waiting")
 		select {
 		case event := <-c.events:
@@ -407,11 +412,6 @@ func (c *Clock) processEventsWhile(
 			c.logger().
 				Debug("clock.ProcessEvent: processed", "pendingCount", c.pendingEvents, log.ErrAttr(err))
 			errs = append(errs, err)
-			if opt.keepCurrentTime {
-				errs = append(errs, c.runDueTasks()...)
-			} else {
-				errs = append(errs, c.RunAll())
-			}
 		case <-ctx.Done():
 			return fmt.Errorf("Clock.%s: timeout waiting for event", name)
 		}
