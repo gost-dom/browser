@@ -85,7 +85,7 @@ ci-build:
 wpt-watch:
 	$(GOW) run ./internal/test/wpt
 
-ci: codegen ci-build test codegen-test
+ci: codegen ci-build test codegen-test test-wpt
 	git diff --quiet HEAD
 
 .PHONY: assert-main-branch
