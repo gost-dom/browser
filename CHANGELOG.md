@@ -1,6 +1,19 @@
 # Changelog - Gost-DOM
 
 
+## [0.11.2](https://github.com/gost-dom/browser/compare/v0.11.1...v0.11.2) (2026-06-02)
+
+
+### Features
+
+* Document.doctype ([eaf891c](https://github.com/gost-dom/browser/commit/eaf891c9658a6957c7077e3fbfd3855b8bea59a8))
+* Document.URL ([2be07a7](https://github.com/gost-dom/browser/commit/2be07a7e8f28738345d79c8c5970b92d0c30d580))
+
+
+### Bug Fixes
+
+* Revert ProcessEvents behaviour, letting options control behaviour ([f7eb6dd](https://github.com/gost-dom/browser/commit/f7eb6ddfa23447dd6833dac33ca0ed7587b6470b))
+
 ## [0.11.1](https://github.com/gost-dom/browser/compare/v0.11.0...v0.11.1) (2026-06-01)
 
 
