@@ -50,7 +50,7 @@ test:
 	$(GO_TEST) -v -race -vet=all ./...
 
 test-wpt:
-	$(MAKE) -C internal/test/wpt test
+	$(MAKE) -C internal/test/wpt ci
 
 test-watch:
 	gotestsum --format dots ./... -- vet=off || echo "Error"
