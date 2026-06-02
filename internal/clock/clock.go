@@ -14,6 +14,18 @@ import (
 	"github.com/gost-dom/browser/internal/log"
 )
 
+type processEventOptions struct {
+	keepCurrentTime bool
+}
+
+type ProcessEventOption func(*processEventOptions)
+
+func KeepCurrentTime() ProcessEventOption {
+	return func(o *processEventOptions) {
+		o.keepCurrentTime = true
+	}
+}
+
 // DefaultEventBufSize is the default capacity used when not specified
 // explicitly for the internal channel events pushed to the event loop.
 const DefaultEventBufSize = 8
@@ -162,7 +174,9 @@ func (c *Clock) runMicrotasksAndFlush() []error {
 		} else {
 			count++
 			if count > c.MaxLoopWithoutDecrement {
-				panic("Clock: Size of pending microtasks isn't decreasing. Are tasks adding new tasks?")
+				panic(
+					"Clock: Size of pending microtasks isn't decreasing. Are tasks adding new tasks?",
+				)
 			}
 		}
 	}
@@ -329,8 +343,12 @@ func (c *Clock) addEvent(task TaskCallback) {
 }
 
 // ProcessEvents processes all pending events.
-func (c *Clock) ProcessEvents(ctx context.Context) error {
-	return c.processEventsWhile(ctx, func() bool { return c.pendingEvents > 0 }, "ProcessEvents")
+func (c *Clock) ProcessEvents(ctx context.Context, opts ...ProcessEventOption) error {
+	return c.processEventsWhile(
+		ctx,
+		func() bool { return c.pendingEvents > 0 },
+		"ProcessEvents",
+		opts...)
 }
 
 // ProcessEvents processes pending events as long as predicate p evaluates to
@@ -355,13 +373,30 @@ func (c *Clock) ProcessEvents(ctx context.Context) error {
 //		statusIndicator := win.Document().GetElementById("status-indicator")
 //		return statusIndicator.TextContent() == "RESPONSE"
 //	})
-func (c *Clock) ProcessEventsWhile(ctx context.Context, f func() bool) error {
-	return c.processEventsWhile(ctx, f, "ProcessEventsWhile")
+func (c *Clock) ProcessEventsWhile(
+	ctx context.Context,
+	f func() bool,
+	opts ...ProcessEventOption,
+) error {
+	return c.processEventsWhile(ctx, f, "ProcessEventsWhile", opts...)
 }
 
-func (c *Clock) processEventsWhile(ctx context.Context, f func() bool, name string) error {
+func (c *Clock) processEventsWhile(
+	ctx context.Context,
+	f func() bool,
+	name string,
+	opts ...ProcessEventOption,
+) error {
+	var opt processEventOptions
+	for _, oo := range opts {
+		oo(&opt)
+	}
 	errs := make([]error, 0, 1+c.pendingEvents*2)
-	errs = append(errs, c.runDueTasks()...)
+	if opt.keepCurrentTime {
+		errs = append(errs, c.runDueTasks()...)
+	} else {
+		errs = append(errs, c.RunAll())
+	}
 	c.logger().Debug("Clock.processEventsWhile", "pendingCount", c.pendingEvents, "this", c)
 	for f() {
 		c.logger().Debug("Clock.ProcessEvents: waiting")
@@ -372,7 +407,11 @@ func (c *Clock) processEventsWhile(ctx context.Context, f func() bool, name stri
 			c.logger().
 				Debug("clock.ProcessEvent: processed", "pendingCount", c.pendingEvents, log.ErrAttr(err))
 			errs = append(errs, err)
-			errs = append(errs, c.runDueTasks()...)
+			if opt.keepCurrentTime {
+				errs = append(errs, c.runDueTasks()...)
+			} else {
+				errs = append(errs, c.RunAll())
+			}
 		case <-ctx.Done():
 			return fmt.Errorf("Clock.%s: timeout waiting for event", name)
 		}

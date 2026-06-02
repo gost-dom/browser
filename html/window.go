@@ -64,9 +64,21 @@ type Clock interface {
 	// Advance simulated time by a specific duration. Will run relevant
 	// callbacks registered with setInterval or setTimeout
 	Advance(time.Duration) error
-	// ProcessEvents ensures that all immediate functions as well as
-	// microtasks are executed.
-	ProcessEvents(ctx context.Context) error
+	// ProcessEvents runs until the system has "settled". The primary intent is
+	// after loading a page, or interacting with the page, to wait for the UI to
+	// be in the correct state, allowing you to verify the state; or perform the
+	// next interaction. This includes:
+	//
+	// - Any callback registered through setInterval.
+	// - Any pending HTTP requests, i.e., if JavaScript code has issues an HTTP
+	// request, this will wait for a response to have been processed.
+	//
+	// Note: This may forward simulated time, if microtasks have been added. If
+	// this is not desirable, pass the [clock.KeepCurrentTime] option.
+	//
+	// Deprecated: This function was poorly named, not revealing its
+	// time-forwarding nature. A new stable API hasn't yet been created.
+	ProcessEvents(ctx context.Context, o ...clock.ProcessEventOption) error
 	// ProcessEventsWhile will process events in the event loop as long as a
 	// callback function f returns true. This has two specific uses over the
 	// simpler ProcessEvents
@@ -81,7 +93,10 @@ type Clock interface {
 	//
 	// For these types of tests, Go's synctest package is worth considering as
 	// well.
-	ProcessEventsWhile(ctx context.Context, f func() bool) error
+	//
+	// Deprecated: This function was poorly named, not revealing its
+	// time-forwarding nature. A new stable API hasn't yet been created.
+	ProcessEventsWhile(ctx context.Context, f func() bool, o ...clock.ProcessEventOption) error
 }
 
 // Describes a current browser context
