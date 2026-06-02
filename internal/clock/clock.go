@@ -104,7 +104,7 @@ type Clock struct {
 	pendingEvents int
 	mu            sync.RWMutex
 
-	// stack contains the depth of nested calls to [*Clock.Do], keeping track of
+	// stack contains the depth of nested calls to [clock.Do], keeping track of
 	// when to run microtasks.
 	stack int
 }
@@ -257,17 +257,6 @@ func (c *Clock) exit() error {
 		return nil
 	}
 	return Tick(c)
-}
-
-// Do wraps a task call and runs microtasks when it has completed. Nested tasks
-// will not trigger microtasks; only when the original root task completes.
-func (c *Clock) Do(f func() error) (err error) {
-	c.enter()
-	defer func() {
-		err = errors.Join(err, c.exit())
-	}()
-
-	return f()
 }
 
 // Cancel removes the task that have been added using [Clock.SetTimeout] or
@@ -554,4 +543,15 @@ func RunAll(c *Clock) error {
 	errs := c.runWhile(func() bool { return c.length() > 0 })
 
 	return errors.Join(errs...)
+}
+
+// Do wraps a task call and runs microtasks when it has completed. Nested tasks
+// will not trigger microtasks; only when the original root task completes.
+func Do(c *Clock, f func() error) (err error) {
+	c.enter()
+	defer func() {
+		err = errors.Join(err, c.exit())
+	}()
+
+	return f()
 }

@@ -2,6 +2,7 @@ package dom
 
 import (
 	"github.com/gost-dom/browser/dom/event"
+	"github.com/gost-dom/browser/internal/clock"
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
@@ -21,7 +22,7 @@ func (l eventListener[T]) HandleEvent(e *event.Event) error {
 	if err == nil {
 		global := l.s.GlobalThis()
 		var res js.Value[T]
-		err = l.s.Clock().Do(func() error {
+		err = clock.Do(l.s.Clock(), func() error {
 			res, err = f.Call(global, event)
 			return err
 		})

@@ -113,7 +113,7 @@ func (s *ClockTestSuite) TestErrorsAreReturned() {
 
 func (s *ClockTestSuite) TestTick() {
 	c := clock.New()
-	c.Do(func() error {
+	clock.Do(c, func() error {
 		c.QueueMacrotask(wrapTask(func() { s.log("Task") }))
 		c.QueueMicrotask(func() error { s.log("Microtask"); return nil })
 		return nil

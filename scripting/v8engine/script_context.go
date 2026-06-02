@@ -8,6 +8,7 @@ import (
 	"runtime/debug"
 
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/constants"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/gosthttp"
@@ -34,7 +35,7 @@ func (c *V8ScriptContext) iso() *v8.Isolate         { return c.host.iso }
 func (c *V8ScriptContext) Context() context.Context { return c.browsingCtx.Context() }
 func (c *V8ScriptContext) do(f func() error) error {
 	if c.host.clock != nil {
-		return c.host.clock.Do(f)
+		return clock.Do(c.host.clock, f)
 	}
 	return f()
 }

@@ -8,6 +8,7 @@ import (
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/cache"
+	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/gosthttp"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/scripting/internal/js"
@@ -27,7 +28,7 @@ type scriptContext struct {
 
 func (c *scriptContext) do(f func() error) error {
 	if c.host.clock != nil {
-		return c.host.clock.Do(f)
+		return clock.Do(c.host.clock, f)
 	}
 	return f()
 }
