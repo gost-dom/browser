@@ -55,7 +55,9 @@ func createData(
 		err = fmt.Errorf("createData error: %s = %s", idlInterface.Name, interfaceConfig.TypeName)
 		return
 	}
-	intfRules := customrules.GetInterfaceRule(interfaceConfig.TypeName)
+	intfRules := customrules.GetInterfaceRule(
+		interfaceConfig.DomSpec.Name,
+		interfaceConfig.TypeName)
 	return model.ESConstructorData{
 		Spec:          interfaceConfig,
 		CustomRule:    intfRules,

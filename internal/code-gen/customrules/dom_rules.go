@@ -29,9 +29,6 @@ var domRules = SpecRules{
 				"options": {Ignore: true, Variadic: true}, // TODO: Get this working
 			}},
 		},
-		Attributes: AttributeRules{
-			"body": {SetterHasError: true},
-		},
 	},
 	"Event": {OutputType: OutputTypeStruct,
 		Attributes: AttributeRules{
@@ -80,12 +77,9 @@ var domRules = SpecRules{
 			"matches":               {HasError: true},
 			"closest":               {HasError: true},
 			"insertAdjacentElement": {HasError: true},
-			"insertAdjacentHTML":    {HasError: true},
 			"insertAdjacentText":    {HasError: true},
 		},
 		Attributes: AttributeRules{
-			"outerHTML":    {SetterHasError: true},
-			"innerHTML":    {SetterHasError: true},
 			"namespaceURI": {ZeroAsNull: true},
 		},
 	},

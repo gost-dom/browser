@@ -12,8 +12,6 @@
 package customrules
 
 import (
-	"fmt"
-	"maps"
 	"reflect"
 	"slices"
 	"strings"
@@ -192,61 +190,9 @@ func SpecNames() []string {
 	return res
 }
 
-func mergeOrPanic[T comparable](a, b T) T {
-	var empty T
-	if a != empty && b != empty {
-		panic(fmt.Sprintf("Both A and B are not empty.\n\t%v\n\t%v", a, b))
-	}
-	if a == empty {
-		return b
-	} else {
-		return a
-	}
+func GetInterfaceRule(spec, name string) InterfaceRule {
+	return GetSpecRules(spec)[name]
 }
-
-func mergeRule(a, b InterfaceRule) InterfaceRule {
-	res := InterfaceRule{
-		mergeOrPanic(a.OverrideTypeName, b.OverrideTypeName),
-		mergeOrPanic(a.InterfacePackage, b.InterfacePackage),
-		mergeOrPanic(a.OutputType, b.OutputType),
-		a.Operations,
-		a.Attributes,
-		mergeOrPanic(a.IsEntity, b.IsEntity),
-	}
-	if res.Operations == nil {
-		res.Operations = b.Operations
-	} else {
-		maps.Copy(res.Operations, b.Operations)
-	}
-	if res.Attributes == nil {
-		res.Attributes = b.Attributes
-	} else {
-		maps.Copy(res.Attributes, b.Attributes)
-	}
-	return res
-}
-
-func makeAllRules() map[string]InterfaceRule {
-	res := make(map[string]InterfaceRule)
-	for _, v := range rules {
-		for n, r := range v {
-			e := res[n]
-			res[n] = mergeRule(e, r)
-		}
-	}
-	return res
-}
-
-func GetInterfaceRule(name string) InterfaceRule {
-	for _, v := range rules {
-		if r, ok := v[name]; ok {
-			return r
-		}
-	}
-	return InterfaceRule{}
-}
-
-var AllRules = makeAllRules()
 
 func GetSpecRules(specName string) SpecRules {
 	if res, ok := rules[specName]; ok {

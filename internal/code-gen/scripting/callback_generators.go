@@ -208,7 +208,9 @@ func (cb CallbackMethods) AttributeGetterCallbackBody(
 	} else {
 		field := g.ValueOf(instance).Field(name)
 		if cb.Data.CustomRule.OutputType == customrules.OutputTypeStruct && !attrRule.Callable {
-			targetTypeRule := customrules.AllRules[attr.Spec.Type.Name]
+			spec := cb.WrapperStruct.SpecName()
+			rules := customrules.GetSpecRules(spec)
+			targetTypeRule := rules[attr.Spec.Type.Name]
 			if targetTypeRule.OutputType == customrules.OutputTypeStruct {
 				call = field.Reference()
 			} else {

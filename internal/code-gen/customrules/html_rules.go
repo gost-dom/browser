@@ -17,6 +17,20 @@ var htmlRules = SpecRules{
 			"replace": {HasError: true},
 			"reload":  {HasError: true},
 		}},
+	"Document": {
+		Attributes: AttributeRules{
+			"body": {SetterHasError: true},
+		},
+	},
+	"Element": {
+		Operations: OperationRules{
+			"insertAdjacentHTML": {HasError: true},
+		},
+		Attributes: AttributeRules{
+			"outerHTML": {SetterHasError: true},
+			"innerHTML": {SetterHasError: true},
+		},
+	},
 	"History": {
 		Operations: OperationRules{
 			"go":      {HasError: true},
