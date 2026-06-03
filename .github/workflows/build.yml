@@ -6,7 +6,7 @@ name: Build
 on:
   workflow_call:
   push:
-    branches: [ "main", "auto-merge", "feature/*" ]
+    branches: [ "main", "auto-merge", "next", "feature/*" ]
   pull_request:
     branches: [ "main" ]
 
