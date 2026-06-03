@@ -357,7 +357,22 @@ func (c *Clock) wrapFn(f func() bool, opts ...ProcessEventOption) func(*[]error)
 	}
 }
 
-// ProcessEvents processes all pending events.
+// ProcessEvents processes all pending "events", allowing test cases to wait for a system to "settle"
+//
+// For most scenarios, the test case merely needs to wait for all these tasks to
+// have completed. E.g., a click handler fetches new data and presents it to the
+// user, the test case should continue once data is visible.
+//
+// This function does just that, waits for all these processes to complete.
+//
+// Warning: There is a glitch in the implementation of this function. setTimeout
+// callbacks will be processed before HTTP responses, causing simulated time to
+// advance. This could cause client-side timeout logic to be triggered. To prevent
+// future tasks to execute, you can pass the [KeepCurrentTime] option; but a better
+// solution will be worked on.
+//
+// Deprecated: The name is likely to change. The term "event" can have different meanings in
+// different contexts; so a more precise term will likely be added.
 func (c *Clock) ProcessEvents(ctx context.Context, opts ...ProcessEventOption) error {
 	return c.processEventsWhile(
 		ctx,
