@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" href="js/codemirror.css" />
+    <script src="js/codemirror.js"></script>
+  </head>
+  <body>
+    <h1>Codemirror test</h1>
+    <textarea id="editor"></textarea>
+    <div id="echo"></div>
+    <script>
+      const handleEvent = (e) => {
+        console.log(e.type, e.target, e);
+      };
+      window.addEventListener("focusin", handleEvent);
+      window.addEventListener("focus", handleEvent, { capture: true });
+      window.addEventListener("click", handleEvent);
+      window.addEventListener("keydown", handleEvent);
+      window.addEventListener("keyup", handleEvent);
+      const textArea = document.getElementById("editor");
+      const echo = document.getElementById("echo");
+      const cmTextArea = document.getElementById(".CodeMirror-scroll textarea");
+      var editor = CodeMirror.fromTextArea(textArea, {
+        lineNumbers: true,
+      });
+      editor.on("change", function () {
+        echo.textContent = editor.getValue();
+      });
+      const cms = document.querySelector(".CodeMirror-scroll");
+    </script>
+  </body>
+</html>

@@ -7,6 +7,7 @@ import (
 	"github.com/gost-dom/browser/scripting/v8engine"
 )
 
-func TestHTMX_V8(t *testing.T) {
+func TestIntegration_V8(t *testing.T) {
 	scripttests.RunHtmxTests(t, v8engine.DefaultEngine())
+	scripttests.RunCodeMirrorTests(t, v8engine.DefaultEngine())
 }

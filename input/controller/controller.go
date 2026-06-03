@@ -52,3 +52,7 @@ func (c KeyboardController) SendKeys(keys iter.Seq[key.Key]) {
 		c.SendKey(k)
 	}
 }
+
+func (c KeyboardController) SendText(text string) {
+	c.SendKeys(key.StringToKeys(text))
+}

@@ -25,8 +25,9 @@ func TestScriptFileSupport(t *testing.T) {
 	scripttests.RunDownloadScriptSuite(t, DefaultEngine())
 }
 
-func TestHTMX_Sobek(t *testing.T) {
+func TestIntegration_Sobek(t *testing.T) {
 	scripttests.RunHtmxTests(t, DefaultEngine())
+	scripttests.RunCodeMirrorTests(t, DefaultEngine())
 }
 
 func TestDatastar(t *testing.T) {
