@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/gost-dom/browser/html"
+	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
@@ -33,4 +34,8 @@ func Window_opener[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 
 func Window_setOpener[T any](_ js.CallbackContext[T]) (js.Value[T], error) {
 	return nil, errors.New("Not implemented")
+}
+
+func encodeNavigator[T any](s js.Scope[T], n *html.Navigator) (js.Value[T], error) {
+	return codec.EncodeEntityScopedWithPrototype(s, n, "Navigator")
 }

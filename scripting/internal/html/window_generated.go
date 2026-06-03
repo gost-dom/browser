@@ -169,7 +169,12 @@ func Window_frameElement[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], e
 }
 
 func Window_navigator[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Window.Window_navigator: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
+	instance, err := js.As[html.Window](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	result := instance.Navigator()
+	return encodeNavigator(cbCtx, result)
 }
 
 func Window_clientInformation[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

@@ -9,6 +9,7 @@ func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
 	InitializeElement(js.MustGetClass(e, "Element"))
 	InitializeHistory(js.CreateClass(e, "History", "", nil))
 	InitializeLocation(js.CreateClass(e, "Location", "", nil))
+	InitializeNavigator(js.CreateClass(e, "Navigator", "", nil))
 	InitializeHTMLElement(js.CreateClass(e, "HTMLElement", "Element", nil))
 	InitializeHTMLAnchorElement(js.CreateClass(e, "HTMLAnchorElement", "HTMLElement", nil))
 	InitializeHTMLFormElement(js.CreateClass(e, "HTMLFormElement", "HTMLElement", nil))

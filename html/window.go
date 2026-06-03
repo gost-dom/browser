@@ -169,6 +169,7 @@ type Window interface {
 	Location() Location
 	History() *History
 	ParseFragment(ownerDocument dom.Document, reader io.Reader) (dom.DocumentFragment, error)
+	Navigator() *Navigator
 	// unexported
 
 	fetchRequest(req *http.Request) error
@@ -189,6 +190,7 @@ type window struct {
 	deferredScripts     []*htmlScriptElement
 	context             context.Context
 	clock               *clock.Clock
+	navigator           Navigator
 }
 
 func newWindow(windowOptions ...WindowOption) *window {
@@ -241,6 +243,8 @@ func (w *window) checkRedirect(req *http.Request, via []*http.Request) error {
 	w.history.ReplaceState(EMPTY_STATE, req.URL.String())
 	return nil
 }
+
+func (w *window) Navigator() *Navigator { return &w.navigator }
 
 func NewWindow(windowOptions ...WindowOption) Window {
 	return newWindow(windowOptions...)

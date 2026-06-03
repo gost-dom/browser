@@ -9,7 +9,9 @@ func ConfigureHTMLSpecs(htmlSpecs *WebAPIConfig) {
 	configureHTMLInputElement(htmlSpecs)
 	htmlSpecs.Type("HTMLTextAreaElement")
 	configureWindow(htmlSpecs)
+
 	htmlSpecs.Type("WindowOrWorkerGlobalScope")
+	htmlSpecs.Type("Navigator")
 
 	document := htmlSpecs.Type("Document")
 	document.Partial = true
@@ -123,7 +125,6 @@ func configureWindow(htmlSpecs *WebAPIConfig) {
 	window.Method("customElements").SetNotImplemented()
 	window.Method("closed").SetNotImplemented()
 	window.Method("frames").SetNotImplemented()
-	window.Method("navigator").SetNotImplemented()
 	window.Method("frames").SetNotImplemented()
 	window.Method("top").SetNotImplemented()
 	window.Method("opener").SetCustomImplementation()
