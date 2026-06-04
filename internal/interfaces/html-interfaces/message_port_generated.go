@@ -2,9 +2,13 @@
 
 package htmlinterfaces
 
-import event "github.com/gost-dom/browser/dom/event"
+import (
+	event "github.com/gost-dom/browser/dom/event"
+	entity "github.com/gost-dom/browser/internal/entity"
+)
 
 type MessagePort interface {
+	entity.Components
 	event.EventTarget
 
 	Onclose() event.EventHandler

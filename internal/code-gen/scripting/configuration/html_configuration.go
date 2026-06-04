@@ -12,6 +12,7 @@ func ConfigureHTMLSpecs(htmlSpecs *WebAPIConfig) {
 
 	htmlSpecs.Type("WindowOrWorkerGlobalScope")
 	htmlSpecs.Type("Navigator")
+	htmlSpecs.Type("MessageChannel")
 
 	document := htmlSpecs.Type("Document")
 	document.Partial = true

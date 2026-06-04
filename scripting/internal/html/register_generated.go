@@ -9,6 +9,7 @@ func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
 	InitializeElement(js.MustGetClass(e, "Element"))
 	InitializeHistory(js.CreateClass(e, "History", "", nil))
 	InitializeLocation(js.CreateClass(e, "Location", "", nil))
+	InitializeMessageChannel(js.CreateClass(e, "MessageChannel", "", MessageChannelConstructor))
 	InitializeNavigator(js.CreateClass(e, "Navigator", "", nil))
 	InitializeHTMLElement(js.CreateClass(e, "HTMLElement", "Element", nil))
 	InitializeHTMLAnchorElement(js.CreateClass(e, "HTMLAnchorElement", "HTMLElement", nil))
@@ -17,4 +18,8 @@ func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
 	InitializeHTMLTemplateElement(js.CreateClass(e, "HTMLTemplateElement", "HTMLElement", nil))
 	InitializeHTMLTextAreaElement(js.CreateClass(e, "HTMLTextAreaElement", "HTMLElement", nil))
 	InitializeWindow(e.ConfigureGlobalScope("Window", js.MustGetClass(e, "EventTarget")))
+}
+
+func ConfigureDedicatedWorkerGlobalScopeRealm[T any](e js.ScriptEngine[T]) {
+	InitializeMessageChannel(js.CreateClass(e, "MessageChannel", "", MessageChannelConstructor))
 }

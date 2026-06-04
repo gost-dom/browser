@@ -27,6 +27,7 @@ func ConfigureWindowRealm[T any](e js.ScriptEngine[T]) {
 
 func ConfigureDedicatedWorkerGlobalScopeRealm[T any](e js.ScriptEngine[T]) {
 	dom.ConfigureDedicatedWorkerGlobalScopeRealm(e)
+	html.ConfigureDedicatedWorkerGlobalScopeRealm(e)
 	fetch.ConfigureDedicatedWorkerGlobalScopeRealm(e)
 	streams.ConfigureDedicatedWorkerGlobalScopeRealm(e)
 	url.ConfigureDedicatedWorkerGlobalScopeRealm(e)

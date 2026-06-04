@@ -78,6 +78,7 @@ var htmlRules = SpecRules{
 	"MessageChannel": {InterfacePackage: packagenames.HTMLInterfaces},
 	"MessagePort": {
 		InterfacePackage: packagenames.HTMLInterfaces,
+		IsEntity:         true,
 		Operations: OperationRules{
 			"postMessage": {Ignore: true},
 		}},

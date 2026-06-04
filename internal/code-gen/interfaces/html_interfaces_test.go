@@ -44,6 +44,7 @@ func TestMessagePortDoesntEmbedEventTarget(t *testing.T) {
 	Expect := gomega.NewWithT(t).Expect
 	gen := generateHtmlIntf(t, "MessagePort")
 
-	Expect(gen).To(HaveRenderedSubstring("interface {\n\tevent.EventTarget"))
+	Expect(gen).To(HaveRenderedSubstring("\tevent.EventTarget"))
+	Expect(gen).To(HaveRenderedSubstring("\tentity.Components"))
 	Expect(gen).ToNot(HaveRenderedSubstring("\tMessageEventTarget"))
 }
