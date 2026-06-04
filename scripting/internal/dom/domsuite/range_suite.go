@@ -16,6 +16,6 @@ func testRange(t *testing.T, e html.ScriptEngine) {
 	doc := win.Document()
 	assert.EqualValues(t, 0, win.MustEval(`range.startOffset`))
 	assert.EqualValues(t, 0, win.MustEval(`range.endOffset`))
-	assert.Equal(t, doc, win.MustEval(` range.startContainer`))
+	assert.Equal(t, doc, win.MustEval(`range.startContainer`))
 	assert.Equal(t, doc, win.MustEval(`range.endContainer`))
 }
