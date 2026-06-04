@@ -14,6 +14,10 @@ func TestHTMLElement(t *testing.T) {
 	t.Run("Dataset", testHTMLElementDataset)
 	t.Run("Tabindex", testHTMLElementTabIndex)
 	t.Run("Autofocus", testHTMLElementAutofocus)
+
+	div := htmltest.CreateHTMLElement(t, "Div")
+	assert.Equal(t, "DIV", div.TagName(), "HTMLElement TagName should be uppercase")
+	assert.Equal(t, "div", div.LocalName(), "HTMLElement localname should be lower case")
 }
 
 func testHTMLElementDataset(t *testing.T) {

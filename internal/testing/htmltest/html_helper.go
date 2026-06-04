@@ -18,3 +18,7 @@ func (h HTMLHelper) NewDocument() HTMLDocumentHelper {
 func (h HTMLHelper) CreateHTMLElement(tagname string) HTMLElementHelper {
 	return NewHTMLElementHelper(h.T, h.NewDocument().CreateHTMLElement(tagname))
 }
+
+func CreateHTMLElement(t testing.TB, tagname string) HTMLElementHelper {
+	return HTMLHelper{t}.CreateHTMLElement(tagname)
+}

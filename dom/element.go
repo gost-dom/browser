@@ -79,7 +79,7 @@ func NewElement(tagName string, ownerDocument Document) Element {
 func newElementNS(ns, tagName string, ownerDocument Document) Element {
 	res := &element{
 		node:       newNode(ownerDocument),
-		tagName:    tagName,
+		tagName:    strings.ToLower(tagName),
 		namespace:  ns,
 		attributes: Attributes(nil),
 	}
@@ -138,12 +138,12 @@ func (e *element) TagName() string {
 			return strings.ToUpper(e.tagName)
 		}
 	}
-	return strings.ToLower(e.tagName)
+	return e.tagName
 }
 
 func (e *element) Namespace() string    { return e.namespace }
 func (e *element) NamespaceURI() string { return e.namespace }
-func (e *element) LocalName() string    { return e.TagName() }
+func (e *element) LocalName() string    { return e.tagName }
 
 func (e *element) ID() string {
 	id, _ := e.GetAttribute("id")
