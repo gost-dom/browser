@@ -150,7 +150,7 @@ type cdataSection struct {
 	*textNode
 }
 
-func NewCDATASection(text string, ownerDocument Document) Text {
+func NewCDATASection(text string, ownerDocument Document) CDATASection {
 	result := &cdataSection{newText(text, ownerDocument)}
 	result.SetSelf(result)
 	return result
