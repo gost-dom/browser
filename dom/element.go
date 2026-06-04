@@ -128,9 +128,7 @@ func (e *element) NodeName() string {
 	return e.selfElement.TagName()
 }
 
-func (e *element) TagName() string {
-	return strings.ToLower(e.tagName)
-}
+func (e *element) TagName() string { return e.tagName }
 
 func (e *element) Namespace() string    { return e.namespace }
 func (e *element) NamespaceURI() string { return e.namespace }
