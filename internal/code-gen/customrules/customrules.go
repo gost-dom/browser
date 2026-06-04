@@ -12,6 +12,7 @@
 package customrules
 
 import (
+	"iter"
 	"reflect"
 	"slices"
 	"strings"
@@ -192,6 +193,24 @@ func SpecNames() []string {
 
 func GetInterfaceRule(spec, name string) InterfaceRule {
 	return GetSpecRules(spec)[name]
+}
+
+type SpecAndRule struct {
+	Spec      string
+	Interface string
+	Rule      InterfaceRule
+}
+
+func AllRules() iter.Seq[SpecAndRule] {
+	return func(yield func(SpecAndRule) bool) {
+		for specName, spec := range rules {
+			for i, rule := range spec {
+				if !yield(SpecAndRule{specName, i, rule}) {
+					return
+				}
+			}
+		}
+	}
 }
 
 func GetSpecRules(specName string) SpecRules {

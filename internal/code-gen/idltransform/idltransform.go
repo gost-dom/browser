@@ -4,6 +4,7 @@ import (
 	"slices"
 
 	"github.com/dave/jennifer/jen"
+	"github.com/gost-dom/code-gen/customrules"
 	"github.com/gost-dom/code-gen/packagenames"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
@@ -18,6 +19,14 @@ type IdlType struct {
 func NewIdlType(t idl.Type) IdlType { return IdlType{t} }
 
 func InternalPackage(name string) string {
+	for entry := range customrules.AllRules() {
+		if entry.Interface == name {
+			rule := entry.Rule
+			if rule.InterfacePackage != "" {
+				return string(rule.InterfacePackage)
+			}
+		}
+	}
 	switch name {
 	case "AbortController", "AbortSignal":
 		return packagenames.DomInterfaces
