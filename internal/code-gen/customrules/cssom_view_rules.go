@@ -1,6 +1,11 @@
 package customrules
 
 var cssomViewRules = SpecRules{
+	"Range": {
+		Operations: OperationRules{
+			"getClientRects": {Ignore: true},
+		},
+	},
 	"Element": {
 		Operations: OperationRules{
 			"getClientRects":  {Ignore: true},

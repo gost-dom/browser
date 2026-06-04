@@ -4,4 +4,7 @@ func ConfigureCssomView(domSpecs *WebAPIConfig) {
 	element := domSpecs.Type("Element")
 	element.Partial = true
 	element.Method("getBoundingClientRect").SetCustomImplementation()
+	rng := domSpecs.Type("Range")
+	rng.Partial = true
+	rng.Method("getBoundingClientRect").SetCustomImplementation()
 }
