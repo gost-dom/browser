@@ -3,9 +3,11 @@ package dom
 import (
 	"errors"
 	"log/slog"
+	"strings"
 
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/internal/constants"
+	intdom "github.com/gost-dom/browser/internal/dom"
 	"github.com/gost-dom/browser/internal/log"
 	"golang.org/x/net/html"
 )
@@ -28,7 +30,7 @@ type Document interface {
 	CreateAttribute(string) Attr
 	CreateAttributeNS(string, string) Attr
 	CreateTextNode(data string) Text
-	CreateCDATASection(data string) CDATASection
+	CreateCDATASection(data string) (CDATASection, error)
 	CreateComment(data string) Comment
 	CreateDocumentType(name string) DocumentType
 	CreateElementNS(string, string) Element
@@ -133,8 +135,15 @@ func (d *document) CreateAttribute(name string) Attr  { return newAttr(name, "",
 func (d *document) CreateElement(name string) Element { return NewElement(name, d.document) }
 func (d *document) CreateText(data string) Text       { return d.CreateTextNode(data) }
 func (d *document) CreateTextNode(data string) Text   { return NewText(data, d.document) }
-func (d *document) CreateCDATASection(data string) CDATASection {
-	return NewCDATASection(data, d.document)
+func (d *document) CreateCDATASection(data string) (CDATASection, error) {
+
+	if intdom.IsHTMLDocument(d) {
+		return nil, newDomErrorCode("Operation is not supported", not_supported_err)
+	}
+	if strings.Contains(data, "]]>") {
+		return nil, newDomErrorCode("Invalid character", invalid_character_err)
+	}
+	return NewCDATASection(data, d.document), nil
 }
 func (d *document) CreateComment(data string) Comment { return NewComment(data, d.document) }
 func (d *document) CreateElementNS(ns string, name string) Element {

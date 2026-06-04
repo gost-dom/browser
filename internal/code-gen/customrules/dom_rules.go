@@ -28,6 +28,7 @@ var domRules = SpecRules{
 			"createElementNS": {Arguments: ArgumentRules{
 				"options": {Ignore: true, Variadic: true}, // TODO: Get this working
 			}},
+			"createCDATASection": {HasError: true},
 		},
 	},
 	"Event": {OutputType: OutputTypeStruct,

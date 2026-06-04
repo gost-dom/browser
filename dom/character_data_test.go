@@ -36,8 +36,20 @@ func TestCharacterDataRemove(t *testing.T) {
 }
 
 func TestCDataSection(t *testing.T) {
-	doc := htmltest.ParseHTMLDocument(t, "<body></body>")
-	doc.Body().Append(doc.CreateCDATASection("Foo bar < > &"))
+	htmlDoc := htmltest.ParseHTMLDocument(t, "<body>Hello</body>")
+	_, err := htmlDoc.CreateCDATASection("Foo bar")
+	assert.ErrorIs(t, err, dom.ErrDom, "CreateCDATASection should be invalid on an HTMLDocument")
 
-	assert.Equal(t, "<![CDATA[Foo bar < > &]]>", doc.Body().InnerHTML())
+	doc := dom.NewDocument(nil)
+
+	_, err = doc.CreateCDATASection("Foobar ]]>")
+	assert.ErrorIs(t, err, dom.ErrDom, "Creating CDATASection with ']]>' should generate an error")
+
+	elm := doc.CreateElement("root")
+	doc.AppendChild(elm)
+	cdata, err := doc.CreateCDATASection("Foo bar < > &")
+	assert.NoError(t, err)
+	elm.AppendChild(cdata)
+
+	assert.Equal(t, "<![CDATA[Foo bar < > &]]>", doc.DocumentElement().InnerHTML())
 }

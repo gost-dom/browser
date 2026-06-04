@@ -137,7 +137,10 @@ func Document_createCDATASection[T any](cbCtx js.CallbackContext[T]) (res js.Val
 	if errArg1 != nil {
 		return nil, errArg1
 	}
-	result := instance.CreateCDATASection(data)
+	result, errCall := instance.CreateCDATASection(data)
+	if errCall != nil {
+		return nil, errCall
+	}
 	return codec.EncodeEntity(cbCtx, result)
 }
 
