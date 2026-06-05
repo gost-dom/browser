@@ -31,13 +31,14 @@ func (c KeyboardController) SendKey(k key.Key) {
 		return
 	}
 	eventInit := k.EventInit()
-	active := c.Window.Document().ActiveElement()
 	if k.Down {
+		active := c.Window.Document().ActiveElement()
 		if uievents.KeydownInit(active, eventInit) {
 			c.handleKey(active, k)
 		}
 	}
 	if k.Up {
+		active := c.Window.Document().ActiveElement()
 		uievents.KeyupInit(active, eventInit)
 	}
 }

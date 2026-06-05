@@ -127,6 +127,32 @@ func TestStreamOfEventsWithShiftKey(t *testing.T) {
 	suite.Expect(input).To(HaveIDLValue("aBc"))
 }
 
+func TestKeyboardControllerFocusChangeBetweenUpDownEvents(t *testing.T) {
+	win := htmltest.NewWindowHTML(
+		t,
+		`<body><input id="input-1" type="text" /><input id="input-2" type="text" /></body>`,
+	)
+	input1 := win.HTMLDocument().GetHTMLElementById("input-1")
+	input2 := win.HTMLDocument().GetHTMLElementById("input-2")
+	input1.AddEventListener("keydown", event.NewEventHandlerFuncWithoutError(func(e *event.Event) {
+		input2.Focus()
+	}))
+	r1 := &EventRecorder{}
+	r2 := &EventRecorder{}
+	input1.AddEventListener("keydown", r1)
+	input2.AddEventListener("keyup", r2)
+
+	input1.Focus()
+	KeyboardController{win}.SendKeys(key.StringToKeys("a"))
+	g := gomega.NewGomegaWithT(t)
+	g.Expect(r1).To(HaveRecordedEvents(
+		&MatchEvent{Type: "keydown", Key: "a"},
+	))
+	g.Expect(r2).To(HaveRecordedEvents(
+		&MatchEvent{Type: "keyup", Key: "a"},
+	))
+}
+
 func initKeyboardControllerSuite(t *testing.T) *keyboardControllerSuite {
 	win := htmltest.NewWindowHTML(t, `<body><input id="input" type="text" /></body>`)
 	input := win.HTMLDocument().GetHTMLElementById("input")
