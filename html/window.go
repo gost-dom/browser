@@ -189,7 +189,6 @@ type window struct {
 	logger              *slog.Logger
 	deferredScripts     []*htmlScriptElement
 	context             context.Context
-	clock               *clock.Clock
 	navigator           Navigator
 }
 
@@ -203,8 +202,12 @@ func newWindow(windowOptions ...WindowOption) *window {
 		ctx = context.Background()
 	}
 	baseLocation := options.BaseLocation
+	winClock := options.Clock
+	if winClock == nil {
+		winClock = clock.New()
+	}
 	win := &window{
-		windowOrWorkerGlobalScope: windowOrWorkerGlobalScope{clock: options.Clock},
+		windowOrWorkerGlobalScope: windowOrWorkerGlobalScope{clock: winClock},
 
 		EventTarget: event.NewEventTarget(),
 		httpClient:  options.HttpClient,
@@ -213,7 +216,6 @@ func newWindow(windowOptions ...WindowOption) *window {
 		logger:              options.Logger,
 		history:             new(History),
 		context:             ctx,
-		clock:               options.Clock,
 	}
 	if baseLocation == "" {
 		baseLocation = "about:blank"
