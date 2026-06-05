@@ -16,6 +16,11 @@ func (l jsValueLogger[T]) LogValue() slog.Value {
 	if val.IsNull() {
 		return slog.StringValue("null")
 	}
+	if _, ok := val.AsFunction(); ok {
+		// Logs a function. Placed here explicitly as some functions may be
+		// logged as objects (functions _are_ objects)
+		return slog.AnyValue(val)
+	}
 	if obj, ok := val.AsObject(); ok {
 		if native := obj.NativeValue(); native != nil {
 			return slog.GroupValue(
