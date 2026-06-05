@@ -3,6 +3,7 @@ package controller
 import (
 	"iter"
 
+	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/input/key"
 	htmlinterfaces "github.com/gost-dom/browser/internal/interfaces/html-interfaces"
@@ -14,6 +15,14 @@ type KeyboardController struct {
 	Window html.Window
 }
 
+func (c KeyboardController) handleKey(active dom.Element, k key.Key) {
+	switch e := active.(type) {
+	case htmlinterfaces.HTMLInputtableElement:
+		e.SetValue(e.Value() + k.Letter)
+		uievents.Input(e)
+	}
+}
+
 // SendKey simulates the input of a single key.
 //
 // Ignored if no Window is assigned.
@@ -23,18 +32,13 @@ func (c KeyboardController) SendKey(k key.Key) {
 	}
 	eventInit := k.EventInit()
 	active := c.Window.Document().ActiveElement()
-	switch e := active.(type) {
-	case htmlinterfaces.HTMLInputtableElement:
-		if k.Down {
-			if !uievents.KeydownInit(e, eventInit) {
-				return
-			}
-			e.SetValue(e.Value() + k.Letter)
-			uievents.Input(e)
+	if k.Down {
+		if uievents.KeydownInit(active, eventInit) {
+			c.handleKey(active, k)
 		}
-		if k.Up {
-			uievents.KeyupInit(e, eventInit)
-		}
+	}
+	if k.Up {
+		uievents.KeyupInit(active, eventInit)
 	}
 }
 

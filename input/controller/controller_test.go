@@ -57,6 +57,7 @@ func TestKeyboardControllerPreventDefault(t *testing.T) {
 	suite.Expect(input).To(HaveIDLValue(""))
 	suite.Expect(r).To(HaveRecordedEvents(
 		&MatchEvent{Type: "keydown"},
+		&MatchEvent{Type: "keyup"},
 	))
 }
 
