@@ -3,12 +3,12 @@ package customrules
 var cssomViewRules = SpecRules{
 	"Range": {
 		Operations: OperationRules{
-			"getClientRects": {Ignore: true},
+			// "getClientRects": {Ignore: true},
 		},
 	},
 	"Element": {
 		Operations: OperationRules{
-			"getClientRects":  {Ignore: true},
+			// "getClientRects":  {Ignore: true},
 			"checkVisibility": {Ignore: true},
 			"scrollIntoView":  {Ignore: true},
 			"scroll":          {Ignore: true},

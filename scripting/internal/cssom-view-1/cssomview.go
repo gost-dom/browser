@@ -2,7 +2,7 @@ package cssomview1
 
 import js "github.com/gost-dom/browser/scripting/internal/js"
 
-func createDummyBoundingRect[T any](cbCtx js.Scope[T]) (js.Value[T], error) {
+func createDummyBoundingRect[T any](cbCtx js.Scope[T]) js.Value[T] {
 	obj := cbCtx.NewObject()
 	obj.Set("x", cbCtx.NewNumber(0))
 	obj.Set("y", cbCtx.NewNumber(0))
@@ -12,5 +12,9 @@ func createDummyBoundingRect[T any](cbCtx js.Scope[T]) (js.Value[T], error) {
 	obj.Set("right", cbCtx.NewNumber(0))
 	obj.Set("bottom", cbCtx.NewNumber(0))
 	obj.Set("left", cbCtx.NewNumber(0))
-	return obj, nil
+	return obj
+}
+
+func createDummyClientRects[T any](cbCtx js.Scope[T]) js.Value[T] {
+	return cbCtx.NewArray(createDummyBoundingRect(cbCtx))
 }
