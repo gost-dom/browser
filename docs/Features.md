@@ -58,10 +58,10 @@ implementations to be build independently.
 
 **Dummy APIs**
 
-Some functionality have dummy implementations, e.g.,
+Some APIs only have dummy implementations, e.g.,
 
 - [CSS Object Model] provides client size information. Dummy implementations
-  exist for [CodeMirror](#CodeMirror) to work
+  exist for [CodeMirror](#codemirror) to work
 
 [CSS Object Model]: https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model
 
@@ -148,9 +148,9 @@ support some basic [Datastar](https://data-star.dev/) cases.
 
 ### CodeMirror
 
-In the tested ~scenarios~ scenario, when you initialize CodeMirror, it creates a
-`textarea` inside a `<div class="CodeMirror">` element. Sending input to this
-element using key `KeyboardController` is the way to go:
+In the tested scenario, when you initialize CodeMirror, it creates a `textarea`
+inside a `<div class="CodeMirror">` element. Sending input to this element using
+key `KeyboardController` is the way to go:
 
 ```go
 document := win.HTMLDocument()
@@ -164,9 +164,8 @@ The `KeyboardController` is intended to simulate the behaviour as user types in
 text; sending the right keyboard or input events in the proper order to the
 focused element.
 
-> [!WARN]
+> [!WARNING]
 > CodeMirror has a lot of functionality relating to actual layout and sizing of
-> element, including "scroll" to behaviour. Gost-DOM has no intention of
-> simulating visual rendering; so extensive test of the UI need other tools.
-> Rudimentary implementations were added to verify behaviour of
-> front-end/back-end interaction.
+> elements, including "scroll" to behaviour. Gost-DOM has no intention of
+> simulating visual rendering; so extensive testing of the UI require other
+> tools.
