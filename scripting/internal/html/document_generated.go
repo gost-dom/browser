@@ -13,6 +13,7 @@ func InitializeDocument[T any](jsClass js.Class[T]) {
 	jsClass.CreateAttribute("location", Document_location, nil, js.LegacyUnforgeable())
 	jsClass.CreateAttribute("body", Document_body, Document_setBody)
 	jsClass.CreateAttribute("head", Document_head, nil)
+	jsClass.CreateAttribute("defaultView", Document_defaultView, nil)
 }
 
 func Document_location[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {

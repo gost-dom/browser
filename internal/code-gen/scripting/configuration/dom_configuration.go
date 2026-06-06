@@ -110,7 +110,6 @@ func configureDOMNode(specs *WebAPIConfig) {
 		"links",
 		"scripts",
 		"currentScript",
-		"defaultView",
 		"designMode",
 		"hidden",
 		"visibilityState",

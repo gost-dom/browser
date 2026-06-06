@@ -52,12 +52,12 @@ func ConfigureHTMLSpecs(htmlSpecs *WebAPIConfig) {
 		"links",
 		"scripts",
 		"currentScript",
-		"defaultView",
 		"designMode",
 		"hidden",
 		"visibilityState",
 		"lastModified",
 	)
+	document.Method("defaultView").SetCustomImplementation()
 
 	location := htmlSpecs.Type("Location")
 	location.Method("ancestorOrigins").SetNotImplemented()
