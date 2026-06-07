@@ -3,6 +3,7 @@ package controller_test
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/html"
@@ -157,22 +158,85 @@ func TestKeyboardControllerEventTiming(t *testing.T) {
 	}))
 
 	input.Focus()
-	suite.SendKeys(key.StringToKeys("abc"))
 
-	suite.Expect(msgs).To(Equal([]string{
-		"keydown: a",
-		"after keydown: a",
-		"keyup: a",
-		"after keyup: a",
-		"keydown: b",
-		"after keydown: b",
-		"keyup: b",
-		"after keyup: b",
-		"keydown: c",
-		"after keydown: c",
-		"keyup: c",
-		"after keyup: c",
-	}))
+	t.Run("Allows setTimeout with zero delay to be processed first", func(t *testing.T) {
+		suite.SendKeys(key.StringToKeys("abc"))
+		suite.Expect(msgs).To(Equal([]string{
+			"keydown: a",
+			"after keydown: a",
+			"keyup: a",
+			"after keyup: a",
+			"keydown: b",
+			"after keydown: b",
+			"keyup: b",
+			"after keyup: b",
+			"keydown: c",
+			"after keydown: c",
+			"keyup: c",
+			"after keyup: c",
+		}))
+	})
+
+	msgs = nil
+	t.Run("Allow simulating keyboard delays", func(t *testing.T) {
+		const one_ms = time.Millisecond
+		const two_ms = 2 * one_ms
+		const three_ms = 3 * one_ms
+		suite.SendKeys(key.StringToKeys("aB",
+			key.WithKeydownDelay(one_ms),
+			key.WithKeyupDelay(two_ms),
+		))
+		clock := win.Clock()
+
+		suite.Expect(msgs).To(Equal([]string{
+			"keydown: a",
+			"after keydown: a",
+		}))
+
+		// One ms after the 'a' keydown event, the keyup should be dispatched
+		msgs = nil
+		clock.Advance(one_ms)
+		suite.Expect(msgs).To(Equal([]string{
+			"keyup: a",
+			"after keyup: a",
+		}))
+
+		msgs = nil
+		// Next key should be two milliseconds later, shift down
+		clock.Advance(one_ms)
+		suite.Expect(msgs).To(BeEmpty())
+		clock.Advance(one_ms)
+		suite.Expect(msgs).To(Equal([]string{
+			"keydown: Shift",
+			"after keydown: Shift",
+		}))
+
+		// One millisecond after Shift keydown, we get "B" keydown
+		msgs = nil
+		clock.Advance(one_ms)
+		suite.Expect(msgs).To(Equal([]string{
+			"keydown: B",
+			"after keydown: B",
+		}))
+
+		// One millisecond after "B" keydown, we get "B" keyup
+		msgs = nil
+		clock.Advance(one_ms)
+		suite.Expect(msgs).To(Equal([]string{
+			"keyup: B",
+			"after keyup: B",
+		}))
+
+		// Finally, the Shift keyup is two milliseconds after "B" keyup
+		msgs = nil
+		clock.Advance(one_ms)
+		suite.Expect(msgs).To(BeEmpty())
+		clock.Advance(one_ms)
+		suite.Expect(msgs).To(Equal([]string{
+			"keyup: Shift",
+			"after keyup: Shift",
+		}))
+	})
 }
 
 func TestKeyboardControllerFocusChangeBetweenUpDownEvents(t *testing.T) {

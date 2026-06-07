@@ -25,7 +25,7 @@ func (c KeyboardController) handleKey(active dom.Element, k key.Key) {
 
 // SendKey simulates the input of a single key.
 //
-// Ignored if no Window is assigned.
+// If c has no Window, this function will produce no effects.
 func (c KeyboardController) SendKey(k key.Key) {
 	if c.Window == nil {
 		return
@@ -43,33 +43,41 @@ func (c KeyboardController) SendKey(k key.Key) {
 	}
 }
 
+// dispatchKeyUp dispatches the keyup event if applicable. After that; it
+// proceeds to handling the remaining keys in a sequence of keys.
+func (c KeyboardController) dispatchKeyUp(getNext func() (key.Key, bool), k key.Key) {
+	eventInit := k.EventInit()
+	if k.Up {
+		active := c.Window.Document().ActiveElement()
+		uievents.KeyupInit(active, eventInit)
+		c.Window.SetTimeout(func() error {
+			c.next(getNext)
+			return nil
+		}, k.KeyupDelay)
+	} else {
+		c.next(getNext)
+	}
+}
+
 func (c KeyboardController) next(getNext func() (key.Key, bool)) {
 	if c.Window == nil {
 		return
 	}
-	c.Window.SetTimeout(func() error {
-		if k, ok := getNext(); ok {
-			eventInit := k.EventInit()
-			if k.Down {
-				active := c.Window.Document().ActiveElement()
-				if uievents.KeydownInit(active, eventInit) {
-					c.handleKey(active, k)
-				}
-			}
-			if k.Up {
-				c.Window.SetTimeout(func() error {
-					active := c.Window.Document().ActiveElement()
-					uievents.KeyupInit(active, eventInit)
-					return nil
-				}, 0)
+	if k, ok := getNext(); ok {
+		eventInit := k.EventInit()
+		if k.Down {
+			active := c.Window.Document().ActiveElement()
+			if uievents.KeydownInit(active, eventInit) {
+				c.handleKey(active, k)
 			}
 			c.Window.SetTimeout(func() error {
-				c.next(getNext)
+				c.dispatchKeyUp(getNext, k)
 				return nil
-			}, 0)
+			}, k.KeydownDelay)
+		} else {
+			c.dispatchKeyUp(getNext, k)
 		}
-		return nil
-	}, 0)
+	}
 }
 
 // SendKeys simulates the user typing a sequence of keys. The key package

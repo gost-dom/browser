@@ -1,6 +1,7 @@
 package key
 
 import (
+	"fmt"
 	"iter"
 	"time"
 	"unicode"
@@ -10,20 +11,58 @@ import (
 
 // Key represents a single keyboard input. WARNING: This is experimental.
 //
-// This is currently a simple abstraction, not taking the sequence of modifier
-// keys into consideration. E.g., shift+A would result in keydown (shift),
-// keydown (A with modifer shift: true), keyup (A), and keyup (shift).
+// The fields Up and Down indicate if up/down events should be dispatched, which
+// is used for simple modifier keys, e.g., the sequence Shift+A would generate
+// the following sequence:
 //
-// This general sequence of events is not yet properly representable in the
-// types.
+//   - Key: Shift, Down: true, Up: false
+//   - Key: A, Down: true, Up: true
+//   - Key: Shift, Down: false, Up: true
+//
+// Modifier states are not properly represented, the individual keyboard events
+// do not contain modifier information, i.e., in the previous example, the event
+// for the "A" key doesn't include the shiftKey yet.
+//
+// When simulating a string of keyboard events, KeydownDelay and KeyupDelay
+// describes simulated delay after the keydown/keyup event before the next
+// keyboard event in the sequence.
 type Key struct {
-	Key      string
-	Letter   string
-	Down, Up bool
-	// delay is not used yet, but express n possible solution to simulating
-	// delays betwen keystrokes, which can be valuable in order to verify
-	// throttling/debounce behaviour.
-	delay time.Duration
+	Key    string
+	Letter string
+	// KeydownDelay defines the simulated delay after the keydown event before
+	// the next keyevent is dispatched.
+	KeydownDelay time.Duration
+	// KeyupDelay defines the simulated delay after the keyup event before the
+	// next keyevent is dispatched.
+	KeyupDelay time.Duration
+	Down, Up   bool
+}
+
+type keyOption func(*Key)
+
+func applyOptions(k Key, o []keyOption) Key {
+	for _, oo := range o {
+		oo(&k)
+	}
+	return k
+}
+
+func WithKeydownDelay(d time.Duration) keyOption {
+	if d < 0 {
+		panic(fmt.Sprintf("WithKeydownDelay: Negative timeout: %v", d))
+	}
+	return func(k *Key) {
+		k.KeydownDelay = d
+	}
+}
+
+func WithKeyupDelay(d time.Duration) keyOption {
+	if d < 0 {
+		panic(fmt.Sprintf("WithKeyupDelay: Negative timeout: %v", d))
+	}
+	return func(k *Key) {
+		k.KeyupDelay = d
+	}
 }
 
 // EventInit creates a KeyboardEventInit representing the key stroke.
@@ -43,17 +82,17 @@ func RuneToKey(r rune) Key {
 // text. If the string contains upper-case letters, the sequence will include a
 // keydown event for the shift key, the keydown/keyup events for the actual key,
 // and finally the keyup event for the shoft key.
-func StringToKeys(s string) iter.Seq[Key] {
+func StringToKeys(s string, o ...keyOption) iter.Seq[Key] {
 	return func(yield func(Key) bool) {
 		for _, r := range s {
 			isUpper := unicode.IsUpper(r)
-			if isUpper && !yield(Key{Key: "Shift", Down: true}) {
+			if isUpper && !yield(applyOptions(Key{Key: "Shift", Down: true}, o)) {
 				return
 			}
-			if !yield(RuneToKey(r)) {
+			if !yield(applyOptions(RuneToKey(r), o)) {
 				return
 			}
-			if isUpper && !yield(Key{Key: "Shift", Up: true}) {
+			if isUpper && !yield(applyOptions(Key{Key: "Shift", Up: true}, o)) {
 				return
 			}
 		}
