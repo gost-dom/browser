@@ -2,6 +2,7 @@ package controller
 
 import (
 	"iter"
+	"log/slog"
 
 	"github.com/gost-dom/browser/dom"
 	"github.com/gost-dom/browser/html"
@@ -45,37 +46,45 @@ func (c KeyboardController) SendKey(k key.Key) {
 
 // dispatchKeyUp dispatches the keyup event if applicable. After that; it
 // proceeds to handling the remaining keys in a sequence of keys.
-func (c KeyboardController) dispatchKeyUp(getNext func() (key.Key, bool), k key.Key) {
+func (c KeyboardController) dispatchKeyUp(getNext func() (key.Key, bool), k key.Key, stop func()) {
 	eventInit := k.EventInit()
 	if k.Up {
 		active := c.Window.Document().ActiveElement()
 		uievents.KeyupInit(active, eventInit)
 		c.Window.SetTimeout(func() error {
-			c.processNextKey(getNext)
+			c.processNextKey(getNext, stop)
 			return nil
 		}, k.KeyupDelay)
 	} else {
-		c.processNextKey(getNext)
+		c.processNextKey(getNext, stop)
 	}
 }
 
-func (c KeyboardController) processNextKey(getNext func() (key.Key, bool)) {
+func (c KeyboardController) processNextKey(getNext func() (key.Key, bool), stop func()) {
 	k, ok := getNext()
 	if !ok {
 		return
 	}
 	eventInit := k.EventInit()
+	if k.KeyupDelay < 0 || k.KeydownDelay < 0 {
+		c.Window.Logger().Error(
+			"KeyboardController: Negative KeyupDelay - aborting key sequence",
+			slog.Any("key", k),
+		)
+		stop()
+		return
+	}
 	if k.Down {
 		active := c.Window.Document().ActiveElement()
 		if uievents.KeydownInit(active, eventInit) {
 			c.handleKey(active, k)
 		}
 		c.Window.SetTimeout(func() error {
-			c.dispatchKeyUp(getNext, k)
+			c.dispatchKeyUp(getNext, k, stop)
 			return nil
 		}, k.KeydownDelay)
 	} else {
-		c.dispatchKeyUp(getNext, k)
+		c.dispatchKeyUp(getNext, k, stop)
 	}
 }
 
@@ -87,8 +96,8 @@ func (c KeyboardController) SendKeys(keys iter.Seq[key.Key]) {
 	if c.Window == nil {
 		return
 	}
-	next, _ := iter.Pull(keys)
-	c.processNextKey(next)
+	next, stop := iter.Pull(keys)
+	c.processNextKey(next, stop)
 	c.Window.Clock().Advance(0)
 }
 
