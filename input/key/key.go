@@ -39,7 +39,10 @@ func RuneToKey(r rune) Key {
 	return Key{Key: string(r), Letter: string(r), Down: true, Up: true}
 }
 
-// StringToKeys returns a sequence of [Key]
+// StringToKeys returns a sequence of [Key] given an input string s containing
+// text. If the string contains upper-case letters, the sequence will include a
+// keydown event for the shift key, the keydown/keyup events for the actual key,
+// and finally the keyup event for the shoft key.
 func StringToKeys(s string) iter.Seq[Key] {
 	return func(yield func(Key) bool) {
 		for _, r := range s {

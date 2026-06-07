@@ -43,14 +43,43 @@ func (c KeyboardController) SendKey(k key.Key) {
 	}
 }
 
+func (c KeyboardController) next(getNext func() (key.Key, bool)) {
+	if c.Window == nil {
+		return
+	}
+	c.Window.SetTimeout(func() error {
+		if k, ok := getNext(); ok {
+			eventInit := k.EventInit()
+			if k.Down {
+				active := c.Window.Document().ActiveElement()
+				if uievents.KeydownInit(active, eventInit) {
+					c.handleKey(active, k)
+				}
+			}
+			if k.Up {
+				c.Window.SetTimeout(func() error {
+					active := c.Window.Document().ActiveElement()
+					uievents.KeyupInit(active, eventInit)
+					return nil
+				}, 0)
+			}
+			c.Window.SetTimeout(func() error {
+				c.next(getNext)
+				return nil
+			}, 0)
+		}
+		return nil
+	}, 0)
+}
+
 // SendKeys simulates the user typing a sequence of keys. The key package
 // contains functionality to generate sequences of keys from an input string.
 //
 // Ignored if no Window is assigned.
 func (c KeyboardController) SendKeys(keys iter.Seq[key.Key]) {
-	for k := range keys {
-		c.SendKey(k)
-	}
+	next, _ := iter.Pull(keys)
+	c.next(next)
+	c.Window.Clock().Advance(0)
 }
 
 func (c KeyboardController) SendText(text string) {

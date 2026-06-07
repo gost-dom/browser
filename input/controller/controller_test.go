@@ -1,6 +1,7 @@
 package controller_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/gost-dom/browser/dom/event"
@@ -9,6 +10,7 @@ import (
 	"github.com/gost-dom/browser/input/key"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
+	"github.com/gost-dom/browser/internal/uievents"
 	. "github.com/gost-dom/browser/testing/gomega-matchers"
 	"github.com/onsi/gomega"
 )
@@ -127,6 +129,52 @@ func TestStreamOfEventsWithShiftKey(t *testing.T) {
 	suite.Expect(input).To(HaveIDLValue("aBc"))
 }
 
+func getKey(e *event.Event) string {
+	eventInit, _ := e.Data.(uievents.KeyboardEventInit)
+	return eventInit.Key
+}
+
+func TestKeyboardControllerEventTiming(t *testing.T) {
+	suite := initKeyboardControllerSuite(t)
+	win := suite.win
+	input := suite.input
+
+	var msgs []string
+
+	input.AddEventListener("keydown", event.NewEventHandlerFuncWithoutError(func(e *event.Event) {
+		msgs = append(msgs, fmt.Sprintf("keydown: %s", getKey(e)))
+		win.SetTimeout(func() error {
+			msgs = append(msgs, fmt.Sprintf("after keydown: %s", getKey(e)))
+			return nil
+		}, 0)
+	}))
+	input.AddEventListener("keyup", event.NewEventHandlerFuncWithoutError(func(e *event.Event) {
+		msgs = append(msgs, fmt.Sprintf("keyup: %s", getKey(e)))
+		win.SetTimeout(func() error {
+			msgs = append(msgs, fmt.Sprintf("after keyup: %s", getKey(e)))
+			return nil
+		}, 0)
+	}))
+
+	input.Focus()
+	suite.SendKeys(key.StringToKeys("abc"))
+
+	suite.Expect(msgs).To(Equal([]string{
+		"keydown: a",
+		"after keydown: a",
+		"keyup: a",
+		"after keyup: a",
+		"keydown: b",
+		"after keydown: b",
+		"keyup: b",
+		"after keyup: b",
+		"keydown: c",
+		"after keydown: c",
+		"keyup: c",
+		"after keyup: c",
+	}))
+}
+
 func TestKeyboardControllerFocusChangeBetweenUpDownEvents(t *testing.T) {
 	win := htmltest.NewWindowHTML(
 		t,
@@ -144,6 +192,7 @@ func TestKeyboardControllerFocusChangeBetweenUpDownEvents(t *testing.T) {
 
 	input1.Focus()
 	KeyboardController{win}.SendKeys(key.StringToKeys("a"))
+
 	g := gomega.NewGomegaWithT(t)
 	g.Expect(r1).To(HaveRecordedEvents(
 		&MatchEvent{Type: "keydown", Key: "a"},
