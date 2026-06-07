@@ -51,32 +51,31 @@ func (c KeyboardController) dispatchKeyUp(getNext func() (key.Key, bool), k key.
 		active := c.Window.Document().ActiveElement()
 		uievents.KeyupInit(active, eventInit)
 		c.Window.SetTimeout(func() error {
-			c.next(getNext)
+			c.processNextKey(getNext)
 			return nil
 		}, k.KeyupDelay)
 	} else {
-		c.next(getNext)
+		c.processNextKey(getNext)
 	}
 }
 
-func (c KeyboardController) next(getNext func() (key.Key, bool)) {
-	if c.Window == nil {
+func (c KeyboardController) processNextKey(getNext func() (key.Key, bool)) {
+	k, ok := getNext()
+	if !ok {
 		return
 	}
-	if k, ok := getNext(); ok {
-		eventInit := k.EventInit()
-		if k.Down {
-			active := c.Window.Document().ActiveElement()
-			if uievents.KeydownInit(active, eventInit) {
-				c.handleKey(active, k)
-			}
-			c.Window.SetTimeout(func() error {
-				c.dispatchKeyUp(getNext, k)
-				return nil
-			}, k.KeydownDelay)
-		} else {
-			c.dispatchKeyUp(getNext, k)
+	eventInit := k.EventInit()
+	if k.Down {
+		active := c.Window.Document().ActiveElement()
+		if uievents.KeydownInit(active, eventInit) {
+			c.handleKey(active, k)
 		}
+		c.Window.SetTimeout(func() error {
+			c.dispatchKeyUp(getNext, k)
+			return nil
+		}, k.KeydownDelay)
+	} else {
+		c.dispatchKeyUp(getNext, k)
 	}
 }
 
@@ -85,8 +84,11 @@ func (c KeyboardController) next(getNext func() (key.Key, bool)) {
 //
 // Ignored if no Window is assigned.
 func (c KeyboardController) SendKeys(keys iter.Seq[key.Key]) {
+	if c.Window == nil {
+		return
+	}
 	next, _ := iter.Pull(keys)
-	c.next(next)
+	c.processNextKey(next)
 	c.Window.Clock().Advance(0)
 }
 
