@@ -7,6 +7,7 @@ import (
 
 	"github.com/gost-dom/browser"
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/fetch"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
 	"github.com/gost-dom/browser/internal/testing/browsertest"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
@@ -17,7 +18,8 @@ import (
 )
 
 func testFetch(t *testing.T, e html.ScriptEngine) {
-	t.Parallel()
+	// TODO: Reintroduce parallel once the tests no longer depend on global state
+	// t.Parallel()
 
 	t.Run("Prototypes", func(t *testing.T) {
 		w := browsertest.InitWindow(t, e)
@@ -36,6 +38,7 @@ func testFetch(t *testing.T, e html.ScriptEngine) {
 	t.Run("ReadableStream body", func(t *testing.T) { testReadableStream(t, e) })
 	t.Run("Headers", func(t *testing.T) { testHeaders(t, e) })
 	t.Run("Request", func(t *testing.T) { testRequest(t, e) })
+	t.Run("Programmable delays", func(t *testing.T) { testProgrammableDelays(t, e) })
 }
 
 func testFetchAbortSignal(t *testing.T, e html.ScriptEngine) {
@@ -77,6 +80,58 @@ func testFetchAbortSignal(t *testing.T, e html.ScriptEngine) {
 	g.Expect(win.Eval(`typeof signal`)).To(Equal("object"), "signal is an object")
 	t.Log("testFetchAbortSignal: eval rejected")
 	g.Expect(win.Eval(`rejected`)).To(Equal("abort-reason"))
+}
+
+func testProgrammableDelays(t *testing.T, e html.ScriptEngine) {
+	fetch.SimulatedDelay = 10 * time.Millisecond
+	t.Cleanup(func() { fetch.SimulatedDelay = 0 })
+
+	handler := gosttest.HttpHandlerMap{
+		"/index.html": gosttest.StaticHTML(`<body>dummy</body>`),
+		"/data.json":  gosttest.StaticJSON(`{"foo": "bar"}`),
+	}
+	win := openWindow(t, e, handler, "https://example.com/index.html")
+
+	win.MustRun(`
+		let gotStatus
+		let err
+		let msgs = [];
+		setTimeout(() => { msgs.push("after 1ms") }, 1);
+		setTimeout(() => { msgs.push("after 9ms") }, 9);
+		setTimeout(() => { msgs.push("after 11ms") }, 11);
+		(async () => {
+			try {
+				const response = await fetch("data.json")
+				msgs.push("after response")
+				gotStatus = response.status
+			} catch (e) {
+				err = e
+			}
+		})()
+	`)
+
+	t.Log("Before advance")
+	win.Clock().Advance(9 * time.Millisecond)
+	assert.Nil(
+		t, win.MustEval("gotStatus"),
+		"After 9 milliseconds, the response should not have been processed",
+	)
+
+	win.Clock().Advance(time.Millisecond)
+	assert.EqualValues(
+		t, 200, win.MustEval("gotStatus"),
+		"After 10 milliseconds, the response should have been processed",
+	)
+	win.Clock().Advance(time.Second)
+
+	g := gomega.NewWithT(t)
+	g.Expect(win.MustEval("msgs")).To(Equal(
+		[]any{
+			"after 1ms",
+			"after 9ms",
+			"after response",
+			"after 11ms",
+		}))
 }
 
 func testFetchJSONAsync(t *testing.T, e html.ScriptEngine) {

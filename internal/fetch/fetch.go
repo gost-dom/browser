@@ -86,7 +86,7 @@ func WithHeaders(h [][2]types.ByteString) RequestOption {
 }
 
 func (f Fetch) Fetch(req Request) (*Response, error) {
-	res := <-f.FetchAsync(req)
+	res := <-f.FetchAsync(req).C
 	return res.Value, res.Err
 }
 
@@ -96,7 +96,7 @@ func (f Fetch) FetchAsync(req Request) promise.Promise[*Response] {
 		ctx = dom.AbortContext(ctx, req.signal)
 	}
 
-	return promise.New(func() (*Response, error) {
+	p := promise.New(func() (*Response, error) {
 		resp, err := req.do(ctx)
 		if err != nil {
 			return nil, err
@@ -109,6 +109,8 @@ func (f Fetch) FetchAsync(req Request) promise.Promise[*Response] {
 			Headers:      headers,
 		}, nil
 	})
+	p.Delay = SimulatedDelay
+	return p
 }
 
 type Response struct {

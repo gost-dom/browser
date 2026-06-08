@@ -44,7 +44,7 @@ func TestFetchAborted(t *testing.T) {
 			handler.WriteHeader(200)
 			handler.Close()
 
-			result := gosttest.ExpectReceive(t, p, gosttest.Context(t.Context()))
+			result := gosttest.ExpectReceive(t, p.C, gosttest.Context(t.Context()))
 			assert.Error(t, result.Err, "Response should be an error")
 
 			synctest.Wait()
@@ -65,7 +65,7 @@ func TestFetchAborted(t *testing.T) {
 
 			p := f.FetchAsync(req)
 			synctest.Wait()
-			res := gosttest.ExpectReceive(t, p, gosttest.Context(t.Context()))
+			res := gosttest.ExpectReceive(t, p.C, gosttest.Context(t.Context()))
 			assert.Equal(t, 200, res.Value.Status)
 			assert.NoError(t, res.Err, "response error")
 

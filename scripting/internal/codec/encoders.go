@@ -1,7 +1,9 @@
 package codec
 
 import (
+	"context"
 	"fmt"
+	"time"
 
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/promise"
@@ -137,22 +139,29 @@ func EncodePromise[T, U any](
 	encoder Encoder[T, U],
 ) (js.Value[T], error) {
 	p := scope.NewPromise()
-	e := scope.Clock().BeginEvent()
-	go func() {
-		promRes := <-prom
-		e.AddEvent(func() error {
-			err := promRes.Err
-			var res js.Value[T]
-			if err == nil {
-				if res, err = encoder(scope, promRes.Value); err == nil {
-					p.Resolve(res)
-					return nil
+	clock := scope.Clock()
+	var delay time.Duration = prom.Delay
+
+	clock.SetTimeoutContext(
+		func(ctx context.Context) error {
+			select {
+			case promRes := <-prom.C:
+				err := promRes.Err
+				if err == nil {
+					var res js.Value[T]
+					if res, err = encoder(scope, promRes.Value); err == nil {
+						p.Resolve(res)
+						return nil
+					}
 				}
+				p.Reject(js.ToJsError(scope, err))
+			case <-ctx.Done():
+				return fmt.Errorf("context deadline exceeded waiting for promise: %v", ctx.Err())
 			}
-			p.Reject(js.ToJsError(scope, err))
 			return nil
-		})
-	}()
+		},
+		delay,
+	)
 	return p, nil
 }
 
