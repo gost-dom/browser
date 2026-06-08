@@ -1,6 +1,7 @@
 package browsertest
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -17,6 +18,7 @@ type windowOption func(html.Window)
 type option struct {
 	logOptions    []gosttest.HandlerOption
 	windowOptions []windowOption
+	context       context.Context
 }
 
 type InitOption func(*option)
@@ -40,6 +42,10 @@ func WithLogOption(lo gosttest.HandlerOption) InitOption {
 
 func WithMinLogLevel(lvl slog.Level) InitOption {
 	return WithLogOption(gosttest.MinLogLevel(lvl))
+}
+
+func WithContext(ctx context.Context) InitOption {
+	return func(o *option) { o.context = ctx }
 }
 
 func withHtml(h string) windowOption {
@@ -77,11 +83,15 @@ func InitBrowser(
 		handler = http.HandlerFunc(dummyHttpServer)
 	}
 	logger := gosttest.NewTestLogger(t, o.logOptions...)
-	b := htmltest.NewBrowserHelper(t, browser.New(
+	browserOptions := []browser.BrowserOption{
 		browser.WithScriptEngine(engine),
 		browser.WithHandler(handler),
 		browser.WithLogger(logger),
-	))
+	}
+	if ctx := o.context; ctx != nil {
+		browserOptions = append(browserOptions, browser.WithContext(ctx))
+	}
+	b := htmltest.NewBrowserHelper(t, browser.New(browserOptions...))
 	t.Cleanup(b.Close)
 	return b
 }

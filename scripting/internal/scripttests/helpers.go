@@ -12,6 +12,7 @@ import (
 var initBrowser = browsertest.InitBrowser
 var WithLogOption = browsertest.WithLogOption
 var WithMinLogLevel = browsertest.WithMinLogLevel
+var WithContext = browsertest.WithContext
 
 func initWindow(
 	t *testing.T, e html.ScriptEngine, h http.Handler, opts ...browsertest.InitOption,

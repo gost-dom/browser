@@ -42,6 +42,8 @@ func testFetchAbortSignal(t *testing.T, e html.ScriptEngine) {
 	// This test has been seen failing on the build server.
 	// Add some random logging to try to diagnose the issue
 	t.Log("testFetchAbortSignal: start")
+	ctx, cancel := context.WithTimeout(t.Context(), time.Second)
+	defer cancel()
 
 	g := gomega.NewWithT(t)
 	t.Log("testFetchAbortSignal: child context")
@@ -65,7 +67,7 @@ func testFetchAbortSignal(t *testing.T, e html.ScriptEngine) {
 	`)
 
 	t.Log("testFetchAbortSignal: script run")
-	win.Clock().ProcessEvents(t.Context())
+	win.Clock().ProcessEvents(ctx)
 	t.Log("testFetchAbortSignal: events processed")
 
 	t.Log("testFetchAbortSignal: eval ctrl")
@@ -88,7 +90,7 @@ func testFetchJSONAsync(t *testing.T, e html.ScriptEngine) {
 	}
 
 	g := gomega.NewWithT(t)
-	win := openWindow(t, e, handler, "https://example.com/index.html")
+	win := openWindow(t, e, handler, "https://example.com/index.html", WithContext(ctx))
 	win.MustRun(`
 		let gotStatus
 		let gotJson = "uninitialized"
