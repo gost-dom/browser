@@ -128,7 +128,7 @@ type Encoder[T, U any] = func(js.Scope[T], U) (js.Value[T], error)
 // value, using encoder to convert the native fulfilled value to a JavaScript
 // value.
 //
-// The returned Promise will not settile immediately after a value is received
+// The returned Promise will not settle immediately after a value is received
 // from prom, but will be deferred to run on the "main loop" that the embedder
 // controls.
 func EncodePromise[T, U any](
