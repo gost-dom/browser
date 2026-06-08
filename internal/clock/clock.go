@@ -445,17 +445,23 @@ func (c *Clock) insertTask(future futureTask) TaskHandle {
 	return future.handle
 }
 
+// FutureTime calculates the simulated wall clock in the future given, given the
+// current simulated wall clock, and delay d. Panics if d is negative.
+func (c *Clock) FutureTime(d time.Duration) time.Time {
+	if d < 0 {
+		panic(fmt.Sprintf("Clock.SetInterval: negative delay: %d", d))
+	}
+	return c.Time.Add(d)
+}
+
 // SetInterval corresponds to the browser's [setInterval] function. Panics if
 // the delay is negative.
 //
 // [SetInterval]: https://developer.mozilla.org/en-US/docs/Web/API/Window/setInterval
 func (c *Clock) SetInterval(task TaskCallback, delay time.Duration) TaskHandle {
-	if delay < 0 {
-		panic(fmt.Sprintf("Clock.SetInterval: negative delay: %d", delay))
-	}
 	return c.insertTask(
 		futureTask{
-			time:   c.Time.Add(delay),
+			time:   c.FutureTime(delay),
 			task:   task,
 			repeat: true,
 			delay:  delay,
@@ -467,11 +473,8 @@ func (c *Clock) SetInterval(task TaskCallback, delay time.Duration) TaskHandle {
 //
 // [SetTimeout]: https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout
 func (c *Clock) SetTimeout(task TaskCallback, delay time.Duration) TaskHandle {
-	if delay < 0 {
-		panic(fmt.Sprintf("Clock.SetTimeout: negative delay: %d", delay))
-	}
 	return c.insertTask(futureTask{
-		time: c.Time.Add(delay),
+		time: c.FutureTime(delay),
 		task: task,
 	})
 }
