@@ -34,6 +34,12 @@ type TaskHandle uint32
 // A TaskCallback is the callback registered for a [futureTask].
 type TaskCallback func() error
 
+func (c TaskCallback) call(context.Context) error { return c() }
+
+type callback interface {
+	call(context.Context) error
+}
+
 // SafeTask creates a TaskCallback with a nil error from a simple callback
 // function which cannot produce an error
 func SafeTask(cb func()) TaskCallback { return func() error { cb(); return nil } }
@@ -42,7 +48,7 @@ func SafeTask(cb func()) TaskCallback { return func() error { cb(); return nil }
 // specified Time value.
 type futureTask struct {
 	time   time.Time
-	task   TaskCallback
+	task   callback
 	handle TaskHandle
 	repeat bool
 	delay  time.Duration
@@ -82,6 +88,7 @@ type Clock struct {
 
 	Time   time.Time
 	Logger *slog.Logger
+	Ctx    context.Context
 
 	// Sets the number of times a task is allowed to run without seeing a
 	// reduction in task list size. I.e., the task list doesn't need to be
@@ -157,6 +164,13 @@ func (c *Clock) peek() (res futureTask, ok bool) {
 	return
 }
 
+func (c *Clock) Context() context.Context {
+	if c.Ctx != nil {
+		return c.Ctx
+	}
+	return context.Background()
+}
+
 func (c *Clock) dequeue() (res futureTask, ok bool) {
 	if len(c.tasks) > 0 {
 		ok = true
@@ -166,7 +180,7 @@ func (c *Clock) dequeue() (res futureTask, ok bool) {
 	return
 }
 
-func (c *Clock) runWhile(predicate func() bool) []error {
+func (c *Clock) runWhile(ctx context.Context, predicate func() bool) []error {
 	errs := []error{c.runMicrotasks()}
 
 	minLength := len(c.tasks)
@@ -177,7 +191,7 @@ func (c *Clock) runWhile(predicate func() bool) []error {
 			break
 		}
 		c.Time = task.time
-		if err := task.task(); err != nil {
+		if err := task.task.call(ctx); err != nil {
 			errs = append(errs, err)
 		}
 		if task.repeat {
@@ -209,7 +223,7 @@ func (c *Clock) Advance(d time.Duration) error {
 	c.logger().Debug("Clock.Advance", "duration", d, "clock", c)
 	endTime := c.Time.Add(d)
 	errs := []error{c.runMicrotasks()}
-	errs = append(errs, c.runWhile(func() bool {
+	errs = append(errs, c.runWhile(c.Context(), func() bool {
 		task, ok := c.peek()
 		return ok && !task.time.After(endTime)
 	})...)
@@ -325,14 +339,18 @@ func (c *Clock) addEvent(task TaskCallback) {
 	c.events <- task
 }
 
-func (c *Clock) wrapFn(f func() bool, opts ...ProcessEventOption) func(*[]error) bool {
+func (c *Clock) wrapFn(
+	ctx context.Context,
+	f func() bool,
+	opts ...ProcessEventOption,
+) func(*[]error) bool {
 	var opt processEventOptions
 	for _, oo := range opts {
 		oo(&opt)
 	}
 	return func(errs *[]error) bool {
 		if opt.keepCurrentTime {
-			*errs = append(*errs, c.runDueTasks()...)
+			*errs = append(*errs, c.runDueTasks(ctx)...)
 		} else {
 			*errs = append(*errs, c.RunAll())
 		}
@@ -359,7 +377,7 @@ func (c *Clock) wrapFn(f func() bool, opts ...ProcessEventOption) func(*[]error)
 func (c *Clock) ProcessEvents(ctx context.Context, opts ...ProcessEventOption) error {
 	return c.processEventsWhile(
 		ctx,
-		c.wrapFn(func() bool { return c.pendingEvents > 0 }, opts...),
+		c.wrapFn(ctx, func() bool { return c.pendingEvents > 0 }, opts...),
 		"ProcessEvents",
 	)
 }
@@ -391,7 +409,7 @@ func (c *Clock) ProcessEventsWhile(
 	f func() bool,
 	opts ...ProcessEventOption,
 ) error {
-	return c.processEventsWhile(ctx, c.wrapFn(f, opts...), "ProcessEventsWhile")
+	return c.processEventsWhile(ctx, c.wrapFn(ctx, f, opts...), "ProcessEventsWhile")
 }
 
 func (c *Clock) processEventsWhile(
@@ -421,8 +439,8 @@ func (c *Clock) processEventsWhile(
 // already passed, but leaves future-scheduled timers alone. This is what
 // ProcessEvents needs: progress real async work without fast-forwarding
 // through unrelated long-delay timeouts.
-func (c *Clock) runDueTasks() []error {
-	return c.runWhile(func() bool {
+func (c *Clock) runDueTasks(ctx context.Context) []error {
+	return c.runWhile(ctx, func() bool {
 		return len(c.tasks) > 0 && !c.tasks[0].time.After(c.Time)
 	})
 }
@@ -490,8 +508,10 @@ func (c *Clock) QueueMacrotask(task TaskCallback) TaskHandle {
 //
 // Returns an error if any of the added tasks generate an error. Panics if the
 // task list doesn't decrease in size. See [Clock] documentation for more info.
-func (c *Clock) RunAll() error {
-	errs := c.runWhile(func() bool { return len(c.tasks) > 0 })
+func (c *Clock) RunAll() error { return c.runAll(c.Context()) }
+
+func (c *Clock) runAll(ctx context.Context) error {
+	errs := c.runWhile(ctx, func() bool { return len(c.tasks) > 0 })
 
 	return errors.Join(errs...)
 }
