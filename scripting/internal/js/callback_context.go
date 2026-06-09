@@ -32,7 +32,7 @@ type Scope[T any] interface {
 	Logger() *slog.Logger
 	Context() context.Context
 	GlobalThis() Object[T]
-	Clock() *clock.Clock
+	Clock() clock.Clock
 	Constructor(string) Constructor[T]
 }
 

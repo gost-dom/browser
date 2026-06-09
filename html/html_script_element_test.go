@@ -34,12 +34,11 @@ type dummyScriptContext struct {
 	host        *dummyScriptHost
 	browsingCtx html.BrowsingContext
 	client      http.Client
-	clock       *clock.Clock
+	clock       clock.Clock
 }
 
 func (c dummyScriptContext) Close() {}
 
-func (c dummyScriptContext) Clock() html.Clock        { return c.clock }
 func (c dummyScriptContext) Eval(string) (any, error) { return nil, nil }
 func (c dummyScriptContext) Run(string) error         { return nil }
 func (c dummyScriptContext) Compile(string) (html.Script, error) {

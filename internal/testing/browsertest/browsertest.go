@@ -8,6 +8,7 @@ import (
 
 	"github.com/gost-dom/browser"
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/testing/gosttest"
 	"github.com/gost-dom/browser/internal/testing/htmltest"
 )
@@ -15,6 +16,7 @@ import (
 type windowOption func(html.Window)
 
 type option struct {
+	clock         clock.Clock
 	logOptions    []gosttest.HandlerOption
 	windowOptions []windowOption
 }
@@ -25,6 +27,10 @@ func withWindowOption(wo windowOption) InitOption {
 	return func(o *option) {
 		o.windowOptions = append(o.windowOptions, wo)
 	}
+}
+
+func WithClock(c clock.Clock) InitOption {
+	return func(o *option) { o.clock = c }
 }
 
 // By default, log entries of Error log level cause the test to fail. This
@@ -77,10 +83,16 @@ func InitBrowser(
 		handler = http.HandlerFunc(dummyHttpServer)
 	}
 	logger := gosttest.NewTestLogger(t, o.logOptions...)
-	b := htmltest.NewBrowserHelper(t, browser.New(
+	browserOpts := []browser.BrowserOption{
 		browser.WithScriptEngine(engine),
 		browser.WithHandler(handler),
 		browser.WithLogger(logger),
+	}
+	if c := o.clock; c != nil {
+		browserOpts = append(browserOpts, browser.WithClock(c))
+	}
+	b := htmltest.NewBrowserHelper(t, browser.New(
+		browserOpts...,
 	))
 	t.Cleanup(b.Close)
 	return b

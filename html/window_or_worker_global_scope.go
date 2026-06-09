@@ -7,7 +7,7 @@ import (
 )
 
 type windowOrWorkerGlobalScope struct {
-	clock *clock.Clock
+	clock clock.Clock
 }
 
 func (w windowOrWorkerGlobalScope) SetTimeout(

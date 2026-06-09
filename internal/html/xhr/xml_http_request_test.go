@@ -28,7 +28,7 @@ type XMLHTTPRequestTestSuite struct {
 	reqErr         error
 	responseHeader http.Header
 	xhr            xhr.XmlHttpRequest
-	timer          *clock.Clock
+	timer          clock.Clock
 }
 
 func TestXMLHTTPRequest(t *testing.T) {
@@ -120,7 +120,7 @@ func (s *XMLHTTPRequestTestSuite) TestAsynchronousRequest() {
 	s.Expect(loadEnded).To(BeFalse(), "loadend emitted")
 	s.Expect(loaded).To(BeFalse(), "load emitted")
 
-	s.Expect(s.timer.RunAll()).To(Succeed())
+	s.Expect(clock.RunAll(s.timer)).To(Succeed())
 
 	s.Expect(s.xhr.Status()).To(Equal(200))
 	s.Expect(s.xhr.ResponseText()).To(Equal("Hello, World!"))

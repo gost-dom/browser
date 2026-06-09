@@ -73,10 +73,10 @@ type xmlHttpRequest struct {
 	res          *http.Response
 	headers      http.Header
 	responseType string
-	clock        *clock.Clock
+	clock        clock.Clock
 }
 
-func NewXmlHttpRequest(ctx html.BrowsingContext, clock *clock.Clock) XmlHttpRequest {
+func NewXmlHttpRequest(ctx html.BrowsingContext, clock clock.Clock) XmlHttpRequest {
 	location := ctx.LocationHREF()
 	result := &xmlHttpRequest{
 		EventTarget: event.NewEventTarget(),
