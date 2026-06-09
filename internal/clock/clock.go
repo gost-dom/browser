@@ -19,6 +19,8 @@ type processEventOptions struct {
 
 type ProcessEventOption func(*processEventOptions)
 
+// Deprecated: A better solution exists for the problem this was intended to
+// solve. This function has no effect.
 func KeepCurrentTime() ProcessEventOption {
 	return func(o *processEventOptions) {
 		o.keepCurrentTime = true
