@@ -18,6 +18,9 @@ func testNode(t *testing.T, e html.ScriptEngine) {
 	t.Run("Remove child", func(t *testing.T) { testRemoveChild(t, e) })
 	t.Run("First child", func(t *testing.T) { testFirstChild(t, e) })
 	t.Run("Contains", func(t *testing.T) { testContains(t, e) })
+	t.Run("Static properties exist on both constructor and prototype", func(t *testing.T) {
+		testStaticProperties(t, e)
+	})
 }
 
 func testStructure(t *testing.T, e html.ScriptEngine) {
@@ -137,4 +140,16 @@ func testContains(t *testing.T, e html.ScriptEngine) {
 	assert.Equal(t, false,
 		win.MustEval(`parent1.contains(parent2)`),
 		"node.contains when passed a child element")
+}
+
+func testStaticProperties(t *testing.T, e html.ScriptEngine) {
+	win := browsertest.InitWindow(t, e)
+	win.MustRun("const el = document.documentElement")
+
+	assert.EqualValues(t, 1, win.MustEval("el.ELEMENT_NODE"))
+	assert.EqualValues(t, 2, win.MustEval("el.ATTRIBUTE_NODE"))
+
+	assert.EqualValues(t, 1, win.MustEval("Node.ELEMENT_NODE"))
+	assert.EqualValues(t, 2, win.MustEval("Node.ATTRIBUTE_NODE"))
+	// Not going through them all
 }
