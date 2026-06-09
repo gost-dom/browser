@@ -218,6 +218,9 @@ func newWindow(windowOptions ...WindowOption) *window {
 		history:             new(History),
 		context:             ctx,
 	}
+	for _, init := range options.ComponentInits {
+		init(win)
+	}
 	if baseLocation == "" {
 		baseLocation = "about:blank"
 	}
@@ -473,6 +476,8 @@ type WindowOptions struct {
 	BaseLocation string
 	Logger       *slog.Logger
 	Context      context.Context
+
+	ComponentInits []func(entity.Components)
 }
 
 type WindowOption interface {

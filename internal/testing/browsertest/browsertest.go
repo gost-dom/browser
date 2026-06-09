@@ -16,9 +16,10 @@ import (
 type windowOption func(html.Window)
 
 type option struct {
-	logOptions    []gosttest.HandlerOption
-	windowOptions []windowOption
-	context       context.Context
+	logOptions     []gosttest.HandlerOption
+	windowOptions  []windowOption
+	context        context.Context
+	browserOptions []browser.BrowserOption
 }
 
 type InitOption func(*option)
@@ -38,6 +39,10 @@ func WithIgnoreErrorLogs() InitOption {
 
 func WithLogOption(lo gosttest.HandlerOption) InitOption {
 	return func(o *option) { o.logOptions = append(o.logOptions, lo) }
+}
+
+func WithBrowserOption(bo browser.BrowserOption) InitOption {
+	return func(o *option) { o.browserOptions = append(o.browserOptions, bo) }
 }
 
 func WithMinLogLevel(lvl slog.Level) InitOption {
@@ -91,6 +96,7 @@ func InitBrowser(
 	if ctx := o.context; ctx != nil {
 		browserOptions = append(browserOptions, browser.WithContext(ctx))
 	}
+	browserOptions = append(browserOptions, o.browserOptions...)
 	b := htmltest.NewBrowserHelper(t, browser.New(browserOptions...))
 	t.Cleanup(b.Close)
 	return b

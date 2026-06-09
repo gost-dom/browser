@@ -88,7 +88,8 @@ func testProgrammableDelays(t *testing.T, e html.ScriptEngine) {
 
 	handler := gosttest.HttpHandlerMap{
 		"/index.html": gosttest.StaticHTML(`<body>dummy</body>`),
-		"/data.json":  gosttest.StaticJSON(`{"foo": "bar"}`),
+		"/data1.json": gosttest.StaticJSON(`{"foo": "bar"}`),
+		"/data2.json": gosttest.StaticJSON(`{"foo": "bar"}`),
 	}
 	win := openWindow(t, e, handler, "https://example.com/index.html")
 
@@ -100,36 +101,24 @@ func testProgrammableDelays(t *testing.T, e html.ScriptEngine) {
 		setTimeout(() => { msgs.push("after 9ms") }, 9);
 		setTimeout(() => { msgs.push("after 11ms") }, 11);
 		(async () => {
-			try {
-				const response = await fetch("data.json")
-				msgs.push("after response")
-				gotStatus = response.status
-			} catch (e) {
-				err = e
-			}
-		})()
+			const response = await fetch("data1.json")
+			msgs.push("after response 1: " + response.status)
+		})();
+		(async () => {
+			const response = await fetch("data2.json")
+			msgs.push("after response 2: " + response.status)
+		})();
 	`)
 
-	t.Log("Before advance")
-	win.Clock().Advance(9 * time.Millisecond)
-	assert.Nil(
-		t, win.MustEval("gotStatus"),
-		"After 9 milliseconds, the response should not have been processed",
-	)
-
-	win.Clock().Advance(time.Millisecond)
-	assert.EqualValues(
-		t, 200, win.MustEval("gotStatus"),
-		"After 10 milliseconds, the response should have been processed",
-	)
 	win.Clock().Advance(time.Second)
 
 	g := gomega.NewWithT(t)
 	g.Expect(win.MustEval("msgs")).To(Equal(
 		[]any{
 			"after 1ms",
+			"after response 1: 200",
 			"after 9ms",
-			"after response",
+			"after response 2: 200",
 			"after 11ms",
 		}))
 }

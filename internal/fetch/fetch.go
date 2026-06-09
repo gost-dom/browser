@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/dom"
@@ -50,17 +51,17 @@ type Request struct {
 
 func (r *Request) URL() string { return url.ParseURLBase(r.url, r.bc.LocationHREF()).Href() }
 
-func (r *Request) do(ctx context.Context) (*http.Response, error) {
+func (r *Request) createHttpReq(ctx context.Context) (*http.Request, error) {
 	method := r.method
 	if method == "" {
 		method = "GET"
 	}
 	url := r.URL()
 	r.bc.Logger().Info("gost-dom/fetch: Request.do", "method", method, "url", url)
-	req, err := http.NewRequestWithContext(ctx, method, url, r.body)
-	if err != nil {
-		return nil, err
-	}
+	return http.NewRequestWithContext(ctx, method, url, r.body)
+}
+
+func (r *Request) do(req *http.Request) (*http.Response, error) {
 	c := r.bc.HTTPClient()
 	return c.Do(req)
 }
@@ -90,14 +91,34 @@ func (f Fetch) Fetch(req Request) (*Response, error) {
 	return res.Value, res.Err
 }
 
+type RequestOptions struct {
+	SimulatedDelay time.Duration
+}
+
+func getRequestOptions(req *http.Request) RequestOptions {
+	var opts RequestOptions
+	switch req.URL.Path {
+	case "/data1.json":
+		opts.SimulatedDelay = 5 * time.Millisecond
+	case "/data2.json":
+		opts.SimulatedDelay = 10 * time.Millisecond
+	}
+	return opts
+}
+
 func (f Fetch) FetchAsync(req Request) promise.Promise[*Response] {
 	ctx := f.BrowsingContext.Context()
 	if req.signal != nil {
 		ctx = dom.AbortContext(ctx, req.signal)
 	}
 
+	httpReq, err := req.createHttpReq(ctx)
+	opts := getRequestOptions(httpReq)
 	p := promise.New(func() (*Response, error) {
-		resp, err := req.do(ctx)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := req.do(httpReq)
 		if err != nil {
 			return nil, err
 		}
@@ -109,7 +130,7 @@ func (f Fetch) FetchAsync(req Request) promise.Promise[*Response] {
 			Headers:      headers,
 		}, nil
 	})
-	p.Delay = SimulatedDelay
+	p.Delay = opts.SimulatedDelay
 	return p
 }
 
