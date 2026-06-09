@@ -351,18 +351,14 @@ func (c *EventLoopCallback) AddEvent(cb TaskCallback) {
 //
 // BeginEvent returns an [EventLoopCallback] that the caller must use to pass the
 // event to the event loop.
+//
+// Deprecated: It was discovered that this works poorly; With no information
+// about when the callback is expected to arrive, callbacks to detect if
 func (c *Clock) BeginEvent() *EventLoopCallback {
-	c.logger().Debug("Clock.BeginEvent")
-
-	c.pendingEvents++
-	if c.events == nil {
-		bufSize := c.EventBufSize
-		if bufSize == 0 {
-			bufSize = DefaultEventBufSize
-		}
-		c.events = make(chan TaskCallback, bufSize)
-	}
-	return &EventLoopCallback{clock: c}
+	panic("BeginEvent no longer works (it never worked well). A recommended replacement " +
+		"is to call SetTimeoutContext with a callback body reading from a channel, " +
+		"aborting on ctx.Done() channel",
+	)
 }
 
 func (c *Clock) addEvent(task TaskCallback) {
