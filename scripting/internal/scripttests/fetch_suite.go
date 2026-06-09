@@ -39,7 +39,8 @@ func testFetch(t *testing.T, e html.ScriptEngine) {
 	t.Run("ReadableStream body", func(t *testing.T) { testReadableStream(t, e) })
 	t.Run("Headers", func(t *testing.T) { testHeaders(t, e) })
 	t.Run("Request", func(t *testing.T) { testRequest(t, e) })
-	t.Run("Programmable delays", func(t *testing.T) { testProgrammableDelays(t, e) })
+	t.Run("Request-based Programmable delays", func(t *testing.T) { testProgrammableDelays(t, e) })
+	t.Run("Simple Programmable delays", func(t *testing.T) { testSimpleProgrammableDelays(t, e) })
 }
 
 func testFetchAbortSignal(t *testing.T, e html.ScriptEngine) {
@@ -96,11 +97,11 @@ func testProgrammableDelays(t *testing.T, e html.ScriptEngine) {
 	ctx, cancel := context.WithTimeout(t.Context(), defaultTimeout)
 	defer cancel()
 
-	// This is bad test practice, the test sets a global value; on top of that,
-	// in a parallel test. However, this should be the _only_ test in the entire
-	// codebase depending on the global default value, so ... unless the bad
-	// pattern is accidentally duplicated, we're good, and we get to test how
-	// default values affect the test.
+	// This is bad test practice, the test sets a global value; And to make
+	// matters worse, it's in a parallel test. However, this should be the
+	// _only_ test in the entire codebase depending on the global default value,
+	// so ... unless the bad pattern is accidentally duplicated, we're good, and
+	// we get to test how default values affect the test.
 	browseroptions.SetDefaultFetchDelay(5 * time.Millisecond)
 
 	handler := gosttest.HttpHandlerMap{
@@ -149,6 +150,43 @@ func testProgrammableDelays(t *testing.T, e html.ScriptEngine) {
 		"after 9ms",
 		"after response 2: 200",
 		"after 11ms",
+	}, msgs)
+}
+
+func testSimpleProgrammableDelays(t *testing.T, e html.ScriptEngine) {
+	ctx, cancel := context.WithTimeout(t.Context(), defaultTimeout)
+	defer cancel()
+
+	handler := gosttest.HttpHandlerMap{
+		"/index.html": gosttest.StaticHTML(`<body>dummy</body>`),
+		"/data.json":  gosttest.StaticJSON(`{"foo": "bar"}`),
+	}
+	b := browser.New(
+		browser.WithScriptEngine(e),
+		browser.WithHandler(handler),
+		browseroptions.FetchDelay(2*time.Millisecond),
+	)
+	win, err := b.Open("https://example.com/index.html")
+	require.NoError(t, err)
+
+	require.NoError(t, win.Run(`
+		let msgs = [];
+		setTimeout(() => { msgs.push("after 1ms") }, 1);
+		setTimeout(() => { msgs.push("after 3ms") }, 3);
+		(async () => {
+			const response = await fetch("data.json")
+			msgs.push("after response: " + response.status)
+		})();
+	`))
+
+	win.Clock().ProcessEvents(ctx)
+
+	msgs, err := win.Eval("msgs")
+	assert.NoError(t, err)
+	assert.Equal(t, []any{
+		"after 1ms",
+		"after response: 200",
+		"after 3ms",
 	}, msgs)
 }
 
@@ -324,6 +362,7 @@ func testRequest(t *testing.T, e html.ScriptEngine) {
 		}
 	})
 }
+
 func testHeaders(t *testing.T, e html.ScriptEngine) {
 	t.Run("Throws on invalid value", func(t *testing.T) {
 		win := initWindow(t, e, nil)

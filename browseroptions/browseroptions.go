@@ -28,6 +28,14 @@ func FetchRequestOptions(f FetchRoundtripOptionsFunc) browser.BrowserOption {
 	)
 }
 
+func FetchDelay(d time.Duration) browser.BrowserOption {
+	return browser.WithComponentType[fetch.RequestOptionFunc](
+		func(r *http.Request, o *fetch.RoundtripOptions) {
+			o.Delay = d
+		},
+	)
+}
+
 // SetDefaultFetchDelay sets the
 //
 // Note: This is a global default, and should only ever be set in a init
