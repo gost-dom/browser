@@ -2,6 +2,7 @@ package scripttests
 
 import (
 	"context"
+	"net/http"
 	"testing"
 	"time"
 
@@ -18,8 +19,7 @@ import (
 )
 
 func testFetch(t *testing.T, e html.ScriptEngine) {
-	// TODO: Reintroduce parallel once the tests no longer depend on global state
-	// t.Parallel()
+	t.Parallel()
 
 	t.Run("Prototypes", func(t *testing.T) {
 		w := browsertest.InitWindow(t, e)
@@ -82,20 +82,36 @@ func testFetchAbortSignal(t *testing.T, e html.ScriptEngine) {
 	g.Expect(win.Eval(`rejected`)).To(Equal("abort-reason"))
 }
 
+func getRequestOptions(req *http.Request) fetch.RoundtripOptions {
+	switch req.URL.Path {
+	case "/data1.json":
+		return fetch.RoundtripOptions{Delay: 5 * time.Millisecond}
+	case "/data2.json":
+		return fetch.RoundtripOptions{Delay: 10 * time.Millisecond}
+	}
+	return fetch.RoundtripOptions{}
+}
+
 func testProgrammableDelays(t *testing.T, e html.ScriptEngine) {
-	fetch.SimulatedDelay = 10 * time.Millisecond
-	t.Cleanup(func() { fetch.SimulatedDelay = 0 })
+	ctx, cancel := context.WithTimeout(t.Context(), defaultTimeout)
+	defer cancel()
 
 	handler := gosttest.HttpHandlerMap{
 		"/index.html": gosttest.StaticHTML(`<body>dummy</body>`),
 		"/data1.json": gosttest.StaticJSON(`{"foo": "bar"}`),
 		"/data2.json": gosttest.StaticJSON(`{"foo": "bar"}`),
 	}
-	win := openWindow(t, e, handler, "https://example.com/index.html")
+	win := openWindow(
+		t,
+		e,
+		handler,
+		"https://example.com/index.html",
+		browsertest.WithBrowserOption(
+			browser.WithComponentType[fetch.RequestOptionFunc](getRequestOptions),
+		),
+	)
 
 	win.MustRun(`
-		let gotStatus
-		let err
 		let msgs = [];
 		setTimeout(() => { msgs.push("after 1ms") }, 1);
 		setTimeout(() => { msgs.push("after 9ms") }, 9);
@@ -110,7 +126,7 @@ func testProgrammableDelays(t *testing.T, e html.ScriptEngine) {
 		})();
 	`)
 
-	win.Clock().Advance(time.Second)
+	win.Clock().ProcessEvents(ctx)
 
 	g := gomega.NewWithT(t)
 	g.Expect(win.MustEval("msgs")).To(Equal(

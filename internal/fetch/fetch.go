@@ -9,6 +9,7 @@ import (
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/dom"
+	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/promise"
 	"github.com/gost-dom/browser/internal/streams"
 	"github.com/gost-dom/browser/internal/types"
@@ -91,20 +92,14 @@ func (f Fetch) Fetch(req Request) (*Response, error) {
 	return res.Value, res.Err
 }
 
-type RequestOptions struct {
-	SimulatedDelay time.Duration
+// RoundtripOptions describes properties for an individual fetch request.
+type RoundtripOptions struct {
+	// Delay controls the Simulated Time passing from issuing a request to
+	// receiving a response.
+	Delay time.Duration
 }
 
-func getRequestOptions(req *http.Request) RequestOptions {
-	var opts RequestOptions
-	switch req.URL.Path {
-	case "/data1.json":
-		opts.SimulatedDelay = 5 * time.Millisecond
-	case "/data2.json":
-		opts.SimulatedDelay = 10 * time.Millisecond
-	}
-	return opts
-}
+type RequestOptionFunc func(req *http.Request) RoundtripOptions
 
 func (f Fetch) FetchAsync(req Request) promise.Promise[*Response] {
 	ctx := f.BrowsingContext.Context()
@@ -113,7 +108,11 @@ func (f Fetch) FetchAsync(req Request) promise.Promise[*Response] {
 	}
 
 	httpReq, err := req.createHttpReq(ctx)
-	opts := getRequestOptions(httpReq)
+	optsFn, _ := entity.ComponentType[RequestOptionFunc](f.BrowsingContext)
+	var opts RoundtripOptions
+	if optsFn != nil {
+		opts = optsFn(httpReq)
+	}
 	p := promise.New(func() (*Response, error) {
 		if err != nil {
 			return nil, err
@@ -130,7 +129,7 @@ func (f Fetch) FetchAsync(req Request) promise.Promise[*Response] {
 			Headers:      headers,
 		}, nil
 	})
-	p.Delay = opts.SimulatedDelay
+	p.Delay = opts.Delay
 	return p
 }
 
