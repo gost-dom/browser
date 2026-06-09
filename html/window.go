@@ -103,6 +103,7 @@ type Clock interface {
 
 // Describes a current browser context
 type BrowsingContext interface {
+	entity.Components
 	// Logger returns the currently configured logger for the window. Returns
 	// nil if no instance is created.
 	Logger() *slog.Logger
