@@ -1,6 +1,27 @@
 # Changelog - Gost-DOM
 
 
+## [0.11.3](https://github.com/gost-dom/browser/compare/v0.11.2...v0.11.3) (2026-06-09)
+
+
+### Features
+
+* Basic CodeMirror support ([6d35203](https://github.com/gost-dom/browser/commit/6d35203e7a02bc5200ad2ee6c2d65502ad3884ab))
+* Create a simple `navigator` type ([d8b6e39](https://github.com/gost-dom/browser/commit/d8b6e39312088a9b433401674005cc094d667939))
+* Implement CDATASection ([d97e709](https://github.com/gost-dom/browser/commit/d97e7096e187e380001520b91cfbece725c7b01f))
+* **scripting:** document.defaultView ([54c43e3](https://github.com/gost-dom/browser/commit/54c43e3fd71715d4d1aeab3473f348e90bb9a54a))
+* **scripting:** Dummy getClientRects on element and range ([17e214c](https://github.com/gost-dom/browser/commit/17e214cf2bc3c70f2efa3f9786a1a2cd801fc15a))
+* **scripting:** Skeleton element.getBoundingClientRect ([a4e29bb](https://github.com/gost-dom/browser/commit/a4e29bb089bc8cfb772f08f12b473e210ba8a936))
+* **scripting:** Static node types available on instances ([29b45a7](https://github.com/gost-dom/browser/commit/29b45a77184278f4f60ac8714511b5964d5f9b6d))
+* Simulating delay when typing ([161a4eb](https://github.com/gost-dom/browser/commit/161a4eb6c5b55d45ffcdaf46029552fe1521526e))
+
+
+### Bug Fixes
+
+* DocumentType.name and nodeName returns correct value ([bfa2dd7](https://github.com/gost-dom/browser/commit/bfa2dd7b3d1687c221b3f5ebee340d1e747342d8))
+* Keyboard events are not restricted to input fields ([8a2207e](https://github.com/gost-dom/browser/commit/8a2207ec4b7981005ba5380a1e2700b912fa53ce))
+* remove unused runtime/cgo import that broke non-CGo builds ([b26cc60](https://github.com/gost-dom/browser/commit/b26cc60c90bc713676f976f1350bd3f95b4c9dd7))
+
 ## [0.11.2](https://github.com/gost-dom/browser/compare/v0.11.1...v0.11.2) (2026-06-02)
 
 
