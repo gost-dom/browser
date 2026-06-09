@@ -1,30 +1,42 @@
 package scripttests
 
 import (
+	"testing"
+
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/testing/browsertest"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
+	"github.com/onsi/gomega"
+	"github.com/stretchr/testify/assert"
 )
 
-type NodeTestSuite struct {
-	ScriptHostSuite
+func testNode(t *testing.T, e html.ScriptEngine) {
+	t.Run("Structure", func(t *testing.T) { testStructure(t, e) })
+	t.Run("InsertBefore", func(t *testing.T) { testInsertBefore(t, e) })
+	t.Run("InsertBefore with no ref", func(t *testing.T) { testInsertBeforeWithNoRef(t, e) })
+	t.Run("InsertBefore with null ref", func(t *testing.T) { testInsertBeforeWithNullRef(t, e) })
+	t.Run("Remove child", func(t *testing.T) { testRemoveChild(t, e) })
+	t.Run("First child", func(t *testing.T) { testFirstChild(t, e) })
+	t.Run("Contains", func(t *testing.T) { testContains(t, e) })
 }
 
-func NewNodeTestSuite(h html.ScriptEngine) *NodeTestSuite {
-	return &NodeTestSuite{ScriptHostSuite: *NewScriptHostSuite(h)}
-}
-
-func (s *NodeTestSuite) TestStructure() {
-	s.MustLoadHTML(`<div id="parent-1"><div id="child-1"></div><div id="child-2"></div></div>`)
-	s.Assert().Equal(true, s.MustEval(`
+func testStructure(t *testing.T, e html.ScriptEngine) {
+	win := browsertest.InitWindow(t, e, browsertest.WithHtml(
+		`<div id="parent-1"><div id="child-1"></div><div id="child-2"></div></div>`,
+	))
+	assert.Equal(t, true, win.MustEval(`
 		const parent1 = document.getElementById("parent-1")
 		const child1 = document.getElementById("child-1")
 		child1.parentNode === parent1
 	`))
 }
 
-func (s *NodeTestSuite) TestInsertBefore() {
-	s.MustLoadHTML(`<div id="parent-1"><div id="child-1"></div><div id="child-2"></div></div>`)
-	s.Expect(s.Eval(`
+func testInsertBefore(t *testing.T, e html.ScriptEngine) {
+	win := browsertest.InitWindow(t, e, browsertest.WithHtml(
+		`<div id="parent-1"><div id="child-1"></div><div id="child-2"></div></div>`,
+	))
+	g := gomega.NewGomegaWithT(t)
+	g.Expect(win.Eval(`
 		const f = document.createDocumentFragment()
 		const d1 = document.createElement("div")
 		const d2 = document.createElement("div")
@@ -39,9 +51,12 @@ func (s *NodeTestSuite) TestInsertBefore() {
 	`)).To(Equal("child-1, d1, d2, child-2"))
 }
 
-func (s *NodeTestSuite) TestInsertBeforeWithNullRef() {
-	s.MustLoadHTML(`<div id="parent-1"><div id="child-1"></div><div id="child-2"></div></div>`)
-	s.Expect(s.Eval(`
+func testInsertBeforeWithNullRef(t *testing.T, e html.ScriptEngine) {
+	win := browsertest.InitWindow(t, e, browsertest.WithHtml(
+		`<div id="parent-1"><div id="child-1"></div><div id="child-2"></div></div>`,
+	))
+	g := gomega.NewGomegaWithT(t)
+	g.Expect(win.Eval(`
 		const f = document.createDocumentFragment()
 		const d1 = document.createElement("div")
 		const d2 = document.createElement("div")
@@ -55,9 +70,12 @@ func (s *NodeTestSuite) TestInsertBeforeWithNullRef() {
 	`)).To(Equal("child-1, child-2, d1, d2"))
 }
 
-func (s *NodeTestSuite) TestInsertBeforeWithNoRef() {
-	s.MustLoadHTML(`<div id="parent-1"><div id="child-1"></div><div id="child-2"></div></div>`)
-	s.Expect(s.Eval(`
+func testInsertBeforeWithNoRef(t *testing.T, e html.ScriptEngine) {
+	win := browsertest.InitWindow(t, e, browsertest.WithHtml(
+		`<div id="parent-1"><div id="child-1"></div><div id="child-2"></div></div>`,
+	))
+	g := gomega.NewWithT(t)
+	g.Expect(win.Eval(`
 		const f = document.createDocumentFragment()
 		const d1 = document.createElement("div")
 		const d2 = document.createElement("div")
@@ -71,27 +89,34 @@ func (s *NodeTestSuite) TestInsertBeforeWithNoRef() {
 	`)).To(Equal("child-1, child-2, d1, d2"))
 }
 
-func (s *NodeTestSuite) TestRemoveChild() {
-	s.MustLoadHTML(`<div id="parent-1"><div id="child">child</div></div>`)
-	s.Expect(s.RunScript(`
+func testRemoveChild(t *testing.T, e html.ScriptEngine) {
+	win := browsertest.InitWindow(t, e, browsertest.WithHtml(
+		`<div id="parent-1"><div id="child">child</div></div>`,
+	))
+	s := gomega.NewGomegaWithT(t)
+	s.Expect(win.Run(`
 		const child = document.getElementById('child');
 		const parent = document.getElementById('parent-1')
 		parent.removeChild(child)
 	`)).To(Succeed())
 	s.Expect(
-		s.Window.Document().GetElementById("parent-1").ChildNodes().Length(),
+		win.Document().GetElementById("parent-1").ChildNodes().Length(),
 	).To(Equal(0))
 }
 
-func (s *NodeTestSuite) TestFirstChild() {
-	s.MustLoadHTML(`<div id="parent-1"><div id="child">child</div></div>`)
+func testFirstChild(t *testing.T, e html.ScriptEngine) {
+	win := browsertest.InitWindow(t, e, browsertest.WithHtml(
+		`<div id="parent-1"><div id="child">child</div></div>`,
+	))
+	s := gomega.NewGomegaWithT(t)
+
 	s.Expect(
-		s.Eval(`document.getElementById("parent-1").firstChild.getAttribute("id")`),
+		win.Eval(`document.getElementById("parent-1").firstChild.getAttribute("id")`),
 	).To(Equal("child"))
 }
 
-func (s *NodeTestSuite) TestContains() {
-	s.MustLoadHTML(`
+func testContains(t *testing.T, e html.ScriptEngine) {
+	win := browsertest.InitWindow(t, e, browsertest.WithHtml(`
 		<div>
 			<div id="parent-1">
 				<div id="child">child</div>
@@ -103,11 +128,13 @@ func (s *NodeTestSuite) TestContains() {
 			const parent2 = document.getElementById("parent-2")
 			const child = document.getElementById("child")
 		</script>
-	`)
+	`))
 
-	s.Expect(s.Eval(`parent1.contains(child)`)).To(BeTrue(),
+	assert.Equal(t, true,
+		win.MustEval(`parent1.contains(child)`),
 		"node.contains when passed a child element")
 
-	s.Expect(s.Eval(`parent1.contains(parent2)`)).To(BeFalse(),
+	assert.Equal(t, false,
+		win.MustEval(`parent1.contains(parent2)`),
 		"node.contains when passed a child element")
 }
