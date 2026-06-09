@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/gost-dom/browser"
+	"github.com/gost-dom/browser/browseroptions"
 	"github.com/gost-dom/browser/html"
-	"github.com/gost-dom/browser/internal/fetch"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
 	"github.com/gost-dom/browser/internal/testing/browsertest"
 	. "github.com/gost-dom/browser/internal/testing/gomega-matchers"
@@ -16,6 +16,7 @@ import (
 	"github.com/gost-dom/browser/internal/testing/htmltest"
 	"github.com/onsi/gomega"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func testFetch(t *testing.T, e html.ScriptEngine) {
@@ -82,38 +83,44 @@ func testFetchAbortSignal(t *testing.T, e html.ScriptEngine) {
 	g.Expect(win.Eval(`rejected`)).To(Equal("abort-reason"))
 }
 
-func getRequestOptions(req *http.Request) fetch.RoundtripOptions {
+func getRequestOptions(req *http.Request, o *browseroptions.FetchRoundtripOptions) {
 	switch req.URL.Path {
 	case "/data1.json":
-		return fetch.RoundtripOptions{Delay: 5 * time.Millisecond}
+		o.Delay = 2 * time.Millisecond
 	case "/data2.json":
-		return fetch.RoundtripOptions{Delay: 10 * time.Millisecond}
+		o.Delay = 10 * time.Millisecond
 	}
-	return fetch.RoundtripOptions{}
 }
 
 func testProgrammableDelays(t *testing.T, e html.ScriptEngine) {
 	ctx, cancel := context.WithTimeout(t.Context(), defaultTimeout)
 	defer cancel()
 
+	// This is bad test practice, the test sets a global value; on top of that,
+	// in a parallel test. However, this should be the _only_ test in the entire
+	// codebase depending on the global default value, so ... unless the bad
+	// pattern is accidentally duplicated, we're good, and we get to test how
+	// default values affect the test.
+	browseroptions.SetDefaultFetchDelay(5 * time.Millisecond)
+
 	handler := gosttest.HttpHandlerMap{
 		"/index.html": gosttest.StaticHTML(`<body>dummy</body>`),
 		"/data1.json": gosttest.StaticJSON(`{"foo": "bar"}`),
 		"/data2.json": gosttest.StaticJSON(`{"foo": "bar"}`),
+		"/data3.json": gosttest.StaticJSON(`{"foo": "bar"}`),
 	}
-	win := openWindow(
-		t,
-		e,
-		handler,
-		"https://example.com/index.html",
-		browsertest.WithBrowserOption(
-			browser.WithComponentType[fetch.RequestOptionFunc](getRequestOptions),
-		),
+	b := browser.New(
+		browser.WithScriptEngine(e),
+		browser.WithHandler(handler),
+		browseroptions.FetchRequestOptions(getRequestOptions),
 	)
+	win, err := b.Open("https://example.com/index.html")
+	require.NoError(t, err)
 
-	win.MustRun(`
+	require.NoError(t, win.Run(`
 		let msgs = [];
 		setTimeout(() => { msgs.push("after 1ms") }, 1);
+		setTimeout(() => { msgs.push("after 3ms") }, 3);
 		setTimeout(() => { msgs.push("after 9ms") }, 9);
 		setTimeout(() => { msgs.push("after 11ms") }, 11);
 		(async () => {
@@ -124,19 +131,25 @@ func testProgrammableDelays(t *testing.T, e html.ScriptEngine) {
 			const response = await fetch("data2.json")
 			msgs.push("after response 2: " + response.status)
 		})();
-	`)
+		(async () => {
+			const response = await fetch("data3.json")
+			msgs.push("after response 3: " + response.status)
+		})();
+	`))
 
 	win.Clock().ProcessEvents(ctx)
 
-	g := gomega.NewWithT(t)
-	g.Expect(win.MustEval("msgs")).To(Equal(
-		[]any{
-			"after 1ms",
-			"after response 1: 200",
-			"after 9ms",
-			"after response 2: 200",
-			"after 11ms",
-		}))
+	msgs, err := win.Eval("msgs")
+	assert.NoError(t, err)
+	assert.Equal(t, []any{
+		"after 1ms",
+		"after response 1: 200",
+		"after 3ms",
+		"after response 3: 200",
+		"after 9ms",
+		"after response 2: 200",
+		"after 11ms",
+	}, msgs)
 }
 
 func testFetchJSONAsync(t *testing.T, e html.ScriptEngine) {

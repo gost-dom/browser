@@ -16,6 +16,11 @@ import (
 	"github.com/gost-dom/browser/url"
 )
 
+var defaultDelay time.Duration
+
+func DefaultDelay() time.Duration     { return defaultDelay }
+func SetDefaultDelay(d time.Duration) { defaultDelay = d }
+
 type Fetch struct {
 	BrowsingContext html.BrowsingContext
 }
@@ -99,7 +104,11 @@ type RoundtripOptions struct {
 	Delay time.Duration
 }
 
-type RequestOptionFunc func(req *http.Request) RoundtripOptions
+func defaultRoundtripOptions() RoundtripOptions {
+	return RoundtripOptions{Delay: defaultDelay}
+}
+
+type RequestOptionFunc func(*http.Request, *RoundtripOptions)
 
 func (f Fetch) FetchAsync(req Request) promise.Promise[*Response] {
 	ctx := f.BrowsingContext.Context()
@@ -109,9 +118,9 @@ func (f Fetch) FetchAsync(req Request) promise.Promise[*Response] {
 
 	httpReq, err := req.createHttpReq(ctx)
 	optsFn, _ := entity.ComponentType[RequestOptionFunc](f.BrowsingContext)
-	var opts RoundtripOptions
+	opts := defaultRoundtripOptions()
 	if optsFn != nil {
-		opts = optsFn(httpReq)
+		optsFn(httpReq, &opts)
 	}
 	p := promise.New(func() (*Response, error) {
 		if err != nil {
@@ -189,4 +198,8 @@ func assertHeaderCountWithinLimit(count int) {
 		)
 		panic(msg)
 	}
+}
+
+func init() {
+	defaultDelay = 5 * time.Millisecond
 }
