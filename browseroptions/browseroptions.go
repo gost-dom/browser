@@ -23,6 +23,13 @@ func FetchRequestOptions(f InitFetchRoundtripOptionsFunc) browser.BrowserOption 
 	)
 }
 
+// FetchDelay defines the simulated delay from issuing a fetch request until the
+// response is available in simulated time.
+//
+// Warning: Using both FetchDelay and FetchRequestOptions will cause undefined
+// behaviour. If you need to explicitly control delay for individual requests,
+// use FetchRequestOptions, and let it fall back to a default delay for requests
+// not explicitly handled.
 func FetchDelay(d time.Duration) browser.BrowserOption {
 	return browser.WithComponentType[fetch.InitRoundTripOptionsFunc](
 		func(r *http.Request, o *fetch.RoundtripOptions) {
@@ -31,7 +38,8 @@ func FetchDelay(d time.Duration) browser.BrowserOption {
 	)
 }
 
-// SetDefaultFetchDelay sets the
+// SetDefaultFetchDelay overrides the default delay for HTTP response
+// processing.
 //
 // Note: This is a global default, and should only ever be set in a init
 // function; and preferably not at all. If the delay affects the outcome of a
