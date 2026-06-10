@@ -5,6 +5,15 @@ import (
 	"time"
 )
 
+type PromiseOptions struct {
+	Delay time.Duration
+}
+type PromiseOption func(*PromiseOptions)
+
+func WithDelay(d time.Duration) PromiseOption {
+	return func(o *PromiseOptions) { o.Delay = d }
+}
+
 // Result represents the outcome of a promise. If the promise is rejected, Err
 // will contain a non-nil value. If Err is nil, the promise was fulfilled, the
 // result contained in field Value.
@@ -14,8 +23,8 @@ type Result[T any] struct {
 }
 
 type Promise[T any] struct {
-	C     chan Result[T]
-	Delay time.Duration
+	PromiseOptions
+	C chan Result[T]
 }
 
 func (p Promise[T]) Close()              { close(p.C) }
@@ -29,8 +38,11 @@ func (p Promise[T]) Reject(err error) { p.C <- Result[T]{Err: err} }
 // separate gorouting, and the promise will eventually settle with the result of
 // the function. If f returns a non-nil error, the promise will reject,
 // otherwise it will resolve with a value of type T.
-func New[T any](f func() (T, error)) Promise[T] {
-	p := Promise[T]{make(chan Result[T], 1), 0}
+func New[T any](f func() (T, error), opts ...PromiseOption) Promise[T] {
+	p := Promise[T]{C: make(chan Result[T], 1)}
+	for _, o := range opts {
+		o(&p.PromiseOptions)
+	}
 	if f != nil {
 		go func() { p.Send(f()) }()
 	}

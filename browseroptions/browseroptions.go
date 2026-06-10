@@ -12,16 +12,11 @@ import (
 )
 
 // FetchRoundtripOptions describes properties for an individual fetch request.
-type FetchRoundtripOptions struct {
-	// Delay controls the Simulated Time passing from issuing a request to
-	// receiving a response.
-	Delay time.Duration
-}
+type FetchRoundtripOptions = fetch.RoundtripOptions
+type InitFetchRoundtripOptionsFunc = fetch.InitRoundTripOptionsFunc
 
-type FetchRoundtripOptionsFunc func(*http.Request, *FetchRoundtripOptions)
-
-func FetchRequestOptions(f FetchRoundtripOptionsFunc) browser.BrowserOption {
-	return browser.WithComponentType[fetch.RequestOptionFunc](
+func FetchRequestOptions(f InitFetchRoundtripOptionsFunc) browser.BrowserOption {
+	return browser.WithComponentType[fetch.InitRoundTripOptionsFunc](
 		func(r *http.Request, o *fetch.RoundtripOptions) {
 			f(r, (*FetchRoundtripOptions)(o))
 		},
@@ -29,7 +24,7 @@ func FetchRequestOptions(f FetchRoundtripOptionsFunc) browser.BrowserOption {
 }
 
 func FetchDelay(d time.Duration) browser.BrowserOption {
-	return browser.WithComponentType[fetch.RequestOptionFunc](
+	return browser.WithComponentType[fetch.InitRoundTripOptionsFunc](
 		func(r *http.Request, o *fetch.RoundtripOptions) {
 			o.Delay = d
 		},

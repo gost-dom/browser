@@ -108,7 +108,7 @@ func defaultRoundtripOptions() RoundtripOptions {
 	return RoundtripOptions{Delay: defaultDelay}
 }
 
-type RequestOptionFunc func(*http.Request, *RoundtripOptions)
+type InitRoundTripOptionsFunc func(*http.Request, *RoundtripOptions)
 
 func (f Fetch) FetchAsync(req Request) promise.Promise[*Response] {
 	ctx := f.BrowsingContext.Context()
@@ -117,12 +117,12 @@ func (f Fetch) FetchAsync(req Request) promise.Promise[*Response] {
 	}
 
 	httpReq, err := req.createHttpReq(ctx)
-	optsFn, _ := entity.ComponentType[RequestOptionFunc](f.BrowsingContext)
+	optsFn, _ := entity.ComponentType[InitRoundTripOptionsFunc](f.BrowsingContext)
 	opts := defaultRoundtripOptions()
 	if optsFn != nil {
 		optsFn(httpReq, &opts)
 	}
-	p := promise.New(func() (*Response, error) {
+	return promise.New(func() (*Response, error) {
 		if err != nil {
 			return nil, err
 		}
@@ -137,9 +137,7 @@ func (f Fetch) FetchAsync(req Request) promise.Promise[*Response] {
 			httpResponse: resp,
 			Headers:      headers,
 		}, nil
-	})
-	p.Delay = opts.Delay
-	return p
+	}, promise.WithDelay(opts.Delay))
 }
 
 type Response struct {
