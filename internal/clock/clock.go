@@ -13,6 +13,12 @@ import (
 	"github.com/gost-dom/browser/internal/log"
 )
 
+type taskOption func(*futureTask)
+
+func WithAsync() taskOption {
+	return func(t *futureTask) { t.async = true }
+}
+
 type processEventOptions struct {
 	keepCurrentTime bool
 }
@@ -487,12 +493,19 @@ func (c *Clock) SetTimeout(task TaskCallback, delay time.Duration) TaskHandle {
 	})
 }
 
-func (c *Clock) SetTimeoutContext(task TaskCallbackContext, delay time.Duration) TaskHandle {
-	return c.insertTask(futureTask{
-		time:  c.FutureTime(delay),
-		task:  task,
-		async: true,
-	})
+func (c *Clock) SetTimeoutContext(
+	task TaskCallbackContext,
+	delay time.Duration,
+	options ...taskOption,
+) TaskHandle {
+	t := futureTask{
+		time: c.FutureTime(delay),
+		task: task,
+	}
+	for _, o := range options {
+		o(&t)
+	}
+	return c.insertTask(t)
 }
 
 // QueueMacrotask places a task on the macrotask queue.

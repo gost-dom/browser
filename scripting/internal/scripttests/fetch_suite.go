@@ -41,6 +41,7 @@ func testFetch(t *testing.T, e html.ScriptEngine) {
 	t.Run("Request", func(t *testing.T) { testRequest(t, e) })
 	t.Run("Request-based Programmable delays", func(t *testing.T) { testProgrammableDelays(t, e) })
 	t.Run("Simple Programmable delays", func(t *testing.T) { testSimpleProgrammableDelays(t, e) })
+	t.Run("Test zero-delay responses", func(t *testing.T) { testZeroDelayResponses(t, e) })
 }
 
 func testFetchAbortSignal(t *testing.T, e html.ScriptEngine) {
@@ -151,6 +152,108 @@ func testProgrammableDelays(t *testing.T, e html.ScriptEngine) {
 		"after response 2: 200",
 		"after 11ms",
 	}, msgs)
+}
+
+func testZeroDelayResponses(t *testing.T, e html.ScriptEngine) {
+	// HTTP responses with zero delay has the capacity to cause deadlock issues.
+	//
+	// After running scripts, the _current default_ behaviour is to run all
+	// microtasks and macrotasks scheduled for the current time, i.e., all
+	// setTimeout(..., 0) callbacks.
+	//
+	// When a fetch response is scheduled to be processed at this time, but we
+	// haven't had the ability to send the response yet, we'd wait indefinitely
+	// for the response to arrive.
+	//
+	// The WithAsync() option tells the clock, that it can return from Advance()
+	// calls, even if this task was scheduled for the current simulated time.
+	// Removing WithAsync() in the fetch implementation will cause this test to block;
+	//
+	// This tests two scenarios
+	//
+	//   - The response is not coupled to the test case itself. Tested code calls
+	//     HTTP handlers that themselves are capable of generating responses.
+	//   - The response is generated in the test code after JavaScript code has sent
+	//     the request, i.e., there is no way for the response to be generated
+	//     before exiting JavaScript execution scope.
+	t.Run("When response is generated before script returns", func(t *testing.T) {
+		ctx, cancel := context.WithTimeout(t.Context(), defaultTimeout)
+		defer cancel()
+
+		handler := gosttest.HttpHandlerMap{
+			"/index.html": gosttest.StaticHTML(`<body>dummy</body>`),
+			"/data.json":  gosttest.StaticJSON(`{"foo": "bar"}`),
+		}
+		b := browser.New(
+			browser.WithScriptEngine(e),
+			browser.WithHandler(handler),
+			browseroptions.FetchDelay(0),
+		)
+		win, err := b.Open("https://example.com/index.html")
+		require.NoError(t, err)
+
+		require.NoError(t, win.Run(`
+			let msgs = [];
+			setTimeout(() => { msgs.push("after 1ms") }, 1);
+			(async () => {
+				const response = await fetch("data.json")
+				msgs.push("after response: " + response.status)
+			})();
+		`))
+
+		win.Clock().ProcessEvents(ctx)
+
+		msgs, err := win.Eval("msgs")
+		assert.NoError(t, err)
+		assert.Equal(t, []any{
+			"after response: 200",
+			"after 1ms",
+		}, msgs)
+	})
+
+	t.Run("When response is generated _after_ the script returns", func(t *testing.T) {
+		ctx, cancel := context.WithTimeout(t.Context(), defaultTimeout)
+		defer cancel()
+
+		delayedHandler := &gosttest.PipeHandler{T: t}
+
+		handler := gosttest.HttpHandlerMap{
+			"/index.html": gosttest.StaticHTML(`<body>dummy</body>`),
+			"/data.json":  delayedHandler,
+		}
+		b := browser.New(
+			browser.WithScriptEngine(e),
+			browser.WithHandler(handler),
+			browseroptions.FetchDelay(0),
+		)
+		win, err := b.Open("https://example.com/index.html")
+		require.NoError(t, err)
+
+		require.NoError(t, win.Run(`
+			let msgs = [];
+			setTimeout(() => { msgs.push("after 1ms") }, 1);
+			(async () => {
+				const response = await fetch("data.json")
+				msgs.push("after response: " + response.status)
+			})();
+		`))
+
+		msgs, err := win.Eval("msgs")
+		require.NoError(t, err)
+		assert.Empty(t, msgs)
+
+		delayedHandler.WriteHeader(200)
+		delayedHandler.Close()
+		win.Clock().ProcessEvents(ctx)
+
+		msgs, err = win.Eval("msgs")
+		assert.NoError(t, err)
+		assert.Equal(t, []any{
+			"after response: 200",
+			"after 1ms",
+		}, msgs)
+
+	})
 }
 
 func testSimpleProgrammableDelays(t *testing.T, e html.ScriptEngine) {

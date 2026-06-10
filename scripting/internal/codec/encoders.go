@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/promise"
 	"github.com/gost-dom/browser/internal/types"
@@ -144,10 +145,10 @@ func EncodePromise[T, U any](
 	// the event loop should happen in a different scope, not where the Go
 	// promise type is translated to a JavaScript promise type.
 	p := scope.NewPromise()
-	clock := scope.Clock()
+	clk := scope.Clock()
 	var delay time.Duration = prom.Delay
 
-	clock.SetTimeoutContext(
+	clk.SetTimeoutContext(
 		func(ctx context.Context) error {
 			select {
 			case promRes := <-prom.C:
@@ -175,6 +176,7 @@ func EncodePromise[T, U any](
 			return nil
 		},
 		delay,
+		clock.WithAsync(),
 	)
 	return p, nil
 }

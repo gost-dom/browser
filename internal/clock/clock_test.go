@@ -178,8 +178,8 @@ func (s *ClockTestSuite) TestProcessEventsUntil() {
 			return ctx.Err()
 		}
 	}
-	c.SetTimeoutContext(cb, 0)
-	c.SetTimeoutContext(cb, 0)
+	c.SetTimeoutContext(cb, 0, clock.WithAsync())
+	c.SetTimeoutContext(cb, 0, clock.WithAsync())
 
 	go func() {
 		ch <- struct{}{}
