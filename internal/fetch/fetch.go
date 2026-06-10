@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"sync/atomic"
 	"time"
 
 	"github.com/gost-dom/browser/html"
@@ -16,10 +17,13 @@ import (
 	"github.com/gost-dom/browser/url"
 )
 
-var defaultDelay time.Duration
+var defaultDelay atomic.Int64
 
-func DefaultDelay() time.Duration     { return defaultDelay }
-func SetDefaultDelay(d time.Duration) { defaultDelay = d }
+func DefaultDelay() time.Duration { return time.Duration(defaultDelay.Load()) }
+func SetDefaultDelay(d time.Duration) time.Duration {
+	old := defaultDelay.Swap(int64(d))
+	return time.Duration(old)
+}
 
 type Fetch struct {
 	BrowsingContext html.BrowsingContext
@@ -105,7 +109,7 @@ type RoundtripOptions struct {
 }
 
 func defaultRoundtripOptions() RoundtripOptions {
-	return RoundtripOptions{Delay: defaultDelay}
+	return RoundtripOptions{Delay: DefaultDelay()}
 }
 
 type InitRoundTripOptionsFunc func(*http.Request, *RoundtripOptions)
@@ -199,5 +203,5 @@ func assertHeaderCountWithinLimit(count int) {
 }
 
 func init() {
-	defaultDelay = 5 * time.Millisecond
+	SetDefaultDelay(5 * time.Millisecond)
 }
