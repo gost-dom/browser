@@ -8,12 +8,12 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/gost-dom/code-gen/customrules"
-	"github.com/gost-dom/code-gen/gen"
-	"github.com/gost-dom/code-gen/idlspec"
-	"github.com/gost-dom/code-gen/packagenames"
-	"github.com/gost-dom/code-gen/scripting/configuration"
-	"github.com/gost-dom/code-gen/scripting/model"
+	"github.com/gost-dom/browser/internal/code-gen/customrules"
+	"github.com/gost-dom/browser/internal/code-gen/gen"
+	"github.com/gost-dom/browser/internal/code-gen/idlspec"
+	"github.com/gost-dom/browser/internal/code-gen/packagenames"
+	"github.com/gost-dom/browser/internal/code-gen/scripting/configuration"
+	"github.com/gost-dom/browser/internal/code-gen/scripting/model"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )

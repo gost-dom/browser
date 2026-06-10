@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/dave/jennifer/jen"
-	"github.com/gost-dom/code-gen/packagenames"
+	"github.com/gost-dom/browser/internal/code-gen/packagenames"
 )
 
 func WriteFile(s FileGeneratorSpec) error {

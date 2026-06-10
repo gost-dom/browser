@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/gost-dom/code-gen/internal"
+	"github.com/gost-dom/browser/internal/code-gen/internal"
 	"github.com/gost-dom/webref/idl"
 )
 

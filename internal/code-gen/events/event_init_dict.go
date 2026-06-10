@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/dave/jennifer/jen"
-	"github.com/gost-dom/code-gen/idltransform"
-	"github.com/gost-dom/code-gen/internal"
+	"github.com/gost-dom/browser/internal/code-gen/idltransform"
+	"github.com/gost-dom/browser/internal/code-gen/internal"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )

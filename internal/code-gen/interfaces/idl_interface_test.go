@@ -5,9 +5,9 @@ import (
 
 	"github.com/onsi/gomega"
 
-	"github.com/gost-dom/code-gen/codegentest"
-	"github.com/gost-dom/code-gen/idltransform"
-	. "github.com/gost-dom/code-gen/interfaces"
+	"github.com/gost-dom/browser/internal/code-gen/codegentest"
+	"github.com/gost-dom/browser/internal/code-gen/idltransform"
+	. "github.com/gost-dom/browser/internal/code-gen/interfaces"
 	. "github.com/gost-dom/generators/testing/matchers"
 	"github.com/gost-dom/webref/idl"
 )

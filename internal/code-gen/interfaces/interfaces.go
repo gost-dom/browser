@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/gost-dom/code-gen/customrules"
-	htmlelements "github.com/gost-dom/code-gen/html-elements"
-	"github.com/gost-dom/code-gen/idltransform"
-	"github.com/gost-dom/code-gen/internal"
-	"github.com/gost-dom/code-gen/packagenames"
+	"github.com/gost-dom/browser/internal/code-gen/customrules"
+	htmlelements "github.com/gost-dom/browser/internal/code-gen/html-elements"
+	"github.com/gost-dom/browser/internal/code-gen/idltransform"
+	"github.com/gost-dom/browser/internal/code-gen/internal"
+	"github.com/gost-dom/browser/internal/code-gen/packagenames"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )

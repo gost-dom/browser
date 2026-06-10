@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	htmlelements "github.com/gost-dom/code-gen/html-elements"
+	htmlelements "github.com/gost-dom/browser/internal/code-gen/html-elements"
 	"github.com/gost-dom/generators"
 	"github.com/onsi/gomega"
 	"github.com/onsi/gomega/types"

@@ -3,7 +3,7 @@ package idltransform_test
 import (
 	"testing"
 
-	"github.com/gost-dom/code-gen/idltransform"
+	"github.com/gost-dom/browser/internal/code-gen/idltransform"
 	. "github.com/gost-dom/generators/testing/matchers"
 	"github.com/gost-dom/webref/idl"
 	"github.com/onsi/gomega"

@@ -1,7 +1,7 @@
 package gotypes
 
 import (
-	"github.com/gost-dom/code-gen/packagenames"
+	"github.com/gost-dom/browser/internal/code-gen/packagenames"
 )
 
 // GoType represents a go type referenced by attributes or operations - either

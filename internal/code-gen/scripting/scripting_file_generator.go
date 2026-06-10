@@ -2,7 +2,7 @@ package scripting
 
 import (
 	"github.com/dave/jennifer/jen"
-	. "github.com/gost-dom/code-gen/scripting/model"
+	. "github.com/gost-dom/browser/internal/code-gen/scripting/model"
 	g "github.com/gost-dom/generators"
 )
 

@@ -1,8 +1,8 @@
 package scripting
 
 import (
-	"github.com/gost-dom/code-gen/customrules"
-	"github.com/gost-dom/code-gen/scripting/model"
+	"github.com/gost-dom/browser/internal/code-gen/customrules"
+	"github.com/gost-dom/browser/internal/code-gen/scripting/model"
 	g "github.com/gost-dom/generators"
 )
 

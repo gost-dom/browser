@@ -5,11 +5,11 @@ import (
 	"os"
 
 	"github.com/dave/jennifer/jen"
-	"github.com/gost-dom/code-gen/events"
-	"github.com/gost-dom/code-gen/gen"
-	"github.com/gost-dom/code-gen/internal"
-	"github.com/gost-dom/code-gen/packagenames"
-	"github.com/gost-dom/code-gen/stdgen"
+	"github.com/gost-dom/browser/internal/code-gen/events"
+	"github.com/gost-dom/browser/internal/code-gen/gen"
+	"github.com/gost-dom/browser/internal/code-gen/internal"
+	"github.com/gost-dom/browser/internal/code-gen/packagenames"
+	"github.com/gost-dom/browser/internal/code-gen/stdgen"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )

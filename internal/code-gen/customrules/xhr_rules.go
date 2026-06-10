@@ -1,7 +1,7 @@
 package customrules
 
 import (
-	"github.com/gost-dom/code-gen/packagenames"
+	"github.com/gost-dom/browser/internal/code-gen/packagenames"
 	"github.com/gost-dom/webref/idl"
 )
 

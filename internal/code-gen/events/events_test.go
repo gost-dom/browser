@@ -3,9 +3,9 @@ package events_test
 import (
 	"testing"
 
-	. "github.com/gost-dom/code-gen/events"
-	. "github.com/gost-dom/code-gen/internal/gomega-matchers"
-	"github.com/gost-dom/code-gen/packagenames"
+	. "github.com/gost-dom/browser/internal/code-gen/events"
+	. "github.com/gost-dom/browser/internal/code-gen/internal/gomega-matchers"
+	"github.com/gost-dom/browser/internal/code-gen/packagenames"
 	gen "github.com/gost-dom/generators"
 	. "github.com/gost-dom/generators/testing/matchers"
 	"github.com/gost-dom/webref/events"

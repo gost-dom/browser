@@ -2,7 +2,7 @@ package customrules
 
 import (
 	"github.com/dave/jennifer/jen"
-	"github.com/gost-dom/code-gen/gotypes"
+	"github.com/gost-dom/browser/internal/code-gen/gotypes"
 	g "github.com/gost-dom/generators"
 )
 

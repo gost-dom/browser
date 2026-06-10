@@ -3,7 +3,7 @@ package scripting
 import (
 	"fmt"
 
-	"github.com/gost-dom/code-gen/packagenames"
+	"github.com/gost-dom/browser/internal/code-gen/packagenames"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )

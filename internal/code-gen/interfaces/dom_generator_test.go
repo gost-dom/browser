@@ -3,9 +3,9 @@ package interfaces_test
 import (
 	"testing"
 
-	"github.com/gost-dom/code-gen/codegentest"
-	"github.com/gost-dom/code-gen/interfaces"
-	"github.com/gost-dom/code-gen/packagenames"
+	"github.com/gost-dom/browser/internal/code-gen/codegentest"
+	"github.com/gost-dom/browser/internal/code-gen/interfaces"
+	"github.com/gost-dom/browser/internal/code-gen/packagenames"
 
 	. "github.com/onsi/gomega"
 )

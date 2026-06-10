@@ -4,12 +4,12 @@ import (
 	"fmt"
 
 	"github.com/dave/jennifer/jen"
-	"github.com/gost-dom/code-gen/customrules"
-	"github.com/gost-dom/code-gen/gen"
-	"github.com/gost-dom/code-gen/gen/variable"
-	"github.com/gost-dom/code-gen/packagenames"
-	"github.com/gost-dom/code-gen/scripting/model"
-	"github.com/gost-dom/code-gen/stdgen"
+	"github.com/gost-dom/browser/internal/code-gen/customrules"
+	"github.com/gost-dom/browser/internal/code-gen/gen"
+	"github.com/gost-dom/browser/internal/code-gen/gen/variable"
+	"github.com/gost-dom/browser/internal/code-gen/packagenames"
+	"github.com/gost-dom/browser/internal/code-gen/scripting/model"
+	"github.com/gost-dom/browser/internal/code-gen/stdgen"
 	g "github.com/gost-dom/generators"
 )
 

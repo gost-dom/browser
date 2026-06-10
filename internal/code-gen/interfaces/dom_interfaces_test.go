@@ -3,7 +3,7 @@ package interfaces_test
 import (
 	"testing"
 
-	"github.com/gost-dom/code-gen/interfaces"
+	"github.com/gost-dom/browser/internal/code-gen/interfaces"
 	. "github.com/gost-dom/generators/testing/matchers"
 	. "github.com/onsi/gomega"
 )

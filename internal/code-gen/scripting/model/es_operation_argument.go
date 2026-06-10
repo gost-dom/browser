@@ -3,8 +3,8 @@ package model
 import (
 	"fmt"
 
-	"github.com/gost-dom/code-gen/customrules"
-	"github.com/gost-dom/code-gen/scripting/configuration"
+	"github.com/gost-dom/browser/internal/code-gen/customrules"
+	"github.com/gost-dom/browser/internal/code-gen/scripting/configuration"
 	"github.com/gost-dom/webref/idl"
 )
 

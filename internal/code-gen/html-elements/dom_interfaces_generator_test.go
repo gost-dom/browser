@@ -3,7 +3,7 @@ package htmlelements_test
 import (
 	"testing"
 
-	. "github.com/gost-dom/code-gen/internal/gomega-matchers"
+	. "github.com/gost-dom/browser/internal/code-gen/internal/gomega-matchers"
 	. "github.com/gost-dom/generators/testing/matchers"
 )
 

@@ -1,6 +1,6 @@
 package configuration
 
-import "github.com/gost-dom/code-gen/packagenames"
+import "github.com/gost-dom/browser/internal/code-gen/packagenames"
 
 func configureURLSpecs(urlSpecs *WebAPIConfig) {
 	urlSearchParams := urlSpecs.Type("URLSearchParams")

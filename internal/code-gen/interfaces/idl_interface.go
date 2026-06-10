@@ -4,11 +4,11 @@ import (
 	"fmt"
 
 	"github.com/dave/jennifer/jen"
-	"github.com/gost-dom/code-gen/customrules"
-	"github.com/gost-dom/code-gen/customrules/typerule"
-	"github.com/gost-dom/code-gen/idltransform"
-	. "github.com/gost-dom/code-gen/internal"
-	"github.com/gost-dom/code-gen/packagenames"
+	"github.com/gost-dom/browser/internal/code-gen/customrules"
+	"github.com/gost-dom/browser/internal/code-gen/customrules/typerule"
+	"github.com/gost-dom/browser/internal/code-gen/idltransform"
+	. "github.com/gost-dom/browser/internal/code-gen/internal"
+	"github.com/gost-dom/browser/internal/code-gen/packagenames"
 	g "github.com/gost-dom/generators"
 	"github.com/gost-dom/webref/idl"
 )

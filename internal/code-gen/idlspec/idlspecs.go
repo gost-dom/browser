@@ -24,7 +24,7 @@ import (
 	"fmt"
 	"iter"
 
-	"github.com/gost-dom/code-gen/customrules"
+	"github.com/gost-dom/browser/internal/code-gen/customrules"
 	"github.com/gost-dom/webref/idl"
 )
 

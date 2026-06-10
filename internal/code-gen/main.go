@@ -9,10 +9,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/gost-dom/code-gen/events"
-	htmlelements "github.com/gost-dom/code-gen/html-elements"
-	"github.com/gost-dom/code-gen/interfaces"
-	"github.com/gost-dom/code-gen/scripting"
+	"github.com/gost-dom/browser/internal/code-gen/events"
+	htmlelements "github.com/gost-dom/browser/internal/code-gen/html-elements"
+	"github.com/gost-dom/browser/internal/code-gen/interfaces"
+	"github.com/gost-dom/browser/internal/code-gen/scripting"
 )
 
 func getWriter(output string) io.Writer {

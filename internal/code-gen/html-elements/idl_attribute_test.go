@@ -5,8 +5,8 @@ import (
 
 	"github.com/onsi/gomega"
 
-	"github.com/gost-dom/code-gen/codegentest"
-	. "github.com/gost-dom/code-gen/html-elements"
+	"github.com/gost-dom/browser/internal/code-gen/codegentest"
+	. "github.com/gost-dom/browser/internal/code-gen/html-elements"
 	g "github.com/gost-dom/generators"
 	. "github.com/gost-dom/generators/testing/matchers"
 )

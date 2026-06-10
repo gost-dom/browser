@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/gost-dom/code-gen/events"
+	"github.com/gost-dom/browser/internal/code-gen/events"
 	g "github.com/gost-dom/generators"
 
 	"github.com/onsi/gomega"
