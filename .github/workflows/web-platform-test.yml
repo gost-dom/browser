@@ -14,7 +14,8 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
-        go-version-file: 'internal/test/wpt/go.work'
+        go-version-file: 'internal/test/wpt/go.mod'
+        cache-dependency-path: 'internal/test/wpt/go.sum'
     - name: Run Web Platform Tests
       run: |
         cd internal/test/wpt 

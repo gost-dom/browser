@@ -35,6 +35,8 @@ jobs:
         go-version: 1.26
         cache-dependency-path: |
           go.sum
+          scripting/v8engine/go.sum
+          scripting/sobekengine/go.sum
 
     - name: Add GOPATH to GITHUB_ENV
       run: echo "GOPATH=$(go env GOPATH)" >>"$GITHUB_ENV"
@@ -50,7 +52,8 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
-        go-version-file: 'internal/test/wpt/go.work'
+        go-version-file: 'internal/test/wpt/go.mod'
+        cache-dependency-path: 'internal/test/wpt/go.sum'
     - name: Run Web Platform Tests
       run: |
         cd internal/test/wpt 
