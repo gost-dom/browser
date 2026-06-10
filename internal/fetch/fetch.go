@@ -119,7 +119,7 @@ func (f Fetch) FetchAsync(req Request) promise.Promise[*Response] {
 	httpReq, err := req.createHttpReq(ctx)
 	optsFn, _ := entity.ComponentType[InitRoundTripOptionsFunc](f.BrowsingContext)
 	opts := defaultRoundtripOptions()
-	if optsFn != nil {
+	if optsFn != nil && httpReq != nil {
 		optsFn(httpReq, &opts)
 	}
 	return promise.New(func() (*Response, error) {
