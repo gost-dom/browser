@@ -2,10 +2,12 @@ package scripttests
 
 import (
 	"context"
+	"net/http"
 	"testing"
 	"time"
 
 	"github.com/gost-dom/browser"
+	"github.com/gost-dom/browser/browseroptions"
 	"github.com/gost-dom/browser/html"
 	dominterfaces "github.com/gost-dom/browser/internal/interfaces/dom-interfaces"
 	"github.com/gost-dom/browser/internal/testing/browsertest"
@@ -14,6 +16,7 @@ import (
 	"github.com/gost-dom/browser/internal/testing/htmltest"
 	"github.com/onsi/gomega"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func testFetch(t *testing.T, e html.ScriptEngine) {
@@ -36,12 +39,17 @@ func testFetch(t *testing.T, e html.ScriptEngine) {
 	t.Run("ReadableStream body", func(t *testing.T) { testReadableStream(t, e) })
 	t.Run("Headers", func(t *testing.T) { testHeaders(t, e) })
 	t.Run("Request", func(t *testing.T) { testRequest(t, e) })
+	t.Run("Request-based Programmable delays", func(t *testing.T) { testProgrammableDelays(t, e) })
+	t.Run("Simple Programmable delays", func(t *testing.T) { testSimpleProgrammableDelays(t, e) })
+	t.Run("Test zero-delay responses", func(t *testing.T) { testZeroDelayResponses(t, e) })
 }
 
 func testFetchAbortSignal(t *testing.T, e html.ScriptEngine) {
 	// This test has been seen failing on the build server.
 	// Add some random logging to try to diagnose the issue
 	t.Log("testFetchAbortSignal: start")
+	ctx, cancel := context.WithTimeout(t.Context(), time.Second)
+	defer cancel()
 
 	g := gomega.NewWithT(t)
 	t.Log("testFetchAbortSignal: child context")
@@ -65,7 +73,7 @@ func testFetchAbortSignal(t *testing.T, e html.ScriptEngine) {
 	`)
 
 	t.Log("testFetchAbortSignal: script run")
-	win.Clock().ProcessEvents(t.Context())
+	win.Clock().ProcessEvents(ctx)
 	t.Log("testFetchAbortSignal: events processed")
 
 	t.Log("testFetchAbortSignal: eval ctrl")
@@ -75,6 +83,214 @@ func testFetchAbortSignal(t *testing.T, e html.ScriptEngine) {
 	g.Expect(win.Eval(`typeof signal`)).To(Equal("object"), "signal is an object")
 	t.Log("testFetchAbortSignal: eval rejected")
 	g.Expect(win.Eval(`rejected`)).To(Equal("abort-reason"))
+}
+
+func getRequestOptions(req *http.Request, o *browseroptions.FetchRoundtripOptions) {
+	switch req.URL.Path {
+	case "/data1.json":
+		o.Delay = 2 * time.Millisecond
+	case "/data2.json":
+		o.Delay = 10 * time.Millisecond
+	}
+}
+
+func testProgrammableDelays(t *testing.T, e html.ScriptEngine) {
+	ctx, cancel := context.WithTimeout(t.Context(), defaultTimeout)
+	defer cancel()
+
+	// This is bad test practice, the test sets a global value; And to make
+	// matters worse, it's in a parallel test. However, this should be the
+	// _only_ test in the entire codebase depending on the global default value,
+	// so ... unless the bad pattern is accidentally duplicated, we're good, and
+	// we get to test how default values affect the test.
+	browseroptions.SetDefaultFetchDelay(5 * time.Millisecond)
+
+	handler := gosttest.HttpHandlerMap{
+		"/index.html": gosttest.StaticHTML(`<body>dummy</body>`),
+		"/data1.json": gosttest.StaticJSON(`{"foo": "bar"}`),
+		"/data2.json": gosttest.StaticJSON(`{"foo": "bar"}`),
+		"/data3.json": gosttest.StaticJSON(`{"foo": "bar"}`),
+	}
+	b := browser.New(
+		browser.WithScriptEngine(e),
+		browser.WithHandler(handler),
+		browseroptions.FetchRequestOptions(getRequestOptions),
+	)
+	win, err := b.Open("https://example.com/index.html")
+	require.NoError(t, err)
+
+	require.NoError(t, win.Run(`
+		let msgs = [];
+		setTimeout(() => { msgs.push("after 1ms") }, 1);
+		setTimeout(() => { msgs.push("after 3ms") }, 3);
+		setTimeout(() => { msgs.push("after 9ms") }, 9);
+		setTimeout(() => { msgs.push("after 11ms") }, 11);
+		(async () => {
+			const response = await fetch("data1.json")
+			msgs.push("after response 1: " + response.status)
+		})();
+		(async () => {
+			const response = await fetch("data2.json")
+			msgs.push("after response 2: " + response.status)
+		})();
+		(async () => {
+			const response = await fetch("data3.json")
+			msgs.push("after response 3: " + response.status)
+		})();
+	`))
+
+	win.Clock().ProcessEvents(ctx)
+
+	msgs, err := win.Eval("msgs")
+	assert.NoError(t, err)
+	assert.Equal(t, []any{
+		"after 1ms",
+		"after response 1: 200",
+		"after 3ms",
+		"after response 3: 200",
+		"after 9ms",
+		"after response 2: 200",
+		"after 11ms",
+	}, msgs)
+}
+
+func testZeroDelayResponses(t *testing.T, e html.ScriptEngine) {
+	// HTTP responses with zero delay has the capacity to cause deadlock issues.
+	//
+	// After running scripts, the _current default_ behaviour is to run all
+	// microtasks and macrotasks scheduled for the current time, i.e., all
+	// setTimeout(..., 0) callbacks.
+	//
+	// When a fetch response is scheduled to be processed at this time, but we
+	// haven't had the ability to send the response yet, we'd wait indefinitely
+	// for the response to arrive.
+	//
+	// The WithAsync() option tells the clock, that it can return from Advance()
+	// calls, even if this task was scheduled for the current simulated time.
+	// Removing WithAsync() in the fetch implementation will cause this test to block;
+	//
+	// This tests two scenarios
+	//
+	//   - The response is not coupled to the test case itself. Tested code calls
+	//     HTTP handlers that themselves are capable of generating responses.
+	//   - The response is generated in the test code after JavaScript code has sent
+	//     the request, i.e., there is no way for the response to be generated
+	//     before exiting JavaScript execution scope.
+	t.Run("When response is generated before script returns", func(t *testing.T) {
+		ctx, cancel := context.WithTimeout(t.Context(), defaultTimeout)
+		defer cancel()
+
+		handler := gosttest.HttpHandlerMap{
+			"/index.html": gosttest.StaticHTML(`<body>dummy</body>`),
+			"/data.json":  gosttest.StaticJSON(`{"foo": "bar"}`),
+		}
+		b := browser.New(
+			browser.WithScriptEngine(e),
+			browser.WithHandler(handler),
+			browseroptions.FetchDelay(0),
+		)
+		win, err := b.Open("https://example.com/index.html")
+		require.NoError(t, err)
+
+		require.NoError(t, win.Run(`
+			let msgs = [];
+			setTimeout(() => { msgs.push("after 1ms") }, 1);
+			(async () => {
+				const response = await fetch("data.json")
+				msgs.push("after response: " + response.status)
+			})();
+		`))
+
+		win.Clock().ProcessEvents(ctx)
+
+		msgs, err := win.Eval("msgs")
+		assert.NoError(t, err)
+		assert.Equal(t, []any{
+			"after response: 200",
+			"after 1ms",
+		}, msgs)
+	})
+
+	t.Run("When response is generated _after_ the script returns", func(t *testing.T) {
+		ctx, cancel := context.WithTimeout(t.Context(), defaultTimeout)
+		defer cancel()
+
+		delayedHandler := &gosttest.PipeHandler{T: t}
+
+		handler := gosttest.HttpHandlerMap{
+			"/index.html": gosttest.StaticHTML(`<body>dummy</body>`),
+			"/data.json":  delayedHandler,
+		}
+		b := browser.New(
+			browser.WithScriptEngine(e),
+			browser.WithHandler(handler),
+			browseroptions.FetchDelay(0),
+		)
+		win, err := b.Open("https://example.com/index.html")
+		require.NoError(t, err)
+
+		require.NoError(t, win.Run(`
+			let msgs = [];
+			setTimeout(() => { msgs.push("after 1ms") }, 1);
+			(async () => {
+				const response = await fetch("data.json")
+				msgs.push("after response: " + response.status)
+			})();
+		`))
+
+		msgs, err := win.Eval("msgs")
+		require.NoError(t, err)
+		assert.Empty(t, msgs)
+
+		delayedHandler.WriteHeader(200)
+		delayedHandler.Close()
+		win.Clock().ProcessEvents(ctx)
+
+		msgs, err = win.Eval("msgs")
+		assert.NoError(t, err)
+		assert.Equal(t, []any{
+			"after response: 200",
+			"after 1ms",
+		}, msgs)
+
+	})
+}
+
+func testSimpleProgrammableDelays(t *testing.T, e html.ScriptEngine) {
+	ctx, cancel := context.WithTimeout(t.Context(), defaultTimeout)
+	defer cancel()
+
+	handler := gosttest.HttpHandlerMap{
+		"/index.html": gosttest.StaticHTML(`<body>dummy</body>`),
+		"/data.json":  gosttest.StaticJSON(`{"foo": "bar"}`),
+	}
+	b := browser.New(
+		browser.WithScriptEngine(e),
+		browser.WithHandler(handler),
+		browseroptions.FetchDelay(2*time.Millisecond),
+	)
+	win, err := b.Open("https://example.com/index.html")
+	require.NoError(t, err)
+
+	require.NoError(t, win.Run(`
+		let msgs = [];
+		setTimeout(() => { msgs.push("after 1ms") }, 1);
+		setTimeout(() => { msgs.push("after 3ms") }, 3);
+		(async () => {
+			const response = await fetch("data.json")
+			msgs.push("after response: " + response.status)
+		})();
+	`))
+
+	win.Clock().ProcessEvents(ctx)
+
+	msgs, err := win.Eval("msgs")
+	assert.NoError(t, err)
+	assert.Equal(t, []any{
+		"after 1ms",
+		"after response: 200",
+		"after 3ms",
+	}, msgs)
 }
 
 func testFetchJSONAsync(t *testing.T, e html.ScriptEngine) {
@@ -88,7 +304,7 @@ func testFetchJSONAsync(t *testing.T, e html.ScriptEngine) {
 	}
 
 	g := gomega.NewWithT(t)
-	win := openWindow(t, e, handler, "https://example.com/index.html")
+	win := openWindow(t, e, handler, "https://example.com/index.html", WithContext(ctx))
 	win.MustRun(`
 		let gotStatus
 		let gotJson = "uninitialized"
@@ -249,6 +465,7 @@ func testRequest(t *testing.T, e html.ScriptEngine) {
 		}
 	})
 }
+
 func testHeaders(t *testing.T, e html.ScriptEngine) {
 	t.Run("Throws on invalid value", func(t *testing.T) {
 		win := initWindow(t, e, nil)

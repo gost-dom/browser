@@ -10,6 +10,7 @@ import (
 	"github.com/gost-dom/browser/html"
 	. "github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/clock"
+	"github.com/gost-dom/browser/internal/entity"
 	. "github.com/gost-dom/browser/internal/gosthttp"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/url"
@@ -20,11 +21,21 @@ type browserConfig struct {
 	logger *slog.Logger
 	engine ScriptEngine
 	ctx    context.Context
+
+	componentInits []func(entity.Components)
 }
 
 type BrowserOption func(*browserConfig)
 
 func WithLogger(l *slog.Logger) BrowserOption { return func(b *browserConfig) { b.logger = l } }
+
+func WithComponentType[T any](val T) BrowserOption {
+	return func(b *browserConfig) {
+		b.componentInits = append(b.componentInits, func(c entity.Components) {
+			entity.SetComponentType[T](c, val)
+		})
+	}
+}
 
 // WithHandler configures the browser's [http.Client] to use an
 // [http.Roundtripper] that bypasses the TCP stack and calls directly into the
@@ -104,6 +115,8 @@ type Browser struct {
 	// making it easy to overlook when working with code. Create a more
 	// resilient design less likely to break
 	closeLock sync.Mutex
+
+	componentInits []func(entity.Components)
 }
 
 // New initialises a new [Browser]. Options can be one of
@@ -134,6 +147,8 @@ func New(options ...BrowserOption) *Browser {
 		ScriptHost: host,
 		Clock:      c,
 		ctx:        config.ctx,
+
+		componentInits: config.componentInits,
 	}
 	if config.ctx != nil {
 		context.AfterFunc(config.ctx, b.Close)
@@ -191,6 +206,8 @@ func (b *Browser) createOptions(location string) WindowOptions {
 		Logger:       b.Logger,
 		Context:      b.ctx,
 		Clock:        b.Clock,
+
+		ComponentInits: b.componentInits,
 	}
 }
 

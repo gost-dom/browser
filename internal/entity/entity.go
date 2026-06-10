@@ -96,6 +96,9 @@ func (e *Entity) component(key any) (res any, ok bool) {
 }
 
 func (e *Entity) setComponent(key any, val any) {
+	if e == nil {
+		panic("*Entity.setComponent called on nil receiver")
+	}
 	v := parseKey(key)
 	_, idx, ok := e.find(v)
 	if ok {
@@ -123,9 +126,11 @@ func ComponentType[T any](e Components) (T, bool) {
 func SetComponentType[T any](e Components, val T) { e.setComponent(reflect.TypeFor[T](), val) }
 
 func (e *Entity) find(v reflect.Value) (any, int, bool) {
-	for i, pair := range e.components {
-		if pair.key.Equal(v) {
-			return pair.val, i, true
+	if e != nil {
+		for i, pair := range e.components {
+			if pair.key.Equal(v) {
+				return pair.val, i, true
+			}
 		}
 	}
 	return nil, -1, false

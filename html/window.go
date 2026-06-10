@@ -103,6 +103,7 @@ type Clock interface {
 
 // Describes a current browser context
 type BrowsingContext interface {
+	entity.Components
 	// Logger returns the currently configured logger for the window. Returns
 	// nil if no instance is created.
 	Logger() *slog.Logger
@@ -216,6 +217,9 @@ func newWindow(windowOptions ...WindowOption) *window {
 		logger:              options.Logger,
 		history:             new(History),
 		context:             ctx,
+	}
+	for _, init := range options.ComponentInits {
+		init(win)
 	}
 	if baseLocation == "" {
 		baseLocation = "about:blank"
@@ -472,6 +476,8 @@ type WindowOptions struct {
 	BaseLocation string
 	Logger       *slog.Logger
 	Context      context.Context
+
+	ComponentInits []func(entity.Components)
 }
 
 type WindowOption interface {

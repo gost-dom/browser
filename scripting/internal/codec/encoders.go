@@ -1,8 +1,11 @@
 package codec
 
 import (
+	"context"
 	"fmt"
+	"time"
 
+	"github.com/gost-dom/browser/internal/clock"
 	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/promise"
 	"github.com/gost-dom/browser/internal/types"
@@ -128,7 +131,7 @@ type Encoder[T, U any] = func(js.Scope[T], U) (js.Value[T], error)
 // value, using encoder to convert the native fulfilled value to a JavaScript
 // value.
 //
-// The returned Promise will not settile immediately after a value is received
+// The returned Promise will not settle immediately after a value is received
 // from prom, but will be deferred to run on the "main loop" that the embedder
 // controls.
 func EncodePromise[T, U any](
@@ -136,23 +139,45 @@ func EncodePromise[T, U any](
 	prom promise.Promise[U],
 	encoder Encoder[T, U],
 ) (js.Value[T], error) {
+	// TODO: This solves a problem that doesn't belong here:
+	// The fetch implementation itself creates a "promise" with a programmable
+	// delay. Enqueueing the expected response at the right simulated time in
+	// the event loop should happen in a different scope, not where the Go
+	// promise type is translated to a JavaScript promise type.
 	p := scope.NewPromise()
-	e := scope.Clock().BeginEvent()
-	go func() {
-		promRes := <-prom
-		e.AddEvent(func() error {
-			err := promRes.Err
-			var res js.Value[T]
-			if err == nil {
-				if res, err = encoder(scope, promRes.Value); err == nil {
-					p.Resolve(res)
-					return nil
+	clk := scope.Clock()
+	var delay time.Duration = prom.Delay
+
+	clk.SetTimeoutContext(
+		func(ctx context.Context) error {
+			select {
+			case promRes := <-prom.C:
+				err := promRes.Err
+				if err == nil {
+					var res js.Value[T]
+					if res, err = encoder(scope, promRes.Value); err == nil {
+						p.Resolve(res)
+						return nil
+					}
 				}
+				// I'm not entirely sure if it make more sense to reject or not
+				// reject the JavaScript promise. Under normal circumstances,
+				// the JavaScript engine would also be shutdown in this
+				// scenario.
+				//
+				// On the other side, this code shouldn't make assumptions about
+				// how context cancellation affects other parts of the system.
+				// So rejecting the promise appears to be the sensible approach
+				p.Reject(js.ToJsError(scope, err))
+			case <-ctx.Done():
+				p.Reject(js.ToJsError(scope, ctx.Err()))
+				return fmt.Errorf("context deadline exceeded waiting for promise: %w", ctx.Err())
 			}
-			p.Reject(js.ToJsError(scope, err))
 			return nil
-		})
-	}()
+		},
+		delay,
+		clock.WithAsync(),
+	)
 	return p, nil
 }
 

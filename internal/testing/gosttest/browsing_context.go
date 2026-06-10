@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gost-dom/browser/html"
+	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/gosthttp"
 	"github.com/gost-dom/browser/internal/log"
 )
@@ -18,6 +19,7 @@ var _ html.BrowsingContext = BrowsingContext{}
 // BrowsingContext implements [html.BrowsingContext] to help test code depending
 // on a context, e.g, fetch and XHR.
 type BrowsingContext struct {
+	*entity.Entity
 	logger   *slog.Logger
 	Ctx      context.Context
 	Client   http.Client

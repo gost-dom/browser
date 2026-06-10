@@ -5,14 +5,25 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"sync/atomic"
+	"time"
 
 	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/dom"
+	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/promise"
 	"github.com/gost-dom/browser/internal/streams"
 	"github.com/gost-dom/browser/internal/types"
 	"github.com/gost-dom/browser/url"
 )
+
+var defaultDelay atomic.Int64
+
+func DefaultDelay() time.Duration { return time.Duration(defaultDelay.Load()) }
+func SetDefaultDelay(d time.Duration) time.Duration {
+	old := defaultDelay.Swap(int64(d))
+	return time.Duration(old)
+}
 
 type Fetch struct {
 	BrowsingContext html.BrowsingContext
@@ -50,17 +61,17 @@ type Request struct {
 
 func (r *Request) URL() string { return url.ParseURLBase(r.url, r.bc.LocationHREF()).Href() }
 
-func (r *Request) do(ctx context.Context) (*http.Response, error) {
+func (r *Request) createHttpReq(ctx context.Context) (*http.Request, error) {
 	method := r.method
 	if method == "" {
 		method = "GET"
 	}
 	url := r.URL()
 	r.bc.Logger().Info("gost-dom/fetch: Request.do", "method", method, "url", url)
-	req, err := http.NewRequestWithContext(ctx, method, url, r.body)
-	if err != nil {
-		return nil, err
-	}
+	return http.NewRequestWithContext(ctx, method, url, r.body)
+}
+
+func (r *Request) do(req *http.Request) (*http.Response, error) {
 	c := r.bc.HTTPClient()
 	return c.Do(req)
 }
@@ -86,9 +97,22 @@ func WithHeaders(h [][2]types.ByteString) RequestOption {
 }
 
 func (f Fetch) Fetch(req Request) (*Response, error) {
-	res := <-f.FetchAsync(req)
+	res := <-f.FetchAsync(req).C
 	return res.Value, res.Err
 }
+
+// RoundtripOptions describes properties for an individual fetch request.
+type RoundtripOptions struct {
+	// Delay controls the Simulated Time passing from issuing a request to
+	// receiving a response.
+	Delay time.Duration
+}
+
+func defaultRoundtripOptions() RoundtripOptions {
+	return RoundtripOptions{Delay: DefaultDelay()}
+}
+
+type InitRoundTripOptionsFunc func(*http.Request, *RoundtripOptions)
 
 func (f Fetch) FetchAsync(req Request) promise.Promise[*Response] {
 	ctx := f.BrowsingContext.Context()
@@ -96,8 +120,17 @@ func (f Fetch) FetchAsync(req Request) promise.Promise[*Response] {
 		ctx = dom.AbortContext(ctx, req.signal)
 	}
 
+	httpReq, err := req.createHttpReq(ctx)
+	optsFn, _ := entity.ComponentType[InitRoundTripOptionsFunc](f.BrowsingContext)
+	opts := defaultRoundtripOptions()
+	if optsFn != nil && httpReq != nil {
+		optsFn(httpReq, &opts)
+	}
 	return promise.New(func() (*Response, error) {
-		resp, err := req.do(ctx)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := req.do(httpReq)
 		if err != nil {
 			return nil, err
 		}
@@ -108,7 +141,7 @@ func (f Fetch) FetchAsync(req Request) promise.Promise[*Response] {
 			httpResponse: resp,
 			Headers:      headers,
 		}, nil
-	})
+	}, promise.WithDelay(opts.Delay))
 }
 
 type Response struct {
@@ -167,4 +200,8 @@ func assertHeaderCountWithinLimit(count int) {
 		)
 		panic(msg)
 	}
+}
+
+func init() {
+	SetDefaultDelay(5 * time.Millisecond)
 }
