@@ -1,0 +1,8 @@
+go 1.25
+
+use (
+	.
+	./scripting/v8engine
+	./scripting/sobekengine
+	./v8browser
+)
