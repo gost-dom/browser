@@ -138,6 +138,11 @@ func EncodePromise[T, U any](
 	prom promise.Promise[U],
 	encoder Encoder[T, U],
 ) (js.Value[T], error) {
+	// TODO: This solves a problem that doesn't belong here:
+	// The fetch implementation itself creates a "promise" with a programmable
+	// delay. Enqueueing the expected response at the right simulated time in
+	// the event loop should happen in a different scope, not where the Go
+	// promise type is translated to a JavaScript promise type.
 	p := scope.NewPromise()
 	clock := scope.Clock()
 	var delay time.Duration = prom.Delay
@@ -154,9 +159,18 @@ func EncodePromise[T, U any](
 						return nil
 					}
 				}
+				// I'm not entirely sure if it make more sense to reject or not
+				// reject the JavaScript promise. Under normal circumstances,
+				// the JavaScript engine would also be shutdown in this
+				// scenario.
+				//
+				// On the other side, this code shouldn't make assumptions about
+				// how context cancellation affects other parts of the system.
+				// So rejecting the promise appears to be the sensible approach
 				p.Reject(js.ToJsError(scope, err))
 			case <-ctx.Done():
-				return fmt.Errorf("context deadline exceeded waiting for promise: %v", ctx.Err())
+				p.Reject(js.ToJsError(scope, ctx.Err()))
+				return fmt.Errorf("context deadline exceeded waiting for promise: %w", ctx.Err())
 			}
 			return nil
 		},
