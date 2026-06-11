@@ -53,7 +53,7 @@ type Element interface {
 
 	// unexported
 
-	getAttributes() Attributes
+	getAttributes() []Attr
 	getSelfElement() Element
 }
 
@@ -64,7 +64,7 @@ type element struct {
 	elementOrDocument
 	tagName      string
 	namespace    string
-	attributes   Attributes
+	attributes   []Attr
 	selfElement  Element
 	selfRenderer Renderer
 	// We might want a "prototype" as a value, rather than a Go type, as new types
@@ -81,7 +81,7 @@ func newElementNS(ns, tagName string, ownerDocument Document) Element {
 		node:       newNode(ownerDocument),
 		tagName:    strings.ToLower(tagName),
 		namespace:  ns,
-		attributes: Attributes(nil),
+		attributes: nil,
 	}
 	res.childNode = childNode{&res.node}
 	res.parentNode = parentNode{&res.node}
@@ -274,7 +274,7 @@ func (e *element) RemoveAttributeNode(node Attr) (Attr, error) {
 	return nil, newDomErrorCode("Node was not found", not_found_err)
 }
 
-func (e *element) getAttributes() Attributes {
+func (e *element) getAttributes() []Attr {
 	return e.attributes
 }
 
