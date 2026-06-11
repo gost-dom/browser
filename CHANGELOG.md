@@ -1,6 +1,35 @@
 # Changelog - Gost-DOM
 
 
+## [0.12.0](https://github.com/gost-dom/browser/compare/v0.11.3...v0.12.0) (2026-06-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* This adds _some_ namespace validation when creating characters
+* All objects that can be retrieved from JavaScript; and
+the same object must be returned from multiple calls, embeds an `Entity`
+struct; which has an `ObjectID`.
+
+This has been removed; in favoud of a more decoupled and flexible
+solution. Each entity can have a number of "components"; it's JavaScript
+object is just one such component
+* Remove deprecated errors
+
+### Features
+
+* Allow pushing global "Components" to a browser. ([d71557b](https://github.com/gost-dom/browser/commit/d71557b563a5f565de1ef76132feab28ed255035))
+* Attr name/localName/prefix and nodeName ([ebf065d](https://github.com/gost-dom/browser/commit/ebf065d0cf02ed1f2e70553967cf515ac7cf7c6e))
+* Make JS engines optional dependencies when pulling in gost-dom/browser ([#245](https://github.com/gost-dom/browser/issues/245)) ([6a8667a](https://github.com/gost-dom/browser/commit/6a8667af716452e062ef047ae2fc0880bdb634ab))
+* Predictable fetch response callback timing ([90f88f4](https://github.com/gost-dom/browser/commit/90f88f4c12d1b50d4eac49a94dfd9a638f4d4d98))
+* Remove deprecated errors ([6c1123f](https://github.com/gost-dom/browser/commit/6c1123f01a840c60829b8aab58dee6a4393e5b28))
+* Remove ObjectID from Node ([3045ee2](https://github.com/gost-dom/browser/commit/3045ee2b9742059cf633b0a37a68947a2a9fd815))
+
+
+### Bug Fixes
+
+* Race condition in V8 engine during promise rejection ([59e0484](https://github.com/gost-dom/browser/commit/59e04849a50a465426e7e40bfd98992ad5657a25))
+
 ## [0.11.3](https://github.com/gost-dom/browser/compare/v0.11.2...v0.11.3) (2026-06-09)
 
 
