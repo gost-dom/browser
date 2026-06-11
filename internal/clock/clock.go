@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"log/slog"
 	"slices"
-	"sync/atomic"
 	"time"
 
 	"github.com/gost-dom/browser/internal/log"
@@ -24,14 +23,6 @@ type processEventOptions struct {
 }
 
 type ProcessEventOption func(*processEventOptions)
-
-// Deprecated: A better solution exists for the problem this was intended to
-// solve. This function has no effect.
-func KeepCurrentTime() ProcessEventOption {
-	return func(o *processEventOptions) {
-		o.keepCurrentTime = true
-	}
-}
 
 // DefaultEventBufSize is the default capacity used when not specified
 // explicitly for the internal channel events pushed to the event loop.
@@ -330,48 +321,6 @@ func (c *Clock) Cancel(handle TaskHandle) {
 // engine.
 func (c *Clock) QueueMicrotask(t TaskCallback) {
 	c.MicrotaskQueue.Enqueue(t)
-}
-
-// [EventLoopCallback] is used to add an event to the event loop. You must call
-// [Clock.BeginEvent] to get an instance, and each instance can only be used for
-// one callback. Passing multiple event loop callbacks to the same instance will
-// panic.
-type EventLoopCallback struct {
-	clock *Clock
-	used  atomic.Bool
-}
-
-// AddEvent allows a goroutine to add an event to be executed on the event loop
-// goroutine. This is safe to call from any goroutine.
-//
-// [EventLoopCallback.AddEvent]/[EventLoopCallback.AddSafeEvent] may only be
-// called once. Multiple calls will panic.
-func (c *EventLoopCallback) AddEvent(cb TaskCallback) {
-	prev := c.used.Swap(true)
-	if prev {
-		panic("gost-dom/clock: adding multiple callbacks from same BeginEvent() call")
-	}
-	c.clock.addEvent(cb)
-}
-
-// BeginEvent tells the event loop that an event is expected to be added in the
-// future. This should be called on the event loop goroutine.
-//
-// BeginEvent returns an [EventLoopCallback] that the caller must use to pass the
-// event to the event loop.
-//
-// Deprecated: It was discovered that this works poorly; With no information
-// about when the callback is expected to arrive, callbacks to detect if
-func (c *Clock) BeginEvent() *EventLoopCallback {
-	panic("BeginEvent no longer works (it never worked well). A recommended replacement " +
-		"is to call SetTimeoutContext with a callback body reading from a channel, " +
-		"aborting on ctx.Done() channel",
-	)
-}
-
-func (c *Clock) addEvent(task TaskCallback) {
-	c.logger().Debug("Clock.AddEvent")
-	c.events <- task
 }
 
 // ProcessEvents processes all pending "events", allowing test cases to wait for a system to "settle"
