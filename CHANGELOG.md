@@ -9,10 +9,8 @@
 * This adds _some_ namespace validation when creating characters
 * All objects that can be retrieved from JavaScript; and
 the same object must be returned from multiple calls, embeds an `Entity`
-struct; which has an `ObjectID`.
-
-This has been removed; in favoud of a more decoupled and flexible
-solution. Each entity can have a number of "components"; it's JavaScript
+struct; which has an `ObjectID`. This has been removed; in favour of a more decoupled and flexible
+solution. Each entity can have a number of "components"; its JavaScript
 object is just one such component
 * Remove deprecated errors
 
