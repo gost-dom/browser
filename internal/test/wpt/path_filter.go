@@ -16,6 +16,14 @@ func (f pathFilter) isMatch(tc TestCase) bool {
 	for _, include := range f.included {
 		if strings.HasPrefix(path, include) {
 			for _, exclude := range f.excluded {
+				for _, pe := range tc.PathElements {
+					if pe == exclude {
+						return false
+					}
+				}
+				if strings.HasSuffix(path, exclude) {
+					return false
+				}
 				if strings.HasPrefix(path, exclude) {
 					return false
 				}

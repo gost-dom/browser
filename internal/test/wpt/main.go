@@ -226,6 +226,7 @@ type options struct {
 	file         string
 	manifest     string
 	includes     []string
+	exclude      []string
 	wptURL       string
 	ignorePanics bool
 }
@@ -312,7 +313,7 @@ func loadTestSource(o options) testCaseLoader {
 			options: o,
 			filter: pathFilter{
 				included: o.includes,
-				excluded: excludedSuites,
+				excluded: append(excludedSuites, o.exclude...),
 			}.isMatch,
 		}
 	}
@@ -329,17 +330,37 @@ type testCaseLoader interface {
 	testCases(ctx context.Context, cancelCause context.CancelCauseFunc) <-chan TestCase
 }
 
+type stringsArg []string
+
+func (a stringsArg) String() string {
+	if a == nil {
+		return ""
+	}
+	ss := ([]string)(a)
+	return strings.Join(ss, ",")
+}
+
+func (a *stringsArg) Set(value string) error {
+	for _, v := range strings.Split(value, ",") {
+		*a = append(*a, v)
+	}
+	return nil
+}
+
 func parseOptions() options {
 	var o options
+	var e stringsArg
 	flag.StringVar(&o.file, "file", "", "")
 	flag.StringVar(&o.manifest, "wpt-manifest", "manifest.json", "")
 	flag.StringVar(&o.wptURL, "wpt-url", "http://localhost:8000", "")
 	flag.StringVar(&o.logLevel, "log-level", "warn", "")
 	flag.StringVar(&o.logType, "log-type", "", "")
+	flag.Var(&e, "exclude", "")
 	flag.BoolVar(&o.logNoColor, "no-color", false, "")
 	flag.Parse()
 	o.initLogger()
 	o.includes = flag.Args()
+	o.exclude = e
 	return o
 }
 
