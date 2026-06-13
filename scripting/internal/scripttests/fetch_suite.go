@@ -38,6 +38,7 @@ func testFetch(t *testing.T, e html.ScriptEngine) {
 	t.Run("404 for not found resource", func(t *testing.T) { testNotFound(t, e) })
 	t.Run("ReadableStream body", func(t *testing.T) { testReadableStream(t, e) })
 	t.Run("Headers", func(t *testing.T) { testHeaders(t, e) })
+	t.Run("Response surface", func(t *testing.T) { testResponseSurface(t, e) })
 	t.Run("Request", func(t *testing.T) { testRequest(t, e) })
 	t.Run("Request-based Programmable delays", func(t *testing.T) { testProgrammableDelays(t, e) })
 	t.Run("Simple Programmable delays", func(t *testing.T) { testSimpleProgrammableDelays(t, e) })
@@ -464,6 +465,53 @@ func testRequest(t *testing.T, e html.ScriptEngine) {
 			assert.Equal(t, "bar", res.(string))
 		}
 	})
+}
+
+func testResponseSurface(t *testing.T, e html.ScriptEngine) {
+	ctx, cancel := context.WithTimeout(t.Context(), defaultTimeout)
+	defer cancel()
+
+	g := gomega.NewWithT(t)
+	handler := gosttest.HttpHandlerMap{
+		"/index.html": gosttest.StaticHTML(`<body>dummy</body>`),
+		"/data.json":  gosttest.StaticJSON(`{"foo":"bar"}`),
+	}
+	win := openWindow(t, e, handler, "https://example.com/index.html")
+	win.MustRun(`
+		globalThis.res = {};
+		(async () => {
+			const ok = await fetch("/data.json");
+			res.ok = ok.ok;
+			res.status = ok.status;
+			res.statusText = ok.statusText;
+			res.text = await (await fetch("/data.json")).text();
+			res.json = JSON.stringify(await (await fetch("/data.json")).json());
+			const buf = await (await fetch("/data.json")).arrayBuffer();
+			res.arrayBufferIsArrayBuffer = buf instanceof ArrayBuffer;
+			res.arrayBuffer = buf.byteLength;
+			const bytes = await (await fetch("/data.json")).bytes();
+			res.bytesIsUint8Array = bytes instanceof Uint8Array;
+			res.bytes = bytes.length;
+			const notFound = await fetch("/does-not-exist");
+			res.notOk = notFound.ok;
+			res.notStatus = notFound.status;
+			res.notStatusText = notFound.statusText;
+		})();
+	`)
+	assert.NoError(t, win.Clock().ProcessEvents(ctx))
+
+	g.Expect(win.Eval("res.ok")).To(BeTrue(), "Response.ok for 200")
+	g.Expect(win.Eval("res.status")).To(BeEquivalentTo(200), "Response.status")
+	g.Expect(win.Eval("res.statusText")).To(Equal("OK"), "Response.statusText")
+	g.Expect(win.Eval("res.text")).To(Equal(`{"foo":"bar"}`), "Body.text()")
+	g.Expect(win.Eval("res.json")).To(Equal(`{"foo":"bar"}`), "Body.json()")
+	g.Expect(win.Eval("res.arrayBufferIsArrayBuffer")).To(BeTrue(), "Body.arrayBuffer() returns an ArrayBuffer")
+	g.Expect(win.Eval("res.arrayBuffer")).To(BeEquivalentTo(13), "Body.arrayBuffer() byteLength")
+	g.Expect(win.Eval("res.bytesIsUint8Array")).To(BeTrue(), "Body.bytes() returns a Uint8Array")
+	g.Expect(win.Eval("res.bytes")).To(BeEquivalentTo(13), "Body.bytes() length")
+	g.Expect(win.Eval("res.notOk")).To(BeFalse(), "Response.ok for 404")
+	g.Expect(win.Eval("res.notStatus")).To(BeEquivalentTo(404), "Response.status for 404")
+	g.Expect(win.Eval("res.notStatusText")).To(Equal("Not Found"), "Response.statusText for 404")
 }
 
 func testHeaders(t *testing.T, e html.ScriptEngine) {
