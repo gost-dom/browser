@@ -36,6 +36,9 @@ func jsClassToV8Class(cls js.Class[jsTypeParam]) *v8Class {
 	return res
 }
 
+// newV8Class creates a v8Class for the named interface, wiring up its
+// constructor, prototype and instance templates (including inherited instance
+// attributes) and the Web-IDL @@toStringTag.
 func newV8Class(
 	host *V8ScriptHost,
 	name string,
@@ -56,6 +59,18 @@ func newV8Class(
 		parent: parent,
 	}
 	result.inst.SetInternalFieldCount(1)
+	// Per Web IDL, every interface prototype carries an @@toStringTag property
+	// equal to the interface name, so Object.prototype.toString.call(navigator)
+	// yields "[object Navigator]" rather than "[object Object]". Without this,
+	// every host object incorrectly stringifies to "[object Object]". The
+	// most-derived class on the prototype chain wins, which matches browsers.
+	if name != "" {
+		if err := result.proto.SetSymbol(
+			v8go.SymbolToStringTag(host.iso), name, v8go.ReadOnly|v8go.DontEnum,
+		); err != nil {
+			panic(fmt.Sprintf("gost-dom/v8engine: set @@toStringTag for %s: %v", name, err))
+		}
+	}
 	for parent != nil {
 		// Set accessor properties of inherited classes on the instance
 		// template.
