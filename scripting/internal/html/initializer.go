@@ -47,6 +47,7 @@ func installHtmlElementTypes[T any](e js.ScriptEngine[T]) {
 
 func installEventLoopGlobals[T any](global js.Class[T]) {
 	global.CreateOperation("requestAnimationFrame", requestAnimationFrame)
+	installBase64Globals(global)
 }
 
 func requestAnimationFrame[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
