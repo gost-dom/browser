@@ -2,6 +2,7 @@ package dom
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/gost-dom/browser/dom/event"
 	"github.com/gost-dom/browser/internal/constants"
@@ -9,6 +10,33 @@ import (
 	codec "github.com/gost-dom/browser/scripting/internal/codec"
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
+
+// Document_createEvent implements the legacy Document.createEvent factory. It
+// returns an uninitialized event whose class matches the requested legacy
+// interface name (e.g. "MouseEvents" -> MouseEvent). The returned event is
+// expected to be initialized via the legacy initEvent/initMouseEvent methods
+// before use.
+func Document_createEvent[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
+	args := cbCtx.Args()
+	kind := ""
+	if len(args) > 0 && args[0] != nil {
+		kind = args[0].String()
+	}
+	className := "Event"
+	switch strings.ToLower(kind) {
+	case "mouseevent", "mouseevents":
+		className = "MouseEvent"
+	case "pointerevent", "pointerevents":
+		className = "PointerEvent"
+	case "keyboardevent", "keyboardevents", "keyevents":
+		className = "KeyboardEvent"
+	case "uievent", "uievents":
+		className = "UIEvent"
+	case "customevent":
+		className = "CustomEvent"
+	}
+	return cbCtx.Constructor(className).NewInstance(&event.Event{})
+}
 
 func CreateEvent[T any](
 	cbCtx js.CallbackContext[T],

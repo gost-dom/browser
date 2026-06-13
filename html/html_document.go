@@ -10,11 +10,15 @@ import (
 type HTMLDocument interface {
 	dom.Document
 	Location() Location
+	// ReadyState reports the document loading state: "loading" while the
+	// document is being parsed, and "complete" once parsing has finished.
+	ReadyState() string
 	// unexported
 	window() *window
 	setActiveElement(e dom.Element)
 	location() *location
 	setLocation(*location)
+	setReadyState(string)
 	URL() string
 }
 
@@ -22,7 +26,20 @@ type htmlDocument struct {
 	dom.Document
 	win         Window
 	docLocation *location
+	readyState  string
 }
+
+// ReadyState reports the document loading state, defaulting to "loading" until
+// parsing completes and setReadyState records "complete".
+func (d *htmlDocument) ReadyState() string {
+	if d.readyState == "" {
+		return "loading"
+	}
+	return d.readyState
+}
+
+// setReadyState records the document's loading state (e.g. "complete").
+func (d *htmlDocument) setReadyState(s string) { d.readyState = s }
 
 func mustAppendChild(p, c dom.Node) dom.Node {
 	_, err := p.AppendChild(c)
@@ -69,7 +86,7 @@ func NewValidHTMLDocument(window Window, options ...func(HTMLDocument)) HTMLDocu
 
 // NewEmptyHtmlDocument creates an HTML document without any content.
 func NewEmptyHtmlDocument(window Window) HTMLDocument {
-	var result HTMLDocument = &htmlDocument{dom.NewDocument(window), window, nil}
+	var result HTMLDocument = &htmlDocument{Document: dom.NewDocument(window), win: window}
 	result.SetSelf(result)
 	intdom.SetIsHTMLDocument(result, true)
 	return result
@@ -100,6 +117,8 @@ func (d *htmlDocument) CreateElement(name string) dom.Element {
 		return NewHTMLAnchorElement(d)
 	case "label":
 		return NewHTMLLabelElement(d)
+	case "iframe":
+		return NewHTMLIFrameElement(d)
 	}
 	return NewHTMLElement(name, d)
 }
