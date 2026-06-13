@@ -30,7 +30,7 @@ func (e *htmlScriptElement) Connected() {
 		err         error
 		deferScript bool
 	)
-	window := e.htmlDocument.window()
+	window := e.window()
 	e.script, deferScript, err = e.compile()
 	if err != nil {
 		l.Error("HTMLScriptElement: script compile error", log.ErrAttr(err))
@@ -56,7 +56,7 @@ func (e *htmlScriptElement) compile() (script Script, deferred bool, err error) 
 func (e *htmlScriptElement) downloadAndCompile(
 	src string,
 ) (script Script, deferred bool, err error) {
-	window := e.htmlDocument.window()
+	window := e.window()
 	src = window.resolveHref(src).Href()
 	scriptType, _ := e.GetAttribute("type")
 	if scriptType == "module" {
@@ -70,7 +70,7 @@ func (e *htmlScriptElement) downloadAndCompile(
 }
 
 func (e *htmlScriptElement) compileInline() (Script, error) {
-	window := e.htmlDocument.window()
+	window := e.window()
 	script, err := window.scriptContext.Compile(e.TextContent())
 	if err != nil {
 		e.logger().Warn("HTMLScriptElement: compile error",
