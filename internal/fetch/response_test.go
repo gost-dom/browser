@@ -7,6 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// TestResponseOk verifies that Response.Ok reports true only for status codes
+// in the 200-299 range.
 func TestResponseOk(t *testing.T) {
 	for _, tc := range []struct {
 		status int
@@ -17,6 +19,8 @@ func TestResponseOk(t *testing.T) {
 	}
 }
 
+// TestResponseStatusText verifies that Response.StatusText falls back to the
+// standard reason phrase when there is no originating http.Response.
 func TestResponseStatusText(t *testing.T) {
 	// With no originating http.Response, StatusText falls back to the standard
 	// reason phrase for the status code.

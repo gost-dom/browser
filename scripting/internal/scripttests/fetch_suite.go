@@ -467,6 +467,9 @@ func testRequest(t *testing.T, e html.ScriptEngine) {
 	})
 }
 
+// testResponseSurface exercises the Response.ok/status/statusText getters and
+// the Body.text/json/bytes/arrayBuffer consumers against both a 200 and a 404
+// response.
 func testResponseSurface(t *testing.T, e html.ScriptEngine) {
 	ctx, cancel := context.WithTimeout(t.Context(), defaultTimeout)
 	defer cancel()

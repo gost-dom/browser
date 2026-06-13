@@ -8,6 +8,9 @@ import (
 	"github.com/gost-dom/browser/scripting/internal/js"
 )
 
+// ResponseConstructor implements the Response constructor. gost-dom does not
+// support constructing Response objects from script, so it always returns an
+// error.
 func ResponseConstructor[T any](cbCtx js.CallbackContext[T]) (js.Value[T], error) {
 	return nil, fmt.Errorf("gost-dom/fetch: Response constructor not implemented")
 }
