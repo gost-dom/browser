@@ -64,12 +64,12 @@ func configureDOMNode(specs *WebAPIConfig) {
 	document := specs.Type("Document")
 	document.Method("implementation").CustomImplementation = true
 	document.Method("createRange").CustomImplementation = true
+	document.Method("createEvent").CustomImplementation = true
 	document.MarkMembersAsNotImplemented(
 		"createNodeIterator",
 		"createTreeWalker",
 		"getElementsByClassName",
 		"adoptNode",
-		"createEvent",
 		"documentURI",
 		"contentType",
 		"inputEncoding",
