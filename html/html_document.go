@@ -5,13 +5,13 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	intdom "github.com/gost-dom/browser/internal/dom"
+	"github.com/gost-dom/browser/internal/entity"
 )
 
 type HTMLDocument interface {
 	dom.Document
 	Location() Location
 	// unexported
-	window() *window
 	setActiveElement(e dom.Element)
 	location() *location
 	setLocation(*location)
@@ -20,7 +20,6 @@ type HTMLDocument interface {
 
 type htmlDocument struct {
 	dom.Document
-	win         Window
 	docLocation *location
 }
 
@@ -69,7 +68,8 @@ func NewValidHTMLDocument(window Window, options ...func(HTMLDocument)) HTMLDocu
 
 // NewEmptyHtmlDocument creates an HTML document without any content.
 func NewEmptyHtmlDocument(window Window) HTMLDocument {
-	var result HTMLDocument = &htmlDocument{dom.NewDocument(window), window, nil}
+	var result HTMLDocument = &htmlDocument{dom.NewDocument(window), nil}
+	entity.SetComponentType[Window](result, window)
 	result.SetSelf(result)
 	intdom.SetIsHTMLDocument(result, true)
 	return result
@@ -119,13 +119,6 @@ func (d *htmlDocument) URL() string {
 		return location.Href()
 	}
 	return "about:blank"
-}
-
-func (d *htmlDocument) window() *window {
-	if d.win == nil {
-		return nil
-	}
-	return d.win.window()
 }
 
 type SetActiveElementer interface {

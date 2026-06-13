@@ -132,7 +132,7 @@ func (e *htmlFormElement) submitFormData(formData *FormData) error {
 		l.Error("Error creating request for form", log.ErrAttr(err))
 		return err
 	}
-	return e.htmlDocument.window().fetchRequest(req)
+	return e.window().fetchRequest(req)
 }
 
 func (e *htmlFormElement) RequestSubmit(submitter dom.Element) error {

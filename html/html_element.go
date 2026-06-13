@@ -6,6 +6,7 @@ import (
 
 	"github.com/gost-dom/browser/dom"
 	. "github.com/gost-dom/browser/internal/dom"
+	"github.com/gost-dom/browser/internal/entity"
 	"github.com/gost-dom/browser/internal/log"
 	"github.com/gost-dom/browser/internal/uievents"
 )
@@ -17,7 +18,7 @@ type HTMLElement interface {
 	HTMLOrSVGElement
 	Click()
 	getHTMLDocument() HTMLDocument
-	window() Window
+	window() *window
 }
 
 type htmlElement struct {
@@ -57,7 +58,13 @@ func (e *htmlElement) SetSelf(self dom.Node) {
 
 func (e *htmlElement) getHTMLDocument() HTMLDocument { return e.htmlDocument }
 
-func (e *htmlElement) window() Window { return e.htmlDocument.window() }
+func (e *htmlElement) window() *window {
+	w, _ := entity.ComponentType[Window](e.OwnerDocument())
+	if w == nil {
+		return nil
+	}
+	return w.window()
+}
 
 func (e *htmlElement) click() bool { return uievents.Click(e.Element) }
 func (e *htmlElement) Click()      { e.click() }
