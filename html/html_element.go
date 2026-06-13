@@ -17,7 +17,6 @@ type HTMLElement interface {
 	ChildrenRenderer
 	HTMLOrSVGElement
 	Click()
-	getHTMLDocument() HTMLDocument
 	window() *window
 }
 
@@ -55,8 +54,6 @@ func (e *htmlElement) SetSelf(self dom.Node) {
 	e.self = self.(HTMLElement)
 	e.Element.SetSelf(self)
 }
-
-func (e *htmlElement) getHTMLDocument() HTMLDocument { return e.htmlDocument }
 
 func (e *htmlElement) window() *window {
 	w, _ := entity.ComponentType[Window](e.OwnerDocument())
