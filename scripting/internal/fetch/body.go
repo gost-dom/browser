@@ -10,52 +10,46 @@ import (
 	js "github.com/gost-dom/browser/scripting/internal/js"
 )
 
-func Body_json[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+// encodeBodyPromise is the shared implementation behind the Body consumer
+// methods (json, text, bytes, arrayBuffer): it reads the entire [fetch.Body] of
+// the current instance and resolves a Promise to the contents encoded by encoder.
+func encodeBodyPromise[T any](
+	cbCtx js.CallbackContext[T],
+	encoder codec.Encoder[T, []byte],
+) (js.Value[T], error) {
 	instance, err := js.As[fetch.Body](cbCtx.Instance())
 	if err != nil {
 		return nil, err
 	}
-	return codec.EncodePromise(cbCtx, promise.ReadAll(instance), EncodeJSONBytes)
+	return codec.EncodePromise(cbCtx, promise.ReadAll(instance), encoder)
+}
+
+func Body_json[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	return encodeBodyPromise(cbCtx, EncodeJSONBytes)
 }
 
 func EncodeJSONBytes[T any](scope js.Scope[T], b []byte) (js.Value[T], error) {
 	return scope.JSONParse(string(b))
 }
 
-// Body_text consumes the body and resolves to its contents as a UTF-8 string.
 func Body_text[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	instance, err := js.As[fetch.Body](cbCtx.Instance())
-	if err != nil {
-		return nil, err
-	}
-	return codec.EncodePromise(cbCtx, promise.ReadAll(instance), encodeBytesAsString)
+	return encodeBodyPromise(cbCtx, encodeBytesAsString)
 }
 
 func encodeBytesAsString[T any](scope js.Scope[T], b []byte) (js.Value[T], error) {
 	return scope.NewString(string(b)), nil
 }
 
-// Body_bytes consumes the body and resolves to a Uint8Array of its contents.
 func Body_bytes[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	instance, err := js.As[fetch.Body](cbCtx.Instance())
-	if err != nil {
-		return nil, err
-	}
-	return codec.EncodePromise(cbCtx, promise.ReadAll(instance), encodeBytesAsUint8Array)
+	return encodeBodyPromise(cbCtx, encodeBytesAsUint8Array)
 }
 
 func encodeBytesAsUint8Array[T any](scope js.Scope[T], b []byte) (js.Value[T], error) {
 	return scope.NewUint8Array(b), nil
 }
 
-// Body_arrayBuffer consumes the body and resolves to an ArrayBuffer of its
-// contents. The buffer is obtained from a freshly created Uint8Array view.
 func Body_arrayBuffer[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	instance, err := js.As[fetch.Body](cbCtx.Instance())
-	if err != nil {
-		return nil, err
-	}
-	return codec.EncodePromise(cbCtx, promise.ReadAll(instance), encodeBytesAsArrayBuffer)
+	return encodeBodyPromise(cbCtx, encodeBytesAsArrayBuffer)
 }
 
 func encodeBytesAsArrayBuffer[T any](scope js.Scope[T], b []byte) (js.Value[T], error) {
@@ -66,11 +60,7 @@ func encodeBytesAsArrayBuffer[T any](scope js.Scope[T], b []byte) (js.Value[T], 
 		// we must not return the Uint8Array, as callers expect an ArrayBuffer.
 		return nil, fmt.Errorf("gost-dom/fetch: arrayBuffer: Uint8Array is not an object")
 	}
-	buf, err := obj.Get("buffer")
-	if err != nil {
-		return nil, err
-	}
-	return buf, nil
+	return obj.Get("buffer")
 }
 
 func encodeReadableStream[T any](

@@ -2,6 +2,10 @@ package configuration
 
 import "github.com/gost-dom/browser/internal/code-gen/packagenames"
 
+// configureFetchSpecs registers the code-generation customizations for the Fetch
+// API types (Request, Response, Body, Headers, and the global fetch operation),
+// marking unsupported members as not-implemented and flagging the members that
+// have hand-written custom implementations.
 func configureFetchSpecs(specs *WebAPIConfig) {
 	req := specs.Type("Request")
 	// req.OverrideWrappedType = &GoType{Package: packagenames.Fetch, Name: "Request", Pointer: true}
