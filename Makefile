@@ -46,7 +46,7 @@ codegen: codegen-clean codegen-build
 	go generate ./...
 
 .PHONY: test test-watch test-browser test-v8 test-sobek
-test:
+test: test-v8 test-sobek
 	$(GO_TEST) -v -race -vet=all ./...
 
 test-wpt:
@@ -69,14 +69,14 @@ test-html:
 
 .PHONY: test-v8
 test-v8:
-	gotestsum --format dots --watch --packages "./scripting/v8engine ./scripting/internal/scripttests" -- -vet=off
+	$(MAKE) -C scripting/v8engine test
 
 test-scripting:
 	gotestsum --format dots --watch --packages "./scripting/... ./scripting/internal/scripttests" -- -vet=off
 
 .PHONY: test-sobek
 test-sobek:
-	$(GOW) -c -e=go -e=js -e=html -w ./.. test -vet=off ./scripting/sobekengine
+	$(MAKE) -C scripting/sobekengine test
 
 .PHONY: ci ci-build release
 ci-build:
