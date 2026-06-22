@@ -53,10 +53,6 @@ type sliceIter[T any] interface {
 	All() []T
 }
 
-func (i Iterator[T, U]) newIteratorOfSlice(s Scope[U], items []T) (Value[U], error) {
-	return i.NewIterator(s, slices.Values(items))
-}
-
 func (i Iterator[T, U]) mapItems(
 	scope Scope[U],
 	items iter.Seq[T],
@@ -125,7 +121,7 @@ func (i Iterator[T, U]) entries(cbCtx CallbackContext[U]) (res Value[U], err err
 	}
 	sliceIter, err2 := As[sliceIter[T]](cbCtx.Instance())
 	if err2 == nil {
-		return i.newIteratorOfSlice(cbCtx, sliceIter.All())
+		return i.NewIterator(cbCtx, slices.Values(sliceIter.All()))
 	}
 	return nil, fmt.Errorf("iterator.getEntries: %w", errors.Join(err1, err2))
 }
