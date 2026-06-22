@@ -6,8 +6,12 @@ import (
 	"iter"
 	"slices"
 
+	"github.com/gohugoio/hugo/tpl/collections"
 	"github.com/gost-dom/browser/internal/log"
 )
+
+// The type used for the index, when iterating value iterators
+type index = int32
 
 // Iterator implements the iterator protocol for a Go iter.Seq[E]. Type
 // parameter T is the type parameter for the script engine. The field Resolver
@@ -53,10 +57,19 @@ type sliceIter[T any] interface {
 	All() []T
 }
 
-type sliceIterWrapper[T any] struct{ s sliceIter[T] }
+type iterable2wrapper[T any] iter.Seq[T]
 
-func (s sliceIterWrapper[T]) All() iter.Seq[T] {
-	return slices.Values(s.s.All())
+func (i iterable2wrapper[T]) All() iter.Seq2[index, T] {
+	collections.Slice
+	return func(yield func(index, T) bool) {
+		var idx index = 0
+		for v := range i {
+			if !yield(idx, v) {
+				return
+			}
+			idx++
+		}
+	}
 }
 
 func (i Iterator[T, U]) mapItems(
@@ -83,48 +96,30 @@ func (i Iterator[T, U]) NewIterator(s Scope[U], items iter.Seq[T]) (Value[U], er
 // - Symbol iterator - implementing the iterable protocol
 // - "entries" - which all web API implement
 func (i Iterator[T, U]) InstallPrototype(class Class[U]) {
+	fe := forEacher[index, T, U]{
+		func(cbCtx CallbackContext[U]) (iterable2[index, T], error) {
+			i, err := i.iterable(cbCtx)
+			if err != nil {
+				return nil, err
+			}
+			return iterable2wrapper[T](i), nil
+		},
+		func(s Scope[U], v index) (Value[U], error) { return s.NewInt32(v), nil },
+		i.Resolver,
+	}
 	class.CreateOperation("entries", i.entries)
-	class.CreateOperation("forEach", i.forEach)
+	class.CreateOperation("forEach", fe.forEach)
 	class.CreateIteratorMethod(i.entries)
 }
 
-func (i Iterator[T, U]) forEach(cbCtx CallbackContext[U]) (res Value[U], err error) {
-	defer cbCtx.Logger().
-		Debug("JS Function call: Iterator.entries", ThisLogAttr(cbCtx), LogAttr("retVal", res), log.ErrAttr(err))
-	instance, err1 := As[iterable[T]](cbCtx.Instance())
-	if err1 != nil {
-		return nil, err
-	}
-	cb, ok := cbCtx.ConsumeArg()
-	if !ok {
-		return nil, cbCtx.NewTypeError("no argument passed to forEach")
-	}
-	fn, ok := cb.AsFunction()
-	if !ok {
-		return nil, cbCtx.NewTypeError("callback not a function")
-	}
-	var index int32 = 0
-	for value := range instance.All() {
-		val, err := i.Resolver(cbCtx, value)
-		if err != nil {
-			return nil, err
-		}
-		if _, err := fn.Call(cbCtx.This(), val, cbCtx.NewInt32(index)); err != nil {
-			return nil, err
-		}
-		index++
-	}
-	return nil, nil
-}
-
-func (i Iterator[T, U]) iterable(cbCtx CallbackContext[U]) (iterable[T], error) {
+func (i Iterator[T, U]) iterable(cbCtx CallbackContext[U]) (iter.Seq[T], error) {
 	instance, err1 := As[iterable[T]](cbCtx.Instance())
 	if err1 == nil {
-		return instance, nil
+		return instance.All(), nil
 	}
 	sliceIter, err2 := As[sliceIter[T]](cbCtx.Instance())
 	if err2 == nil {
-		return sliceIterWrapper[T]{sliceIter}, nil
+		return slices.Values(sliceIter.All()), nil
 	}
 	return nil, err1
 }
@@ -136,7 +131,7 @@ func (i Iterator[T, U]) entries(cbCtx CallbackContext[U]) (res Value[U], err err
 	if err != nil {
 		return nil, fmt.Errorf("iterator.getEntries: %w", err)
 	}
-	return i.NewIterator(cbCtx, instance.All())
+	return i.NewIterator(cbCtx, instance)
 }
 
 /* -------- iterator2 -------- */
@@ -159,6 +154,43 @@ func NewIterator2[K, V, U any](
 
 type iterable2[K, V any] interface {
 	All() iter.Seq2[K, V]
+}
+
+type forEacher[K, V, T any] struct {
+	getInstance func(cbCtx CallbackContext[T]) (iterable2[K, V], error)
+	keyLookup   ValueResolver[K, T]
+	valueLookup ValueResolver[V, T]
+}
+
+func (e forEacher[K, V, U]) forEach(cbCtx CallbackContext[U]) (res Value[U], err error) {
+	defer cbCtx.Logger().
+		Debug("JS Function call: Iterator.entries", ThisLogAttr(cbCtx), LogAttr("retVal", res), log.ErrAttr(err))
+	instance, err1 := e.getInstance(cbCtx)
+	if err1 != nil {
+		return nil, err
+	}
+	cb, ok := cbCtx.ConsumeArg()
+	if !ok {
+		return nil, cbCtx.NewTypeError("no argument passed to forEach")
+	}
+	fn, ok := cb.AsFunction()
+	if !ok {
+		return nil, cbCtx.NewTypeError("callback not a function")
+	}
+	for k, v := range instance.All() {
+		key, err := e.keyLookup(cbCtx, k)
+		if err != nil {
+			return nil, err
+		}
+		val, err := e.valueLookup(cbCtx, v)
+		if err != nil {
+			return nil, err
+		}
+		if _, err := fn.Call(cbCtx.This(), val, key); err != nil {
+			return nil, err
+		}
+	}
+	return nil, nil
 }
 
 func (i Iterator2[K, V, U]) mapItems(
@@ -204,7 +236,12 @@ func (i Iterator2[K, V, U]) InstallPrototype(cls Class[U]) {
 		return i.newIterator(cbCtx, instance)
 	}
 	cls.CreateOperation("entries", getEntries)
-	cls.CreateOperation("forEach", i.forEach)
+	fe := forEacher[K, V, U]{
+		i.getInstance,
+		i.keyLookup,
+		i.valueLookup,
+	}
+	cls.CreateOperation("forEach", fe.forEach)
 	cls.CreateIteratorMethod(getEntries)
 	keys := NewIterator(i.keyLookup)
 	values := NewIterator(i.valueLookup)
@@ -226,35 +263,8 @@ func (i Iterator2[K, V, U]) InstallPrototype(cls Class[U]) {
 	})
 }
 
-func (i Iterator2[K, V, U]) forEach(cbCtx CallbackContext[U]) (res Value[U], err error) {
-	defer cbCtx.Logger().
-		Debug("JS Function call: Iterator.entries", ThisLogAttr(cbCtx), LogAttr("retVal", res), log.ErrAttr(err))
-	instance, err1 := As[iterable2[K, V]](cbCtx.Instance())
-	if err1 != nil {
-		return nil, err
-	}
-	cb, ok := cbCtx.ConsumeArg()
-	if !ok {
-		return nil, cbCtx.NewTypeError("no argument passed to forEach")
-	}
-	fn, ok := cb.AsFunction()
-	if !ok {
-		return nil, cbCtx.NewTypeError("callback not a function")
-	}
-	for k, v := range instance.All() {
-		key, err := i.keyLookup(cbCtx, k)
-		if err != nil {
-			return nil, err
-		}
-		val, err := i.valueLookup(cbCtx, v)
-		if err != nil {
-			return nil, err
-		}
-		if _, err := fn.Call(cbCtx.This(), val, key); err != nil {
-			return nil, err
-		}
-	}
-	return nil, nil
+func (i Iterator2[K, V, U]) getInstance(cbCtx CallbackContext[U]) (iterable2[K, V], error) {
+	return As[iterable2[K, V]](cbCtx.Instance())
 }
 
 // pairKeys returns a sequences of the keys in a sequence of key/value pairs
