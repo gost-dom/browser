@@ -6,7 +6,6 @@ import (
 	"iter"
 	"slices"
 
-	"github.com/gohugoio/hugo/tpl/collections"
 	"github.com/gost-dom/browser/internal/log"
 )
 
@@ -57,13 +56,10 @@ type sliceIter[T any] interface {
 	All() []T
 }
 
-type iterable2wrapper[T any] iter.Seq[T]
-
-func (i iterable2wrapper[T]) All() iter.Seq2[index, T] {
-	collections.Slice
+func withIndex[T any](s iter.Seq[T]) iter.Seq2[index, T] {
 	return func(yield func(index, T) bool) {
 		var idx index = 0
-		for v := range i {
+		for v := range s {
 			if !yield(idx, v) {
 				return
 			}
@@ -91,20 +87,24 @@ func (i Iterator[T, U]) NewIterator(s Scope[U], items iter.Seq[T]) (Value[U], er
 	return s.NewIterator(i.mapItems(s, items)), nil
 }
 
+func encodeIndex[T any](s Scope[T], i index) (Value[T], error) {
+	return s.NewInt32(i), nil
+}
+
 // Method InstallPrototype creates the following prototype methods:
 //
 // - Symbol iterator - implementing the iterable protocol
 // - "entries" - which all web API implement
 func (i Iterator[T, U]) InstallPrototype(class Class[U]) {
 	fe := forEacher[index, T, U]{
-		func(cbCtx CallbackContext[U]) (iterable2[index, T], error) {
+		func(cbCtx CallbackContext[U]) (iter.Seq2[index, T], error) {
 			i, err := i.iterable(cbCtx)
 			if err != nil {
 				return nil, err
 			}
-			return iterable2wrapper[T](i), nil
+			return withIndex(i), nil
 		},
-		func(s Scope[U], v index) (Value[U], error) { return s.NewInt32(v), nil },
+		encodeIndex[U],
 		i.Resolver,
 	}
 	class.CreateOperation("entries", i.entries)
@@ -157,7 +157,7 @@ type iterable2[K, V any] interface {
 }
 
 type forEacher[K, V, T any] struct {
-	getInstance func(cbCtx CallbackContext[T]) (iterable2[K, V], error)
+	getInstance func(cbCtx CallbackContext[T]) (iter.Seq2[K, V], error)
 	keyLookup   ValueResolver[K, T]
 	valueLookup ValueResolver[V, T]
 }
@@ -177,7 +177,7 @@ func (e forEacher[K, V, U]) forEach(cbCtx CallbackContext[U]) (res Value[U], err
 	if !ok {
 		return nil, cbCtx.NewTypeError("callback not a function")
 	}
-	for k, v := range instance.All() {
+	for k, v := range instance {
 		key, err := e.keyLookup(cbCtx, k)
 		if err != nil {
 			return nil, err
@@ -237,7 +237,7 @@ func (i Iterator2[K, V, U]) InstallPrototype(cls Class[U]) {
 	}
 	cls.CreateOperation("entries", getEntries)
 	fe := forEacher[K, V, U]{
-		i.getInstance,
+		i.seq2,
 		i.keyLookup,
 		i.valueLookup,
 	}
@@ -263,8 +263,12 @@ func (i Iterator2[K, V, U]) InstallPrototype(cls Class[U]) {
 	})
 }
 
-func (i Iterator2[K, V, U]) getInstance(cbCtx CallbackContext[U]) (iterable2[K, V], error) {
-	return As[iterable2[K, V]](cbCtx.Instance())
+func (i Iterator2[K, V, U]) seq2(cbCtx CallbackContext[U]) (res iter.Seq2[K, V], err error) {
+	var it iterable2[K, V]
+	if it, err = As[iterable2[K, V]](cbCtx.Instance()); err == nil {
+		res = it.All()
+	}
+	return
 }
 
 // pairKeys returns a sequences of the keys in a sequence of key/value pairs
