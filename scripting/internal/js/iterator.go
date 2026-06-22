@@ -53,6 +53,12 @@ type sliceIter[T any] interface {
 	All() []T
 }
 
+type sliceIterWrapper[T any] struct{ s sliceIter[T] }
+
+func (s sliceIterWrapper[T]) All() iter.Seq[T] {
+	return slices.Values(s.s.All())
+}
+
 func (i Iterator[T, U]) mapItems(
 	scope Scope[U],
 	items iter.Seq[T],
@@ -111,19 +117,26 @@ func (i Iterator[T, U]) forEach(cbCtx CallbackContext[U]) (res Value[U], err err
 	return nil, nil
 }
 
-func (i Iterator[T, U]) entries(cbCtx CallbackContext[U]) (res Value[U], err error) {
-	defer cbCtx.Logger().
-		Debug("JS Function call: Iterator.entries", ThisLogAttr(cbCtx), LogAttr("retVal", res), log.ErrAttr(err))
-
+func (i Iterator[T, U]) iterable(cbCtx CallbackContext[U]) (iterable[T], error) {
 	instance, err1 := As[iterable[T]](cbCtx.Instance())
 	if err1 == nil {
-		return i.NewIterator(cbCtx, instance.All())
+		return instance, nil
 	}
 	sliceIter, err2 := As[sliceIter[T]](cbCtx.Instance())
 	if err2 == nil {
-		return i.NewIterator(cbCtx, slices.Values(sliceIter.All()))
+		return sliceIterWrapper[T]{sliceIter}, nil
 	}
-	return nil, fmt.Errorf("iterator.getEntries: %w", errors.Join(err1, err2))
+	return nil, err1
+}
+
+func (i Iterator[T, U]) entries(cbCtx CallbackContext[U]) (res Value[U], err error) {
+	defer cbCtx.Logger().
+		Debug("JS Function call: Iterator.entries", ThisLogAttr(cbCtx), LogAttr("retVal", res), log.ErrAttr(err))
+	instance, err := i.iterable(cbCtx)
+	if err != nil {
+		return nil, fmt.Errorf("iterator.getEntries: %w", err)
+	}
+	return i.NewIterator(cbCtx, instance.All())
 }
 
 /* -------- iterator2 -------- */
