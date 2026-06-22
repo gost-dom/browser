@@ -14,11 +14,6 @@ var textEncoderDecoder []byte
 
 func InstallPolyfills[T any](host js.ScriptEngine[T]) {
 	host.InstallPolyfill(`
-		FormData.prototype.forEach = function(cb) {
-			return Array.from(this).forEach(([k,v]) => { cb(v,k) })
-		}
-	`, "gost-dom/polyfills/formdata.js")
-	host.InstallPolyfill(`
 		installNode = (n) => {
 			n.ELEMENT_NODE = 1;
 			n.ATTRIBUTE_NODE = 2;

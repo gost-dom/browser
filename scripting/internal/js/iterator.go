@@ -82,7 +82,37 @@ func (i Iterator[T, U]) NewIterator(s Scope[U], items iter.Seq[T]) (Value[U], er
 // - "entries" - which all web API implement
 func (i Iterator[T, U]) InstallPrototype(class Class[U]) {
 	class.CreateOperation("entries", i.entries)
+	class.CreateOperation("forEach", i.forEach)
 	class.CreateIteratorMethod(i.entries)
+}
+
+func (i Iterator[T, U]) forEach(cbCtx CallbackContext[U]) (res Value[U], err error) {
+	defer cbCtx.Logger().
+		Debug("JS Function call: Iterator.entries", ThisLogAttr(cbCtx), LogAttr("retVal", res), log.ErrAttr(err))
+	instance, err1 := As[iterable[T]](cbCtx.Instance())
+	if err1 != nil {
+		return nil, err
+	}
+	cb, ok := cbCtx.ConsumeArg()
+	if !ok {
+		return nil, cbCtx.NewTypeError("no argument passed to forEach")
+	}
+	fn, ok := cb.AsFunction()
+	if !ok {
+		return nil, cbCtx.NewTypeError("callback not a function")
+	}
+	var index int32 = 0
+	for value := range instance.All() {
+		val, err := i.Resolver(cbCtx, value)
+		if err != nil {
+			return nil, err
+		}
+		if _, err := fn.Call(cbCtx.This(), val, cbCtx.NewInt32(index)); err != nil {
+			return nil, err
+		}
+		index++
+	}
+	return nil, nil
 }
 
 func (i Iterator[T, U]) entries(cbCtx CallbackContext[U]) (res Value[U], err error) {
@@ -165,6 +195,7 @@ func (i Iterator2[K, V, U]) InstallPrototype(cls Class[U]) {
 		return i.newIterator(cbCtx, instance)
 	}
 	cls.CreateOperation("entries", getEntries)
+	cls.CreateOperation("forEach", i.forEach)
 	cls.CreateIteratorMethod(getEntries)
 	keys := NewIterator(i.keyLookup)
 	values := NewIterator(i.valueLookup)
@@ -184,6 +215,37 @@ func (i Iterator2[K, V, U]) InstallPrototype(cls Class[U]) {
 		}
 		return values.NewIterator(cbCtx, pairValues(instance.All()))
 	})
+}
+
+func (i Iterator2[K, V, U]) forEach(cbCtx CallbackContext[U]) (res Value[U], err error) {
+	defer cbCtx.Logger().
+		Debug("JS Function call: Iterator.entries", ThisLogAttr(cbCtx), LogAttr("retVal", res), log.ErrAttr(err))
+	instance, err1 := As[iterable2[K, V]](cbCtx.Instance())
+	if err1 != nil {
+		return nil, err
+	}
+	cb, ok := cbCtx.ConsumeArg()
+	if !ok {
+		return nil, cbCtx.NewTypeError("no argument passed to forEach")
+	}
+	fn, ok := cb.AsFunction()
+	if !ok {
+		return nil, cbCtx.NewTypeError("callback not a function")
+	}
+	for k, v := range instance.All() {
+		key, err := i.keyLookup(cbCtx, k)
+		if err != nil {
+			return nil, err
+		}
+		val, err := i.valueLookup(cbCtx, v)
+		if err != nil {
+			return nil, err
+		}
+		if _, err := fn.Call(cbCtx.This(), val, key); err != nil {
+			return nil, err
+		}
+	}
+	return nil, nil
 }
 
 // pairKeys returns a sequences of the keys in a sequence of key/value pairs
