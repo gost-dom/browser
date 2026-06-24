@@ -68,6 +68,12 @@ func withIndex[T any](s iter.Seq[T]) iter.Seq2[index, T] {
 	}
 }
 
+// entry encodes a single "entry" in "entries". For the ValueIterator, the
+// "key", i.e. index, is ignored.
+func (i Iterator[T, U]) entry(scope Scope[U], _ index, v T) (Value[U], error) {
+	return i.encodeValue(scope, v)
+}
+
 func (i Iterator[T, U]) mapItems(
 	scope Scope[U],
 	items iter.Seq[T],
@@ -87,8 +93,8 @@ func (i Iterator[T, U]) NewIterator(s Scope[U], items iter.Seq[T]) (Value[U], er
 	return s.NewIterator(i.mapItems(s, items)), nil
 }
 
-func encodeIndex[T any](s Scope[T], i index) (Value[T], error) {
-	return s.NewInt32(i), nil
+func (i Iterator[T, U]) encodeKey(s Scope[U], idx index) (Value[U], error) {
+	return s.NewInt32(idx), nil
 }
 
 // Method InstallPrototype creates the following prototype methods:
@@ -97,22 +103,28 @@ func encodeIndex[T any](s Scope[T], i index) (Value[T], error) {
 // - "entries" - which all web API implement
 func (i Iterator[T, U]) InstallPrototype(class Class[U]) {
 	fe := forEacher[index, T, U]{
-		func(cbCtx CallbackContext[U]) (iter.Seq2[index, T], error) {
-			i, err := i.iterable(cbCtx)
-			if err != nil {
-				return nil, err
-			}
-			return withIndex(i), nil
-		},
-		encodeIndex[U],
-		i.Resolver,
+		i,
 	}
-	class.CreateOperation("entries", i.entries)
+	class.CreateOperation("entries", fe.entries)
 	class.CreateOperation("forEach", fe.forEach)
 	class.CreateIteratorMethod(i.entries)
 }
 
-func (i Iterator[T, U]) iterable(cbCtx CallbackContext[U]) (iter.Seq[T], error) {
+func (i Iterator[T, U]) encodeValue(s Scope[U], v T) (Value[U], error) {
+	return i.Resolver(s, v)
+}
+
+// seq2 implements iterableSource
+func (i Iterator[T, U]) seq2(cbCtx CallbackContext[U]) (iter.Seq2[index, T], error) {
+	idx, err := i.seq(cbCtx)
+	if err != nil {
+		return nil, err
+	}
+	return withIndex(idx), nil
+}
+
+// seq creates a new [iter.Seq] for iterating the collection from start.
+func (i Iterator[T, U]) seq(cbCtx CallbackContext[U]) (iter.Seq[T], error) {
 	instance, err1 := As[iterable[T]](cbCtx.Instance())
 	if err1 == nil {
 		return instance.All(), nil
@@ -127,7 +139,7 @@ func (i Iterator[T, U]) iterable(cbCtx CallbackContext[U]) (iter.Seq[T], error) 
 func (i Iterator[T, U]) entries(cbCtx CallbackContext[U]) (res Value[U], err error) {
 	defer cbCtx.Logger().
 		Debug("JS Function call: Iterator.entries", ThisLogAttr(cbCtx), LogAttr("retVal", res), log.ErrAttr(err))
-	instance, err := i.iterable(cbCtx)
+	instance, err := i.seq(cbCtx)
 	if err != nil {
 		return nil, fmt.Errorf("iterator.getEntries: %w", err)
 	}
@@ -148,24 +160,61 @@ func NewIterator2[K, V, U any](
 	keyLookup ValueResolver[K, U],
 	valueLookup ValueResolver[V, U],
 ) Iterator2[K, V, U] {
-	iterator := Iterator2[K, V, U]{keyLookup, valueLookup}
-	return iterator
+	return Iterator2[K, V, U]{keyLookup, valueLookup}
 }
 
 type iterable2[K, V any] interface {
 	All() iter.Seq2[K, V]
 }
 
+// iterableSource supports a common implementation for both value-, and
+// key/value collections.
+type iterableSource[K, V, T any] interface {
+	// seq2 returns a new iter.seq2 for iterating the collection
+	seq2(cbCtx CallbackContext[T]) (iter.Seq2[K, V], error)
+	// entry creates the iterated value for the entries iterator
+	entry(Scope[T], K, V) (Value[T], error)
+	// encodeKey encodes a JavaScript value of the iterated key/index in forEach callbacks
+	encodeKey(Scope[T], K) (Value[T], error)
+	// encodeKey encodes a JavaScript value of the iterated value in forEach callbacks
+	encodeValue(Scope[T], V) (Value[T], error)
+}
+
 type forEacher[K, V, T any] struct {
-	getInstance func(cbCtx CallbackContext[T]) (iter.Seq2[K, V], error)
-	keyLookup   ValueResolver[K, T]
-	valueLookup ValueResolver[V, T]
+	iterableSource[K, V, T]
+}
+
+func (e forEacher[K, V, U]) entries(cbCtx CallbackContext[U]) (res Value[U], err error) {
+
+	cbCtx.Logger().Debug("JS Function call: Iterator2.entries", ThisLogAttr(cbCtx))
+	defer func() {
+		cbCtx.Logger().
+			Debug("JS Function call: Iterator2.entries", ThisLogAttr(cbCtx), LogAttr("retVal", res), log.ErrAttr(err))
+	}()
+	items, err := e.seq2(cbCtx)
+	if err != nil {
+		return nil, err
+	}
+	return cbCtx.NewIterator(e.mapItems(cbCtx, items)), nil
+}
+
+func (e forEacher[K, V, U]) mapItems(
+	cbCtx CallbackContext[U],
+	items iter.Seq2[K, V]) iter.Seq2[Value[U], error] {
+	return func(yield func(Value[U], error) bool) {
+		for k, v := range items {
+			res, err := e.entry(cbCtx, k, v)
+			if !yield(res, err) {
+				return
+			}
+		}
+	}
 }
 
 func (e forEacher[K, V, U]) forEach(cbCtx CallbackContext[U]) (res Value[U], err error) {
 	defer cbCtx.Logger().
 		Debug("JS Function call: Iterator.entries", ThisLogAttr(cbCtx), LogAttr("retVal", res), log.ErrAttr(err))
-	instance, err1 := e.getInstance(cbCtx)
+	instance, err1 := e.seq2(cbCtx)
 	if err1 != nil {
 		return nil, err
 	}
@@ -178,11 +227,11 @@ func (e forEacher[K, V, U]) forEach(cbCtx CallbackContext[U]) (res Value[U], err
 		return nil, cbCtx.NewTypeError("callback not a function")
 	}
 	for k, v := range instance {
-		key, err := e.keyLookup(cbCtx, k)
+		key, err := e.encodeKey(cbCtx, k)
 		if err != nil {
 			return nil, err
 		}
-		val, err := e.valueLookup(cbCtx, v)
+		val, err := e.encodeValue(cbCtx, v)
 		if err != nil {
 			return nil, err
 		}
@@ -193,27 +242,13 @@ func (e forEacher[K, V, U]) forEach(cbCtx CallbackContext[U]) (res Value[U], err
 	return nil, nil
 }
 
-func (i Iterator2[K, V, U]) mapItems(
-	cbCtx CallbackContext[U],
-	items iter.Seq2[K, V]) iter.Seq2[Value[U], error] {
-	return func(yield func(Value[U], error) bool) {
-		for k, v := range items {
-			kk, err1 := i.keyLookup(cbCtx, k)
-			vv, err2 := i.valueLookup(cbCtx, v)
-			err := errors.Join(err1, err2)
-			res := cbCtx.NewArray(kk, vv) // Safe to call on nil jsValues
-			if !yield(res, err) {
-				return
-			}
-		}
-	}
-}
-
-func (i Iterator2[K, V, U]) newIterator(
-	cbCtx CallbackContext[U],
-	items iterable2[K, V],
-) (Value[U], error) {
-	return cbCtx.NewIterator(i.mapItems(cbCtx, items.All())), nil
+// entry implements iterableSource, returning an array with key and value
+func (i Iterator2[K, V, U]) entry(cbCtx Scope[U], k K, v V) (Value[U], error) {
+	kk, err1 := i.keyLookup(cbCtx, k)
+	vv, err2 := i.valueLookup(cbCtx, v)
+	err := errors.Join(err1, err2)
+	res := cbCtx.NewArray(kk, vv) // Safe to call on nil jsValues
+	return res, err
 }
 
 // InstallPrototype creates the following prototype methods on cls.
@@ -223,26 +258,12 @@ func (i Iterator2[K, V, U]) newIterator(
 // - "keys" - Returns an iterator over all keys
 // - "values" - Returns an iterator over all values
 func (i Iterator2[K, V, U]) InstallPrototype(cls Class[U]) {
-	getEntries := func(cbCtx CallbackContext[U]) (res Value[U], err error) {
-		cbCtx.Logger().Debug("JS Function call: Iterator2.entries", ThisLogAttr(cbCtx))
-		defer func() {
-			cbCtx.Logger().
-				Debug("JS Function call: Iterator2.entries", ThisLogAttr(cbCtx), LogAttr("retVal", res), log.ErrAttr(err))
-		}()
-		instance, err := As[iterable2[K, V]](cbCtx.Instance())
-		if err != nil {
-			return nil, err
-		}
-		return i.newIterator(cbCtx, instance)
-	}
-	cls.CreateOperation("entries", getEntries)
 	fe := forEacher[K, V, U]{
-		i.seq2,
-		i.keyLookup,
-		i.valueLookup,
+		i,
 	}
+	cls.CreateOperation("entries", fe.entries)
 	cls.CreateOperation("forEach", fe.forEach)
-	cls.CreateIteratorMethod(getEntries)
+	cls.CreateIteratorMethod(fe.entries)
 	keys := NewIterator(i.keyLookup)
 	values := NewIterator(i.valueLookup)
 	cls.CreateOperation("keys", func(cbCtx CallbackContext[U]) (Value[U], error) {
@@ -263,6 +284,15 @@ func (i Iterator2[K, V, U]) InstallPrototype(cls Class[U]) {
 	})
 }
 
+func (i Iterator2[K, V, U]) encodeKey(scope Scope[U], key K) (Value[U], error) {
+	return i.keyLookup(scope, key)
+}
+
+func (i Iterator2[K, V, U]) encodeValue(scope Scope[U], value V) (Value[U], error) {
+	return i.valueLookup(scope, value)
+}
+
+// seq2 implements iterableSource
 func (i Iterator2[K, V, U]) seq2(cbCtx CallbackContext[U]) (res iter.Seq2[K, V], err error) {
 	var it iterable2[K, V]
 	if it, err = As[iterable2[K, V]](cbCtx.Instance()); err == nil {
