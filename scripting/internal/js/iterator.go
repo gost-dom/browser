@@ -102,7 +102,7 @@ func (i Iterator[T, U]) encodeKey(s Scope[U], idx index) (Value[U], error) {
 // - Symbol iterator - implementing the iterable protocol
 // - "entries" - which all web API implement
 func (i Iterator[T, U]) InstallPrototype(class Class[U]) {
-	fe := forEacher[index, T, U]{
+	fe := iterableOperations[index, T, U]{
 		i,
 	}
 	class.CreateOperation("entries", fe.entries)
@@ -180,11 +180,17 @@ type iterableSource[K, V, T any] interface {
 	encodeValue(Scope[T], V) (Value[T], error)
 }
 
-type forEacher[K, V, T any] struct {
+// iterableOperations provides common implementations for iterable methods
+// present on both value- and key/value iterators.
+//
+// Differences in the two types are captured in iterableSource, notably the
+// entries iterator returns a single value for value iterators, and a key/value
+// array for key/value iterators.
+type iterableOperations[K, V, T any] struct {
 	iterableSource[K, V, T]
 }
 
-func (e forEacher[K, V, U]) entries(cbCtx CallbackContext[U]) (res Value[U], err error) {
+func (e iterableOperations[K, V, U]) entries(cbCtx CallbackContext[U]) (res Value[U], err error) {
 
 	cbCtx.Logger().Debug("JS Function call: Iterator2.entries", ThisLogAttr(cbCtx))
 	defer func() {
@@ -198,7 +204,7 @@ func (e forEacher[K, V, U]) entries(cbCtx CallbackContext[U]) (res Value[U], err
 	return cbCtx.NewIterator(e.mapItems(cbCtx, items)), nil
 }
 
-func (e forEacher[K, V, U]) mapItems(
+func (e iterableOperations[K, V, U]) mapItems(
 	cbCtx CallbackContext[U],
 	items iter.Seq2[K, V]) iter.Seq2[Value[U], error] {
 	return func(yield func(Value[U], error) bool) {
@@ -211,7 +217,7 @@ func (e forEacher[K, V, U]) mapItems(
 	}
 }
 
-func (e forEacher[K, V, U]) forEach(cbCtx CallbackContext[U]) (res Value[U], err error) {
+func (e iterableOperations[K, V, U]) forEach(cbCtx CallbackContext[U]) (res Value[U], err error) {
 	defer cbCtx.Logger().
 		Debug("JS Function call: Iterator.entries", ThisLogAttr(cbCtx), LogAttr("retVal", res), log.ErrAttr(err))
 	instance, err1 := e.seq2(cbCtx)
@@ -258,7 +264,7 @@ func (i Iterator2[K, V, U]) entry(cbCtx Scope[U], k K, v V) (Value[U], error) {
 // - "keys" - Returns an iterator over all keys
 // - "values" - Returns an iterator over all values
 func (i Iterator2[K, V, U]) InstallPrototype(cls Class[U]) {
-	fe := forEacher[K, V, U]{
+	fe := iterableOperations[K, V, U]{
 		i,
 	}
 	cls.CreateOperation("entries", fe.entries)
