@@ -7,11 +7,10 @@ import (
 )
 
 func NamedNodeMapCustomInitializer[T any](class js.Class[T]) {
-	iterator := js.NewIterator(
+	js.InstallValueIterator(class,
 		func(s js.Scope[T], instance dom.Attr) (js.Value[T], error) {
 			return codec.EncodeEntity(s, instance)
 		})
-	iterator.InstallPrototype(class)
 	class.CreateIndexedHandler(
 		js.WithIndexedGetterCallback(func(s js.CallbackScope[T], key int) (js.Value[T], error) {
 			instance, err := js.As[dom.NamedNodeMap](s.Instance())
