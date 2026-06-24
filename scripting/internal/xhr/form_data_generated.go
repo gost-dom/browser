@@ -16,7 +16,7 @@ func InitializeFormData[T any](jsClass js.Class[T]) {
 	jsClass.CreateOperation("getAll", FormData_getAll)
 	jsClass.CreateOperation("has", FormData_has)
 	jsClass.CreateOperation("set", FormData_set)
-	js.InstallIterator2(jsClass, codec.EncodeString, encodeFormDataEntryValue)
+	js.InstallPairIterator(jsClass, codec.EncodeString, encodeFormDataEntryValue)
 }
 
 func FormDataConstructor[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
