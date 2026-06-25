@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"iter"
 	"slices"
-
-	"github.com/gost-dom/browser/internal/log"
 )
 
 // The type used for the index, when iterating value iterators
@@ -135,8 +133,6 @@ func (i ValueIterator[T, U]) seq(cbCtx CallbackContext[U]) (iter.Seq[T], error) 
 }
 
 func (i ValueIterator[T, U]) entries(cbCtx CallbackContext[U]) (res Value[U], err error) {
-	defer cbCtx.Logger().
-		Debug("JS Function call: Iterator.entries", ThisLogAttr(cbCtx), LogAttr("retVal", res), log.ErrAttr(err))
 	instance, err := i.seq(cbCtx)
 	if err != nil {
 		return nil, fmt.Errorf("iterator.getEntries: %w", err)
@@ -179,12 +175,7 @@ type iterableOperations[K, V, T any] struct {
 	iterableSource[K, V, T]
 }
 
-func (e iterableOperations[K, V, U]) entries(cbCtx CallbackContext[U]) (res Value[U], err error) {
-	cbCtx.Logger().Debug("JS Function call: Iterator2.entries", ThisLogAttr(cbCtx))
-	defer func() {
-		cbCtx.Logger().
-			Debug("JS Function call: Iterator2.entries", ThisLogAttr(cbCtx), LogAttr("retVal", res), log.ErrAttr(err))
-	}()
+func (e iterableOperations[K, V, U]) entries(cbCtx CallbackContext[U]) (Value[U], error) {
 	items, err := e.seq2(cbCtx)
 	if err != nil {
 		return nil, err
@@ -208,12 +199,10 @@ func (e iterableOperations[K, V, U]) mapItems(
 	}
 }
 
-func (e iterableOperations[K, V, U]) forEach(cbCtx CallbackContext[U]) (res Value[U], err error) {
-	defer cbCtx.Logger().
-		Debug("JS Function call: Iterator.forEach", ThisLogAttr(cbCtx), LogAttr("retVal", res), log.ErrAttr(err))
+func (e iterableOperations[K, V, U]) forEach(cbCtx CallbackContext[U]) (Value[U], error) {
 	instance, err1 := e.seq2(cbCtx)
 	if err1 != nil {
-		return nil, err
+		return nil, err1
 	}
 	cb, ok := cbCtx.ConsumeArg()
 	if !ok {
@@ -255,7 +244,6 @@ func (i PairIterator[K, V, U]) InstallPrototype(cls Class[U]) {
 	keys := newIterator(i.keyLookup)
 	values := newIterator(i.valueLookup)
 	cls.CreateOperation("keys", func(cbCtx CallbackContext[U]) (Value[U], error) {
-		cbCtx.Logger().Debug("JS Function call: Iterator2.keys", ThisLogAttr(cbCtx))
 		instance, err := As[pairIterable[K, V]](cbCtx.Instance())
 		if err != nil {
 			return nil, err
@@ -263,7 +251,6 @@ func (i PairIterator[K, V, U]) InstallPrototype(cls Class[U]) {
 		return keys.NewIterator(cbCtx, pairKeys(instance.All()))
 	})
 	cls.CreateOperation("values", func(cbCtx CallbackContext[U]) (Value[U], error) {
-		cbCtx.Logger().Debug("JS Function call: Iterator2.values", ThisLogAttr(cbCtx))
 		instance, err := As[pairIterable[K, V]](cbCtx.Instance())
 		if err != nil {
 			return nil, err
