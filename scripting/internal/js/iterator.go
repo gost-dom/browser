@@ -10,23 +10,24 @@ import (
 // The type used for the index, when iterating value iterators
 type index = int32
 
-// ValueIterator implements the iterator protocol for a Go iter.Seq[E]. Type
-// parameter T is the type parameter for the script engine. The field Resolver
-// is a function that is used to generate a JavaScript value for an element of
-// type E.
-type ValueIterator[E, T any] struct {
-	Resolver ValueResolver[E, T]
+// valueIterator implements the iterator protocol for a Go iter.Seq[E]. Type
+// parameter T is the type parameter for the script engine.
+type valueIterator[E, T any] struct {
+	// The encoder used to encode the iterated values to JavaScript values
+	valueEncoder Encoder[E, T]
 }
 
-type ValueResolver[T, U any] func(s Scope[U], value T) (Value[U], error)
+// Encoder is the type for a function that encodes Go type T to a JavaScript
+// value valid in the JavaScript scope s.
+type Encoder[T, U any] func(s Scope[U], value T) (Value[U], error)
 
 // InstallValueIterator creates prototype operations the web IDL value iterables
 // should implement, including Symbol.iterator and entries. This requires that
 // instances must wrap a value providing method All() returning an iter.Seq[T].
 //
 // See also: https://webidl.spec.whatwg.org/#idl-iterable
-func InstallValueIterator[T, U any](class Class[U], entityLookup ValueResolver[T, U]) {
-	ValueIterator[T, U]{entityLookup}.InstallPrototype(class)
+func InstallValueIterator[T, U any](class Class[U], entityLookup Encoder[T, U]) {
+	valueIterator[T, U]{entityLookup}.InstallPrototype(class)
 }
 
 // InstallPairIterator creates prototype operations the web IDL pair iterators
@@ -36,10 +37,10 @@ func InstallValueIterator[T, U any](class Class[U], entityLookup ValueResolver[T
 // See also: https://webidl.spec.whatwg.org/#idl-iterable
 func InstallPairIterator[K, V, U any](
 	class Class[U],
-	keyLookup ValueResolver[K, U],
-	valueLookup ValueResolver[V, U],
+	keyLookup Encoder[K, U],
+	valueLookup Encoder[V, U],
 ) {
-	PairIterator[K, V, U]{keyLookup, valueLookup}.InstallPrototype(class)
+	pairIterator[K, V, U]{keyLookup, valueLookup}.InstallPrototype(class)
 }
 
 // valueIterable is the interface for a type that can implement the iterable
@@ -71,7 +72,7 @@ func withIndex[T any](s iter.Seq[T]) iter.Seq2[index, T] {
 func encodeIterator[T, U any](
 	scope Scope[U],
 	values iter.Seq[T],
-	encoder ValueResolver[T, U],
+	encoder Encoder[T, U],
 ) (Value[U], error) {
 	jsSeq := func(yield func(Value[U], error) bool) {
 		for item := range values {
@@ -84,7 +85,7 @@ func encodeIterator[T, U any](
 	return scope.NewIterator(jsSeq), nil
 }
 
-func (i ValueIterator[T, U]) encodeKey(s Scope[U], idx index) (Value[U], error) {
+func (i valueIterator[T, U]) encodeKey(s Scope[U], idx index) (Value[U], error) {
 	return s.NewInt32(idx), nil
 }
 
@@ -92,7 +93,7 @@ func (i ValueIterator[T, U]) encodeKey(s Scope[U], idx index) (Value[U], error) 
 //
 // - Symbol iterator - implementing the iterable protocol
 // - "entries" - which all web API implement
-func (i ValueIterator[T, U]) InstallPrototype(class Class[U]) {
+func (i valueIterator[T, U]) InstallPrototype(class Class[U]) {
 	fe := iterableOperations[index, T, U]{
 		i,
 	}
@@ -101,12 +102,12 @@ func (i ValueIterator[T, U]) InstallPrototype(class Class[U]) {
 	class.CreateIteratorMethod(i.symbolIterator)
 }
 
-func (i ValueIterator[T, U]) encodeValue(s Scope[U], v T) (Value[U], error) {
-	return i.Resolver(s, v)
+func (i valueIterator[T, U]) encodeValue(s Scope[U], v T) (Value[U], error) {
+	return i.valueEncoder(s, v)
 }
 
 // seq2 implements iterableSource
-func (i ValueIterator[T, U]) seq2(cbCtx CallbackContext[U]) (iter.Seq2[index, T], error) {
+func (i valueIterator[T, U]) seq2(cbCtx CallbackContext[U]) (iter.Seq2[index, T], error) {
 	idx, err := i.seq(cbCtx)
 	if err != nil {
 		return nil, err
@@ -115,7 +116,7 @@ func (i ValueIterator[T, U]) seq2(cbCtx CallbackContext[U]) (iter.Seq2[index, T]
 }
 
 // seq creates a new [iter.Seq] for iterating the collection from start.
-func (i ValueIterator[T, U]) seq(cbCtx CallbackContext[U]) (iter.Seq[T], error) {
+func (i valueIterator[T, U]) seq(cbCtx CallbackContext[U]) (iter.Seq[T], error) {
 	instance, err1 := As[valueIterable[T]](cbCtx.Instance())
 	if err1 == nil {
 		return instance.All(), nil
@@ -127,21 +128,21 @@ func (i ValueIterator[T, U]) seq(cbCtx CallbackContext[U]) (iter.Seq[T], error) 
 	return nil, err1
 }
 
-func (i ValueIterator[T, U]) symbolIterator(cbCtx CallbackContext[U]) (res Value[U], err error) {
+func (i valueIterator[T, U]) symbolIterator(cbCtx CallbackContext[U]) (res Value[U], err error) {
 	instance, err := i.seq(cbCtx)
 	if err != nil {
 		return nil, fmt.Errorf("valueIterator: decode iterator: %w", err)
 	}
-	return encodeIterator(cbCtx, instance, i.Resolver)
+	return encodeIterator(cbCtx, instance, i.valueEncoder)
 }
 
 /* -------- PairIterator -------- */
 
-// PairIterator is like [ValueIterator], but implements a pair iterator over an
+// pairIterator is like [valueIterator], but implements a pair iterator over an
 // iter.Seq2[K,V] value.
-type PairIterator[K, V, U any] struct {
-	keyLookup   ValueResolver[K, U]
-	valueLookup ValueResolver[V, U]
+type pairIterator[K, V, U any] struct {
+	keyEncoder   Encoder[K, U]
+	valueEncoder Encoder[V, U]
 }
 
 type pairIterable[K, V any] interface {
@@ -229,7 +230,7 @@ func (e iterableOperations[K, V, U]) forEach(cbCtx CallbackContext[U]) (Value[U]
 // - "entries" - Returns the same iterator as Symbol Iterator
 // - "keys" - Returns an iterator over all keys
 // - "values" - Returns an iterator over all values
-func (i PairIterator[K, V, U]) InstallPrototype(cls Class[U]) {
+func (i pairIterator[K, V, U]) InstallPrototype(cls Class[U]) {
 	fe := iterableOperations[K, V, U]{
 		i,
 	}
@@ -241,27 +242,27 @@ func (i PairIterator[K, V, U]) InstallPrototype(cls Class[U]) {
 		if err != nil {
 			return nil, err
 		}
-		return encodeIterator(cbCtx, pairKeys(instance.All()), i.keyLookup)
+		return encodeIterator(cbCtx, pairKeys(instance.All()), i.keyEncoder)
 	})
 	cls.CreateOperation("values", func(cbCtx CallbackContext[U]) (Value[U], error) {
 		instance, err := As[pairIterable[K, V]](cbCtx.Instance())
 		if err != nil {
 			return nil, err
 		}
-		return encodeIterator(cbCtx, pairValues(instance.All()), i.valueLookup)
+		return encodeIterator(cbCtx, pairValues(instance.All()), i.valueEncoder)
 	})
 }
 
-func (i PairIterator[K, V, U]) encodeKey(scope Scope[U], key K) (Value[U], error) {
-	return i.keyLookup(scope, key)
+func (i pairIterator[K, V, U]) encodeKey(scope Scope[U], key K) (Value[U], error) {
+	return i.keyEncoder(scope, key)
 }
 
-func (i PairIterator[K, V, U]) encodeValue(scope Scope[U], value V) (Value[U], error) {
-	return i.valueLookup(scope, value)
+func (i pairIterator[K, V, U]) encodeValue(scope Scope[U], value V) (Value[U], error) {
+	return i.valueEncoder(scope, value)
 }
 
 // seq2 implements iterableSource
-func (i PairIterator[K, V, U]) seq2(cbCtx CallbackContext[U]) (res iter.Seq2[K, V], err error) {
+func (i pairIterator[K, V, U]) seq2(cbCtx CallbackContext[U]) (res iter.Seq2[K, V], err error) {
 	var it pairIterable[K, V]
 	if it, err = As[pairIterable[K, V]](cbCtx.Instance()); err == nil {
 		res = it.All()
