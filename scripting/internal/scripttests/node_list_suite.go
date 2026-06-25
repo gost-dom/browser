@@ -59,6 +59,10 @@ func (s *NodeListSuite) TestNodeListIteration() {
 	s.Expect(s.Eval("nodes[1].textContent")).To(Equal("Node 2"))
 	s.Expect(s.Eval("nodes[2].textContent")).To(Equal("Node 3"))
 	s.Expect(s.Eval("typeof nodes[3]")).To(Equal("undefined"))
+
+	s.Expect(s.Eval("Array.from(document.body.childNodes.keys()).join(',')")).To(Equal("0,1,2"))
+	s.Expect(s.Eval("Array.from(document.body.childNodes.values()).map(x => x.textContent).join(',')")).
+		To(Equal("Node 1,Node 2,Node 3"))
 }
 
 func (s *NodeListSuite) TestNodeListEntriesIteration() {

@@ -123,7 +123,20 @@ func AsFunction[T any](v Value[T]) (Function[T], bool) {
 	return v.AsFunction()
 }
 
+// Clone implements structured clone, creating a deep copy, but retaining shared
+// object references; I.e., if two keys reference the same object in the source,
+// so will the clone.
+//
+// The clone will be valid in scope s. The scope can exist in a completely
+// different realm; Thus this can be used when sending messages between Window
+// and Worker scopes.
 func Clone[T any](v Value[T], s Scope[T]) (Value[T], error) {
+	// TODO: Is there a potential race condition hiding here? Scope s could
+	// potentially be active in a different goroutine. Would that be a problem?
+	// V8 implements locking, and v8go uses correct synchronization primitives
+	// for the resources it maintains.
+	// As this is only _creating_ new objects - pure Go JavaScript engines aught
+	// have trouble with this.
 	var objects [][2]Value[T]
 	return clone(v, s, &objects)
 }
