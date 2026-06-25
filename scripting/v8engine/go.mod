@@ -1,11 +1,11 @@
 module github.com/gost-dom/browser/scripting/v8engine
 
-go 1.25
+go 1.25.0
 
 require (
-	github.com/gost-dom/browser v0.10.3
-	github.com/gost-dom/v8go v0.0.0-20250712111039-fd213ddc42d7
-	github.com/onsi/gomega v1.38.2
+	github.com/gost-dom/browser v0.12.0
+	github.com/gost-dom/v8go v0.0.0-20260625072029-cd6c7322a199
+	github.com/onsi/gomega v1.42.1
 )
 
 require (
@@ -22,8 +22,8 @@ require (
 	github.com/tommie/v8go/deps/linux_amd64 v0.0.0-20251007175045-97bcf8e7d6ed // indirect
 	github.com/tommie/v8go/deps/linux_arm64 v0.0.0-20251007175045-97bcf8e7d6ed // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
-	golang.org/x/net v0.47.0 // indirect
-	golang.org/x/text v0.31.0 // indirect
+	golang.org/x/net v0.56.0 // indirect
+	golang.org/x/text v0.38.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
