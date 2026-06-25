@@ -72,12 +72,6 @@ func withIndex[T any](s iter.Seq[T]) iter.Seq2[index, T] {
 	}
 }
 
-// entry encodes a single "entry" in "entries". For the ValueIterator, the
-// "key", i.e. index, is ignored.
-func (i ValueIterator[T, U]) entry(scope Scope[U], _ index, v T) (Value[U], error) {
-	return i.encodeValue(scope, v)
-}
-
 func (i ValueIterator[T, U]) mapItems(
 	scope Scope[U],
 	items iter.Seq[T],
@@ -169,8 +163,6 @@ type iterableSource[K, V, T any] interface {
 	// seq2 returns a new iter.seq2 for iterating the collection. For
 	// value collections, the iterated key is the index.
 	seq2(cbCtx CallbackContext[T]) (iter.Seq2[K, V], error)
-	// entry creates the iterated value for the entries iterator
-	entry(Scope[T], K, V) (Value[T], error)
 	// encodeKey encodes a JavaScript value of the iterated key/index in forEach callbacks
 	encodeKey(Scope[T], K) (Value[T], error)
 	// encodeKey encodes a JavaScript value of the iterated value in forEach callbacks
@@ -205,7 +197,10 @@ func (e iterableOperations[K, V, U]) mapItems(
 	items iter.Seq2[K, V]) iter.Seq2[Value[U], error] {
 	return func(yield func(Value[U], error) bool) {
 		for k, v := range items {
-			res, err := e.entry(cbCtx, k, v)
+			kk, err1 := e.encodeKey(cbCtx, k)
+			vv, err2 := e.encodeValue(cbCtx, v)
+			err := errors.Join(err1, err2)
+			res := cbCtx.NewArray(kk, vv) // Safe to call on nil jsValues
 			if !yield(res, err) {
 				return
 			}
@@ -215,7 +210,7 @@ func (e iterableOperations[K, V, U]) mapItems(
 
 func (e iterableOperations[K, V, U]) forEach(cbCtx CallbackContext[U]) (res Value[U], err error) {
 	defer cbCtx.Logger().
-		Debug("JS Function call: Iterator.entries", ThisLogAttr(cbCtx), LogAttr("retVal", res), log.ErrAttr(err))
+		Debug("JS Function call: Iterator.forEach", ThisLogAttr(cbCtx), LogAttr("retVal", res), log.ErrAttr(err))
 	instance, err1 := e.seq2(cbCtx)
 	if err1 != nil {
 		return nil, err
@@ -242,15 +237,6 @@ func (e iterableOperations[K, V, U]) forEach(cbCtx CallbackContext[U]) (res Valu
 		}
 	}
 	return nil, nil
-}
-
-// entry implements iterableSource, returning an array with key and value
-func (i PairIterator[K, V, U]) entry(cbCtx Scope[U], k K, v V) (Value[U], error) {
-	kk, err1 := i.keyLookup(cbCtx, k)
-	vv, err2 := i.valueLookup(cbCtx, v)
-	err := errors.Join(err1, err2)
-	res := cbCtx.NewArray(kk, vv) // Safe to call on nil jsValues
-	return res, err
 }
 
 // InstallPrototype creates the following prototype methods on cls.

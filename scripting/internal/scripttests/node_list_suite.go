@@ -45,3 +45,33 @@ func (s *NodeListSuite) TestNodeListWithThreeElements() {
 		`document.body.childNodes[5] === undefined`,
 	)).To(BeTrue())
 }
+
+func (s *NodeListSuite) TestNodeListIteration() {
+	s.MustLoadHTML(`<div id="1">Node 1</div><div id="2">Node 2</div><div id="3">Node 3</div>`)
+	s.MustRunScript(`
+		let nodes = []
+		for (const node of document.body.childNodes) { 
+			nodes.push(node) 
+		}
+	`)
+	s.Expect(s.Eval("nodes.length")).To(BeEquivalentTo(3), "Array has three elements")
+	s.Expect(s.Eval("nodes[0].textContent")).To(Equal("Node 1"))
+	s.Expect(s.Eval("nodes[1].textContent")).To(Equal("Node 2"))
+	s.Expect(s.Eval("nodes[2].textContent")).To(Equal("Node 3"))
+	s.Expect(s.Eval("typeof nodes[3]")).To(Equal("undefined"))
+}
+
+func (s *NodeListSuite) TestNodeListEntriesIteration() {
+	s.MustLoadHTML(`<div id="1"></div><div id="2"></div><div id="3"></div>`)
+	s.MustRunScript(`
+		let entries = []
+		for (const e of document.body.childNodes.entries()) { 
+			entries.push(e) 
+		}
+	`)
+	s.Expect(s.Eval("entries.length")).To(BeEquivalentTo(3), "Array has three elements")
+	s.Expect(s.Eval("entries[0][0]")).To(BeEquivalentTo(0), "First element is the index")
+	s.Expect(s.Eval("entries[0][1] instanceof HTMLElement")).To(BeTrue())
+	s.Expect(s.Eval("entries[1][0]")).To(BeEquivalentTo(1), "First element is the index")
+	s.Expect(s.Eval("entries[1][1] instanceof HTMLElement")).To(BeTrue())
+}
