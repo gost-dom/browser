@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"iter"
 	"slices"
+
+	"github.com/gost-dom/browser/internal/gosterror"
 )
 
 // The type used for the index, when iterating value iterators
@@ -195,29 +197,26 @@ func (e iterableOperations[K, V, U]) mapItems(
 	}
 }
 
+func decodeFunction[T any](s Scope[T], v Value[T]) (Function[T], error) {
+	if fn, ok := v.AsFunction(); ok {
+		return fn, nil
+	}
+	return nil, s.NewTypeError("not a function")
+}
+
 func (e iterableOperations[K, V, U]) forEach(cbCtx CallbackContext[U]) (Value[U], error) {
 	instance, err1 := e.seq2(cbCtx)
-	if err1 != nil {
-		return nil, err1
-	}
-	cb, ok := cbCtx.ConsumeArg()
-	if !ok {
-		return nil, cbCtx.NewTypeError("no argument passed to forEach")
-	}
-	fn, ok := cb.AsFunction()
-	if !ok {
-		return nil, cbCtx.NewTypeError("callback not a function")
+	cb, err2 := ConsumeArgument(cbCtx, "callback", nil, decodeFunction)
+	if err := gosterror.First(err1, err2); err != nil {
+		return nil, err
 	}
 	for k, v := range instance {
-		key, err := e.encodeKey(cbCtx, k)
-		if err != nil {
+		key, keyErr := e.encodeKey(cbCtx, k)
+		val, valErr := e.encodeValue(cbCtx, v)
+		if err := errors.Join(keyErr, valErr); err != nil {
 			return nil, err
 		}
-		val, err := e.encodeValue(cbCtx, v)
-		if err != nil {
-			return nil, err
-		}
-		if _, err := fn.Call(cbCtx.This(), val, key); err != nil {
+		if _, err := cb.Call(cbCtx.This(), val, key); err != nil {
 			return nil, err
 		}
 	}
