@@ -76,6 +76,16 @@ type sliceIter[T any] interface {
 	All() []T
 }
 
+// withIndex wraps a value sequence into an index/value sequence to provide a
+// base for common implementations of standard operations on iterable objects:
+//
+//   - forEach
+//   - entries
+//   - values
+//   - keys
+//
+// The same implementation works for both value and pair iterators when the
+// value iterator is exposed as an iterator of index/value pairs
 func withIndex[T any](s iter.Seq[T]) iter.Seq2[index, T] {
 	return func(yield func(index, T) bool) {
 		var idx index = 0
