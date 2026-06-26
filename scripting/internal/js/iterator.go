@@ -243,7 +243,7 @@ func (e iterableOperations[K, V, U]) forEach(cbCtx CallbackContext[U]) (Value[U]
 		if err := errors.Join(keyErr, valErr); err != nil {
 			return nil, err
 		}
-		if _, err := cb.Call(cbCtx.This(), val, key); err != nil {
+		if _, err := cb.Call(cbCtx.GlobalThis(), val, key, cbCtx.This()); err != nil {
 			return nil, err
 		}
 	}

@@ -65,6 +65,26 @@ func (s *NodeListSuite) TestNodeListIteration() {
 		To(Equal("Node 1,Node 2,Node 3"))
 }
 
+func (s *NodeListSuite) TestNodeListForEach() {
+	s.MustLoadHTML(`<div id="1"></div><div id="2"></div><div id="3"></div>`)
+	s.MustRunScript(`
+		let entries = []
+		let thisPtr
+		document.body.childNodes.forEach(function (value, key, collection) {
+			thisPtr = this
+			entries.push([value,key,collection])
+		})
+	`)
+	s.Expect(s.Eval("thisPtr === globalThis")).To(BeTrue(), "'this' is the global scope")
+	s.Expect(s.Eval("entries.length")).To(BeEquivalentTo(3), "Array has three elements")
+	s.Expect(s.Eval("entries[0][0] instanceof HTMLElement")).
+		To(BeTrue(), "First argument is the value")
+	s.Expect(s.Eval("entries[0][1]")).To(BeEquivalentTo(0), "Second argument is the index")
+	s.Expect(s.Eval("entries[0][2] === document.body.childNodes")).
+		To(BeTrue(), "Third argument is the collection")
+	s.Expect(s.Eval("entries[1][1]")).To(BeEquivalentTo(1), "Index of second entry")
+	s.Expect(s.Eval("entries[2][1]")).To(BeEquivalentTo(2), "Index of last entry")
+}
 func (s *NodeListSuite) TestNodeListEntriesIteration() {
 	s.MustLoadHTML(`<div id="1"></div><div id="2"></div><div id="3"></div>`)
 	s.MustRunScript(`
