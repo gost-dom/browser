@@ -237,13 +237,22 @@ func (e iterableOperations[K, V, U]) forEach(cbCtx CallbackContext[U]) (Value[U]
 	if err := gosterror.First(err1, err2); err != nil {
 		return nil, err
 	}
+	var thisObject Object[U]
+	this, ok := cbCtx.ConsumeArg()
+	if ok {
+		thisObject, ok = this.AsObject()
+	}
+
+	if !ok {
+		thisObject = cbCtx.GlobalThis()
+	}
 	for k, v := range instance {
 		key, keyErr := e.encodeKey(cbCtx, k)
 		val, valErr := e.encodeValue(cbCtx, v)
 		if err := errors.Join(keyErr, valErr); err != nil {
 			return nil, err
 		}
-		if _, err := cb.Call(cbCtx.GlobalThis(), val, key, cbCtx.This()); err != nil {
+		if _, err := cb.Call(thisObject, val, key, cbCtx.This()); err != nil {
 			return nil, err
 		}
 	}
