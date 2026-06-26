@@ -7,11 +7,10 @@ import (
 )
 
 func HTMLCollectionCustomInitializer[T any](class js.Class[T]) {
-	iterator := js.NewIterator(
+	js.InstallValueIterator(class,
 		func(s js.Scope[T], instance dom.Element) (js.Value[T], error) {
 			return codec.EncodeEntity(s, instance)
 		})
-	iterator.InstallPrototype(class)
 
 	class.CreateIndexedHandler(
 		js.WithIndexedGetterCallback(

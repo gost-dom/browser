@@ -107,11 +107,11 @@ func (e *Entity) setComponent(key any, val any) {
 }
 
 func Component[T any](e Components, key any) (res T, ok bool) {
-	var val any
-	if val, ok = e.component(key); !ok {
-		return
+	if e != nil {
+		if val, hasKey := e.component(key); hasKey {
+			res, ok = val.(T)
+		}
 	}
-	res, ok = val.(T)
 	return
 }
 
