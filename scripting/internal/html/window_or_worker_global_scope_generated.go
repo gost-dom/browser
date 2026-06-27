@@ -10,11 +10,42 @@ import (
 )
 
 func InitializeWindowOrWorkerGlobalScope[T any](jsClass js.Class[T]) {
+	jsClass.CreateOperation("btoa", WindowOrWorkerGlobalScope_btoa)
+	jsClass.CreateOperation("atob", WindowOrWorkerGlobalScope_atob)
 	jsClass.CreateOperation("setTimeout", WindowOrWorkerGlobalScope_setTimeout)
 	jsClass.CreateOperation("clearTimeout", WindowOrWorkerGlobalScope_clearTimeout)
 	jsClass.CreateOperation("setInterval", WindowOrWorkerGlobalScope_setInterval)
 	jsClass.CreateOperation("clearInterval", WindowOrWorkerGlobalScope_clearInterval)
 	jsClass.CreateOperation("queueMicrotask", WindowOrWorkerGlobalScope_queueMicrotask)
+}
+
+func WindowOrWorkerGlobalScope_btoa[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	instance, errInst := js.As[htmlinterfaces.WindowOrWorkerGlobalScope](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	data, errArg1 := js.ConsumeArgument(cbCtx, "data", nil, codec.DecodeBinaryString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result := instance.Btoa(data)
+	return codec.EncodeString(cbCtx, result)
+}
+
+func WindowOrWorkerGlobalScope_atob[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	instance, errInst := js.As[htmlinterfaces.WindowOrWorkerGlobalScope](cbCtx.Instance())
+	if errInst != nil {
+		return nil, errInst
+	}
+	data, errArg1 := js.ConsumeArgument(cbCtx, "data", nil, codec.DecodeString)
+	if errArg1 != nil {
+		return nil, errArg1
+	}
+	result, errCall := instance.Atob(data)
+	if errCall != nil {
+		return nil, errCall
+	}
+	return codec.EncodeBinaryString(cbCtx, result)
 }
 
 func WindowOrWorkerGlobalScope_setTimeout[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
