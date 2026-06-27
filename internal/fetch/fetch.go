@@ -68,7 +68,14 @@ func (r *Request) createHttpReq(ctx context.Context) (*http.Request, error) {
 	}
 	url := r.URL()
 	r.bc.Logger().Info("gost-dom/fetch: Request.do", "method", method, "url", url)
-	return http.NewRequestWithContext(ctx, method, url, r.body)
+	req, err := http.NewRequestWithContext(ctx, method, url, r.body)
+	if err != nil {
+		return nil, err
+	}
+	for name, value := range r.Headers.All() {
+		req.Header.Add(string(name), string(value))
+	}
+	return req, nil
 }
 
 func (r *Request) do(req *http.Request) (*http.Response, error) {
