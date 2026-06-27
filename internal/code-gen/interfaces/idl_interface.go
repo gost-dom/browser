@@ -152,11 +152,7 @@ func (o IdlInterfaceOperation) newIdlType(t idl.Type) g.Generator {
 
 func (o IdlInterfaceOperation) argumentType(a IdlInterfaceOperationArgument) g.Generator {
 	if goType := a.Rules.GoType; goType.Name != "" {
-		res := g.NewTypePackage(goType.Name, goType.Package)
-		if goType.Pointer {
-			res = res.Pointer()
-		}
-		return res
+		return customrules.GoTypeGenerator(goType)
 	}
 
 	var arg g.Generator = o.newIdlType(a.Type())

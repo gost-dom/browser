@@ -8,6 +8,8 @@ import (
 )
 
 type WindowOrWorkerGlobalScope interface {
+	Btoa([]byte) string
+	Atob(string) ([]byte, error)
 	SetTimeout(TimerHandler, time.Duration) clock.TaskHandle
 	ClearTimeout(clock.TaskHandle)
 	SetInterval(TimerHandler, time.Duration) clock.TaskHandle
