@@ -37,12 +37,14 @@ func compareHeaders(a, b Header) int {
 }
 
 func (h *Headers) Append(name, val types.ByteString) {
-	// In order to have correct iteration behaviour, it's imperative that the
-	// list is kept sorted.
+	// Forbidden header names are matched case-insensitively, so normalise the
+	// name before both the check and insertion. Keeping the list sorted is
+	// imperative for correct iteration behaviour.
+	name = name.ToLower()
 	if slices.Index(h.invalidHeaders, name) != -1 {
 		return
 	}
-	h.headers = insertSorted(h.headers, Header{key: name.ToLower(), val: val}, compareHeaders)
+	h.headers = insertSorted(h.headers, Header{key: name, val: val}, compareHeaders)
 }
 
 func (h *Headers) Delete(name types.ByteString) {

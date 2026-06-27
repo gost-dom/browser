@@ -61,8 +61,6 @@ type Request struct {
 
 func (r *Request) URL() string { return url.ParseURLBase(r.url, r.bc.LocationHREF()).Href() }
 
-// createHttpReq builds the outgoing [http.Request] for this fetch Request,
-// defaulting the method to GET and forwarding the request headers.
 func (r *Request) createHttpReq(ctx context.Context) (*http.Request, error) {
 	method := r.method
 	if method == "" {
@@ -74,10 +72,6 @@ func (r *Request) createHttpReq(ctx context.Context) (*http.Request, error) {
 	if err != nil {
 		return nil, err
 	}
-	// Forward the request headers to the outgoing HTTP request. Without this,
-	// headers set via fetch's RequestInit (e.g. Content-Type, Authorization, or
-	// custom API headers) were silently dropped, causing servers that require
-	// them to reject the request.
 	for name, value := range r.Headers.All() {
 		req.Header.Add(string(name), string(value))
 	}
