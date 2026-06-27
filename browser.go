@@ -56,6 +56,14 @@ func WithScriptEngine(engine html.ScriptEngine) BrowserOption {
 	return func(b *browserConfig) { b.engine = engine }
 }
 
+// WithNavigator configures the values reported by the window's navigator (user
+// agent, platform, languages, hardware concurrency, ...). This lets client code
+// dictate the browser identity rather than relying on the default profile.
+// Fields left zero fall back to [html.DefaultNavigatorProfile].
+func WithNavigator(profile html.NavigatorProfile) BrowserOption {
+	return WithComponentType(profile)
+}
+
 // WithContext passes a [context.Context] than can trigger cancellation, e.g.:
 //
 //   - Close any open HTTP connections and disconnect from the server.

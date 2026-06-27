@@ -221,6 +221,10 @@ func newWindow(windowOptions ...WindowOption) *window {
 	for _, init := range options.ComponentInits {
 		init(win)
 	}
+	// Resolve the navigator profile from the configured component (if any),
+	// falling back to the default for every unset field.
+	profile, _ := entity.ComponentType[NavigatorProfile](win)
+	win.navigator.profile = profile.withDefaults()
 	if baseLocation == "" {
 		baseLocation = "about:blank"
 	}
