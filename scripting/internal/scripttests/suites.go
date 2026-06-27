@@ -54,6 +54,7 @@ func RunSuites(t *testing.T, e html.ScriptEngine) {
 	t.Run("NodeList", runSuite(NewNodeListSuite(e)))
 	t.Run("AbortController", runSuite(NewAbortControllerSuite(e)))
 	t.Run("Console", func(t *testing.T) { testConsole(t, e) })
+	t.Run("ToStringTag", func(t *testing.T) { testToStringTag(t, e) })
 	t.Run("Fetch", func(t *testing.T) { testFetch(t, e) })
 	t.Run("Streams", func(t *testing.T) { testStreams(t, e) })
 	t.Run("CharacterData", func(t *testing.T) { testCharacterData(t, e) })

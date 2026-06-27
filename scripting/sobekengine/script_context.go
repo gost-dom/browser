@@ -194,6 +194,7 @@ func (c *scriptContext) CreateClass(
 	cls.prototype = constructor.Get("prototype").(*sobek.Object)
 	c.vm.Set(name, constructor)
 	c.classes[name] = cls
+	cls.setToStringTag(cls.prototype)
 
 	if extends != nil {
 		if superclass, ok := extends.(*class); ok {
@@ -221,6 +222,9 @@ func (c *scriptContext) ConfigureGlobalScope(
 	)
 	cls.prototype = constructor.Get("prototype").(*sobek.Object)
 	c.vm.Set(name, constructor)
+	// The global object carries its own @@toStringTag ("global" in Sobek), which
+	// shadows the prototype, so the tag is set on the global object directly.
+	cls.setToStringTag(c.globalThis())
 
 	if extends != nil {
 		if superclass, ok := extends.(*class); ok {
