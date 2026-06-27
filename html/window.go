@@ -337,6 +337,11 @@ func (w *window) parseReader(reader io.Reader, u *url.URL) error {
 		s.run(w.Logger())
 	}
 	if err == nil {
+		// The document has finished parsing. Reflect this in readyState before
+		// dispatching the lifecycle events, so DOMContentLoaded handlers observe
+		// "complete"; and, crucially, so scripts that run *during* parsing
+		// observe "loading" and correctly defer their initialization.
+		w.document.setReadyState("complete")
 		w.document.DispatchEvent(&event.Event{Type: dom.DocumentEventDOMContentLoaded})
 		// 'load' is emitted when css and images are loaded, not relevant yet, so
 		// just emit it right await
