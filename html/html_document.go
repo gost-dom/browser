@@ -100,6 +100,8 @@ func (d *htmlDocument) CreateElement(name string) dom.Element {
 		return NewHTMLAnchorElement(d)
 	case "label":
 		return NewHTMLLabelElement(d)
+	case "iframe":
+		return NewHTMLIFrameElement(d)
 	}
 	return NewHTMLElement(name, d)
 }
