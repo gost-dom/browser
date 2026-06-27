@@ -1,18 +1,18 @@
-package v8engine_test
+package scripttests
 
 import (
 	"testing"
 
+	"github.com/gost-dom/browser/html"
 	"github.com/gost-dom/browser/internal/testing/browsertest"
-	"github.com/gost-dom/browser/scripting/v8engine"
 	"github.com/stretchr/testify/assert"
 )
 
-// TestInterfaceToStringTag verifies that interface prototypes carry the Web-IDL
+// testToStringTag verifies that interface prototypes carry the Web IDL
 // @@toStringTag, so Object.prototype.toString.call(obj) yields "[object <Name>]"
 // rather than the generic "[object Object]".
-func TestInterfaceToStringTag(t *testing.T) {
-	win := browsertest.InitWindow(t, v8engine.DefaultEngine())
+func testToStringTag(t *testing.T, e html.ScriptEngine) {
+	win := browsertest.InitWindow(t, e)
 	eq := func(name, script string, want any) {
 		t.Helper()
 		assert.Equal(t, want, win.MustEval(script), name)

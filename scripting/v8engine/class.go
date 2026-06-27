@@ -64,6 +64,11 @@ func newV8Class(
 	// yields "[object Navigator]" rather than "[object Object]". Without this,
 	// every host object incorrectly stringifies to "[object Object]". The
 	// most-derived class on the prototype chain wins, which matches browsers.
+	// Per Web IDL the property is { writable: false, enumerable: false,
+	// configurable: true }; ReadOnly|DontEnum covers the first two.
+	//
+	// https://webidl.spec.whatwg.org/#dfn-class-string
+	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toStringTag
 	if name != "" {
 		if err := result.proto.SetSymbol(
 			v8go.SymbolToStringTag(host.iso), name, v8go.ReadOnly|v8go.DontEnum,
