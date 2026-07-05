@@ -35,10 +35,6 @@ func Body_formData[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err err
 	return codec.EncodeCallbackErrorf(cbCtx, "Body.Body_formData: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func Body_text[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Body.Body_text: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
-}
-
 func Body_body[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[fetch.Body](cbCtx.Instance())
 	if err != nil {

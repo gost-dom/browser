@@ -45,14 +45,6 @@ func Response_status[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err e
 	return codec.EncodeInt(cbCtx, result)
 }
 
-func Response_ok[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Response.Response_ok: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
-}
-
-func Response_statusText[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Response.Response_statusText: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
-}
-
 func Response_headers[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	instance, err := js.As[*fetch.Response](cbCtx.Instance())
 	if err != nil {

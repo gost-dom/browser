@@ -36,6 +36,8 @@ func testFetch(t *testing.T, e html.ScriptEngine) {
 	t.Run("Fetch resource async/await", func(t *testing.T) { testFetchJSONAsync(t, e) })
 	t.Run("Fetch invalid JSON", func(t *testing.T) { testFetchInvalidJSON(t, e) })
 	t.Run("404 for not found resource", func(t *testing.T) { testNotFound(t, e) })
+	t.Run("RequestInit with empty headers object", func(t *testing.T) { testEmptyHeadersInit(t, e) })
+	t.Run("Response ok/statusText/text", func(t *testing.T) { testResponseOkStatusTextText(t, e) })
 	t.Run("ReadableStream body", func(t *testing.T) { testReadableStream(t, e) })
 	t.Run("Headers", func(t *testing.T) { testHeaders(t, e) })
 	t.Run("Request", func(t *testing.T) { testRequest(t, e) })
@@ -387,6 +389,58 @@ func testNotFound(t *testing.T, e html.ScriptEngine) {
 	defer cancel()
 	assert.NoError(t, win.Clock().ProcessEvents(ctx))
 	g.Expect(win.Eval("got")).To(BeEquivalentTo(404))
+}
+
+// Regression: a plain-object headers init must work even when EMPTY. A stale
+// ErrNotIterable from the iterator attempt used to leak out of the record
+// fallback when the loop had zero entries, so `fetch(url, {headers: {}})`
+// rejected while `{headers: {a: "b"}}` succeeded.
+func testEmptyHeadersInit(t *testing.T, e html.ScriptEngine) {
+	handler := gosttest.HttpHandlerMap{
+		"/index.html": gosttest.StaticHTML(`<body>dummy</body>`),
+		"/data.json":  gosttest.StaticJSON(`{"foo": "bar"}`),
+	}
+	g := gomega.NewWithT(t)
+	win := openWindow(t, e, handler, "https://example.com/index.html")
+	win.MustRun(`
+		fetch("data.json", { method: "GET", headers: {} })
+			.then(r => { globalThis.got = r.status }, e => { globalThis.failed = String(e) })
+	`)
+	ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
+	defer cancel()
+	assert.NoError(t, win.Clock().ProcessEvents(ctx))
+	g.Expect(win.Eval("globalThis.failed")).To(BeNil(), "fetch with empty headers object rejected")
+	g.Expect(win.Eval("got")).To(BeEquivalentTo(200))
+}
+
+// Response.ok, Response.statusText, and Body.text().
+func testResponseOkStatusTextText(t *testing.T, e html.ScriptEngine) {
+	handler := gosttest.HttpHandlerMap{
+		"/index.html": gosttest.StaticHTML(`<body>dummy</body>`),
+		"/data.txt":   gosttest.StaticJSON(`hello`),
+	}
+	g := gomega.NewWithT(t)
+	win := openWindow(t, e, handler, "https://example.com/index.html")
+	win.MustRun(`
+		(async () => {
+			const r = await fetch("data.txt")
+			globalThis.gotOk = r.ok
+			globalThis.gotStatusText = r.statusText
+			globalThis.gotText = await r.text()
+			const missing = await fetch("nope.txt")
+			globalThis.missingOk = missing.ok
+			globalThis.missingStatusText = missing.statusText
+		})().catch(e => { globalThis.failed = String(e) })
+	`)
+	ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
+	defer cancel()
+	assert.NoError(t, win.Clock().ProcessEvents(ctx))
+	g.Expect(win.Eval("globalThis.failed")).To(BeNil())
+	g.Expect(win.Eval("gotOk")).To(BeEquivalentTo(true), "ok for 200")
+	g.Expect(win.Eval("gotStatusText")).To(Equal("OK"))
+	g.Expect(win.Eval("gotText")).To(Equal(`hello`))
+	g.Expect(win.Eval("missingOk")).To(BeEquivalentTo(false), "ok for 404")
+	g.Expect(win.Eval("missingStatusText")).To(Equal("Not Found"))
 }
 
 func testReadableStream(t *testing.T, e html.ScriptEngine) {

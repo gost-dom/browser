@@ -152,6 +152,13 @@ type Response struct {
 	httpResponse *http.Response
 }
 
+// Ok reports whether Status is in the 2xx range (Response.ok).
+func (r *Response) Ok() bool { return r.Status >= 200 && r.Status <= 299 }
+
+// StatusText returns the reason phrase for the status code, e.g. "Not Found"
+// (Response.statusText).
+func (r *Response) StatusText() string { return http.StatusText(r.Status) }
+
 type ReadableStream struct {
 	Reader io.Reader
 }
