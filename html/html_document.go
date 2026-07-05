@@ -112,8 +112,17 @@ func (d *htmlDocument) Location() Location {
 	return d.docLocation
 }
 
-func (d *htmlDocument) location() *location     { return d.docLocation }
-func (d *htmlDocument) setLocation(l *location) { d.docLocation = l }
+func (d *htmlDocument) location() *location { return d.docLocation }
+func (d *htmlDocument) setLocation(l *location) {
+	// Give the location a back-reference to the owning window so a same-document
+	// fragment change (location.hash = ...) can dispatch a hashchange event.
+	if l != nil {
+		if w, ok := entity.ComponentType[Window](d); ok && w != nil {
+			l.win = w.window()
+		}
+	}
+	d.docLocation = l
+}
 func (d *htmlDocument) URL() string {
 	if location := d.Location(); location != nil {
 		return location.Href()
