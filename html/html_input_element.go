@@ -37,8 +37,19 @@ func (e *htmlInputElement) Name() string {
 }
 func (e *htmlInputElement) SetName(value string) { e.SetAttribute("name", value) }
 func (e *htmlInputElement) CheckValidity() bool  { return true }
-func (e *htmlInputElement) Checked() bool        { return e.checked }
-func (e *htmlInputElement) SetChecked(b bool)    { e.checked = b }
+
+// Checked reports the control's checkedness. Like Value, it falls back to the
+// content attribute so a control parsed from markup -- <input checked> -- is
+// seen as checked without anything having called SetChecked.
+func (e *htmlInputElement) Checked() bool {
+	if e.checked {
+		return true
+	}
+	_, hasAttr := e.GetAttribute("checked")
+	return hasAttr
+}
+
+func (e *htmlInputElement) SetChecked(b bool) { e.checked = b }
 func (e *htmlInputElement) Value() string {
 	value := e.value
 	if value == "" {

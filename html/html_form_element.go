@@ -103,9 +103,9 @@ func (e *htmlFormElement) Submit() error {
 }
 
 func (e *htmlFormElement) Elements() dom.NodeList {
-	inputs, err := e.QuerySelectorAll("input")
+	elements, err := e.QuerySelectorAll("input, select, textarea")
 	if err == nil {
-		return inputs
+		return elements
 	}
 	panic(err) // Should only be on invalid css pattern
 }
