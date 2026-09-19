@@ -23,7 +23,7 @@ func ConfigureEventSpecs(s *WebAPIConfig) {
 
 	keyboardEvent := s.Type("KeyboardEvent")
 
-	keyboardEvent.Method("getModifierState").SetNotImplemented()
+	keyboardEvent.Method("getModifierState").SetCustomImplementation()
 }
 
 func ConfigurePointerEventSpecs(s *WebAPIConfig) {
