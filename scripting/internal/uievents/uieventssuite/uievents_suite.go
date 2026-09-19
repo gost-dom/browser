@@ -64,4 +64,34 @@ func RunUieventsSuite(t *testing.T, e html.ScriptEngine) {
 			gost.assertEqual(event.key, "k")
 		`)
 	})
+
+	t.Run("KeyboardEvent modifier state", func(t *testing.T) {
+		w := browsertest.InitWindow(t, e)
+		w.MustRun(`
+			const event = new KeyboardEvent("dummy", {
+				altKey: true,
+				ctrlKey: true,
+				metaKey: true,
+				shiftKey: true,
+				modifierAltGraph: true,
+				modifierCapsLock: true,
+				modifierFn: true,
+				modifierFnLock: true,
+				modifierHyper: true,
+				modifierNumLock: true,
+				modifierScrollLock: true,
+				modifierSuper: true,
+				modifierSymbol: true,
+				modifierSymbolLock: true,
+			})
+			for (const modifier of [
+				"Alt", "AltGraph", "CapsLock", "Control", "Fn", "FnLock",
+				"Hyper", "Meta", "NumLock", "ScrollLock", "Shift", "Super",
+				"Symbol", "SymbolLock", "Accel",
+			]) {
+				gost.assertEqual(event.getModifierState(modifier), true)
+			}
+			gost.assertEqual(event.getModifierState("Unknown"), false)
+		`)
+	})
 }
