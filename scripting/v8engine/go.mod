@@ -4,7 +4,7 @@ go 1.25
 
 require (
 	github.com/gost-dom/browser v0.10.3
-	github.com/gost-dom/v8go v0.0.0-20250712111039-fd213ddc42d7
+	github.com/gost-dom/v8go v0.0.0-20261115230326-a9da67bbb4d0
 	github.com/onsi/gomega v1.38.2
 )
 
@@ -15,12 +15,13 @@ require (
 	github.com/kr/text v0.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/testify v1.11.1 // indirect
-	github.com/tommie/v8go/deps/android_amd64 v0.0.0-20251007175045-97bcf8e7d6ed // indirect
-	github.com/tommie/v8go/deps/android_arm64 v0.0.0-20251007175045-97bcf8e7d6ed // indirect
-	github.com/tommie/v8go/deps/darwin_amd64 v0.0.0-20251007175045-97bcf8e7d6ed // indirect
-	github.com/tommie/v8go/deps/darwin_arm64 v0.0.0-20251007175045-97bcf8e7d6ed // indirect
-	github.com/tommie/v8go/deps/linux_amd64 v0.0.0-20251007175045-97bcf8e7d6ed // indirect
-	github.com/tommie/v8go/deps/linux_arm64 v0.0.0-20251007175045-97bcf8e7d6ed // indirect
+	github.com/tommie/v8go/deps/android_amd64 v0.0.0-20261112084653-d9d1101d81c9 // indirect
+	github.com/tommie/v8go/deps/android_arm64 v0.0.0-20261112084653-d9d1101d81c9 // indirect
+	github.com/tommie/v8go/deps/darwin_amd64 v0.0.0-20261112084653-d9d1101d81c9 // indirect
+	github.com/tommie/v8go/deps/darwin_arm64 v0.0.0-20261112084653-d9d1101d81c9 // indirect
+	github.com/tommie/v8go/deps/linux_amd64 v0.0.0-20261112084653-d9d1101d81c9 // indirect
+	github.com/tommie/v8go/deps/linux_arm64 v0.0.0-20261112084653-d9d1101d81c9 // indirect
+	github.com/tommie/v8go/deps/windows_amd64 v0.0.0-20261112084653-d9d1101d81c9 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/net v0.47.0 // indirect
 	golang.org/x/text v0.31.0 // indirect
