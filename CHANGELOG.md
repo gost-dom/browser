@@ -1,6 +1,24 @@
 # Changelog - Gost-DOM
 
 
+## [0.13.0](https://github.com/gost-dom/browser/compare/v0.12.0...v0.13.0) (2026-11-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* Only for the v8 script engine, new environment
+variables are necessary for cgo interop.
+
+### Features
+
+* Basic <select> support ([f8255b0](https://github.com/gost-dom/browser/commit/f8255b04a1ed6712394638d59f75c92491695aef))
+* Update v8 engine ([0205f99](https://github.com/gost-dom/browser/commit/0205f99db5ba0c37d7297bd701b3e1a1190b1f0a))
+
+
+### Bug Fixes
+
+* **sobek:** Fix potential nil pointer panic in promise resolution ([1fcb84b](https://github.com/gost-dom/browser/commit/1fcb84b3029a731d0772ffb9688ef1b8362d13cb))
+
 ## [0.12.0](https://github.com/gost-dom/browser/compare/v0.11.3...v0.12.0) (2026-06-11)
 
 
