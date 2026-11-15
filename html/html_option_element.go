@@ -1,15 +1,21 @@
 package html
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/gost-dom/browser/dom"
+)
 
 type HTMLOptionElement interface {
 	HTMLElement
 	Value() string
-	selectedness() bool
+	Selected() bool
 }
 
 type htmlOptionElement struct {
 	htmlElement
+
+	selectedness bool
 }
 
 func NewHTMLOptionElement(ownerDocument HTMLDocument) HTMLOptionElement {
@@ -20,13 +26,27 @@ func NewHTMLOptionElement(ownerDocument HTMLDocument) HTMLOptionElement {
 	return result
 }
 
-func (e *htmlOptionElement) selectedness() bool {
-	v, ok := e.GetAttribute("selected")
-	fmt.Println("SELECTED", v, ok)
-	return ok
+func (e *htmlOptionElement) Selected() bool {
+	return e.Selectedness()
+}
+
+func (e *htmlOptionElement) Selectedness() bool {
+	return e.selectedness
+}
+
+func (e *htmlOptionElement) SetSelectedness(s bool) {
+	fmt.Println("Set selected", s, e.ID())
+	e.selectedness = s
 }
 
 func (e *htmlOptionElement) Value() string {
 	val, _ := e.GetAttribute("value")
 	return val
+}
+
+func (e *htmlOptionElement) SetAttributeNode(a dom.Attr) (dom.Attr, error) {
+	if a.Name() == "selected" {
+		e.selectedness = true
+	}
+	return e.htmlElement.SetAttributeNode(a)
 }

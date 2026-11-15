@@ -298,7 +298,7 @@ func (e *element) SetAttribute(name string, value string) error {
 		e.notify(e.attributeChangedEvent(a, prevVal))
 	} else {
 		if attr, err := newAttr(name, value, e.OwnerDocument()); err == nil {
-			e.SetAttributeNode(attr)
+			e.selfElement.SetAttributeNode(attr)
 		} else {
 			return err
 		}
