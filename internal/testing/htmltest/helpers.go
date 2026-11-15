@@ -201,3 +201,12 @@ func ParseHTMLDocument(t testing.TB, s string) HTMLDocumentHelper {
 	}
 	return NewHTMLDocumentHelper(t, win.Document())
 }
+
+func WinQuerySelector[T html.HTMLElement](win WindowHelper, q string) T {
+	return QuerySelector[T](win.HTMLDocument().HTMLParentNodeHelper, q)
+}
+func QuerySelector[T html.HTMLElement](n HTMLParentNodeHelper, q string) T {
+	n.t.Helper()
+	res := n.QuerySelectorHTML(q)
+	return UnwrapHTMLElement[T](res)
+}

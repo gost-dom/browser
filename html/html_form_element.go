@@ -103,7 +103,7 @@ func (e *htmlFormElement) Submit() error {
 }
 
 func (e *htmlFormElement) Elements() dom.NodeList {
-	inputs, err := e.QuerySelectorAll("input")
+	inputs, err := e.QuerySelectorAll("input, select")
 	if err == nil {
 		return inputs
 	}

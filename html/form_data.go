@@ -32,10 +32,10 @@ func NewFormData() *FormData {
 //
 // see also: https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#constructing-the-form-data-set
 func NewFormDataForm(form HTMLFormElement) *FormData {
-	inputs := form.Elements()
+	elements := form.Elements()
 	formData := NewFormData()
-	for input := range inputs.All() {
-		if input, ok := input.(HTMLInputElement); ok {
+	for element := range elements.All() {
+		if input, ok := element.(*htmlInputElement); ok {
 			name := input.Name()
 			if name == "" {
 				continue
@@ -51,6 +51,10 @@ func NewFormDataForm(form HTMLFormElement) *FormData {
 				// TODO: handle no values
 				formData.Append(name, NewFormDataValueString(input.Value()))
 			}
+		}
+		if sel, ok := element.(*htmlSelectElement); ok {
+			name := sel.Name()
+			formData.Append(name, NewFormDataValueString(sel.Value()))
 		}
 	}
 	return formData
