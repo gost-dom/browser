@@ -1,5 +1,0 @@
-#!/bin/sh
-go mod edit -replace="github.com/gost-dom/v8go=$HOME/go/src/github.com/gost-dom/v8go"
-go mod tidy
-
-
