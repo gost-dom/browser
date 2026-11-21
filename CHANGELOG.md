@@ -1,6 +1,13 @@
 # Changelog - Gost-DOM
 
 
+## [0.13.1](https://github.com/gost-dom/browser/compare/v0.13.0...v0.13.1) (2026-11-21)
+
+
+### Bug Fixes
+
+* Remove noisy log output ([a7a07d3](https://github.com/gost-dom/browser/commit/a7a07d35d8a09de118785ecaf963e9a5cfc6d481))
+
 ## [0.13.0](https://github.com/gost-dom/browser/compare/v0.12.0...v0.13.0) (2026-11-15)
 
 
