@@ -109,7 +109,6 @@ func (d *htmlDocument) CreateElement(name string) dom.Element {
 }
 
 func (d *htmlDocument) Location() Location {
-	d.Logger().Info("Document Location", "loc", d.docLocation)
 	if d.docLocation == nil {
 		return nil
 	}
