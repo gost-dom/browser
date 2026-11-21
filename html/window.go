@@ -394,6 +394,7 @@ func (w *window) get(href string) error {
 func (w *window) fetchRequest(req *http.Request) error {
 	// Create a copy of the client, and set the CheckRedirect to a function that
 	// updates the window location to reflect the new URL.
+	req.Header.Add("Origin", w.Location().Origin())
 	l := w.Logger()
 	l.Info("window.fetchRequest", "method", req.Method, "url", req.URL.String())
 	client := w.httpClient
