@@ -35,6 +35,11 @@ func decodeHeadersInit[T any](
 		return
 	}
 	if obj, ok := v.AsObject(); ok {
+		// Not iterable → treat as a plain record of name/value pairs. Clear the
+		// sentinel first: for an EMPTY object the loop below never assigns err,
+		// so the stale ErrNotIterable would leak out as the result (making
+		// `fetch(url, {headers: {}})` fail while `{headers: {a: "b"}}` worked).
+		err = nil
 		var key js.Value[T]
 		for key, err = range js.ObjectEnumerableOwnPropertyKeys(scope, obj) {
 			if err == nil && key.IsSymbol() {

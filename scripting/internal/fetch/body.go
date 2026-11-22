@@ -16,8 +16,20 @@ func Body_json[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) 
 	return codec.EncodePromise(cbCtx, promise.ReadAll(instance), EncodeJSONBytes)
 }
 
+func Body_text[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
+	instance, err := js.As[fetch.Body](cbCtx.Instance())
+	if err != nil {
+		return nil, err
+	}
+	return codec.EncodePromise(cbCtx, promise.ReadAll(instance), EncodeTextBytes)
+}
+
 func EncodeJSONBytes[T any](scope js.Scope[T], b []byte) (js.Value[T], error) {
 	return scope.JSONParse(string(b))
+}
+
+func EncodeTextBytes[T any](scope js.Scope[T], b []byte) (js.Value[T], error) {
+	return codec.EncodeString(scope, string(b))
 }
 
 func encodeReadableStream[T any](

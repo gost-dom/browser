@@ -16,14 +16,19 @@ func configureFetchSpecs(specs *WebAPIConfig) {
 	res.OverrideWrappedType = &GoType{Package: packagenames.Fetch, Name: "Response", Pointer: true}
 	res.SkipConstructor = true
 	res.MarkMembersAsNotImplemented(
-		"type", "clone", "url", "redirected", "ok", "statusText",
+		"type", "clone", "url", "redirected",
 	)
+	// ok and statusText have hand-written implementations in response.go.
+	res.Method("ok").SetCustomImplementation()
+	res.Method("statusText").SetCustomImplementation()
 
 	body := specs.Type("Body")
 	body.MarkMembersAsNotImplemented(
-		"arrayBuffer", "blob", "bytes", "formData", "text", "bodyUsed",
+		"arrayBuffer", "blob", "bytes", "formData", "bodyUsed",
 	)
 	body.Method("json").SetCustomImplementation()
+	// text has a hand-written implementation in body.go.
+	body.Method("text").SetCustomImplementation()
 
 	headers := specs.Type("Headers")
 	headers.MarkMembersAsNotImplemented("getSetCookie")
