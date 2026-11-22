@@ -1,6 +1,8 @@
 package sobekengine
 
 import (
+	"fmt"
+
 	"github.com/gost-dom/browser/scripting/internal/js"
 	"github.com/grafana/sobek"
 )
@@ -81,6 +83,33 @@ func (c class) CreateIteratorMethod(cb js.CallbackFunc[jsTypeParam]) {
 		sobek.SymIterator,
 		wrapJSCallback(c.ctx, cb.WithLog(c.name, "Symbol.Iterator")),
 	)
+}
+
+// setToStringTag installs the Web IDL class string as obj's @@toStringTag, so
+// Object.prototype.toString.call(obj) yields "[object <Name>]" instead of the
+// generic "[object Object]". Per Web IDL the property is { writable: false,
+// enumerable: false, configurable: true }.
+//
+// For interface prototypes obj is the prototype, which instances inherit from.
+// For the global object the tag must be set on the global object itself, as
+// Sobek gives it an own @@toStringTag of "global" that would otherwise shadow
+// the inherited one.
+//
+// https://webidl.spec.whatwg.org/#dfn-class-string
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toStringTag
+func (c *class) setToStringTag(obj *sobek.Object) {
+	if c.name == "" {
+		return
+	}
+	if err := obj.DefineDataPropertySymbol(
+		sobek.SymToStringTag,
+		c.ctx.vm.ToValue(c.name),
+		sobek.FLAG_FALSE, // writable
+		sobek.FLAG_TRUE,  // configurable
+		sobek.FLAG_FALSE, // enumerable
+	); err != nil {
+		panic(fmt.Sprintf("gost-dom/sobek: set @@toStringTag for %s: %v", c.name, err))
+	}
 }
 
 func (c *class) NewInstance(native any) (js.Object[jsTypeParam], error) {
