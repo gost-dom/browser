@@ -22,6 +22,7 @@ func ConfigureScriptEngine[T any](e js.ScriptEngine[T]) {
 	// See also: https://developer.mozilla.org/en-US/docs/Web/API/HTMLDocument
 	js.CreateClass(e, "HTMLDocument", "Document", js.IllegalConstructor)
 	installHtmlElementTypes(e)
+	installIFrameElement(e)
 }
 
 // installHtmlElementTypes adds classes for all the HTML element types work which
