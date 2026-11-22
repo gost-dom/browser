@@ -8,6 +8,7 @@ import (
 
 var timeDuration = gotypes.TimeDuration
 var taskHandle = gotypes.TaskHandle
+var byteSlice = gotypes.ByteSlice
 
 var htmlRules = SpecRules{
 	"DOMStringMap": {OutputType: OutputTypeStruct},
@@ -60,6 +61,14 @@ var htmlRules = SpecRules{
 		"focus": {Arguments: ArgumentRules{"options": {Ignore: true}}},
 	}},
 	"WindowOrWorkerGlobalScope": {Operations: OperationRules{
+		"atob": {
+			HasError:   true,
+			ReturnType: byteSlice,
+		},
+		"btoa": {
+			Arguments: ArgumentRules{
+				"data": {GoType: byteSlice},
+			}},
 		"setTimeout": {
 			ReturnType: taskHandle,
 			Arguments: ArgumentRules{
@@ -120,8 +129,6 @@ func init() {
 	IgnoreMembers(htmlRules,
 		Overrides{"WindowOrWorkerGlobalScope": {
 			Operations: []string{
-				"atob",
-				"btoa",
 				"createImageBitmap",
 				"structuredClone",
 				"reportError",

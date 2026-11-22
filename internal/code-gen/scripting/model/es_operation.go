@@ -15,6 +15,7 @@ import (
 
 var encodeString = g.NewValuePackage("EncodeString", packagenames.Codec)
 var encodeByteString = g.NewValuePackage("EncodeByteString", packagenames.Codec)
+var encodeBinaryString = g.NewValuePackage("EncodeBinaryString", packagenames.Codec)
 var encodeAny = g.NewValuePackage("EncodeAny", packagenames.Codec)
 var encodeNillableString = g.NewValuePackage("EncodeNillableString", packagenames.Codec)
 var encodeNullableString = g.NewValuePackage("EncodeNullableString", packagenames.Codec)

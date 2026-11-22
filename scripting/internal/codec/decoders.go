@@ -28,6 +28,26 @@ func DecodeString[T any](s js.Scope[T], v js.Value[T]) (string, error) {
 	return v.String(), nil
 }
 
+// DecodeBinaryString decodes a JavaScript "binary string" into the bytes it
+// represents, where each character maps to a single byte. Every code point must
+// be in the Latin-1 range (0..255) - the representation consumed by btoa; a code
+// point outside that range is an error.
+func DecodeBinaryString[T any](s js.Scope[T], v js.Value[T]) ([]byte, error) {
+	if v == nil {
+		v = s.Undefined()
+	}
+	str := v.String()
+	bytes := make([]byte, 0, len(str))
+	for _, r := range str {
+		if r > 0xFF {
+			return nil, fmt.Errorf(
+				"codec: binary string contains a character outside the Latin-1 range")
+		}
+		bytes = append(bytes, byte(r))
+	}
+	return bytes, nil
+}
+
 func DecodeBoolean[T any](_ js.Scope[T], val js.Value[T]) (bool, error) {
 	return val.Boolean(), nil
 }

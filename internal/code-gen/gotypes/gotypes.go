@@ -25,3 +25,9 @@ var TaskHandle = GoType{
 	Name:    "TaskHandle",
 	Package: packagenames.Clock,
 }
+
+// ByteSlice is the Go []byte type, used to represent a binary string (e.g. the
+// input to btoa and the output of atob) decoded into its raw bytes.
+var ByteSlice = GoType{
+	Name: "[]byte",
+}

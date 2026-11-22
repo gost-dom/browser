@@ -3,6 +3,7 @@ package codec
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/gost-dom/browser/internal/clock"
@@ -81,6 +82,18 @@ func EncodeString[T any](scope js.Scope[T], s string) (js.Value[T], error) {
 
 func EncodeByteString[T any](scope js.Scope[T], s types.ByteString) (js.Value[T], error) {
 	return scope.NewString(string(s)), nil
+}
+
+// EncodeBinaryString encodes bytes as a JavaScript "binary string", where each
+// byte becomes a single character in the range 0..255. This is the
+// representation produced by atob.
+func EncodeBinaryString[T any](scope js.Scope[T], b []byte) (js.Value[T], error) {
+	var sb strings.Builder
+	sb.Grow(len(b))
+	for _, c := range b {
+		sb.WriteRune(rune(c))
+	}
+	return scope.NewString(sb.String()), nil
 }
 
 func EncodeNullableString[T any](scope js.CallbackScope[T], s *string) (js.Value[T], error) {

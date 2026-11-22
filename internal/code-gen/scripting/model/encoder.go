@@ -29,4 +29,5 @@ func EncoderForIdlType(t idl.Type) g.Value {
 
 var encoders = map[gotypes.GoType]g.Value{
 	{Name: "Document", Package: packagenames.Dom}: encodeEntity,
+	gotypes.ByteSlice:                             encodeBinaryString,
 }

@@ -13,6 +13,7 @@ import (
 )
 
 var decodeString = g.NewValuePackage("DecodeString", packagenames.Codec)
+var decodeBinaryString = g.NewValuePackage("DecodeBinaryString", packagenames.Codec)
 var decodeDuration = g.NewValuePackage("DecodeDuration", packagenames.Codec)
 var decodeByteString = g.NewValuePackage("DecodeByteString", packagenames.Codec)
 var decodeBoolean = g.NewValuePackage("DecodeBoolean", packagenames.Codec)
@@ -48,6 +49,9 @@ func DecodersForGoType(
 	}
 	if goType == gotypes.TaskHandle {
 		return []g.Generator{g.NewValue("decodeTaskHandle")}
+	}
+	if goType == gotypes.ByteSlice {
+		return []g.Generator{decodeBinaryString}
 	}
 	return DecodersForType(argType)
 }
