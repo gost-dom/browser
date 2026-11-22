@@ -136,7 +136,10 @@ func (l *URL) SetUsername(
 func (l URL) Username() string                { return l.url.User.Username() }
 func (l *URL) SearchParams() *URLSearchParams { return &URLSearchParams{l.url.Query(), l} }
 
-func (l *URL) SetHash(val string) { l.url.Fragment = val }
+// SetHash sets the URL fragment. Per the URL spec, a single leading "#" in the
+// assigned value is stripped (so `location.hash = "#/x"` yields fragment "/x",
+// and Hash() reads back "#/x", not "##/x").
+func (l *URL) SetHash(val string) { l.url.Fragment = strings.TrimPrefix(val, "#") }
 func (l *URL) SetHost(val string) { l.url.Host = val }
 func (l *URL) SetHostname(val string) {
 	port := l.Port()
