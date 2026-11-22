@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"sync/atomic"
 	"time"
 
@@ -150,6 +151,26 @@ type Response struct {
 	Headers Headers
 
 	httpResponse *http.Response
+}
+
+// Ok reports whether the response status is in the range 200-299, matching the
+// [Response.ok] getter in the Fetch API.
+//
+// [Response.ok]: https://developer.mozilla.org/en-US/docs/Web/API/Response/ok
+func (r Response) Ok() bool { return r.Status >= 200 && r.Status <= 299 }
+
+// StatusText returns the HTTP status reason phrase, e.g. "OK" for 200. When the
+// originating [http.Response] carries an explicit reason phrase that value is
+// used; otherwise it falls back to the standard text for the status code.
+//
+// [Response.statusText]: https://developer.mozilla.org/en-US/docs/Web/API/Response/statusText
+func (r Response) StatusText() string {
+	if r.httpResponse != nil {
+		if _, text, ok := strings.Cut(r.httpResponse.Status, " "); ok && text != "" {
+			return text
+		}
+	}
+	return http.StatusText(r.Status)
 }
 
 type ReadableStream struct {

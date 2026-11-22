@@ -19,24 +19,12 @@ func InitializeBody[T any](jsClass js.Class[T]) {
 	jsClass.CreateAttribute("bodyUsed", Body_bodyUsed, nil)
 }
 
-func Body_arrayBuffer[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Body.Body_arrayBuffer: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
-}
-
 func Body_blob[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return codec.EncodeCallbackErrorf(cbCtx, "Body.Body_blob: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
-func Body_bytes[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Body.Body_bytes: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
-}
-
 func Body_formData[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
 	return codec.EncodeCallbackErrorf(cbCtx, "Body.Body_formData: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
-}
-
-func Body_text[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
-	return codec.EncodeCallbackErrorf(cbCtx, "Body.Body_text: Not implemented. Create an issue: https://github.com/gost-dom/browser/issues")
 }
 
 func Body_body[T any](cbCtx js.CallbackContext[T]) (res js.Value[T], err error) {
