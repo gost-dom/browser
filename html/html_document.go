@@ -11,17 +11,34 @@ import (
 type HTMLDocument interface {
 	dom.Document
 	Location() Location
+	// ReadyState reports the document loading state: "loading" while the
+	// document is being parsed, and "complete" once parsing has finished.
+	ReadyState() string
 	// unexported
 	setActiveElement(e dom.Element)
 	location() *location
 	setLocation(*location)
+	setReadyState(string)
 	URL() string
 }
 
 type htmlDocument struct {
 	dom.Document
 	docLocation *location
+	readyState  string
 }
+
+// ReadyState reports the document loading state, defaulting to "loading" until
+// parsing completes and setReadyState records "complete".
+func (d *htmlDocument) ReadyState() string {
+	if d.readyState == "" {
+		return "loading"
+	}
+	return d.readyState
+}
+
+// setReadyState records the document's loading state (e.g. "complete").
+func (d *htmlDocument) setReadyState(s string) { d.readyState = s }
 
 func mustAppendChild(p, c dom.Node) dom.Node {
 	_, err := p.AppendChild(c)
@@ -68,7 +85,7 @@ func NewValidHTMLDocument(window Window, options ...func(HTMLDocument)) HTMLDocu
 
 // NewEmptyHtmlDocument creates an HTML document without any content.
 func NewEmptyHtmlDocument(window Window) HTMLDocument {
-	var result HTMLDocument = &htmlDocument{dom.NewDocument(window), nil}
+	var result HTMLDocument = &htmlDocument{Document: dom.NewDocument(window)}
 	entity.SetComponentType[Window](result, window)
 	result.SetSelf(result)
 	intdom.SetIsHTMLDocument(result, true)
