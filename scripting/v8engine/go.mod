@@ -29,3 +29,5 @@ require (
 )
 
 replace github.com/gost-dom/browser => ../../
+
+replace github.com/gost-dom/v8go => /Users/peter/src/go/gost-dom/v8go
