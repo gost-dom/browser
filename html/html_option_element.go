@@ -1,8 +1,6 @@
 package html
 
 import (
-	"fmt"
-
 	"github.com/gost-dom/browser/dom"
 )
 
@@ -35,7 +33,6 @@ func (e *htmlOptionElement) Selectedness() bool {
 }
 
 func (e *htmlOptionElement) SetSelectedness(s bool) {
-	fmt.Println("Set selected", s, e.ID())
 	e.selectedness = s
 }
 
